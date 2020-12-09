@@ -1,0 +1,41 @@
+[
+    {
+      "name": "GCforms",
+      "image": "${image}",
+      "portMappings": [
+        {
+          "containerPort": 3000
+        }
+      ],
+      "linuxParameters": {
+        "capabilities": {
+          "drop": ["ALL"]
+        }
+      },
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "${awslogs-group}",
+          "awslogs-region": "${awslogs-region}",
+          "awslogs-stream-prefix": "${awslogs-stream-prefix}"
+        }
+      },
+      "environment": [
+        {
+          "name": "METRIC_PROVIDER",
+          "value": "${metric_provider}"
+        },
+        {
+          "name": "TRACER_PROVIDER",
+          "value": "${tracer_provider}"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "OTP_NOTIFY_API_KEY",
+          "valueFrom": "${notify_api_key}"
+        }
+      ]
+    }
+  ]
+  

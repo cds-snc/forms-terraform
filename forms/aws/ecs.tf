@@ -16,7 +16,7 @@ resource "aws_ecs_cluster" "forms" {
 }
 
 locals {
-  portal_repo = aws_ecr_repository.repository.repository_url
+  forms_repo = aws_ecr_repository.repository.repository_url
 }
 
 ###
@@ -29,7 +29,7 @@ data "template_file" "forms_task" {
   template = file("task-definitions/forms.json")
 
   vars = {
-    image                 = "${local.portal_repo}"
+    image                 = "${local.forms_repo}"
     awslogs-group         = aws_cloudwatch_log_group.forms.name
     awslogs-region        = var.region
     awslogs-stream-prefix = "ecs-${var.ecs_forms_name}"
@@ -108,7 +108,7 @@ resource "aws_ecs_service" "forms" {
 
 }
 
-resource "aws_appautoscaling_target" "portal" {
+resource "aws_appautoscaling_target" "forms" {
   count              = var.forms_autoscale_enabled ? 1 : 0
   service_namespace  = "ecs"
   resource_id        = "service/${aws_ecs_service.forms.cluster}/${aws_ecs_service.forms.name}"
@@ -116,8 +116,8 @@ resource "aws_appautoscaling_target" "portal" {
   min_capacity       = var.min_capacity
   max_capacity       = var.max_capacity
 }
-resource "aws_appautoscaling_policy" "portal_cpu" {
-  count              = var.portal_autoscale_enabled ? 1 : 0
+resource "aws_appautoscaling_policy" "forms_cpu" {
+  count              = var.forms_autoscale_enabled ? 1 : 0
   name               = "forms_cpu"
   policy_type        = "TargetTrackingScaling"
   service_namespace  = "ecs"
@@ -134,7 +134,7 @@ resource "aws_appautoscaling_policy" "portal_cpu" {
   }
 }
 
-resource "aws_appautoscaling_policy" "portal_memory" {
+resource "aws_appautoscaling_policy" "forms_memory" {
   count              = var.forms_autoscale_enabled ? 1 : 0
   name               = "forms_memory"
   policy_type        = "TargetTrackingScaling"
