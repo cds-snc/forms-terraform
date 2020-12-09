@@ -65,8 +65,8 @@ variable "max_capacity" {
   default = 2
 }
 
-# Task Covid Portal
-variable "ecs_covid_portal_name" {
+# Task Forms
+variable "ecs_forms_name" {
   type = string
 }
 
@@ -115,14 +115,6 @@ variable "vpc_cidr_block" {
 }
 
 variable "vpc_name" {
-  type = string
-}
-
-###
-# AWS RDS - rds.tf
-###
-# RDS Subnet Group
-variable "rds_db_subnet_group_name" {
   type = string
 }
 

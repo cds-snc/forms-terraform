@@ -17,8 +17,8 @@ resource "aws_lb_target_group" "forms" {
     port                = 3000
     matcher             = "301,200"
     timeout             = 5
-    healthy_threshold   = 1
-    unhealthy_threshold = 1
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
   }
 
   tags = {
