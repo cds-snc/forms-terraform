@@ -34,7 +34,7 @@ resource "aws_iam_policy" "forms_secrets_manager" {
 }
 
 resource "aws_iam_role" "forms" {
-  name = var.ecs_forms_name
+  name = var.ecs_form_viewer_name
 
   assume_role_policy = data.aws_iam_policy_document.forms.json
 

@@ -66,7 +66,7 @@ variable "max_capacity" {
 }
 
 # Task Forms
-variable "ecs_forms_name" {
+variable "ecs_form_viewer_name" {
   type = string
 }
 
@@ -78,11 +78,21 @@ variable "ecs_secret_notify_api_key" {
 
 # Task Forms Env Vars
 
+variable "feedback_email_to" {
+  type = string
+}
 
+variable "notify_endpoint" {
+  type = string
+}
+
+variable "notify_template_id" {
+  type = string
+}
 
 # Forms Scaling
 
-variable "forms_autoscale_enabled" {
+variable "form_viewer_autoscale_enabled" {
   type = bool
 }
 

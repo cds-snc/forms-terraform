@@ -5,26 +5,29 @@
 region = "ca-central-1"
 # Enable the new ARN format to propagate tags to containers (see config/terraform/aws/README.md)
 billing_tag_key   = "CostCentre"
-billing_tag_value = "GCforms"
+billing_tag_value = "Forms"
 
 ###
 # AWS Cloud Watch - cloudwatch.tf
 ###
 
-cloudwatch_log_group_name = "GCforms"
+cloudwatch_log_group_name = "Forms"
 
 ###
 # AWS ECS - ecs.tf
 ###
 
-ecs_name        = "GCforms"
-metric_provider = "stdout"
-tracer_provider = "stdout"
-ecs_forms_name  = "GCforms"
+ecs_name             = "Forms"
+metric_provider      = "stdout"
+tracer_provider      = "stdout"
+ecs_form_viewer_name = "form-viewer"
+feedback_email_to    = "mario.garneau@cds-snc.ca"
+notify_endpoint      = "https://api.notification.canada.ca"
+notify_template_id   = "2fc2653c-e19d-46bd-96c1-9c91a43d2ffe"
 
 #Autoscaling ECS
 
-forms_autoscale_enabled = true
+form_viewer_autoscale_enabled = true
 
 ###
 # AWS VPC - networking.tf

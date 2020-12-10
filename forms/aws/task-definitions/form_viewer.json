@@ -1,6 +1,6 @@
 [
     {
-      "name": "GCforms",
+      "name": "form_viewer",
       "image": "${image}",
       "portMappings": [
         {
@@ -28,11 +28,23 @@
         {
           "name": "TRACER_PROVIDER",
           "value": "${tracer_provider}"
+        },
+        {
+          "name": "NOTIFY_ENDPOINT",
+          "value": "${notify_endpoint}"
+        },
+        {
+          "name": "NOTIFY_TEMPLATE_ID",
+          "value": "${notify_template_id}"
+        },
+        {
+          "name": "FEEDBACK_EMAIL_TO",
+          "valueFrom": "${feedback_email_to}"
         }
       ],
       "secrets": [
         {
-          "name": "OTP_NOTIFY_API_KEY",
+          "name": "NOTIFY_API_KEY",
           "valueFrom": "${notify_api_key}"
         }
       ]

@@ -1,4 +1,4 @@
-resource "aws_acm_certificate" "forms" {
+resource "aws_acm_certificate" "form_viewer" {
   domain_name       = var.route53_zone_name
   validation_method = "DNS"
 

@@ -2,7 +2,7 @@
 # Route53 Zone
 ###
 
-resource "aws_route53_zone" "forms" {
+resource "aws_route53_zone" "form_viewer" {
   name = var.route53_zone_name
 
   tags = {
@@ -14,27 +14,25 @@ resource "aws_route53_zone" "forms" {
 # Route53 Record - Forms
 ###
 
-resource "aws_route53_record" "forms" {
-  zone_id = aws_route53_zone.forms.zone_id
-  name    = aws_route53_zone.forms.name
+resource "aws_route53_record" "form_viewer" {
+  zone_id = aws_route53_zone.form_viewer.zone_id
+  name    = aws_route53_zone.form_viewer.name
   type    = "A"
 
-  set_identifier = "main"
-
   alias {
-    name                   = aws_lb.forms.dns_name
-    zone_id                = aws_lb.forms.zone_id
+    name                   = aws_lb.form_viewer.dns_name
+    zone_id                = aws_lb.form_viewer.zone_id
     evaluate_target_health = true
   }
 }
 
 # Certificate validation
 
-resource "aws_route53_record" "forms_certificate_validation" {
-  zone_id = aws_route53_zone.forms.zone_id
+resource "aws_route53_record" "form_viewer_certificate_validation" {
+  zone_id = aws_route53_zone.form_viewer.zone_id
 
   for_each = {
-    for dvo in aws_acm_certificate.forms.domain_validation_options : dvo.domain_name => {
+    for dvo in aws_acm_certificate.form_viewer.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
       type   = dvo.resource_record_type
       record = dvo.resource_record_value

@@ -26,7 +26,7 @@ resource "aws_cloudwatch_metric_alarm" "forms_cpu_utilization_high_warn" {
   ok_actions    = [aws_sns_topic.alert_ok.arn]
   dimensions = {
     ClusterName = aws_ecs_cluster.forms.name
-    ServiceName = aws_ecs_service.forms.name
+    ServiceName = aws_ecs_service.form_viewer.name
   }
 }
 
@@ -46,7 +46,7 @@ resource "aws_cloudwatch_metric_alarm" "forms_memory_utilization_high_warn" {
 
   dimensions = {
     ClusterName = aws_ecs_cluster.forms.name
-    ServiceName = aws_ecs_service.forms.name
+    ServiceName = aws_ecs_service.form_viewer.name
   }
 }
 
@@ -138,7 +138,7 @@ resource "aws_cloudwatch_metric_alarm" "response_time_warn" {
       period      = "60"
       stat        = "Average"
       dimensions = {
-        LoadBalancer = aws_lb.forms.arn_suffix
+        LoadBalancer = aws_lb.form_viewer.arn_suffix
       }
     }
   }
@@ -162,7 +162,7 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_forms_warn" {
   alarm_actions = [aws_sns_topic.alert_warning.arn]
 
   dimensions = {
-    ResourceArn = aws_lb.forms.arn
+    ResourceArn = aws_lb.form_viewer.arn
   }
 }
 
@@ -181,7 +181,7 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_route53_warn" {
   alarm_actions = [aws_sns_topic.alert_warning.arn]
 
   dimensions = {
-    ResourceArn = "arn:aws:route53:::hostedzone/${aws_route53_zone.forms.zone_id}"
+    ResourceArn = "arn:aws:route53:::hostedzone/${aws_route53_zone.form_viewer.zone_id}"
   }
 }
 

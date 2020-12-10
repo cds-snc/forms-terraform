@@ -1,8 +1,8 @@
 locals {
-  image_name = "forms-staging"
+  image_name = "form_viewer_staging"
 }
 
-resource "aws_ecr_repository" "repository" {
+resource "aws_ecr_repository" "viewer_repository" {
   name                 = local.image_name
   image_tag_mutability = "MUTABLE"
 
@@ -12,7 +12,7 @@ resource "aws_ecr_repository" "repository" {
 }
 
 resource "aws_ecr_lifecycle_policy" "policy" {
-  repository = aws_ecr_repository.repository.name
+  repository = aws_ecr_repository.viewer_repository.name
 
   policy = <<EOF
 {
@@ -36,5 +36,5 @@ EOF
 }
 
 output "ecr_repository_url" {
-  value = aws_ecr_repository.repository.repository_url
+  value = aws_ecr_repository.viewer_repository.repository_url
 }

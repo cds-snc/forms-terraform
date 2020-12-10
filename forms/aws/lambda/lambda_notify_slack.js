@@ -13,8 +13,8 @@ function getMessage(message) {
 exports.handler = function(event, context) {
 
     var postData = {
-        "channel": "#exposure-healthcare-dev",
-        "username": "GCForms Notifier",
+        "channel": "#forms-dev",
+        "username": "Forms Notifier",
         "text": "*Staging Environment*",
         "icon_emoji": ":loudspeaker:"
     };

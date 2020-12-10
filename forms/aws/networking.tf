@@ -338,7 +338,7 @@ resource "aws_security_group" "privatelink" {
 }
 
 resource "aws_security_group_rule" "privatelink_portal_ingress" {
-  description              = "Security group rule for Portal ingress"
+  description              = "Security group rule for Forms ingress"
   type                     = "ingress"
   from_port                = 443
   to_port                  = 443
