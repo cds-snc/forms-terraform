@@ -29,18 +29,13 @@ data "template_file" "form_viewer_task" {
   template = file("task-definitions/form_viewer.json")
 
   vars = {
-    image                  = "${local.form_viewer_repo}"
-    awslogs-group          = aws_cloudwatch_log_group.forms.name
-    awslogs-region         = var.region
-    awslogs-stream-prefix  = "ecs-${var.ecs_form_viewer_name}"
-    metric_provider        = var.metric_provider
-    tracer_provider        = var.tracer_provider
-    notify_api_key         = aws_secretsmanager_secret_version.notify_api_key.arn
-    notify_endpoint        = var.notify_endpoint
-    notify_template_id     = var.notify_template_id
-    notify_ssc_template_id = var.notify_ssc_template_id
-    email_to               = var.email_to
-    ssc_email_to           = var.ssc_email_to
+    image                 = "${local.form_viewer_repo}"
+    awslogs-group         = aws_cloudwatch_log_group.forms.name
+    awslogs-region        = var.region
+    awslogs-stream-prefix = "ecs-${var.ecs_form_viewer_name}"
+    metric_provider       = var.metric_provider
+    tracer_provider       = var.tracer_provider
+    notify_api_key        = aws_secretsmanager_secret_version.notify_api_key.arn
   }
 }
 
