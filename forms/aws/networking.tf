@@ -234,6 +234,10 @@ resource "aws_route_table_association" "forms_private_route" {
 # AWS Security Groups
 ###
 
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.forms.id
+}
+
 resource "aws_security_group" "forms" {
   name        = "forms"
   description = "Ingress - Forms"
