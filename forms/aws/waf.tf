@@ -1,9 +1,9 @@
 ###
-# AWS WAF - Covid Portal Rules
+# AWS WAF - GCForms rules
 ###
 
 resource "aws_wafv2_web_acl" "forms_acl" {
-  name  = "covid_portal"
+  name  = "GCForms"
   scope = "REGIONAL"
 
   default_action {

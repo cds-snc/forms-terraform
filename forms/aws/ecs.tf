@@ -36,6 +36,7 @@ data "template_file" "form_viewer_task" {
     metric_provider       = var.metric_provider
     tracer_provider       = var.tracer_provider
     notify_api_key        = aws_secretsmanager_secret_version.notify_api_key.arn
+    submission_api        = "${aws_lambda_function.submission.arn}"
   }
 }
 
@@ -148,4 +149,37 @@ resource "aws_appautoscaling_policy" "forms_memory" {
     }
     target_value = var.memory_scale_metric
   }
+}
+
+## IAM Polcies
+
+data "aws_iam_policy_document" "forms" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+###
+# AWS IAM - Forms End User
+###
+
+resource "aws_iam_role" "forms" {
+  name = var.ecs_form_viewer_name
+
+  assume_role_policy = data.aws_iam_policy_document.forms.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+  }
+}
+
+
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_forms" {
+  role       = aws_iam_role.forms.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
