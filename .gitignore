@@ -28,3 +28,12 @@ override.tf.json
 
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 *tfplan*
+
+#Ignore vscode settings
+.vscode
+
+#Ignore node modules folders for Lambda functions
+**/node_modules/
+
+#Ignore Mac OS file types
+.DS_Store
