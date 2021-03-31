@@ -78,10 +78,10 @@ jobs:
           terraform init
 
       - name: Install Node packages for Submission
-        run: yarn --cwd "./forms/aws/lambda/submission/nodejs" install
+        run: yarn --cwd "./lambda/submission/nodejs" install
 
       - name: Install Node packages for Reliability
-        run: yarn --cwd "./forms/aws/lambda/reliability/nodejs" install
+        run: yarn --cwd "./lambda/reliability/nodejs" install
 
       - name: Terraform Plan
         env:
