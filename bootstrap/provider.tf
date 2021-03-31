@@ -5,7 +5,6 @@ provider "aws" {
 resource "aws_s3_bucket" "log_bucket" {
   bucket = join("",[var.storage_bucket,"-logs"])
   acl    = "log-delivery-write"
-  #tfsec:ignore:AWS002
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
@@ -13,6 +12,8 @@ resource "aws_s3_bucket" "log_bucket" {
       }
     }
   }
+  #tfsec:ignore:AWS002
+  #tfsec:ignore:AWS077
 }
 
 resource "aws_s3_bucket" "storage_bucket" {
