@@ -178,8 +178,18 @@ resource "aws_iam_role" "forms" {
   }
 }
 
+resource "aws_iam_policy" "forms_secrets_manager" {
+  name   = "formsSecretsManagerKeyRetrieval"
+  path   = "/"
+  policy = data.aws_iam_policy_document.forms_secrets_manager.json
+}
 
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_forms" {
   role       = aws_iam_role.forms.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "secrets_manager_forms" {
+  role       = aws_iam_role.forms.name
+  policy_arn = aws_iam_policy.forms_secrets_manager.arn
 }
