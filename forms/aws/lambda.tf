@@ -89,7 +89,7 @@ resource "aws_lambda_function" "reliability" {
   environment {
     variables = {
       REGION         = var.region
-      NOTIFY_API_KEY = "${aws_secretsmanager_secret_version.notify_api_key.secret_string}"
+      NOTIFY_API_KEY = aws_secretsmanager_secret_version.notify_api_key.secret_string
     }
   }
 }

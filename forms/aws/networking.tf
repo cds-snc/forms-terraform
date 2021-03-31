@@ -26,7 +26,7 @@ resource "aws_vpc_endpoint" "sqs" {
   service_name        = "com.amazonaws.${var.region}.sqs"
   private_dns_enabled = true
   security_group_ids = [
-    "${aws_security_group.privatelink.id}",
+    aws_security_group.privatelink.id
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 }
@@ -44,7 +44,7 @@ resource "aws_vpc_endpoint" "lambda" {
   service_name        = "com.amazonaws.${var.region}.lambda"
   private_dns_enabled = true
   security_group_ids = [
-    "${aws_security_group.privatelink.id}",
+    aws_security_group.privatelink.id,
   ]
   subnet_ids = data.aws_subnet_ids.lambda_endpoint_available.ids
 }
@@ -55,7 +55,7 @@ resource "aws_vpc_endpoint" "ecr-dkr" {
   service_name        = "com.amazonaws.${var.region}.ecr.dkr"
   private_dns_enabled = true
   security_group_ids = [
-    "${aws_security_group.privatelink.id}",
+    aws_security_group.privatelink.id,
   ]
   subnet_ids = data.aws_subnet_ids.ecr_endpoint_available.ids
 }
@@ -66,7 +66,7 @@ resource "aws_vpc_endpoint" "ecr-api" {
   service_name        = "com.amazonaws.${var.region}.ecr.api"
   private_dns_enabled = true
   security_group_ids = [
-    "${aws_security_group.privatelink.id}",
+    aws_security_group.privatelink.id,
   ]
   subnet_ids = data.aws_subnet_ids.ecr_endpoint_available.ids
 }
@@ -77,7 +77,7 @@ resource "aws_vpc_endpoint" "kms" {
   service_name        = "com.amazonaws.${var.region}.kms"
   private_dns_enabled = true
   security_group_ids = [
-    "${aws_security_group.privatelink.id}",
+    aws_security_group.privatelink.id,
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 }
@@ -88,7 +88,7 @@ resource "aws_vpc_endpoint" "secretsmanager" {
   service_name        = "com.amazonaws.${var.region}.secretsmanager"
   private_dns_enabled = true
   security_group_ids = [
-    "${aws_security_group.privatelink.id}",
+    aws_security_group.privatelink.id,
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 }
@@ -106,7 +106,7 @@ resource "aws_vpc_endpoint" "logs" {
   service_name        = "com.amazonaws.${var.region}.logs"
   private_dns_enabled = true
   security_group_ids = [
-    "${aws_security_group.privatelink.id}",
+    aws_security_group.privatelink.id,
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 }
@@ -117,7 +117,7 @@ resource "aws_vpc_endpoint" "monitoring" {
   service_name        = "com.amazonaws.${var.region}.monitoring"
   private_dns_enabled = true
   security_group_ids = [
-    "${aws_security_group.privatelink.id}",
+    aws_security_group.privatelink.id,
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 }

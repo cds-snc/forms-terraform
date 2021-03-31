@@ -36,7 +36,7 @@ data "template_file" "form_viewer_task" {
     metric_provider       = var.metric_provider
     tracer_provider       = var.tracer_provider
     notify_api_key        = aws_secretsmanager_secret_version.notify_api_key.arn
-    submission_api        = "${aws_lambda_function.submission.arn}"
+    submission_api        = aws_lambda_function.submission.arn
   }
 }
 
