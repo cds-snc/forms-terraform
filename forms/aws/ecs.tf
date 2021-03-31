@@ -184,6 +184,20 @@ resource "aws_iam_policy" "forms_secrets_manager" {
   policy = data.aws_iam_policy_document.forms_secrets_manager.json
 }
 
+data "aws_iam_policy_document" "forms_secrets_manager" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+
+    resources = [
+      aws_secretsmanager_secret_version.notify_api_key.arn,
+    ]
+  }
+}
+
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_forms" {
   role       = aws_iam_role.forms.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
