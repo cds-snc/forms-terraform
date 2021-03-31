@@ -1,5 +1,5 @@
 locals {
-  image_name = "form_viewer_staging"
+  image_name = "form_viewer_${var.environment}"
 }
 
 resource "aws_ecr_repository" "viewer_repository" {

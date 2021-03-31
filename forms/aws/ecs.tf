@@ -29,13 +29,14 @@ data "template_file" "form_viewer_task" {
   template = file("task-definitions/form_viewer.json")
 
   vars = {
-    image                 = "${local.form_viewer_repo}"
+    image                 = local.form_viewer_repo
     awslogs-group         = aws_cloudwatch_log_group.forms.name
     awslogs-region        = var.region
     awslogs-stream-prefix = "ecs-${var.ecs_form_viewer_name}"
     metric_provider       = var.metric_provider
     tracer_provider       = var.tracer_provider
     notify_api_key        = aws_secretsmanager_secret_version.notify_api_key.arn
+    submission_api        = "${aws_lambda_function.submission.arn}"
   }
 }
 
@@ -148,4 +149,61 @@ resource "aws_appautoscaling_policy" "forms_memory" {
     }
     target_value = var.memory_scale_metric
   }
+}
+
+## IAM Polcies
+
+data "aws_iam_policy_document" "forms" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+###
+# AWS IAM - Forms End User
+###
+
+resource "aws_iam_role" "forms" {
+  name = var.ecs_form_viewer_name
+
+  assume_role_policy = data.aws_iam_policy_document.forms.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+  }
+}
+
+resource "aws_iam_policy" "forms_secrets_manager" {
+  name   = "formsSecretsManagerKeyRetrieval"
+  path   = "/"
+  policy = data.aws_iam_policy_document.forms_secrets_manager.json
+}
+
+data "aws_iam_policy_document" "forms_secrets_manager" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+
+    resources = [
+      aws_secretsmanager_secret_version.notify_api_key.arn,
+    ]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_forms" {
+  role       = aws_iam_role.forms.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "secrets_manager_forms" {
+  role       = aws_iam_role.forms.name
+  policy_arn = aws_iam_policy.forms_secrets_manager.arn
 }

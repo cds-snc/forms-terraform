@@ -4,9 +4,7 @@ var util = require("util");
 function getMessage(message) {
   try {
     const parsedMessage = JSON.parse(message);
-    return parsedMessage.AlarmDescription
-      ? parsedMessage.AlarmDescription
-      : parsedMessage;
+    return parsedMessage.AlarmDescription ? parsedMessage.AlarmDescription : parsedMessage;
   } catch (err) {
     return message;
   }

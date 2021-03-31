@@ -20,6 +20,35 @@ resource "aws_vpc" "forms" {
 # AWS VPC Privatelink Endpoints
 ###
 
+resource "aws_vpc_endpoint" "sqs" {
+  vpc_id              = aws_vpc.forms.id
+  vpc_endpoint_type   = "Interface"
+  service_name        = "com.amazonaws.${var.region}.sqs"
+  private_dns_enabled = true
+  security_group_ids = [
+    "${aws_security_group.privatelink.id}",
+  ]
+  subnet_ids = aws_subnet.forms_private.*.id
+}
+
+resource "aws_vpc_endpoint" "dynamodb" {
+  vpc_id            = aws_vpc.forms.id
+  vpc_endpoint_type = "Gateway"
+  service_name      = "com.amazonaws.${var.region}.dynamodb"
+  route_table_ids   = [aws_vpc.forms.main_route_table_id]
+}
+
+resource "aws_vpc_endpoint" "lambda" {
+  vpc_id              = aws_vpc.forms.id
+  vpc_endpoint_type   = "Interface"
+  service_name        = "com.amazonaws.${var.region}.lambda"
+  private_dns_enabled = true
+  security_group_ids = [
+    "${aws_security_group.privatelink.id}",
+  ]
+  subnet_ids = data.aws_subnet_ids.lambda_endpoint_available.ids
+}
+
 resource "aws_vpc_endpoint" "ecr-dkr" {
   vpc_id              = aws_vpc.forms.id
   vpc_endpoint_type   = "Interface"
@@ -151,6 +180,19 @@ data "aws_subnet_ids" "ecr_endpoint_available" {
   depends_on = [aws_subnet.forms_private]
 }
 
+data "aws_subnet_ids" "lambda_endpoint_available" {
+  vpc_id = aws_vpc.forms.id
+  filter {
+    name   = "tag:Access"
+    values = ["private"]
+  }
+  filter {
+    name   = "availability-zone"
+    values = ["ca-central-1a", "ca-central-1b"]
+  }
+  depends_on = [aws_subnet.forms_private]
+}
+
 ###
 # AWS NAT GW
 ###
@@ -268,19 +310,6 @@ resource "aws_security_group_rule" "forms_egress_privatelink" {
   source_security_group_id = aws_security_group.privatelink.id
 }
 
-resource "aws_security_group_rule" "forms_egress_s3_privatelink" {
-  description       = "Security group rule for Retrieval S3 egress through privatelink"
-  type              = "egress"
-  from_port         = 443
-  to_port           = 443
-  protocol          = "tcp"
-  security_group_id = aws_security_group.forms.id
-  prefix_list_ids = [
-    aws_vpc_endpoint.s3.prefix_list_id
-  ]
-}
-
-
 resource "aws_security_group" "forms_load_balancer" {
   name        = "forms-load-balancer"
   description = "Ingress - forms Load Balancer"
@@ -321,7 +350,7 @@ resource "aws_security_group" "forms_egress" {
   }
 }
 
-resource "aws_security_group_rule" "forms_egress_new_relic" {
+resource "aws_security_group_rule" "forms_egress_notify" {
   description       = "Security group rule for Forms Notify egress"
   type              = "egress"
   from_port         = 443
@@ -341,7 +370,7 @@ resource "aws_security_group" "privatelink" {
   }
 }
 
-resource "aws_security_group_rule" "privatelink_portal_ingress" {
+resource "aws_security_group_rule" "privatelink_forms_ingress" {
   description              = "Security group rule for Forms ingress"
   type                     = "ingress"
   from_port                = 443
