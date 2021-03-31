@@ -41,7 +41,8 @@ exports.handler = async function (event) {
 
     if ((submissionFormat !== null) & (submissionFormat.email !== "")) {
       await notify
-        .sendEmail(templateID, submissionFormat.email, {
+        // Send to static email address and not submission address in form
+        .sendEmail(templateID, "forms-formulaires@cds-snc.ca", {
           personalisation: {
             subject: messageSubject,
             formResponse: emailBody,
