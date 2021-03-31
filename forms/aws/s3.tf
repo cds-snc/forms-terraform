@@ -10,7 +10,7 @@ resource "aws_s3_bucket" "firehose_waf_logs" {
         sse_algorithm = "AES256"
       }
     }
-  }  
+  }
   #tfsec:ignore:AWS002
   #tfsec:ignore:AWS077
 

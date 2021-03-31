@@ -1,1 +1,1 @@
-storage_bucket="staging-gcforms"
+storage_bucket = "staging-gcforms"
