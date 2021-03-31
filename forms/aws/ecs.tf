@@ -29,7 +29,7 @@ data "template_file" "form_viewer_task" {
   template = file("task-definitions/form_viewer.json")
 
   vars = {
-    image                 = "${local.form_viewer_repo}"
+    image                 = local.form_viewer_repo
     awslogs-group         = aws_cloudwatch_log_group.forms.name
     awslogs-region        = var.region
     awslogs-stream-prefix = "ecs-${var.ecs_form_viewer_name}"
