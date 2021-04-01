@@ -185,7 +185,7 @@ resource "aws_lambda_permission" "notify_slack_ok" {
   source_arn    = aws_sns_topic.alert_ok.arn
 }
 
-# Allow API Gateway to call Lambda
+# Allow ECS containers to callLambda
 resource "aws_lambda_permission" "submission" {
   statement_id  = "AllowInvokeECS"
   action        = "lambda:InvokeFunction"
