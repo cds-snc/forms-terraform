@@ -11,7 +11,7 @@ exports.handler = async function (event) {
       .then((messageData) => ({
         submissionID: messageData.Item.SubmissionID.S,
         sendReceipt: messageData.Item.SendReceipt.S,
-        formSubmission: JSON.parse(messageData.Item.Data.S) || null,
+        formSubmission: JSON.parse(messageData.Item.FormData.S) || null,
       }))
       .catch((err) => {
         console.error("Could not sucessfully retrieve data");
