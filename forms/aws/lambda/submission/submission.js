@@ -80,14 +80,12 @@ const saveReceipt = async (submissionID, receiptID) => {
         SubmissionID: { S: submissionID },
       },
       UpdateExpression: "SET SendReceipt = :receipt",
-      // prettier-ignore
       ExpressionAttributeValues: {
-        ":receipt": { "S": receiptID },
+        ":receipt": { S: receiptID },
       },
     };
     //save data to DynamoDB
     await db.send(new UpdateItemCommand(DBParams));
-    await db.update();
   } catch (err) {
     console.warn(`Unable to update receipt ID on submissionID: ${submissionID}`);
     console.warn(err);

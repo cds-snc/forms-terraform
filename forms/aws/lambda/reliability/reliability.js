@@ -83,9 +83,8 @@ async function getSubmission(message) {
     const db = new DynamoDBClient({ region: REGION });
     const DBParams = {
       TableName: "ReliabilityQueue",
-      //prettier-ignore
       Key: {
-        SubmissionID: { "S": message.submissionID },
+        SubmissionID: { S: message.submissionID },
       },
       ProjectExpression: "SubmissionID,SendReceipt,FormData",
     };
