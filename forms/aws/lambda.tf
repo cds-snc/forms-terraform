@@ -255,6 +255,7 @@ resource "aws_iam_policy" "lambda_dynamodb" {
       "Action": [
         "dynamodb:GetItem",
         "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
         "dynamodb:DeleteItem",
         "dynamodb:Scan",
         "dynamodb:Query"
