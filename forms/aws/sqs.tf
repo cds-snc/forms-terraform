@@ -2,7 +2,7 @@
 
 resource "aws_sqs_queue" "reliability_queue" {
   name                        = "submission_processing.fifo"
-  delay_seconds               = 0
+  delay_seconds               = 5
   max_message_size            = 2048
   message_retention_seconds   = 345600
   fifo_queue                  = true
