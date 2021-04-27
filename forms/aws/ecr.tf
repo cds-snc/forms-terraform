@@ -4,8 +4,8 @@ locals {
 
 resource "aws_ecr_repository" "viewer_repository" {
 
-  name                 = local.image_name
-  
+  name = local.image_name
+
   #Ignore tag mutability for Staging
   image_tag_mutability = "MUTABLE" #tfsec:ignoreAWS078
 
