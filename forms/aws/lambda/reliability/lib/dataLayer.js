@@ -82,7 +82,7 @@ function handleArrayResponse(title, response, collector) {
 }
 
 function handleTextResponse(title, response, collector) {
-  if (response !== undefined && response !== null) {
+  if (response !== undefined && response !== null && response !== "") {
     collector.push(`${title}${String.fromCharCode(13)}-${response}`);
     return;
   }
