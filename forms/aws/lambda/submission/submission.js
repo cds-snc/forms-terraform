@@ -72,7 +72,6 @@ const saveData = async (submissionID, formData) => {
 };
 
 const saveReceipt = async (submissionID, receiptID) => {
-  // Need to research and fix this command
   try {
     const DBParams = {
       TableName: "ReliabilityQueue",
