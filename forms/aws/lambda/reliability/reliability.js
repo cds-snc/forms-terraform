@@ -15,6 +15,7 @@ exports.handler = async function (event) {
       }))
       .catch((err) => {
         console.error("Could not sucessfully retrieve data");
+        console.error(err);
         throw Error(err);
       });
     submissionIDPlaceholder = submissionID;
@@ -73,40 +74,31 @@ exports.handler = async function (event) {
     }
   } catch (err) {
     console.error(`Error in processing, submission ${submissionIDPlaceholder} not processed.`);
-    // By rethrowing the error below the message will not be deleted from the queue.
-    throw Error(err);
+    return { statusCode: 500, body: "Could not process / Function Error" };
   }
 };
 
 async function getSubmission(message) {
-  try {
-    const db = new DynamoDBClient({ region: REGION });
-    const DBParams = {
-      TableName: "ReliabilityQueue",
-      Key: {
-        SubmissionID: { S: message.submissionID },
-      },
-      ProjectExpression: "SubmissionID,SendReceipt,FormData",
-    };
-    //save data to DynamoDB
-    return db.send(new GetItemCommand(DBParams));
-  } catch (err) {
-    throw Error(err);
-  }
+  const db = new DynamoDBClient({ region: REGION });
+  const DBParams = {
+    TableName: "ReliabilityQueue",
+    Key: {
+      SubmissionID: { S: message.submissionID },
+    },
+    ProjectExpression: "SubmissionID,SendReceipt,FormData",
+  };
+  //save data to DynamoDB
+  return db.send(new GetItemCommand(DBParams));
 }
 
 async function removeSubmission(message) {
-  try {
-    const db = new DynamoDBClient({ region: REGION });
-    const DBParams = {
-      TableName: "ReliabilityQueue",
-      Key: {
-        SubmissionID: { S: message.submissionID },
-      },
-    };
-    //remove data fron DynamoDB
-    return db.send(new DeleteItemCommand(DBParams));
-  } catch (err) {
-    throw Error(err);
-  }
+  const db = new DynamoDBClient({ region: REGION });
+  const DBParams = {
+    TableName: "ReliabilityQueue",
+    Key: {
+      SubmissionID: { S: message.submissionID },
+    },
+  };
+  //remove data fron DynamoDB
+  return db.send(new DeleteItemCommand(DBParams));
 }

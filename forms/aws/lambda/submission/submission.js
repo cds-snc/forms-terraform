@@ -55,20 +55,16 @@ const sendData = async (submissionID) => {
 };
 
 const saveData = async (submissionID, formData) => {
-  try {
-    const DBParams = {
-      TableName: "ReliabilityQueue",
-      Item: {
-        SubmissionID: { S: submissionID },
-        SendReceipt: { S: "unknown" },
-        FormData: { S: JSON.stringify(formData) },
-      },
-    };
-    //save data to DynamoDB
-    await db.send(new PutItemCommand(DBParams));
-  } catch (err) {
-    throw Error(err);
-  }
+  const DBParams = {
+    TableName: "ReliabilityQueue",
+    Item: {
+      SubmissionID: { S: submissionID },
+      SendReceipt: { S: "unknown" },
+      FormData: { S: JSON.stringify(formData) },
+    },
+  };
+  //save data to DynamoDB
+  await db.send(new PutItemCommand(DBParams));
 };
 
 const saveReceipt = async (submissionID, receiptID) => {
