@@ -8,8 +8,6 @@ module.exports = function extractFormData(submission) {
     const question = formOrigin.elements.find((element) => element.id === qID);
     if (question) {
       handleType(question, formResponses[question.id], dataCollector);
-    } else {
-      console.error(`Failed component ID look up ${qID} on form ID ${formOrigin.id}`);
     }
   });
   return dataCollector;
@@ -34,6 +32,7 @@ function handleType(question, response, collector) {
       handleDynamicForm(qTitle, response, question.properties.subElements, collector);
       break;
     case "fileInput":
+      handleTextResponse(qTitle, response, collector);
       break;
   }
 }
@@ -83,7 +82,7 @@ function handleArrayResponse(title, response, collector) {
 }
 
 function handleTextResponse(title, response, collector) {
-  if (response !== undefined && response !== null) {
+  if (response !== undefined && response !== null && response !== "") {
     collector.push(`${title}${String.fromCharCode(13)}-${response}`);
     return;
   }

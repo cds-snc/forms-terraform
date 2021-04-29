@@ -1,8 +1,10 @@
 const { SQSClient, SendMessageCommand } = require("@aws-sdk/client-sqs");
-const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBClient, PutItemCommand, UpdateItemCommand } = require("@aws-sdk/client-dynamodb");
 const uuid = require("uuid");
 
 const REGION = process.env.REGION;
+const db = new DynamoDBClient({ region: REGION });
+const sqs = new SQSClient({ region: REGION });
 
 // Store questions with responses
 exports.handler = async function (event) {
@@ -10,10 +12,17 @@ exports.handler = async function (event) {
     const formData = event;
     const submissionID = uuid.v4();
     //-----------
-    return sendData(submissionID)
+
+    return saveData(submissionID, formData)
+      .then(() => {
+        return sendData(submissionID);
+      })
       .then(async (receiptID) => {
-        console.log(`SQS Message successfully created with ID ${receiptID}`);
-        await saveData(submissionID, receiptID, formData);
+        // Update DB entry for receipt ID
+        await saveReceipt(submissionID, receiptID);
+        console.log(
+          `SQS Message successfully created with reciept ID ${receiptID} for submission ID ${submissionID}`
+        );
         return { status: true };
       })
       .catch((err) => {
@@ -29,7 +38,6 @@ exports.handler = async function (event) {
 
 const sendData = async (submissionID) => {
   try {
-    const sqs = new SQSClient({ region: REGION });
     const SQSParams = {
       MessageBody: JSON.stringify({
         submissionID: submissionID,
@@ -46,20 +54,35 @@ const sendData = async (submissionID) => {
   }
 };
 
-const saveData = async (submissionID, sendReceipt, formData) => {
+const saveData = async (submissionID, formData) => {
+  const DBParams = {
+    TableName: "ReliabilityQueue",
+    Item: {
+      SubmissionID: { S: submissionID },
+      SendReceipt: { S: "unknown" },
+      FormData: { S: JSON.stringify(formData) },
+    },
+  };
+  //save data to DynamoDB
+  await db.send(new PutItemCommand(DBParams));
+};
+
+const saveReceipt = async (submissionID, receiptID) => {
   try {
-    const db = new DynamoDBClient({ region: REGION });
     const DBParams = {
       TableName: "ReliabilityQueue",
-      Item: {
+      Key: {
         SubmissionID: { S: submissionID },
-        SendReceipt: { S: sendReceipt },
-        Data: { S: JSON.stringify(formData) },
+      },
+      UpdateExpression: "SET SendReceipt = :receipt",
+      ExpressionAttributeValues: {
+        ":receipt": { S: receiptID },
       },
     };
     //save data to DynamoDB
-    await db.send(new PutItemCommand(DBParams));
+    await db.send(new UpdateItemCommand(DBParams));
   } catch (err) {
-    throw Error(err);
+    console.warn(`Unable to update receipt ID on submissionID: ${submissionID}`);
+    console.warn(err);
   }
 };
