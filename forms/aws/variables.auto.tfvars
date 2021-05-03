@@ -6,7 +6,7 @@ region = "ca-central-1"
 # Enable the new ARN format to propagate tags to containers (see config/terraform/aws/README.md)
 billing_tag_key   = "CostCentre"
 billing_tag_value = "Forms"
-environment       = "staging"
+environment       = "sandbox"
 
 ###
 # AWS Cloud Watch - cloudwatch.tf
@@ -39,4 +39,4 @@ vpc_name       = "forms"
 # AWS Route 53 - route53.tf
 ###
 
-route53_zone_name = "forms-staging.cdssandbox.xyz"
+route53_zone_name = "forms-sandbox.cdssandbox.xyz"
