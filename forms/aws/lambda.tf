@@ -212,13 +212,20 @@ resource "aws_lambda_permission" "notify_slack_ok" {
   source_arn    = aws_sns_topic.alert_ok.arn
 }
 
-# Allow ECS containers to callLambda
+# Allow ECS containers to call Lambdas
 resource "aws_lambda_permission" "submission" {
   statement_id  = "AllowInvokeECS"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.submission.function_name
   principal     = aws_iam_role.forms.arn
 }
+resource "aws_lambda_permission" "templates" {
+  statement_id  = "AllowInvokeECS"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.templates.function_name
+  principal     = aws_iam_role.forms.arn
+}
+
 ## Allow Lambda to create Logs in Cloudwatch
 
 resource "aws_iam_policy" "lambda_logging" {
