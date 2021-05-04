@@ -159,6 +159,33 @@ resource "aws_lambda_layer_version" "submission_lib" {
   compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
 }
 
+###
+# AWS Lambda - Template Storage processing
+###
+
+data "archive_file" "templates" {
+  type        = "zip"
+  source_file = "lambda/templates/templates.js"
+  output_path = "/tmp/templates.zip"
+}
+
+resource "aws_lambda_function" "templates" {
+  filename      = "/tmp/templates.zip"
+  function_name = "Templates"
+  role          = aws_iam_role.iam_for_lambda.arn
+  handler       = "templates.handler"
+
+  source_code_hash = data.archive_file.submission_main.output_base64sha256
+
+  runtime = "nodejs14.x"
+
+  environment {
+    variables = {
+    }
+  }
+}
+
+
 ## Allow SNS to call Lambda function
 
 resource "aws_lambda_permission" "notify_slack_warning" {
