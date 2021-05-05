@@ -390,6 +390,18 @@ resource "aws_security_group_rule" "privatelink_forms_ingress" {
   source_security_group_id = aws_security_group.forms.id
 }
 
+
+resource "aws_security_group" "lambdas" {
+  name        = "lambdas"
+  description = "Lambda security group"
+  vpc_id      = aws_vpc.forms.id
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+  }
+}
+
+# Allow traffic from the app and from the lambdas
 resource "aws_security_group" "forms_database" {
   name        = "forms-database"
   description = "Ingress - Forms Database"
@@ -401,6 +413,7 @@ resource "aws_security_group" "forms_database" {
     to_port   = 5432
     security_groups = [
       aws_security_group.forms.id,
+      aws_security_group.lambdas.id
     ]
   }
 
