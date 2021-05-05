@@ -185,8 +185,8 @@ resource "aws_lambda_function" "templates" {
   }
 
   vpc_config {
-    subnet_ids         = [aws_subnet.forms_private.id]
-    security_group_ids = [aws_security_group.lambdas.id]
+    subnet_ids         = data.aws_subnet_ids.lambda_endpoint_available.ids
+    security_group_ids = [aws_security_group.lambdas.id, aws_security_group.privatelink.id]
   }
 }
 
