@@ -78,6 +78,13 @@ variable "ecs_form_viewer_name" {
 variable "ecs_secret_notify_api_key" {
   type = string
 }
+variable "ecs_secret_google_client_id" {
+  type = string
+}
+variable "ecs_secret_google_client_secret" {
+  type = string
+}
+
 
 # Forms Scaling
 
@@ -114,6 +121,39 @@ variable "vpc_cidr_block" {
 }
 
 variable "vpc_name" {
+  type = string
+}
+
+###
+# AWS RDS - rds.tf
+###
+# RDS Subnet Group
+variable "rds_db_subnet_group_name" {
+  type = string
+}
+
+# RDS DB - Key Retrieval/Submission
+variable "rds_db_name" {
+  type = string
+}
+
+variable "rds_name" {
+  type = string
+}
+
+variable "rds_db_user" {
+  type = string
+}
+
+variable "rds_db_password" {
+  type = string
+}
+
+variable "rds_allocated_storage" {
+  type = string
+}
+
+variable "rds_instance_class" {
   type = string
 }
 

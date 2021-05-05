@@ -27,6 +27,23 @@ ecs_form_viewer_name = "form-viewer"
 
 form_viewer_autoscale_enabled = true
 
+
+###
+# AWS RDS - rds.tf
+###
+
+rds_db_subnet_group_name = "forms-sandbox-db"
+
+# RDS Cluster
+rds_db_name = "forms"
+rds_name    = "forms-staging-db"
+rds_db_user = "postgres"
+# Value should come from a TF_VAR environment variable (e.g. set in a Github Secret)
+# rds_db_password       = ""
+rds_allocated_storage = "5"
+rds_instance_class    = "db.t3.medium"
+
+
 ###
 # AWS VPC - networking.tf
 ###

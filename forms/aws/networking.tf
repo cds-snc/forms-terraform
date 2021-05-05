@@ -310,6 +310,16 @@ resource "aws_security_group_rule" "forms_egress_privatelink" {
   source_security_group_id = aws_security_group.privatelink.id
 }
 
+resource "aws_security_group_rule" "forms_egress_database" {
+  description              = "Security group rule for Forms DB egress through privatelink"
+  type                     = "egress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.forms.id
+  source_security_group_id = aws_security_group.forms_database.id
+}
+
 resource "aws_security_group" "forms_load_balancer" {
   name        = "forms-load-balancer"
   description = "Ingress - forms Load Balancer"
@@ -378,6 +388,25 @@ resource "aws_security_group_rule" "privatelink_forms_ingress" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.privatelink.id
   source_security_group_id = aws_security_group.forms.id
+}
+
+resource "aws_security_group" "forms_database" {
+  name        = "forms-database"
+  description = "Ingress - Forms Database"
+  vpc_id      = aws_vpc.forms.id
+
+  ingress {
+    protocol  = "tcp"
+    from_port = 5432
+    to_port   = 5432
+    security_groups = [
+      aws_security_group.forms.id,
+    ]
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+  }
 }
 
 ###
