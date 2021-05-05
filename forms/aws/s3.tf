@@ -2,7 +2,7 @@
 # AWS S3 bucket - WAF log target
 ###
 resource "aws_s3_bucket" "firehose_waf_logs" {
-  bucket = "forms-terraform-waf-logs"
+  bucket = "forms-sandbox-terraform-waf-logs"
   acl    = "private"
   server_side_encryption_configuration {
     rule {
