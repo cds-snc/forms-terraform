@@ -179,11 +179,6 @@ resource "aws_lambda_function" "templates" {
 
   runtime = "nodejs14.x"
 
-  environment {
-    variables = {
-    }
-  }
-
   vpc_config {
     subnet_ids         = data.aws_subnet_ids.lambda_endpoint_available.ids
     security_group_ids = [aws_security_group.lambdas.id, aws_security_group.privatelink.id]
