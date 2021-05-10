@@ -61,6 +61,8 @@ resource "aws_lb" "form_viewer" {
   ]
   subnets = aws_subnet.forms_public.*.id
 
+  drop_invalid_header_fields = true
+
   tags = {
     Name                  = "form_viewer"
     (var.billing_tag_key) = var.billing_tag_value
