@@ -168,6 +168,7 @@ data "archive_file" "templates_main" {
   source_file = "lambda/templates/templates.js"
   output_path = "/tmp/templates_main.zip"
 }
+
 data "archive_file" "templates_lib" {
   type        = "zip"
   source_dir  = "lambda/templates/"
