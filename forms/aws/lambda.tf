@@ -178,11 +178,6 @@ resource "aws_lambda_function" "templates" {
   source_code_hash = data.archive_file.submission_main.output_base64sha256
 
   runtime = "nodejs14.x"
-
-  vpc_config {
-    subnet_ids         = data.aws_subnet_ids.lambda_endpoint_available.ids
-    security_group_ids = [aws_security_group.lambdas.id, aws_security_group.privatelink.id]
-  }
 }
 
 
