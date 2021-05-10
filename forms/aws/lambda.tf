@@ -182,7 +182,7 @@ resource "aws_lambda_function" "templates" {
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "templates.handler"
 
-  source_code_hash = data.archive_file.submission_main.output_base64sha256
+  source_code_hash = data.archive_file.templates_main.output_base64sha256
   runtime = "nodejs14.x"
   layers  = [aws_lambda_layer_version.templates_lib.arn]
 
