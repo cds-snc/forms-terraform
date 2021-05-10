@@ -182,14 +182,10 @@ resource "aws_lambda_function" "templates" {
   handler       = "templates.handler"
 
   source_code_hash = data.archive_file.submission_main.output_base64sha256
-  runtime = "nodejs14.x"
+
   layers  = [aws_lambda_layer_version.templates_lib.arn]
 
-  environment {
-    variables = {
-      REGION  = var.region
-    }
-  }
+  runtime = "nodejs14.x"
 }
 
 resource "aws_lambda_layer_version" "templates_lib" {
