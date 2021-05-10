@@ -163,21 +163,36 @@ resource "aws_lambda_layer_version" "submission_lib" {
 # AWS Lambda - Template Storage processing
 ###
 
-data "archive_file" "templates" {
+data "archive_file" "templates_main" {
   type        = "zip"
   source_file = "lambda/templates/templates.js"
+  output_path = "/tmp/templates_main.zip"
+}
+data "archive_file" "templates_lib" {
+  type        = "zip"
+  source_dir  = "lambda/templates/"
+  excludes    = ["templates.js"]
   output_path = "/tmp/templates.zip"
 }
 
 resource "aws_lambda_function" "templates" {
-  filename      = "/tmp/templates.zip"
+  filename      = "/tmp/templates_main.zip"
   function_name = "Templates"
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "templates.handler"
 
   source_code_hash = data.archive_file.submission_main.output_base64sha256
 
+  layers  = [aws_lambda_layer_version.templates_lib.arn]
+
   runtime = "nodejs14.x"
+}
+
+resource "aws_lambda_layer_version" "templates_lib" {
+  filename            = "/tmp/templates_lib.zip"
+  layer_name          = "templates_node_packages"
+  source_code_hash    = data.archive_file.templates_lib.output_base64sha256
+  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
 }
 
 
