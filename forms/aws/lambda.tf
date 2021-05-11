@@ -189,7 +189,7 @@ resource "aws_lambda_function" "templates" {
   environment {
     variables = {
       REGION = var.region,
-      DB_URL = aws_rds_cluster.forms.id
+      DB_URL = aws_secretsmanager_secret_version.database_url.secret_string
     }
   }
 }
@@ -355,7 +355,10 @@ resource "aws_iam_policy" "lambda_secrets" {
       "Action": [
         "secretsmanager:GetSecretValue"
       ],
-      "Resource": "${aws_secretsmanager_secret_version.notify_api_key.arn}",
+      "Resource": [
+        "${aws_secretsmanager_secret_version.notify_api_key.arn}",
+        "${aws_secretsmanager_secret_version.database_url.arn}"
+      ]
       "Effect": "Allow"
     }
   ]
