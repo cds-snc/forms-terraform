@@ -358,7 +358,7 @@ resource "aws_iam_policy" "lambda_secrets" {
       "Resource": [
         "${aws_secretsmanager_secret_version.notify_api_key.arn}",
         "${aws_secretsmanager_secret_version.database_url.arn}"
-      ]
+      ],
       "Effect": "Allow"
     }
   ]
