@@ -40,3 +40,4 @@ resource "aws_secretsmanager_secret" "database_secret" {
 resource "aws_secretsmanager_secret_version" "database_secret" {
   secret_id     = aws_secretsmanager_secret.database_secret.id
   secret_string = var.rds_db_password
+}
