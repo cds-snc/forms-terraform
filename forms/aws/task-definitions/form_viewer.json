@@ -60,8 +60,8 @@
         "valueFrom": "${google_client_secret}"
       },
       {
-        "name": "DATABASE_URL",
-        "valueFrom": "${database_url}"
+        "name": "DATABASE_SECRET",
+        "valueFrom": "${database_secret}"
       }
     ]
   }
