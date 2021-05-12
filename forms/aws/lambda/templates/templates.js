@@ -3,9 +3,9 @@ const REGION = process.env.REGION;
 
 exports.handler = async function (event) {
   const dbClient = new RDSDataClient({region: REGION});
-  if (event.httpMethod == "POST") {
+  //if (event.httpMethod == "POST") {
     // For now querystring - will probably make this a file upload on the body
-    const jsonConfig = event.queryStringParameters.jsonBlob;
+    const jsonConfig = event.queryStringParameters.json_config;
 
     // TODO - INSERT vs UPDATE
 
@@ -19,18 +19,15 @@ exports.handler = async function (event) {
     };
   
     const command = new BatchExecuteStatementCommand(params);
-  
     try {
       const data = await dbClient.send(command);
   
-      return data;
+      return {'data': data};
     } catch (error) {
-  
-    } finally {
-  
+      return {'error': error};
     }
-  } else if (event.httpMethod == "GET") {
+  //} else if (event.httpMethod == "GET") {
     // get all forms from DB for now
-    return {"message": "Hello World"};
-  }
+  //  return {"message": "Hello World"};
+  //}
 };
