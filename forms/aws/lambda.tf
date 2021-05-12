@@ -400,6 +400,6 @@ resource "aws_iam_role_policy_attachment" "lambda_kms" {
 }
 
 resource "aws_iam_role_policy_attachment" "AWSLambdaVPCAccessExecutionRole" {
-    role       = aws_iam_role.iam_for_lambda.name
-    policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
