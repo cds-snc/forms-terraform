@@ -195,10 +195,10 @@ resource "aws_lambda_function" "templates" {
     }
   }
 
-  #vpc_config {
-  #  subnet_ids         = data.aws_subnet_ids.lambda_endpoint_available.ids
-  #  security_group_ids = [aws_security_group.lambdas.id, aws_security_group.privatelink.id]
-  #}
+  vpc_config {
+    subnet_ids         = data.aws_subnet_ids.lambda_endpoint_available.ids
+    security_group_ids = [aws_security_group.lambdas.id, aws_security_group.privatelink.id]
+  }
 }
 
 resource "aws_lambda_layer_version" "templates_lib" {
@@ -397,4 +397,9 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb" {
 resource "aws_iam_role_policy_attachment" "lambda_kms" {
   role       = aws_iam_role.iam_for_lambda.name
   policy_arn = aws_iam_policy.lambda_kms.arn
+}
+
+resource "aws_iam_role_policy_attachment" "AWSLambdaVPCAccessExecutionRole" {
+    role       = aws_iam_role.iam_for_lambda.name
+    policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
