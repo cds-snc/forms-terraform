@@ -32,6 +32,16 @@ resource "aws_secretsmanager_secret_version" "google_client_secret" {
   secret_string = var.ecs_secret_google_client_secret
 }
 
+resource "aws_secretsmanager_secret" "database_url" {
+  name                    = "server-database-url"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "database_url" {
+  secret_id     = aws_secretsmanager_secret.database_url.id
+  secret_string = "postgres://${var.rds_db_user}:${var.rds_db_password}@${aws_rds_cluster.forms.endpoint}:5432/${var.rds_db_name}"
+}
+
 resource "aws_secretsmanager_secret" "database_secret" {
   name                    = "database-secret"
   recovery_window_in_days = 0
@@ -39,5 +49,5 @@ resource "aws_secretsmanager_secret" "database_secret" {
 
 resource "aws_secretsmanager_secret_version" "database_secret" {
   secret_id     = aws_secretsmanager_secret.database_secret.id
-  secret_string = var.rds_db_password
+  secret_string = "{'username': '${var.rds_db_user}', 'password': '${var.rds_db_password}' }"
 }
