@@ -47,7 +47,8 @@ resource "aws_secretsmanager_secret" "database_secret" {
   recovery_window_in_days = 0
 }
 
+
 resource "aws_secretsmanager_secret_version" "database_secret" {
   secret_id     = aws_secretsmanager_secret.database_secret.id
-  secret_string = "{'username': '${var.rds_db_user}', 'password': '${var.rds_db_password}' }"
+  secret_string = "{\"username\": \"${var.rds_db_user}\", \"password\": \"${var.rds_db_password}\"}"
 }

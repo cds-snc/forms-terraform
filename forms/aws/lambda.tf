@@ -194,6 +194,11 @@ resource "aws_lambda_function" "templates" {
       DB_NAME   = var.rds_db_name
     }
   }
+
+  #vpc_config {
+  #  subnet_ids         = data.aws_subnet_ids.lambda_endpoint_available.ids
+  #  security_group_ids = [aws_security_group.lambdas.id, aws_security_group.privatelink.id]
+  #}
 }
 
 resource "aws_lambda_layer_version" "templates_lib" {
