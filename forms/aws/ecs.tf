@@ -41,6 +41,7 @@ data "template_file" "form_viewer_task" {
     database_url          = aws_secretsmanager_secret_version.database_url.arn
     nextauth_url          = "https://${var.route53_zone_name}"
     submission_api        = aws_lambda_function.submission.arn
+    templates_api         = aws_lambda_function.templates.arn
   }
 }
 
