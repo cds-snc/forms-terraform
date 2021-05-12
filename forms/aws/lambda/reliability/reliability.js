@@ -1,4 +1,8 @@
-const { DynamoDBClient, GetItemCommand, DeleteItemCommand } = require("@aws-sdk/client-dynamodb");
+const {
+  DynamoDBClient,
+  GetItemCommand,
+  DeleteItemCommand,
+} = require("@aws-sdk/client-dynamodb");
 const { NotifyClient } = require("notifications-node-client");
 const convertMessage = require("markdown");
 const REGION = process.env.REGION;
@@ -7,7 +11,9 @@ exports.handler = async function (event) {
   let submissionIDPlaceholder = "";
   try {
     const message = JSON.parse(event.Records[0].body);
-    const { submissionID, sendReceipt, formSubmission } = await getSubmission(message)
+    const { submissionID, sendReceipt, formSubmission } = await getSubmission(
+      message
+    )
       .then((messageData) => ({
         submissionID: messageData.Item.SubmissionID.S,
         sendReceipt: messageData.Item.SendReceipt.S,
@@ -35,7 +41,11 @@ exports.handler = async function (event) {
       process.env.NOTIFY_API_KEY
     );
     const emailBody = convertMessage(formSubmission);
-    const messageSubject = formSubmission.form.titleEn + " Submission";
+    const messageSubject = `${
+      formSubmission.form.emailSubjectEn
+        ? formSubmission.form.emailSubjectEn
+        : formSubmission.form.titleEn
+    } Submission`;
     // Need to get this from the submission now.. not the app.
     const submissionFormat = formSubmission.submission;
     // Send to Notify
@@ -70,10 +80,14 @@ exports.handler = async function (event) {
 
       return { statusCode: 202, body: "Received by Notify" };
     } else {
-      throw Error("Form can not be submitted due to missing Submission Parameters");
+      throw Error(
+        "Form can not be submitted due to missing Submission Parameters"
+      );
     }
   } catch (err) {
-    console.error(`Error in processing, submission ${submissionIDPlaceholder} not processed.`);
+    console.error(
+      `Error in processing, submission ${submissionIDPlaceholder} not processed.`
+    );
     return { statusCode: 500, body: "Could not process / Function Error" };
   }
 };
