@@ -121,6 +121,16 @@ resource "aws_vpc_endpoint" "monitoring" {
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 }
+resource "aws_vpc_endpoint" "rds" {
+  vpc_id              = aws_vpc.forms.id
+  vpc_endpoint_type   = "Interface"
+  service_name        = "com.amazonaws.${var.region}.rds-data"
+  private_dns_enabled = true
+  security_group_ids = [
+    aws_security_group.privatelink.id,
+  ]
+  subnet_ids = aws_subnet.forms_private.*.id
+}
 
 ###
 # AWS Internet Gateway
@@ -391,16 +401,6 @@ resource "aws_security_group_rule" "privatelink_forms_ingress" {
 }
 
 
-resource "aws_security_group" "lambdas" {
-  name        = "lambdas"
-  description = "Lambda security group"
-  vpc_id      = aws_vpc.forms.id
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-  }
-}
-
 # Allow traffic from the app and from the lambdas
 resource "aws_security_group" "forms_database" {
   name        = "forms-database"
@@ -413,7 +413,6 @@ resource "aws_security_group" "forms_database" {
     to_port   = 5432
     security_groups = [
       aws_security_group.forms.id,
-      aws_security_group.lambdas.id
     ]
   }
 

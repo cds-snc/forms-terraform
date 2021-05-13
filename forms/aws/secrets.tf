@@ -49,6 +49,7 @@ resource "aws_secretsmanager_secret" "database_secret" {
 
 
 resource "aws_secretsmanager_secret_version" "database_secret" {
+  depends_on    = [aws_rds_cluster.forms]
   secret_id     = aws_secretsmanager_secret.database_secret.id
-  secret_string = "{\"username\": \"${var.rds_db_user}\", \"password\": \"${var.rds_db_password}\"}"
+  secret_string = "{\"dbInstanceIdentifier\": \"${var.rds_name}-cluster\",\"engine\": \"${aws_rds_cluster.forms.engine}\",\"host\": \"${aws_rds_cluster.forms.endpoint}\",\"port\": ${aws_rds_cluster.forms.port},\"resourceId\": \"${aws_rds_cluster.forms.cluster_resource_id}\",\"username\": \"${var.rds_db_user}\",\"password\": \"${var.rds_db_password}\"}"
 }

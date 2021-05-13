@@ -194,11 +194,6 @@ resource "aws_lambda_function" "templates" {
       DB_NAME   = var.rds_db_name
     }
   }
-
-  vpc_config {
-    subnet_ids         = data.aws_subnet_ids.lambda_endpoint_available.ids
-    security_group_ids = [aws_security_group.lambdas.id, aws_security_group.privatelink.id]
-  }
 }
 
 resource "aws_lambda_layer_version" "templates_lib" {
@@ -272,6 +267,46 @@ resource "aws_iam_policy" "lambda_logging" {
   ]
 }
 EOF
+}
+
+resource "aws_iam_policy" "lambda_rds" {
+  name        = "lambda_rds"
+  path        = "/"
+  description = "IAM policy for allowing acces to DB"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "RDSDataServiceAccess",
+      "Effect": "Allow",
+      "Action": [
+          "dbqms:CreateFavoriteQuery",
+          "dbqms:DescribeFavoriteQueries",
+          "dbqms:UpdateFavoriteQuery",
+          "dbqms:DeleteFavoriteQueries",
+          "dbqms:GetQueryString",
+          "dbqms:CreateQueryHistory",
+          "dbqms:DescribeQueryHistory",
+          "dbqms:UpdateQueryHistory",
+          "dbqms:DeleteQueryHistory",
+          "rds-data:ExecuteSql",
+          "rds-data:ExecuteStatement",
+          "rds-data:BatchExecuteStatement",
+          "rds-data:BeginTransaction",
+          "rds-data:CommitTransaction",
+          "rds-data:RollbackTransaction",
+          "secretsmanager:CreateSecret",
+          "secretsmanager:ListSecrets",
+          "secretsmanager:GetRandomPassword",
+          "tag:GetResources"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+  EOF
 }
 
 ## Allow Lambda to create and retrieve SQS messages
@@ -397,6 +432,11 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb" {
 resource "aws_iam_role_policy_attachment" "lambda_kms" {
   role       = aws_iam_role.iam_for_lambda.name
   policy_arn = aws_iam_policy.lambda_kms.arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_rds" {
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = aws_iam_policy.lambda_rds.arn
 }
 
 resource "aws_iam_role_policy_attachment" "AWSLambdaVPCAccessExecutionRole" {
