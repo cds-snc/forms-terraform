@@ -52,10 +52,11 @@ jobs:
         run: terraform plan
 
   terraform-security-scan:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
+      - name: Test output
+        run : echo "The pr event name is: ${{ github.event_name }}"
       - name: Checkout
         uses: actions/checkout@v2
       - name: Terraform security scan
