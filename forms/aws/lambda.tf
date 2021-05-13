@@ -159,6 +159,56 @@ resource "aws_lambda_layer_version" "submission_lib" {
   compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
 }
 
+###
+# AWS Lambda - Template Storage processing
+###
+
+data "archive_file" "templates_main" {
+  type        = "zip"
+  source_file = "lambda/templates/templates.js"
+  output_path = "/tmp/templates_main.zip"
+}
+
+data "archive_file" "templates_lib" {
+  type        = "zip"
+  source_dir  = "lambda/templates/"
+  excludes    = ["templates.js"]
+  output_path = "/tmp/templates_lib.zip"
+}
+
+resource "aws_lambda_function" "templates" {
+  filename      = "/tmp/templates_main.zip"
+  function_name = "Templates"
+  role          = aws_iam_role.iam_for_lambda.arn
+  handler       = "templates.handler"
+
+  source_code_hash = data.archive_file.templates_main.output_base64sha256
+  runtime          = "nodejs14.x"
+  layers           = [aws_lambda_layer_version.templates_lib.arn]
+
+  environment {
+    variables = {
+      REGION    = var.region,
+      DB_ARN    = aws_rds_cluster.forms.arn,
+      DB_SECRET = aws_secretsmanager_secret_version.database_secret.arn,
+      DB_NAME   = var.rds_db_name
+    }
+  }
+
+  vpc_config {
+    subnet_ids         = data.aws_subnet_ids.lambda_endpoint_available.ids
+    security_group_ids = [aws_security_group.lambdas.id, aws_security_group.privatelink.id]
+  }
+}
+
+resource "aws_lambda_layer_version" "templates_lib" {
+  filename            = "/tmp/templates_lib.zip"
+  layer_name          = "templates_node_packages"
+  source_code_hash    = data.archive_file.templates_lib.output_base64sha256
+  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+}
+
+
 ## Allow SNS to call Lambda function
 
 resource "aws_lambda_permission" "notify_slack_warning" {
@@ -185,13 +235,20 @@ resource "aws_lambda_permission" "notify_slack_ok" {
   source_arn    = aws_sns_topic.alert_ok.arn
 }
 
-# Allow ECS containers to callLambda
+# Allow ECS containers to call Lambdas
 resource "aws_lambda_permission" "submission" {
   statement_id  = "AllowInvokeECS"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.submission.function_name
   principal     = aws_iam_role.forms.arn
 }
+resource "aws_lambda_permission" "templates" {
+  statement_id  = "AllowInvokeECS"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.templates.function_name
+  principal     = aws_iam_role.forms.arn
+}
+
 ## Allow Lambda to create Logs in Cloudwatch
 
 resource "aws_iam_policy" "lambda_logging" {
@@ -305,7 +362,10 @@ resource "aws_iam_policy" "lambda_secrets" {
       "Action": [
         "secretsmanager:GetSecretValue"
       ],
-      "Resource": "${aws_secretsmanager_secret_version.notify_api_key.arn}",
+      "Resource": [
+        "${aws_secretsmanager_secret_version.notify_api_key.arn}",
+        "${aws_secretsmanager_secret_version.database_secret.arn}"
+      ],
       "Effect": "Allow"
     }
   ]
@@ -337,4 +397,9 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb" {
 resource "aws_iam_role_policy_attachment" "lambda_kms" {
   role       = aws_iam_role.iam_for_lambda.name
   policy_arn = aws_iam_policy.lambda_kms.arn
+}
+
+resource "aws_iam_role_policy_attachment" "AWSLambdaVPCAccessExecutionRole" {
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }

@@ -13,7 +13,7 @@ exports.handler = function (event, context) {
   var postData = {
     channel: "#forms-deploy-activities",
     username: "Forms Notifier",
-    text: "*Staging Environment*",
+    text: "*Sandbox Environment*",
     icon_emoji: ":loudspeaker:",
   };
 

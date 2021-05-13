@@ -10,7 +10,7 @@ provider "template" {
 
 terraform {
   backend "s3" {
-    bucket = "staging-gcforms"
+    bucket = "sandbox-gcforms"
     key    = "aws/backend/default.tfstate"
     region = "ca-central-1"
 
