@@ -7,9 +7,6 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - "forms/aws/*"
-      - "bootstrap/*"
 
 defaults:
   run:
