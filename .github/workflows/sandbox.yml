@@ -29,7 +29,6 @@ env:
 
 jobs:
   terraform-plan:
-    if: ${{ github.ref != 'refs/heads/sandbox' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -52,7 +51,6 @@ jobs:
         run: terraform plan
 
   terraform-security-scan:
-    if: ${{ github.ref != 'refs/heads/sandbox' }}
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
