@@ -28,13 +28,8 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  test-output:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Test output
-      - run: echo "This is the event name: ${{ github.event_name }}"
   terraform-plan:
-    if: github.ref != 'refs/heads/sandbox'
+    if: ${{ github.ref != 'refs/heads/sandbox' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -57,7 +52,7 @@ jobs:
         run: terraform plan
 
   terraform-security-scan:
-    if: github.ref != 'refs/heads/sandbox'
+    if: ${{ github.ref != 'refs/heads/sandbox' }}
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
@@ -69,7 +64,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   terraform-apply:
-    if: github.ref == 'refs/heads/sandbox'
+    if: ${{ github.ref == 'refs/heads/sandbox' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
