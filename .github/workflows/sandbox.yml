@@ -29,6 +29,7 @@ env:
 
 jobs:
   test-output:
+    runs-on: ubuntu-latest
     steps:
       - name: Test output
       - run: echo "This is the event name: ${{ github.event_name }}"
