@@ -1,5 +1,5 @@
 const { sendToNotify } = require("notifyProcessing");
-const { removeSubmission, getSubmission } = require("dataLayer");
+const { getSubmission } = require("dataLayer");
 
 exports.handler = async function (event) {
   let submissionIDPlaceholder = "";

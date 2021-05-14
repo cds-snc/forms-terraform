@@ -1,6 +1,7 @@
 // Process request and format for Notify
 const { NotifyClient } = require("notifications-node-client");
 const convertMessage = require("markdown");
+const { removeSubmission } = require("dataLayer");
 
 async function sendToNotify(formSubmission, sendReceipt) {
   const templateID = "92096ac6-1cc5-40ae-9052-fffdb8439a90";
