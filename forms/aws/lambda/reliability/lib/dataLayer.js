@@ -36,7 +36,7 @@ async function saveToVault(submissionID, formData) {
   const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
 
   const DBParams = {
-    TableName: "ReliabilityQueue",
+    TableName: "Vault",
     Item: {
       SubmissionID: { S: submissionID },
       FormSubmission: { S: formSubmission },
