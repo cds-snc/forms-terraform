@@ -9,9 +9,9 @@ exports.handler = async function (event) {
     const message = JSON.parse(event.Records[0].body);
     const { submissionID, sendReceipt, formSubmission } = await getSubmission(message)
       .then((messageData) => ({
-        submissionID: messageData.Item.SubmissionID.S,
-        sendReceipt: messageData.Item.SendReceipt.S,
-        formSubmission: JSON.parse(messageData.Item.FormData.S) || null,
+        submissionID: messageData.Item.SubmissionID.S || null,
+        sendReceipt: messageData.Item.SendReceipt.S || null,
+        formSubmission: messageData.Item.FormData.S || null,
       }))
       .catch((err) => {
         console.error("Could not sucessfully retrieve data");
