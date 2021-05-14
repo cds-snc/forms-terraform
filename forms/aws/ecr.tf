@@ -8,6 +8,8 @@ resource "aws_ecr_repository" "viewer_repository" {
 
   #Ignore tag mutability for Staging
   image_tag_mutability = "MUTABLE" #tfsec:ignore:AWS078
+  # Ignore using global encryption key
+  #tfsec:ignore:AWS093
 
   image_scanning_configuration {
     scan_on_push = true
