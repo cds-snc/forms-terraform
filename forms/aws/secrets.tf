@@ -17,6 +17,8 @@ resource "aws_secretsmanager_secret_version" "notify_api_key" {
 resource "aws_secretsmanager_secret" "google_client_id" {
   name                    = "google_client_id"
   recovery_window_in_days = 0
+  # Ignore using global encryption key
+  #tfsec:ignore:AWS095
 }
 
 resource "aws_secretsmanager_secret_version" "google_client_id" {
@@ -27,6 +29,8 @@ resource "aws_secretsmanager_secret_version" "google_client_id" {
 resource "aws_secretsmanager_secret" "google_client_secret" {
   name                    = "google_client_secret"
   recovery_window_in_days = 0
+  # Ignore using global encryption key
+  #tfsec:ignore:AWS095
 }
 
 resource "aws_secretsmanager_secret_version" "google_client_secret" {
@@ -37,6 +41,8 @@ resource "aws_secretsmanager_secret_version" "google_client_secret" {
 resource "aws_secretsmanager_secret" "database_url" {
   name                    = "server-database-url"
   recovery_window_in_days = 0
+  # Ignore using global encryption key
+  #tfsec:ignore:AWS095
 }
 
 resource "aws_secretsmanager_secret_version" "database_url" {
@@ -47,6 +53,8 @@ resource "aws_secretsmanager_secret_version" "database_url" {
 resource "aws_secretsmanager_secret" "database_secret" {
   name                    = "database-secret"
   recovery_window_in_days = 0
+  # Ignore using global encryption key
+  #tfsec:ignore:AWS095
 }
 
 
