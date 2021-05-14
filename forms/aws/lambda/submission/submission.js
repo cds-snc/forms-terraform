@@ -55,12 +55,14 @@ const sendData = async (submissionID) => {
 };
 
 const saveData = async (submissionID, formData) => {
+  const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
+
   const DBParams = {
     TableName: "ReliabilityQueue",
     Item: {
       SubmissionID: { S: submissionID },
       SendReceipt: { S: "unknown" },
-      FormData: { S: JSON.stringify(formData) },
+      FormData: { S: formSubmission },
     },
   };
   //save data to DynamoDB
