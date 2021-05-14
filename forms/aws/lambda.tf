@@ -66,6 +66,11 @@ data "archive_file" "reliability_lib" {
     content  = file("./lambda/reliability/lib/dataLayer.js")
     filename = "nodejs/node_modules/dataLayer/index.js"
   }
+
+  source {
+    content  = file("./lambda/reliability/lib/notifyProcessing.js")
+    filename = "nodejs/node_modules/notifyProcessing/index.js"
+  }
 }
 
 data "archive_file" "reliability_nodejs" {
