@@ -1,4 +1,4 @@
-const { sendToNotify } = require("notifyProcessing");
+const sendToNotify = require("notifyProcessing");
 const { getSubmission } = require("dataLayer");
 
 exports.handler = async function (event) {
