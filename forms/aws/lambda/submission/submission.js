@@ -21,7 +21,7 @@ exports.handler = async function (event) {
         // Update DB entry for receipt ID
         await saveReceipt(submissionID, receiptID);
         console.log(
-          `SQS Message successfully created with reciept ID ${receiptID} for submission ID ${submissionID}`
+          `SQS Message successfully created with ID ${receiptID} for submission ID ${submissionID}`
         );
         return { status: true };
       })
