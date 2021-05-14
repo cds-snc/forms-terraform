@@ -1,6 +1,35 @@
+const { DynamoDBClient, GetItemCommand, DeleteItemCommand } = require("@aws-sdk/client-dynamodb");
+
+const REGION = process.env.REGION;
+
+async function getSubmission(message) {
+  const db = new DynamoDBClient({ region: REGION });
+  const DBParams = {
+    TableName: "ReliabilityQueue",
+    Key: {
+      SubmissionID: { S: message.submissionID },
+    },
+    ProjectExpression: "SubmissionID,SendReceipt,FormData",
+  };
+  //save data to DynamoDB
+  return db.send(new GetItemCommand(DBParams));
+}
+
+async function removeSubmission(message) {
+  const db = new DynamoDBClient({ region: REGION });
+  const DBParams = {
+    TableName: "ReliabilityQueue",
+    Key: {
+      SubmissionID: { S: message.submissionID },
+    },
+  };
+  //remove data fron DynamoDB
+  return db.send(new DeleteItemCommand(DBParams));
+}
+
 // Email submission data manipulation
 
-module.exports = function extractFormData(submission) {
+function extractFormData(submission) {
   const formResponses = submission.responses;
   const formOrigin = submission.form;
   const dataCollector = [];
@@ -11,7 +40,7 @@ module.exports = function extractFormData(submission) {
     }
   });
   return dataCollector;
-};
+}
 
 function handleType(question, response, collector) {
   // Add i18n here later on?
@@ -89,3 +118,9 @@ function handleTextResponse(title, response, collector) {
 
   collector.push(`${title}${String.fromCharCode(13)}- No Response`);
 }
+
+module.exports = {
+  getSubmission,
+  removeSubmission,
+  extractFormData,
+};

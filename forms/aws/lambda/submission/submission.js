@@ -21,7 +21,7 @@ exports.handler = async function (event) {
         // Update DB entry for receipt ID
         await saveReceipt(submissionID, receiptID);
         console.log(
-          `SQS Message successfully created with reciept ID ${receiptID} for submission ID ${submissionID}`
+          `SQS Message successfully created with ID ${receiptID} for submission ID ${submissionID}`
         );
         return { status: true };
       })
@@ -55,12 +55,14 @@ const sendData = async (submissionID) => {
 };
 
 const saveData = async (submissionID, formData) => {
+  const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
+
   const DBParams = {
     TableName: "ReliabilityQueue",
     Item: {
       SubmissionID: { S: submissionID },
       SendReceipt: { S: "unknown" },
-      FormData: { S: JSON.stringify(formData) },
+      FormData: { S: formSubmission },
     },
   };
   //save data to DynamoDB
