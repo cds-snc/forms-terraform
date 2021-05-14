@@ -41,7 +41,7 @@ exports.handler = async function (event) {
   try {
     const data = await dbClient.send(command);
 
-    return {'data': data.updateResults};
+    return {'data': data};
   } catch (error) {
     return {'error': error};
   }
