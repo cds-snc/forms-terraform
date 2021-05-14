@@ -9,7 +9,7 @@ exports.handler = async function (event) {
     .then((messageData) => ({
       submissionID: messageData.Item.SubmissionID.S || null,
       sendReceipt: messageData.Item.SendReceipt.S || null,
-      formSubmission: messageData.Item.FormData.S || null,
+      formSubmission: JSON.parse(messageData.Item.FormData.S) || null,
     }))
     .then(({ submissionID, sendReceipt, formSubmission }) => {
       submissionIDPlaceholder = submissionID;
