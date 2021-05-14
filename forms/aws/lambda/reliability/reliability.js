@@ -41,11 +41,9 @@ exports.handler = async function (event) {
       process.env.NOTIFY_API_KEY
     );
     const emailBody = convertMessage(formSubmission);
-    const messageSubject = `${
-      formSubmission.form.emailSubjectEn
-        ? formSubmission.form.emailSubjectEn
-        : formSubmission.form.titleEn
-    } Submission`;
+    const messageSubject = formSubmission.form.emailSubjectEn
+      ? formSubmission.form.emailSubjectEn
+      : formSubmission.form.titleEn;
     // Need to get this from the submission now.. not the app.
     const submissionFormat = formSubmission.submission;
     // Send to Notify
