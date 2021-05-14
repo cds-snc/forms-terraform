@@ -1,5 +1,5 @@
 const json2md = require("json2md");
-const extractFormData = require("dataLayer");
+const { extractFormData } = require("dataLayer");
 
 module.exports = (formResponse) => {
   const subjectEn = formResponse.form.emailSubjectEn
