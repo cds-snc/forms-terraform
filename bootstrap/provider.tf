@@ -45,6 +45,8 @@ resource "aws_dynamodb_table" "terraform_state_lock" {
     type = "S"
   }
   #tfsec:ignore:AWS086
+  # Ignore using global encryption key
+  #tfsec:ignore:AWS092
 
   tags = {
     ("CostCentre") = "Forms"
