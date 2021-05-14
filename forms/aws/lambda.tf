@@ -71,6 +71,11 @@ data "archive_file" "reliability_lib" {
     content  = file("./lambda/reliability/lib/notifyProcessing.js")
     filename = "nodejs/node_modules/notifyProcessing/index.js"
   }
+
+  source {
+    content  = file("./lambda/reliability/lib/vaultProcessing.js")
+    filename = "nodejs/node_modules/vaultProcessing/index.js"
+  }
 }
 
 data "archive_file" "reliability_nodejs" {

@@ -1,4 +1,5 @@
 const sendToNotify = require("notifyProcessing");
+const sendToVault = require("vaultProcessing");
 const { getSubmission } = require("dataLayer");
 
 exports.handler = async function (event) {
@@ -24,7 +25,7 @@ exports.handler = async function (event) {
       /// process submission to vault or Notify
 
       if (formSubmission.vault) {
-        // Send to vault
+        sendToVault(submissionID, sendReceipt, formSubmission, message);
       } else {
         return sendToNotify(submissionID, sendReceipt, formSubmission, message);
       }

@@ -1,4 +1,9 @@
-const { DynamoDBClient, GetItemCommand, DeleteItemCommand } = require("@aws-sdk/client-dynamodb");
+const {
+  DynamoDBClient,
+  GetItemCommand,
+  DeleteItemCommand,
+  PutItemCommand,
+} = require("@aws-sdk/client-dynamodb");
 
 const REGION = process.env.REGION;
 
@@ -25,6 +30,20 @@ async function removeSubmission(message) {
   };
   //remove data fron DynamoDB
   return db.send(new DeleteItemCommand(DBParams));
+}
+
+async function saveToVault(submissionID, formData) {
+  const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
+
+  const DBParams = {
+    TableName: "ReliabilityQueue",
+    Item: {
+      SubmissionID: { S: submissionID },
+      FormSubmission: { S: formSubmission },
+    },
+  };
+  //save data to DynamoDB
+  await db.send(new PutItemCommand(DBParams));
 }
 
 // Email submission data manipulation
@@ -123,4 +142,5 @@ module.exports = {
   getSubmission,
   removeSubmission,
   extractFormData,
+  saveToVault,
 };
