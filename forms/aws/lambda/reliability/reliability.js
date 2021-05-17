@@ -12,7 +12,7 @@ exports.handler = async function (event) {
       sendReceipt: messageData.Item.SendReceipt.S || null,
       formSubmission: JSON.parse(messageData.Item.FormData.S) || null,
     }))
-    .then(({ submissionID, sendReceipt, formSubmission }) => {
+    .then(async ({ submissionID, sendReceipt, formSubmission }) => {
       submissionIDPlaceholder = submissionID;
       // Check if form data exists or was already processed.
       if (formSubmission === null || typeof formSubmission === "undefined") {
