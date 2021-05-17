@@ -213,6 +213,53 @@ resource "aws_lambda_layer_version" "templates_lib" {
   compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
 }
 
+###
+# Vault Retrieval 
+###
+###
+# AWS Lambda - Template Storage processing
+###
+
+data "archive_file" "retrieval_main" {
+  type        = "zip"
+  source_file = "lambda/retrieval/retrieval.js"
+  output_path = "/tmp/retrieval_main.zip"
+}
+
+data "archive_file" "retrieval_lib" {
+  type        = "zip"
+  source_dir  = "lambda/retrieval/"
+  excludes    = ["retrieval.js"]
+  output_path = "/tmp/retrieval_lib.zip"
+}
+
+resource "aws_lambda_function" "retrieval" {
+  filename      = "/tmp/retrieval_main.zip"
+  function_name = "Retrieval"
+  role          = aws_iam_role.iam_for_lambda.arn
+  handler       = "retrieval.handler"
+
+  source_code_hash = data.archive_file.retrieval_main.output_base64sha256
+  runtime          = "nodejs14.x"
+  layers           = [aws_lambda_layer_version.retrieval_lib.arn]
+
+  environment {
+    variables = {
+      REGION    = var.region,
+      DB_ARN    = aws_rds_cluster.forms.arn,
+      DB_SECRET = aws_secretsmanager_secret_version.database_secret.arn,
+      DB_NAME   = var.rds_db_name
+    }
+  }
+}
+
+resource "aws_lambda_layer_version" "retrieval_lib" {
+  filename            = "/tmp/retrieval_lib.zip"
+  layer_name          = "retrieval_node_packages"
+  source_code_hash    = data.archive_file.retrieval_lib.output_base64sha256
+  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+}
+
 
 ## Allow SNS to call Lambda function
 

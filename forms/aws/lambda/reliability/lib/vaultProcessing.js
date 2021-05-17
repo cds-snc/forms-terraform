@@ -1,6 +1,6 @@
 const { saveToVault, removeSubmission } = require("dataLayer");
-module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
-  return await saveToVault(submissionID, formSubmission)
+module.exports = async (submissionID, sendReceipt, formResponse, formID, message) => {
+  return await saveToVault(submissionID, formResponse, formID)
     .catch((err) => {
       throw new Error(`Saving to Vault error: ${JSON.stringify(err)}`);
     })

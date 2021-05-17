@@ -32,14 +32,16 @@ async function removeSubmission(message) {
   return await db.send(new DeleteItemCommand(DBParams));
 }
 
-async function saveToVault(submissionID, formData) {
+async function saveToVault(submissionID, formResponse, formID) {
   const db = new DynamoDBClient({ region: REGION });
-  const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
+  const formSubmission =
+    typeof formResponse === "string" ? formResponse : JSON.stringify(formResponse);
 
   const DBParams = {
     TableName: "Vault",
     Item: {
       SubmissionID: { S: submissionID },
+      FormID: { S: formID },
       FormSubmission: { S: formSubmission },
     },
   };
