@@ -1,6 +1,6 @@
 const { saveToVault, removeSubmission } = require("dataLayer");
 module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
-  saveToVault(submissionID, formSubmission)
+  return saveToVault(submissionID, formSubmission)
     .catch((err) => {
       throw new Error(`Saving to Vault error: ${JSON.stringify(err)}`);
     })
@@ -19,7 +19,10 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
         );
       });
     })
-    .then(() => ({ statusCode: 202, body: "Stored in the Vault" }))
+    .then(() => {
+      console.log("Saved to the Vault");
+      return { statusCode: 202 };
+    })
     .catch((err) => {
       console.error(err);
       return { statusCode: 500, body: "Could not process / Function Error" };

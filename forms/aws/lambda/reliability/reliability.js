@@ -20,14 +20,15 @@ exports.handler = async function (event) {
         console.warn(
           `No corresponding submission for Submission ID: ${submissionID} in the reliability database`
         );
-        return { statusCode: 202, body: "Data no longer exists in DB" };
+        console.log("Data no longer exists in the DB");
+        return { statusCode: 202 };
       }
       /// process submission to vault or Notify
 
       if (formSubmission.vault) {
-        return sendToVault(submissionID, sendReceipt, formSubmission, message);
+        return await sendToVault(submissionID, sendReceipt, formSubmission, message);
       } else {
-        return sendToNotify(submissionID, sendReceipt, formSubmission, message);
+        return await sendToNotify(submissionID, sendReceipt, formSubmission, message);
       }
     })
     .catch((err) => {
