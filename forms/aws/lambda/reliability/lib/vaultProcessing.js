@@ -11,7 +11,7 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
       // Remove data
       await removeSubmission(message).catch((err) => {
         // Not throwing an error back to SQS because the message was
-        // sucessfully processed by Notify.  Only cleanup required.
+        // sucessfully processed by the vault.  Only cleanup required.
         console.error(
           `Could not delete submission ${submissionID} from DB.  Error: ${
             typeof err === "object" ? JSON.stringify(err) : err

@@ -17,7 +17,7 @@ async function getSubmission(message) {
     ProjectExpression: "SubmissionID,SendReceipt,FormData",
   };
   //save data to DynamoDB
-  return db.send(new GetItemCommand(DBParams));
+  return await db.send(new GetItemCommand(DBParams));
 }
 
 async function removeSubmission(message) {
@@ -29,7 +29,7 @@ async function removeSubmission(message) {
     },
   };
   //remove data fron DynamoDB
-  return db.send(new DeleteItemCommand(DBParams));
+  return await db.send(new DeleteItemCommand(DBParams));
 }
 
 async function saveToVault(submissionID, formData) {
@@ -44,7 +44,7 @@ async function saveToVault(submissionID, formData) {
     },
   };
   //save data to DynamoDB
-  await db.send(new PutItemCommand(DBParams));
+  return await db.send(new PutItemCommand(DBParams));
 }
 
 // Email submission data manipulation
