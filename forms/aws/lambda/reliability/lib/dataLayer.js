@@ -37,11 +37,13 @@ async function saveToVault(submissionID, formResponse, formID) {
   const formSubmission =
     typeof formResponse === "string" ? formResponse : JSON.stringify(formResponse);
 
+  const formIdentifier = typeof formID === "string" ? formID : formID.toString();
+
   const DBParams = {
     TableName: "Vault",
     Item: {
       SubmissionID: { S: submissionID },
-      FormID: { S: formID },
+      FormID: { S: formIdentifier },
       FormSubmission: { S: formSubmission },
     },
   };
