@@ -11,7 +11,7 @@ const db = new DynamoDBClient({ region: REGION });
 exports.handler = async function (event) {
   const action = event.action;
   const formID = event.formID;
-  const responseID = event.responseID ?? null;
+  const responseID = event.responseID || null;
 
   switch (action) {
     case "GET":
