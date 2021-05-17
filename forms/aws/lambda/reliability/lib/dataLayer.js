@@ -33,22 +33,18 @@ async function removeSubmission(message) {
 }
 
 async function saveToVault(submissionID, formData) {
-  try {
-    const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
+  const db = new DynamoDBClient({ region: REGION });
+  const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
 
-    const DBParams = {
-      TableName: "Vault",
-      Item: {
-        SubmissionID: { S: submissionID },
-        FormSubmission: { S: formSubmission },
-      },
-    };
-    //save data to DynamoDB
-    await db.send(new PutItemCommand(DBParams));
-  } catch (err) {
-    console.error(err);
-    return Promise.reject(err);
-  }
+  const DBParams = {
+    TableName: "Vault",
+    Item: {
+      SubmissionID: { S: submissionID },
+      FormSubmission: { S: formSubmission },
+    },
+  };
+  //save data to DynamoDB
+  await db.send(new PutItemCommand(DBParams));
 }
 
 // Email submission data manipulation
