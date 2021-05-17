@@ -8,9 +8,6 @@ const {
 const REGION = process.env.REGION;
 const db = new DynamoDBClient({ region: REGION });
 
-// Get response(s)
-// Delete response
-
 exports.handler = async function (event) {
   const action = event.action;
   const formID = event.formID;
@@ -19,7 +16,6 @@ exports.handler = async function (event) {
   switch (action) {
     case "GET":
       return await getResponses(formID);
-      break;
     case "DELETE":
       break;
     default:
@@ -34,7 +30,7 @@ async function getResponses(formID) {
     TableName: "Vault",
     Limit: 10,
     FilterExpression: "FormID = :form",
-    ExpressionAttributeValues: { form: { S: formID } },
+    ExpressionAttributeValues: { ":form": { S: formID } },
     ProjectionExpression: "SubmissionID,FormID,FormSubmission",
   };
   return await db.send(new ScanCommand(DBParams));
