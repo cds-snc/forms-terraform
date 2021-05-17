@@ -9,7 +9,8 @@ exports.handler = async function (event) {
       parameters;
   switch (method) {
     case "INSERT":
-      SQL = "INSERT INTO Templates (json_config) VALUES :json_config";
+      const json_config = "'" + JSON.stringify(event.json_config) + "'";
+      SQL = "INSERT INTO Templates (json_config) VALUES (:json_config)";
       parameters = [
         {
           name: "json_config",
@@ -40,9 +41,11 @@ exports.handler = async function (event) {
   const command = new ExecuteStatementCommand(params);
   try {
     const data = await dbClient.send(command);
-
+    console.log("success")
     return {'data': data};
   } catch (error) {
+    console.log("error:")
+    console.log(error);
     return {'error': error};
   }
 };
