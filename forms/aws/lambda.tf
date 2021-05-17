@@ -362,7 +362,10 @@ resource "aws_iam_policy" "lambda_dynamodb" {
         "dynamodb:Scan",
         "dynamodb:Query"
       ],
-      "Resource": "${aws_dynamodb_table.reliability_queue.arn}",
+      "Resource": [
+        "${aws_dynamodb_table.reliability_queue.arn}",
+        "${aws_dynamodb_table.vault.arn}"
+        ],
       "Effect": "Allow"
     }
   ]
