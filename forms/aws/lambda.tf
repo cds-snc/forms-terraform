@@ -195,6 +195,7 @@ resource "aws_lambda_function" "templates" {
   source_code_hash = data.archive_file.templates_main.output_base64sha256
   runtime          = "nodejs14.x"
   layers           = [aws_lambda_layer_version.templates_lib.arn]
+  timeout          = "10"
 
   environment {
     variables = {
