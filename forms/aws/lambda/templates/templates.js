@@ -1,12 +1,11 @@
-const { RDSDataClient, ExecuteStatementCommand } = require("@aws-sdk/client-rds-data")
+const { RDSDataClient, ExecuteStatementCommand } = require("@aws-sdk/client-rds-data");
 const REGION = process.env.REGION;
 
 exports.handler = async function (event) {
-  const dbClient = new RDSDataClient({region: REGION});
+  const dbClient = new RDSDataClient({ region: REGION });
   const method = event.method;
 
-  let SQL,
-      parameters;
+  let SQL, parameters;
 
   /*
     Supported Methods:
@@ -21,8 +20,8 @@ exports.handler = async function (event) {
       - (Required) formID to delete
   */
 
-  let formID      = (event.formID) ? event.formID : null,
-      json_config = (event.json_config) ? "'" + JSON.stringify(event.json_config) + "'" : null;
+  let formID = event.formID ? event.formID : null,
+    json_config = event.json_config ? "'" + JSON.stringify(event.json_config) + "'" : null;
 
   switch (method) {
     case "INSERT":
@@ -33,12 +32,12 @@ exports.handler = async function (event) {
             name: "json_config",
             typeHint: "JSON",
             value: {
-              stringValue: JSON.stringify(event.json_config)
-            }
-          }
+              stringValue: JSON.stringify(event.json_config),
+            },
+          },
         ];
       } else {
-        return {'error': "Missing required JSON"}
+        return { error: "Missing required JSON" };
       }
       break;
     case "GET":
@@ -49,9 +48,9 @@ exports.handler = async function (event) {
           {
             name: "formID",
             value: {
-              longValue: formID
-            }
-          }
+              longValue: formID,
+            },
+          },
         ];
       } else {
         SQL = "SELECT * FROM Templates";
@@ -65,19 +64,19 @@ exports.handler = async function (event) {
           {
             name: "formID",
             value: {
-              longValue: formID
-            }
+              longValue: formID,
+            },
           },
           {
             name: "json_config",
             typeHint: "JSON",
             value: {
-              stringValue: JSON.stringify(event.json_config)
-            }
-          }
+              stringValue: JSON.stringify(event.json_config),
+            },
+          },
         ];
       } else {
-        return {'error': "Missing required Parameter"}
+        return { error: "Missing required Parameter" };
       }
       break;
     case "DELETE":
@@ -88,37 +87,39 @@ exports.handler = async function (event) {
           {
             name: "formID",
             value: {
-              longValue: formID
-            }
-          }
+              longValue: formID,
+            },
+          },
         ];
       } else {
-        return {'error': "Missing required Parameter: FormID"}
+        return { error: "Missing required Parameter: FormID" };
       }
       break;
   }
 
   if (!SQL) {
-    return {'error': "Method not supported"}
+    return { error: "Method not supported" };
   }
-   
+
   const params = {
     database: process.env.DB_NAME,
     resourceArn: process.env.DB_ARN,
     secretArn: process.env.DB_SECRET,
     sql: SQL,
     includeResultMetadata: false, // set to true if we want metadata like column names
-    parameters: parameters
+    parameters: parameters,
   };
 
   const command = new ExecuteStatementCommand(params);
-  try {
-    const data = await dbClient.send(command);
-    console.log("success")
-    return {'data': data};
-  } catch (error) {
-    console.log("error:")
-    console.log(error);
-    return {'error': error};
-  }
+  return await dbClient
+    .send(command)
+    .then((data) => {
+      console.log("success");
+      return { data: data };
+    })
+    .catch((error) => {
+      console.log("error:");
+      console.log(error);
+      return { error: error };
+    });
 };
