@@ -129,12 +129,15 @@ exports.handler = async function (event) {
 
 const parseConfig = (records) => {
   if (records.length > 0) {
-    records.map((record) => {
+    const parsedRecords = records.map((record) => {
       return {
         formID: record[0].longValue,
         json_config: record[0].stringValue || undefined,
         isNull: record[0].isNull || undefined,
       };
     });
+    return { records: parsedRecords };
+  } else {
+    return records;
   }
 };
