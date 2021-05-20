@@ -129,11 +129,10 @@ exports.handler = async function (event) {
 };
 
 const parseConfig = (records) => {
-  console.log(records);
   const parsedRecords = records.map((record) => {
     return {
       formID: record[0].longValue,
-      json_config: record[1].stringValue || undefined,
+      json_config: JSON.parse(record[1].stringValue.trim(1, -1)) || undefined,
       isNull: record[2].isNull || undefined,
     };
   });
