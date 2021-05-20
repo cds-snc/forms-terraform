@@ -115,6 +115,9 @@ exports.handler = async function (event) {
     .send(command)
     .then((data) => {
       console.log("success");
+      if (data.records) {
+        return { data: parseConfig(data) };
+      }
       return { data: data };
     })
     .catch((error) => {
@@ -122,4 +125,16 @@ exports.handler = async function (event) {
       console.log(error);
       return { error: error };
     });
+};
+
+const parseConfig = (records) => {
+  if (records.length > 0) {
+    records.map((record) => {
+      return {
+        formID: record[0].longValue,
+        json_config: record[0].stringValue || undefined,
+        isNull: record[0].isNull || undefined,
+      };
+    });
+  }
 };
