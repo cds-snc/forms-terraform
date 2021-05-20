@@ -25,7 +25,7 @@ exports.handler = async function (event) {
       }
       /// process submission to vault or Notify
 
-      if (formSubmission.vault) {
+      if (formSubmission.submission.vault) {
         return await sendToVault(
           submissionID,
           sendReceipt,
