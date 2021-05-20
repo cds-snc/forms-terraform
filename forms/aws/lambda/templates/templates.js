@@ -116,7 +116,7 @@ exports.handler = async function (event) {
     .then((data) => {
       console.log("success");
 
-      if (data.records.length > 0) {
+      if (data.records && data.records.length > 0) {
         return { data: parseConfig(data.records) };
       }
       return { data: data };
