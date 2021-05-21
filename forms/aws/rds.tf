@@ -31,10 +31,9 @@ resource "aws_rds_cluster" "forms" {
   # KMS key is not explicitly defined but a default key is created
 
   scaling_configuration {
-    auto_pause               = true
-    max_capacity             = 8
-    min_capacity             = 2
-    seconds_until_auto_pause = 300
+    auto_pause   = false
+    max_capacity = 8
+    min_capacity = 2
   }
 
 
