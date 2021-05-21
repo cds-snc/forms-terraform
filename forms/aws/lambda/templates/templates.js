@@ -1,6 +1,8 @@
 const { RDSDataClient, ExecuteStatementCommand } = require("@aws-sdk/client-rds-data")
 const REGION = process.env.REGION;
 
+//TODO better error handling? return a non 200?
+
 exports.handler = async function (event) {
   const dbClient = new RDSDataClient({region: REGION});
   const method = event.method;
@@ -21,7 +23,7 @@ exports.handler = async function (event) {
       - (Required) formID to delete
   */
 
-  let formID      = (event.formID) ? event.formID : null,
+  let formID      = (event.formID) ? parseInt(event.formID) : null,
       json_config = (event.json_config) ? "'" + JSON.stringify(event.json_config) + "'" : null;
 
   switch (method) {
