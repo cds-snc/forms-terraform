@@ -23,18 +23,18 @@ exports.handler = async function (event) {
   */
 
   let formID = event.formID ? parseInt(event.formID) : null,
-    json_config = event.json_config ? "'" + JSON.stringify(event.json_config) + "'" : null;
+    formConfig = event.formConfig ? "'" + JSON.stringify(event.formConfig) + "'" : null;
 
   switch (method) {
     case "INSERT":
-      if (json_config) {
+      if (formConfig) {
         SQL = "INSERT INTO Templates (json_config) VALUES (:json_config)";
         parameters = [
           {
             name: "json_config",
             typeHint: "JSON",
             value: {
-              stringValue: JSON.stringify(event.json_config),
+              stringValue: JSON.stringify(event.formConfig),
             },
           },
         ];
@@ -60,7 +60,7 @@ exports.handler = async function (event) {
       break;
     case "UPDATE":
       // needs the ID and the new json blob
-      if (formID && json_config) {
+      if (formID && formConfig) {
         SQL = "UPDATE Templates SET json_config = :json_config WHERE id = :formID";
         parameters = [
           {
@@ -73,7 +73,7 @@ exports.handler = async function (event) {
             name: "json_config",
             typeHint: "JSON",
             value: {
-              stringValue: JSON.stringify(event.json_config),
+              stringValue: JSON.stringify(event.formConfig),
             },
           },
         ];
