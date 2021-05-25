@@ -302,6 +302,14 @@ resource "aws_lambda_permission" "templates" {
   principal     = aws_iam_role.forms.arn
 }
 
+# Allow Lambda to call templates function
+resource "aws_labmda_permission" "internal_templates" {
+  statement_id  = "AllowInvokeLambda"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.templates.function_name
+  principal     = aws_iam_role.lambda.arn
+}
+
 ## Allow Lambda to create Logs in Cloudwatch
 
 resource "aws_iam_policy" "lambda_logging" {
