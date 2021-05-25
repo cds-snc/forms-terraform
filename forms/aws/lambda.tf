@@ -303,7 +303,7 @@ resource "aws_lambda_permission" "templates" {
 }
 
 # Allow Lambda to call templates function
-resource "aws_labmda_permission" "internal_templates" {
+resource "aws_lambda_permission" "internal_templates" {
   statement_id  = "AllowInvokeLambda"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.templates.function_name
