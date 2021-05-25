@@ -93,6 +93,6 @@ const getFormTemplate = (formID) => {
     })
     .catch((err) => {
       logMessage.error(err);
-      throw new Error("Could not process request with Lambda Submission function");
+      throw new Error("Could not process request with Lambda Templates function");
     });
 };
