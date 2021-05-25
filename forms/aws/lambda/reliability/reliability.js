@@ -30,7 +30,7 @@ exports.handler = async function (event) {
           submissionID,
           sendReceipt,
           formSubmission.responses,
-          formSubmission.form.id,
+          formSubmission.formID,
           message
         );
       } else {
