@@ -307,7 +307,7 @@ resource "aws_lambda_permission" "internal_templates" {
   statement_id  = "AllowInvokeLambda"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.templates.function_name
-  principal     = aws_iam_role.lambda.arn
+  principal     = aws_iam_role.iam_for_lambda.arn
 }
 
 ## Allow Lambda to create Logs in Cloudwatch
