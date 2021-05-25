@@ -22,8 +22,8 @@ exports.handler = async function (event) {
       - (Required) formID to delete
   */
 
-  let formID      = (event.formID) ? parseInt(event.formID) : null,
-      json_config = (event.json_config) ? "'" + JSON.stringify(event.json_config) + "'" : null;
+  let formID = event.formID ? parseInt(event.formID) : null,
+    json_config = event.json_config ? "'" + JSON.stringify(event.json_config) + "'" : null;
 
   switch (method) {
     case "INSERT":
@@ -134,8 +134,8 @@ const parseConfig = (records) => {
   const parsedRecords = records.map((record) => {
     return {
       formID: record[0].longValue,
-      json_config: JSON.parse(record[1].stringValue.trim(1, -1)) || undefined,
-      isNull: record[2].isNull || undefined,
+      formConfig: JSON.parse(record[1].stringValue.trim(1, -1)) || undefined,
+      organization: record[2].isNull || undefined,
     };
   });
   return { records: parsedRecords };
