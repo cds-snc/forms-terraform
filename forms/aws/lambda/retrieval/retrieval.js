@@ -1,28 +1,21 @@
-const {
-  DynamoDBClient,
-  GetItemCommand,
-  DeleteItemCommand,
-  ScanCommand,
-} = require("@aws-sdk/client-dynamodb");
+const { DynamoDBClient, DeleteItemCommand, ScanCommand } = require("@aws-sdk/client-dynamodb");
 
 const REGION = process.env.REGION;
 const db = new DynamoDBClient({ region: REGION });
 
 exports.handler = async function (event) {
   const action = event.action;
-  const formID = event.formID;
+  const formID = event.formID || null;
   const responseID = event.responseID || null;
 
   switch (action) {
     case "GET":
       return await getResponses(formID);
     case "DELETE":
-      break;
+      return await removeResponse(responseID);
     default:
       throw new Error("Action not supported");
   }
-
-  return { statusCode: 202 };
 };
 
 async function getResponses(formID) {
@@ -34,4 +27,15 @@ async function getResponses(formID) {
     ProjectionExpression: "SubmissionID,FormID,FormSubmission",
   };
   return await db.send(new ScanCommand(DBParams));
+}
+
+async function removeResponse(submissionID) {
+  const DBParams = {
+    TableName: "Vault",
+    Key: {
+      SubmissionID: { S: submissionID },
+    },
+  };
+  //remove data fron DynamoDB
+  return await db.send(new DeleteItemCommand(DBParams));
 }
