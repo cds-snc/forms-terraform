@@ -56,7 +56,7 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
   }
 };
 
-const getFormTemplate = (formID) => {
+const getFormTemplate = async (formID) => {
   const lambdaClient = new LambdaClient({ region: REGION });
   const encoder = new TextEncoder();
 
