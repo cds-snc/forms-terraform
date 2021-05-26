@@ -13,9 +13,7 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
   formSubmission.form = getFormTemplate(formSubmission.formID);
   const emailBody = convertMessage(formSubmission);
   const messageSubject = `${
-    formSubmission.form.emailSubjectEn
-      ? formSubmission.form.emailSubjectEn
-      : formSubmission.form.titleEn
+    formSubmission.emailSubjectEn ? formSubmission.emailSubjectEn : formSubmission.titleEn
   } Submission`;
   // Need to get this from the submission now.. not the app.
   const submissionFormat = formSubmission.submission;
@@ -85,7 +83,7 @@ const getFormTemplate = async (formID) => {
         if (records?.length === 1 && records[0].formConfig.form) {
           return {
             formID,
-            ...records[0].formConfig,
+            ...records[0].formConfig.form,
           };
         }
         return null;
