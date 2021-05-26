@@ -73,10 +73,10 @@ const getFormTemplate = async (formID) => {
       const decoder = new TextDecoder();
       const payload = decoder.decode(response.Payload);
       if (response.FunctionError) {
-        logMessage.info("Lambda Template Client not successful");
+        cosole.error("Lambda Template Client not successful");
         return null;
       } else {
-        logMessage.info("Lambda Template Client successfully triggered");
+        console.info("Lambda Template Client successfully triggered");
 
         const response = JSON.parse(payload);
         const { records } = response.data;
