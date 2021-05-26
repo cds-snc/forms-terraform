@@ -10,7 +10,7 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
   const templateID = "92096ac6-1cc5-40ae-9052-fffdb8439a90";
   const notify = new NotifyClient("https://api.notification.canada.ca", process.env.NOTIFY_API_KEY);
   // Add form config back to submission to be processed
-  formSubmission.form = getFormTemplate(formSubmission.formID);
+  formSubmission.form = await getFormTemplate(formSubmission.formID);
   const emailBody = convertMessage(formSubmission);
   const messageSubject = `${
     formSubmission.emailSubjectEn ? formSubmission.emailSubjectEn : formSubmission.titleEn
