@@ -12,9 +12,9 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
   // Add form config back to submission to be processed
   formSubmission.form = await getFormTemplate(formSubmission.formID);
   const emailBody = convertMessage(formSubmission);
-  const messageSubject = `${
-    formSubmission.emailSubjectEn ? formSubmission.emailSubjectEn : formSubmission.titleEn
-  } Submission`;
+  const messageSubject = formSubmission.form.emailSubjectEn
+    ? formSubmission.form.emailSubjectEn
+    : formSubmission.form.titleEn;
   // Need to get this from the submission now.. not the app.
   const submissionFormat = formSubmission.submission;
   // Send to Notify
