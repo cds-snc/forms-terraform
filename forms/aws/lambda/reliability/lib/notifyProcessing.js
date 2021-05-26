@@ -90,7 +90,7 @@ const getFormTemplate = async (formID) => {
       }
     })
     .catch((err) => {
-      logMessage.error(err);
+      console.error(err);
       throw new Error("Could not process request with Lambda Templates function");
     });
 };
