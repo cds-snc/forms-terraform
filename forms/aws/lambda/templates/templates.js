@@ -28,7 +28,7 @@ exports.handler = async function (event) {
   switch (method) {
     case "INSERT":
       if (formConfig) {
-        SQL = "INSERT INTO Templates (json_config) VALUES (:json_config)";
+        SQL = "INSERT INTO Templates (json_config) VALUES (:json_config) RETURNING id";
         parameters = [
           {
             name: "json_config",
@@ -132,10 +132,17 @@ exports.handler = async function (event) {
 
 const parseConfig = (records) => {
   const parsedRecords = records.map((record) => {
+    const formID = record[0].longValue;
+    let formConfig,
+      organization;
+    if (record.length > 1) {
+      formConfig = JSON.parse(record[1].stringValue.trim(1, -1)) || undefined;
+      organization = record[2].isNull || undefined
+    }
     return {
-      formID: record[0].longValue,
-      formConfig: JSON.parse(record[1].stringValue.trim(1, -1)) || undefined,
-      organization: record[2].isNull || undefined,
+      formID: formID,
+      formConfig: formConfig,
+      organization: organization,
     };
   });
   return { records: parsedRecords };
