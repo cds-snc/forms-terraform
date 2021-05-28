@@ -25,6 +25,9 @@ exports.handler = async function (event) {
   let formID = event.formID ? parseInt(event.formID) : null,
     formConfig = event.formConfig ? "'" + JSON.stringify(event.formConfig) + "'" : null;
 
+  // if formID is NaN, assign it to an id we know will return no records
+  if (isNaN(formID)) formID = 1;
+
   switch (method) {
     case "INSERT":
       if (formConfig) {
