@@ -302,6 +302,14 @@ resource "aws_lambda_permission" "templates" {
   principal     = aws_iam_role.forms.arn
 }
 
+resource "aws_lambda_permission" "retrieval" {
+  statement_id  = "AllowInvokeECS"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.retrieval.function_name
+  principal     = aws_iam_role.forms.arn
+}
+
+
 # Allow Lambda to call templates function
 resource "aws_lambda_permission" "internal_templates" {
   statement_id  = "AllowInvokeLambda"
