@@ -61,7 +61,7 @@ async function removeAllResponses(formID) {
   // BatchWriteItem works in batches of 25 max
   while (responsesLeft) {
     let responses = await getSubmissionIDs(formID);
-    if (responses.Items) {
+    if (responses.Items.length > 0) {
       // do the deletes
       var DeleteParams = {
         RequestItems: {
@@ -80,10 +80,11 @@ async function removeAllResponses(formID) {
       }
       // send the request
       // TODO, collect any that fail and retry
-      responseData.push(await db.send(new BatchWriteItemCommand(DeleteParams)));
+      let DBResponse = await db.send(new BatchWriteItemCommand(DeleteParams));
+      responseData.push(DBResponse);
     } else {
       responsesLeft = false;
-      return (responseData) ? responseData : responses;
     }
   }
+  return responseData;
 }
