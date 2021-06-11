@@ -79,6 +79,7 @@ async function removeAllResponses(formID) {
         DeleteParams.RequestItems.Vault.push({
           DeleteRequest: {
             Key: {
+              FormID: { S: responses.Items[i].FormID.S },
               SubmissionID: { S: responses.Items[i].SubmissionID.S },
             },
           },
