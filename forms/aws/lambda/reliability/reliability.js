@@ -9,7 +9,7 @@ exports.handler = async function (event) {
   return await getSubmission(message)
     .then((messageData) => ({
       submissionID: messageData.Item.SubmissionID.S || null,
-      formID: messageData.Item.FormID || null,
+      formID: messageData.Item.FormID.S || null,
       sendReceipt: messageData.Item.SendReceipt.S || null,
       formSubmission: JSON.parse(messageData.Item.FormData.S) || null,
     }))
