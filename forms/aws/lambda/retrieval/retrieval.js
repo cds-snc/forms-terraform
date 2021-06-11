@@ -43,7 +43,7 @@ async function getSubmissionIDs(formID) {
     Limit: 25,
     KeyConditionExpression: "FormID = :form",
     ExpressionAttributeValues: { ":form": { S: formID } },
-    ProjectionExpression: "SubmissionID",
+    ProjectionExpression: "SubmissionID, FormID",
   };
   return await db.send(new QueryCommand(DBParams));
 }
