@@ -119,11 +119,13 @@ resource "aws_cloudwatch_metric_alarm" "forms_dead_letter_queue_warn" {
   alarm_name          = "DeadLetterQueueWarn"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "2"
+  datapoints_to_alarm = "1"
   metric_name         = "ApproximateNumberOfMessagesDelayed"
-  namespace           = "AWS/ECS"
+  namespace           = "AWS/SQS"
   period              = "300"
   statistic           = "Sum"
   threshold           = "1"
+  treat_missing_data  = "notBreaching"
   alarm_description   = "End User Forms Warning - A message has been sent to the Dead Letter Queue."
 
   alarm_actions = [aws_sns_topic.alert_warning.arn]
