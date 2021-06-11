@@ -6,12 +6,14 @@ exports.handler = async function (event) {
   let submissionIDPlaceholder = "";
 
   const message = JSON.parse(event.Records[0].body);
-  return await getSubmission(message)
+  await getSubmission(message)
     .then((messageData) => ({
-      submissionID: messageData.Item.SubmissionID.S || null,
-      formID: messageData.Item.FormID.S || null,
-      sendReceipt: messageData.Item.SendReceipt.S || null,
-      formSubmission: JSON.parse(messageData.Item.FormData.S) || null,
+      submissionID: messageData.Item?.SubmissionID.S ?? null,
+      formID: messageData.Item?.FormID.S ?? null,
+      sendReceipt: messageData.Item?.SendReceipt.S ?? null,
+      formSubmission: messageData.Item?.FormData.S
+        ? JSON.parse(messageData.Item?.FormData.S)
+        : null,
     }))
     .then(async ({ submissionID, sendReceipt, formSubmission, formID }) => {
       submissionIDPlaceholder = submissionID;
@@ -21,8 +23,7 @@ exports.handler = async function (event) {
         console.warn(
           `No corresponding submission for Submission ID: ${submissionID} in the reliability database`
         );
-        console.log("Data no longer exists in the DB");
-        return { statusCode: 202 };
+        throw new Error("Data no longer exists in the DB");
       }
       /// process submission to vault or Notify
 
@@ -41,6 +42,6 @@ exports.handler = async function (event) {
     .catch((err) => {
       console.error(err);
       console.error(`Error in processing, submission ${submissionIDPlaceholder} not processed.`);
-      return { statusCode: 500, body: "Could not process / Function Error" };
+      throw new Error("Could not process / Function Error");
     });
 };
