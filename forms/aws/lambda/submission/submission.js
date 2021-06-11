@@ -61,6 +61,7 @@ const saveData = async (submissionID, formData) => {
     TableName: "ReliabilityQueue",
     Item: {
       SubmissionID: { S: submissionID },
+      FormID: { S: formSubmission.formID },
       SendReceipt: { S: "unknown" },
       FormData: { S: formSubmission },
     },

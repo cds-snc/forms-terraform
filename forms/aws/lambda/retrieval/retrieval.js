@@ -1,4 +1,9 @@
-const { DynamoDBClient, DeleteItemCommand, ScanCommand, BatchWriteItemCommand } = require("@aws-sdk/client-dynamodb");
+const {
+  DynamoDBClient,
+  DeleteItemCommand,
+  QueryCommand,
+  BatchWriteItemCommand,
+} = require("@aws-sdk/client-dynamodb");
 
 const REGION = process.env.REGION;
 const db = new DynamoDBClient({ region: REGION });
@@ -12,10 +17,10 @@ exports.handler = async function (event) {
     case "GET":
       return await getResponses(formID);
     case "DELETE":
-      if (formID) {
+      if (formID && !responseID) {
         return await removeAllResponses(formID);
       }
-      return await removeResponse(responseID);
+      return await removeResponse(formID, responseID);
     default:
       throw new Error("Action not supported");
   }
@@ -25,28 +30,29 @@ async function getResponses(formID) {
   const DBParams = {
     TableName: "Vault",
     Limit: 10,
-    FilterExpression: "FormID = :form",
+    KeyConditionExpression: "FormID = :form",
     ExpressionAttributeValues: { ":form": { S: formID } },
-    ProjectionExpression: "SubmissionID,FormID,FormSubmission",
+    ProjectionExpression: "FormID,SubmissionID,FormSubmission",
   };
-  return await db.send(new ScanCommand(DBParams));
+  return await db.send(new QueryCommand(DBParams));
 }
 async function getSubmissionIDs(formID) {
   // get the responses in batches of 25
   const DBParams = {
     TableName: "Vault",
     Limit: 25,
-    FilterExpression: "FormID = :form",
+    KeyConditionExpression: "FormID = :form",
     ExpressionAttributeValues: { ":form": { S: formID } },
     ProjectionExpression: "SubmissionID",
   };
-  return await db.send(new ScanCommand(DBParams));
+  return await db.send(new QueryCommand(DBParams));
 }
 
-async function removeResponse(submissionID) {
+async function removeResponse(formID, submissionID) {
   const DBParams = {
     TableName: "Vault",
     Key: {
+      FormID: { S: formID },
       SubmissionID: { S: submissionID },
     },
   };
@@ -65,17 +71,17 @@ async function removeAllResponses(formID) {
       // do the deletes
       var DeleteParams = {
         RequestItems: {
-          Vault: []
-        }
+          Vault: [],
+        },
       };
       // populate the requestItems array with response keys
-      for (let i=0; i < responses.Items.length; i++) {
+      for (let i = 0; i < responses.Items.length; i++) {
         DeleteParams.RequestItems.Vault.push({
           DeleteRequest: {
             Key: {
-              SubmissionID: {S: responses.Items[i].SubmissionID.S}
-            }
-          }
+              SubmissionID: { S: responses.Items[i].SubmissionID.S },
+            },
+          },
         });
       }
       // send the request

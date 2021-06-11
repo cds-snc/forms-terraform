@@ -14,7 +14,7 @@ async function getSubmission(message) {
     Key: {
       SubmissionID: { S: message.submissionID },
     },
-    ProjectExpression: "SubmissionID,SendReceipt,FormData",
+    ProjectExpression: "SubmissionID,FormID,SendReceipt,FormData",
   };
   //save data to DynamoDB
   return await db.send(new GetItemCommand(DBParams));

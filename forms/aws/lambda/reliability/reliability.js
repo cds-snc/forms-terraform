@@ -9,6 +9,7 @@ exports.handler = async function (event) {
   return await getSubmission(message)
     .then((messageData) => ({
       submissionID: messageData.Item.SubmissionID.S || null,
+      formID: messageData.Item.FormID || null,
       sendReceipt: messageData.Item.SendReceipt.S || null,
       formSubmission: JSON.parse(messageData.Item.FormData.S) || null,
     }))
@@ -30,7 +31,7 @@ exports.handler = async function (event) {
           submissionID,
           sendReceipt,
           formSubmission.responses,
-          formSubmission.formID,
+          formID,
           message
         );
       } else {
