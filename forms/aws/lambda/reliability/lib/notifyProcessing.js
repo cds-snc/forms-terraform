@@ -30,15 +30,14 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
         reference: submissionID,
       })
       .catch((err) => {
-        console.error(`Sending to Notify error: ${JSON.stringify(err)}`);
-        return { statusCode: 500, body: "Could not process / Function Error" };
+        throw new Error(`Sending to Notify error: ${JSON.stringify(err)}`);
       })
       .then(async () => {
         console.log(
           `Sucessfully processed SQS message ${sendReceipt} for Submission ${submissionID}`
         );
         // Remove data
-        await removeSubmission(message).catch((err) => {
+        return await removeSubmission(message).catch((err) => {
           // Not throwing an error back to SQS because the message was
           // sucessfully processed by Notify.  Only cleanup required.
           console.error(
@@ -47,8 +46,7 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
             }`
           );
         });
-      })
-      .then(() => ({ statusCode: 202, body: "Received by Notify" }));
+      });
   } else {
     throw Error("Form can not be submitted due to missing Submission Parameters");
   }

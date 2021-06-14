@@ -32,6 +32,7 @@ exports.handler = async function (event) {
       });
     //----------
   } catch (err) {
+    console.error(err);
     return { status: false };
   }
 };

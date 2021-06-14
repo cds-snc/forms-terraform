@@ -9,10 +9,10 @@ module.exports = async (submissionID, sendReceipt, formResponse, formID, message
         `Sucessfully processed SQS message ${sendReceipt} for Submission ${submissionID}`
       );
       // Remove data
-      await removeSubmission(message).catch((err) => {
+      return await removeSubmission(message).catch((err) => {
         // Not throwing an error back to SQS because the message was
         // sucessfully processed by the vault.  Only cleanup required.
-        console.error(
+        throw new Error(
           `Could not delete submission ${submissionID} from DB.  Error: ${
             typeof err === "object" ? JSON.stringify(err) : err
           }`
@@ -21,10 +21,5 @@ module.exports = async (submissionID, sendReceipt, formResponse, formID, message
     })
     .then(() => {
       console.log("Saved to the Vault");
-      return { statusCode: 202 };
-    })
-    .catch((err) => {
-      console.error(err);
-      return { statusCode: 500, body: "Could not process / Function Error" };
     });
 };

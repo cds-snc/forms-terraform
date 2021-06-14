@@ -6,9 +6,9 @@ exports.handler = async function (event) {
   let submissionIDPlaceholder = "";
 
   const message = JSON.parse(event.Records[0].body);
-  await getSubmission(message)
+  return await getSubmission(message)
     .then((messageData) => ({
-      submissionID: messageData.Item?.SubmissionID.S ?? null,
+      submissionID: messageData.Item?.SubmissionID.S ?? message.submissionID,
       formID: messageData.Item?.FormID.S ?? null,
       sendReceipt: messageData.Item?.SendReceipt.S ?? null,
       formSubmission: messageData.Item?.FormData.S
@@ -20,10 +20,11 @@ exports.handler = async function (event) {
       // Check if form data exists or was already processed.
       if (formSubmission === null || typeof formSubmission === "undefined") {
         // Ack and remove message from queue if it doesn't exist in the DB
+        // Do not throw an error so it does not retry again
         console.warn(
           `No corresponding submission for Submission ID: ${submissionID} in the reliability database`
         );
-        throw new Error("Data no longer exists in the DB");
+        console.warn("Data no longer exists in the DB");
       }
       /// process submission to vault or Notify
 
