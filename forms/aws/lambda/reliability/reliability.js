@@ -5,6 +5,7 @@ const { getSubmission } = require("dataLayer");
 exports.handler = async function (event) {
   let submissionIDPlaceholder = "";
 
+
   const message = JSON.parse(event.Records[0].body);
   return await getSubmission(message)
     .then((messageData) => ({
