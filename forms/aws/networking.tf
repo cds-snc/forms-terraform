@@ -321,13 +321,23 @@ resource "aws_security_group_rule" "forms_egress_privatelink" {
 }
 
 resource "aws_security_group_rule" "forms_egress_database" {
-  description              = "Security group rule for Forms DB egress through privatelink"
+  description              = "Security group rule for Forms DB egress to Database"
   type                     = "egress"
   from_port                = 5432
   to_port                  = 5432
   protocol                 = "tcp"
   security_group_id        = aws_security_group.forms.id
   source_security_group_id = aws_security_group.forms_database.id
+}
+
+resource "aws_security_group_rule" "forms_egress_redis" {
+  description              = "Security group rule for Forms DB egress to Redis"
+  type                     = "egress"
+  from_port                = 6379
+  to_port                  = 6379
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.forms.id
+  source_security_group_id = aws_security_group.forms_redis.id
 }
 
 resource "aws_security_group" "forms_load_balancer" {
@@ -411,6 +421,26 @@ resource "aws_security_group" "forms_database" {
     protocol  = "tcp"
     from_port = 5432
     to_port   = 5432
+    security_groups = [
+      aws_security_group.forms.id,
+    ]
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+  }
+}
+
+# Allow traffic from the app
+resource "aws_security_group" "forms_redis" {
+  name        = "forms-redis"
+  description = "Ingress - Forms Redis"
+  vpc_id      = aws_vpc.forms.id
+
+  ingress {
+    protocol  = "tcp"
+    from_port = 6379
+    to_port   = 6379
     security_groups = [
       aws_security_group.forms.id,
     ]
