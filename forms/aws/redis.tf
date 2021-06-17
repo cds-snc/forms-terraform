@@ -1,4 +1,8 @@
 resource "aws_elasticache_replication_group" "redis" {
+  # Ignore that there is no encryption in transit or at rest.
+  # Only non sensistive data is stored in feature flags
+  #tfsec:ignore:AWS035
+  #tfsec:ignore:AWS036
   automatic_failover_enabled    = true
   replication_group_id          = "gcforms-redis-rep-group"
   replication_group_description = "Redis cluster for GCForms"
