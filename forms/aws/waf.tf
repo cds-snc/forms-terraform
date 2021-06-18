@@ -52,11 +52,11 @@ resource "aws_wafv2_web_acl" "forms_acl" {
           name = "GenericRFI_BODY"
         }
 
-        
+
         excluded_rule {
           name = "SizeRestrictions_BODY"
         }
-        
+
       }
 
     }
