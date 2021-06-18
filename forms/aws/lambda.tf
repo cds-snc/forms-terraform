@@ -66,6 +66,16 @@ data "archive_file" "reliability_lib" {
     content  = file("./lambda/reliability/lib/dataLayer.js")
     filename = "nodejs/node_modules/dataLayer/index.js"
   }
+
+  source {
+    content  = file("./lambda/reliability/lib/notifyProcessing.js")
+    filename = "nodejs/node_modules/notifyProcessing/index.js"
+  }
+
+  source {
+    content  = file("./lambda/reliability/lib/vaultProcessing.js")
+    filename = "nodejs/node_modules/vaultProcessing/index.js"
+  }
 }
 
 data "archive_file" "reliability_nodejs" {
@@ -159,6 +169,99 @@ resource "aws_lambda_layer_version" "submission_lib" {
   compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
 }
 
+###
+# AWS Lambda - Template Storage processing
+###
+
+data "archive_file" "templates_main" {
+  type        = "zip"
+  source_file = "lambda/templates/templates.js"
+  output_path = "/tmp/templates_main.zip"
+}
+
+data "archive_file" "templates_lib" {
+  type        = "zip"
+  source_dir  = "lambda/templates/"
+  excludes    = ["templates.js"]
+  output_path = "/tmp/templates_lib.zip"
+}
+
+resource "aws_lambda_function" "templates" {
+  filename      = "/tmp/templates_main.zip"
+  function_name = "Templates"
+  role          = aws_iam_role.iam_for_lambda.arn
+  handler       = "templates.handler"
+
+  source_code_hash = data.archive_file.templates_main.output_base64sha256
+  runtime          = "nodejs14.x"
+  layers           = [aws_lambda_layer_version.templates_lib.arn]
+  timeout          = "10"
+
+  environment {
+    variables = {
+      REGION    = var.region,
+      DB_ARN    = aws_rds_cluster.forms.arn,
+      DB_SECRET = aws_secretsmanager_secret_version.database_secret.arn,
+      DB_NAME   = var.rds_db_name
+    }
+  }
+}
+
+resource "aws_lambda_layer_version" "templates_lib" {
+  filename            = "/tmp/templates_lib.zip"
+  layer_name          = "templates_node_packages"
+  source_code_hash    = data.archive_file.templates_lib.output_base64sha256
+  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+}
+
+###
+# Vault Retrieval 
+###
+###
+# AWS Lambda - Template Storage processing
+###
+
+data "archive_file" "retrieval_main" {
+  type        = "zip"
+  source_file = "lambda/retrieval/retrieval.js"
+  output_path = "/tmp/retrieval_main.zip"
+}
+
+data "archive_file" "retrieval_lib" {
+  type        = "zip"
+  source_dir  = "lambda/retrieval/"
+  excludes    = ["retrieval.js"]
+  output_path = "/tmp/retrieval_lib.zip"
+}
+
+resource "aws_lambda_function" "retrieval" {
+  filename      = "/tmp/retrieval_main.zip"
+  function_name = "Retrieval"
+  role          = aws_iam_role.iam_for_lambda.arn
+  handler       = "retrieval.handler"
+
+  source_code_hash = data.archive_file.retrieval_main.output_base64sha256
+  runtime          = "nodejs14.x"
+  layers           = [aws_lambda_layer_version.retrieval_lib.arn]
+
+  environment {
+    variables = {
+      REGION    = var.region,
+      DB_ARN    = aws_rds_cluster.forms.arn,
+      DB_SECRET = aws_secretsmanager_secret_version.database_secret.arn,
+      DB_NAME   = var.rds_db_name
+    }
+  }
+}
+
+resource "aws_lambda_layer_version" "retrieval_lib" {
+  filename            = "/tmp/retrieval_lib.zip"
+  layer_name          = "retrieval_node_packages"
+  source_code_hash    = data.archive_file.retrieval_lib.output_base64sha256
+  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+}
+
+
 ## Allow SNS to call Lambda function
 
 resource "aws_lambda_permission" "notify_slack_warning" {
@@ -185,13 +288,36 @@ resource "aws_lambda_permission" "notify_slack_ok" {
   source_arn    = aws_sns_topic.alert_ok.arn
 }
 
-# Allow ECS containers to callLambda
+# Allow ECS containers to call Lambdas
 resource "aws_lambda_permission" "submission" {
   statement_id  = "AllowInvokeECS"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.submission.function_name
   principal     = aws_iam_role.forms.arn
 }
+resource "aws_lambda_permission" "templates" {
+  statement_id  = "AllowInvokeECS"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.templates.function_name
+  principal     = aws_iam_role.forms.arn
+}
+
+resource "aws_lambda_permission" "retrieval" {
+  statement_id  = "AllowInvokeECS"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.retrieval.function_name
+  principal     = aws_iam_role.forms.arn
+}
+
+
+# Allow Lambda to call templates function
+resource "aws_lambda_permission" "internal_templates" {
+  statement_id  = "AllowInvokeLambda"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.templates.function_name
+  principal     = aws_iam_role.iam_for_lambda.arn
+}
+
 ## Allow Lambda to create Logs in Cloudwatch
 
 resource "aws_iam_policy" "lambda_logging" {
@@ -215,6 +341,46 @@ resource "aws_iam_policy" "lambda_logging" {
   ]
 }
 EOF
+}
+
+resource "aws_iam_policy" "lambda_rds" {
+  name        = "lambda_rds"
+  path        = "/"
+  description = "IAM policy for allowing acces to DB"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "RDSDataServiceAccess",
+      "Effect": "Allow",
+      "Action": [
+          "dbqms:CreateFavoriteQuery",
+          "dbqms:DescribeFavoriteQueries",
+          "dbqms:UpdateFavoriteQuery",
+          "dbqms:DeleteFavoriteQueries",
+          "dbqms:GetQueryString",
+          "dbqms:CreateQueryHistory",
+          "dbqms:DescribeQueryHistory",
+          "dbqms:UpdateQueryHistory",
+          "dbqms:DeleteQueryHistory",
+          "rds-data:ExecuteSql",
+          "rds-data:ExecuteStatement",
+          "rds-data:BatchExecuteStatement",
+          "rds-data:BeginTransaction",
+          "rds-data:CommitTransaction",
+          "rds-data:RollbackTransaction",
+          "secretsmanager:CreateSecret",
+          "secretsmanager:ListSecrets",
+          "secretsmanager:GetRandomPassword",
+          "tag:GetResources"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+  EOF
 }
 
 ## Allow Lambda to create and retrieve SQS messages
@@ -257,10 +423,14 @@ resource "aws_iam_policy" "lambda_dynamodb" {
         "dynamodb:PutItem",
         "dynamodb:UpdateItem",
         "dynamodb:DeleteItem",
+        "dynamodb:BatchWriteItem",
         "dynamodb:Scan",
         "dynamodb:Query"
       ],
-      "Resource": "${aws_dynamodb_table.reliability_queue.arn}",
+      "Resource": [
+        "${aws_dynamodb_table.reliability_queue.arn}",
+        "${aws_dynamodb_table.vault.arn}"
+        ],
       "Effect": "Allow"
     }
   ]
@@ -305,7 +475,10 @@ resource "aws_iam_policy" "lambda_secrets" {
       "Action": [
         "secretsmanager:GetSecretValue"
       ],
-      "Resource": "${aws_secretsmanager_secret_version.notify_api_key.arn}",
+      "Resource": [
+        "${aws_secretsmanager_secret_version.notify_api_key.arn}",
+        "${aws_secretsmanager_secret_version.database_secret.arn}"
+      ],
       "Effect": "Allow"
     }
   ]
@@ -337,4 +510,14 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb" {
 resource "aws_iam_role_policy_attachment" "lambda_kms" {
   role       = aws_iam_role.iam_for_lambda.name
   policy_arn = aws_iam_policy.lambda_kms.arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_rds" {
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = aws_iam_policy.lambda_rds.arn
+}
+
+resource "aws_iam_role_policy_attachment" "AWSLambdaVPCAccessExecutionRole" {
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }

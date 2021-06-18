@@ -36,7 +36,13 @@ data "template_file" "form_viewer_task" {
     metric_provider       = var.metric_provider
     tracer_provider       = var.tracer_provider
     notify_api_key        = aws_secretsmanager_secret_version.notify_api_key.arn
+    google_client_id      = aws_secretsmanager_secret_version.google_client_id.arn
+    google_client_secret  = aws_secretsmanager_secret_version.google_client_secret.arn
+    database_url          = aws_secretsmanager_secret_version.database_url.arn
+    redis_url             = aws_elasticache_replication_group.redis.primary_endpoint_address
+    nextauth_url          = "https://${var.route53_zone_name}"
     submission_api        = aws_lambda_function.submission.arn
+    templates_api         = aws_lambda_function.templates.arn
   }
 }
 
@@ -194,6 +200,9 @@ data "aws_iam_policy_document" "forms_secrets_manager" {
 
     resources = [
       aws_secretsmanager_secret_version.notify_api_key.arn,
+      aws_secretsmanager_secret_version.google_client_id.arn,
+      aws_secretsmanager_secret_version.google_client_secret.arn,
+      aws_secretsmanager_secret_version.database_url.arn
     ]
   }
 }

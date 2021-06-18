@@ -121,6 +121,16 @@ resource "aws_vpc_endpoint" "monitoring" {
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 }
+resource "aws_vpc_endpoint" "rds" {
+  vpc_id              = aws_vpc.forms.id
+  vpc_endpoint_type   = "Interface"
+  service_name        = "com.amazonaws.${var.region}.rds-data"
+  private_dns_enabled = true
+  security_group_ids = [
+    aws_security_group.privatelink.id,
+  ]
+  subnet_ids = aws_subnet.forms_private.*.id
+}
 
 ###
 # AWS Internet Gateway
@@ -310,6 +320,26 @@ resource "aws_security_group_rule" "forms_egress_privatelink" {
   source_security_group_id = aws_security_group.privatelink.id
 }
 
+resource "aws_security_group_rule" "forms_egress_database" {
+  description              = "Security group rule for Forms DB egress to Database"
+  type                     = "egress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.forms.id
+  source_security_group_id = aws_security_group.forms_database.id
+}
+
+resource "aws_security_group_rule" "forms_egress_redis" {
+  description              = "Security group rule for Forms DB egress to Redis"
+  type                     = "egress"
+  from_port                = 6379
+  to_port                  = 6379
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.forms.id
+  source_security_group_id = aws_security_group.forms_redis.id
+}
+
 resource "aws_security_group" "forms_load_balancer" {
   name        = "forms-load-balancer"
   description = "Ingress - forms Load Balancer"
@@ -378,6 +408,47 @@ resource "aws_security_group_rule" "privatelink_forms_ingress" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.privatelink.id
   source_security_group_id = aws_security_group.forms.id
+}
+
+
+# Allow traffic from the app and from the lambdas
+resource "aws_security_group" "forms_database" {
+  name        = "forms-database"
+  description = "Ingress - Forms Database"
+  vpc_id      = aws_vpc.forms.id
+
+  ingress {
+    protocol  = "tcp"
+    from_port = 5432
+    to_port   = 5432
+    security_groups = [
+      aws_security_group.forms.id,
+    ]
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+  }
+}
+
+# Allow traffic from the app
+resource "aws_security_group" "forms_redis" {
+  name        = "forms-redis"
+  description = "Ingress - Forms Redis"
+  vpc_id      = aws_vpc.forms.id
+
+  ingress {
+    protocol  = "tcp"
+    from_port = 6379
+    to_port   = 6379
+    security_groups = [
+      aws_security_group.forms.id,
+    ]
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+  }
 }
 
 ###

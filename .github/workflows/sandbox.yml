@@ -56,7 +56,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Terraform security scan
-        uses: triat/terraform-security-scan@v2.0.2
+        uses: triat/terraform-security-scan@v2.2.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -87,6 +87,9 @@ jobs:
 
       - name: Install Node packages for Templates
         run: yarn --cwd "./lambda/templates/nodejs" install
+
+      - name: Install Node packages for Retrieval
+        run: yarn --cwd "./lambda/retrieval/nodejs" install
 
       - name: Terraform Plan
         env:

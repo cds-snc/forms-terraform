@@ -1,6 +1,59 @@
+const {
+  DynamoDBClient,
+  GetItemCommand,
+  DeleteItemCommand,
+  PutItemCommand,
+} = require("@aws-sdk/client-dynamodb");
+
+const REGION = process.env.REGION;
+
+async function getSubmission(message) {
+  const db = new DynamoDBClient({ region: REGION });
+  const DBParams = {
+    TableName: "ReliabilityQueue",
+    Key: {
+      SubmissionID: { S: message.submissionID },
+    },
+    ProjectExpression: "SubmissionID,FormID,SendReceipt,FormData",
+  };
+  //save data to DynamoDB
+  return await db.send(new GetItemCommand(DBParams));
+}
+
+async function removeSubmission(message) {
+  const db = new DynamoDBClient({ region: REGION });
+  const DBParams = {
+    TableName: "ReliabilityQueue",
+    Key: {
+      SubmissionID: { S: message.submissionID },
+    },
+  };
+  //remove data fron DynamoDB
+  return await db.send(new DeleteItemCommand(DBParams));
+}
+
+async function saveToVault(submissionID, formResponse, formID) {
+  const db = new DynamoDBClient({ region: REGION });
+  const formSubmission =
+    typeof formResponse === "string" ? formResponse : JSON.stringify(formResponse);
+
+  const formIdentifier = typeof formID === "string" ? formID : formID.toString();
+
+  const DBParams = {
+    TableName: "Vault",
+    Item: {
+      SubmissionID: { S: submissionID },
+      FormID: { S: formIdentifier },
+      FormSubmission: { S: formSubmission },
+    },
+  };
+  //save data to DynamoDB
+  return await db.send(new PutItemCommand(DBParams));
+}
+
 // Email submission data manipulation
 
-module.exports = function extractFormData(submission) {
+function extractFormData(submission) {
   const formResponses = submission.responses;
   const formOrigin = submission.form;
   const dataCollector = [];
@@ -11,7 +64,7 @@ module.exports = function extractFormData(submission) {
     }
   });
   return dataCollector;
-};
+}
 
 function handleType(question, response, collector) {
   // Add i18n here later on?
@@ -89,3 +142,10 @@ function handleTextResponse(title, response, collector) {
 
   collector.push(`${title}${String.fromCharCode(13)}- No Response`);
 }
+
+module.exports = {
+  getSubmission,
+  removeSubmission,
+  extractFormData,
+  saveToVault,
+};
