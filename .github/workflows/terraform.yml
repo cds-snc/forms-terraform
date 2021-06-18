@@ -85,6 +85,12 @@ jobs:
       - name: Install Node packages for Reliability
         run: yarn --cwd "./lambda/reliability/nodejs" install
 
+      - name: Install Node packages for Templates
+        run: yarn --cwd "./lambda/templates/nodejs" install
+
+      - name: Install Node packages for Retrieval
+        run: yarn --cwd "./lambda/retrieval/nodejs" install
+
       - name: Terraform Plan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
