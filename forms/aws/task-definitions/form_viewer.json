@@ -30,10 +30,6 @@
         "value": "${tracer_provider}"
       },
       {
-        "name": "PRODUCTION_ENV",
-        "value": "false"
-      },
-      {
         "name": "SUBMISSION_API",
         "value": "${submission_api}"
       },
