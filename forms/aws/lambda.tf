@@ -541,7 +541,7 @@ resource "aws_iam_policy" "lambda_app_invoke" {
       "Resource": [
         "${aws_lambda_function.retrieval.arn}",
         "${aws_lambda_function.templates.arn}",
-        "${aws_labmda_function.submission.arn}",
+        "${aws_lambda_function.submission.arn}",
       
       ]
     }
