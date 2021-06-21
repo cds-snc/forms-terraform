@@ -537,7 +537,7 @@ resource "aws_iam_policy" "lambda_app_invoke" {
       "Action": [
         "lambda:InvokeFunction"
       ],
-      "Resource": "arn:aws:lambda:*:*:*",
+      "Resource": "arn:aws:lambda:*:*:function:*",
       "Effect": "Allow"
     }
   ]
