@@ -521,3 +521,26 @@ resource "aws_iam_role_policy_attachment" "AWSLambdaVPCAccessExecutionRole" {
   role       = aws_iam_role.iam_for_lambda.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
+
+
+## Allow Lambda to create and retrieve SQS messages
+resource "aws_iam_policy" "lambda_app_invoke" {
+  name        = "lambda_app_invoke"
+  path        = "/"
+  description = "IAM policy for allowing the Forms app to invoke Lambda functions"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "lambda:InvokeFunction"
+      ],
+      "Resource": "arn:aws:lambda:*:*:*",
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
