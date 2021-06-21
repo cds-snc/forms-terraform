@@ -534,11 +534,16 @@ resource "aws_iam_policy" "lambda_app_invoke" {
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Effect": "Allow",
       "Action": [
         "lambda:InvokeFunction"
       ],
-      "Resource": "arn:aws:lambda:*:*:function:*",
-      "Effect": "Allow"
+      "Resource": [
+        "${aws_lambda_function.retrieval.arn}",
+        "${aws_lambda_function.templates.arn}",
+        "${aws_labmda_function.submission.arn}",
+      
+      ]
     }
   ]
 }
