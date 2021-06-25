@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: SAM template for local lambda testing for GC Forms
+
+Parameters:
+  AppName:
+    Type: String
+    Description: Name of application (no spaces). Value must be globally unique
+    Default: FormsTest
+  DBUser:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: "postgres"
+  DBPassword:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: "password"
+  DBHost:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: "host.docker.internal"
+  DBName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: "formsDB"
+
+Globals:
+  Function:
+    Runtime: nodejs12.x
+    Tags:
+      Environment:
+        Ref: Environment
+        Name:
+          Ref: AppName
+
+Resources:
+  Templates:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-templates
+      CodeUri: ../templates/
+      Handler: templates.handler
+      Layers:
+        - Ref: TemplatesLayer
+      Environment:
+        Variables:
+          PGUSER:
+            Ref: DBUser
+          PGPASSWORD:
+            Ref: DBPassword
+          PGHOST:
+            Ref: DBHost
+          PGDATABASE:
+            Ref: DBName
+
+  TemplatesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName:
+        Fn::Sub: ${Environment}-${AppName}-templates-layer
+      ContentUri: ../templates/
+      CompatibleRuntimes:
+        - nodejs12.x
