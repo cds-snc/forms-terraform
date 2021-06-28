@@ -6,8 +6,6 @@ const REGION = process.env.REGION;
 //TODO better error handling? return a non 200?
 
 exports.handler = async function (event) {
-  console.log(event);
-
   var dbClient;
   // Connect to either local or AWS db
   if (process.env.AWS_SAM_LOCAL) {
@@ -138,7 +136,6 @@ exports.handler = async function (event) {
   if (process.env.AWS_SAM_LOCAL) {
     return await dbClient.query(SQL, parameters)
       .then((data) => {
-        console.log(data);
         console.log("success");
         if (data.rows && data.rows.length > 0) {
           return { data: parseConfig(data.rows) };
@@ -164,7 +161,7 @@ exports.handler = async function (event) {
       .send(command)
       .then((data) => {
         console.log("success");
-  
+
         if (data.records && data.records.length > 0) {
           return { data: parseConfig(data.records) };
         }
