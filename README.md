@@ -17,8 +17,8 @@ Install AWS SAM-CLI
 
 ### Starting the environment:
 
-Lambda dependencies
-need to be installed in their respective folders - TODO: make a command to do this
+Install Lambda dependencies
+In directory: `./forms/aws/lambda/` run the script `./install_package.sh`
 
 In directory:
 `./forms/aws/lambda/local-development/`
