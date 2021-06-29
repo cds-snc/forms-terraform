@@ -1,13 +1,23 @@
 const { RDSDataClient, ExecuteStatementCommand } = require("@aws-sdk/client-rds-data");
+const { Client } = require('pg');
+
 const REGION = process.env.REGION;
 
 //TODO better error handling? return a non 200?
 
 exports.handler = async function (event) {
-  const dbClient = new RDSDataClient({ region: REGION });
-  const method = event.method;
-
-  let SQL, parameters;
+  var dbClient;
+  // Connect to either local or AWS db
+  if (process.env.AWS_SAM_LOCAL) {
+    dbClient = new Client();
+    if (process.env.PGHOST && process.env.PGUSER && process.env.PGDATABASE && process.env.PGPASSWORD) {
+      dbClient.connect();
+    } else {
+      return "Missing Environment Variables for DB config"
+    }
+  } else {
+    dbClient = new RDSDataClient({ region: REGION });
+  }
 
   /*
     Supported Methods:
@@ -21,18 +31,23 @@ exports.handler = async function (event) {
     DELETE:
       - (Required) formID to delete
   */
-
+  const method = event.method;
   let formID = event.formID ? parseInt(event.formID) : null,
     formConfig = event.formConfig ? "'" + JSON.stringify(event.formConfig) + "'" : null;
 
   // if formID is NaN, assign it to an id we know will return no records
   if (isNaN(formID)) formID = 1;
 
+  let SQL = "",
+    parameters = [];
+
   switch (method) {
     case "INSERT":
       if (formConfig) {
-        SQL = "INSERT INTO Templates (json_config) VALUES (:json_config) RETURNING id";
-        parameters = [
+        SQL = (!process.env.AWS_SAM_LOCAL) ?
+          "INSERT INTO Templates (json_config) VALUES (:json_config) RETURNING id"
+          : "INSERT INTO Templates (json_config) VALUES ($1) RETURNING id";
+        parameters = (!process.env.AWS_SAM_LOCAL) ? [
           {
             name: "json_config",
             typeHint: "JSON",
@@ -40,7 +55,8 @@ exports.handler = async function (event) {
               stringValue: JSON.stringify(event.formConfig),
             },
           },
-        ];
+        ]
+        : [JSON.stringify(event.formConfig)];
       } else {
         return { error: "Missing required JSON" };
       }
@@ -48,15 +64,18 @@ exports.handler = async function (event) {
     case "GET":
       // Get a specific form if given the id, all forms if not
       if (formID) {
-        SQL = "SELECT * FROM Templates WHERE id = :formID";
-        parameters = [
+        SQL = (!process.env.AWS_SAM_LOCAL) ?
+          "SELECT * FROM Templates WHERE id = :formID"
+        : "SELECT * FROM Templates WHERE id = ($1)";
+        parameters = (!process.env.AWS_SAM_LOCAL) ? [
           {
             name: "formID",
             value: {
               longValue: formID,
             },
           },
-        ];
+        ]
+        : [formID];
       } else {
         SQL = "SELECT * FROM Templates";
       }
@@ -64,8 +83,11 @@ exports.handler = async function (event) {
     case "UPDATE":
       // needs the ID and the new json blob
       if (formID && formConfig) {
-        SQL = "UPDATE Templates SET json_config = :json_config WHERE id = :formID";
-        parameters = [
+        SQL = (!process.env.AWS_SAM_LOCAL)
+          ? "UPDATE Templates SET json_config = :json_config WHERE id = :formID"
+          : "UPDATE Templates SET json_config = ($1) WHERE id = ($2)";
+        parameters = (!process.env.AWS_SAM_LOCAL)
+        ? [
           {
             name: "formID",
             value: {
@@ -79,7 +101,8 @@ exports.handler = async function (event) {
               stringValue: JSON.stringify(event.formConfig),
             },
           },
-        ];
+        ]
+        : [formID, JSON.stringify(event.formConfig)];
       } else {
         return { error: "Missing required Parameter" };
       }
@@ -87,15 +110,19 @@ exports.handler = async function (event) {
     case "DELETE":
       // needs the ID
       if (formID) {
-        SQL = "DELETE from Templates WHERE id = :formID";
-        parameters = [
+        SQL = (!process.env.AWS_SAM_LOCAL)
+          ? "DELETE from Templates WHERE id = :formID"
+          : "DELETE from Templates WHERE id = ($1)";
+        parameters = (!process.env.AWS_SAM_LOCAL)
+        ? [
           {
             name: "formID",
             value: {
               longValue: formID,
             },
           },
-        ];
+        ]
+        : [formID];
       } else {
         return { error: "Missing required Parameter: FormID" };
       }
@@ -106,42 +133,65 @@ exports.handler = async function (event) {
     return { error: "Method not supported" };
   }
 
-  const params = {
-    database: process.env.DB_NAME,
-    resourceArn: process.env.DB_ARN,
-    secretArn: process.env.DB_SECRET,
-    sql: SQL,
-    includeResultMetadata: false, // set to true if we want metadata like column names
-    parameters: parameters,
-  };
+  if (process.env.AWS_SAM_LOCAL) {
+    return await dbClient.query(SQL, parameters)
+      .then((data) => {
+        console.log("success");
+        if (data.rows && data.rows.length > 0) {
+          return { data: parseConfig(data.rows) };
+        }
+        return { data: data };
+      })
+      .catch((error) => {
+        console.log("error:");
+        console.log(error);
+        return { error: error };
+      });
+  } else {
+    const params = {
+      database: process.env.DB_NAME,
+      resourceArn: process.env.DB_ARN,
+      secretArn: process.env.DB_SECRET,
+      sql: SQL,
+      includeResultMetadata: false, // set to true if we want metadata like column names
+      parameters: parameters,
+    };
+    const command = new ExecuteStatementCommand(params);
+    return await dbClient
+      .send(command)
+      .then((data) => {
+        console.log("success");
 
-  const command = new ExecuteStatementCommand(params);
-  return await dbClient
-    .send(command)
-    .then((data) => {
-      console.log("success");
-
-      if (data.records && data.records.length > 0) {
-        return { data: parseConfig(data.records) };
-      }
-      return { data: data };
-    })
-    .catch((error) => {
-      console.log("error:");
-      console.log(error);
-      return { error: error };
-    });
+        if (data.records && data.records.length > 0) {
+          return { data: parseConfig(data.records) };
+        }
+        return { data: data };
+      })
+      .catch((error) => {
+        console.log("error:");
+        console.log(error);
+        return { error: error };
+      });
+  }
 };
 
 const parseConfig = (records) => {
   const parsedRecords = records.map((record) => {
-    const formID = record[0].longValue;
-    let formConfig,
+    let formID,
+      formConfig,
       organization;
-    if (record.length > 1) {
-      formConfig = JSON.parse(record[1].stringValue.trim(1, -1)) || undefined;
-      organization = record[2].isNull || undefined
+    if (!process.env.AWS_SAM_LOCAL) {
+      formID = record[0].longValue;
+      if (record.length > 1) {
+        formConfig = JSON.parse(record[1].stringValue.trim(1, -1)) || undefined;
+        organization = record[2].isNull || undefined
+      }
+    } else {
+      formID = record.id;
+      formConfig = record.json_config;
+      organization = record.organisation;
     }
+
     return {
       formID: formID,
       formConfig: formConfig,
