@@ -40,6 +40,7 @@ jobs:
       - name: Terraform Plan
         uses: cds-snc/terraform-plan@v1.0.4
         with:
+          directory: ./forms/aws
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-delete: true
 
