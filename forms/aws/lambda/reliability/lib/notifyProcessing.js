@@ -2,7 +2,7 @@
 const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
 const { NotifyClient } = require("notifications-node-client");
 const convertMessage = require("markdown");
-const { removeSubmission } = require("dataLayer");
+const { removeSubmission, formatError } = require("dataLayer");
 
 const REGION = process.env.REGION;
 
@@ -34,16 +34,16 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
       })
       .then(async () => {
         console.log(
-          `Sucessfully processed SQS message ${sendReceipt} for Submission ${submissionID}`
+          `{"status": "success", "submissionID": "${submissionID}", "sqsMessage":"${sendReceipt}", "method":"notify"}`
         );
         // Remove data
         return await removeSubmission(message).catch((err) => {
           // Not throwing an error back to SQS because the message was
           // sucessfully processed by Notify.  Only cleanup required.
-          console.error(
-            `Could not delete submission ${submissionID} from DB.  Error: ${
-              typeof err === "object" ? JSON.stringify(err) : err
-            }`
+          console.warn(
+            `{"status": "failed", "submissionID": "${submissionID}", "error": "Can not delete entry from reliability db.  Error:${formatError(
+              err
+            )}", "method":"notify"}`
           );
         });
       });

@@ -6,6 +6,10 @@ const REGION = process.env.REGION;
 const db = new DynamoDBClient({ region: REGION });
 const sqs = new SQSClient({ region: REGION });
 
+const formatError = (err) => {
+  return typeof err === "object" ? JSON.stringify(err) : err;
+};
+
 // Store questions with responses
 exports.handler = async function (event) {
   try {
@@ -21,18 +25,23 @@ exports.handler = async function (event) {
         // Update DB entry for receipt ID
         await saveReceipt(submissionID, receiptID);
         console.log(
-          `SQS Message successfully created with ID ${receiptID} for submission ID ${submissionID}`
+          `{"status": "success", "sqsMessage": "${receiptID}", "submissionID": "${submissionID}"}`
         );
         return { status: true };
       })
       .catch((err) => {
-        console.error(err);
-        console.error(`Form Submission with ID ${submissionID} errored during submission`);
+        console.error(
+          `{"status": "failed", "submissionID": "${submissionID}", "error": "${formatError(err)}"}`
+        );
         return { status: false };
       });
     //----------
   } catch (err) {
-    console.error(err);
+    console.error(
+      `{"status": "failed", ""submissionID": "${
+        submissionID ? submissionID : "Not yet created"
+      }", "error": "${formatError(err)}"}`
+    );
     return { status: false };
   }
 };
@@ -86,7 +95,6 @@ const saveReceipt = async (submissionID, receiptID) => {
     //save data to DynamoDB
     await db.send(new UpdateItemCommand(DBParams));
   } catch (err) {
-    console.warn(`Unable to update receipt ID on submissionID: ${submissionID}`);
-    console.warn(err);
+    console.warn(`{status: warn, submissionID: ${submissionID}, warning: ${formatError(err)}}`);
   }
 };

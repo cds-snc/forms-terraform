@@ -143,9 +143,14 @@ function handleTextResponse(title, response, collector) {
   collector.push(`${title}${String.fromCharCode(13)}- No Response`);
 }
 
+function formatErr(err) {
+  return typeof err === "object" ? JSON.stringify(err) : err;
+}
+
 module.exports = {
   getSubmission,
   removeSubmission,
   extractFormData,
   saveToVault,
+  formatErr,
 };

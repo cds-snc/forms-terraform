@@ -1,6 +1,6 @@
 const sendToNotify = require("notifyProcessing");
 const sendToVault = require("vaultProcessing");
-const { getSubmission } = require("dataLayer");
+const { getSubmission, formatError } = require("dataLayer");
 
 exports.handler = async function (event) {
   let submissionIDPlaceholder = "";
@@ -21,10 +21,10 @@ exports.handler = async function (event) {
       if (formSubmission === null || typeof formSubmission === "undefined") {
         // Ack and remove message from queue if it doesn't exist in the DB
         // Do not throw an error so it does not retry again
+
         console.warn(
-          `No corresponding submission for Submission ID: ${submissionID} in the reliability database`
+          `{"status": "warn", "submissionID": "${submissionID}", "warning": "Submission data does not exist in the DB" }`
         );
-        console.warn("Data no longer exists in the DB");
       }
       /// process submission to vault or Notify
 
@@ -41,8 +41,11 @@ exports.handler = async function (event) {
       }
     })
     .catch((err) => {
-      console.error(err);
-      console.error(`Error in processing, submission ${submissionIDPlaceholder} not processed.`);
+      console.error(
+        `{"status": "failed", "submissionID": "${submissionIDPlaceholder}", "error": "${formatError(
+          err
+        )}}"`
+      );
       throw new Error("Could not process / Function Error");
     });
 };
