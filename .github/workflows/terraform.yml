@@ -38,7 +38,7 @@ jobs:
           terraform_version: ~0.14.0
 
       - name: Terraform Plan
-        uses: cds-snc/terraform-plan@latest
+        uses: cds-snc/terraform-plan@v1.0.4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-delete: true
