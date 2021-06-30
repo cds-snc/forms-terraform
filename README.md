@@ -17,14 +17,12 @@ Install AWS SAM-CLI
 
 ### Starting the environment:
 
-Install Lambda dependencies
-In directory: `./forms/aws/lambda/` run the script `./install_package.sh`
-
 In directory:
 `./forms/aws/lambda/local-development/`
 `template.yml` defines the local environment / project we will be running. Functions and environment variables can be defined here.
-Run the command:
-`sam local start-lambda`
+
+Install Lambda dependencies and start local lambda service
+In directory: `./forms/aws/lambda/` run the script `./start_local_lambdas.sh`
 
 If you want to invoke a lambda specifically, here’s the example command:
 `aws lambda invoke --function-name "Templates" --endpoint-url "http://127.0.0.1:3001" --no-verify-ssl out.txt`

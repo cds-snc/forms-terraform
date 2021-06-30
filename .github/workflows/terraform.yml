@@ -36,17 +36,13 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ~0.14.0
-
-      - name: Terraform Init
-        run: |
-          terraform init
-      - name: Terraform Format
-        run: terraform fmt -check
+          terraform_wrapper: false
 
       - name: Terraform Plan
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: terraform plan
+        uses: cds-snc/terraform-plan@v1.0.4
+        with:
+          directory: ./forms/aws
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   terraform-security-scan:
     if: github.event_name == 'pull_request'
