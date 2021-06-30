@@ -42,6 +42,7 @@ jobs:
         with:
           directory: ./forms/aws
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          terraform_wrapper: false
 
   terraform-security-scan:
     if: github.event_name == 'pull_request'
