@@ -15,3 +15,9 @@ resource "aws_s3_bucket" "firehose_waf_logs" {
   #tfsec:ignore:AWS077
 
 }
+
+resource "aws_s3_bucket_public_access_block" "firehose_waf_logs" {
+	bucket = aws_s3_bucket.firehose_waf_logs.id
+	block_public_acls   = true
+	block_public_policy = true
+}

@@ -16,6 +16,12 @@ resource "aws_s3_bucket" "log_bucket" {
   #tfsec:ignore:AWS077
 }
 
+resource "aws_s3_bucket_public_access_block" "log_bucket" {
+	bucket = aws_s3_bucket.log_bucket.id
+	block_public_acls   = true
+	block_public_policy = true
+}
+
 resource "aws_s3_bucket" "storage_bucket" {
   bucket = var.storage_bucket
   acl    = "private"
@@ -33,6 +39,12 @@ resource "aws_s3_bucket" "storage_bucket" {
       }
     }
   }
+}
+
+resource "aws_s3_bucket_public_access_block" "storage_bucket" {
+	bucket = aws_s3_bucket.storage_bucket.id
+	block_public_acls   = true
+	block_public_policy = true
 }
 
 resource "aws_dynamodb_table" "terraform_state_lock" {

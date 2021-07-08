@@ -483,7 +483,7 @@ resource "aws_iam_policy" "lambda_kms" {
         "kms:Encrypt",
         "kms:Decrypt"
       ],
-      "Resource": "*",
+      "Resource": ["${aws_kms_key.dynamoDB.arn}"],
       "Effect": "Allow"
     }
   ]
