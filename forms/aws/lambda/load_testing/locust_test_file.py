@@ -2,7 +2,7 @@ import time
 import random
 import json
 from json import JSONDecodeError
-from locust import HttpUser, task, between, events
+from locust import HttpUser, task, between
 
 formIDs = ["28","29","30","31"]
 
