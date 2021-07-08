@@ -87,6 +87,12 @@ jobs:
       - name: Install Node packages for Retrieval
         run: yarn --cwd "./lambda/retrieval/nodejs" install
 
+      - name: Install Python packages for Load Testing
+        run: |
+          cd ./lambda/load_testing
+          pip3 install invokust --target=python-packages
+          cd ../..
+
       - name: Terraform Plan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
