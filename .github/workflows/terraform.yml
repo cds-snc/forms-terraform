@@ -39,7 +39,7 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Plan
-        uses: cds-snc/terraform-plan@v1.0.4
+        uses: cds-snc/terraform-plan@v1.0.5
         with:
           directory: ./forms/aws
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -86,6 +86,12 @@ jobs:
 
       - name: Install Node packages for Retrieval
         run: yarn --cwd "./lambda/retrieval/nodejs" install
+
+      - name: Install Python packages for Load Testing
+        run: |
+          cd ./lambda/load_testing
+          pip3 install invokust --target=python-packages
+          cd ../..
 
       - name: Terraform Plan
         env:
