@@ -36,11 +36,9 @@ class FormUser(HttpUser):
   wait_time = between(3,10)
   host = "https://forms-staging.cdssandbox.xyz"
 
-  # Pre-test: Get available published forms from API.
-
   # Test 1: High hit count
   # Hit landing page
-  # Choose one of the production forms
+  # Choose one of the performance testing forms
   # Submit Form response based on form ID
 
   @task
