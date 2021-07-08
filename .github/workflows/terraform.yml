@@ -39,7 +39,7 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Plan
-        uses: cds-snc/terraform-plan@v1.0.4
+        uses: cds-snc/terraform-plan@v1.0.5
         with:
           directory: ./forms/aws
           github-token: ${{ secrets.GITHUB_TOKEN }}
