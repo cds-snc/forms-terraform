@@ -303,6 +303,39 @@ resource "aws_lambda_layer_version" "retrieval_lib" {
   compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
 }
 
+###
+# Load Testing
+###
+data "archive_file" "load_testing" {
+  type        = "zip"
+  source_dir  = "lambda/load_testing/"
+  output_path = "/tmp/load_testing.zip"
+}
+
+resource "aws_lambda_function" "load_testing" {
+  filename         = "/tmp/load_testing.zip"
+  function_name    = "LoadTesting"
+  role             = aws_iam_role.iam_for_lambda.arn
+  handler          = "lambda_locust.handler"
+  timeout          = 300
+  source_code_hash = data.archive_file.load_testing.output_base64sha256
+
+  runtime     = "python3.8"
+  description = "A function that runs a locust load test"
+
+  environment {
+    variables = {
+      LOCUST_RUN_TIME    = "3m"
+      LOCUST_LOCUSTFILE  = "locust_test_file.py"
+      LOCUST_HOST        = "https://forms-staging.cdssandbox.xyz"
+      LOCUST_HATCH_RATE  = "1"
+      LOCUST_NUM_CLIENTS = "1"
+    }
+  }
+
+}
+
+
 
 ## Allow SNS to call Lambda function
 
@@ -495,7 +528,7 @@ resource "aws_iam_policy" "lambda_kms" {
         "kms:Encrypt",
         "kms:Decrypt"
       ],
-      "Resource": "*",
+      "Resource": ["${aws_kms_key.dynamoDB.arn}"],
       "Effect": "Allow"
     }
   ]
