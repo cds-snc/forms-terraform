@@ -49,6 +49,25 @@ Resources:
             Ref: DBHost
           PGDATABASE:
             Ref: DBName
+  Organisations:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-Organisations
+      CodeUri: ../organisations/
+      Handler: organisations.handler
+      Layers:
+        - Ref: OrganisationsLayer
+      Environment:
+        Variables:
+          PGUSER:
+            Ref: DBUser
+          PGPASSWORD:
+            Ref: DBPassword
+          PGHOST:
+            Ref: DBHost
+          PGDATABASE:
+            Ref: DBName
 
   TemplatesLayer:
     Type: AWS::Serverless::LayerVersion
@@ -56,5 +75,14 @@ Resources:
       LayerName:
         Fn::Sub: ${Environment}-${AppName}-templates-layer
       ContentUri: ../templates/
+      CompatibleRuntimes:
+        - nodejs12.x
+
+  OrganisationsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName:
+        Fn::Sub: ${Environment}-${AppName}-organisations-layer
+      ContentUri: ../organisations/
       CompatibleRuntimes:
         - nodejs12.x

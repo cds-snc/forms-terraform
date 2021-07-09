@@ -215,10 +215,52 @@ resource "aws_lambda_layer_version" "templates_lib" {
 }
 
 ###
+# AWS Lambda - User and Organisation management
+###
+data "archive_file" "organisations_main" {
+  type        = "zip"
+  source_file = "lambda/organisations/organisations.js"
+  output_path = "/tmp/organisations_main.zip"
+}
+
+data "archive_file" "organisations_lib" {
+  type        = "zip"
+  source_dir  = "lambda/organisations/"
+  excludes    = ["organisations.js"]
+  output_path = "/tmp/organisations_lib.zip"
+}
+
+resource "aws_lambda_function" "organisations" {
+  filename      = "/tmp/organisations_main.zip"
+  function_name = "Organisations"
+  role          = aws_iam_role.iam_for_lambda.arn
+  handler       = "organisations.handler"
+
+  source_code_hash = data.archive_file.organisations_main.output_base64sha256
+  runtime          = "nodejs14.x"
+  layers           = [aws_lambda_layer_version.organisations_lib.arn]
+  timeout          = "10"
+
+  environment {
+    variables = {
+      REGION    = var.region,
+      DB_ARN    = aws_rds_cluster.forms.arn,
+      DB_SECRET = aws_secretsmanager_secret_version.database_secret.arn,
+      DB_NAME   = var.rds_db_name
+    }
+  }
+}
+
+resource "aws_lambda_layer_version" "organisations_lib" {
+  filename            = "/tmp/organisations_lib.zip"
+  layer_name          = "organisations_node_packages"
+  source_code_hash    = data.archive_file.organisations_lib.output_base64sha256
+  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+}
+
+
+###
 # Vault Retrieval 
-###
-###
-# AWS Lambda - Template Storage processing
 ###
 
 data "archive_file" "retrieval_main" {
