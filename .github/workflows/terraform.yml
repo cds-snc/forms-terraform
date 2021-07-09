@@ -90,7 +90,7 @@ jobs:
       - name: Install Python packages for Load Testing
         run: |
           cd ./lambda/load_testing
-          pip3 install invokust --target=python-packages
+          pip3 install invokust --target .
           cd ../..
 
       - name: Terraform Plan
