@@ -5,8 +5,6 @@ const { v4: uuidv4 } = require('uuid');
 const REGION = process.env.REGION;
 
 exports.handler = async function (event) {
-  console.log(event)
-
   var dbClient;
   // Connect to either local or AWS db
   if (process.env.AWS_SAM_LOCAL) {
@@ -42,8 +40,6 @@ exports.handler = async function (event) {
   
   let SQL = "",
     parameters = [];
-
-  console.log(method);
   
   switch (method) {
     case "INSERT":
@@ -159,7 +155,6 @@ exports.handler = async function (event) {
   // this is copied from templates lambda with only minor changes..
   // maybe we can reuse this code somehow?
   if (process.env.AWS_SAM_LOCAL) {
-    console.log(SQL);
     return await dbClient.query(SQL, parameters)
       .then((data) => {
         console.log("success");
