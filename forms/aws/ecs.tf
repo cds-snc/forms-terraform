@@ -43,6 +43,7 @@ data "template_file" "form_viewer_task" {
     nextauth_url          = "https://${var.route53_zone_name}"
     submission_api        = aws_lambda_function.submission.arn
     templates_api         = aws_lambda_function.templates.arn
+    organisations_api     = aws_lambda_function.organisations.arn
   }
 }
 

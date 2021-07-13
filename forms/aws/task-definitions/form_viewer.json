@@ -38,6 +38,10 @@
         "value": "${templates_api}"
       },
       {
+        "name": "USERS_ORGS_API",
+        "value": "${organisations_api}"
+      },
+      {
         "name": "NEXTAUTH_URL",
         "value": "${nextauth_url}"
       },
