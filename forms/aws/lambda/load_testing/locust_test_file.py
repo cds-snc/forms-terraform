@@ -60,9 +60,13 @@ class FormUser(HttpUser):
     formID = random.choice(formIDs)
     self.client.get(f"/{lang}/id/{formID}")
 
+    uniqueFormData = formSubmissions[formID]
+    uniqueFormData["2"] = uuid.uuid4().hex
+
     # Submit the form
-    with self.client.post("/api/submit", json=formSubmissions[formID], name=f"/api/submit?{formID}", catch_response=True) as response:
+    with self.client.post("/api/submit", json=uniqueFormData, name=f"/api/submit?{formID}", catch_response=True) as response:
       try:
+        formDataSubmissions.append(uniqueFormData["2"])
         if response.json()["received"] != True :
           response.failure(f"Submission failed for formID {formID}")
       except JSONDecodeError:
@@ -72,8 +76,6 @@ class FormUser(HttpUser):
 
     # Go to confirmation page
     self.client.get(f"/{lang}/id/{formID}/confirmation")
-
-
 
   # Admin Users tests:
   #
