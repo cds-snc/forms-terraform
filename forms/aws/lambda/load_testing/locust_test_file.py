@@ -1,8 +1,8 @@
-import time
 import random
+import uuid
 import json
 from json import JSONDecodeError
-from locust import HttpUser, task, between
+from locust import HttpUser, task, between, events
 
 formIDs = ["28","29","30","31"]
 
@@ -32,6 +32,15 @@ formSubmissions ={
     "formID": "31"
   }
 }
+
+formDataSubmissions = []
+
+@events.test_stop.add_listener
+def on_test_stop(environment, **kwargs):
+  output_file = open("/tmp/form_completion.json", "w")
+  json.dump(formDataSubmissions, output_file)
+  output_file.close()
+
 class FormUser(HttpUser):
   wait_time = between(3,10)
   host = "https://forms-staging.cdssandbox.xyz"
