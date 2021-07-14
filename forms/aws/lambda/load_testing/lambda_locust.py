@@ -1,7 +1,3 @@
-import sys
-
-sys.path.insert(0, "python-packages")
-
 import logging
 import json
 import os
@@ -32,6 +28,11 @@ def handler(event=None, context=None):
         lambda_runtime_info = get_lambda_runtime_info(context)
         loadtest_results = locust_stats.copy()
         loadtest_results.update(lambda_runtime_info)
+
+        a = os.listdir('/tmp')
+        for x in a:
+            print("Files in /tmp")
+            print(x)
 
         form_input_file = open("/tmp/form_completion.json", "r")
         form_input = json.load(form_input_file)

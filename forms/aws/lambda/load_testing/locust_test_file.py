@@ -1,3 +1,5 @@
+
+import os
 import random
 import uuid
 import json
@@ -40,6 +42,11 @@ def on_test_stop(environment, **kwargs):
   output_file = open("/tmp/form_completion.json", "w")
   json.dump(formDataSubmissions, output_file)
   output_file.close()
+  ## tmp debugging code
+  a = os.listdir('/tmp')
+  for x in a:
+    print("Files in /tmp")
+    print(x)
 
 class FormUser(HttpUser):
   wait_time = between(3,10)
