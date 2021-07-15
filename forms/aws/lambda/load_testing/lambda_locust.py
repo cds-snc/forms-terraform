@@ -31,9 +31,9 @@ def handler(event=None, context=None):
     else:
         loadtest.getFormInfo()
         locust_stats = loadtest.stats()
-        #lambda_runtime_info = get_lambda_runtime_info(context)
+        lambda_runtime_info = get_lambda_runtime_info(context)
         loadtest_results = locust_stats.copy()
-        #loadtest_results.update(lambda_runtime_info)
+        loadtest_results.update(lambda_runtime_info)
 
         form_input_file = open("/tmp/form_completion.json", "r")
         form_input = json.load(form_input_file)

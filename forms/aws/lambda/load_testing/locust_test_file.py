@@ -36,24 +36,24 @@ formSubmissions ={
   }
 }
 
-formDataSubmissions = []
+
 
 class FormUser(HttpUser):
   wait_time = between(3,10)
   host = "https://forms-staging.cdssandbox.xyz"
 
+  formDataSubmissions = {"success":[], "failed":[]}
+
   # Test 1: High hit count
   # Hit landing page
   # Choose one of the performance testing forms
   # Submit Form response based on form ID
-  
+
   @classmethod
   def on_test_stop(self):
-    logging.info("The test is stopping... event function firing.")
     output_file = open("/tmp/form_completion.json", "w")
-    json.dump(formDataSubmissions, output_file)
+    json.dump(self.formDataSubmissions, output_file)
     output_file.close()
-    logging.info("The test is stopping... event function complete.")
 
   @task
   def formFill(self):
@@ -71,12 +71,17 @@ class FormUser(HttpUser):
     # Submit the form
     with self.client.post("/api/submit", json=uniqueFormData, name=f"/api/submit?{formID}", catch_response=True) as response:
       try:
-        formDataSubmissions.append(uniqueFormData["2"])
+        
         if response.json()["received"] != True :
+          self.formDataSubmissions["failed"].append(uniqueFormData["2"])
           response.failure(f"Submission failed for formID {formID}")
+        else:
+          self.formDataSubmissions["success"].append(uniqueFormData["2"])
       except JSONDecodeError:
+        self.formDataSubmissions["failed"].append(uniqueFormData["2"])
         response.failure("Response could not be decoded as JSON")
       except KeyError:
+        self.formDataSubmissions["failed"].append(uniqueFormData["2"])
         response.failure("Response did not have the expected receive key")
 
     # Go to confirmation page
