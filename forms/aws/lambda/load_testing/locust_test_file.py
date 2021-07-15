@@ -1,10 +1,11 @@
-
-import os
+import logging
 import random
 import uuid
 import json
 from json import JSONDecodeError
 from locust import HttpUser, task, between, events
+
+logging.basicConfig(level=logging.INFO)
 
 formIDs = ["28","29","30","31"]
 
@@ -37,17 +38,6 @@ formSubmissions ={
 
 formDataSubmissions = []
 
-@events.test_stop.add_listener
-def on_test_stop(environment, **kwargs):
-  output_file = open("/tmp/form_completion.json", "w")
-  json.dump(formDataSubmissions, output_file)
-  output_file.close()
-  ## tmp debugging code
-  a = os.listdir('/tmp')
-  for x in a:
-    print("Files in /tmp")
-    print(x)
-
 class FormUser(HttpUser):
   wait_time = between(3,10)
   host = "https://forms-staging.cdssandbox.xyz"
@@ -56,6 +46,14 @@ class FormUser(HttpUser):
   # Hit landing page
   # Choose one of the performance testing forms
   # Submit Form response based on form ID
+  
+  @classmethod
+  def on_test_stop(self):
+    logging.info("The test is stopping... event function firing.")
+    output_file = open("/tmp/form_completion.json", "w")
+    json.dump(formDataSubmissions, output_file)
+    output_file.close()
+    logging.info("The test is stopping... event function complete.")
 
   @task
   def formFill(self):
@@ -83,6 +81,8 @@ class FormUser(HttpUser):
 
     # Go to confirmation page
     self.client.get(f"/{lang}/id/{formID}/confirmation")
+
+
 
   # Admin Users tests:
   #
