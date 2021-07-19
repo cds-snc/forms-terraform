@@ -1,8 +1,11 @@
-import time
+import logging
 import random
+import uuid
 import json
 from json import JSONDecodeError
-from locust import HttpUser, task, between
+from locust import HttpUser, task, between, events
+
+logging.basicConfig(level=logging.INFO)
 
 formIDs = ["28","29","30","31"]
 
@@ -32,14 +35,25 @@ formSubmissions ={
     "formID": "31"
   }
 }
+
+
+
 class FormUser(HttpUser):
   wait_time = between(3,10)
   host = "https://forms-staging.cdssandbox.xyz"
+
+  formDataSubmissions = {"success":[], "failed":[]}
 
   # Test 1: High hit count
   # Hit landing page
   # Choose one of the performance testing forms
   # Submit Form response based on form ID
+
+  @classmethod
+  def on_test_stop(self):
+    output_file = open("/tmp/form_completion.json", "w")
+    json.dump(self.formDataSubmissions, output_file)
+    output_file.close()
 
   @task
   def formFill(self):
@@ -51,14 +65,23 @@ class FormUser(HttpUser):
     formID = random.choice(formIDs)
     self.client.get(f"/{lang}/id/{formID}")
 
+    uniqueFormData = formSubmissions[formID]
+    uniqueFormData["2"] = uuid.uuid4().hex
+
     # Submit the form
-    with self.client.post("/api/submit", json=formSubmissions[formID], name=f"/api/submit?{formID}", catch_response=True) as response:
+    with self.client.post("/api/submit", json=uniqueFormData, name=f"/api/submit?{formID}", catch_response=True) as response:
       try:
+        
         if response.json()["received"] != True :
+          self.formDataSubmissions["failed"].append(uniqueFormData["2"])
           response.failure(f"Submission failed for formID {formID}")
+        else:
+          self.formDataSubmissions["success"].append(uniqueFormData["2"])
       except JSONDecodeError:
+        self.formDataSubmissions["failed"].append(uniqueFormData["2"])
         response.failure("Response could not be decoded as JSON")
       except KeyError:
+        self.formDataSubmissions["failed"].append(uniqueFormData["2"])
         response.failure("Response did not have the expected receive key")
 
     # Go to confirmation page

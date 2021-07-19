@@ -114,7 +114,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     priority = 102
 
     action {
-      block {}
+      count {}
     }
 
     statement {
