@@ -57,13 +57,13 @@ exports.handler = async function (event) {
               },
             },
             {
-              name: "nameen",
+              name: "organisationNameEn",
               value: {
                 stringValue: organisationNameEn,
               },
             },
             {
-              name: "namefr",
+              name: "organisationNameFr",
               value: {
                 stringValue: organisationNameFr,
               },
