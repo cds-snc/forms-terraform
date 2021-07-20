@@ -38,7 +38,7 @@
         "value": "${templates_api}"
       },
       {
-        "name": "USERS_ORGS_API",
+        "name": "ORGANISATIONS_API",
         "value": "${organisations_api}"
       },
       {

@@ -377,6 +377,12 @@ resource "aws_lambda_permission" "templates" {
   function_name = aws_lambda_function.templates.function_name
   principal     = aws_iam_role.forms.arn
 }
+resource "aws_lambda_permission" "organisations" {
+  statement_id  = "AllowInvokeECS"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.organisations.function_name
+  principal     = aws_iam_role.forms.arn
+}
 
 resource "aws_lambda_permission" "retrieval" {
   statement_id  = "AllowInvokeECS"
