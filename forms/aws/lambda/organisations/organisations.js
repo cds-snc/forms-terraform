@@ -51,7 +51,7 @@ exports.handler = async function (event) {
           : "INSERT INTO organisations (id, nameen, namefr) VALUES ($1, $2, $3) RETURNING id";
         parameters = (!process.env.AWS_SAM_LOCAL) ? [
             {
-              name: "id",
+              name: "organisationID",
               value: {
                 stringValue: organisationID,
               },
