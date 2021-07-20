@@ -318,6 +318,7 @@ resource "aws_lambda_function" "load_testing" {
   role             = aws_iam_role.iam_for_lambda.arn
   handler          = "lambda_locust.handler"
   timeout          = 300
+  memory_size      = 200
   source_code_hash = data.archive_file.load_testing.output_base64sha256
 
   runtime     = "python3.8"
