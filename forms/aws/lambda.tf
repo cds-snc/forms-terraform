@@ -568,6 +568,35 @@ resource "aws_iam_policy" "lambda_secrets" {
 EOF
 }
 
+# Allow lambda to access S3 buckets
+
+resource "aws_iam_policy" "lambda_s3" {
+  name        = "lambda_dynamobdb"
+  path        = "/"
+  description = "IAM policy for storing files in S3"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:ListBucket"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.reliability_file_storage.arn}",
+        "${aws_s3_bucket.vault_file_storage.arn}",
+        "${aws_s3_bucket.archive_storage.arn}
+        ],
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
 resource "aws_iam_role_policy_attachment" "lambda_secrets" {
   role       = aws_iam_role.iam_for_lambda.name
   policy_arn = aws_iam_policy.lambda_secrets.arn
