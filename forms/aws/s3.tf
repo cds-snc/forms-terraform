@@ -95,7 +95,7 @@ resource "aws_s3_bucket" "archive_storage" {
   lifecycle_rule {
     enabled = true
     expiration {
-      days = 5
+      days = 30
     }
   }
   server_side_encryption_configuration {
