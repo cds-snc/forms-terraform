@@ -31,6 +31,7 @@ resource "aws_iam_role" "vpc_flow_logs" {
 EOF
 }
 
+#tfsec:ignore:AWS099
 resource "aws_iam_role_policy" "vpc_flow_logs" {
   name = "vpc_flow_logs"
   role = aws_iam_role.vpc_flow_logs.id

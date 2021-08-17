@@ -27,6 +27,7 @@ data "archive_file" "notify_slack" {
   output_path = "/tmp/notify_slack.zip"
 }
 
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "notify_slack_sns" {
   filename      = "/tmp/notify_slack.zip"
   function_name = "NotifySlackSNS"
@@ -42,7 +43,6 @@ resource "aws_lambda_function" "notify_slack_sns" {
       SLACK_WEBHOOK = var.slack_webhook
     }
   }
-
 }
 ###
 # AWS Lambda - Reliability Queue Processing
@@ -85,6 +85,7 @@ data "archive_file" "reliability_nodejs" {
   output_path = "/tmp/reliability_nodejs.zip"
 }
 
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "reliability" {
   filename      = "/tmp/reliability_main.zip"
   function_name = "Reliability"
@@ -142,6 +143,7 @@ data "archive_file" "submission_lib" {
   output_path = "/tmp/submission_lib.zip"
 }
 
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "submission" {
   filename      = "/tmp/submission_main.zip"
   function_name = "Submission"
@@ -186,6 +188,7 @@ data "archive_file" "templates_lib" {
   output_path = "/tmp/templates_lib.zip"
 }
 
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "templates" {
   filename      = "/tmp/templates_main.zip"
   function_name = "Templates"
@@ -230,6 +233,7 @@ data "archive_file" "organisations_lib" {
   output_path = "/tmp/organisations_lib.zip"
 }
 
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "organisations" {
   filename      = "/tmp/organisations_main.zip"
   function_name = "Organisations"
@@ -276,6 +280,7 @@ data "archive_file" "retrieval_lib" {
   output_path = "/tmp/retrieval_lib.zip"
 }
 
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "retrieval" {
   filename      = "/tmp/retrieval_main.zip"
   function_name = "Retrieval"
@@ -312,6 +317,7 @@ data "archive_file" "load_testing" {
   output_path = "/tmp/load_testing.zip"
 }
 
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "load_testing" {
   filename         = "/tmp/load_testing.zip"
   function_name    = "LoadTesting"
@@ -402,6 +408,7 @@ resource "aws_lambda_permission" "internal_templates" {
 
 ## Allow Lambda to create Logs in Cloudwatch
 
+#tfsec:ignore:AWS099
 resource "aws_iam_policy" "lambda_logging" {
   name        = "lambda_logging"
   path        = "/"
@@ -425,6 +432,7 @@ resource "aws_iam_policy" "lambda_logging" {
 EOF
 }
 
+#tfsec:ignore:AWS099
 resource "aws_iam_policy" "lambda_rds" {
   name        = "lambda_rds"
   path        = "/"
@@ -466,6 +474,7 @@ resource "aws_iam_policy" "lambda_rds" {
 }
 
 ## Allow Lambda to create and retrieve SQS messages
+#tfsec:ignore:AWS099
 resource "aws_iam_policy" "lambda_sqs" {
   name        = "lambda_sqs"
   path        = "/"
@@ -568,6 +577,35 @@ resource "aws_iam_policy" "lambda_secrets" {
 EOF
 }
 
+# Allow lambda to access S3 buckets
+
+resource "aws_iam_policy" "lambda_s3" {
+  name        = "lambda_dynamobdb"
+  path        = "/"
+  description = "IAM policy for storing files in S3"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:ListBucket"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.reliability_file_storage.arn}",
+        "${aws_s3_bucket.vault_file_storage.arn}",
+        "${aws_s3_bucket.archive_storage.arn}
+        ],
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
 resource "aws_iam_role_policy_attachment" "lambda_secrets" {
   role       = aws_iam_role.iam_for_lambda.name
   policy_arn = aws_iam_policy.lambda_secrets.arn

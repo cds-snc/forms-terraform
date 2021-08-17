@@ -13,7 +13,8 @@ resource "aws_db_subnet_group" "forms" {
     (var.billing_tag_key) = var.billing_tag_value
   }
 }
-
+# KMS key is not explicitly defined but a default key is created
+#tfsec:ignore:AWS051
 resource "aws_rds_cluster" "forms" {
   cluster_identifier        = "${var.rds_name}-cluster"
   engine                    = "aurora-postgresql"
@@ -27,8 +28,7 @@ resource "aws_rds_cluster" "forms" {
   preferred_backup_window   = "07:00-09:00"
   db_subnet_group_name      = aws_db_subnet_group.forms.name
   storage_encrypted         = true
-  #tfsec:ignore:AWS051
-  # KMS key is not explicitly defined but a default key is created
+
 
   scaling_configuration {
     auto_pause   = false

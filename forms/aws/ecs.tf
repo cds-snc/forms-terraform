@@ -29,21 +29,22 @@ data "template_file" "form_viewer_task" {
   template = file("task-definitions/form_viewer.json")
 
   vars = {
-    image                 = local.form_viewer_repo
-    awslogs-group         = aws_cloudwatch_log_group.forms.name
-    awslogs-region        = var.region
-    awslogs-stream-prefix = "ecs-${var.ecs_form_viewer_name}"
-    metric_provider       = var.metric_provider
-    tracer_provider       = var.tracer_provider
-    notify_api_key        = aws_secretsmanager_secret_version.notify_api_key.arn
-    google_client_id      = aws_secretsmanager_secret_version.google_client_id.arn
-    google_client_secret  = aws_secretsmanager_secret_version.google_client_secret.arn
-    database_url          = aws_secretsmanager_secret_version.database_url.arn
-    redis_url             = aws_elasticache_replication_group.redis.primary_endpoint_address
-    nextauth_url          = "https://${var.route53_zone_name}"
-    submission_api        = aws_lambda_function.submission.arn
-    templates_api         = aws_lambda_function.templates.arn
-    organisations_api     = aws_lambda_function.organisations.arn
+    image                    = local.form_viewer_repo
+    awslogs-group            = aws_cloudwatch_log_group.forms.name
+    awslogs-region           = var.region
+    awslogs-stream-prefix    = "ecs-${var.ecs_form_viewer_name}"
+    metric_provider          = var.metric_provider
+    tracer_provider          = var.tracer_provider
+    notify_api_key           = aws_secretsmanager_secret_version.notify_api_key.arn
+    google_client_id         = aws_secretsmanager_secret_version.google_client_id.arn
+    google_client_secret     = aws_secretsmanager_secret_version.google_client_secret.arn
+    database_url             = aws_secretsmanager_secret_version.database_url.arn
+    redis_url                = aws_elasticache_replication_group.redis.primary_endpoint_address
+    nextauth_url             = "https://${var.route53_zone_name}"
+    submission_api           = aws_lambda_function.submission.arn
+    templates_api            = aws_lambda_function.templates.arn
+    organisations_api        = aws_lambda_function.organisations.arn
+    reliability_file_storage = aws_s3_bucket.reliability_file_storage.id
   }
 }
 
@@ -208,6 +209,31 @@ data "aws_iam_policy_document" "forms_secrets_manager" {
   }
 }
 
+
+resource "aws_iam_policy" "forms_s3" {
+  name   = "formsS3Access"
+  path   = "/"
+  policy = data.aws_iam_policy_document.forms_s3.json
+}
+
+data "aws_iam_policy_document" "forms_s3" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:ListBucket"
+    ]
+
+    resources = [
+      aws_s3_bucket.reliability_file_storage.arn
+    ]
+  }
+}
+
+
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_forms" {
   role       = aws_iam_role.forms.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
@@ -217,3 +243,4 @@ resource "aws_iam_role_policy_attachment" "secrets_manager_forms" {
   role       = aws_iam_role.forms.name
   policy_arn = aws_iam_policy.forms_secrets_manager.arn
 }
+
