@@ -580,7 +580,7 @@ EOF
 # Allow lambda to access S3 buckets
 
 resource "aws_iam_policy" "lambda_s3" {
-  name        = "lambda_dynamobdb"
+  name        = "lambda_s3"
   path        = "/"
   description = "IAM policy for storing files in S3"
 
