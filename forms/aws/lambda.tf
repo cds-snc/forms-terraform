@@ -27,6 +27,7 @@ data "archive_file" "notify_slack" {
   output_path = "/tmp/notify_slack.zip"
 }
 
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "notify_slack_sns" {
   filename      = "/tmp/notify_slack.zip"
   function_name = "NotifySlackSNS"
@@ -42,7 +43,6 @@ resource "aws_lambda_function" "notify_slack_sns" {
       SLACK_WEBHOOK = var.slack_webhook
     }
   }
-
 }
 ###
 # AWS Lambda - Reliability Queue Processing
@@ -85,6 +85,7 @@ data "archive_file" "reliability_nodejs" {
   output_path = "/tmp/reliability_nodejs.zip"
 }
 
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "reliability" {
   filename      = "/tmp/reliability_main.zip"
   function_name = "Reliability"
@@ -142,6 +143,7 @@ data "archive_file" "submission_lib" {
   output_path = "/tmp/submission_lib.zip"
 }
 
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "submission" {
   filename      = "/tmp/submission_main.zip"
   function_name = "Submission"
@@ -186,6 +188,7 @@ data "archive_file" "templates_lib" {
   output_path = "/tmp/templates_lib.zip"
 }
 
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "templates" {
   filename      = "/tmp/templates_main.zip"
   function_name = "Templates"
@@ -230,6 +233,7 @@ data "archive_file" "organisations_lib" {
   output_path = "/tmp/organisations_lib.zip"
 }
 
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "organisations" {
   filename      = "/tmp/organisations_main.zip"
   function_name = "Organisations"
@@ -276,6 +280,7 @@ data "archive_file" "retrieval_lib" {
   output_path = "/tmp/retrieval_lib.zip"
 }
 
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "retrieval" {
   filename      = "/tmp/retrieval_main.zip"
   function_name = "Retrieval"
@@ -312,6 +317,7 @@ data "archive_file" "load_testing" {
   output_path = "/tmp/load_testing.zip"
 }
 
+#tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "load_testing" {
   filename         = "/tmp/load_testing.zip"
   function_name    = "LoadTesting"

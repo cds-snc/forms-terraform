@@ -12,7 +12,7 @@ resource "aws_db_subnet_group" "forms" {
     Name                  = var.rds_db_subnet_group_name
     (var.billing_tag_key) = var.billing_tag_value
   }
-}  
+}
 # KMS key is not explicitly defined but a default key is created
 #tfsec:ignore:AWS051
 resource "aws_rds_cluster" "forms" {
