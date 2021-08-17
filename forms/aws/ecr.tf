@@ -2,14 +2,14 @@ locals {
   image_name = "form_viewer_${var.environment}"
 }
 
+# Ignore using global encryption key
+#tfsec:ignore:AWS093
 resource "aws_ecr_repository" "viewer_repository" {
 
   name = local.image_name
 
   #Ignore tag mutability for Staging
   image_tag_mutability = "MUTABLE" #tfsec:ignore:AWS078
-  # Ignore using global encryption key
-  #tfsec:ignore:AWS093
 
   image_scanning_configuration {
     scan_on_push = true

@@ -1,7 +1,7 @@
 provider "aws" {
   region = "ca-central-1"
 }
-
+#tfsec:ignore:AWS002 tfsec:ignore:AWS077
 resource "aws_s3_bucket" "log_bucket" {
   bucket = join("", [var.storage_bucket, "-logs"])
   acl    = "log-delivery-write"
@@ -12,8 +12,7 @@ resource "aws_s3_bucket" "log_bucket" {
       }
     }
   }
-  #tfsec:ignore:AWS002
-  #tfsec:ignore:AWS077
+
 }
 
 resource "aws_s3_bucket_public_access_block" "log_bucket" {
@@ -50,7 +49,7 @@ resource "aws_s3_bucket_public_access_block" "storage_bucket" {
   ignore_public_acls = true
   restrict_public_buckets = true
 }
-
+#tfsec:ignore:AWS086 tfsec:ignore:AWS092
 resource "aws_dynamodb_table" "terraform_state_lock" {
   name           = "terraform-lock"
   read_capacity  = 5
@@ -60,9 +59,7 @@ resource "aws_dynamodb_table" "terraform_state_lock" {
     name = "LockID"
     type = "S"
   }
-  #tfsec:ignore:AWS086
-  # Ignore using global encryption key
-  #tfsec:ignore:AWS092
+
 
   tags = {
     ("CostCentre") = "Forms"

@@ -1,6 +1,7 @@
 ###
 # AWS S3 bucket - WAF log target
-###
+###  
+#tfsec:ignore:AWS002 tfsec:ignore:AWS077
 resource "aws_s3_bucket" "firehose_waf_logs" {
   bucket = "forms-staging-terraform-waf-logs"
   acl    = "private"
@@ -11,9 +12,6 @@ resource "aws_s3_bucket" "firehose_waf_logs" {
       }
     }
   }
-  #tfsec:ignore:AWS002
-  #tfsec:ignore:AWS077
-
 }
 
 resource "aws_s3_bucket_public_access_block" "firehose_waf_logs" {
@@ -28,6 +26,7 @@ resource "aws_s3_bucket_public_access_block" "firehose_waf_logs" {
 ###
 # AWS S3 bucket - Reliability Queue File Storage
 ###
+#tfsec:ignore:AWS002 tfsec:ignore:AWS077
 resource "aws_s3_bucket" "reliability_file_storage" {
   bucket = "forms-staging-reliability_file_storage"
   acl    = "private"
@@ -46,9 +45,6 @@ resource "aws_s3_bucket" "reliability_file_storage" {
       }
     }
   }
-  #tfsec:ignore:AWS002
-  #tfsec:ignore:AWS077
-
 }
 
 resource "aws_s3_bucket_public_access_block" "reliability_file_storage" {
@@ -62,6 +58,7 @@ resource "aws_s3_bucket_public_access_block" "reliability_file_storage" {
 ###
 # AWS S3 bucket - Vault File Storage
 ###
+#tfsec:ignore:AWS002 tfsec:ignore:AWS077
 resource "aws_s3_bucket" "vault_file_storage" {
   bucket = "forms-staging-vault_file_storage"
   acl    = "private"
@@ -72,9 +69,6 @@ resource "aws_s3_bucket" "vault_file_storage" {
       }
     }
   }
-  #tfsec:ignore:AWS002
-  #tfsec:ignore:AWS077
-
 }
 
 resource "aws_s3_bucket_public_access_block" "vault_file_storage" {
@@ -88,6 +82,7 @@ resource "aws_s3_bucket_public_access_block" "vault_file_storage" {
 ###
 # AWS S3 bucket - Archive Storage
 ###
+#tfsec:ignore:AWS002 tfsec:ignore:AWS077
 resource "aws_s3_bucket" "archive_storage" {
   bucket = "forms-staging-archive_storage"
   acl    = "private"
@@ -105,9 +100,6 @@ resource "aws_s3_bucket" "archive_storage" {
       }
     }
   }
-  #tfsec:ignore:AWS002
-  #tfsec:ignore:AWS077
-
 }
 
 resource "aws_s3_bucket_public_access_block" "archive_storage" {
