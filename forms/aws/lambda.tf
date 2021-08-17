@@ -408,6 +408,7 @@ resource "aws_lambda_permission" "internal_templates" {
 
 ## Allow Lambda to create Logs in Cloudwatch
 
+#tfsec:ignore:AWS099
 resource "aws_iam_policy" "lambda_logging" {
   name        = "lambda_logging"
   path        = "/"
@@ -431,6 +432,7 @@ resource "aws_iam_policy" "lambda_logging" {
 EOF
 }
 
+#tfsec:ignore:AWS099
 resource "aws_iam_policy" "lambda_rds" {
   name        = "lambda_rds"
   path        = "/"
@@ -472,6 +474,7 @@ resource "aws_iam_policy" "lambda_rds" {
 }
 
 ## Allow Lambda to create and retrieve SQS messages
+#tfsec:ignore:AWS099
 resource "aws_iam_policy" "lambda_sqs" {
   name        = "lambda_sqs"
   path        = "/"
