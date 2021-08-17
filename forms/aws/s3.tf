@@ -28,7 +28,7 @@ resource "aws_s3_bucket_public_access_block" "firehose_waf_logs" {
 ###
 #tfsec:ignore:AWS002 tfsec:ignore:AWS077
 resource "aws_s3_bucket" "reliability_file_storage" {
-  bucket = "forms-staging-reliability_file_storage"
+  bucket = "forms-staging-reliability-file-storage"
   acl    = "private"
 
   lifecycle_rule {
@@ -60,7 +60,7 @@ resource "aws_s3_bucket_public_access_block" "reliability_file_storage" {
 ###
 #tfsec:ignore:AWS002 tfsec:ignore:AWS077
 resource "aws_s3_bucket" "vault_file_storage" {
-  bucket = "forms-staging-vault_file_storage"
+  bucket = "forms-staging-vault-file-storage"
   acl    = "private"
   server_side_encryption_configuration {
     rule {
@@ -84,7 +84,7 @@ resource "aws_s3_bucket_public_access_block" "vault_file_storage" {
 ###
 #tfsec:ignore:AWS002 tfsec:ignore:AWS077
 resource "aws_s3_bucket" "archive_storage" {
-  bucket = "forms-staging-archive_storage"
+  bucket = "forms-staging-archive-storage"
   acl    = "private"
 
   lifecycle_rule {
