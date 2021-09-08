@@ -94,7 +94,7 @@ variable "ecs_secret_google_client_secret" {
   type = string
 }
 
-variable "ecs_list_management_api_key" {
+variable "ecs_list_manager_api_key" {
   type = string
 }
 

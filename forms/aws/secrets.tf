@@ -22,7 +22,7 @@ resource "aws_secretsmanager_secret" "list_manager_api_key" {
 
 resource "aws_secretsmanager_secret_version" "list_manager_api_key" {
   secret_id     = aws_secretsmanager_secret.list_manager_api_key.id
-  secret_string = var.ecs_secret_notify_api_key
+  secret_string = var.ecs_list_manager_api_key
 }
 
 
