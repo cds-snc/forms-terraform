@@ -36,6 +36,9 @@ data "template_file" "form_viewer_task" {
     metric_provider          = var.metric_provider
     tracer_provider          = var.tracer_provider
     notify_api_key           = aws_secretsmanager_secret_version.notify_api_key.arn
+    list_manager_api_key     = aws_secretsmanager_secret_version.list_manager_api_key.arn
+    list_manager_host        = var.list_manager_host
+    ircc_config              = var.ircc_config
     google_client_id         = aws_secretsmanager_secret_version.google_client_id.arn
     google_client_secret     = aws_secretsmanager_secret_version.google_client_secret.arn
     database_url             = aws_secretsmanager_secret_version.database_url.arn
@@ -202,6 +205,7 @@ data "aws_iam_policy_document" "forms_secrets_manager" {
 
     resources = [
       aws_secretsmanager_secret_version.notify_api_key.arn,
+      aws_secretsmanager_secret_version.list_manager_api_key.arn,
       aws_secretsmanager_secret_version.google_client_id.arn,
       aws_secretsmanager_secret_version.google_client_secret.arn,
       aws_secretsmanager_secret_version.database_url.arn
@@ -244,3 +248,7 @@ resource "aws_iam_role_policy_attachment" "secrets_manager_forms" {
   policy_arn = aws_iam_policy.forms_secrets_manager.arn
 }
 
+resource "aws_iam_role_policy_attachment" "s3_forms" {
+  role       = aws_iam_role.forms.name
+  policy_arn = aws_iam_policy.forms_s3.arn
+}
