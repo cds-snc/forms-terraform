@@ -7,8 +7,6 @@ from locust import HttpUser, task, between, events
 
 logging.basicConfig(level=logging.INFO)
 
-formIDs = ["81","83"]
-
 formSubmissions = {
 
   "en":[
@@ -29,6 +27,10 @@ formSubmissions = {
     {
     "2":{"value":["Humanitarian program to help Afghan nationals resettle to Canada."]},
     "4":{"value":["French"]}
+    },
+    {
+    "2":{"value":["Immigration program for Afghans who assisted the Government of Canada and their eligible family members.","Humanitarian program to help Afghan nationals resettle to Canada."]},
+    "4":{"value":["English","French"]}
     }
   ],
   "fr":[
@@ -47,17 +49,13 @@ formSubmissions = {
     {
     "2":{"value":["Programme humanitaire pour aider les afghans à s’installer au Canada."]},
     "4":{"value":["Français"]}
+    },
+    {
+    "2":{"value":["Programme d’immigration pour les Afghans qui ont aidé le gouvernement du Canada et les membres admissibles de leurs familles.","Programme humanitaire pour aider les afghans à s’installer au Canada."]},
+    "4":{"value":["Anglais","Français"]}
     }
   ]
 }
-
-def generatePhoneorEmail(formID):
-  if formID == "81":
-    return uuid.uuid4().hex + "@cds-snc.ca"
-  else:
-    return "1" + str(random.randint(1000000,9999999))
-
-
 
 class FormUser(HttpUser):
   wait_time = between(3,10)
@@ -83,11 +81,11 @@ class FormUser(HttpUser):
     self.client.get(f"/{lang}/welcome-bienvenue")
     
     # Go to a form page after 
-    formID = random.choice(formIDs)
+    formID = "81"
     self.client.get(f"/{lang}/id/{formID}")
 
     uniqueFormData = formSubmissions[lang]
-    uniqueFormData["3"] = generatePhoneorEmail(formID)
+    uniqueFormData["3"] = "success@simulator.amazonses.com"
     uniqueFormData["formID"] = formID
 
     # Submit the form
