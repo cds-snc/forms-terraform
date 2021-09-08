@@ -248,3 +248,7 @@ resource "aws_iam_role_policy_attachment" "secrets_manager_forms" {
   policy_arn = aws_iam_policy.forms_secrets_manager.arn
 }
 
+resource "aws_iam_role_policy_attachment" "s3_forms" {
+  role       = aws_iam_role.forms.name
+  policy_arn = aws_iam_policy.forms_s3.arn
+}
