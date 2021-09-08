@@ -40,7 +40,7 @@ variable "list_manager_host" {
 }
 
 variable "ircc_config" {
-  type= string
+  type = string
 }
 
 variable "github_sha" {
