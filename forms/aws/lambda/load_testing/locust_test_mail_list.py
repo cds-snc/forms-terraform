@@ -84,7 +84,8 @@ class FormUser(HttpUser):
     formID = "81"
     self.client.get(f"/{lang}/id/{formID}")
 
-    uniqueFormData = formSubmissions[lang]
+    uniqueFormDataArray = formSubmissions[lang]
+    uniqueFormData = random.choice(uniqueFormDataArray)
     uniqueFormData["3"] = "success@simulator.amazonses.com"
     uniqueFormData["formID"] = formID
 
