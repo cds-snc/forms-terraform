@@ -47,9 +47,6 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
         // try getting the list id from the config json.
         try {
           listID = irccConfig.listMapping[language][program][contactFieldType];
-
-          //debugging
-          console.log(listID);
         } catch (err) {
           console.error(
             `IRCC config does not contain the following path ${language}.${program}.${contactFieldType}`
@@ -58,7 +55,6 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
         }
 
         let response;
-        console.log(listManagerHost);
         try {
           // Now we create the subscription
           response = await axios
@@ -77,41 +73,29 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
             .catch((err) => {
               throw new Error(`Sending to Mailing List Error: ${JSON.stringify(err)}`);
             });
-          console.log(response);
         } catch (err) {
           console.error(
             `Subscription failed with status ${response.status} and message ${response.data}`
           );
           throw new Error(`Sending to Mailing List Error: ${JSON.stringify(err)}`);
         }
-
-        console.log(response);
-
-        // subscription is successfully created... log the id and return 200
-        if (response.status === 200) {
-          console.log(
-            `{"status": "success", "submissionID": "${submissionID}", "sqsMessage":"${sendReceipt}", "method":"mailing_list"}`
-          );
-
-          // Remove data
-          return await removeSubmission(message).catch((err) => {
-            // Not throwing an error back to SQS because the message was
-            // sucessfully processed by Notify.  Only cleanup required.
-            console.warn(
-              `{"status": "failed", "submissionID": "${submissionID}", "error": "Can not delete entry from reliability db.  Error:${formatError(
-                err
-              )}", "method":"notify"}`
-            );
-          });
-        }
-        // otherwise something has failed... not the users issue hence 500
-        else {
-          throw new Error(
-            `Subscription failed with status ${response.status} and message ${response.data}`
-          );
-        }
       }
     }
+
+    console.log(
+      `{"status": "success", "submissionID": "${submissionID}", "sqsMessage":"${sendReceipt}", "method":"mailing_list"}`
+    );
+
+    // Remove data
+    return await removeSubmission(message).catch((err) => {
+      // Not throwing an error back to SQS because the message was
+      // sucessfully processed by Notify.  Only cleanup required.
+      console.warn(
+        `{"status": "failed", "submissionID": "${submissionID}", "error": "Can not delete entry from reliability db.  Error:${formatError(
+          err
+        )}", "method":"notify"}`
+      );
+    });
   } else {
     throw new Error(
       `Not able to determine type of contact field for form ${formSubmission.formID}`
