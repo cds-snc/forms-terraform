@@ -18,6 +18,9 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
   const { responses, formID } = formSubmission;
   const form = await getFormTemplate(formID);
 
+  //debugging
+  console.log(form);
+
   // get program and language values from submission using the ircc config refrenced ids
   const programs = JSON.parse(responses[irccConfig.programFieldID]);
   const programList = programs.value;
@@ -46,8 +49,7 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
         const language = languageList[i];
         const program = programList[j];
         let listID;
-        // try getting the list id from the config json. If it doesn't exist fail gracefully, log the message and send 500 error
-        // 500 error because this is a misconfiguration on our end its not the users fault i.e. 4xx
+        // try getting the list id from the config json.
         try {
           listID = irccConfig.listMapping[language][program][contactFieldType];
         } catch (err) {
