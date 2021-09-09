@@ -77,6 +77,7 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
             .catch((err) => {
               throw new Error(`Sending to Mailing List Error: ${JSON.stringify(err)}`);
             });
+          console.log(response);
         } catch (err) {
           console.error(
             `Subscription failed with status ${response.status} and message ${response.data}`
