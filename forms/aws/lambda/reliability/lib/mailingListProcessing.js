@@ -17,39 +17,24 @@ const listManagerApiKey = process.env.LIST_MANAGER_API_KEY;
 module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
   const { responses, formID } = formSubmission;
 
-  //debugging
-  console.log(formID);
-
   const form = await getFormTemplate(formID);
   //debugging
-  console.log(form);
+
   console.log(responses);
   console.log(irccConfig);
 
   // get program and language values from submission using the ircc config refrenced ids
-  const programs = responses[irccConfig.programFieldID];
-
-  //debugging
-  console.log(programs);
-
-  const programList = programs.value;
+  const programList = responses[irccConfig.programFieldID];
 
   //debugging
   console.log(programList);
 
-  const languages = responses[irccConfig.languageFieldID];
+  const languageList = responses[irccConfig.languageFieldID];
 
-  //debugging
-  console.log(languages);
-
-  const languageList = languages.value;
   //debugging
   console.log(languageList);
 
   const contact = responses[irccConfig.contactFieldID];
-
-  //debugging
-  console.log(contact);
 
   // get the type of contact field from the form template
   const contactFieldFormElement = form.elements.filter(
@@ -62,7 +47,6 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
       : false;
 
   console.log(contactFieldType);
-  console.log(languageList);
 
   if (contactFieldType) {
     // forEach slower than a for loop https://stackoverflow.com/questions/43821759/why-array-foreach-is-slower-than-for-loop-in-javascript
