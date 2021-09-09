@@ -99,8 +99,11 @@ resource "aws_lambda_function" "reliability" {
 
   environment {
     variables = {
-      REGION         = var.region
-      NOTIFY_API_KEY = aws_secretsmanager_secret_version.notify_api_key.secret_string
+      REGION               = var.region
+      NOTIFY_API_KEY       = aws_secretsmanager_secret_version.notify_api_key.secret_string
+      LIST_MANAGER_API_KEY = aws_secretsmanager_secret_version.list_manager_api_key.arn
+      LIST_MANAGER_HOST    = var.list_manager_host
+      IRCC_CONFIG          = var.ircc_config
     }
   }
 }
@@ -568,7 +571,8 @@ resource "aws_iam_policy" "lambda_secrets" {
       ],
       "Resource": [
         "${aws_secretsmanager_secret_version.notify_api_key.arn}",
-        "${aws_secretsmanager_secret_version.database_secret.arn}"
+        "${aws_secretsmanager_secret_version.database_secret.arn}",
+        "${aws_secretsmanager_secret_version.list_manager_api_key.arn}"
       ],
       "Effect": "Allow"
     }

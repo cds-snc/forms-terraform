@@ -1,5 +1,6 @@
 const sendToNotify = require("notifyProcessing");
 const sendToVault = require("vaultProcessing");
+const sendToMailingList = require("mailingListProcessing");
 const { getSubmission, formatError } = require("dataLayer");
 
 exports.handler = async function (event) {
@@ -36,6 +37,8 @@ exports.handler = async function (event) {
           formID,
           message
         );
+      } else if (formSubmission.submission.mailingList) {
+        return await sendToMailingList(submissionID, sendReceipt, formSubmission, message);
       } else {
         return await sendToNotify(submissionID, sendReceipt, formSubmission, message);
       }

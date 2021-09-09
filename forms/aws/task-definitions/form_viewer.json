@@ -22,14 +22,6 @@
     },
     "environment": [
       {
-        "name": "LIST_MANAGER_HOST",
-        "value": "${list_manager_host}"
-      },
-      {
-        "name": "IRCC_CONFIG",
-        "value": "${ircc_config}"
-      },
-      {
         "name": "METRIC_PROVIDER",
         "value": "${metric_provider}"
       },
@@ -63,10 +55,6 @@
       }
     ],
     "secrets": [
-      {
-        "name": "LIST_MANAGER_API_KEY",
-        "valueFrom": "${list_manager_api_key}"
-      },
       {
         "name": "NOTIFY_API_KEY",
         "valueFrom": "${notify_api_key}"
