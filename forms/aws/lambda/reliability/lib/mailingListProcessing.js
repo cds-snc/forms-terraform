@@ -1,4 +1,4 @@
-import axios from "axios";
+const axios = require("axios");
 const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
 const { removeSubmission, formatError } = require("dataLayer");
 // Process request and send to Mailing List Manager
