@@ -27,7 +27,7 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
   console.log(irccConfig);
 
   // get program and language values from submission using the ircc config refrenced ids
-  const programs = JSON.parse(responses[irccConfig.programFieldID]);
+  const programs = responses[irccConfig.programFieldID];
 
   //debugging
   console.log(programs);
