@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
 const { removeSubmission, formatError } = require("dataLayer");
 // Process request and send to Mailing List Manager
@@ -50,8 +50,8 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
         // 500 error because this is a misconfiguration on our end its not the users fault i.e. 4xx
         try {
           listID = irccConfig.listMapping[language][program][contactFieldType];
-        } catch (e) {
-          logMessage.error(
+        } catch (err) {
+          console.error(
             `IRCC config does not contain the following path ${language}.${program}.${contactFieldType}`
           );
           throw new Error(`Sending to Mailing List Error: ${JSON.stringify(err)}`);
