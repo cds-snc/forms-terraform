@@ -1,6 +1,6 @@
 import logging
 import random
-import uuid
+import time
 import json
 from json import JSONDecodeError
 from locust import HttpUser, task, between, events
@@ -79,10 +79,12 @@ class FormUser(HttpUser):
     lang = random.choice(["en", "fr"])
     # Get to welcome page
     self.client.get(f"/{lang}/welcome-bienvenue")
+    time.sleep(random.randint(2,5))
     
     # Go to a form page after 
     formID = "81"
     self.client.get(f"/{lang}/id/{formID}")
+    time.sleep(random.randint(5,15))
 
     uniqueFormDataArray = formSubmissions[lang]
     uniqueFormData = random.choice(uniqueFormDataArray)
@@ -106,5 +108,6 @@ class FormUser(HttpUser):
         response.failure("Response did not have the expected receive key")
 
     # Go to confirmation page
+    time.sleep(random.randint(2,5))
     self.client.get(f"/{lang}/id/{formID}/confirmation")
 
