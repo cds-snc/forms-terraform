@@ -28,13 +28,28 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
 
   // get program and language values from submission using the ircc config refrenced ids
   const programs = JSON.parse(responses[irccConfig.programFieldID]);
+
+  //debugging
+  console.log(programs);
+
   const programList = programs.value;
 
-  const languages = JSON.parse(responses[irccConfig.languageFieldID]);
+  //debugging
+  console.log(programList);
+
+  const languages = responses[irccConfig.languageFieldID];
+
+  //debugging
+  console.log(languages);
 
   const languageList = languages.value;
+  //debugging
+  console.log(languageList);
 
   const contact = responses[irccConfig.contactFieldID];
+
+  //debugging
+  console.log(contact);
 
   // get the type of contact field from the form template
   const contactFieldFormElement = form.elements.filter(
