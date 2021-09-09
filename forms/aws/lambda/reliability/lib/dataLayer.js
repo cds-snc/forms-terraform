@@ -143,7 +143,7 @@ function handleTextResponse(title, response, collector) {
   collector.push(`${title}${String.fromCharCode(13)}- No Response`);
 }
 
-function formatErr(err) {
+function formatError(err) {
   return typeof err === "object" ? JSON.stringify(err) : err;
 }
 
@@ -152,5 +152,5 @@ module.exports = {
   removeSubmission,
   extractFormData,
   saveToVault,
-  formatErr,
+  formatError,
 };
