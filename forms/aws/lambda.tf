@@ -76,6 +76,11 @@ data "archive_file" "reliability_lib" {
     content  = file("./lambda/reliability/lib/vaultProcessing.js")
     filename = "nodejs/node_modules/vaultProcessing/index.js"
   }
+
+    source {
+    content  = file("./lambda/reliability/lib/mailingListProcessing.js")
+    filename = "nodejs/node_modules/mailingListProcessing/index.js"
+  }
 }
 
 data "archive_file" "reliability_nodejs" {
