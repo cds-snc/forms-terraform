@@ -16,10 +16,11 @@ const listManagerApiKey = process.env.LIST_MANAGER_API_KEY;
 
 module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
   const { responses, formID } = formSubmission;
-  const form = await getFormTemplate(formID);
 
   //debugging
-  console.log(form);
+  console.log(formID);
+
+  const form = await getFormTemplate(formID);
 
   // get program and language values from submission using the ircc config refrenced ids
   const programs = JSON.parse(responses[irccConfig.programFieldID]);
@@ -137,8 +138,15 @@ const getFormTemplate = async (formID) => {
       } else {
         console.info("Lambda Template Client successfully triggered");
 
+        //debugging
+        console.log(payload);
+
         const response = JSON.parse(payload);
         const { records } = response.data;
+
+        //debugging
+        console.log(records);
+
         if (records?.length === 1 && records[0].formConfig.form) {
           return {
             formID,
