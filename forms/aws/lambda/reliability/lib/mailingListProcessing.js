@@ -42,6 +42,9 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
       ? contactFieldFormElement[0].properties.validation?.type
       : false;
 
+  console.log(contactFieldType);
+  console.log(languageList);
+
   if (contactFieldType) {
     // forEach slower than a for loop https://stackoverflow.com/questions/43821759/why-array-foreach-is-slower-than-for-loop-in-javascript
     // yes its a double loop O(n^2) but we know n <= 4
@@ -53,6 +56,9 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
         // try getting the list id from the config json.
         try {
           listID = irccConfig.listMapping[language][program][contactFieldType];
+
+          //debugging
+          console.log(listID);
         } catch (err) {
           console.error(
             `IRCC config does not contain the following path ${language}.${program}.${contactFieldType}`
@@ -81,6 +87,8 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
           );
           throw new Error(`Sending to Mailing List Error: ${JSON.stringify(err)}`);
         }
+
+        console.log(response);
 
         // subscription is successfully created... log the id and return 200
         if (response.status === 200) {
