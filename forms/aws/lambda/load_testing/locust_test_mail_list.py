@@ -11,48 +11,48 @@ formSubmissions = {
 
   "en":[
     {
-    "2":{"value":["Immigration program for Afghans who assisted the Government of Canada and their eligible family members."]},
-    "4":{"value":["English"]},
+    "2":'{"value":["Immigration program for Afghans who assisted the Government of Canada and their eligible family members."]}',
+    "4":'{"value":["English"]}',
 
     },
     {
-    "2":{"value":["Humanitarian program to help Afghan nationals resettle to Canada."]},
-    "4":{"value":["English"]},
+    "2":'{"value":["Humanitarian program to help Afghan nationals resettle to Canada."]}',
+    "4":'{"value":["English"]}',
 
     },
     {
-    "2":{"value":["Immigration program for Afghans who assisted the Government of Canada and their eligible family members."]},
-    "4":{"value":["French"]},
+    "2":'{"value":["Immigration program for Afghans who assisted the Government of Canada and their eligible family members."]}',
+    "4":'{"value":["French"]}',
     },
     {
-    "2":{"value":["Humanitarian program to help Afghan nationals resettle to Canada."]},
-    "4":{"value":["French"]}
+    "2":'{"value":["Humanitarian program to help Afghan nationals resettle to Canada."]}',
+    "4":'{"value":["French"]}'
     },
     {
-    "2":{"value":["Immigration program for Afghans who assisted the Government of Canada and their eligible family members.","Humanitarian program to help Afghan nationals resettle to Canada."]},
-    "4":{"value":["English","French"]}
+    "2":'{"value":["Immigration program for Afghans who assisted the Government of Canada and their eligible family members.","Humanitarian program to help Afghan nationals resettle to Canada."]}',
+    "4":'{"value":["English","French"]}'
     }
   ],
   "fr":[
     {
-    "2":{"value":["Programme d’immigration pour les Afghans qui ont aidé le gouvernement du Canada et les membres admissibles de leurs familles."]},
-    "4":{"value":["Anglais"]},
+    "2":'{"value":["Programme d’immigration pour les Afghans qui ont aidé le gouvernement du Canada et les membres admissibles de leurs familles."]}',
+    "4":'{"value":["Anglais"]}',
     },
     {
-    "2":{"value":["Programme humanitaire pour aider les afghans à s’installer au Canada."]},
-    "4":{"value":["Anglais"]},
+    "2":'{"value":["Programme humanitaire pour aider les afghans à s’installer au Canada."]}',
+    "4":'{"value":["Anglais"]}',
     },
     {
-    "2":{"value":["Programme d’immigration pour les Afghans qui ont aidé le gouvernement du Canada et les membres admissibles de leurs familles."]},
-    "4":{"value":["Français"]},
+    "2":'{"value":["Programme d’immigration pour les Afghans qui ont aidé le gouvernement du Canada et les membres admissibles de leurs familles."]}',
+    "4":'{"value":["Français"]}',
     },
     {
-    "2":{"value":["Programme humanitaire pour aider les afghans à s’installer au Canada."]},
-    "4":{"value":["Français"]}
+    "2":'{"value":["Programme humanitaire pour aider les afghans à s’installer au Canada."]}',
+    "4":'{"value":["Français"]}'
     },
     {
-    "2":{"value":["Programme d’immigration pour les Afghans qui ont aidé le gouvernement du Canada et les membres admissibles de leurs familles.","Programme humanitaire pour aider les afghans à s’installer au Canada."]},
-    "4":{"value":["Anglais","Français"]}
+    "2":'{"value":["Programme d’immigration pour les Afghans qui ont aidé le gouvernement du Canada et les membres admissibles de leurs familles.","Programme humanitaire pour aider les afghans à s’installer au Canada."]}',
+    "4":'{"value":["Anglais","Français"]}'
     }
   ]
 }
