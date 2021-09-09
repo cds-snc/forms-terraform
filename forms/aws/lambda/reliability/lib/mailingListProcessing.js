@@ -20,7 +20,7 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
   //debugging
   console.log(formID);
 
-  const form = await getFormTemplate(formID); \
+  const form = await getFormTemplate(formID);
   //debugging
   console.log(form);
   console.log(responses);
