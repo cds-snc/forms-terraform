@@ -77,7 +77,7 @@ data "archive_file" "reliability_lib" {
     filename = "nodejs/node_modules/vaultProcessing/index.js"
   }
 
-    source {
+  source {
     content  = file("./lambda/reliability/lib/mailingListProcessing.js")
     filename = "nodejs/node_modules/mailingListProcessing/index.js"
   }
