@@ -18,21 +18,11 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
   const { responses, formID } = formSubmission;
 
   const form = await getFormTemplate(formID);
-  //debugging
-
-  console.log(responses);
-  console.log(irccConfig);
 
   // get program and language values from submission using the ircc config refrenced ids
   const programList = responses[irccConfig.programFieldID];
 
-  //debugging
-  console.log(programList);
-
   const languageList = responses[irccConfig.languageFieldID];
-
-  //debugging
-  console.log(languageList);
 
   const contact = responses[irccConfig.contactFieldID];
 
@@ -45,8 +35,6 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
     contactFieldFormElement.length > 0
       ? contactFieldFormElement[0].properties.validation?.type
       : false;
-
-  console.log(contactFieldType);
 
   if (contactFieldType) {
     // forEach slower than a for loop https://stackoverflow.com/questions/43821759/why-array-foreach-is-slower-than-for-loop-in-javascript
@@ -70,20 +58,25 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
         }
 
         let response;
+        console.log(listManagerHost);
         try {
           // Now we create the subscription
-          response = await axios.post(
-            `${listManagerHost}/subscription`,
-            {
-              [contactFieldType]: contact,
-              list_id: listID,
-            },
-            {
-              headers: {
-                Authorization: listManagerApiKey,
+          response = await axios
+            .post(
+              `${listManagerHost}/subscription`,
+              {
+                [contactFieldType]: contact,
+                list_id: listID,
               },
-            }
-          );
+              {
+                headers: {
+                  Authorization: listManagerApiKey,
+                },
+              }
+            )
+            .catch((err) => {
+              throw new Error(`Sending to Mailing List Error: ${JSON.stringify(err)}`);
+            });
         } catch (err) {
           console.error(
             `Subscription failed with status ${response.status} and message ${response.data}`
