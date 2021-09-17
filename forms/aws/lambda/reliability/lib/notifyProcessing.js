@@ -3,6 +3,7 @@ const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
 const { NotifyClient } = require("notifications-node-client");
 const convertMessage = require("markdown");
 const { removeSubmission, formatError } = require("dataLayer");
+const { retrieveFilesFromReliabilityStorage, removeFilesFromReliabilityStorage } = require("s3FileInput");
 
 const REGION = process.env.REGION;
 
@@ -17,21 +18,38 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
     : formSubmission.form.titleEn;
   // Need to get this from the submission now.. not the app.
   const submissionFormat = formSubmission.submission;
-  // Send to Notify
 
+  const fileInputPaths = extractFileInputResponses(formSubmission);
+  
+  // Send to Notify
   if ((submissionFormat !== null) & (submissionFormat.email !== "")) {
-    return await notify
-      // Send to static email address and not submission address in form
-      .sendEmail(templateID, "forms-formulaires@cds-snc.ca", {
-        personalisation: {
-          subject: messageSubject,
-          formResponse: emailBody,
-        },
-        reference: submissionID,
+    return await retrieveFilesFromReliabilityStorage(fileInputPaths)
+      .then(async (files) => {
+
+        const attachFileParameters = fileInputPaths.reduce((acc, current, index) => {
+          return {
+            [`file${index}`]: {
+              "file": files[index],
+              "filename": current,
+              "sending_method": "attach"
+            },
+            ...acc
+          };
+        }, {});
+
+        return await notify
+          // Send to static email address and not submission address in form
+          .sendEmail(templateID, "forms-formulaires@cds-snc.ca", {
+            personalisation: {
+              subject: messageSubject,
+              formResponse: emailBody,
+              ...attachFileParameters
+            },
+            reference: submissionID,
+          });
       })
-      .catch((err) => {
-        throw new Error(`Sending to Notify error: ${JSON.stringify(err)}`);
-      })
+      .catch((err) => { throw new Error(`Sending to Notify error: ${JSON.stringify(err)}`) })
+      .then(async () => await removeFilesFromReliabilityStorage(fileInputPaths))
       .then(async () => {
         console.log(
           `{"status": "success", "submissionID": "${submissionID}", "sqsMessage":"${sendReceipt}", "method":"notify"}`
