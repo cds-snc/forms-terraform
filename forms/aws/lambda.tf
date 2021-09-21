@@ -606,8 +606,11 @@ resource "aws_iam_policy" "lambda_s3" {
       ],
       "Resource": [
         "${aws_s3_bucket.reliability_file_storage.arn}",
+        "${aws_s3_bucket.reliability_file_storage.arn}/*",
         "${aws_s3_bucket.vault_file_storage.arn}",
-        "${aws_s3_bucket.archive_storage.arn}"
+        "${aws_s3_bucket.vault_file_storage.arn}/*",
+        "${aws_s3_bucket.archive_storage.arn}",
+        "${aws_s3_bucket.archive_storage.arn}/*"
         ],
       "Effect": "Allow"
     }
