@@ -20,7 +20,7 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
   const form = await getFormTemplate(formID);
 
   // get program and language values from submission using the ircc config refrenced ids
-  const programList = responses[irccConfig.programFieldID];
+  // const programList = responses[irccConfig.programFieldID]; commented out as its not needed for now
 
   const languageList = responses[irccConfig.languageFieldID];
 
@@ -40,46 +40,44 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
     // forEach slower than a for loop https://stackoverflow.com/questions/43821759/why-array-foreach-is-slower-than-for-loop-in-javascript
     // yes its a double loop O(n^2) but we know n <= 4
     for (let i = 0; i < languageList.length; i++) {
-      for (let j = 0; j < programList.length; j++) {
-        const language = languageList[i];
-        const program = programList[j];
-        let listID;
-        // try getting the list id from the config json.
-        try {
-          listID = irccConfig.listMapping[language][program][contactFieldType];
-        } catch (err) {
-          console.error(
-            `IRCC config does not contain the following path ${language}.${program}.${contactFieldType}`
-          );
-          throw new Error(`Sending to Mailing List Error: ${JSON.stringify(err)}`);
-        }
-
-        let response;
-        try {
-          // Now we create the subscription
-          response = await axios
-            .post(
-              `${listManagerHost}/subscription`,
-              {
-                [contactFieldType]: contact,
-                list_id: listID,
-              },
-              {
-                headers: {
-                  Authorization: listManagerApiKey,
-                },
-              }
-            )
-            .catch((err) => {
-              throw new Error(`Sending to Mailing List Error: ${JSON.stringify(err)}`);
-            });
-        } catch (err) {
-          console.error(
-            `Subscription failed with status ${response.status} and message ${response.data}`
-          );
-          throw new Error(`Sending to Mailing List Error: ${JSON.stringify(err)}`);
-        }
+      const language = languageList[i];
+      let listID;
+      // try getting the list id from the config json.
+      try {
+        listID = irccConfig.listMapping[language][contactFieldType];
+      } catch (err) {
+        console.error(
+          `IRCC config does not contain the following path ${language}.${contactFieldType}`
+        );
+        throw new Error(`Sending to Mailing List Error: ${JSON.stringify(err)}`);
       }
+
+      let response;
+      try {
+        // Now we create the subscription
+        response = await axios
+          .post(
+            `${listManagerHost}/subscription`,
+            {
+              [contactFieldType]: contact,
+              list_id: listID,
+            },
+            {
+              headers: {
+                Authorization: listManagerApiKey,
+              },
+            }
+          )
+          .catch((err) => {
+            throw new Error(`Sending to Mailing List Error: ${JSON.stringify(err)}`);
+          });
+      } catch (err) {
+        console.error(
+          `Subscription failed with status ${response.status} and message ${response.data}`
+        );
+        throw new Error(`Sending to Mailing List Error: ${JSON.stringify(err)}`);
+      }
+      
     }
 
     console.log(
