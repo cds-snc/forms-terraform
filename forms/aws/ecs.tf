@@ -228,8 +228,8 @@ data "aws_iam_policy_document" "forms_s3" {
     ]
 
     resources = [
-        aws_s3_bucket.reliability_file_storage.arn,
-        "${aws_s3_bucket.reliability_file_storage.arn}/*"
+      aws_s3_bucket.reliability_file_storage.arn,
+      "${aws_s3_bucket.reliability_file_storage.arn}/*"
     ]
   }
 }
