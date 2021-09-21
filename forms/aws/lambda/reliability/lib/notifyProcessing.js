@@ -2,7 +2,7 @@
 const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
 const { NotifyClient } = require("notifications-node-client");
 const convertMessage = require("markdown");
-const { removeSubmission, formatError } = require("dataLayer");
+const { removeSubmission, formatError, extractFileInputResponses } = require("dataLayer");
 const { retrieveFilesFromReliabilityStorage, removeFilesFromReliabilityStorage } = require("s3FileInput");
 
 const REGION = process.env.REGION;

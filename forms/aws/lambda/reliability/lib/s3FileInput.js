@@ -41,7 +41,7 @@ async function removeFilesFromReliabilityStorage(filePaths) {
 }
 
 modules.exports = {
-  retrieveFileFromReliabilityStorage,
+  retrieveFilesFromReliabilityStorage,
   copyFilesFromReliabilityToVaultStorage,
   removeFilesFromReliabilityStorage
 };
