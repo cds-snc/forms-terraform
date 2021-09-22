@@ -57,6 +57,10 @@ resource "aws_wafv2_web_acl" "forms_acl" {
           name = "SizeRestrictions_BODY"
         }
 
+        excluded_rule {
+          name = "CrossSiteScripting_BODY"
+        }
+
       }
 
     }
