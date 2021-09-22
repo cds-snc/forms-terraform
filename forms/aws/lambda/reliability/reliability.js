@@ -33,7 +33,7 @@ exports.handler = async function (event) {
         return await sendToVault(
           submissionID,
           sendReceipt,
-          formSubmission.responses,
+          formSubmission,
           formID,
           message
         );
