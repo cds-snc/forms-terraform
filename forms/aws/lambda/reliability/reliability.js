@@ -2,6 +2,7 @@ const sendToNotify = require("notifyProcessing");
 const sendToVault = require("vaultProcessing");
 const sendToMailingList = require("mailingListProcessing");
 const { getSubmission, formatError } = require("dataLayer");
+const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
 
 exports.handler = async function (event) {
   let submissionIDPlaceholder = "";
@@ -54,5 +55,46 @@ exports.handler = async function (event) {
         )}}"`
       );
       throw new Error("Could not process / Function Error");
+    });
+};
+
+const getFormTemplate = async (formID) => {
+  const lambdaClient = new LambdaClient({ region: REGION });
+  const encoder = new TextEncoder();
+
+  const command = new InvokeCommand({
+    FunctionName: "Templates",
+    Payload: encoder.encode(
+      JSON.stringify({
+        method: "GET",
+        formID,
+      })
+    ),
+  });
+  return await lambdaClient
+    .send(command)
+    .then((response) => {
+      const decoder = new TextDecoder();
+      const payload = decoder.decode(response.Payload);
+      if (response.FunctionError) {
+        cosole.error("Lambda Template Client not successful");
+        return null;
+      } else {
+        console.info("Lambda Template Client successfully triggered");
+
+        const response = JSON.parse(payload);
+        const { records } = response.data;
+        if (records?.length === 1 && records[0].formConfig.form) {
+          return {
+            formID,
+            ...records[0].formConfig.form,
+          };
+        }
+        return null;
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      throw new Error("Could not process request with Lambda Templates function");
     });
 };
