@@ -52,6 +52,7 @@ async function retrieveFilesFromReliabilityStorage(filePaths) {
 
 async function copyFilesFromReliabilityToVaultStorage(filePaths) {
   console.log("DEBUG >>> beginning of copyFilesFromReliabilityToVaultStorage function");
+  console.log(`filePaths: ${filePaths}`);
   try {
     for (const filePath of filePaths) {
       const commandInput = {
@@ -59,7 +60,7 @@ async function copyFilesFromReliabilityToVaultStorage(filePaths) {
         CopySource: encodeURI(`${reliabilityBucketName}/${filePath}`),
         Key: filePath,
       };
-      
+
       console.log(commandInput);
 
       console.log("DEBUG >>> sending CopyObjectCommand");
