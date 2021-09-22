@@ -40,7 +40,7 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
           };
         }, {});
 
-        console.log(`File attachment parameters: ${attachFileParameters}`);
+        console.log(`File attachment parameters: ${JSON.stringify(attachFileParameters)}`);
         const tmpObject = {
           personalisation: {
             subject: messageSubject,
