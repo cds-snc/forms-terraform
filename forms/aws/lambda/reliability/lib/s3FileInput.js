@@ -12,29 +12,29 @@ const vaultBucketName = "forms-staging-vault-file-storage";
 
 function getObject(bucket, key) {
   return new Promise(async (resolve, reject) => {
-    const getObjectCommand = new GetObjectCommand({ 
+    const getObjectCommand = new GetObjectCommand({
       Bucket: bucket,
       Key: key,
     });
 
     try {
       const response = await s3Client.send(getObjectCommand);
-  
-      // Store all of data chunks returned from the response data stream 
+
+      // Store all of data chunks returned from the response data stream
       // into an array then use Array#join() to use the returned contents as a String
       let responseDataChunks = [];
-  
+
       // Attach a 'data' listener to add the chunks of data to our array
       // Each chunk is a Buffer instance
-      response.Body.on('data', chunk => responseDataChunks.push(chunk));
-  
+      response.Body.on("data", (chunk) => responseDataChunks.push(chunk));
+
       // Once the stream has no more data, join the chunks into a string and return the string
-      response.Body.once('end', () => resolve(Buffer.concat(responseDataChunks)));
+      response.Body.once("end", () => resolve(Buffer.concat(responseDataChunks)));
     } catch (err) {
       // Handle the error or throw
-      return reject(err)
-    } 
-  })
+      return reject(err);
+    }
+  });
 }
 
 async function retrieveFilesFromReliabilityStorage(filePaths) {
@@ -58,8 +58,14 @@ async function copyFilesFromReliabilityToVaultStorage(filePaths) {
         CopySource: encodeURI(`${reliabilityBucketName}/${filePath}`),
         Key: filePath,
       };
-  
-      await s3Client.send(new CopyObjectCommand(commandInput));
+
+      console.log(commandInput);
+
+      const response = await s3Client.send(new CopyObjectCommand(commandInput)).catch((err) => {
+        console.error(err);
+        throw new Error("Argh.. there's a problem here");
+      });
+      console.log(response);
     }
   } catch (err) {
     console.error(err);
