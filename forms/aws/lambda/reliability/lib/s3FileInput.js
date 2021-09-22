@@ -51,14 +51,19 @@ async function retrieveFilesFromReliabilityStorage(filePaths) {
 }
 
 async function copyFilesFromReliabilityToVaultStorage(filePaths) {
-  for (const filePath of filePaths) {
-    const commandInput = {
-      Bucket: vaultBucketName,
-      CopySource: `${reliabilityBucketName}/${filePath}`,
-      Key: filePath,
-    };
-
-    await s3Client.send(new CopyObjectCommand(commandInput));
+  try {
+    for (const filePath of filePaths) {
+      const commandInput = {
+        Bucket: vaultBucketName,
+        CopySource: `${reliabilityBucketName}/${filePath}`,
+        Key: filePath,
+      };
+  
+      await s3Client.send(new CopyObjectCommand(commandInput));
+    }
+  } catch (err) {
+    console.error(err);
+    throw new Error("Could not copy files");
   }
 }
 
