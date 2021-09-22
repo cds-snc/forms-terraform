@@ -4,6 +4,8 @@ const sendToMailingList = require("mailingListProcessing");
 const { getSubmission, formatError } = require("dataLayer");
 const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
 
+const REGION = process.env.REGION;
+
 exports.handler = async function (event) {
   let submissionIDPlaceholder = "";
 
@@ -35,13 +37,7 @@ exports.handler = async function (event) {
       /// process submission to vault or Notify
       if (formSubmission.submission.vault) {
         console.log("DEBUG >>> calling sendToVault");
-        return await sendToVault(
-          submissionID,
-          sendReceipt,
-          formSubmission,
-          formID,
-          message
-        );
+        return await sendToVault(submissionID, sendReceipt, formSubmission, formID, message);
       } else if (formSubmission.submission.mailingList) {
         return await sendToMailingList(submissionID, sendReceipt, formSubmission, message);
       } else {
