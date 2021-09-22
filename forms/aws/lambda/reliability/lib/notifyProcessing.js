@@ -3,7 +3,10 @@ const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
 const { NotifyClient } = require("notifications-node-client");
 const convertMessage = require("markdown");
 const { removeSubmission, formatError, extractFileInputResponses } = require("dataLayer");
-const { retrieveFilesFromReliabilityStorage, removeFilesFromReliabilityStorage } = require("s3FileInput");
+const {
+  retrieveFilesFromReliabilityStorage,
+  removeFilesFromReliabilityStorage,
+} = require("s3FileInput");
 
 const REGION = process.env.REGION;
 
@@ -20,22 +23,32 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
   const submissionFormat = formSubmission.submission;
 
   const fileInputPaths = extractFileInputResponses(formSubmission);
-  
+
   // Send to Notify
   if ((submissionFormat !== null) & (submissionFormat.email !== "")) {
+    console.log(`File Input Paths: ${fileInputPaths}`);
     return await retrieveFilesFromReliabilityStorage(fileInputPaths)
       .then(async (files) => {
-
         const attachFileParameters = fileInputPaths.reduce((acc, current, index) => {
           return {
             [`file${index}`]: {
-              "file": files[index],
-              "filename": current,
-              "sending_method": "attach"
+              file: files[index],
+              filename: current,
+              sending_method: "attach",
             },
-            ...acc
+            ...acc,
           };
         }, {});
+
+        console.log(`File attachment parameters: ${attachFileParameters}`);
+        const tmpObject = {
+          personalisation: {
+            subject: messageSubject,
+            formResponse: emailBody,
+            ...attachFileParameters,
+          },
+        };
+        console.log(`Parameters passed to Notify: ${JSON.stringify(tmpObject)}`);
 
         return await notify
           // Send to static email address and not submission address in form
@@ -43,12 +56,14 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
             personalisation: {
               subject: messageSubject,
               formResponse: emailBody,
-              ...attachFileParameters
+              ...attachFileParameters,
             },
             reference: submissionID,
           });
       })
-      .catch((err) => { throw new Error(`Sending to Notify error: ${JSON.stringify(err)}`) })
+      .catch((err) => {
+        throw new Error(`Sending to Notify error: ${JSON.stringify(err)}`);
+      })
       .then(async () => await removeFilesFromReliabilityStorage(fileInputPaths))
       .then(async () => {
         console.log(
