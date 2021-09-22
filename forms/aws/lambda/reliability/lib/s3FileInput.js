@@ -40,7 +40,7 @@ async function removeFilesFromReliabilityStorage(filePaths) {
   }
 }
 
-modules.exports = {
+module.exports = {
   retrieveFilesFromReliabilityStorage,
   copyFilesFromReliabilityToVaultStorage,
   removeFilesFromReliabilityStorage
