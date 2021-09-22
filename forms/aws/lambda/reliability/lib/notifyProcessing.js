@@ -41,29 +41,6 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
             },
           };
 
-          try {
-            console.log(attachFileParameters);
-          } catch (err) {
-            console.error(err);
-          }
-
-          try {
-            console.log(`Json stringified object: ${JSON.stringify(attachFileParameters)}`);
-          } catch (err) {
-            console.error(err);
-          }
-          try {
-            console.log(tmpObject);
-          } catch (err) {
-            console.error(err);
-          }
-
-          try {
-            console.log(`Json stringified object: ${JSON.stringify(tmpObject)}`);
-          } catch (err) {
-            console.error(err);
-          }
-
           return await notify
             // Send to static email address and not submission address in form
             .sendEmail(templateID, "forms-formulaires@cds-snc.ca", {

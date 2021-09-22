@@ -10,14 +10,9 @@ const {
 } = require("s3FileInput");
 
 module.exports = async (submissionID, sendReceipt, formSubmission, formID, message) => {
-  console.log("DEBUG >>> beginning of vaultProcessing main function");
-  console.log(`formSubmission: ${JSON.stringify(formSubmission)}`);
   const fileInputPaths = extractFileInputResponses(formSubmission);
-  console.log("DEBUG >>> calling copyFilesFromReliabilityToVaultStorage");
-  console.log(`fileInputPaths: ${fileInputPaths}`);
   return await copyFilesFromReliabilityToVaultStorage(fileInputPaths)
     .then(async () => {
-      console.log("DEBUG >>> calling removeFilesFromReliabilityStorage");
       return await removeFilesFromReliabilityStorage(fileInputPaths);
     })
     .then(async () => await saveToVault(submissionID, formSubmission.responses, formID))

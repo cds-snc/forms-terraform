@@ -36,7 +36,6 @@ exports.handler = async function (event) {
 
       /// process submission to vault or Notify
       if (formSubmission.submission.vault) {
-        console.log("DEBUG >>> calling sendToVault");
         return await sendToVault(submissionID, sendReceipt, formSubmission, formID, message);
       } else if (formSubmission.submission.mailingList) {
         return await sendToMailingList(submissionID, sendReceipt, formSubmission, message);
