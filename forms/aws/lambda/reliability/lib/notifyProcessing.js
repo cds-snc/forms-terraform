@@ -48,13 +48,24 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
           };
 
           try {
-            console.log(tempObject);
+            console.log(attachFileParameters);
           } catch (err) {
             console.error(err);
           }
 
           try {
-            console.log(`Json stringified object: ${JSON.stringify(tempObject)}`);
+            console.log(`Json stringified object: ${JSON.stringify(tmpObject)}`);
+          } catch (err) {
+            console.error(err);
+          }
+          try {
+            console.log(attachFileParameters);
+          } catch (err) {
+            console.error(err);
+          }
+
+          try {
+            console.log(`Json stringified object: ${JSON.stringify(tmpObject)}`);
           } catch (err) {
             console.error(err);
           }
