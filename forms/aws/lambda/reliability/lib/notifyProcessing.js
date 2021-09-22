@@ -28,34 +28,51 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
   if ((submissionFormat !== null) & (submissionFormat.email !== "")) {
     return await retrieveFilesFromReliabilityStorage(fileInputPaths)
       .then(async (files) => {
-        const attachFileParameters = fileInputPaths.reduce((acc, current, index) => {
-          return {
-            [`file${index}`]: {
-              file: files[index],
-              filename: current,
-              sending_method: "attach",
-            },
-            ...acc,
-          };
-        }, {});
-        const tmpObject = {
-          personalisation: {
-            subject: messageSubject,
-            formResponse: emailBody,
-            ...attachFileParameters,
-          },
-        };
-
-        return await notify
-          // Send to static email address and not submission address in form
-          .sendEmail(templateID, "forms-formulaires@cds-snc.ca", {
+        try {
+          const attachFileParameters = fileInputPaths.reduce((acc, current, index) => {
+            return {
+              [`file${index}`]: {
+                file: files[index],
+                filename: current,
+                sending_method: "attach",
+              },
+              ...acc,
+            };
+          }, {});
+          const tmpObject = {
             personalisation: {
               subject: messageSubject,
               formResponse: emailBody,
               ...attachFileParameters,
             },
-            reference: submissionID,
-          });
+          };
+
+          try {
+            console.log(tempObject);
+          } catch (err) {
+            console.error(err);
+          }
+
+          try {
+            console.log(`Json stringified object: ${JSON.stringify(tempObject)}`);
+          } catch (err) {
+            console.error(err);
+          }
+
+          return await notify
+            // Send to static email address and not submission address in form
+            .sendEmail(templateID, "forms-formulaires@cds-snc.ca", {
+              personalisation: {
+                subject: messageSubject,
+                formResponse: emailBody,
+                ...attachFileParameters,
+              },
+              reference: submissionID,
+            });
+        } catch (err) {
+          console.error(err);
+          throw new Error("Problem sending to Notify");
+        }
       })
       .catch((err) => {
         throw new Error(`Sending to Notify error: ${JSON.stringify(err)}`);
