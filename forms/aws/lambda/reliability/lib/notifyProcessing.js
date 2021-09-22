@@ -1,5 +1,3 @@
-// Process request and format for Notify
-const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
 const { NotifyClient } = require("notifications-node-client");
 const convertMessage = require("markdown");
 const { removeSubmission, formatError, extractFileInputResponses } = require("dataLayer");
@@ -105,45 +103,4 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
   } else {
     throw Error("Form can not be submitted due to missing Submission Parameters");
   }
-};
-
-const getFormTemplate = async (formID) => {
-  const lambdaClient = new LambdaClient({ region: REGION });
-  const encoder = new TextEncoder();
-
-  const command = new InvokeCommand({
-    FunctionName: "Templates",
-    Payload: encoder.encode(
-      JSON.stringify({
-        method: "GET",
-        formID,
-      })
-    ),
-  });
-  return await lambdaClient
-    .send(command)
-    .then((response) => {
-      const decoder = new TextDecoder();
-      const payload = decoder.decode(response.Payload);
-      if (response.FunctionError) {
-        cosole.error("Lambda Template Client not successful");
-        return null;
-      } else {
-        console.info("Lambda Template Client successfully triggered");
-
-        const response = JSON.parse(payload);
-        const { records } = response.data;
-        if (records?.length === 1 && records[0].formConfig.form) {
-          return {
-            formID,
-            ...records[0].formConfig.form,
-          };
-        }
-        return null;
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-      throw new Error("Could not process request with Lambda Templates function");
-    });
 };
