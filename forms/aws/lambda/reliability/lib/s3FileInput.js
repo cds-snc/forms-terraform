@@ -51,6 +51,8 @@ async function retrieveFilesFromReliabilityStorage(filePaths) {
 }
 
 async function copyFilesFromReliabilityToVaultStorage(filePaths) {
+  console.log("DEBUG >>> beginning of copyFilesFromReliabilityToVaultStorage function");
+  console.log(`filePaths: ${filePaths}`);
   try {
     for (const filePath of filePaths) {
       const commandInput = {
@@ -61,6 +63,7 @@ async function copyFilesFromReliabilityToVaultStorage(filePaths) {
 
       console.log(commandInput);
 
+      console.log("DEBUG >>> sending CopyObjectCommand");
       const response = await s3Client.send(new CopyObjectCommand(commandInput)).catch((err) => {
         console.error(err);
         throw new Error("Argh.. there's a problem here");
@@ -74,6 +77,7 @@ async function copyFilesFromReliabilityToVaultStorage(filePaths) {
 }
 
 async function removeFilesFromReliabilityStorage(filePaths) {
+  console.log("DEBUG >>> beginning of removeFilesFromReliabilityStorage function");
   for (const filePath of filePaths) {
     const commandInput = {
       Bucket: reliabilityBucketName,
