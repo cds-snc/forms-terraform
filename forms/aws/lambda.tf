@@ -81,6 +81,11 @@ data "archive_file" "reliability_lib" {
     content  = file("./lambda/reliability/lib/mailingListProcessing.js")
     filename = "nodejs/node_modules/mailingListProcessing/index.js"
   }
+
+  source {
+    content  = file("./lambda/reliability/lib/s3FileInput.js")
+    filename = "nodejs/node_modules/s3FileInput/index.js"
+  }
 }
 
 data "archive_file" "reliability_nodejs" {
