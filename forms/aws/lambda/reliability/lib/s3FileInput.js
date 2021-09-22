@@ -41,7 +41,7 @@ async function retrieveFilesFromReliabilityStorage(filePaths) {
   try {
     const files = filePaths.map(async (filePath) => {
       const result = await getObject(reliabilityBucketName, filePath);
-      return result.Body.toString("base64");
+      return result.toString("base64");
     });
     return await Promise.all(files);
   } catch (err) {
