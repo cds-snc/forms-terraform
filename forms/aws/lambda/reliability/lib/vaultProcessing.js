@@ -2,9 +2,14 @@ const { saveToVault, removeSubmission, formatError, extractFileInputResponses } 
 const { copyFilesFromReliabilityToVaultStorage, removeFilesFromReliabilityStorage } = require("s3FileInput");
 
 module.exports = async (submissionID, sendReceipt, formSubmission, formID, message) => {
+  console.log("DEBUG >>> beginning of vaultProcessing main function");
   const fileInputPaths = extractFileInputResponses(formSubmission);
+  console.log("DEBUG >>> calling copyFilesFromReliabilityToVaultStorage");
   return await copyFilesFromReliabilityToVaultStorage(fileInputPaths)
-    .then(async () => await removeFilesFromReliabilityStorage(fileInputPaths))
+    .then(async () => {
+      console.log("DEBUG >>> calling removeFilesFromReliabilityStorage");
+      return await removeFilesFromReliabilityStorage(fileInputPaths)
+    })
     .then(async () => await saveToVault(submissionID, formSubmission.responses, formID))
     .catch((err) => { throw new Error(`Saving to Vault error: ${formatErr(err)}`) })
     .then(async () => {
