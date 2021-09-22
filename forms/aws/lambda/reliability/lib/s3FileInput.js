@@ -1,4 +1,9 @@
-const { S3Client, GetObjectCommand, CopyObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const {
+  S3Client,
+  GetObjectCommand,
+  CopyObjectCommand,
+  DeleteObjectCommand,
+} = require("@aws-sdk/client-s3");
 
 const s3Client = new S3Client({ region: process.env.REGION });
 
@@ -6,17 +11,16 @@ const reliabilityBucketName = "forms-staging-reliability-file-storage";
 const vaultBucketName = "forms-staging-vault-file-storage";
 
 async function retrieveFilesFromReliabilityStorage(filePaths) {
-  const files = filePaths.map(async (filePath) => {
+  return await filePaths.map((filePath) => {
     const commandInput = {
       Bucket: reliabilityBucketName,
       Key: filePath,
     };
-  
-    const commandOutput = await s3Client.send(new GetObjectCommand(commandInput));
-    return commandOutput.Body
+
+    return s3Client.send(new GetObjectCommand(commandInput)).then((commandOutput) => {
+      return commandOutput.Body;
+    });
   });
-  
-  return await Promise.all(files);
 }
 
 async function copyFilesFromReliabilityToVaultStorage(filePaths) {
@@ -26,7 +30,7 @@ async function copyFilesFromReliabilityToVaultStorage(filePaths) {
       CopySource: `${reliabilityBucketName}/${filePath}`,
       Key: filePath,
     };
-  
+
     await s3Client.send(new CopyObjectCommand(commandInput));
   }
 }
@@ -37,14 +41,13 @@ async function removeFilesFromReliabilityStorage(filePaths) {
       Bucket: reliabilityBucketName,
       Key: filePath,
     };
-  
+
     await s3Client.send(new DeleteObjectCommand(commandInput));
   }
 }
 
-module.exports = {
+module.exports = {
   retrieveFilesFromReliabilityStorage,
   copyFilesFromReliabilityToVaultStorage,
-  removeFilesFromReliabilityStorage
+  removeFilesFromReliabilityStorage,
 };
-  
