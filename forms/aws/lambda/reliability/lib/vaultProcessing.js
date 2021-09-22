@@ -4,8 +4,6 @@ const { copyFilesFromReliabilityToVaultStorage, removeFilesFromReliabilityStorag
 module.exports = async (submissionID, sendReceipt, formSubmission, formID, message) => {
   const fileInputPaths = extractFileInputResponses(formSubmission);
   return await copyFilesFromReliabilityToVaultStorage(fileInputPaths)
-    .then(async () => await removeFilesFromReliabilityStorage(fileInputPaths));
-  /*return await copyFilesFromReliabilityToVaultStorage(fileInputPaths)
     .then(async () => await removeFilesFromReliabilityStorage(fileInputPaths))
     .then(async () => await saveToVault(submissionID, formSubmission.responses, formID))
     .catch((err) => { throw new Error(`Saving to Vault error: ${formatErr(err)}`) })
@@ -23,5 +21,5 @@ module.exports = async (submissionID, sendReceipt, formSubmission, formID, messa
           )}", "method":"vault" }`
         );
       });
-    });*/
+    });
 };

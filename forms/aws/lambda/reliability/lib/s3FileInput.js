@@ -55,7 +55,7 @@ async function copyFilesFromReliabilityToVaultStorage(filePaths) {
     for (const filePath of filePaths) {
       const commandInput = {
         Bucket: vaultBucketName,
-        CopySource: `${reliabilityBucketName}/${filePath}`,
+        CopySource: encodeURI(`${reliabilityBucketName}/${filePath}`),
         Key: filePath,
       };
   
