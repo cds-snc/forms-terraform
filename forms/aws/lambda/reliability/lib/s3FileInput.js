@@ -18,18 +18,18 @@ function getObject(bucket, key) {
     });
 
     try {
-      const response = await s3Client.send(getObjectCommand)
+      const response = await s3Client.send(getObjectCommand);
   
       // Store all of data chunks returned from the response data stream 
       // into an array then use Array#join() to use the returned contents as a String
-      let responseDataChunks = []
+      let responseDataChunks = [];
   
       // Attach a 'data' listener to add the chunks of data to our array
       // Each chunk is a Buffer instance
-      response.Body.on('data', chunk => responseDataChunks.push(chunk))
+      response.Body.on('data', chunk => responseDataChunks.push(chunk));
   
       // Once the stream has no more data, join the chunks into a string and return the string
-      response.Body.once('end', () => resolve(responseDataChunks.join('')))
+      response.Body.once('end', () => resolve(Buffer.concat(responseDataChunks)));
     } catch (err) {
       // Handle the error or throw
       return reject(err)
