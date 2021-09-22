@@ -12,24 +12,19 @@ const vaultBucketName = "forms-staging-vault-file-storage";
 
 async function retrieveFilesFromReliabilityStorage(filePaths) {
   try {
-    let files = [];
-
-    for (const filePath of filePaths) {
-      console.log(`Filepath: ${filePath}`);
+    const files = filePaths.map(async (filePath) => {
       const commandInput = {
         Bucket: reliabilityBucketName,
         Key: filePath,
       };
 
       const commandOutput = await s3Client.send(new GetObjectCommand(commandInput));
-
-      files.push(commandOutput.Body);
-    }
-
-    return files;
+      return commandOutput.Body;
+    });
+    return await Promise.all(files);
   } catch (err) {
     console.error(err);
-    throw new Error("I'm breaking again in retriveing files");
+    throw new Error("Could not retrieve files");
   }
 }
 
