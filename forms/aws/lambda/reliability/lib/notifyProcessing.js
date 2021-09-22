@@ -26,7 +26,6 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
 
   // Send to Notify
   if ((submissionFormat !== null) & (submissionFormat.email !== "")) {
-    console.log(`File Input Paths: ${fileInputPaths}`);
     return await retrieveFilesFromReliabilityStorage(fileInputPaths)
       .then(async (files) => {
         const attachFileParameters = fileInputPaths.reduce((acc, current, index) => {
@@ -39,8 +38,6 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
             ...acc,
           };
         }, {});
-
-        console.log(`File attachment parameters: ${JSON.stringify(attachFileParameters)}`);
         const tmpObject = {
           personalisation: {
             subject: messageSubject,
@@ -48,7 +45,6 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
             ...attachFileParameters,
           },
         };
-        console.log(`Parameters passed to Notify: ${JSON.stringify(tmpObject)}`);
 
         return await notify
           // Send to static email address and not submission address in form
