@@ -19,7 +19,7 @@ async function retrieveFilesFromReliabilityStorage(filePaths) {
       };
 
       const commandOutput = await s3Client.send(new GetObjectCommand(commandInput));
-      return commandOutput.Body;
+      return commandOutput.Body.toString("base64");
     });
     return await Promise.all(files);
   } catch (err) {
