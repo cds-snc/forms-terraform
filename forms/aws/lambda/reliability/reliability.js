@@ -27,8 +27,11 @@ exports.handler = async function (event) {
           `{"status": "warn", "submissionID": "${submissionID}", "warning": "Submission data does not exist in the DB" }`
         );
       }
-      /// process submission to vault or Notify
 
+      // Add form config back to submission to be processed
+      formSubmission.form = await getFormTemplate(formSubmission.formID);
+
+      /// process submission to vault or Notify
       if (formSubmission.submission.vault) {
         console.log("DEBUG >>> calling sendToVault");
         return await sendToVault(
