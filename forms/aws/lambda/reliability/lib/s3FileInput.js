@@ -18,7 +18,7 @@ async function retrieveFilesFromReliabilityStorage(filePaths) {
 }
 
 async function copyFilesFromReliabilityToVaultStorage(filePaths) {
-  filePaths.forEach(filePath => {
+  for (const filePath of filePaths) {
     const commandInput = {
       Bucket: vaultBucketName,
       CopySource: `${reliabilityBucketName}/${filePath}`,
@@ -26,18 +26,18 @@ async function copyFilesFromReliabilityToVaultStorage(filePaths) {
     };
   
     await s3Client.send(new CopyObjectCommand(commandInput));
-  });
+  }
 }
 
 async function removeFilesFromReliabilityStorage(filePaths) {
-  filePaths.forEach(filePath => {
+  for (const filePath of filePaths) {
     const commandInput = {
       Bucket: reliabilityBucketName,
       Key: filePath,
     };
   
     await s3Client.send(new DeleteObjectCommand(commandInput));
-  });
+  }
 }
 
 modules.exports = {
