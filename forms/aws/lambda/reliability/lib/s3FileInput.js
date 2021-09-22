@@ -12,7 +12,10 @@ const vaultBucketName = "forms-staging-vault-file-storage";
 
 function getObject(bucket, key) {
   return new Promise(async (resolve, reject) => {
-    const getObjectCommand = new GetObjectCommand({ bucket, key })
+    const getObjectCommand = new GetObjectCommand({ 
+      Bucket: bucket,
+      Key: key,
+    });
 
     try {
       const response = await s3Client.send(getObjectCommand)
