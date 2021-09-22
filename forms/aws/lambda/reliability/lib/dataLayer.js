@@ -53,6 +53,14 @@ async function saveToVault(submissionID, formResponse, formID) {
 
 // Email submission data manipulation
 
+function extractFileInputResponses(submission) {
+  return submission
+  .form
+  .elements
+  .filter(element => element.type === "fileInput")
+  .map(element => submission.responses[element.id])
+}
+
 function extractFormData(submission) {
   const formResponses = submission.responses;
   const formOrigin = submission.form;
@@ -150,6 +158,7 @@ function formatError(err) {
 module.exports = {
   getSubmission,
   removeSubmission,
+  extractFileInputResponses,
   extractFormData,
   saveToVault,
   formatError,

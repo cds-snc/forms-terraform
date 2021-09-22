@@ -81,6 +81,11 @@ data "archive_file" "reliability_lib" {
     content  = file("./lambda/reliability/lib/mailingListProcessing.js")
     filename = "nodejs/node_modules/mailingListProcessing/index.js"
   }
+
+  source {
+    content  = file("./lambda/reliability/lib/s3FileInput.js")
+    filename = "nodejs/node_modules/s3FileInput/index.js"
+  }
 }
 
 data "archive_file" "reliability_nodejs" {
@@ -606,8 +611,11 @@ resource "aws_iam_policy" "lambda_s3" {
       ],
       "Resource": [
         "${aws_s3_bucket.reliability_file_storage.arn}",
+        "${aws_s3_bucket.reliability_file_storage.arn}/*",
         "${aws_s3_bucket.vault_file_storage.arn}",
-        "${aws_s3_bucket.archive_storage.arn}"
+        "${aws_s3_bucket.vault_file_storage.arn}/*",
+        "${aws_s3_bucket.archive_storage.arn}",
+        "${aws_s3_bucket.archive_storage.arn}/*"
         ],
       "Effect": "Allow"
     }
