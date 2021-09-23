@@ -54,12 +54,15 @@ async function saveToVault(submissionID, formResponse, formID) {
 // Email submission data manipulation
 
 function extractFileInputResponses(submission) {
-  return submission
-  .form
-  .elements
-  .filter(element => element.type === "fileInput")
-  .map(element => submission.responses[element.id])
-  .filter(response => response !== "");
+  return submission.form.elements
+    .filter((element) => element.type === "fileInput")
+    .map((element) => submission.responses[element.id])
+    .filter((response) => {
+      console.log(response);
+      if (response !== "") {
+        return response;
+      }
+    });
 }
 
 function extractFormData(submission) {
