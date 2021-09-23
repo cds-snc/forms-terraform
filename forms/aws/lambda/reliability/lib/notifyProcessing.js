@@ -17,7 +17,6 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
   const submissionFormat = formSubmission.submission;
 
   const fileInputPaths = extractFileInputResponses(formSubmission);
-  console.log(`File Input Paths: ${fileInputPaths}`);
 
   // Send to Notify
   if ((submissionFormat !== null) & (submissionFormat.email !== "")) {
@@ -34,14 +33,6 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
               ...acc,
             };
           }, {});
-          const tmpObject = {
-            personalisation: {
-              subject: messageSubject,
-              formResponse: emailBody,
-              ...attachFileParameters,
-            },
-          };
-          console.log(tmpObject);
 
           return await notify
             // Send to static email address and not submission address in form

@@ -57,12 +57,7 @@ function extractFileInputResponses(submission) {
   return submission.form.elements
     .filter((element) => element.type === "fileInput")
     .map((element) => submission.responses[element.id])
-    .filter((response) => {
-      console.log(response);
-      if (response !== "") {
-        return response;
-      }
-    });
+    .filter((response) => response !== "");
 }
 
 function extractFormData(submission) {
