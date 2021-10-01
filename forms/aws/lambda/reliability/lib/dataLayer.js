@@ -115,7 +115,6 @@ function handleType(question, response, collector) {
     case "radio":
       handleTextResponse(qTitle, response, collector);
       break;
-
     case "checkbox":
       handleArrayResponse(qTitle, response, collector);
       break;
@@ -123,7 +122,7 @@ function handleType(question, response, collector) {
       handleDynamicForm(qTitle, response, question.properties.subElements, collector);
       break;
     case "fileInput":
-      handleTextResponse(qTitle, response, collector);
+      handleFileInputResponse(qTitle, response, collector);
       break;
   }
 }
@@ -141,7 +140,9 @@ function handleDynamicForm(title, response, question, collector) {
         case "radio":
           handleTextResponse(qTitle, row[qIndex], rowCollector);
           break;
-
+        case "fileInput":
+          handleFileInputResponse(qTitle, row[qIndex], rowCollector);
+          break;
         case "checkbox":
           handleArrayResponse(qTitle, row[qIndex], rowCollector);
           break;
@@ -175,6 +176,16 @@ function handleArrayResponse(title, response, collector) {
 function handleTextResponse(title, response, collector) {
   if (response !== undefined && response !== null && response !== "") {
     collector.push(`${title}${String.fromCharCode(13)}-${response}`);
+    return;
+  }
+
+  collector.push(`${title}${String.fromCharCode(13)}- No Response`);
+}
+
+function handleFileInputResponse(title, response, collector) {
+  if (response !== undefined && response !== null && response !== "") {
+    const fileName = response.split("/").pop();
+    collector.push(`${title}${String.fromCharCode(13)}-${fileName}`);
     return;
   }
 
