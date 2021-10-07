@@ -27,7 +27,7 @@ module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
             return {
               [`file${index}`]: {
                 file: files[index],
-                filename: current,
+                filename: current.split("/").pop(), // Extract file name from storage path
                 sending_method: "attach",
               },
               ...acc,
