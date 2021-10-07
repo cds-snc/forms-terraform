@@ -54,13 +54,15 @@ async function saveToVault(submissionID, formResponse, formID) {
 // Email submission data manipulation
 
 function extractFileInputResponses(submission) {
-  const fileInputElements = form.elements
+  const fileInputElements = submission.form.elements
     .filter((element) => element.type === "fileInput")
     .map((element) => submission.responses[element.id])
     .filter((response) => response !== "");
 
-  const dynamicRowElementsIncludingFileInputComponents = form.elements
+  const dynamicRowElementsIncludingFileInputComponents = submission.form.elements
+    // Filter down to only dynamicRow elements
     .filter((element) => element.type === "dynamicRow")
+    // Filter down to only dynamicRow elements that contain fileInputs
     .filter(
       (element) =>
         element.properties.subElements?.filter(
@@ -70,7 +72,7 @@ function extractFileInputResponses(submission) {
     .map((element) => {
       return (
         element.properties.subElements
-          ?.filter((subElement) => !["richText"].includes(subElement.type))
+          // Accumulates file input paths contained in dynamic row responses
           .reduce((acc, current, currentIndex) => {
             if (current.type === "fileInput") {
               const values = [];
