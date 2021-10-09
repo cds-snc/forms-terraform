@@ -4,7 +4,7 @@
   "main": "organisations.js",
   "dependencies": {
     "@aws-sdk/client-rds-data": "^3.14.0",
-    "pg": "^8.6.0",
+    "pg": "^8.7.1",
     "uuid": "^8.3.2"
   }
 }
