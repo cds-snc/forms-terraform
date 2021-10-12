@@ -1,7 +1,21 @@
-const { saveToVault, removeSubmission, formatError } = require("dataLayer");
+const {
+  saveToVault,
+  removeSubmission,
+  formatError,
+  extractFileInputResponses,
+} = require("dataLayer");
+const {
+  copyFilesFromReliabilityToVaultStorage,
+  removeFilesFromReliabilityStorage,
+} = require("s3FileInput");
 
-module.exports = async (submissionID, sendReceipt, formResponse, formID, message) => {
-  return await saveToVault(submissionID, formResponse, formID)
+module.exports = async (submissionID, sendReceipt, formSubmission, formID, message) => {
+  const fileInputPaths = extractFileInputResponses(formSubmission);
+  return await copyFilesFromReliabilityToVaultStorage(fileInputPaths)
+    .then(async () => {
+      return await removeFilesFromReliabilityStorage(fileInputPaths);
+    })
+    .then(async () => await saveToVault(submissionID, formSubmission.responses, formID))
     .catch((err) => {
       throw new Error(`Saving to Vault error: ${formatErr(err)}`);
     })

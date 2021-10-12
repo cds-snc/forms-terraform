@@ -2,6 +2,9 @@ const sendToNotify = require("notifyProcessing");
 const sendToVault = require("vaultProcessing");
 const sendToMailingList = require("mailingListProcessing");
 const { getSubmission, formatError } = require("dataLayer");
+const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
+
+const REGION = process.env.REGION;
 
 exports.handler = async function (event) {
   let submissionIDPlaceholder = "";
@@ -27,16 +30,13 @@ exports.handler = async function (event) {
           `{"status": "warn", "submissionID": "${submissionID}", "warning": "Submission data does not exist in the DB" }`
         );
       }
-      /// process submission to vault or Notify
 
+      // Add form config back to submission to be processed
+      formSubmission.form = await getFormTemplate(formSubmission.formID);
+
+      /// process submission to vault or Notify
       if (formSubmission.submission.vault) {
-        return await sendToVault(
-          submissionID,
-          sendReceipt,
-          formSubmission.responses,
-          formID,
-          message
-        );
+        return await sendToVault(submissionID, sendReceipt, formSubmission, formID, message);
       } else if (formSubmission.submission.mailingList) {
         return await sendToMailingList(submissionID, sendReceipt, formSubmission, message);
       } else {
@@ -50,5 +50,46 @@ exports.handler = async function (event) {
         )}}"`
       );
       throw new Error("Could not process / Function Error");
+    });
+};
+
+const getFormTemplate = async (formID) => {
+  const lambdaClient = new LambdaClient({ region: REGION });
+  const encoder = new TextEncoder();
+
+  const command = new InvokeCommand({
+    FunctionName: "Templates",
+    Payload: encoder.encode(
+      JSON.stringify({
+        method: "GET",
+        formID,
+      })
+    ),
+  });
+  return await lambdaClient
+    .send(command)
+    .then((response) => {
+      const decoder = new TextDecoder();
+      const payload = decoder.decode(response.Payload);
+      if (response.FunctionError) {
+        cosole.error("Lambda Template Client not successful");
+        return null;
+      } else {
+        console.info("Lambda Template Client successfully triggered");
+
+        const response = JSON.parse(payload);
+        const { records } = response.data;
+        if (records?.length === 1 && records[0].formConfig.form) {
+          return {
+            formID,
+            ...records[0].formConfig.form,
+          };
+        }
+        return null;
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      throw new Error("Could not process request with Lambda Templates function");
     });
 };

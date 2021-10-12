@@ -53,6 +53,46 @@ async function saveToVault(submissionID, formResponse, formID) {
 
 // Email submission data manipulation
 
+function extractFileInputResponses(submission) {
+  const fileInputElements = submission.form.elements
+    .filter((element) => element.type === "fileInput")
+    .map((element) => submission.responses[element.id])
+    .filter((response) => response !== "");
+
+  const dynamicRowElementsIncludingFileInputComponents = submission.form.elements
+    // Filter down to only dynamicRow elements
+    .filter((element) => element.type === "dynamicRow")
+    // Filter down to only dynamicRow elements that contain fileInputs
+    .filter(
+      (element) =>
+        element.properties.subElements?.filter(
+          (subElement) => subElement.type === "fileInput"
+        ) ?? false
+    )
+    .map((element) => {
+      return (
+        element.properties.subElements
+          // Accumulates file input paths contained in dynamic row responses
+          .reduce((acc, current, currentIndex) => {
+            if (current.type === "fileInput") {
+              const values = [];
+              const responses = submission.responses[element.id];
+              responses.forEach((response) => {
+                const fileInputPath = response[currentIndex];
+                if (fileInputPath !== "") values.push(fileInputPath);
+              });
+              return [...acc, ...values];
+            } else {
+              return acc;
+            }
+          }, []) ?? []
+      );
+    })
+    .flat();
+
+    return [...fileInputElements, ...dynamicRowElementsIncludingFileInputComponents];
+}
+
 function extractFormData(submission) {
   const formResponses = submission.responses;
   const formOrigin = submission.form;
@@ -77,7 +117,6 @@ function handleType(question, response, collector) {
     case "radio":
       handleTextResponse(qTitle, response, collector);
       break;
-
     case "checkbox":
       handleArrayResponse(qTitle, response, collector);
       break;
@@ -85,7 +124,7 @@ function handleType(question, response, collector) {
       handleDynamicForm(qTitle, response, question.properties.subElements, collector);
       break;
     case "fileInput":
-      handleTextResponse(qTitle, response, collector);
+      handleFileInputResponse(qTitle, response, collector);
       break;
   }
 }
@@ -103,7 +142,9 @@ function handleDynamicForm(title, response, question, collector) {
         case "radio":
           handleTextResponse(qTitle, row[qIndex], rowCollector);
           break;
-
+        case "fileInput":
+          handleFileInputResponse(qTitle, row[qIndex], rowCollector);
+          break;
         case "checkbox":
           handleArrayResponse(qTitle, row[qIndex], rowCollector);
           break;
@@ -143,6 +184,16 @@ function handleTextResponse(title, response, collector) {
   collector.push(`${title}${String.fromCharCode(13)}- No Response`);
 }
 
+function handleFileInputResponse(title, response, collector) {
+  if (response !== undefined && response !== null && response !== "") {
+    const fileName = response.split("/").pop();
+    collector.push(`${title}${String.fromCharCode(13)}-${fileName}`);
+    return;
+  }
+
+  collector.push(`${title}${String.fromCharCode(13)}- No Response`);
+}
+
 function formatError(err) {
   return typeof err === "object" ? JSON.stringify(err) : err;
 }
@@ -150,6 +201,7 @@ function formatError(err) {
 module.exports = {
   getSubmission,
   removeSubmission,
+  extractFileInputResponses,
   extractFormData,
   saveToVault,
   formatError,
