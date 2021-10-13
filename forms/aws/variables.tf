@@ -35,14 +35,6 @@ variable "cloudwatch_log_group_name" {
 # AWS ECS - ecs.tf
 ###
 
-variable "list_manager_host" {
-  type = string
-}
-
-variable "ircc_config" {
-  type = string
-}
-
 variable "github_sha" {
   type    = string
   default = ""
@@ -93,11 +85,6 @@ variable "ecs_secret_google_client_id" {
 variable "ecs_secret_google_client_secret" {
   type = string
 }
-
-variable "ecs_secret_list_manager_api_key" {
-  type = string
-}
-
 
 # Forms Scaling
 
