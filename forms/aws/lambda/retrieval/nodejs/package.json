@@ -4,6 +4,6 @@
   "main": "retrieval.js",
   "dependencies": {
     "@aws-sdk/client-rds-data": "^3.14.0",
-    "@aws-sdk/client-dynamodb": "^3.7.0"
+    "@aws-sdk/client-dynamodb": "^3.34.0"
   }
 }
