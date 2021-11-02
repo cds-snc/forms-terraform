@@ -5,11 +5,10 @@ Infrastructure as Code for GC Forms Staging environment
 ## Running Lambdas and DBs locally
 
 Pre-requisites:
-Docker
-Homebrew
-AWS CLI
-configure with staging credentials and “ca-central-1”
-Postgres and PGAdmin
+- Docker  
+- Homebrew  
+- AWS CLI (*configure with staging credentials and “ca-central-1”*)  
+- Postgres and PGAdmin
 
 Install AWS SAM-CLI
 `brew tap aws/tap`
@@ -24,8 +23,10 @@ In directory:
 Install Lambda dependencies and start local lambda service
 In directory: `./forms/aws/lambda/` run the script `./start_local_lambdas.sh`
 
-If you want to invoke a lambda specifically, here’s the example command:
-`aws lambda invoke --function-name "Templates" --endpoint-url "http://127.0.0.1:3001" --no-verify-ssl out.txt`
+If you want to invoke a lambda specifically, here’s the example command:  
+`aws lambda invoke --function-name "Templates" --endpoint-url "http://127.0.0.1:3001" --no-verify-ssl --payload fileb://./file.json out.txt`  
+**NOTE:** *`fileb://` allows a JSON file that uses UTF-8 encoding for the payload.*   
+  
 Otherwise, in the platform-forms-client, you just modify the ‘endpoint’ parameter of the LambdaClient to hit `http://127.0.0.1:3001` . I’ve done this through an environment variable:
 `LOCAL_LAMBDA_ENDPOINT=http://127.0.0.1:3001`
 
