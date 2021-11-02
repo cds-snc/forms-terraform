@@ -7,5 +7,6 @@ resource "aws_route53_zone" "form_viewer" {
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
+    "Terraform"           = true
   }
 }
