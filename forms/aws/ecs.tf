@@ -91,6 +91,7 @@ resource "aws_ecs_service" "form_viewer" {
     subnets          = aws_subnet.forms_private.*.id
     security_groups = [
       aws_security_group.forms.id,
+      aws_security_group.forms_egress.id
     ]
   }
 
