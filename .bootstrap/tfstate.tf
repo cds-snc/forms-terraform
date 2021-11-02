@@ -18,12 +18,17 @@ variable "tfstate_bucket_name" {
 }
 
 module "state_bucket" {
-  source      = "github.com/cds-snc/terraform-modules?ref=v0.0.38//S3"
-  bucket_name = var.tfstate_bucket_name
+  source            = "github.com/cds-snc/terraform-modules?ref=v0.0.38//S3"
+  bucket_name       = var.tfstate_bucket_name
+  billing_tag_value = "Forms"
+
+  versioning = {
+    enabled = true
+  }
+
   logging = {
     target_bucket = module.state_bucket_logs.s3_bucket_id
   }
-  billing_tag_value = "Forms"
 }
 
 module "state_bucket_logs" {
