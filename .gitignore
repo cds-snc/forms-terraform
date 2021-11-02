@@ -5,8 +5,11 @@
 *.tfstate
 *.tfstate.*
 
-# terraform dependency lock file
-.terraform.lock.hcl
+# Terraform lock file
+.bootstrap/.terraform.lock.hcl
+
+# Terragrunt
+.terragrunt-cache
 
 # Crash log files
 crash.log
