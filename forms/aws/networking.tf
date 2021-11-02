@@ -370,6 +370,26 @@ resource "aws_security_group" "forms_load_balancer" {
   }
 }
 
+resource "aws_security_group" "forms_egress" {
+  name        = "egress-anywhere"
+  description = "Egress - Forms External Services"
+  vpc_id      = aws_vpc.forms.id
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+  }
+}
+
+resource "aws_security_group_rule" "forms_egress_notify" {
+  description       = "Security group rule for Forms Notify egress"
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  security_group_id = aws_security_group.forms_egress.id
+  cidr_blocks       = ["0.0.0.0/0"] #tfsec:ignore:AWS007
+}
+
 resource "aws_security_group" "privatelink" {
   name        = "privatelink"
   description = "privatelink endpoints"
