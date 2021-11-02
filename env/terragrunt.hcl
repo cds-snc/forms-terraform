@@ -4,7 +4,7 @@ locals {
 
 inputs = {
   account_id        = "${local.vars.inputs.account_id}"
-  billing_tag_key   = "CostCenter"
+  billing_tag_key   = "CostCentre"
   billing_tag_value = "forms-platform-${local.vars.inputs.env}"   
   domain            = "${local.vars.inputs.domain}"
   env               = "${local.vars.inputs.env}"
