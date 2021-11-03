@@ -1,5 +1,5 @@
 terraform {
-  source = "../../../aws//hosted_zone"
+  source = "../../../aws//kms"
 }
 
 include {

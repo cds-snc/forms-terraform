@@ -60,6 +60,9 @@ jobs:
             hosted_zone:
               - 'aws/hosted_zone/**'
               - 'env/scratch/hosted_zone/**'
+            kms:
+              - 'aws/kms/**'
+              - 'env/scratch/kms/**'              
 
       # No dependencies
       - name: Terragrunt plan hosted_zone
@@ -71,3 +74,13 @@ jobs:
           comment-title: "Scratch: hosted_zone"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
+
+      - name: Terragrunt plan kms
+        if: ${{ steps.filter.outputs.kms == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/scratch/kms"
+          comment-delete: "true"
+          comment-title: "Scratch: kms"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"          
