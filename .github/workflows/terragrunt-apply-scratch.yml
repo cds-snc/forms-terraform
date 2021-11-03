@@ -58,6 +58,9 @@ jobs:
             network:
               - 'aws/network/**'
               - 'env/scratch/network/**'
+            redis:
+              - 'aws/redis/**'
+              - 'env/scratch/redis/**'
 
       # No dependencies
       - name: Terragrunt apply hosted_zone
@@ -74,5 +77,11 @@ jobs:
       - name: Terragrunt apply network
         if: ${{ steps.filter.outputs.network == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/scratch/network
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve      
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      # Depends on network
+      - name: Terragrunt apply redis
+        if: ${{ steps.filter.outputs.redis == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/scratch/redis
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
 

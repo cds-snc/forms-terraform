@@ -66,6 +66,9 @@ jobs:
             network:
               - 'aws/network/**'
               - 'env/scratch/network/**'
+            redis:
+              - 'aws/redis/**'
+              - 'env/scratch/redis/**'
 
       # No dependencies
       - name: Terragrunt plan hosted_zone
@@ -97,4 +100,15 @@ jobs:
           comment-delete: "true"
           comment-title: "Scratch: network"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"          
+          terragrunt: "true"
+
+      # Depends on network
+      - name: Terragrunt plan redis
+        if: ${{ steps.filter.outputs.redis == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/scratch/redis"
+          comment-delete: "true"
+          comment-title: "Scratch: redis"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
