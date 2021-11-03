@@ -2,4 +2,7 @@
 
 skip-check:
   - CKV_AWS_23 # Security group descriptions are not required
+  - CKV_AWS_29 # Elasticache data is non-sensitive feature flags
+  - CKV_AWS_30 # Elasticache data is non-sensitive feature flags
+  - CKV_AWS_31 # Elasticache data is non-sensitive feature flags
   - CKV2_AWS_5 # Security groups are attached in seperate Terragrunt modules
