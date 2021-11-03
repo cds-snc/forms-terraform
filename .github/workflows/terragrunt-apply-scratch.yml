@@ -54,7 +54,10 @@ jobs:
               - 'env/scratch/hosted_zone/**'
             kms:
               - 'aws/kms/**'
-              - 'env/scratch/kms/**'              
+              - 'env/scratch/kms/**'
+            network:
+              - 'aws/network/**'
+              - 'env/scratch/network/**'
 
       # No dependencies
       - name: Terragrunt apply hosted_zone
@@ -65,4 +68,11 @@ jobs:
       - name: Terragrunt apply kms
         if: ${{ steps.filter.outputs.kms == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/scratch/kms
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve        
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      # Depends on kms
+      - name: Terragrunt apply network
+        if: ${{ steps.filter.outputs.network == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/scratch/network
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve      
+
