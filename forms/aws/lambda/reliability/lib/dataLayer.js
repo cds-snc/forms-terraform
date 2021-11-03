@@ -14,7 +14,7 @@ async function getSubmission(message) {
     Key: {
       SubmissionID: { S: message.submissionID },
     },
-    ProjectExpression: "SubmissionID,FormID,SendReceipt,FormData",
+    ProjectExpression: "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage",
   };
   //save data to DynamoDB
   return await db.send(new GetItemCommand(DBParams));
@@ -93,23 +93,21 @@ function extractFileInputResponses(submission) {
     return [...fileInputElements, ...dynamicRowElementsIncludingFileInputComponents];
 }
 
-function extractFormData(submission) {
+function extractFormData(submission, language) {
   const formResponses = submission.responses;
   const formOrigin = submission.form;
   const dataCollector = [];
   formOrigin.layout.map((qID) => {
     const question = formOrigin.elements.find((element) => element.id === qID);
     if (question) {
-      handleType(question, formResponses[question.id], dataCollector);
+      handleType(question, formResponses[question.id], language, dataCollector);
     }
   });
   return dataCollector;
 }
 
-function handleType(question, response, collector) {
-  // Add i18n here later on?
-  // Do we detect lang submission or output with mixed lang?
-  const qTitle = question.properties.titleEn;
+function handleType(question, response, language, collector) {
+  const qTitle = language === "fr"? question.properties.titleFr : question.properties.titleEn;
   switch (question.type) {
     case "textField":
     case "textArea":

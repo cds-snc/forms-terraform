@@ -6,13 +6,14 @@ const {
   removeFilesFromReliabilityStorage,
 } = require("s3FileInput");
 
-module.exports = async (submissionID, sendReceipt, formSubmission, message) => {
+module.exports = async (submissionID, sendReceipt, formSubmission, language, message) => {
   const templateID = "92096ac6-1cc5-40ae-9052-fffdb8439a90";
   const notify = new NotifyClient("https://api.notification.canada.ca", process.env.NOTIFY_API_KEY);
-  const emailBody = convertMessage(formSubmission);
-  const messageSubject = formSubmission.form.emailSubjectEn
-    ? formSubmission.form.emailSubjectEn
-    : formSubmission.form.titleEn;
+  const emailBody = convertMessage(formSubmission, language);
+  const messageSubject = language === "fr" ?
+    (formSubmission.form.emailSubjectFr ? formSubmission.form.emailSubjectFr : formSubmission.form.titleFr) :
+    (formSubmission.form.emailSubjectEn ? formSubmission.form.emailSubjectEn : formSubmission.form.titleEn)
+
   // Need to get this from the submission now.. not the app.
   const submissionFormat = formSubmission.submission;
 

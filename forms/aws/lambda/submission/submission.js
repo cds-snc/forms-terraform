@@ -16,25 +16,15 @@ exports.handler = async function (event) {
     const formData = event;
     const submissionID = uuid.v4();
     //-----------
+    await saveData(submissionID, formData)
+    const receiptID = await sendData(submissionID)
+    // Update DB entry for receipt ID
+    await saveReceipt(submissionID, receiptID);
+    console.log(
+        `{"status": "success", "sqsMessage": "${receiptID}", "submissionID": "${submissionID}"}`
+    );
+    return { status: true };
 
-    return saveData(submissionID, formData)
-      .then(() => {
-        return sendData(submissionID);
-      })
-      .then(async (receiptID) => {
-        // Update DB entry for receipt ID
-        await saveReceipt(submissionID, receiptID);
-        console.log(
-          `{"status": "success", "sqsMessage": "${receiptID}", "submissionID": "${submissionID}"}`
-        );
-        return { status: true };
-      })
-      .catch((err) => {
-        console.error(
-          `{"status": "failed", "submissionID": "${submissionID}", "error": "${formatError(err)}"}`
-        );
-        return { status: false };
-      });
     //----------
   } catch (err) {
     console.error(
@@ -73,6 +63,7 @@ const saveData = async (submissionID, formData) => {
       SubmissionID: { S: submissionID },
       FormID: { S: formData.formID },
       SendReceipt: { S: "unknown" },
+      FormSubmissionLanguage: {S: formData.language},
       FormData: { S: formSubmission },
     },
   };
