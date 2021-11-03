@@ -1,0 +1,5 @@
+# Config for checkov Terraform static analysis
+
+skip-check:
+  - CKV_AWS_23 # Security group descriptions are not required
+  - CKV2_AWS_5 # Security groups are attached in seperate Terragrunt modules
