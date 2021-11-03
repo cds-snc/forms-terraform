@@ -46,7 +46,7 @@ jobs:
           && grep 'Linux_x86_64.tar.gz' < checksums.txt | sha256sum --check  --status \
           && tar -zxvf "conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz" conftest \
           && mv conftest /usr/local/bin \
-          && rm "conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz" checksums.txt          
+          && rm "conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz" checksums.txt
 
       - uses: dorny/paths-filter@b2feaf19c27470162a626bd6fa8438ae5b263721 # v2.10.2
         id: filter
@@ -62,7 +62,10 @@ jobs:
               - 'env/scratch/hosted_zone/**'
             kms:
               - 'aws/kms/**'
-              - 'env/scratch/kms/**'              
+              - 'env/scratch/kms/**'
+            network:
+              - 'aws/network/**'
+              - 'env/scratch/network/**'
 
       # No dependencies
       - name: Terragrunt plan hosted_zone
@@ -82,5 +85,16 @@ jobs:
           directory: "env/scratch/kms"
           comment-delete: "true"
           comment-title: "Scratch: kms"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      # Depends on kms
+      - name: Terragrunt plan network
+        if: ${{ steps.filter.outputs.network == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/scratch/network"
+          comment-delete: "true"
+          comment-title: "Scratch: network"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"          
