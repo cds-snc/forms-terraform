@@ -104,8 +104,8 @@ resource "aws_security_group" "forms_egress" {
   }
 }
 
-resource "aws_security_group_rule" "forms_egress_notify" {
-  description       = "Security group rule for Forms Notify egress"
+resource "aws_security_group_rule" "forms_external_auth" {
+  description       = "Security group rule for Forms app access to the internet for external authentication"
   type              = "egress"
   from_port         = 443
   to_port           = 443
