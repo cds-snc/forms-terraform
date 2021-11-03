@@ -3,6 +3,11 @@
 #
 resource "aws_default_security_group" "default" {
   vpc_id = aws_vpc.forms.id
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_security_group" "forms" {

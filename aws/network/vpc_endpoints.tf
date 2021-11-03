@@ -12,6 +12,11 @@ resource "aws_vpc_endpoint" "sqs" {
     aws_security_group.privatelink.id
   ]
   subnet_ids = aws_subnet.forms_private.*.id
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_vpc_endpoint" "lambda" {
@@ -23,6 +28,11 @@ resource "aws_vpc_endpoint" "lambda" {
     aws_security_group.privatelink.id,
   ]
   subnet_ids = data.aws_subnet_ids.lambda_endpoint_available.ids
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_vpc_endpoint" "ecr-dkr" {
@@ -34,6 +44,11 @@ resource "aws_vpc_endpoint" "ecr-dkr" {
     aws_security_group.privatelink.id,
   ]
   subnet_ids = data.aws_subnet_ids.ecr_endpoint_available.ids
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_vpc_endpoint" "ecr-api" {
@@ -45,6 +60,11 @@ resource "aws_vpc_endpoint" "ecr-api" {
     aws_security_group.privatelink.id,
   ]
   subnet_ids = data.aws_subnet_ids.ecr_endpoint_available.ids
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_vpc_endpoint" "kms" {
@@ -56,6 +76,11 @@ resource "aws_vpc_endpoint" "kms" {
     aws_security_group.privatelink.id,
   ]
   subnet_ids = aws_subnet.forms_private.*.id
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_vpc_endpoint" "secretsmanager" {
@@ -67,6 +92,11 @@ resource "aws_vpc_endpoint" "secretsmanager" {
     aws_security_group.privatelink.id,
   ]
   subnet_ids = aws_subnet.forms_private.*.id
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_vpc_endpoint" "logs" {
@@ -78,6 +108,11 @@ resource "aws_vpc_endpoint" "logs" {
     aws_security_group.privatelink.id,
   ]
   subnet_ids = aws_subnet.forms_private.*.id
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_vpc_endpoint" "monitoring" {
@@ -89,6 +124,11 @@ resource "aws_vpc_endpoint" "monitoring" {
     aws_security_group.privatelink.id,
   ]
   subnet_ids = aws_subnet.forms_private.*.id
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 resource "aws_vpc_endpoint" "rds" {
   vpc_id              = aws_vpc.forms.id
@@ -99,6 +139,11 @@ resource "aws_vpc_endpoint" "rds" {
     aws_security_group.privatelink.id,
   ]
   subnet_ids = aws_subnet.forms_private.*.id
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_vpc_endpoint" "dynamodb" {
@@ -106,6 +151,11 @@ resource "aws_vpc_endpoint" "dynamodb" {
   vpc_endpoint_type = "Gateway"
   service_name      = "com.amazonaws.${var.region}.dynamodb"
   route_table_ids   = [aws_vpc.forms.main_route_table_id]
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_vpc_endpoint" "s3" {
@@ -113,4 +163,9 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_endpoint_type = "Gateway"
   service_name      = "com.amazonaws.${var.region}.s3"
   route_table_ids   = [aws_vpc.forms.main_route_table_id]
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
