@@ -16,6 +16,7 @@ env:
   TERRAFORM_VERSION: 1.0.10
   TERRAGRUNT_VERSION: 0.35.6
   TF_INPUT: false
+  TF_VAR_rds_db_password: ${{ secrets.DB_PASSWORD }}
 
 jobs:
 
@@ -66,6 +67,9 @@ jobs:
             network:
               - 'aws/network/**'
               - 'env/scratch/network/**'
+            rds:
+              - 'aws/rds/**'
+              - 'env/scratch/rds/**'
             redis:
               - 'aws/redis/**'
               - 'env/scratch/redis/**'
@@ -110,5 +114,15 @@ jobs:
           directory: "env/scratch/redis"
           comment-delete: "true"
           comment-title: "Scratch: redis"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan rds
+        if: ${{ steps.filter.outputs.rds == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/scratch/rds"
+          comment-delete: "true"
+          comment-title: "Scratch: rds"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
