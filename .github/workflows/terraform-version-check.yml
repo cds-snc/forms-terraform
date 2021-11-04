@@ -35,6 +35,25 @@ jobs:
           echo "::set-output name=terraform::${TERRAFORM_USED}"
           echo "::set-output name=terragrunt::${TERRAGRUNT_USED}"
 
+      - name: Delete previous update comments
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: comments } = await octokit.rest.issues.listComments({
+              ...context.repo,
+              issue_number: context.payload.pull_request.number,
+            });
+            const comment = comments.find(
+              (comment) => comment.user.type === "Bot" && comment.body.indexOf("Terrform update available") > -1
+            );
+            if (comment) {
+              await octokit.rest.issues.deleteComment({
+                ...context.repo,
+                comment_id: comment.id,
+              });
+            }
+
       - name: Add version comment
         if: steps.latest.outputs.terraform != steps.used.outputs.terraform || steps.latest.outputs.terragrunt != steps.used.outputs.terragrunt
         uses: actions/github-script@v4
@@ -45,8 +64,7 @@ jobs:
               ...context.repo,
               issue_number: context.issue.number,
               body: `## ⚠ Terrform update available
-                yaml
-                - Terraform: ${{ steps.latest.outputs.terraform }}
-                - Terragrunt: ${{ steps.latest.outputs.terragrunt }}
+                Terraform: ${{ steps.latest.outputs.terraform }}
+                Terragrunt: ${{ steps.latest.outputs.terragrunt }}
               `
             })
