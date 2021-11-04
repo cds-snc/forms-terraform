@@ -40,15 +40,15 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { data: comments } = await octokit.rest.issues.listComments({
+            const { data: comments } = await github.issues.listComments({
               ...context.repo,
-              issue_number: context.payload.pull_request.number,
+              issue_number: context.issue.number,
             });
             const comment = comments.find(
               (comment) => comment.user.type === "Bot" && comment.body.indexOf("Terrform update available") > -1
             );
             if (comment) {
-              await octokit.rest.issues.deleteComment({
+              await github.issues.deleteComment({
                 ...context.repo,
                 comment_id: comment.id,
               });
