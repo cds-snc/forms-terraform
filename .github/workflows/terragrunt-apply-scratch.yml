@@ -52,7 +52,10 @@ jobs:
               - 'env/scratch/env_vars.hcl'
             dynamodb:
               - 'aws/dynamodb/**'
-              - 'env/scratch/dynamodb/**'              
+              - 'env/scratch/dynamodb/**'
+            ecr:
+              - 'aws/ecr/**'
+              - 'env/scratch/ecr/**'
             hosted_zone:
               - 'aws/hosted_zone/**'
               - 'env/scratch/hosted_zone/**'
@@ -80,6 +83,11 @@ jobs:
         working-directory: env/scratch/kms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Terragrunt apply ecr
+        if: ${{ steps.filter.outputs.ecr == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/scratch/ecr
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
       # Depends on kms
       - name: Terragrunt apply network
         if: ${{ steps.filter.outputs.network == 'true' || steps.filter.outputs.common == 'true' }}
@@ -89,7 +97,7 @@ jobs:
       - name: Terragrunt apply dynamodb
         if: ${{ steps.filter.outputs.dynamodb == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/scratch/dynamodb
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve        
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on network
       - name: Terragrunt apply redis

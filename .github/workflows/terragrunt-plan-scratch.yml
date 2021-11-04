@@ -61,6 +61,9 @@ jobs:
             dynamodb:
               - 'aws/dynamodb/**'
               - 'env/scratch/dynamodb/**'
+            ecr:
+              - 'aws/ecr/**'
+              - 'env/scratch/ecr/**'
             hosted_zone:
               - 'aws/hosted_zone/**'
               - 'env/scratch/hosted_zone/**'
@@ -95,6 +98,16 @@ jobs:
           directory: "env/scratch/kms"
           comment-delete: "true"
           comment-title: "Scratch: kms"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan ecr
+        if: ${{ steps.filter.outputs.ecr == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/scratch/ecr"
+          comment-delete: "true"
+          comment-title: "Scratch: ecr"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
