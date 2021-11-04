@@ -35,23 +35,15 @@ jobs:
           echo "::set-output name=terraform::${TERRAFORM_USED}"
           echo "::set-output name=terragrunt::${TERRAGRUNT_USED}"
 
-      - name: Delete previous update comments
+      - name: Delete previous comments
         uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { data: comments } = await github.issues.listComments({
-              ...context.repo,
-              issue_number: context.issue.number,
-            });
-            const comment = comments.find(
-              (comment) => comment.user.type === "Bot" && comment.body.indexOf("Terrform update available") > -1
-            );
+            const { data: comments } = await github.issues.listComments({...context.repo, issue_number: context.issue.number});
+            const comment = comments.find(comment => comment.user.type === "Bot" && comment.body.indexOf("Terrform update available") > -1);
             if (comment) {
-              await github.issues.deleteComment({
-                ...context.repo,
-                comment_id: comment.id,
-              });
+              await github.issues.deleteComment({...context.repo, comment_id: comment.id});
             }
 
       - name: Add version comment
@@ -60,11 +52,12 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const tf = { used: "${{ steps.used.outputs.terraform }}",  latest: "${{ steps.latest.outputs.terraform }}" };
+            const tg = { used: "${{ steps.used.outputs.terragrunt }}", latest: "${{ steps.latest.outputs.terragrunt }}" };
+            const terraform =  tf.used !== tf.latest ? `\nTerraform: v${tf.used} older than v${tf.latest}` : "";  
+            const terragrunt = tg.used !== tg.latest ? `\nTerraform: v${tg.used} older than v${tg.latest}` : "";        
             github.issues.createComment({
               ...context.repo,
               issue_number: context.issue.number,
-              body: `## ⚠ Terrform update available
-                Terraform: ${{ steps.latest.outputs.terraform }}
-                Terragrunt: ${{ steps.latest.outputs.terragrunt }}
-              `
+              body: "## ⚠ Terrform update available\n```yaml${terraform}${terragrunt}```"
             })
