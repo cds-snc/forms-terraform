@@ -45,9 +45,8 @@ jobs:
               ...context.repo,
               issue_number: context.issue.number,
               body: `## ⚠ Terrform update available
-                \`\`\`yaml
+                yaml
                 - Terraform: ${{ steps.latest.outputs.terraform }}
                 - Terragrunt: ${{ steps.latest.outputs.terragrunt }}
-                \`\`\`
               `
             })
