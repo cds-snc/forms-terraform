@@ -24,7 +24,7 @@ jobs:
           TERRAFORM_LATEST="$(curl https://api.github.com/repos/hashicorp/terraform/releases/latest | jq --raw-output '.tag_name' | cut -c 2-)"
           TERRAGRUNT_LATEST="$(curl https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | jq --raw-output '.tag_name' | cut -c 2-)"
           echo "::set-output name=terraform::123"
-          echo "::set-output name=terragrunt::${TERRAGRUNT_LATEST}"
+          echo "::set-output name=terragrunt::456"
 
       - name: Get used versions
         id: used
