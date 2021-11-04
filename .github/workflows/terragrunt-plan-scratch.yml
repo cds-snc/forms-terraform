@@ -58,6 +58,9 @@ jobs:
               - 'env/common/**'
               - 'env/terragrunt.hcl'
               - 'env/scratch/env_vars.hcl'
+            dynamodb:
+              - 'aws/dynamodb/**'
+              - 'env/scratch/dynamodb/**'
             hosted_zone:
               - 'aws/hosted_zone/**'
               - 'env/scratch/hosted_zone/**'
@@ -103,6 +106,16 @@ jobs:
           directory: "env/scratch/network"
           comment-delete: "true"
           comment-title: "Scratch: network"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan dynamodb
+        if: ${{ steps.filter.outputs.dynamodb == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/scratch/dynamodb"
+          comment-delete: "true"
+          comment-title: "Scratch: dynamodb"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
