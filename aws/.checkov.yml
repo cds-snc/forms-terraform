@@ -2,7 +2,9 @@
 
 skip-check:
   - CKV_AWS_23  # Security group descriptions are not required
+  - CKV_AWS_51  # ECR `latest` image tag is used in Staging
   - CKV_AWS_128 # RDS IAM authentication will not be used
+  - CKV_AWS_136 # ECR default service key encryption is acceptable
   - CKV_AWS_162 # RDS IAM authentication will not be used
   - CKV2_AWS_5  # Security groups are attached in seperate Terragrunt modules
   - CKV_AWS_29  # TODO: Elasticache investigate at-rest data encryption
