@@ -29,6 +29,7 @@ jobs:
       - name: Get used versions
         id: used
         run: |
+          pip install yq
           TERRAFORM_USED="$(yq -r .env.TERRAFORM_VERSION .github/workflows/terragrunt-apply-${{ env.ENV }}.yml)"
           TERRAGRUNT_USED="$(yq -r .env.TERRAGRUNT_VERSION .github/workflows/terragrunt-apply-${{ env.ENV }}.yml)"
           echo "::set-output name=terraform::${TERRAFORM_USED}"
