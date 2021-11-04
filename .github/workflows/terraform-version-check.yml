@@ -54,8 +54,8 @@ jobs:
           script: |
             const tf = { used: "${{ steps.used.outputs.terraform }}",  latest: "${{ steps.latest.outputs.terraform }}" };
             const tg = { used: "${{ steps.used.outputs.terragrunt }}", latest: "${{ steps.latest.outputs.terragrunt }}" };
-            const terraform =  tf.used !== tf.latest ? `\nTerraform: v${tf.used} older than v${tf.latest}` : "";  
-            const terragrunt = tg.used !== tg.latest ? `\nTerraform: v${tg.used} older than v${tg.latest}` : "";        
+            const terraform =  tf.used !== tf.latest ? `\nTerraform: ${tf.latest} (using ${tf.used})` : "";  
+            const terragrunt = tg.used !== tg.latest ? `\nTerragrunt: ${tg.latest} (using ${tg.used})` : "";        
             github.issues.createComment({
               ...context.repo,
               issue_number: context.issue.number,
