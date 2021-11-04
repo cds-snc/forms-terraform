@@ -1,8 +1,12 @@
 # Config for checkov Terraform static analysis
 
 skip-check:
-  - CKV_AWS_23 # Security group descriptions are not required
-  - CKV_AWS_29 # Elasticache data is non-sensitive feature flags
-  - CKV_AWS_30 # Elasticache data is non-sensitive feature flags
-  - CKV_AWS_31 # Elasticache data is non-sensitive feature flags
-  - CKV2_AWS_5 # Security groups are attached in seperate Terragrunt modules
+  - CKV_AWS_23  # Security group descriptions are not required
+  - CKV_AWS_128 # RDS IAM authentication will not be used
+  - CKV_AWS_162 # RDS IAM authentication will not be used
+  - CKV2_AWS_5  # Security groups are attached in seperate Terragrunt modules
+  - CKV_AWS_29  # TODO: Elasticache investigate at-rest data encryption
+  - CKV_AWS_30  # TODO: Elasticache investigate in-transit data encryption
+  - CKV_AWS_31  # TODO: Elasticache investigate in-transit data encryption and auth token  
+  - CKV2_AWS_8  # TODO: RDS investigate if Query Logging can be enabled
+  - CKV2_AWS_27 # TODO: RDS investigate how to setup AWS Backup plan
