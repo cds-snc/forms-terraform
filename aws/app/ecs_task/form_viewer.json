@@ -1,0 +1,76 @@
+[
+  {
+    "name": "form_viewer",
+    "image": "${image}",
+    "portMappings": [
+      {
+        "containerPort": 3000
+      }
+    ],
+    "linuxParameters": {
+      "capabilities": {
+        "drop": ["ALL"]
+      }
+    },
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${awslogs-group}",
+        "awslogs-region": "${awslogs-region}",
+        "awslogs-stream-prefix": "${awslogs-stream-prefix}"
+      }
+    },
+    "environment": [
+      {
+        "name": "METRIC_PROVIDER",
+        "value": "${metric_provider}"
+      },
+      {
+        "name": "TRACER_PROVIDER",
+        "value": "${tracer_provider}"
+      },
+      {
+        "name": "SUBMISSION_API",
+        "value": "${submission_api}"
+      },
+      {
+        "name": "TEMPLATES_API",
+        "value": "${templates_api}"
+      },
+      {
+        "name": "ORGANISATIONS_API",
+        "value": "${organisations_api}"
+      },
+      {
+        "name": "NEXTAUTH_URL",
+        "value": "${nextauth_url}"
+      },
+      {
+        "name": "REDIS_URL",
+        "value": "${redis_url}"
+      },
+      {
+        "name": "RELIABILITY_FILE_STORAGE",
+        "value": "${reliability_file_storage}"
+      }
+    ],
+    "secrets": [
+      {
+        "name": "NOTIFY_API_KEY",
+        "valueFrom": "${notify_api_key}"
+      },
+      {
+        "name": "GOOGLE_CLIENT_ID",
+        "valueFrom": "${google_client_id}"
+      },
+      {
+        "name": "GOOGLE_CLIENT_SECRET",
+        "valueFrom": "${google_client_secret}"
+      },
+      {
+        "name": "DATABASE_URL",
+        "valueFrom": "${database_url}"
+      }
+    ]
+  }
+]
