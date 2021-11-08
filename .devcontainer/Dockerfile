@@ -8,8 +8,11 @@ ARG TERRAGRUNT_VERSION
 
 # Install packages
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends awscli ca-certificates curl git gnupg2 jq make openssh-client python3-pip vim zsh \
+    && apt-get -y install --no-install-recommends awscli ca-certificates curl git gnupg2 jq make nodejs npm openssh-client python3-pip vim zsh \
     && apt-get autoremove -y && apt-get clean -y 
+
+# Install yarn
+RUN npm install -g yarn
 
 # Install Terraform
 RUN curl -Lo terraform.zip https://releases.hashicorp.com/terraform/"${TERRAFORM_VERSION}"/terraform_"${TERRAFORM_VERSION}"_linux_"$(dpkg --print-architecture)".zip \
