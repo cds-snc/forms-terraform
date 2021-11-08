@@ -3,12 +3,20 @@
 skip-check:
   - CKV_AWS_23  # Security group descriptions are not required
   - CKV_AWS_51  # ECR `latest` image tag is used in Staging
+  - CKV_AWS_115 # Lambda function-level concurrent execution limit not required
+  - CKV_AWS_116 # Lambda dead-letter queue not required
+  - CKV_AWS_117 # Lambda configured within a VPC not required
   - CKV_AWS_128 # RDS IAM authentication will not be used
   - CKV_AWS_136 # ECR default service key encryption is acceptable
+  - CKV_AWS_144 # S3 cross-region replication no required
+  - CKV_AWS_145 # S3 default service key encryption is acceptable
+  - CKV_AWS_149 # SecretsManager default service key encryption is acceptable
   - CKV_AWS_162 # RDS IAM authentication will not be used
+  - CKV_AWS_173 # Lambda env var default service key encryption is acceptable
   - CKV2_AWS_5  # Security groups are attached in seperate Terragrunt modules
   - CKV_AWS_29  # TODO: Elasticache investigate at-rest data encryption
   - CKV_AWS_30  # TODO: Elasticache investigate in-transit data encryption
   - CKV_AWS_31  # TODO: Elasticache investigate in-transit data encryption and auth token  
+  - CKV_AWS_91  # TODO: Load balancer enable access logging
   - CKV2_AWS_8  # TODO: RDS investigate if Query Logging can be enabled
   - CKV2_AWS_27 # TODO: RDS investigate how to setup AWS Backup plan

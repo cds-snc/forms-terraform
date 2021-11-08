@@ -32,3 +32,8 @@ output "redis_security_group_id" {
   description = "Redis security group ID"
   value       = aws_security_group.forms_redis.id
 }
+
+output "vpc_id" {
+  description = "VPC ID"
+  value       = aws_vpc.forms.id
+}
