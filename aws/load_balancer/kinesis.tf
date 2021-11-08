@@ -13,6 +13,11 @@ resource "aws_kinesis_firehose_delivery_stream" "firehose_waf_logs" {
     role_arn   = aws_iam_role.firehose_waf_logs.arn
     bucket_arn = aws_s3_bucket.firehose_waf_logs.arn
   }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 #
@@ -38,6 +43,11 @@ resource "aws_s3_bucket" "firehose_waf_logs" {
       }
     }
   }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "firehose_waf_logs" {
@@ -54,6 +64,11 @@ resource "aws_s3_bucket_public_access_block" "firehose_waf_logs" {
 resource "aws_iam_role" "firehose_waf_logs" {
   name               = "firehose_waf_logs"
   assume_role_policy = data.aws_iam_policy_document.firehose_waf_assume.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_iam_role_policy" "firehose_waf_logs" {
