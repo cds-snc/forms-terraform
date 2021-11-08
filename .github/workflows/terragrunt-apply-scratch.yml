@@ -71,8 +71,16 @@ jobs:
             redis:
               - 'aws/redis/**'
               - 'env/scratch/redis/**'
+            sqs:
+              - 'aws/sqs/**'
+              - 'env/scratch/sqs/**'
 
       # No dependencies
+      - name: Terragrunt apply ecr
+        if: ${{ steps.filter.outputs.ecr == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/scratch/ecr
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
       - name: Terragrunt apply hosted_zone
         if: ${{ steps.filter.outputs.hosted_zone == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/scratch/hosted_zone
@@ -83,9 +91,9 @@ jobs:
         working-directory: env/scratch/kms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Terragrunt apply ecr
-        if: ${{ steps.filter.outputs.ecr == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/scratch/ecr
+      - name: Terragrunt apply sqs
+        if: ${{ steps.filter.outputs.sqs == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/scratch/sqs
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on kms

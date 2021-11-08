@@ -79,8 +79,21 @@ jobs:
             redis:
               - 'aws/redis/**'
               - 'env/scratch/redis/**'
+            sqs:
+              - 'aws/sqs/**'
+              - 'env/scratch/sqs/**'
 
       # No dependencies
+      - name: Terragrunt plan ecr
+        if: ${{ steps.filter.outputs.ecr == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/scratch/ecr"
+          comment-delete: "true"
+          comment-title: "Scratch: ecr"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+      
       - name: Terragrunt plan hosted_zone
         if: ${{ steps.filter.outputs.hosted_zone == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
@@ -101,13 +114,13 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Terragrunt plan ecr
-        if: ${{ steps.filter.outputs.ecr == 'true' || steps.filter.outputs.common == 'true' }}
+      - name: Terragrunt plan sqs
+        if: ${{ steps.filter.outputs.sqs == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
         with:
-          directory: "env/scratch/ecr"
+          directory: "env/scratch/sqs"
           comment-delete: "true"
-          comment-title: "Scratch: ecr"
+          comment-title: "Scratch: sqs"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
