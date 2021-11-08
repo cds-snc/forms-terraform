@@ -1,0 +1,15 @@
+{
+  "name": "reliability",
+  "version": "1.0.0",
+  "main": "reliability.js",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.7.0",
+    "@aws-sdk/client-lambda": "^3.16.0",
+    "@aws-sdk/client-s3": "^3.33.0",
+    "@aws-sdk/client-sqs": "^3.7.0",
+    "axios": "^0.21.1",
+    "json2md": "^1.10.0",
+    "notifications-node-client": "^5.1.0"
+  }
+}

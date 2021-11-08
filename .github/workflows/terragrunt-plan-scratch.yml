@@ -16,6 +16,9 @@ env:
   TERRAFORM_VERSION: 1.0.10
   TERRAGRUNT_VERSION: 0.35.6
   TF_INPUT: false
+  TF_VAR_google_client_id: ${{ secrets.GOOGLE_CLIENT_ID}}
+  TF_VAR_google_client_secret: ${{secrets.GOOGLE_CLIENT_SECRET}}
+  TF_VAR_notify_api_key: ${{ secrets.NOTIFY_API_KEY }}
   TF_VAR_rds_db_password: ${{ secrets.DB_PASSWORD }}
 
 jobs:
@@ -53,6 +56,9 @@ jobs:
         id: filter
         with:
           filters: |
+            app:
+              - 'aws/app/**'
+              - 'env/scratch/app/**'
             common:
               - '.github/workflows/terragrunt-plan-scratch.yml'
               - 'env/common/**'
@@ -178,3 +184,22 @@ jobs:
           comment-title: "Scratch: rds"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
+
+      # Depends on everything
+      - name: Install Lambda deps
+        if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/app/lambda/deps.sh install
+
+      - name: Terragrunt plan app
+        if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/scratch/app"
+          comment-delete: "true"
+          comment-title: "Scratch: app"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Remove Lambda deps
+        if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/app/lambda/deps.sh delete
