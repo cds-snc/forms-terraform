@@ -5,6 +5,11 @@
 resource "aws_codedeploy_app" "app" {
   compute_platform = "ECS"
   name             = "AppECS-${aws_ecs_cluster.forms.name}-${aws_ecs_service.form_viewer.name}"
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_codedeploy_deployment_group" "app" {
@@ -53,5 +58,10 @@ resource "aws_codedeploy_deployment_group" "app" {
         name = var.lb_target_group_2_name
       }
     }
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
   }
 }

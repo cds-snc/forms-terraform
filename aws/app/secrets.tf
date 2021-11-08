@@ -4,6 +4,11 @@
 resource "aws_secretsmanager_secret" "google_client_id" {
   name                    = "google_client_id"
   recovery_window_in_days = 0
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_secretsmanager_secret_version" "google_client_id" {
@@ -14,6 +19,11 @@ resource "aws_secretsmanager_secret_version" "google_client_id" {
 resource "aws_secretsmanager_secret" "google_client_secret" {
   name                    = "google_client_secret"
   recovery_window_in_days = 0
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_secretsmanager_secret_version" "google_client_secret" {
@@ -24,6 +34,11 @@ resource "aws_secretsmanager_secret_version" "google_client_secret" {
 resource "aws_secretsmanager_secret" "notify_api_key" {
   name                    = "notify_api_key"
   recovery_window_in_days = 0
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_secretsmanager_secret_version" "notify_api_key" {
