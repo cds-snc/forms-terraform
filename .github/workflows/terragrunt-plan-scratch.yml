@@ -70,6 +70,9 @@ jobs:
             kms:
               - 'aws/kms/**'
               - 'env/scratch/kms/**'
+            load_balancer:
+              - 'aws/load_balancer/**'
+              - 'env/scratch/load_balancer/**'
             network:
               - 'aws/network/**'
               - 'env/scratch/network/**'
@@ -93,7 +96,7 @@ jobs:
           comment-title: "Scratch: ecr"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
-      
+
       - name: Terragrunt plan hosted_zone
         if: ${{ steps.filter.outputs.hosted_zone == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
@@ -146,6 +149,16 @@ jobs:
           terragrunt: "true"
 
       # Depends on network
+      - name: Terragrunt plan load_balancer
+        if: ${{ steps.filter.outputs.load_balancer == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/scratch/load_balancer"
+          comment-delete: "true"
+          comment-title: "Scratch: load_balancer"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
       - name: Terragrunt plan redis
         if: ${{ steps.filter.outputs.redis == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
