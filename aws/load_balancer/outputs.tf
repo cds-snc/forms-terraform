@@ -1,3 +1,13 @@
+output "lb_arn" {
+  description = "Load balancer ARN"
+  value       = aws_lb.form_viewer.arn
+}
+
+output "lb_arn_suffix" {
+  description = "Load balancer ARN suffix"
+  value       = aws_lb.form_viewer.arn_suffix
+}
+
 output "lb_https_listener_arn" {
   description = "Load balancer HTTPS listener ARN"
   value       = aws_lb_listener.form_viewer_https.arn
