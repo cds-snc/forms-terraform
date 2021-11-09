@@ -1,0 +1,63 @@
+name: "Terraform version check"
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "aws/**"
+      - "env/**"
+      - ".github/workflows/terraform-version-check.yml"
+
+env:
+  ENV: scratch
+
+jobs:
+  terraform-version-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get latest versions
+        id: latest
+        run: |
+          TERRAFORM_LATEST="$(curl https://api.github.com/repos/hashicorp/terraform/releases/latest | jq --raw-output '.tag_name' | cut -c 2-)"
+          TERRAGRUNT_LATEST="$(curl https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | jq --raw-output '.tag_name' | cut -c 2-)"
+          echo "::set-output name=terraform::${TERRAFORM_LATEST}"
+          echo "::set-output name=terragrunt::${TERRAGRUNT_LATEST}"
+
+      - name: Get used versions
+        id: used
+        run: |
+          pip install yq
+          TERRAFORM_USED="$(yq -r .env.TERRAFORM_VERSION .github/workflows/terragrunt-apply-${{ env.ENV }}.yml)"
+          TERRAGRUNT_USED="$(yq -r .env.TERRAGRUNT_VERSION .github/workflows/terragrunt-apply-${{ env.ENV }}.yml)"
+          echo "::set-output name=terraform::${TERRAFORM_USED}"
+          echo "::set-output name=terragrunt::${TERRAGRUNT_USED}"
+
+      - name: Delete previous comments
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: comments } = await github.issues.listComments({...context.repo, issue_number: context.issue.number});
+            const comment = comments.find(comment => comment.user.type === "Bot" && comment.body.indexOf("Terrform update available") > -1);
+            if (comment) {
+              await github.issues.deleteComment({...context.repo, comment_id: comment.id});
+            }
+
+      - name: Add version comment
+        if: steps.latest.outputs.terraform != steps.used.outputs.terraform || steps.latest.outputs.terragrunt != steps.used.outputs.terragrunt
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const tf = { used: "${{ steps.used.outputs.terraform }}",  latest: "${{ steps.latest.outputs.terraform }}" };
+            const tg = { used: "${{ steps.used.outputs.terragrunt }}", latest: "${{ steps.latest.outputs.terragrunt }}" };
+            const terraform =  tf.used !== tf.latest ? `\nTerraform: ${tf.latest} (using ${tf.used})` : "";  
+            const terragrunt = tg.used !== tg.latest ? `\nTerragrunt: ${tg.latest} (using ${tg.used})` : "";        
+            github.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body: `## ⚠ Terrform update available\n\`\`\`yaml${terraform}${terragrunt}\n\`\`\``
+            })
