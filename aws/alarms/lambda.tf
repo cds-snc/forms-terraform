@@ -79,35 +79,7 @@ data "aws_iam_policy_document" "lambda_assume_policy" {
   }
 }
 
-resource "aws_iam_policy" "notify_slack_lambda_logging" {
-  name        = "notify_slack_lambda_logging"
-  path        = "/"
-  description = "IAM policy for logging from a lambda"
-  policy      = data.aws_iam_policy_document.lambda_logging.json
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "notify_slack_lambda_logging" {
+resource "aws_iam_role_policy_attachment" "notify_slack_lambda_basic_access" {
   role       = aws_iam_role.notify_slack_lambda.name
-  policy_arn = aws_iam_policy.notify_slack_lambda_logging.arn
-}
-
-data "aws_iam_policy_document" "lambda_logging" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:PutLogEvents"
-    ]
-
-    resources = [
-      "arn:aws:logs:${var.region}:${var.account_id}:*"
-    ]
-  }
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
