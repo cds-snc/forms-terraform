@@ -18,6 +18,11 @@ resource "aws_cloudwatch_metric_alarm" "forms_cpu_utilization_high_warn" {
     ClusterName = var.ecs_cluster_name
     ServiceName = var.ecs_service_name
   }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "forms_memory_utilization_high_warn" {
@@ -37,6 +42,11 @@ resource "aws_cloudwatch_metric_alarm" "forms_memory_utilization_high_warn" {
   dimensions = {
     ClusterName = var.ecs_cluster_name
     ServiceName = var.ecs_service_name
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
   }
 }
 
@@ -69,6 +79,11 @@ resource "aws_cloudwatch_metric_alarm" "five_hundred_response_warn" {
   alarm_description   = "End User Forms Warning - A 5xx HTML error was detected coming from the Forms."
 
   alarm_actions = [aws_sns_topic.alert_warning.arn]
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_cloudwatch_log_metric_filter" "application_error" {
@@ -97,6 +112,11 @@ resource "aws_cloudwatch_metric_alarm" "application_error_warn" {
   alarm_description   = "End User Forms Warning - An error message was detected in the ECS logs"
 
   alarm_actions = [aws_sns_topic.alert_warning.arn]
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 #
@@ -118,6 +138,11 @@ resource "aws_cloudwatch_metric_alarm" "forms_dead_letter_queue_warn" {
   alarm_actions = [aws_sns_topic.alert_warning.arn]
   dimensions = {
     QueueName = var.sqs_deadletter_queue_arn
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
   }
 }
 
@@ -149,6 +174,11 @@ resource "aws_cloudwatch_metric_alarm" "response_time_warn" {
       }
     }
   }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 #
@@ -170,6 +200,11 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_forms_warn" {
   dimensions = {
     ResourceArn = var.lb_arn
   }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "ddos_detected_route53_warn" {
@@ -188,6 +223,11 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_route53_warn" {
 
   dimensions = {
     ResourceArn = "arn:aws:route53:::hostedzone/${var.hosted_zone_id}"
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
   }
 }
 
@@ -222,4 +262,9 @@ resource "aws_cloudwatch_event_rule" "codedeploy_sns" {
       ]
     }
   })
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
