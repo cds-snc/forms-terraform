@@ -36,6 +36,7 @@ variable "lb_arn_suffix" {
 variable "slack_webhook" {
   description = "The Slack webhook path that notifications are sent to (posted to https://hooks.slack.com/)"
   type        = string
+  sensitive   = true
 }
 
 variable "sqs_deadletter_queue_arn" {
