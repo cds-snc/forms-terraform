@@ -207,10 +207,10 @@ resource "aws_lambda_function" "templates" {
 
   environment {
     variables = {
-      REGION    = var.region,
-      DB_ARN    = aws_rds_cluster.forms.arn,
-      DB_SECRET = aws_secretsmanager_secret_version.database_secret.arn,
-      DB_NAME   = var.rds_db_name,
+      REGION       = var.region,
+      DB_ARN       = aws_rds_cluster.forms.arn,
+      DB_SECRET    = aws_secretsmanager_secret_version.database_secret.arn,
+      DB_NAME      = var.rds_db_name,
       TOKEN_SECRET = aws_secretsmanager_secret_version.token_secret.arn
     }
   }
