@@ -1,5 +1,6 @@
 const { RDSDataClient, ExecuteStatementCommand } = require("@aws-sdk/client-rds-data");
 const { Client } = require("pg");
+const {jwt} = require("jsonwebtoken");
 
 const REGION = process.env.REGION;
 
@@ -145,20 +146,24 @@ exports.handler = async function (event) {
   }
 
   if (process.env.AWS_SAM_LOCAL) {
-    return await dbClient
-      .query(SQL, parameters)
-      .then((data) => {
-        if (data.rows && data.rows.length > 0) {
-          return { data: parseConfig(data.rows) };
+    try{
+      const data = await dbClient.query(SQL, parameters);
+      if (data.rows && data.rows.length > 0) {
+        let returnedData = parseConfig(data.rows);
+        // here we need to create the jwt token with the id that was created
+        if(method === "INSERT"){
+          returnedData = await createBearerToken(dbClient, returnedData.records[0].formID, true)
         }
-        return { data: data };
-      })
-      .catch((error) => {
-        console.error(
-          `{"status": "error", "error": "${formatError(error)}", "event": "${formatError(event)}"}`
-        );
-        return { error: error };
-      });
+        return { data: returnedData };
+      }
+      return { data: data };
+    }
+    catch(error){
+      console.error(
+        `{"status": "error", "error": "${formatError(error)}", "event": "${formatError(event)}"}`
+      );
+      return { error: error };
+    }
   } else {
     const params = {
       database: process.env.DB_NAME,
@@ -169,43 +174,94 @@ exports.handler = async function (event) {
       parameters: parameters,
     };
     const command = new ExecuteStatementCommand(params);
-    return await dbClient
-      .send(command)
-      .then((data) => {
-        if (data.records && data.records.length > 0) {
-          return { data: parseConfig(data.records) };
+    try {
+      const data = await dbClient.send(command)
+      if (data.records && data.records.length > 0) {
+        let returnedData = parseConfig(data.records);
+        if ( method === "INSERT"){
+          returnedData = await createBearerToken(dbClient, returnedData.records[0].formID, false, params)
         }
-        return { data: data };
-      })
-      .catch((error) => {
-        console.error(
-          `{"status": "error", "error": "${formatError(error)}", "event": "${formatError(event)}"}`
-        );
-        return { error: error };
-      });
+        return {data: returnedData};
+      }
+      return {data: data};
+    }
+    catch(error){
+      console.error(
+        `{"status": "error", "error": "${formatError(error)}", "event": "${formatError(event)}"}`
+      );
+      return { error: error };
+    }
   }
 };
 
+
 const parseConfig = (records) => {
   const parsedRecords = records.map((record) => {
-    let formID, formConfig, organization;
+    let formID, formConfig, organization, bearerToken;
     if (!process.env.AWS_SAM_LOCAL) {
       formID = record[0].longValue;
       if (record.length > 1) {
         formConfig = JSON.parse(record[1].stringValue.trim(1, -1)) || undefined;
         organization = record[2].isNull || undefined;
+        bearerToken = record[3].isNull || undefined;
       }
     } else {
       formID = record.id;
       formConfig = record.json_config;
       organization = record.organisation;
+      bearerToken = record.bearer_token
     }
 
     return {
-      formID: formID,
-      formConfig: formConfig,
-      organization: organization,
+      formID,
+      formConfig,
+      organization,
+      bearerToken
     };
   });
   return { records: parsedRecords };
 };
+
+/**
+ * function to mint and commit jwt bearer token to the appropriate row in the database
+ * @param dbClient - the db client to use to send commands to the db
+ * @param formID - the ID of the relevant row this token is being minted for
+ * @param local - whether or not this is using the local database client or the production RDS data client
+ * @param rdsParams - the parameters which will be used in the rdsData client
+ * @returns {Promise<any>} - the returned data from the db client
+ */
+const createBearerToken = async (dbClient, formID, local, rdsParams) => {
+  const token = jwt.sign(
+      {
+        formID
+      },
+      process.env.TOKEN_SECRET,
+      {
+        expiresIn: "1y"
+      }
+  )
+  let data
+  if(local){
+    data = await dbClient.query("UPDATE templates SET bearer_token = ($1) WHERE id = ($2)", [token, formID])
+  }else{
+    let rdsParamsCopy = {...rdsParams}
+    rdsParamsCopy["SQL"] = "UPDATE Templates SET bearer_token = :bearer_token WHERE id = :formID"
+    rdsParamsCopy["parameters"] = [
+      {
+        name: "formID",
+        value: {
+          longValue: formID,
+        },
+      },
+      {
+        name: "bearer_token",
+        value: {
+          stringValue: token,
+        }
+      }
+    ]
+    data = await dbClient.send(rdsParamsCopy)
+  }
+
+  return parseConfig(data.records)
+}
