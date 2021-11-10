@@ -4,6 +4,11 @@
 resource "aws_secretsmanager_secret" "database_url" {
   name                    = "server-database-url"
   recovery_window_in_days = 0
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_secretsmanager_secret_version" "database_url" {
@@ -14,6 +19,11 @@ resource "aws_secretsmanager_secret_version" "database_url" {
 resource "aws_secretsmanager_secret" "database_secret" {
   name                    = "database-secret"
   recovery_window_in_days = 0
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
 resource "aws_secretsmanager_secret_version" "database_secret" {
