@@ -160,7 +160,9 @@ jobs:
 
       - name: Install Lambda load_testing deps
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/load_testing/lambda/deps.sh install
+        run: |
+          sudo apt update && sudo apt install -y python3-testresources
+          ./aws/load_testing/lambda/deps.sh install
 
       - name: Terragrunt apply load_testing
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
