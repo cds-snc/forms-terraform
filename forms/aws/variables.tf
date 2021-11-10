@@ -86,7 +86,7 @@ variable "ecs_secret_google_client_secret" {
   type = string
 }
 
-variable "ecs_token_secret" {
+variable "ecs_secret_token_secret" {
   type = string
 }
 

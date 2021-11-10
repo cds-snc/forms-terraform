@@ -46,7 +46,7 @@ resource "aws_secretsmanager_secret" "token_secret"{
 
 resource "aws_secretsmanager_secret_version" "token_secret"{
   secret_id     = aws_secretsmanager_secret.token_secret.id
-  secret_string = var.ecs_token_secret
+  secret_string = var.ecs_secret_token_secret
 }
 
 # Ignore using global encryption key
