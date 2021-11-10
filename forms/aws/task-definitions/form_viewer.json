@@ -68,6 +68,10 @@
         "valueFrom": "${google_client_secret}"
       },
       {
+        "name": "TOKEN_SECRET",
+        "valueFrom": "${token_secret}"
+      },
+      {
         "name": "DATABASE_URL",
         "valueFrom": "${database_url}"
       }
