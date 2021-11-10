@@ -75,6 +75,9 @@ jobs:
             load_balancer:
               - 'aws/load_balancer/**'
               - 'env/scratch/load_balancer/**'
+            load_testing:
+              - 'aws/load_testing/**'
+              - 'env/scratch/load_testing/**'
             network:
               - 'aws/network/**'
               - 'env/scratch/network/**'
@@ -154,3 +157,16 @@ jobs:
         if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/scratch/alarms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Install Lambda load_testing deps
+        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/load_testing/lambda/deps.sh install
+
+      - name: Terragrunt apply load_testing
+        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/scratch/load_testing
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Remove Lambda load_testing deps
+        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/load_testing/lambda/deps.sh delete        

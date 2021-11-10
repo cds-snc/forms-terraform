@@ -59,7 +59,7 @@ jobs:
           filters: |
             alarms:
               - 'aws/alarms/**'
-              - 'env/scratch/alarms/**'          
+              - 'env/scratch/alarms/**'
             app:
               - 'aws/app/**'
               - 'env/scratch/app/**'
@@ -83,6 +83,9 @@ jobs:
             load_balancer:
               - 'aws/load_balancer/**'
               - 'env/scratch/load_balancer/**'
+            load_testing:
+              - 'aws/load_testing/**'
+              - 'env/scratch/load_testing/**'
             network:
               - 'aws/network/**'
               - 'env/scratch/network/**'
@@ -216,4 +219,22 @@ jobs:
           comment-delete: "true"
           comment-title: "Scratch: alarms"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"        
+          terragrunt: "true"
+
+      - name: Install Lambda load_testing deps
+        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/load_testing/lambda/deps.sh install
+
+      - name: Terragrunt plan load_testing
+        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/scratch/load_testing"
+          comment-delete: "true"
+          comment-title: "Scratch: load_testing"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Remove Lambda load_testing deps
+        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/load_testing/lambda/deps.sh delete
