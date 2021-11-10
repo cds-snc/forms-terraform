@@ -250,7 +250,7 @@ const createBearerToken = async (dbClient, formID, local, rdsParams) => {
     return parseConfig(data.rows)
   }else{
     let rdsParamsCopy = {...rdsParams};
-    rdsParamsCopy["SQL"] = "UPDATE Templates SET bearer_token = :bearer_token WHERE id = :formID RETURNING id, json_config, organisation, bearer_token;";
+    rdsParamsCopy["sql"] = "UPDATE Templates SET bearer_token = :bearer_token WHERE id = :formID RETURNING id, json_config, organisation, bearer_token;";
     rdsParamsCopy["parameters"] = [
       {
         name: "formID",
