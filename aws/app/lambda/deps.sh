@@ -11,10 +11,12 @@ SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 
 # Loop over the Lambda directories
 for LAMBDA_DIR in "$SCRIPT_DIR"/*/; do
-    echo "⚡ $LAMBDA_DIR $ACTION"
-    if [ "$ACTION" = "delete" ]; then
-        rm -rf "$LAMBDA_DIR/nodejs/node_modules"
-    else
-        yarn --cwd "$LAMBDA_DIR/nodejs" install
+    if test -f "$LAMBDA_DIR/nodejs/package.json"; then
+        echo "⚡ $LAMBDA_DIR $ACTION"
+        if [ "$ACTION" = "delete" ]; then
+            rm -rf "$LAMBDA_DIR/nodejs/node_modules"
+        else
+            yarn --cwd "$LAMBDA_DIR/nodejs" install
+        fi
     fi
 done
