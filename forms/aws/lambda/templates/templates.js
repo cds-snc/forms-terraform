@@ -1,6 +1,6 @@
 const { RDSDataClient, ExecuteStatementCommand } = require("@aws-sdk/client-rds-data");
 const { Client } = require("pg");
-const {jwt} = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 const REGION = process.env.REGION;
 
@@ -16,10 +16,10 @@ exports.handler = async function (event) {
   if (process.env.AWS_SAM_LOCAL) {
     dbClient = new Client();
     if (
-      process.env.PGHOST &&
-      process.env.PGUSER &&
-      process.env.PGDATABASE &&
-      process.env.PGPASSWORD
+        process.env.PGHOST &&
+        process.env.PGUSER &&
+        process.env.PGDATABASE &&
+        process.env.PGPASSWORD
     ) {
       dbClient.connect();
     } else {
@@ -43,22 +43,22 @@ exports.handler = async function (event) {
   */
   const method = event.method;
   let formID = event.formID ? parseInt(event.formID) : null,
-    formConfig = event.formConfig ? "'" + JSON.stringify(event.formConfig) + "'" : null;
+      formConfig = event.formConfig ? "'" + JSON.stringify(event.formConfig) + "'" : null;
 
   // if formID is NaN, assign it to an id we know will return no records
   if (isNaN(formID)) formID = 1;
 
   let SQL = "",
-    parameters = [];
+      parameters = [];
 
   switch (method) {
     case "INSERT":
       if (formConfig) {
         SQL = !process.env.AWS_SAM_LOCAL
-          ? "INSERT INTO Templates (json_config) VALUES (:json_config) RETURNING id"
-          : "INSERT INTO Templates (json_config) VALUES ($1) RETURNING id";
+            ? "INSERT INTO Templates (json_config) VALUES (:json_config) RETURNING id"
+            : "INSERT INTO Templates (json_config) VALUES ($1) RETURNING id";
         parameters = !process.env.AWS_SAM_LOCAL
-          ? [
+            ? [
               {
                 name: "json_config",
                 typeHint: "JSON",
@@ -67,7 +67,7 @@ exports.handler = async function (event) {
                 },
               },
             ]
-          : [JSON.stringify(event.formConfig)];
+            : [JSON.stringify(event.formConfig)];
       } else {
         return { error: "Missing required JSON" };
       }
@@ -76,10 +76,10 @@ exports.handler = async function (event) {
       // Get a specific form if given the id, all forms if not
       if (formID) {
         SQL = !process.env.AWS_SAM_LOCAL
-          ? "SELECT * FROM Templates WHERE id = :formID"
-          : "SELECT * FROM Templates WHERE id = ($1)";
+            ? "SELECT * FROM Templates WHERE id = :formID"
+            : "SELECT * FROM Templates WHERE id = ($1)";
         parameters = !process.env.AWS_SAM_LOCAL
-          ? [
+            ? [
               {
                 name: "formID",
                 value: {
@@ -87,7 +87,7 @@ exports.handler = async function (event) {
                 },
               },
             ]
-          : [formID];
+            : [formID];
       } else {
         SQL = "SELECT * FROM Templates";
       }
@@ -96,10 +96,10 @@ exports.handler = async function (event) {
       // needs the ID and the new json blob
       if (formID && formConfig) {
         SQL = !process.env.AWS_SAM_LOCAL
-          ? "UPDATE Templates SET json_config = :json_config WHERE id = :formID"
-          : "UPDATE Templates SET json_config = ($1) WHERE id = ($2)";
+            ? "UPDATE Templates SET json_config = :json_config WHERE id = :formID"
+            : "UPDATE Templates SET json_config = ($1) WHERE id = ($2)";
         parameters = !process.env.AWS_SAM_LOCAL
-          ? [
+            ? [
               {
                 name: "formID",
                 value: {
@@ -114,7 +114,7 @@ exports.handler = async function (event) {
                 },
               },
             ]
-          : [formID, JSON.stringify(event.formConfig)];
+            : [formID, JSON.stringify(event.formConfig)];
       } else {
         return { error: "Missing required Parameter" };
       }
@@ -123,10 +123,10 @@ exports.handler = async function (event) {
       // needs the ID
       if (formID) {
         SQL = !process.env.AWS_SAM_LOCAL
-          ? "DELETE from Templates WHERE id = :formID"
-          : "DELETE from Templates WHERE id = ($1)";
+            ? "DELETE from Templates WHERE id = :formID"
+            : "DELETE from Templates WHERE id = ($1)";
         parameters = !process.env.AWS_SAM_LOCAL
-          ? [
+            ? [
               {
                 name: "formID",
                 value: {
@@ -134,7 +134,7 @@ exports.handler = async function (event) {
                 },
               },
             ]
-          : [formID];
+            : [formID];
       } else {
         return { error: "Missing required Parameter: FormID" };
       }
@@ -159,8 +159,9 @@ exports.handler = async function (event) {
       return { data: data };
     }
     catch(error){
+      console.log(error)
       console.error(
-        `{"status": "error", "error": "${formatError(error)}", "event": "${formatError(event)}"}`
+          `{"status": "error", "error": "${formatError(error)}", "event": "${formatError(event)}"}`
       );
       return { error: error };
     }
@@ -187,7 +188,7 @@ exports.handler = async function (event) {
     }
     catch(error){
       console.error(
-        `{"status": "error", "error": "${formatError(error)}", "event": "${formatError(event)}"}`
+          `{"status": "error", "error": "${formatError(error)}", "event": "${formatError(event)}"}`
       );
       return { error: error };
     }
@@ -239,13 +240,17 @@ const createBearerToken = async (dbClient, formID, local, rdsParams) => {
       {
         expiresIn: "1y"
       }
-  )
-  let data
+  );
+  let data;
   if(local){
-    data = await dbClient.query("UPDATE templates SET bearer_token = ($1) WHERE id = ($2)", [token, formID])
+    data = await dbClient.query(
+        "UPDATE templates SET bearer_token = ($1) WHERE id = ($2) RETURNING id, json_config, organisation, bearer_token;",
+        [token, formID]
+    );
+    return parseConfig(data.rows)
   }else{
-    let rdsParamsCopy = {...rdsParams}
-    rdsParamsCopy["SQL"] = "UPDATE Templates SET bearer_token = :bearer_token WHERE id = :formID"
+    let rdsParamsCopy = {...rdsParams};
+    rdsParamsCopy["SQL"] = "UPDATE Templates SET bearer_token = :bearer_token WHERE id = :formID RETURNING id, json_config, organisation, bearer_token;";
     rdsParamsCopy["parameters"] = [
       {
         name: "formID",
@@ -259,9 +264,9 @@ const createBearerToken = async (dbClient, formID, local, rdsParams) => {
           stringValue: token,
         }
       }
-    ]
-    data = await dbClient.send(rdsParamsCopy)
+    ];
+    data = await dbClient.send(rdsParamsCopy);
+    return parseConfig(data.records)
   }
 
-  return parseConfig(data.records)
 }
