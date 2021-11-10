@@ -40,7 +40,7 @@ data "template_file" "form_viewer_task" {
     google_client_secret     = aws_secretsmanager_secret_version.google_client_secret.arn
     database_url             = aws_secretsmanager_secret_version.database_url.arn
     redis_url                = aws_elasticache_replication_group.redis.primary_endpoint_address
-    token_secret             = awa_secretsmanager_secret_version.token_secret.arn
+    token_secret             = aws_secretsmanager_secret_version.token_secret.arn
     nextauth_url             = "https://${var.route53_zone_name}"
     submission_api           = aws_lambda_function.submission.arn
     templates_api            = aws_lambda_function.templates.arn
