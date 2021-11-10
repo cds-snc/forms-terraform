@@ -19,6 +19,9 @@ Parameters:
   DBName:
     Type: AWS::SSM::Parameter::Value<String>
     Default: "formsDB"
+  TOKEN_SECRET:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: "somesecretstring"
 
 Globals:
   Function:
@@ -49,6 +52,8 @@ Resources:
             Ref: DBHost
           PGDATABASE:
             Ref: DBName
+          TOKEN_SECRET:
+            Ref: TOKEN_SECRET
   Organisations:
     Type: AWS::Serverless::Function
     Properties:
