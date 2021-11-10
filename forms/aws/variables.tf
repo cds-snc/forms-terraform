@@ -86,6 +86,10 @@ variable "ecs_secret_google_client_secret" {
   type = string
 }
 
+variable "ecs_token_secret" {
+  type = string
+}
+
 # Forms Scaling
 
 variable "form_viewer_autoscale_enabled" {

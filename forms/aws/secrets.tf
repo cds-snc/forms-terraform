@@ -39,6 +39,18 @@ resource "aws_secretsmanager_secret_version" "google_client_secret" {
 
 # Ignore using global encryption key
 #tfsec:ignore:AWS095
+resource "aws_secretsmanager_secret" "token_secret"{
+  name                    = "token_secret"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "token_secret"{
+  secret_id     = aws_secretsmanager_secret.token_secret.id
+  secret_string = var.ecs_token_secret
+}
+
+# Ignore using global encryption key
+#tfsec:ignore:AWS095
 resource "aws_secretsmanager_secret" "database_url" {
   name                    = "server-database-url"
   recovery_window_in_days = 0
