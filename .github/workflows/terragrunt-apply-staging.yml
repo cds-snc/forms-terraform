@@ -1,4 +1,4 @@
-name: "Terragrunt apply SCRATCH"
+name: "Terragrunt apply STAGING"
 
 on:
   push:
@@ -7,13 +7,13 @@ on:
     paths:
       - "aws/**"
       - "env/common/**"
-      - "env/scratch/**"
-      - ".github/workflows/terragrunt-apply-scratch.yml"
+      - "env/staging/**"
+      - ".github/workflows/terragrunt-apply-staging.yml"
 
 env:
   AWS_REGION: ca-central-1
-  AWS_ACCESS_KEY_ID: ${{ secrets.SCRATCH_AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.SCRATCH_AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   TERRAFORM_VERSION: 1.0.10
   TERRAGRUNT_VERSION: 0.35.6
   TF_INPUT: false
@@ -22,7 +22,7 @@ env:
   TF_VAR_google_client_secret: ${{secrets.GOOGLE_CLIENT_SECRET}}
   TF_VAR_notify_api_key: ${{ secrets.NOTIFY_API_KEY }}
   TF_VAR_rds_db_password: ${{ secrets.DB_PASSWORD }}
-  TF_VAR_slack_webhook: ${{ secrets.SCRATCH_SLACK_WEBHOOK }}
+  TF_VAR_slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
 
 jobs:
   terragrunt-apply:
@@ -52,92 +52,92 @@ jobs:
           filters: |
             alarms:
               - 'aws/alarms/**'
-              - 'env/scratch/alarms/**'
+              - 'env/staging/alarms/**'
             app:
               - 'aws/app/**'
-              - 'env/scratch/app/**'
+              - 'env/staging/app/**'
             common:
-              - '.github/workflows/terragrunt-plan-scratch.yml'
+              - '.github/workflows/terragrunt-plan-staging.yml'
               - 'env/common/**'
               - 'env/terragrunt.hcl'
-              - 'env/scratch/env_vars.hcl'
+              - 'env/staging/env_vars.hcl'
             dynamodb:
               - 'aws/dynamodb/**'
-              - 'env/scratch/dynamodb/**'
+              - 'env/staging/dynamodb/**'
             ecr:
               - 'aws/ecr/**'
-              - 'env/scratch/ecr/**'
+              - 'env/staging/ecr/**'
             hosted_zone:
               - 'aws/hosted_zone/**'
-              - 'env/scratch/hosted_zone/**'
+              - 'env/staging/hosted_zone/**'
             kms:
               - 'aws/kms/**'
-              - 'env/scratch/kms/**'
+              - 'env/staging/kms/**'
             load_balancer:
               - 'aws/load_balancer/**'
-              - 'env/scratch/load_balancer/**'
+              - 'env/staging/load_balancer/**'
             load_testing:
               - 'aws/load_testing/**'
-              - 'env/scratch/load_testing/**'
+              - 'env/staging/load_testing/**'
             network:
               - 'aws/network/**'
-              - 'env/scratch/network/**'
+              - 'env/staging/network/**'
             rds:
               - 'aws/rds/**'
-              - 'env/scratch/rds/**'
+              - 'env/staging/rds/**'
             redis:
               - 'aws/redis/**'
-              - 'env/scratch/redis/**'
+              - 'env/staging/redis/**'
             sqs:
               - 'aws/sqs/**'
-              - 'env/scratch/sqs/**'
+              - 'env/staging/sqs/**'
 
       # No dependencies
       - name: Terragrunt apply ecr
         if: ${{ steps.filter.outputs.ecr == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/scratch/ecr
+        working-directory: env/staging/ecr
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply hosted_zone
         if: ${{ steps.filter.outputs.hosted_zone == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/scratch/hosted_zone
+        working-directory: env/staging/hosted_zone
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply kms
         if: ${{ steps.filter.outputs.kms == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/scratch/kms
+        working-directory: env/staging/kms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply sqs
         if: ${{ steps.filter.outputs.sqs == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/scratch/sqs
+        working-directory: env/staging/sqs
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on kms
       - name: Terragrunt apply network
         if: ${{ steps.filter.outputs.network == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/scratch/network
+        working-directory: env/staging/network
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply dynamodb
         if: ${{ steps.filter.outputs.dynamodb == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/scratch/dynamodb
+        working-directory: env/staging/dynamodb
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on network
       - name: Terragrunt apply load_balancer
         if: ${{ steps.filter.outputs.load_balancer == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/scratch/load_balancer
+        working-directory: env/staging/load_balancer
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply redis
         if: ${{ steps.filter.outputs.redis == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/scratch/redis
+        working-directory: env/staging/redis
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply rds
         if: ${{ steps.filter.outputs.rds == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/scratch/rds
+        working-directory: env/staging/rds
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on everything
@@ -147,7 +147,7 @@ jobs:
 
       - name: Terragrunt apply app
         if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/scratch/app
+        working-directory: env/staging/app
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Remove Lambda deps
@@ -156,7 +156,7 @@ jobs:
 
       - name: Terragrunt apply alarms
         if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/scratch/alarms
+        working-directory: env/staging/alarms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Install Lambda load_testing deps
@@ -167,7 +167,7 @@ jobs:
 
       - name: Terragrunt apply load_testing
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/scratch/load_testing
+        working-directory: env/staging/load_testing
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Remove Lambda load_testing deps
