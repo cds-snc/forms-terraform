@@ -32,6 +32,7 @@ data "template_file" "form_viewer_task" {
     notify_api_key           = aws_secretsmanager_secret_version.notify_api_key.arn
     google_client_id         = aws_secretsmanager_secret_version.google_client_id.arn
     google_client_secret     = aws_secretsmanager_secret_version.google_client_secret.arn
+    token_secret             = aws_secretsmanager_secret_version.token_secret.arn
     database_url             = var.database_url_secret_arn
     redis_url                = var.redis_url
     nextauth_url             = "https://${var.domain}"
