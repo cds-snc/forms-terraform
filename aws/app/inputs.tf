@@ -86,6 +86,7 @@ variable "ecs_security_group_id" {
 variable "ecs_secret_token_secret" {
   description = "Forms ECS JSON Web Token (JWT) secret used by Templates lambda"
   type        = string
+  sensitive   = true
 }
 
 variable "egress_security_group_id" {
