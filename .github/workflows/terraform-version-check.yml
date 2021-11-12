@@ -9,7 +9,7 @@ on:
       - ".github/workflows/terraform-version-check.yml"
 
 env:
-  ENV: scratch
+  ENV: staging
 
 jobs:
   terraform-version-check:

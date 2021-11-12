@@ -1,0 +1,39 @@
+terraform {
+  source = "../../../aws//load_balancer"
+}
+
+dependencies {
+  paths = ["../hosted_zone", "../network"]
+}
+
+dependency "hosted_zone" {
+  config_path = "../hosted_zone"
+
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    hosted_zone_id = ""
+  }
+}
+
+dependency "network" {
+  config_path = "../network"
+
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    alb_security_group_id = ""
+    public_subnet_ids     = [""]
+    vpc_id                = ""
+  }
+}
+
+inputs = {
+  hosted_zone_id = dependency.hosted_zone.outputs.hosted_zone_id
+
+  alb_security_group_id = dependency.network.outputs.alb_security_group_id
+  public_subnet_ids     = dependency.network.outputs.public_subnet_ids
+  vpc_id                = dependency.network.outputs.vpc_id
+}
+
+include {
+  path = find_in_parent_folders()
+}
