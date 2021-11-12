@@ -45,3 +45,18 @@ resource "aws_secretsmanager_secret_version" "notify_api_key" {
   secret_id     = aws_secretsmanager_secret.notify_api_key.id
   secret_string = var.notify_api_key
 }
+
+resource "aws_secretsmanager_secret" "token_secret" {
+  name                    = "token_secret"
+  recovery_window_in_days = 0
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_secretsmanager_secret_version" "token_secret" {
+  secret_id     = aws_secretsmanager_secret.token_secret.id
+  secret_string = var.ecs_secret_token_secret
+}
