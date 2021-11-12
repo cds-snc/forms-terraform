@@ -265,10 +265,8 @@ const createBearerToken = async (dbClient, formID, local, rdsParams) => {
         }
       }
     ];
-    const command = new ExecuteStatementCommand(rdsParamsCopy)
-    console.log("creating bearer token")
+    const command = new ExecuteStatementCommand(rdsParamsCopy);
     data = await dbClient.send(command);
-    console.log("bearer token created")
     return parseConfig(data.records)
   }
 
