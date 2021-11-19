@@ -2,6 +2,16 @@
 # WAF
 # Defines the firewall rules protecting the ALB
 #
+
+locals {
+  is_production = var.env == "production"
+
+  # AWSManagedRulesCommonRuleSet to exclude.  Only exclude XSS in non-production environments.
+  excluded_rules_upload = ["GenericRFI_QUERYARGUMENTS", "GenericRFI_BODY", "SizeRestrictions_BODY"]
+  excluded_xss          = ["CrossSiteScripting_BODY"]
+  excluded_rules_common = !local.is_production ? concat(local.excluded_rules_upload, local.excluded_xss) : local.excluded_rules_upload
+}
+
 resource "aws_wafv2_web_acl" "forms_acl" {
   name  = "GCForms"
   scope = "REGIONAL"
@@ -45,20 +55,11 @@ resource "aws_wafv2_web_acl" "forms_acl" {
         name        = "AWSManagedRulesCommonRuleSet"
         vendor_name = "AWS"
 
-        excluded_rule {
-          name = "GenericRFI_QUERYARGUMENTS"
-        }
-
-        excluded_rule {
-          name = "GenericRFI_BODY"
-        }
-
-        excluded_rule {
-          name = "SizeRestrictions_BODY"
-        }
-
-        excluded_rule {
-          name = "CrossSiteScripting_BODY"
+        dynamic "excluded_rule" {
+          for_each = local.excluded_rules_common
+          content {
+            name = excluded_rule.value
+          }
         }
       }
     }
@@ -115,8 +116,16 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     name     = "PostRequestLimit"
     priority = 102
 
+    # Only block in `production`
     action {
-      count {}
+      dynamic "block" {
+        for_each = local.is_production ? [true] : []
+        content {}
+      }
+      dynamic "count" {
+        for_each = !local.is_production ? [true] : []
+        content {}
+      }
     }
 
     statement {
