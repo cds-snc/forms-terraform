@@ -9,7 +9,7 @@ locals {
   # AWSManagedRulesCommonRuleSet to exclude.  Only exclude XSS in non-production environments.
   excluded_rules_upload = ["GenericRFI_QUERYARGUMENTS", "GenericRFI_BODY", "SizeRestrictions_BODY"]
   excluded_xss          = ["CrossSiteScripting_BODY"]
-  excluded_rules_common = !is_production ? concat(local.excluded_rules_upload, local.excluded_xss) : local.excluded_rules_upload
+  excluded_rules_common = !local.is_production ? concat(local.excluded_rules_upload, local.excluded_xss) : local.excluded_rules_upload
 }
 
 resource "aws_wafv2_web_acl" "forms_acl" {
@@ -119,11 +119,11 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     # Only block in `production`
     action {
       dynamic "block" {
-        for_each = is_production ? [true] : []
+        for_each = local.is_production ? [true] : []
         content {}
       }
       dynamic "count" {
-        for_each = !is_production ? [true] : []
+        for_each = !local.is_production ? [true] : []
         content {}
       }
     }
