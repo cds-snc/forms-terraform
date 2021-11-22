@@ -1,0 +1,236 @@
+name: "Terragrunt plan PRODUCTION"
+
+on:
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ca-central-1
+  AWS_ACCESS_KEY_ID: ${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}
+  CONFTEST_VERSION: 0.27.0
+  TERRAFORM_VERSION: 1.0.10
+  TERRAGRUNT_VERSION: 0.35.6
+  TF_INPUT: false
+  TF_VAR_ecs_secret_token_secret: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
+  TF_VAR_google_client_id: ${{ secrets.PRODUCTION_GOOGLE_CLIENT_ID}}
+  TF_VAR_google_client_secret: ${{secrets.PRODUCTION_GOOGLE_CLIENT_SECRET}}
+  TF_VAR_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
+  TF_VAR_rds_db_password: ${{ secrets.PRODUCTION_DB_PASSWORD }}
+  TF_VAR_slack_webhook: ${{ secrets.PRODUCTION_SLACK_WEBHOOK }}
+
+jobs:
+
+  # Check the VERSION file to get the target version to deploy and previously deployed version.
+  # These are used to determine which Terraform modules need to have `terraform plan` run.
+  version-manifest:
+    uses: cds-snc/forms-terraform/.github/workflows/version-manifest.yml@main
+
+  # Create a comment with a link showing the diff between versions
+  diff-comment:
+    needs: version-manifest
+    uses: cds-snc/forms-terraform/.github/workflows/diff-comment.yml@main
+    with:
+      ref: v${{ needs.version-manifest.outputs.current }}
+      base: v${{ needs.version-manifest.outputs.previous }}
+
+  terragrunt-plan:
+    needs: version-manifest
+    runs-on: ubuntu-latest
+    env:
+      TARGET_VERSION: v${{ needs.version-manifest.outputs.current }}
+      PREVIOUS_VERSION: v${{ needs.version-manifest.outputs.previous }}
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.TARGET_VERSION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@3d8debd658c92063839bc97da5c2427100420dec # v1.3.2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+
+      - name: Setup Terragrunt
+        run: |
+          mkdir bin
+          wget -O bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v$TERRAGRUNT_VERSION/terragrunt_linux_amd64
+          chmod +x bin/*
+          echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
+
+      - name: Install Conftest
+        run: |
+          wget "https://github.com/open-policy-agent/conftest/releases/download/v${{ env.CONFTEST_VERSION }}/conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz" \
+          && wget "https://github.com/open-policy-agent/conftest/releases/download/v${{ env.CONFTEST_VERSION }}/checksums.txt" \
+          && grep 'Linux_x86_64.tar.gz' < checksums.txt | sha256sum --check  --status \
+          && tar -zxvf "conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz" conftest \
+          && mv conftest /usr/local/bin \
+          && rm "conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz" checksums.txt
+
+      - uses: cds-snc/paths-filter@v2.10.3
+        id: filter
+        with:
+          ref: ${{ env.TARGET_VERSION }}
+          base: ${{ env.PREVIOUS_VERSION }}
+          filters: |
+            alarms:
+              - 'aws/alarms/**'
+              - 'env/production/alarms/**'
+            app:
+              - 'aws/app/**'
+              - 'env/production/app/**'
+            common:
+              - '.github/workflows/terragrunt-plan-production.yml'
+              - 'env/common/**'
+              - 'env/terragrunt.hcl'
+              - 'env/production/env_vars.hcl'
+            dynamodb:
+              - 'aws/dynamodb/**'
+              - 'env/production/dynamodb/**'
+            ecr:
+              - 'aws/ecr/**'
+              - 'env/production/ecr/**'
+            hosted_zone:
+              - 'aws/hosted_zone/**'
+              - 'env/production/hosted_zone/**'
+            kms:
+              - 'aws/kms/**'
+              - 'env/production/kms/**'
+            load_balancer:
+              - 'aws/load_balancer/**'
+              - 'env/production/load_balancer/**'
+            network:
+              - 'aws/network/**'
+              - 'env/production/network/**'
+            rds:
+              - 'aws/rds/**'
+              - 'env/production/rds/**'
+            redis:
+              - 'aws/redis/**'
+              - 'env/production/redis/**'
+            sqs:
+              - 'aws/sqs/**'
+              - 'env/production/sqs/**'
+
+      # No dependencies
+      - name: Terragrunt plan ecr
+        if: ${{ steps.filter.outputs.ecr == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/production/ecr"
+          comment-delete: "true"
+          comment-title: "Production: ecr"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan hosted_zone
+        if: ${{ steps.filter.outputs.hosted_zone == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/production/hosted_zone"
+          comment-delete: "true"
+          comment-title: "Production: hosted_zone"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan kms
+        if: ${{ steps.filter.outputs.kms == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/production/kms"
+          comment-delete: "true"
+          comment-title: "Production: kms"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan sqs
+        if: ${{ steps.filter.outputs.sqs == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/production/sqs"
+          comment-delete: "true"
+          comment-title: "Production: sqs"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      # Depends on kms
+      - name: Terragrunt plan network
+        if: ${{ steps.filter.outputs.network == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/production/network"
+          comment-delete: "true"
+          comment-title: "Production: network"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan dynamodb
+        if: ${{ steps.filter.outputs.dynamodb == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/production/dynamodb"
+          comment-delete: "true"
+          comment-title: "Production: dynamodb"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      # Depends on network
+      - name: Terragrunt plan load_balancer
+        if: ${{ steps.filter.outputs.load_balancer == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/production/load_balancer"
+          comment-delete: "true"
+          comment-title: "Production: load_balancer"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan redis
+        if: ${{ steps.filter.outputs.redis == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/production/redis"
+          comment-delete: "true"
+          comment-title: "Production: redis"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan rds
+        if: ${{ steps.filter.outputs.rds == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/production/rds"
+          comment-delete: "true"
+          comment-title: "Production: rds"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      # Depends on everything
+      - name: Install Lambda deps
+        if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/app/lambda/deps.sh install
+
+      - name: Terragrunt plan app
+        if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/production/app"
+          comment-delete: "true"
+          comment-title: "Production: app"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Remove Lambda deps
+        if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/app/lambda/deps.sh delete
+
+      - name: Terragrunt plan alarms
+        if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/production/alarms"
+          comment-delete: "true"
+          comment-title: "Production: alarms"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"

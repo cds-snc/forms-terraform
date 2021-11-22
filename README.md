@@ -1,13 +1,13 @@
-# forms-staging-terraform
+# Forms Terraform
 
-Infrastructure as Code for GC Forms Staging environment
+Infrastructure as Code for the GC Forms environment.
 
 ## Running Lambdas and DBs locally
 
 Pre-requisites:
-- Docker  
-- Homebrew  
-- AWS CLI (*configure with staging credentials and “ca-central-1”*)  
+- Docker
+- Homebrew
+- AWS CLI (*configure with staging credentials and “ca-central-1”*)
 - Postgres and PGAdmin
 
 Install AWS SAM-CLI
@@ -23,10 +23,10 @@ In directory:
 Install Lambda dependencies and start local lambda service
 In directory: `./aws/app/lambda/` run the script `./start_local_lambdas.sh`
 
-If you want to invoke a lambda specifically, here’s the example command:  
-`aws lambda invoke --function-name "Templates" --endpoint-url "http://127.0.0.1:3001" --no-verify-ssl --payload fileb://./file.json out.txt`  
-**NOTE:** *`fileb://` allows a JSON file that uses UTF-8 encoding for the payload.*   
-  
+If you want to invoke a lambda specifically, here’s the example command:
+`aws lambda invoke --function-name "Templates" --endpoint-url "http://127.0.0.1:3001" --no-verify-ssl --payload fileb://./file.json out.txt`
+**NOTE:** *`fileb://` allows a JSON file that uses UTF-8 encoding for the payload.*
+
 Otherwise, in the platform-forms-client, you just modify the ‘endpoint’ parameter of the LambdaClient to hit `http://127.0.0.1:3001` . I’ve done this through an environment variable:
 `LOCAL_LAMBDA_ENDPOINT=http://127.0.0.1:3001`
 
@@ -37,4 +37,14 @@ if you get connection errors: postgresql.conf listen address “\*”
 Notes:
 When running locally using AWS SAM, the env var `AWS_SAM_LOCAL = true` is set automatically - so I hook into this for local testing
 
-todo: environment variables
+## Terraform secrets
+Terraform will require the following variables to plan and apply:
+```hcl
+ecs_secret_token_secret # JSON Web Token signing secret
+google_client_id        # Google OAuth client ID (used for authentication)
+google_client_secret:   # Google OAuth client secret (used for authentication)
+notify_api_key          # Notify API key to send messages
+rds_db_password         # Database password
+slack_webhook           # Slack webhook to send CloudWatch notifications
+```
+
