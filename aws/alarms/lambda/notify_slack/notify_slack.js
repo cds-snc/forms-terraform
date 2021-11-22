@@ -10,10 +10,11 @@ function getMessage(message) {
   }
 }
 exports.handler = function (event, context) {
+  var environment = process.env.ENVIRONMENT || "Staging";
   var postData = {
     channel: "#forms-deploy-activities",
     username: "Forms Notifier",
-    text: "*Staging Environment*",
+    text: `*${environment} Environment*`,
     icon_emoji: ":loudspeaker:",
   };
 
