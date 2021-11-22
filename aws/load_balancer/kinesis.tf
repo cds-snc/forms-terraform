@@ -26,7 +26,7 @@ resource "aws_kinesis_firehose_delivery_stream" "firehose_waf_logs" {
 resource "aws_s3_bucket" "firehose_waf_logs" {
   # checkov:skip=CKV_AWS_18: Versioning not required
   # checkov:skip=CKV_AWS_21: Access logging not required  
-  bucket = "forms-${var.env}-terraform-waf-logs"
+  bucket = var.env == "production" ? "forms-waf-logs" : "forms-${var.env}-terraform-waf-logs"
   acl    = "private"
 
   lifecycle_rule {
