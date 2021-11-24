@@ -156,8 +156,3 @@ jobs:
       - name: Remove Lambda deps
         if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
         run: ./aws/app/lambda/deps.sh delete
-
-      - name: Terragrunt apply alarms
-        if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/production/alarms
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve     
