@@ -1,7 +1,11 @@
 name: "Terragrunt apply PRODUCTION"
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "VERSION"
 
 env:
   AWS_REGION: ca-central-1
@@ -28,8 +32,8 @@ jobs:
     needs: version-manifest
     runs-on: ubuntu-latest
     env:
-      TARGET_VERSION: v${{ needs.version-manifest.outputs.current }}
-      PREVIOUS_VERSION: v${{ needs.version-manifest.outputs.previous }} 
+      TARGET_VERSION: ${{ needs.version-manifest.outputs.current }}
+      PREVIOUS_VERSION: ${{ needs.version-manifest.outputs.previous }} 
     steps:
 
       - name: Checkout
