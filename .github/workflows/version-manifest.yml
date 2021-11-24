@@ -6,7 +6,13 @@ name: "Version manifest"
 
 on:
   workflow_call:
-  workflow_dispatch:
+    outputs:
+      previous:
+        description: "The previous contents of the VERSION manifest"
+        value: ${{ jobs.version-manifest.outputs.previous }}
+      current:
+        description: "The current contents of the VERSION manifest"
+        value: ${{ jobs.version-manifest.outputs.current }}
 
 jobs:
   version-manifest:
@@ -24,7 +30,7 @@ jobs:
         id: versions
         run: |
           PREV_SHA="$(git show -2 --pretty=format:"%h" --no-patch VERSION | tail -n 1)"
-          PREV_VERSION="$(git show ${CURRENT_SHA}:VERSION)"
+          PREV_VERSION="$(git show ${PREV_SHA}:VERSION)"
           CURR_VERSION="$(cat VERSION)"
           echo "PREV_SHA=${PREV_SHA}"
           echo "PREV_VERSION=${PREV_VERSION}"

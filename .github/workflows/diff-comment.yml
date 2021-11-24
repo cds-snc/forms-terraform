@@ -36,5 +36,5 @@ jobs:
             github.issues.createComment({
               ...context.repo,
               issue_number: context.issue.number,
-              body: "## Version diff\n${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/compare/${{ inputs.base }}...${{ inputs.ref }}"
+              body: "## Version diff\nhttps://github.com/cds-snc/forms-terraform/compare/${{ inputs.base }}...${{ inputs.ref }}"
             })
