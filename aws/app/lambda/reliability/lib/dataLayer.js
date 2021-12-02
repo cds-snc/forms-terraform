@@ -65,9 +65,8 @@ function extractFileInputResponses(submission) {
     // Filter down to only dynamicRow elements that contain fileInputs
     .filter(
       (element) =>
-        element.properties.subElements?.filter(
-          (subElement) => subElement.type === "fileInput"
-        ) ?? false
+        element.properties.subElements?.filter((subElement) => subElement.type === "fileInput") ??
+        false
     )
     .map((element) => {
       return (
@@ -90,7 +89,7 @@ function extractFileInputResponses(submission) {
     })
     .flat();
 
-    return [...fileInputElements, ...dynamicRowElementsIncludingFileInputComponents];
+  return [...fileInputElements, ...dynamicRowElementsIncludingFileInputComponents];
 }
 
 function extractFormData(submission, language) {
@@ -108,6 +107,8 @@ function extractFormData(submission, language) {
 
 function handleType(question, response, language, collector) {
   const qTitle = language === "fr" ? question.properties.titleFr : question.properties.titleEn;
+  const qRowLabel =
+    language === "fr" ? question.properties.placeholderFr : question.properties.placeholderFr;
   switch (question.type) {
     case "textField":
     case "textArea":
@@ -119,7 +120,7 @@ function handleType(question, response, language, collector) {
       handleArrayResponse(qTitle, response, collector);
       break;
     case "dynamicRow":
-      handleDynamicForm(qTitle, response, question.properties.subElements, collector);
+      handleDynamicForm(qTitle, qRowLabel, response, question.properties.subElements, collector);
       break;
     case "fileInput":
       handleFileInputResponse(qTitle, response, collector);
@@ -127,7 +128,7 @@ function handleType(question, response, language, collector) {
   }
 }
 
-function handleDynamicForm(title, response, question, collector) {
+function handleDynamicForm(title, rowLabel = "Item", response, question, collector) {
   const responseCollector = response.map((row, rIndex) => {
     const rowCollector = [];
     question.map((qItem, qIndex) => {
@@ -146,12 +147,14 @@ function handleDynamicForm(title, response, question, collector) {
         case "checkbox":
           handleArrayResponse(qTitle, row[qIndex], rowCollector);
           break;
+        default:
+          break;
       }
     });
-    rowCollector.unshift(`Item ${rIndex + 1}`);
+    rowCollector.unshift(`${String.fromCharCode(13)}***${rowLabel} ${rIndex + 1}***`);
     return rowCollector.join(String.fromCharCode(13));
   });
-  responseCollector.unshift(title);
+  responseCollector.unshift(`**${title}**`);
   collector.push(responseCollector.join(String.fromCharCode(13)));
 }
 
@@ -160,36 +163,36 @@ function handleArrayResponse(title, response, collector) {
     if (Array.isArray(response)) {
       const responses = response
         .map((item) => {
-          return `- ${item}`;
+          return `-  ${item}`;
         })
         .join(String.fromCharCode(13));
-      collector.push(`${title}${String.fromCharCode(13)}${responses}`);
+      collector.push(`**${title}**${String.fromCharCode(13)}${responses}`);
       return;
     } else {
       handleTextResponse(title, response, collector);
       return;
     }
   }
-  collector.push(`${title}${String.fromCharCode(13)}- No response`);
+  collector.push(`**${title}**${String.fromCharCode(13)}No response`);
 }
 
 function handleTextResponse(title, response, collector) {
   if (response !== undefined && response !== null && response !== "") {
-    collector.push(`${title}${String.fromCharCode(13)}-${response}`);
+    collector.push(`**${title}**${String.fromCharCode(13)}${response}`);
     return;
   }
 
-  collector.push(`${title}${String.fromCharCode(13)}- No Response`);
+  collector.push(`**${title}**${String.fromCharCode(13)}No Response`);
 }
 
 function handleFileInputResponse(title, response, collector) {
   if (response !== undefined && response !== null && response !== "") {
     const fileName = response.split("/").pop();
-    collector.push(`${title}${String.fromCharCode(13)}-${fileName}`);
+    collector.push(`**${title}**${String.fromCharCode(13)}${fileName}`);
     return;
   }
 
-  collector.push(`${title}${String.fromCharCode(13)}- No Response`);
+  collector.push(`**${title}**${String.fromCharCode(13)}No Response`);
 }
 
 function formatError(err) {
