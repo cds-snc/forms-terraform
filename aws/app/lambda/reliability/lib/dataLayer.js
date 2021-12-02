@@ -108,7 +108,7 @@ function extractFormData(submission, language) {
 function handleType(question, response, language, collector) {
   const qTitle = language === "fr" ? question.properties.titleFr : question.properties.titleEn;
   const qRowLabel =
-    language === "fr" ? question.properties.placeholderFr : question.properties.placeholderFr;
+    language === "fr" ? question.properties.placeholderFr : question.properties.placeholderEn;
   switch (question.type) {
     case "textField":
     case "textArea":
