@@ -1,5 +1,8 @@
+# The source for this module is local since it requires that the `aws/app/lambda` dependencies are installed
+# before running `terraform plan/apply`.  If a remote Terraform module is used, this step can't happen.
+# TODO: switch to using Docker image based Lambdas that would not require the dependency install step.
 terraform {
-  source = "git::https://github.com/cds-snc/forms-terraform//aws/app?ref=${get_env("TARGET_VERSION")}"
+  source = "../../../aws//app"
 }
 
 dependencies {
