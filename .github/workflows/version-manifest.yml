@@ -2,7 +2,7 @@ name: "Version manifest"
 
 # Gets the following content from the `VERSION` manifest:
 # 1. current version: the target version for the Terraform plan and apply.
-# 2. previous version: the previously deployed Terraform version. 
+# 2. previous version: the previously deployed Terraform version.
 
 on:
   workflow_call:
