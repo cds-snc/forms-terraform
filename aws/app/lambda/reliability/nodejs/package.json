@@ -5,7 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.7.0",
-    "@aws-sdk/client-lambda": "^3.16.0",
+    "@aws-sdk/client-lambda": "^3.41.0",
     "@aws-sdk/client-s3": "^3.33.0",
     "@aws-sdk/client-sqs": "^3.7.0",
     "axios": "^0.21.1",
