@@ -97,6 +97,42 @@ resource "aws_iam_role_policy_attachment" "s3_forms" {
 }
 
 #
+# IAM - Dynamo DB
+#
+resource "aws_iam_policy" "forms_dynamodb" {
+  name        = "forms_dynamodb"
+  path        = "/"
+  description = "IAM policy for allowing access for Forms ECS task to read and write to the vault"
+  policy      = data.aws_iam_policy_document.forms_dynamodb
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+data "aws_iam_policy_document" "forms_dynamodb" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "dynamodb:GetItem",
+      "dynamodb:PutItem",
+      "dynamodb:UpdateItem",
+      "dynamodb:DeleteItem",
+      "dynamodb:BatchWriteItem",
+      "dynamodb:Scan",
+      "dynamodb:Query"
+    ]
+
+    resources = [
+      var.dynamodb_relability_queue_arn,
+      var.dynamodb_vault_arn
+    ]
+  }
+}
+
+#
 # IAM - Codedeploy
 #
 resource "aws_iam_role" "codedeploy" {
