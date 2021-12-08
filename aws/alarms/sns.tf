@@ -20,6 +20,28 @@ resource "aws_sns_topic" "alert_ok" {
   }
 }
 
+resource "aws_sns_topic" "alert_warning_us_east" {
+  provider = aws.us-east-1
+
+  name              = "alert-warning"
+  kms_master_key_id = var.kms_key_cloudwatch_us_east_arn
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_sns_topic" "alert_ok_us_east" {
+  provider = aws.us-east-1
+
+  name              = "alert-ok"
+  kms_master_key_id = var.kms_key_cloudwatch_us_east_arn
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
 #
 # SNS topic subscriptions
 #
@@ -31,6 +53,22 @@ resource "aws_sns_topic_subscription" "topic_warning" {
 
 resource "aws_sns_topic_subscription" "topic_ok" {
   topic_arn = aws_sns_topic.alert_ok.arn
+  protocol  = "lambda"
+  endpoint  = aws_lambda_function.notify_slack_sns.arn
+}
+
+resource "aws_sns_topic_subscription" "topic_warning_us_east" {
+  provider = aws.us-east-1
+
+  topic_arn = aws_sns_topic.alert_warning_us_east.arn
+  protocol  = "lambda"
+  endpoint  = aws_lambda_function.notify_slack_sns.arn
+}
+
+resource "aws_sns_topic_subscription" "topic_ok_us_east" {
+  provider = aws.us-east-1
+
+  topic_arn = aws_sns_topic.alert_ok_us_east.arn
   protocol  = "lambda"
   endpoint  = aws_lambda_function.notify_slack_sns.arn
 }

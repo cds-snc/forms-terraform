@@ -10,6 +10,7 @@ dependency "hosted_zone" {
   config_path = "../hosted_zone"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_with_state           = true
   mock_outputs = {
     hosted_zone_id = ""
   }
@@ -19,8 +20,10 @@ dependency "kms" {
   config_path = "../kms"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_with_state           = true  
   mock_outputs = {
-    kms_key_cloudwatch_arn = ""
+    kms_key_cloudwatch_arn         = ""
+    kms_key_cloudwatch_us_east_arn = ""
   }
 }
 
@@ -28,6 +31,7 @@ dependency "load_balancer" {
   config_path = "../load_balancer"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_with_state           = true
   mock_outputs = {
     lb_arn        = ""
     lb_arn_suffix = ""
@@ -38,6 +42,7 @@ dependency "sqs" {
   config_path = "../sqs"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_with_state           = true
   mock_outputs = {
     sqs_deadletter_queue_arn = ""
   }
@@ -47,6 +52,7 @@ dependency "app" {
   config_path = "../app"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_with_state           = true
   mock_outputs = {
     ecs_cloudwatch_log_group_name = ""
     ecs_cluster_name              = ""
@@ -61,7 +67,8 @@ inputs = {
 
   hosted_zone_id = dependency.hosted_zone.outputs.hosted_zone_id
 
-  kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
+  kms_key_cloudwatch_arn         = dependency.kms.outputs.kms_key_cloudwatch_arn
+  kms_key_cloudwatch_us_east_arn = dependency.kms.outputs.kms_key_cloudwatch_us_east_arn
 
   lb_arn        = dependency.load_balancer.outputs.lb_arn
   lb_arn_suffix = dependency.load_balancer.outputs.lb_arn_suffix
