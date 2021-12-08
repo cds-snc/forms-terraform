@@ -54,6 +54,22 @@ resource "aws_lambda_permission" "notify_slack_ok" {
   source_arn    = aws_sns_topic.alert_ok.arn
 }
 
+resource "aws_lambda_permission" "notify_slack_warning_us_east" {
+  statement_id  = "AllowExecutionFromSNSWarningAlertUSEast"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.notify_slack_sns.function_name
+  principal     = "sns.amazonaws.com"
+  source_arn    = aws_sns_topic.alert_warning_us_east.arn
+}
+
+resource "aws_lambda_permission" "notify_slack_ok_us_east" {
+  statement_id  = "AllowExecutionFromSNSOkAlertUSEast"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.notify_slack_sns.function_name
+  principal     = "sns.amazonaws.com"
+  source_arn    = aws_sns_topic.alert_ok_us_east.arn
+}
+
 #
 # IAM: Notify Slack Lambda
 #
