@@ -20,7 +20,8 @@ dependency "kms" {
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    kms_key_cloudwatch_arn = ""
+    kms_key_cloudwatch_arn         = ""
+    kms_key_cloudwatch_us_east_arn = ""
   }
 }
 
@@ -61,7 +62,8 @@ inputs = {
 
   hosted_zone_id = dependency.hosted_zone.outputs.hosted_zone_id
 
-  kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
+  kms_key_cloudwatch_arn         = dependency.kms.outputs.kms_key_cloudwatch_arn
+  kms_key_cloudwatch_us_east_arn = dependency.kms.outputs.kms_key_cloudwatch_us_east_arn
 
   lb_arn        = dependency.load_balancer.outputs.lb_arn
   lb_arn_suffix = dependency.load_balancer.outputs.lb_arn_suffix

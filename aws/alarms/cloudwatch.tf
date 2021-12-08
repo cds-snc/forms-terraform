@@ -268,3 +268,48 @@ resource "aws_cloudwatch_event_rule" "codedeploy_sns" {
     Terraform             = true
   }
 }
+
+#
+# Shield Advanced DDoS detection: ALB and Route53
+#
+resource "aws_cloudwatch_metric_alarm" "alb_ddos" {
+  alarm_name          = "ALBDDoS"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "DDoSDetected"
+  namespace           = "AWS/DDoSProtection"
+  period              = "60"
+  statistic           = "Sum"
+  threshold           = "0"
+  treat_missing_data  = "notBreaching"
+
+  alarm_description = "DDoS detection for ALB"
+  alarm_actions     = [aws_sns_topic.alert_warning.arn]
+  ok_actions        = [aws_sns_topic.alert_ok.arn]
+
+  dimensions = {
+    ResourceArn = var.lb_arn
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "route53_ddos" {
+  provider = aws.us-east-1
+
+  alarm_name          = "Route53DDoS"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "DDoSDetected"
+  namespace           = "AWS/DDoSProtection"
+  period              = "60"
+  statistic           = "Sum"
+  threshold           = "0"
+  treat_missing_data  = "notBreaching"
+
+  alarm_description = "DDoS detection for Route53"
+  alarm_actions     = [aws_sns_topic.alert_warning_us_east.arn]
+  ok_actions        = [aws_sns_topic.alert_ok_us_east.arn]
+
+  dimensions = {
+    ResourceArn = "arn:aws:route53:::hostedzone/${var.hosted_zone_id}"
+  }
+}

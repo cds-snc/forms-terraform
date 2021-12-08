@@ -13,6 +13,19 @@ resource "aws_kms_key" "cloudwatch" {
   }
 }
 
+resource "aws_kms_key" "cloudwatch_us_east" {
+  provider = aws.us-east-1
+
+  description         = "CloudWatch Log Group Key"
+  enable_key_rotation = true
+  policy              = data.aws_iam_policy_document.kms_cloudwatch.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
 data "aws_iam_policy_document" "kms_cloudwatch" {
   # checkov:skip=CKV_AWS_109: `resources = ["*"]` identifies the KMS key to which the key policy is attached
   # checkov:skip=CKV_AWS_111: `resources = ["*"]` identifies the KMS key to which the key policy is attached

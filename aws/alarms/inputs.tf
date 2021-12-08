@@ -23,6 +23,11 @@ variable "kms_key_cloudwatch_arn" {
   type        = string
 }
 
+variable "kms_key_cloudwatch_us_east_arn" {
+  description = "CloudWatch KMS key ARN in us-east-1, used by SNS topics"
+  type        = string
+}
+
 variable "lb_arn" {
   description = "Load balancer ARN, used by DDoS alarms"
   type        = string
