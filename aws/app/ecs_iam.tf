@@ -96,7 +96,7 @@ resource "aws_iam_role_policy_attachment" "s3_forms" {
   policy_arn = aws_iam_policy.forms_s3.arn
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_task_execution_forms" {
+resource "aws_iam_role_policy_attachment" "dynamodb_forms" {
   role       = aws_iam_role.forms.name
   policy_arn = aws_iam_policy.forms_dynamodb.arn
 }
