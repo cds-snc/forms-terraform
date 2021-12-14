@@ -91,6 +91,11 @@ resource "aws_iam_role_policy_attachment" "secrets_manager_forms" {
   policy_arn = aws_iam_policy.forms_secrets_manager.arn
 }
 
+resource "aws_iam_role_policy_attachment" "kms_forms" {
+  role       = aws_iam_role.forms.name
+  policy_arn = aws_iam_policy.forms_kms.arn
+}
+
 resource "aws_iam_role_policy_attachment" "s3_forms" {
   role       = aws_iam_role.forms.name
   policy_arn = aws_iam_policy.forms_s3.arn
@@ -100,6 +105,39 @@ resource "aws_iam_role_policy_attachment" "dynamodb_forms" {
   role       = aws_iam_role.forms.name
   policy_arn = aws_iam_policy.forms_dynamodb.arn
 }
+
+#
+# IAM - KMS (for encryption key access - needed for Dynamob DB)
+#
+
+resource "aws_iam_policy" "forms_kms" {
+  name        = "ecs_kms"
+  path        = "/"
+  description = "IAM policy for storing encrypting and decrypting data"
+  policy      = data.aws_iam_policy_document.forms_kms.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+data "aws_iam_policy_document" "forms_kms" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "kms:GenerateDataKey",
+      "kms:Encrypt",
+      "kms:Decrypt"
+    ]
+
+    resources = [
+      var.kms_key_dynamodb_arn
+    ]
+  }
+}
+
 
 #
 # IAM - Dynamo DB
@@ -166,3 +204,5 @@ resource "aws_iam_role_policy_attachment" "codedeploy" {
   role       = aws_iam_role.codedeploy.name
   policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
 }
+
+
