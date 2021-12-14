@@ -107,7 +107,7 @@ resource "aws_iam_role_policy_attachment" "dynamodb_forms" {
 }
 
 #
-# IAM - KMS (for encryption key access)
+# IAM - KMS (for encryption key access - needed for Dynamob DB)
 #
 
 resource "aws_iam_policy" "forms_kms" {
