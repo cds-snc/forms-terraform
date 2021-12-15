@@ -41,6 +41,17 @@ resource "aws_dynamodb_table" "vault" {
     type = "S"
   }
 
+  attribute {
+    name = "Retrieved"
+    type = "N"
+  }
+
+  global_secondary_index {
+    name            = "retrieved-index"
+    hash_key        = "Retrieved"
+    projection_type = "ALL"
+  }
+
   server_side_encryption {
     enabled     = true
     kms_key_arn = var.kms_key_dynamodb_arn
