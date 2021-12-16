@@ -18,16 +18,6 @@ variable "hosted_zone_id" {
   type        = string
 }
 
-variable "kms_key_cloudwatch_arn" {
-  description = "CloudWatch KMS key ARN, used by SNS topics"
-  type        = string
-}
-
-variable "kms_key_cloudwatch_us_east_arn" {
-  description = "CloudWatch KMS key ARN in us-east-1, used by SNS topics"
-  type        = string
-}
-
 variable "lb_arn" {
   description = "Load balancer ARN, used by DDoS alarms"
   type        = string
@@ -61,5 +51,30 @@ variable "threshold_ecs_memory_utilization_high" {
 
 variable "threshold_lb_response_time" {
   description = "Load balancer response time, in seconds, above which an alarm is triggered (10 minute period)"
+  type        = string
+}
+
+variable "sns_topic_alert_critical_arn" {
+  description = "SNS topic ARN that critical alerts are sent to"
+  type        = string
+}
+
+variable "sns_topic_alert_warning_arn" {
+  description = "SNS topic ARN that warning alerts are sent to"
+  type        = string
+}
+
+variable "sns_topic_alert_ok_arn" {
+  description = "SNS topic ARN that ok alerts are sent to"
+  type        = string
+}
+
+variable "sns_topic_alert_warning_us_east_arn" {
+  description = "SNS topic ARN that warning alerts are sent to (US East)"
+  type        = string
+}
+
+variable "sns_topic_alert_ok_us_east_arn" {
+  description = "SNS topic ARN that ok alerts are sent to (US East)"
   type        = string
 }

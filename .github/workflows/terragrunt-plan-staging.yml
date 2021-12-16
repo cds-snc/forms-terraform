@@ -96,6 +96,9 @@ jobs:
             redis:
               - 'aws/redis/**'
               - 'env/staging/redis/**'
+            sns:
+              - 'aws/sns/**'
+              - 'env/staging/sns/**'
             sqs:
               - 'aws/sqs/**'
               - 'env/staging/sqs/**'
@@ -138,6 +141,16 @@ jobs:
           directory: "env/staging/sqs"
           comment-delete: "true"
           comment-title: "Staging: sqs"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan sns
+        if: ${{ steps.filter.outputs.sns == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/staging/sns"
+          comment-delete: "true"
+          comment-title: "Staging: sns"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 

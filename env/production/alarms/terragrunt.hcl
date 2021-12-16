@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../hosted_zone", "../kms", "../load_balancer", "../sqs", "../app"]
+  paths = ["../hosted_zone", "../kms", "../load_balancer", "../sqs", "../app", "../sns"]
 }
 
 dependency "hosted_zone" {
@@ -60,6 +60,20 @@ dependency "app" {
   }
 }
 
+dependency "sns" {
+  config_path = "../sns"
+
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_with_state           = true
+  mock_outputs = {
+    sns_topic_alert_critical_arn        = ""
+    sns_topic_alert_warning_arn         = ""
+    sns_topic_alert_ok_arn              = ""
+    sns_topic_alert_warning_us_east_arn = ""
+    sns_topic_alert_ok_us_east_arn      = ""
+  }
+}
+
 inputs = {
   threshold_ecs_cpu_utilization_high    = "50"
   threshold_ecs_memory_utilization_high = "50"
@@ -78,6 +92,12 @@ inputs = {
   ecs_cloudwatch_log_group_name = dependency.app.outputs.ecs_cloudwatch_log_group_name
   ecs_cluster_name              = dependency.app.outputs.ecs_cluster_name
   ecs_service_name              = dependency.app.outputs.ecs_service_name
+
+  sns_topic_alert_critical_arn        = dependency.sns.outputs.sns_topic_alert_critical_arn
+  sns_topic_alert_warning_arn         = dependency.sns.outputs.sns_topic_alert_warning_arn
+  sns_topic_alert_ok_arn              = dependency.sns.outputs.sns_topic_alert_ok_arn
+  sns_topic_alert_warning_us_east_arn = dependency.sns.outputs.sns_topic_alert_warning_us_east_arn
+  sns_topic_alert_ok_us_east_arn      = dependency.sns.outputs.sns_topic_alert_ok_us_east_arn
 }
 
 include {
