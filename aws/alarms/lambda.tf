@@ -38,12 +38,20 @@ resource "aws_lambda_function" "notify_slack_sns" {
 #
 # Allow SNS to invoke Lambda function
 #
+resource "aws_lambda_permission" "notify_slack_critical" {
+  statement_id  = "AllowExecutionFromSNSCriticalAlert"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.notify_slack_sns.function_name
+  principal     = "sns.amazonaws.com"
+  source_arn    = var.sns_topic_alert_critical_arn
+}
+
 resource "aws_lambda_permission" "notify_slack_warning" {
   statement_id  = "AllowExecutionFromSNSWarningAlert"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.notify_slack_sns.function_name
   principal     = "sns.amazonaws.com"
-  source_arn    = aws_sns_topic.alert_warning.arn
+  source_arn    = var.sns_topic_alert_warning_arn
 }
 
 resource "aws_lambda_permission" "notify_slack_ok" {
@@ -51,7 +59,7 @@ resource "aws_lambda_permission" "notify_slack_ok" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.notify_slack_sns.function_name
   principal     = "sns.amazonaws.com"
-  source_arn    = aws_sns_topic.alert_ok.arn
+  source_arn    = var.sns_topic_alert_ok_arn
 }
 
 resource "aws_lambda_permission" "notify_slack_warning_us_east" {
@@ -59,7 +67,7 @@ resource "aws_lambda_permission" "notify_slack_warning_us_east" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.notify_slack_sns.function_name
   principal     = "sns.amazonaws.com"
-  source_arn    = aws_sns_topic.alert_warning_us_east.arn
+  source_arn    = var.sns_topic_alert_warning_us_east_arn
 }
 
 resource "aws_lambda_permission" "notify_slack_ok_us_east" {
@@ -67,7 +75,7 @@ resource "aws_lambda_permission" "notify_slack_ok_us_east" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.notify_slack_sns.function_name
   principal     = "sns.amazonaws.com"
-  source_arn    = aws_sns_topic.alert_ok_us_east.arn
+  source_arn    = var.sns_topic_alert_ok_us_east_arn
 }
 
 #
