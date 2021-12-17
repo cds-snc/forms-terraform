@@ -165,7 +165,11 @@ data "aws_iam_policy_document" "forms_dynamodb" {
       "dynamodb:DeleteItem",
       "dynamodb:BatchWriteItem",
       "dynamodb:Scan",
-      "dynamodb:Query"
+      "dynamodb:Query",
+      "dynamodb:PartiQLSelect",
+      "dynamodb:PartiQLDelete",
+      "dynamodb:PartiQLInsert",
+      "dynamodb:PartiQLUpdate"
     ]
 
     resources = [
