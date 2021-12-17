@@ -8,7 +8,7 @@ ARG TERRAGRUNT_VERSION
 
 # Install packages
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends awscli ca-certificates curl git gnupg2 jq make nodejs npm openssh-client python3-pip vim zsh \
+    && apt-get -y install --no-install-recommends awscli build-essential ca-certificates curl git gnupg2 jq libffi-dev make nodejs npm openssh-client python3-dev python3-pip vim zsh \
     && apt-get autoremove -y && apt-get clean -y 
 
 # Install yarn

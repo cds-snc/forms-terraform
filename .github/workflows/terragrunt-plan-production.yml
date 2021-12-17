@@ -113,6 +113,9 @@ jobs:
             redis:
               - 'aws/redis/**'
               - 'env/production/redis/**'
+            sns:
+              - 'aws/sns/**'
+              - 'env/production/sns/**'
             sqs:
               - 'aws/sqs/**'
               - 'env/production/sqs/**'
@@ -155,6 +158,16 @@ jobs:
           directory: "env/production/sqs"
           comment-delete: "true"
           comment-title: "Production: sqs"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan sns
+        if: ${{ steps.filter.outputs.sns == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/production/sns"
+          comment-delete: "true"
+          comment-title: "Production: sns"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 

@@ -95,6 +95,9 @@ jobs:
             redis:
               - 'aws/redis/**'
               - 'env/production/redis/**'
+            sns:
+              - 'aws/sns/**'
+              - 'env/production/sns/**'
             sqs:
               - 'aws/sqs/**'
               - 'env/production/sqs/**'
@@ -118,6 +121,11 @@ jobs:
       - name: Terragrunt apply sqs
         if: ${{ steps.filter.outputs.sqs == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/production/sqs
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply sns
+        if: ${{ steps.filter.outputs.sns == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/production/sns
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on kms

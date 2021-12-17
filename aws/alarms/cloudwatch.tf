@@ -12,8 +12,8 @@ resource "aws_cloudwatch_metric_alarm" "forms_cpu_utilization_high_warn" {
   threshold           = var.threshold_ecs_cpu_utilization_high
   alarm_description   = "End User Forms Warning - High CPU usage has been detected."
 
-  alarm_actions = [aws_sns_topic.alert_warning.arn]
-  ok_actions    = [aws_sns_topic.alert_ok.arn]
+  alarm_actions = [var.sns_topic_alert_warning_arn]
+  ok_actions    = [var.sns_topic_alert_ok_arn]
   dimensions = {
     ClusterName = var.ecs_cluster_name
     ServiceName = var.ecs_service_name
@@ -36,8 +36,8 @@ resource "aws_cloudwatch_metric_alarm" "forms_memory_utilization_high_warn" {
   threshold           = var.threshold_ecs_memory_utilization_high
   alarm_description   = "End User Forms Warning - High memory usage has been detected."
 
-  alarm_actions = [aws_sns_topic.alert_warning.arn]
-  ok_actions    = [aws_sns_topic.alert_ok.arn]
+  alarm_actions = [var.sns_topic_alert_warning_arn]
+  ok_actions    = [var.sns_topic_alert_ok_arn]
 
   dimensions = {
     ClusterName = var.ecs_cluster_name
@@ -78,7 +78,7 @@ resource "aws_cloudwatch_metric_alarm" "five_hundred_response_warn" {
   treat_missing_data  = "notBreaching"
   alarm_description   = "End User Forms Warning - A 5xx HTML error was detected coming from the Forms."
 
-  alarm_actions = [aws_sns_topic.alert_warning.arn]
+  alarm_actions = [var.sns_topic_alert_warning_arn]
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
@@ -111,7 +111,7 @@ resource "aws_cloudwatch_metric_alarm" "application_error_warn" {
   treat_missing_data  = "notBreaching"
   alarm_description   = "End User Forms Warning - An error message was detected in the ECS logs"
 
-  alarm_actions = [aws_sns_topic.alert_warning.arn]
+  alarm_actions = [var.sns_topic_alert_warning_arn]
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
@@ -135,7 +135,7 @@ resource "aws_cloudwatch_metric_alarm" "forms_dead_letter_queue_warn" {
   treat_missing_data  = "notBreaching"
   alarm_description   = "End User Forms Warning - A message has been sent to the Dead Letter Queue."
 
-  alarm_actions = [aws_sns_topic.alert_warning.arn]
+  alarm_actions = [var.sns_topic_alert_warning_arn]
   dimensions = {
     QueueName = var.sqs_deadletter_queue_arn
   }
@@ -157,8 +157,8 @@ resource "aws_cloudwatch_metric_alarm" "response_time_warn" {
   threshold           = var.threshold_lb_response_time
   alarm_description   = "End User Forms Warning - The latency of response times from the forms are abnormally high."
   treat_missing_data  = "notBreaching"
-  alarm_actions       = [aws_sns_topic.alert_warning.arn]
-  ok_actions          = [aws_sns_topic.alert_ok.arn]
+  alarm_actions       = [var.sns_topic_alert_warning_arn]
+  ok_actions          = [var.sns_topic_alert_ok_arn]
 
 
   metric_query {
@@ -195,7 +195,7 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_forms_warn" {
   threshold           = "0"
   alarm_description   = "End User Forms Warning - AWS has detected a DDOS attack on the End User Forms's Load Balancer"
 
-  alarm_actions = [aws_sns_topic.alert_warning.arn]
+  alarm_actions = [var.sns_topic_alert_warning_arn]
 
   dimensions = {
     ResourceArn = var.lb_arn
@@ -219,7 +219,7 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_route53_warn" {
   threshold           = "0"
   alarm_description   = "End User Forms Warning - AWS has detected a DDOS attack on the End User Forms's DNS Server"
 
-  alarm_actions = [aws_sns_topic.alert_warning.arn]
+  alarm_actions = [var.sns_topic_alert_warning_arn]
 
   dimensions = {
     ResourceArn = "arn:aws:route53:::hostedzone/${var.hosted_zone_id}"
@@ -237,7 +237,7 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_route53_warn" {
 resource "aws_cloudwatch_event_target" "codedeploy_sns" {
   target_id = "CodeDeploy_SNS"
   rule      = aws_cloudwatch_event_rule.codedeploy_sns.name
-  arn       = aws_sns_topic.alert_warning.arn
+  arn       = var.sns_topic_alert_warning_arn
 
   input_transformer {
     input_paths = {
@@ -284,8 +284,8 @@ resource "aws_cloudwatch_metric_alarm" "alb_ddos" {
   treat_missing_data  = "notBreaching"
 
   alarm_description = "DDoS detection for ALB"
-  alarm_actions     = [aws_sns_topic.alert_warning.arn]
-  ok_actions        = [aws_sns_topic.alert_ok.arn]
+  alarm_actions     = [var.sns_topic_alert_warning_arn]
+  ok_actions        = [var.sns_topic_alert_ok_arn]
 
   dimensions = {
     ResourceArn = var.lb_arn
@@ -306,8 +306,8 @@ resource "aws_cloudwatch_metric_alarm" "route53_ddos" {
   treat_missing_data  = "notBreaching"
 
   alarm_description = "DDoS detection for Route53"
-  alarm_actions     = [aws_sns_topic.alert_warning_us_east.arn]
-  ok_actions        = [aws_sns_topic.alert_ok_us_east.arn]
+  alarm_actions     = [var.sns_topic_alert_warning_us_east_arn]
+  ok_actions        = [var.sns_topic_alert_ok_us_east_arn]
 
   dimensions = {
     ResourceArn = "arn:aws:route53:::hostedzone/${var.hosted_zone_id}"
