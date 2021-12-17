@@ -180,7 +180,8 @@ data "aws_iam_policy_document" "lambda_kms" {
     ]
 
     resources = [
-      var.kms_key_dynamodb_arn
+      var.kms_key_dynamodb_arn,
+      var.kms_key_cloudwatch_arn
     ]
   }
 }
@@ -278,6 +279,33 @@ data "aws_iam_policy_document" "lambda_app_invoke" {
   }
 }
 
+## Allow Lambda to access SNS
+resource "aws_iam_policy" "lambda_sns" {
+  name        = "lambda_sns"
+  path        = "/"
+  description = "IAM policy for allowing lambda to publish message in SNS for Slack notification"
+  policy      = data.aws_iam_policy_document.lambda_sns.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+data "aws_iam_policy_document" "lambda_sns" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "sns:Publish"
+    ]
+
+    resources = [
+      var.sns_topic_alert_critical_arn
+    ]
+  }
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_secrets" {
   role       = aws_iam_role.lambda.name
   policy_arn = aws_iam_policy.lambda_secrets.arn
@@ -316,4 +344,9 @@ resource "aws_iam_role_policy_attachment" "lambda_s3" {
 resource "aws_iam_role_policy_attachment" "AWSLambdaVPCAccessExecutionRole" {
   role       = aws_iam_role.lambda.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_sns" {
+  role       = aws_iam_role.lambda.name
+  policy_arn = aws_iam_policy.lambda_sns.arn
 }

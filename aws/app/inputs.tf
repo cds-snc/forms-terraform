@@ -178,3 +178,18 @@ variable "tracer_provider" {
   description = "Tracer provider, used by the ECS task"
   type        = string
 }
+
+variable "dynamodb_vault_table_name" {
+  description = "Vault DynamodDB table name"
+  type        = string
+}
+
+variable "dynamodb_vault_retrieved_index_name" {
+  description = "Vault DynamodDB Retrieved index name"
+  type        = string
+}
+
+variable "sns_topic_alert_critical_arn" {
+  description = "SNS topic ARN that critical alerts are sent to"
+  type        = string
+}
