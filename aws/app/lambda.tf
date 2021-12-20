@@ -258,59 +258,6 @@ resource "aws_lambda_layer_version" "organisations_lib" {
   compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
 }
 
-
-#
-# Vault Retrieval 
-#
-data "archive_file" "retrieval_main" {
-  type        = "zip"
-  source_file = "lambda/retrieval/retrieval.js"
-  output_path = "/tmp/retrieval_main.zip"
-}
-
-data "archive_file" "retrieval_lib" {
-  type        = "zip"
-  source_dir  = "lambda/retrieval/"
-  excludes    = ["retrieval.js"]
-  output_path = "/tmp/retrieval_lib.zip"
-}
-
-resource "aws_lambda_function" "retrieval" {
-  filename      = "/tmp/retrieval_main.zip"
-  function_name = "Retrieval"
-  role          = aws_iam_role.lambda.arn
-  handler       = "retrieval.handler"
-
-  source_code_hash = data.archive_file.retrieval_main.output_base64sha256
-  runtime          = "nodejs14.x"
-  layers           = [aws_lambda_layer_version.retrieval_lib.arn]
-
-  environment {
-    variables = {
-      REGION    = var.region
-      DB_ARN    = var.rds_cluster_arn
-      DB_SECRET = var.database_secret_arn
-      DB_NAME   = var.rds_db_name
-    }
-  }
-
-  tracing_config {
-    mode = "PassThrough"
-  }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
-}
-
-resource "aws_lambda_layer_version" "retrieval_lib" {
-  filename            = "/tmp/retrieval_lib.zip"
-  layer_name          = "retrieval_node_packages"
-  source_code_hash    = data.archive_file.retrieval_lib.output_base64sha256
-  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
-}
-
 #
 # Lambda permissions
 #
@@ -332,13 +279,6 @@ resource "aws_lambda_permission" "organisations" {
   statement_id  = "AllowInvokeECS"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.organisations.function_name
-  principal     = aws_iam_role.forms.arn
-}
-
-resource "aws_lambda_permission" "retrieval" {
-  statement_id  = "AllowInvokeECS"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.retrieval.function_name
   principal     = aws_iam_role.forms.arn
 }
 
