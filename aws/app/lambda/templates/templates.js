@@ -203,8 +203,8 @@ const parseConfig = (records) => {
       formID = record[0].longValue;
       if (record.length > 1) {
         formConfig = JSON.parse(record[1].stringValue.trim(1, -1)) || undefined;
-        organization = record[2].isNull || undefined;
-        bearerToken = record[3].isNull || undefined;
+        organization = record[2] ? record[2] : undefined;
+        bearerToken = record[3] ? record[3] : undefined;
       }
     } else {
       formID = record.id;
