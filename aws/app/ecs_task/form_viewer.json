@@ -38,8 +38,8 @@
         "value": "${templates_api}"
       },
       {
-        "name": "ORGANISATIONS_API",
-        "value": "${organisations_api}"
+        "name": "ORGANIZATIONS_API",
+        "value": "${organizations_api}"
       },
       {
         "name": "NEXTAUTH_URL",

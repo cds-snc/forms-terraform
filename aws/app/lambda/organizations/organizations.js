@@ -21,128 +21,128 @@ exports.handler = async function (event) {
   /*
     Supported Methods:
     INSERT:
-      - (Required) organisationName
+      - (Required) organizationName
     GET:
-      - (Optional) organisationID. Returns all entries if not provided
+      - (Optional) organizationID. Returns all entries if not provided
     UPDATE:
       - All params are required for the first iteration of this lambda
-      - (Required) organisationID
-      - (Required) organisationNameEn
-      - (Required) organisationNameFr
+      - (Required) organizationID
+      - (Required) organizationNameEn
+      - (Required) organizationNameFr
     DELETE:
-      - (Required) organisationID to delete
+      - (Required) organizationID to delete
   */
   
   const method = event.method;
-  let organisationID = event.organisationID ? event.organisationID : null,
-    organisationNameEn = event.organisationNameEn ? event.organisationNameEn : null,
-    organisationNameFr = event.organisationNameFr ? event.organisationNameFr : null;
+  let organizationID = event.organizationID ? event.organizationID : null,
+    organizationNameEn = event.organizationNameEn ? event.organizationNameEn : null,
+    organizationNameFr = event.organizationNameFr ? event.organizationNameFr : null;
   
   let SQL = "",
     parameters = [];
   
   switch (method) {
     case "INSERT":
-      if (organisationNameEn && organisationNameFr) {
+      if (organizationNameEn && organizationNameFr) {
         // generate new uuid
-        organisationID = uuidv4();
+        organizationID = uuidv4();
         SQL = (!process.env.AWS_SAM_LOCAL) ?
-          "INSERT INTO organisations (id, nameen, namefr) VALUES (:organisationID, :organisationNameEn, :organisationNameFr) RETURNING id"
-          : "INSERT INTO organisations (id, nameen, namefr) VALUES ($1, $2, $3) RETURNING id";
+          "INSERT INTO organizations (id, nameen, namefr) VALUES (:organizationID, :organizationNameEn, :organizationNameFr) RETURNING id"
+          : "INSERT INTO organizations (id, nameen, namefr) VALUES ($1, $2, $3) RETURNING id";
         parameters = (!process.env.AWS_SAM_LOCAL) ? [
             {
-              name: "organisationID",
+              name: "organizationID",
               value: {
-                stringValue: organisationID,
+                stringValue: organizationID,
               },
             },
             {
-              name: "organisationNameEn",
+              name: "organizationNameEn",
               value: {
-                stringValue: organisationNameEn,
+                stringValue: organizationNameEn,
               },
             },
             {
-              name: "organisationNameFr",
+              name: "organizationNameFr",
               value: {
-                stringValue: organisationNameFr,
+                stringValue: organizationNameFr,
               },
             },
           ]
-          : [organisationID, organisationNameEn, organisationNameFr];
+          : [organizationID, organizationNameEn, organizationNameFr];
       } else {
         return { error: "Missing required Name in En and Fr"}
       }
       break;
     case "GET":
       // Get a specific org if given the id, all orgs if not
-      if (organisationID) {
+      if (organizationID) {
         SQL = (!process.env.AWS_SAM_LOCAL) ?
-          "SELECT * FROM organisations WHERE id = :organisationID"
-        : "SELECT * FROM organisations WHERE id = ($1)";
+          "SELECT * FROM organizations WHERE id = :organizationID"
+        : "SELECT * FROM organizations WHERE id = ($1)";
         parameters = (!process.env.AWS_SAM_LOCAL) ? [
           {
-            name: "organisationID",
+            name: "organizationID",
             value: {
-              stringValue: organisationID,
+              stringValue: organizationID,
             },
           },
         ]
-        : [organisationID];
+        : [organizationID];
       } else {
-        SQL = "SELECT * FROM organisations";
+        SQL = "SELECT * FROM organizations";
       }
       break;
     case "UPDATE":
       // needs an ID and both names for now - we'll just overwrite the whole thing for an MVP
-      if (organisationID && organisationNameEn && organisationNameFr) {
+      if (organizationID && organizationNameEn && organizationNameFr) {
         SQL = (!process.env.AWS_SAM_LOCAL)
-          ? "UPDATE organisations SET nameen = :organisationNameEn, namefr = :organisationNameFr WHERE id = :organisationID"
-          : "UPDATE organisations SET nameen = ($1), namefr = ($2) WHERE id = ($3)";
+          ? "UPDATE organizations SET nameen = :organizationNameEn, namefr = :organizationNameFr WHERE id = :organizationID"
+          : "UPDATE organizations SET nameen = ($1), namefr = ($2) WHERE id = ($3)";
         parameters = (!process.env.AWS_SAM_LOCAL)
         ? [
           {
-            name: "organisationNameEn",
+            name: "organizationNameEn",
             value: {
-              stringValue: organisationNameEn,
+              stringValue: organizationNameEn,
             },
           },
           {
-            name: "organisationNameFr",
+            name: "organizationNameFr",
             value: {
-              stringValue: organisationNameFr,
+              stringValue: organizationNameFr,
             },
           },
           {
-            name: "organisationID",
+            name: "organizationID",
             value: {
-              stringValue: organisationID,
+              stringValue: organizationID,
             },
           },
         ]
-        : [organisationID, organisationNameEn, organisationNameFr];
+        : [organizationID, organizationNameEn, organizationNameFr];
       } else {
         return { error: "Missing required Parameter" };
       }
       break;
     case "DELETE":
       // needs the id
-      if (organisationID) {
+      if (organizationID) {
         SQL = (!process.env.AWS_SAM_LOCAL)
-          ? "DELETE from organisations WHERE id = :organisationID"
-          : "DELETE from organisations WHERE id = ($1)";
+          ? "DELETE from organizations WHERE id = :organizationID"
+          : "DELETE from organizations WHERE id = ($1)";
         parameters = (!process.env.AWS_SAM_LOCAL)
         ? [
           {
-            name: "organisationID",
+            name: "organizationID",
             value: {
-              stringValue: organisationID,
+              stringValue: organizationID,
             },
           },
         ]
-        : [organisationID];
+        : [organizationID];
       } else {
-        return { error: "Missing required Parameter: OrganisationID" };
+        return { error: "Missing required Parameter: OrganizationID" };
       }
       break;
 
@@ -201,24 +201,24 @@ exports.handler = async function (event) {
 const parseResponse = (records) => {
   const parsedRecords = records.map((record) => {
     let id,
-      organisationNameEn,
-      organisationNameFr;
+      organizationNameEn,
+      organizationNameFr;
     if (!process.env.AWS_SAM_LOCAL) {
       id = record[0].stringValue;
       if (record.length > 1) {
-          organisationNameEn = record[1].stringValue
-          organisationNameFr = record[2].stringValue
+          organizationNameEn = record[1].stringValue
+          organizationNameFr = record[2].stringValue
       }
     } else {
       id = record.id;
-      organisationNameEn = record.nameen;
-      organisationNameFr = record.namefr;
+      organizationNameEn = record.nameen;
+      organizationNameFr = record.namefr;
     }
 
     return {
-      organisationID: id,
-      organisationNameEn: organisationNameEn,
-      organisationNameFr: organisationNameFr,
+      organizationID: id,
+      organizationNameEn: organizationNameEn,
+      organizationNameFr: organizationNameFr,
     };
   });
   return { records: parsedRecords };

@@ -206,30 +206,30 @@ resource "aws_lambda_layer_version" "templates_lib" {
 }
 
 #
-# User and Organisation management
+# User and Organization management
 #
-data "archive_file" "organisations_main" {
+data "archive_file" "organizations_main" {
   type        = "zip"
-  source_file = "lambda/organisations/organisations.js"
-  output_path = "/tmp/organisations_main.zip"
+  source_file = "lambda/organizations/organizations.js"
+  output_path = "/tmp/organizations_main.zip"
 }
 
-data "archive_file" "organisations_lib" {
+data "archive_file" "organizations_lib" {
   type        = "zip"
-  source_dir  = "lambda/organisations/"
-  excludes    = ["organisations.js"]
-  output_path = "/tmp/organisations_lib.zip"
+  source_dir  = "lambda/organizations/"
+  excludes    = ["organizations.js"]
+  output_path = "/tmp/organizations_lib.zip"
 }
 
-resource "aws_lambda_function" "organisations" {
-  filename      = "/tmp/organisations_main.zip"
-  function_name = "Organisations"
+resource "aws_lambda_function" "organizations" {
+  filename      = "/tmp/organizations_main.zip"
+  function_name = "Organizations"
   role          = aws_iam_role.lambda.arn
-  handler       = "organisations.handler"
+  handler       = "organizations.handler"
 
-  source_code_hash = data.archive_file.organisations_main.output_base64sha256
+  source_code_hash = data.archive_file.organizations_main.output_base64sha256
   runtime          = "nodejs14.x"
-  layers           = [aws_lambda_layer_version.organisations_lib.arn]
+  layers           = [aws_lambda_layer_version.organizations_lib.arn]
   timeout          = "10"
 
   environment {
@@ -251,10 +251,10 @@ resource "aws_lambda_function" "organisations" {
   }
 }
 
-resource "aws_lambda_layer_version" "organisations_lib" {
-  filename            = "/tmp/organisations_lib.zip"
-  layer_name          = "organisations_node_packages"
-  source_code_hash    = data.archive_file.organisations_lib.output_base64sha256
+resource "aws_lambda_layer_version" "organizations_lib" {
+  filename            = "/tmp/organizations_lib.zip"
+  layer_name          = "organizations_node_packages"
+  source_code_hash    = data.archive_file.organizations_lib.output_base64sha256
   compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
 }
 
@@ -329,10 +329,10 @@ resource "aws_lambda_permission" "templates" {
   principal     = aws_iam_role.forms.arn
 }
 
-resource "aws_lambda_permission" "organisations" {
+resource "aws_lambda_permission" "organizations" {
   statement_id  = "AllowInvokeECS"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.organisations.function_name
+  function_name = aws_lambda_function.organizations.function_name
   principal     = aws_iam_role.forms.arn
 }
 
