@@ -7,3 +7,13 @@ output "dynamodb_vault_arn" {
   description = "Vault DynamodDB table ARN"
   value       = aws_dynamodb_table.vault.arn
 }
+
+output "dynamodb_vault_table_name" {
+  description = "Vault DynamodDB table name"
+  value       = aws_dynamodb_table.vault.name
+}
+
+output "dynamodb_vault_retrieved_index_name" {
+  description = "Vault DynamodDB Retrieved index name"
+  value       = aws_dynamodb_table.vault.global_secondary_index.*.name
+}
