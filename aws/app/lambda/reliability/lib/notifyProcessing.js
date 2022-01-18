@@ -51,7 +51,27 @@ module.exports = async (submissionID, sendReceipt, formSubmission, language, mes
               reference: submissionID,
             });
         } catch (err) {
-          console.error(err);
+          if (err.response) {
+            /*
+             * The request was made and the server responded with a
+             * status code that falls out of the range of 2xx
+             */
+            const notifyErrors = Array.isArray(err.response.data.errors)
+              ? JSON.stringify(err.response.data.errors)
+              : err.response.data.errors;
+            const errorMessage = `Notify Errored with status code ${err.response.status} and returned the following detailed errors ${notifyErrors}`;
+            console.log(errorMessage);
+          } else if (err.request) {
+            /*
+             * The request was made but no response was received, `error.request`
+             * is an instance of XMLHttpRequest in the browser and an instance
+             * of http.ClientRequest in Node.js
+             */
+            console.log(err.request);
+          } else {
+            // Something happened in setting up the request and triggered an Error
+            console.log(err.message);
+          }
           throw new Error("Problem sending to Notify");
         }
       })
