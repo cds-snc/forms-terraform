@@ -1,25 +1,5 @@
 locals {
   vars = read_terragrunt_config("../env_vars.hcl")
-  local-generate = {
-    if_exists = "overwrite_terragrunt"
-    path = "../../terraform.tfstate"
-  }
-  local-config = {
-    path = "../../terraform.tfstate"
-  }
-
-  s3-generate = {
-    path      = "backend.tf"
-    if_exists = "overwrite_terragrunt"
-  }
-
-  s3-config = {
-    encrypt        = true
-    bucket         = "forms-${local.vars.inputs.env}-tfstate"
-    dynamodb_table = "tfstate-lock"
-    region         = local.vars.inputs.env == "local" ? "us-east-1": "ca-central-1"
-    key            = "${path_relative_to_include()}/terraform.tfstate"
-  }
 }
 
 inputs = {
@@ -33,9 +13,18 @@ inputs = {
 
 
 remote_state {
-  backend = local.vars.inputs.env == "local" ? "local" : "s3"
-  generate = local.vars.inputs.env == "local" ? local.local-generate : local.s3-generate
-  config = local.vars.inputs.env == "local" ? local.local-config : local.s3-generate
+  backend = "s3"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite_terragrunt"
+  }
+  config = {
+    encrypt        = true
+    bucket         = "forms-${local.vars.inputs.env}-tfstate"
+    dynamodb_table = "tfstate-lock"
+    region         = "ca-central-1"
+    key            = "${path_relative_to_include()}/terraform.tfstate"
+  }
 }
 
 generate "provider" {
