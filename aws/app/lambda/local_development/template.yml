@@ -12,7 +12,7 @@ Parameters:
     Default: "postgres"
   DBPassword:
     Type: AWS::SSM::Parameter::Value<String>
-    Default: "password"
+    Default: "chummy"
   DBHost:
     Type: AWS::SSM::Parameter::Value<String>
     Default: "host.docker.internal"
@@ -22,6 +22,12 @@ Parameters:
   TOKEN_SECRET:
     Type: AWS::SSM::Parameter::Value<String>
     Default: "somesecretstring"
+  SQS_URL:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: "http://host.docker.internal:4566/000000000000/submission_processing.fifo"
+  NOTIFY_API_KEY:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: "NOTIFY API KEY"
 
 Globals:
   Function:
@@ -54,6 +60,38 @@ Resources:
             Ref: DBName
           TOKEN_SECRET:
             Ref: TOKEN_SECRET
+
+  Submission:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-submission
+      CodeUri: ../submission/
+      Handler: submission.handler
+      Layers:
+        - Ref: SubmissionLayer
+      Environment:
+        Variables:
+          SQS_URL:
+            Ref: SQS_URL
+
+  Reliability:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-reliability
+      CodeUri: ../reliability/
+      Handler: reliability.handler
+      Runtime: nodejs14.x
+      Timeout: 300
+      Layers:
+        - Ref: ReliabilityLayer
+      Environment:
+        Variables:
+          NOTIFY_API_KEY:
+            Ref: NOTIFY_API_KEY
+
+
   Organisations:
     Type: AWS::Serverless::Function
     Properties:
@@ -81,7 +119,25 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-templates-layer
       ContentUri: ../templates/
       CompatibleRuntimes:
-        - nodejs12.x
+        - nodejs14.x
+
+  SubmissionLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName:
+        Fn::Sub: ${Environment}-${AppName}-submission-layer
+      ContentUri: ../submission/
+      CompatibleRuntimes:
+        - nodejs14.x
+
+  ReliabilityLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName:
+        Fn::Sub: ${Environment}-${AppName}-reliability-layer
+      ContentUri: ../reliability/
+      CompatibleRuntimes:
+        - nodejs14.x
 
   OrganisationsLayer:
     Type: AWS::Serverless::LayerVersion
@@ -90,4 +146,4 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-organisations-layer
       ContentUri: ../organisations/
       CompatibleRuntimes:
-        - nodejs12.x
+        - nodejs14.x

@@ -8,7 +8,7 @@ const {
 const REGION = process.env.REGION;
 
 async function getSubmission(message) {
-  const db = new DynamoDBClient({ region: REGION });
+  const db = new DynamoDBClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566": undefined });
   const DBParams = {
     TableName: "ReliabilityQueue",
     Key: {
@@ -21,7 +21,7 @@ async function getSubmission(message) {
 }
 
 async function removeSubmission(message) {
-  const db = new DynamoDBClient({ region: REGION });
+  const db = new DynamoDBClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566": undefined });
   const DBParams = {
     TableName: "ReliabilityQueue",
     Key: {
@@ -33,7 +33,7 @@ async function removeSubmission(message) {
 }
 
 async function saveToVault(submissionID, formResponse, formID) {
-  const db = new DynamoDBClient({ region: REGION });
+  const db = new DynamoDBClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566": undefined });
   const formSubmission =
     typeof formResponse === "string" ? formResponse : JSON.stringify(formResponse);
 

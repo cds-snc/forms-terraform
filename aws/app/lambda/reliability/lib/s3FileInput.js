@@ -5,9 +5,13 @@ const {
   DeleteObjectCommand,
 } = require("@aws-sdk/client-s3");
 
-const s3Client = new S3Client({ region: process.env.REGION });
+const s3Client = new S3Client({
+  region: process.env.REGION,
+  endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566": undefined,
+  forcePathStyle: process.env.AWS_SAM_LOCAL ? true: undefined
+});
 
-const environment = process.env.ENVIRONMENT || "staging";
+const environment = process.env.ENVIRONMENT || process.env.AWS_SAM_LOCAL ? "local": "staging";
 const reliabilityBucketName = `forms-${environment}-reliability-file-storage`;
 const vaultBucketName = `forms-${environment}-vault-file-storage`;
 
