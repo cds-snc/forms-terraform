@@ -177,6 +177,54 @@ sqs_reliability_queue_arn = "arn:aws:sqs:us-east-1:000000000000:submission_proce
 sqs_reliability_queue_id = "http://localhost:4566/000000000000/submission_processing.fifo"
 ```
 
+#### Creating SNS queue
+
+Now to create our local SNS queue.
+
+Navigate to `./env/local/sns` and use terragrunt to apply it to localstack. Make sure you delete the terragrunt cache folder beforehand. Here is an example with the expected output. 
+
+```shell
+$ cd ./env/local/sns
+$ rm -rf .terragrunt-cache
+$ terragrunt apply
+# JSON of changes beforehand
+Plan: 5 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + sns_topic_alert_critical_arn        = (known after apply)
+  + sns_topic_alert_ok_arn              = (known after apply)
+  + sns_topic_alert_ok_us_east_arn      = (known after apply)
+  + sns_topic_alert_warning_arn         = (known after apply)
+  + sns_topic_alert_warning_us_east_arn = (known after apply)
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+aws_sns_topic.alert_warning_us_east: Creating...
+aws_sns_topic.alert_ok_us_east: Creating...
+aws_sns_topic.alert_warning_us_east: Creation complete after 0s [id=arn:aws:sns:us-east-1:000000000000:alert-warning]
+aws_sns_topic.alert_ok_us_east: Creation complete after 0s [id=arn:aws:sns:us-east-1:000000000000:alert-ok]
+aws_sns_topic.alert_warning: Creating...
+aws_sns_topic.alert_critical: Creating...
+aws_sns_topic.alert_ok: Creating...
+aws_sns_topic.alert_critical: Creation complete after 0s [id=arn:aws:sns:us-east-1:000000000000:alert-critical]
+aws_sns_topic.alert_warning: Creation complete after 0s [id=arn:aws:sns:us-east-1:000000000000:alert-warning]
+aws_sns_topic.alert_ok: Creation complete after 0s [id=arn:aws:sns:us-east-1:000000000000:alert-ok]
+
+Apply complete! Resources: 5 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+sns_topic_alert_critical_arn = "arn:aws:sns:us-east-1:000000000000:alert-critical"
+sns_topic_alert_ok_arn = "arn:aws:sns:us-east-1:000000000000:alert-ok"
+sns_topic_alert_ok_us_east_arn = "arn:aws:sns:us-east-1:000000000000:alert-ok"
+sns_topic_alert_warning_arn = "arn:aws:sns:us-east-1:000000000000:alert-warning"
+sns_topic_alert_warning_us_east_arn = "arn:aws:sns:us-east-1:000000000000:alert-warning"
+```
+
 
 #### Creating the DynamoDB database
 
@@ -345,6 +393,25 @@ REPORT RequestId: ca3b4eed-9c78-46b0-ab55-62ccb8a93357  Init Duration: 0.17 ms  
 ```
 
 Please note you must configure the `NOTIFY_API_KEY` in the `templates.yml` for this to work. If you have configured it correctly... you should successfully receive an email with the form response 
+
+#### Running the archiver lambda 
+
+To avoid having to deploy and then wait for the Cloudwatch cron job to trigger the archiving process (at 4 AM) you can use the `invoke_archiver` script to simulate the archiver function being invoked.
+
+```shell
+$ ./invoke_archiver.sh
+Reading invoke payload from stdin (you can also pass it from file with --event)
+Invoking archiver.handler (nodejs12.x)
+ArchiverLayer is a local Layer in the template
+Building image.......................
+Skip pulling image and use local one: samcli/lambda:nodejs12.x-x86_64-201e8924bd486130d7628ec48.
+
+Mounting /Users/clementjanin/github/forms-terraform/aws/app/lambda/archive_form_responses as /var/task:ro,delegated inside runtime container
+START RequestId: fc1f1509-63af-4a96-a798-81a295e6ca2f Version: $LATEST
+END RequestId: fc1f1509-63af-4a96-a798-81a295e6ca2f
+REPORT RequestId: fc1f1509-63af-4a96-a798-81a295e6ca2f	Init Duration: 0.27 ms	Duration: 627.46 ms	Billed Duration: 628 ms	Memory Size: 128 MB	Max Memory Used: 128 MB
+{"statusCode":"SUCCESS"}
+```
 
 
 ## Terraform secrets

@@ -112,6 +112,26 @@ Resources:
           PGDATABASE:
             Ref: DBName
 
+  Archiver:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-Archiver
+      CodeUri: ../archive_form_responses/
+      Handler: archiver.handler
+      Layers:
+        - Ref: ArchiverLayer
+      Environment:
+        Variables:
+          DYNAMODB_VAULT_TABLE_NAME:
+            Ref: Vault
+          DYNAMODB_VAULT_INDEX_NAME:
+            Ref: retrieved-index
+          ARCHIVING_S3_BUCKET:
+            Ref: forms-local-archive-storage
+          SNS_ERROR_TOPIC_ARN:
+            Ref: arn:aws:sns:us-east-1:000000000000:alert-critical
+
   TemplatesLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -145,5 +165,14 @@ Resources:
       LayerName:
         Fn::Sub: ${Environment}-${AppName}-organisations-layer
       ContentUri: ../organisations/
+      CompatibleRuntimes:
+        - nodejs14.x
+
+  ArchiverLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName:
+        Fn::Sub: ${Environment}-${AppName}-archiver-layer
+      ContentUri: ../archive_form_responses/
       CompatibleRuntimes:
         - nodejs14.x
