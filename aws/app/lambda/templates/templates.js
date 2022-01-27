@@ -209,7 +209,7 @@ const parseConfig = (records) => {
     } else {
       formID = record.id;
       formConfig = record.json_config;
-      organization = record.organisation;
+      organization = record.organization;
       bearerToken = record.bearer_token
     }
 
@@ -244,13 +244,13 @@ const createBearerToken = async (dbClient, formID, local, rdsParams) => {
   let data;
   if(local){
     data = await dbClient.query(
-        "UPDATE templates SET bearer_token = ($1) WHERE id = ($2) RETURNING id, json_config, organisation, bearer_token;",
+        "UPDATE templates SET bearer_token = ($1) WHERE id = ($2) RETURNING id, json_config, organization, bearer_token;",
         [token, formID]
     );
     return parseConfig(data.rows)
   }else{
     let rdsParamsCopy = {...rdsParams};
-    rdsParamsCopy["sql"] = "UPDATE Templates SET bearer_token = :bearer_token WHERE id = :formID RETURNING id, json_config, organisation, bearer_token;";
+    rdsParamsCopy["sql"] = "UPDATE Templates SET bearer_token = :bearer_token WHERE id = :formID RETURNING id, json_config, organization, bearer_token;";
     rdsParamsCopy["parameters"] = [
       {
         name: "formID",

@@ -1,7 +1,7 @@
 {
-  "name": "organisations",
+  "name": "organizations",
   "version": "1.0.0",
-  "main": "organisations.js",
+  "main": "organizations.js",
   "dependencies": {
     "@aws-sdk/client-rds-data": "^3.14.0",
     "pg": "^8.6.0",

@@ -38,7 +38,7 @@ data "template_file" "form_viewer_task" {
     nextauth_url             = "https://${var.domain}"
     submission_api           = aws_lambda_function.submission.arn
     templates_api            = aws_lambda_function.templates.arn
-    organisations_api        = aws_lambda_function.organisations.arn
+    organizations_api        = aws_lambda_function.organizations.arn
     reliability_file_storage = aws_s3_bucket.reliability_file_storage.id
   }
 }

@@ -91,16 +91,15 @@ Resources:
           NOTIFY_API_KEY:
             Ref: NOTIFY_API_KEY
 
-
-  Organisations:
+  Organizations:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName:
-        Fn::Sub: ${Environment}-${AppName}-Organisations
-      CodeUri: ../organisations/
-      Handler: organisations.handler
+        Fn::Sub: ${Environment}-${AppName}-Organizations
+      CodeUri: ../organizations/
+      Handler: organizations.handler
       Layers:
-        - Ref: OrganisationsLayer
+        - Ref: OrganizationsLayer
       Environment:
         Variables:
           PGUSER:
@@ -159,12 +158,12 @@ Resources:
       CompatibleRuntimes:
         - nodejs14.x
 
-  OrganisationsLayer:
+  OrganizationsLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       LayerName:
-        Fn::Sub: ${Environment}-${AppName}-organisations-layer
-      ContentUri: ../organisations/
+        Fn::Sub: ${Environment}-${AppName}-organizations-layer
+      ContentUri: ../organizations/
       CompatibleRuntimes:
         - nodejs14.x
 
