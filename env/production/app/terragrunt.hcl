@@ -13,6 +13,7 @@ dependency "dynamodb" {
   config_path = "../dynamodb"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_with_state           = true
   mock_outputs = {
     dynamodb_relability_queue_arn       = ""
     dynamodb_vault_arn                  = ""
