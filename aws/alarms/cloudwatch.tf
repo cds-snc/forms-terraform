@@ -119,6 +119,39 @@ resource "aws_cloudwatch_metric_alarm" "application_error_warn" {
   }
 }
 
+resource "aws_cloudwatch_log_metric_filter" "reliability_error" {
+  name           = "ReliabilityQueueError"
+  pattern        = "Error"
+  log_group_name = var.lambda_reliability_log_group_name
+
+  metric_transformation {
+    name          = "ReliabilityQueueError"
+    namespace     = "forms"
+    value         = "1"
+    default_value = "0"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "reliability_error_warn" {
+  alarm_name          = "ReliabilityErrorWarn"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = aws_cloudwatch_log_metric_filter.reliability_error.name
+  namespace           = "forms"
+  period              = "60"
+  statistic           = "Sum"
+  threshold           = "0"
+  treat_missing_data  = "notBreaching"
+  alarm_description   = "End User Forms Warning - An error message was detected in the Reliability Queue"
+
+  alarm_actions = [var.sns_topic_alert_warning_arn]
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
 #
 # Submissions in Dead Letter Queue
 #
