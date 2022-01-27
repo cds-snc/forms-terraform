@@ -26,14 +26,23 @@ const PROCESSING_BATCH_SIZE = 25;
 exports.handler = async(event) => {
 
   try {
-    await archiveConsumedFormResponses(new DynamoDBClient({ region: REGION }), new S3Client({ region: REGION }));
+    const dynamoDb = new DynamoDBClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined});
+    const s3Client = new S3Client({
+      region: REGION,
+      endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+      forcePathStyle: process.env.AWS_SAM_LOCAL ? true : undefined
+    });
+
+    await archiveConsumedFormResponses(dynamoDb, s3Client);
 
     return {
       statusCode: "SUCCESS"
     };
   }
   catch (err) {
-    await reportErrorToSlack(new SNSClient({ region: REGION }), err.message);
+    const snsClient = new SNSClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined});
+
+    await reportErrorToSlack(snsClient, err.message);
 
     return {
       statusCode: "ERROR",

@@ -15,7 +15,7 @@ resource "aws_dynamodb_table" "reliability_queue" {
   }
 
   point_in_time_recovery {
-    enabled = true
+    enabled = var.env == "local" ? false : true
   }
 
   tags = {
@@ -58,7 +58,7 @@ resource "aws_dynamodb_table" "vault" {
   }
 
   point_in_time_recovery {
-    enabled = true
+    enabled = var.env == "local" ? false : true
   }
 
   tags = {

@@ -53,7 +53,7 @@ exports.handler = async function (event) {
 };
 
 const getFormTemplate = async (formID) => {
-  const lambdaClient = new LambdaClient({ region: REGION });
+  const lambdaClient = new LambdaClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:3001": undefined });
   const encoder = new TextEncoder();
 
   const command = new InvokeCommand({

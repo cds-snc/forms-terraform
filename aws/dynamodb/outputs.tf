@@ -15,5 +15,5 @@ output "dynamodb_vault_table_name" {
 
 output "dynamodb_vault_retrieved_index_name" {
   description = "Vault DynamodDB Retrieved index name"
-  value       = aws_dynamodb_table.vault.global_secondary_index.*.name
+  value       = one(aws_dynamodb_table.vault.global_secondary_index.*.name)
 }

@@ -8,8 +8,9 @@ inputs = {
   billing_tag_value = "forms-platform-${local.vars.inputs.env}"   
   domain            = "${local.vars.inputs.domain}"
   env               = "${local.vars.inputs.env}"
-  region            = "ca-central-1" 
+  region            = local.vars.inputs.env == "local" ? "us-east-1":"ca-central-1"
 }
+
 
 remote_state {
   backend = "s3"
@@ -29,7 +30,7 @@ remote_state {
 generate "provider" {
   path      = "provider.tf"
   if_exists = "overwrite"
-  contents  = file("./common/provider.tf")
+  contents  = local.vars.inputs.env == "local" ? file("./common/local-provider.tf") : file("./common/provider.tf")
 }
 
 generate "common_variables" {
