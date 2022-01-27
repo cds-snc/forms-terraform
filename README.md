@@ -91,6 +91,29 @@ $ localstack status services
 └──────────────────────────┴───────────┘
 ```
 
+### Setting up AWS CLI to work with localstack
+
+In order to have the SDKs properly working with localstack we need to correctly set up
+our aws cli profiles.
+
+Add the following configurations to `~/.aws/config` and `~/.aws/credentials`
+
+`~/.aws/config`
+```text
+[profile local]
+region = us-east-1
+output = yaml
+```
+
+`./aws/credentials`
+```text
+[local]
+aws_access_key_id = test
+aws_secret_access_key = test
+```
+
+**ensure that you do not have a default profile as this will cause errors**
+
 ### Setting up local infrastructure 
 
 Now that we have localstack up and running it's time to configure our local AWS services with what the lambdas would expect as if running in an AWS environment.
@@ -150,6 +173,7 @@ Navigate to `./env/local/sqs` and use terragrunt to apply it to localstack. Here
 
 ```shell
 $ cd ./env/local/sqs
+$ terragrunt apply
 # JSON of changes beforehand
 Plan: 2 to add, 0 to change, 0 to destroy.
 
@@ -347,6 +371,9 @@ You will also have to supply the following environment variables and values to p
 ```shell
 # localstack only simulates a us-east-1 region
 AWS_REGION=us-east-1
+LOCAL_S3_ENDPOINT=http://localhost:4566
+RELIABILITY_FILE_STORAGE=forms-local-reliability-file-storage
+LOCAL_LAMBDA_ENDPOINT=http://127.0.0.1:3001
 LOCAL_S3_ENDPOINT=http://localhost:4566
 ```
 

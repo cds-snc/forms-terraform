@@ -15,7 +15,7 @@ resource "aws_dynamodb_table" "reliability_queue" {
   }
 
   point_in_time_recovery {
-    enabled = var.env == "local" ? false : true
+    enabled = var.env != "local"
   }
 
   tags = {
