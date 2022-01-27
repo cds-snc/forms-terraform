@@ -54,9 +54,10 @@ dependency "app" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_with_state           = true
   mock_outputs = {
-    ecs_cloudwatch_log_group_name = ""
-    ecs_cluster_name              = ""
-    ecs_service_name              = "" 
+    ecs_cloudwatch_log_group_name     = ""
+    ecs_cluster_name                  = ""
+    ecs_service_name                  = ""
+    lambda_reliability_log_group_name = ""
   }
 }
 
@@ -89,9 +90,10 @@ inputs = {
 
   sqs_deadletter_queue_arn = dependency.sqs.outputs.sqs_deadletter_queue_arn
 
-  ecs_cloudwatch_log_group_name = dependency.app.outputs.ecs_cloudwatch_log_group_name
-  ecs_cluster_name              = dependency.app.outputs.ecs_cluster_name
-  ecs_service_name              = dependency.app.outputs.ecs_service_name
+  ecs_cloudwatch_log_group_name     = dependency.app.outputs.ecs_cloudwatch_log_group_name
+  ecs_cluster_name                  = dependency.app.outputs.ecs_cluster_name
+  ecs_service_name                  = dependency.app.outputs.ecs_service_name
+  lambda_reliability_log_group_name = dependency.app.outputs.lambda_reliability_log_group_name
 
   sns_topic_alert_critical_arn        = dependency.sns.outputs.sns_topic_alert_critical_arn
   sns_topic_alert_warning_arn         = dependency.sns.outputs.sns_topic_alert_warning_arn

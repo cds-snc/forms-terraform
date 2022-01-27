@@ -3,6 +3,11 @@ variable "ecs_cloudwatch_log_group_name" {
   type        = string
 }
 
+variable "lambda_reliability_log_group_name" {
+  description = "Lambda Reliability Queue CloudWatch log group name, used by lambda error metric alarms"
+  type        = string
+}
+
 variable "ecs_cluster_name" {
   description = "ECS cluster name, used by CPU/memory threshold alarms"
   type        = string
