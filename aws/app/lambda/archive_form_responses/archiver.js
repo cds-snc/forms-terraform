@@ -1,6 +1,5 @@
 const {
   DynamoDBClient,
-  QueryCommand,
   BatchWriteItemCommand,
 } = require("@aws-sdk/client-dynamodb");
 
@@ -16,12 +15,8 @@ const {
 
 const REGION = process.env.REGION;
 const DYNAMODB_VAULT_TABLE_NAME = process.env.DYNAMODB_VAULT_TABLE_NAME;
-const DYNAMODB_VAULT_INDEX_NAME = process.env.DYNAMODB_VAULT_INDEX_NAME;
 const ARCHIVING_S3_BUCKET = process.env.ARCHIVING_S3_BUCKET;
 const SNS_ERROR_TOPIC_ARN = process.env.SNS_ERROR_TOPIC_ARN;
-
-// We are limited by the `BatchWriteItemCommand` (we use to delete items from DynamoDB) that can only take 25 `DeleteRequest` at a time
-const PROCESSING_BATCH_SIZE = 25;
 
 exports.handler = async(event) => {
 
@@ -33,7 +28,7 @@ exports.handler = async(event) => {
       forcePathStyle: process.env.AWS_SAM_LOCAL ? true : undefined
     });
 
-    await archiveConsumedFormResponses(dynamoDb, s3Client);
+    await archiveConsumedFormResponses(dynamoDb, s3Client, event.Records);
 
     return {
       statusCode: "SUCCESS"
@@ -52,46 +47,14 @@ exports.handler = async(event) => {
 
 };
 
-async function archiveConsumedFormResponses(dynamoDb, s3Client) {
-  let lastReadResponse = null;
+async function archiveConsumedFormResponses(dynamoDb, s3Client, records) {
+  const formResponses = records.map(record => record.dynamodb.NewImage);
 
-  while (lastReadResponse !== undefined) {
-    const response = await getConsumedFormResponses(dynamoDb, lastReadResponse === null ? undefined : lastReadResponse);
-
-    if (response.formResponses.length > 0) {
-      for (const formResponse of response.formResponses) {
-        await saveFormResponseToS3(s3Client, formResponse.FormID.S, formResponse.SubmissionID.S, formResponse.FormSubmission.S);
-      }
-
-      await deleteFormResponsesFromDynamoDb(dynamoDb, response.formResponses);
-    }
-
-    lastReadResponse = response.lastReadResponse;
+  for (const formResponse of formResponses) {
+    await saveFormResponseToS3(s3Client, formResponse.FormID.S, formResponse.SubmissionID.S, formResponse.FormSubmission.S);
   }
-}
 
-async function getConsumedFormResponses(dynamoDb, lastReadResponse = undefined) {
-  const queryCommandInput = {
-    TableName: DYNAMODB_VAULT_TABLE_NAME,
-    IndexName: DYNAMODB_VAULT_INDEX_NAME,
-    Limit: PROCESSING_BATCH_SIZE,
-    ExclusiveStartKey: lastReadResponse,
-    KeyConditionExpression: "Retrieved = :isRetrieved",
-    ExpressionAttributeValues: { ":isRetrieved": { N: "1" } },
-    ProjectionExpression: "FormID, SubmissionID, FormSubmission",
-  };
-
-  try {
-    const queryCommandOutput = await dynamoDb.send(new QueryCommand(queryCommandInput));
-
-    return {
-      formResponses: queryCommandOutput.Items,
-      lastReadResponse: queryCommandOutput.LastEvaluatedKey,
-    };
-  }
-  catch (err) {
-    throw new Error(`Failed to retrieve consumed form responses. Reason: ${err.message}.`);
-  }
+  await deleteFormResponsesFromDynamoDb(dynamoDb, formResponses);
 }
 
 async function saveFormResponseToS3(s3Client, formID, submissionID, formResponse) {
@@ -110,6 +73,7 @@ async function saveFormResponseToS3(s3Client, formID, submissionID, formResponse
 }
 
 async function deleteFormResponsesFromDynamoDb(dynamoDb, formResponses) {
+  // The `BatchWriteItemCommand` can only take up to 25 `DeleteRequest` at a time. The DynamodDB trigger configuration is batching items from the DynamoDB stream for us.
   const deleteRequests = formResponses.reduce((accumulator, currentValue) => {
     const deleteRequest = {
       "DeleteRequest": {

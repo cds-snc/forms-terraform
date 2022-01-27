@@ -15,7 +15,7 @@ dependency "dynamodb" {
     dynamodb_relability_queue_arn       = ""
     dynamodb_vault_arn                  = ""
     dynamodb_vault_table_name           = ""
-    dynamodb_vault_retrieved_index_name = ""
+    dynamodb_vault_stream_arn           = ""
   }
 }
 
@@ -118,7 +118,7 @@ inputs = {
   dynamodb_relability_queue_arn       = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
   dynamodb_vault_arn                  = dependency.dynamodb.outputs.dynamodb_vault_arn
   dynamodb_vault_table_name           = dependency.dynamodb.outputs.dynamodb_vault_table_name
-  dynamodb_vault_retrieved_index_name = dependency.dynamodb.outputs.dynamodb_vault_retrieved_index_name
+  dynamodb_vault_stream_arn           = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
 
   ecr_repository_url = dependency.ecr.outputs.ecr_repository_url
 

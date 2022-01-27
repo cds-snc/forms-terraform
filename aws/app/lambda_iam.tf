@@ -146,13 +146,17 @@ data "aws_iam_policy_document" "lambda_dynamodb" {
       "dynamodb:DeleteItem",
       "dynamodb:BatchWriteItem",
       "dynamodb:Scan",
-      "dynamodb:Query"
+      "dynamodb:Query",
+      "dynamodb:DescribeStream",
+      "dynamodb:GetRecords",
+      "dynamodb:GetShardIterator"
     ]
 
     resources = [
       var.dynamodb_relability_queue_arn,
       var.dynamodb_vault_arn,
-      "${var.dynamodb_vault_arn}/index/*"
+      "${var.dynamodb_vault_arn}/index/*",
+      var.dynamodb_vault_stream_arn
     ]
   }
 }

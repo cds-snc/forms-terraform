@@ -184,12 +184,12 @@ variable "dynamodb_vault_table_name" {
   type        = string
 }
 
-variable "dynamodb_vault_retrieved_index_name" {
-  description = "Vault DynamodDB Retrieved index name"
+variable "sns_topic_alert_critical_arn" {
+  description = "SNS topic ARN that critical alerts are sent to"
   type        = string
 }
 
-variable "sns_topic_alert_critical_arn" {
-  description = "SNS topic ARN that critical alerts are sent to"
+variable "dynamodb_vault_stream_arn" {
+  description = "Vault DynamoDB stream ARN"
   type        = string
 }

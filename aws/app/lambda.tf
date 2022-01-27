@@ -290,7 +290,6 @@ resource "aws_lambda_function" "archiver" {
       REGION                    = var.region
       SNS_ERROR_TOPIC_ARN       = var.sns_topic_alert_critical_arn
       DYNAMODB_VAULT_TABLE_NAME = var.dynamodb_vault_table_name
-      DYNAMODB_VAULT_INDEX_NAME = var.dynamodb_vault_retrieved_index_name
       ARCHIVING_S3_BUCKET       = aws_s3_bucket.archive_storage.bucket
     }
   }
@@ -310,6 +309,20 @@ resource "aws_lambda_layer_version" "archiver_lib" {
   layer_name          = "archiver_node_packages"
   source_code_hash    = data.archive_file.archiver_lib.output_base64sha256
   compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+}
+
+resource "aws_lambda_event_source_mapping" "vault_updated_item_stream" {
+  event_source_arn       = var.dynamodb_vault_stream_arn
+  function_name          = aws_lambda_function.archiver.arn
+  starting_position      = "LATEST"
+  batch_size             = 25 // The lambda being invoked has some limitation due to AWS API so we want batches of 25 items.
+  maximum_retry_attempts = 3
+
+  filter_criteria {
+    filter {
+      pattern = "{\"dynamodb\":{\"NewImage\":{\"Retrieved\":{\"N\":[\"1\"]}}}}"
+    }
+  }
 }
 
 #
@@ -341,12 +354,4 @@ resource "aws_lambda_permission" "internal_templates" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.templates.function_name
   principal     = aws_iam_role.lambda.arn
-}
-
-resource "aws_lambda_permission" "allow_cloudwatch_to_run_archiver_lambda" {
-  statement_id  = "AllowExecutionFromCloudWatch"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.archiver.function_name
-  principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.cron_4am_every_day.arn
 }
