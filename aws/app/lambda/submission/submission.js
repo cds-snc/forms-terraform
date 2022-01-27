@@ -3,8 +3,8 @@ const { DynamoDBClient, PutItemCommand, UpdateItemCommand } = require("@aws-sdk/
 const uuid = require("uuid");
 
 const REGION = process.env.REGION;
-const db = new DynamoDBClient({ region: REGION });
-const sqs = new SQSClient({ region: REGION });
+const db = new DynamoDBClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566": undefined});
+const sqs = new SQSClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL? "http://host.docker.internal:4566": undefined});
 
 const formatError = (err) => {
   return typeof err === "object" ? JSON.stringify(err) : err;
