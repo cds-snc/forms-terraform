@@ -124,8 +124,6 @@ Resources:
         Variables:
           DYNAMODB_VAULT_TABLE_NAME:
             Ref: Vault
-          DYNAMODB_VAULT_INDEX_NAME:
-            Ref: retrieved-index
           ARCHIVING_S3_BUCKET:
             Ref: forms-local-archive-storage
           SNS_ERROR_TOPIC_ARN:
