@@ -423,10 +423,12 @@ Please note you must configure the `NOTIFY_API_KEY` in the `templates.yml` for t
 
 #### Running the archiver lambda 
 
-To avoid having to deploy and then wait for the Cloudwatch cron job to trigger the archiving process (at 4 AM) you can use the `invoke_archiver` script to simulate the archiver function being invoked.
+Unfortunately due to AWS SAM limitations it is not possible to automatically trigger the archiver lambda function whenever a modification is made to the DynamoDB Vault table.
+
+In order to run the archiver lambda you should have the FormID and the SubmissionID in your possession so that you can pass them to the `invoke_archiver` script.
 
 ```shell
-$ ./invoke_archiver.sh
+$ ./invoke_archiver.sh 1 2dd4930d-cd77-41b3-a68e-9f44ef9e80f5
 Reading invoke payload from stdin (you can also pass it from file with --event)
 Invoking archiver.handler (nodejs12.x)
 ArchiverLayer is a local Layer in the template
