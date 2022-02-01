@@ -3,6 +3,11 @@ variable "account_id" {
   type        = string
 }
 
+variable "cbs_satellite_bucket_name" {
+  description = "(Required) Name of the Cloud Based Sensor S3 satellite bucket"
+  type        = string
+}
+
 variable "billing_tag_key" {
   description = "The default tagging key"
   type        = string
