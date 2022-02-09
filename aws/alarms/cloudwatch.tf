@@ -371,3 +371,35 @@ resource "aws_cloudwatch_metric_alarm" "temporary_token_generated_outside_canada
     Terraform             = true
   }
 }
+
+resource "aws_cloudwatch_log_metric_filter" "expired_bearer_token" {
+  name           = "ExpiredBearerToken"
+  pattern        = "expired bearer token"
+  log_group_name = var.ecs_cloudwatch_log_group_name
+  metric_transformation {
+    name      = "ExpiredBearerToken"
+    namespace = "forms"
+    value     = "1"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "expired_bearer_token" {
+  alarm_name          = "ExpiredBearerToken"
+  namespace           = "forms"
+  metric_name         = aws_cloudwatch_log_metric_filter.expired_bearer_token.metric_transformation[0].name
+  statistic           = "SampleCount"
+  period              = "60"
+  comparison_operator = "GreaterThanThreshold"
+  threshold           = "0"
+  evaluation_periods  = "1"
+  treat_missing_data  = "notBreaching"
+
+  alarm_description = "End User Forms Warning - An expired bearer token has been used"
+  alarm_actions     = [var.sns_topic_alert_warning_arn]
+  ok_actions        = [var.sns_topic_alert_ok_arn]
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
