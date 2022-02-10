@@ -346,3 +346,28 @@ resource "aws_cloudwatch_metric_alarm" "route53_ddos" {
     ResourceArn = "arn:aws:route53:::hostedzone/${var.hosted_zone_id}"
   }
 }
+
+#
+# Monitoring alarms
+#
+
+resource "aws_cloudwatch_metric_alarm" "temporary_token_generated_outside_canada_warn" {
+  alarm_name          = "TemporaryTokenGeneratedOutsideCandaWarn"
+  namespace           = "forms"
+  metric_name         = var.temporary_token_generated_outside_canada_metric_name
+  statistic           = "SampleCount"
+  period              = "300"
+  comparison_operator = "GreaterThanThreshold"
+  threshold           = "0"
+  evaluation_periods  = "1"
+  treat_missing_data  = "notBreaching"
+
+  alarm_description = "End User Forms Warning - A temporary token has been generated from outside Canada"
+  alarm_actions     = [var.sns_topic_alert_warning_arn]
+  ok_actions        = [var.sns_topic_alert_ok_arn]
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}

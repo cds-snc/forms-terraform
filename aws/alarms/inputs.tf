@@ -83,3 +83,8 @@ variable "sns_topic_alert_ok_us_east_arn" {
   description = "SNS topic ARN that ok alerts are sent to (US East)"
   type        = string
 }
+
+variable "temporary_token_generated_outside_canada_metric_name" {
+  description = "Metric tracking request made outside of Canada in order to generate a temporary token"
+  type        = string
+}
