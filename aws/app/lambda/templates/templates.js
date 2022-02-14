@@ -76,8 +76,8 @@ exports.handler = async function (event) {
       // Get a specific form if given the id, all forms if not
       if (formID) {
         SQL = !process.env.AWS_SAM_LOCAL
-            ? "SELECT * FROM Templates WHERE id = :formID"
-            : "SELECT * FROM Templates WHERE id = ($1)";
+            ? "SELECT id, json_config, organization FROM Templates WHERE id = :formID"
+            : "SELECT id, json_config, organization FROM Templates WHERE id = ($1)";
         parameters = !process.env.AWS_SAM_LOCAL
             ? [
               {
@@ -89,7 +89,7 @@ exports.handler = async function (event) {
             ]
             : [formID];
       } else {
-        SQL = "SELECT * FROM Templates";
+        SQL = "SELECT id, json_config, organization FROM Templates";
       }
       break;
     case "UPDATE":
@@ -198,26 +198,23 @@ exports.handler = async function (event) {
 
 const parseConfig = (records) => {
   const parsedRecords = records.map((record) => {
-    let formID, formConfig, organization, bearerToken;
+    let formID, formConfig, organization;
     if (!process.env.AWS_SAM_LOCAL) {
       formID = record[0].longValue;
       if (record.length > 1) {
         formConfig = JSON.parse(record[1].stringValue.trim(1, -1)) || undefined;
         organization = record[2].stringValue ? record[2].stringValue : null;
-        bearerToken = record[3].stringValue ? record[3].stringValue : null;
       }
     } else {
       formID = record.id;
       formConfig = record.json_config;
       organization = record.organization;
-      bearerToken = record.bearer_token
     }
 
     return {
       formID,
       formConfig,
       organization,
-      bearerToken
     };
   });
   return { records: parsedRecords };
