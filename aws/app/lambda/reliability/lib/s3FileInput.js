@@ -11,7 +11,7 @@ const s3Client = new S3Client({
   forcePathStyle: process.env.AWS_SAM_LOCAL ? true: undefined
 });
 
-const environment = process.env.ENVIRONMENT || process.env.AWS_SAM_LOCAL ? "local": "staging";
+const environment = process.env.ENVIRONMENT || (process.env.AWS_SAM_LOCAL ? "local": "staging");
 const reliabilityBucketName = `forms-${environment}-reliability-file-storage`;
 const vaultBucketName = `forms-${environment}-vault-file-storage`;
 
