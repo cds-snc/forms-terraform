@@ -25,11 +25,12 @@ resource "aws_dynamodb_table" "reliability_queue" {
 }
 
 resource "aws_dynamodb_table" "vault" {
-  name           = "Vault"
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "FormID"
-  range_key      = "SubmissionID"
-  stream_enabled = false
+  name             = "Vault"
+  billing_mode     = "PAY_PER_REQUEST"
+  hash_key         = "FormID"
+  range_key        = "SubmissionID"
+  stream_enabled   = true
+  stream_view_type = "NEW_IMAGE"
 
   attribute {
     name = "FormID"
