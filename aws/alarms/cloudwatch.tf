@@ -403,3 +403,35 @@ resource "aws_cloudwatch_metric_alarm" "expired_bearer_token" {
     Terraform             = true
   }
 }
+
+resource "aws_cloudwatch_log_metric_filter" "generate_temporary_token_api_failure" {
+  name           = "GenerateTemporaryTokenApiFailure"
+  pattern        = "Failed to generate temporary token"
+  log_group_name = var.ecs_cloudwatch_log_group_name
+  metric_transformation {
+    name      = "GenerateTemporaryTokenApiFailure"
+    namespace = "forms"
+    value     = "1"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "generate_temporary_token_api_failure" {
+  alarm_name          = "GenerateTemporaryTokenApiFailure"
+  namespace           = "forms"
+  metric_name         = aws_cloudwatch_log_metric_filter.generate_temporary_token_api_failure.metric_transformation[0].name
+  statistic           = "SampleCount"
+  period              = "300"
+  comparison_operator = "GreaterThanThreshold"
+  threshold           = "5"
+  evaluation_periods  = "1"
+  treat_missing_data  = "notBreaching"
+
+  alarm_description = "End User Forms Warning - Failed to generate temporary token too many times"
+  alarm_actions     = [var.sns_topic_alert_warning_arn]
+  ok_actions        = [var.sns_topic_alert_ok_arn]
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
