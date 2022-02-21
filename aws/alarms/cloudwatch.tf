@@ -352,15 +352,20 @@ resource "aws_cloudwatch_metric_alarm" "route53_ddos" {
 #
 
 resource "aws_cloudwatch_metric_alarm" "temporary_token_generated_outside_canada_warn" {
-  alarm_name          = "TemporaryTokenGeneratedOutsideCandaWarn"
-  namespace           = "forms"
-  metric_name         = var.temporary_token_generated_outside_canada_metric_name
+  alarm_name          = "TemporaryTokenGeneratedOutsideCanadaWarn"
+  namespace           = "AWS/WAFV2"
+  metric_name         = "CountedRequests"
   statistic           = "SampleCount"
   period              = "300"
   comparison_operator = "GreaterThanThreshold"
   threshold           = "0"
   evaluation_periods  = "1"
   treat_missing_data  = "notBreaching"
+  dimensions = {
+    Region = "ca-central-1"
+    Rule   = "TemporaryTokenGeneratedOutsideCanada"
+    WebACL = "GCForms"
+  }
 
   alarm_description = "End User Forms Warning - A temporary token has been generated from outside Canada"
   alarm_actions     = [var.sns_topic_alert_warning_arn]
