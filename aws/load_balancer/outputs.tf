@@ -27,8 +27,3 @@ output "lb_target_group_2_name" {
   description = "Load balancer target group 2 name, used by CodeDeploy to alternate blue/green deployments"
   value       = aws_lb_target_group.form_viewer_2.name
 }
-
-output "temporary_token_generated_outside_canada_metric_name" {
-  description = "Metric tracking request made outside of Canada in order to generate a temporary token"
-  value       = one([for x in aws_wafv2_web_acl.forms_acl.rule : one(x.visibility_config.*.metric_name) if x.name == "TemporaryTokenGeneratedOutsideCanada"])
-}

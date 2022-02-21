@@ -20,7 +20,7 @@ dependency "kms" {
   config_path = "../kms"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_with_state           = true  
+  mock_outputs_merge_with_state           = true
   mock_outputs = {
     kms_key_cloudwatch_arn         = ""
     kms_key_cloudwatch_us_east_arn = ""
@@ -33,9 +33,8 @@ dependency "load_balancer" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_with_state           = true
   mock_outputs = {
-    lb_arn                                               = ""
-    lb_arn_suffix                                        = ""
-    temporary_token_generated_outside_canada_metric_name = "tbd"
+    lb_arn        = ""
+    lb_arn_suffix = ""
   }
 }
 
@@ -86,9 +85,8 @@ inputs = {
   kms_key_cloudwatch_arn         = dependency.kms.outputs.kms_key_cloudwatch_arn
   kms_key_cloudwatch_us_east_arn = dependency.kms.outputs.kms_key_cloudwatch_us_east_arn
 
-  lb_arn                                               = dependency.load_balancer.outputs.lb_arn
-  lb_arn_suffix                                        = dependency.load_balancer.outputs.lb_arn_suffix
-  temporary_token_generated_outside_canada_metric_name = dependency.load_balancer.outputs.temporary_token_generated_outside_canada_metric_name
+  lb_arn        = dependency.load_balancer.outputs.lb_arn
+  lb_arn_suffix = dependency.load_balancer.outputs.lb_arn_suffix
 
   sqs_deadletter_queue_arn = dependency.sqs.outputs.sqs_deadletter_queue_arn
 
