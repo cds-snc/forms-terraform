@@ -101,7 +101,7 @@ resource "aws_cloudwatch_log_metric_filter" "application_error" {
 
 resource "aws_cloudwatch_metric_alarm" "ELB_5xx_error_warn" {
   alarm_name          = "HTTPCode_ELB_5XX_Count"
-  alarm_description   = "ELB Warning - 5xx Error exceed threshold."  
+  alarm_description   = "ELB Warning - 5xx Error exceed threshold."
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
   metric_name         = "HTTPCode_ELB_5XX_Count"
