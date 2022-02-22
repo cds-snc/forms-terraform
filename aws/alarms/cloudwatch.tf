@@ -101,18 +101,16 @@ resource "aws_cloudwatch_log_metric_filter" "application_error" {
 
 resource "aws_cloudwatch_metric_alarm" "5xx_error_warn" {
   alarm_name          = "HTTPCode_ELB_5XX_Count"
+  alarm_description   = "ELB Warning - 5xx Error exceed threshold."  
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
   metric_name         = "HTTPCode_ELB_5XX_Count"
   namespace           = "forms"
-  period              = "60"
+  period              = "300"
   statistic           = "Sum"
-  threshold           = "0"
+  threshold           = "10"
   treat_missing_data  = "notBreaching"
-  alarm_description   = "ELB Warning - 5xx Error exceed threshold."
-
-  alarm_actions = [var.sns_topic_alert_warning_arn]
-
+  alarm_actions       = [var.sns_topic_alert_warning_arn]
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
