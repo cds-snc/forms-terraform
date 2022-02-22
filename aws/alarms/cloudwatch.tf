@@ -103,7 +103,7 @@ resource "aws_cloudwatch_metric_alarm" "5xx_error_warn" {
   alarm_name          = "HTTPCode_ELB_5XX_Count"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
-  metric_name         = HTTPCode_ELB_5XX_Count
+  metric_name         = "HTTPCode_ELB_5XX_Count"
   namespace           = "forms"
   period              = "60"
   statistic           = "Sum"
