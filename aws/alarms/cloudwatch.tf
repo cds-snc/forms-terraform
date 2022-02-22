@@ -105,10 +105,10 @@ resource "aws_cloudwatch_metric_alarm" "5xx_error_warn" {
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
   metric_name         = "HTTPCode_ELB_5XX_Count"
-  namespace           = "forms"
+  namespace           = "AWS/ApplicationELB"
   period              = "300"
   statistic           = "Sum"
-  threshold           = "10"
+  threshold           = "1"
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_topic_alert_warning_arn]
   tags = {
