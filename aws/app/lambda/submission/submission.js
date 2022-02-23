@@ -15,8 +15,11 @@ exports.handler = async function (event) {
   try {
     const formData = event;
     const submissionID = uuid.v4();
+    // add timestamp 
+    const editFormData = typeof formData === "string" ? JSON.parse(formData) : formData;
+    editFormData['timestamp'] = (new Date()).getTime();
     //-----------
-    await saveData(submissionID, formData)
+    await saveData(submissionID, JSON.stringify(editFormData))
     const receiptID = await sendData(submissionID)
     // Update DB entry for receipt ID
     await saveReceipt(submissionID, receiptID);
