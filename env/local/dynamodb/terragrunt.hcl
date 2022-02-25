@@ -17,14 +17,14 @@ dependency "kms" {
 
 inputs = {
   kms_key_dynamodb_arn = dependency.kms.outputs.kms_key_dynamodb_arn
-  env = "local"
+  env                  = "local"
 }
 
 remote_state {
   backend = "local"
   generate = {
     if_exists = "overwrite_terragrunt"
-    path = "../../terraform.tfstate"
+    path      = "../../terraform.tfstate"
   }
   config = {
     path = "../../terraform.tfstate"

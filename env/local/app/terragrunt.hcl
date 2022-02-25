@@ -2,8 +2,8 @@ terraform {
   source = "../../../aws//app"
   extra_arguments "target_s3" {
     commands = [
-       "plan",
-       "apply"
+      "plan",
+      "apply"
     ]
 
     arguments = [
@@ -18,7 +18,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms",  "../dynamodb" ]
+  paths = ["../kms", "../dynamodb"]
 }
 
 dependency "dynamodb" {
@@ -26,10 +26,10 @@ dependency "dynamodb" {
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    dynamodb_relability_queue_arn       = ""
-    dynamodb_vault_arn                  = ""
-    dynamodb_vault_table_name           = ""
-    dynamodb_vault_stream_arn           = ""
+    dynamodb_relability_queue_arn = ""
+    dynamodb_vault_arn            = ""
+    dynamodb_vault_table_name     = ""
+    dynamodb_vault_stream_arn     = ""
   }
 }
 
@@ -65,7 +65,7 @@ inputs = {
   rds_db_password                             = "local"
   slack_webhook                               = "local"
 
-  sns_topic_alert_critical_arn  = ""
+  sns_topic_alert_critical_arn = ""
 
   dynamodb_relability_queue_arn = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
   dynamodb_vault_arn            = dependency.dynamodb.outputs.dynamodb_vault_arn
@@ -88,10 +88,10 @@ inputs = {
 
   redis_url = ""
 
-  rds_cluster_arn            = ""
-  rds_db_name                = ""
-  database_secret_arn        = ""
-  database_url_secret_arn    = ""
+  rds_cluster_arn         = ""
+  rds_db_name             = ""
+  database_secret_arn     = ""
+  database_url_secret_arn = ""
 
   sqs_reliability_queue_arn = ""
   sqs_reliability_queue_id  = ""
@@ -101,7 +101,7 @@ remote_state {
   backend = "local"
   generate = {
     if_exists = "overwrite_terragrunt"
-    path = "../../terraform.tfstate"
+    path      = "../../terraform.tfstate"
   }
   config = {
     path = "../../terraform.tfstate"
