@@ -15,8 +15,8 @@ resource "aws_dynamodb_table" "reliability_queue" {
   }
 
   global_secondary_index {
-    name = "SubmissionDateTime-index"
-    hash_key = "SubmissionDateTime"
+    name            = "SubmissionDateTime-index"
+    hash_key        = "SubmissionDateTime"
     projection_type = "ALL"
   }
 
@@ -58,11 +58,11 @@ resource "aws_dynamodb_table" "vault" {
     type = "N"
   }
 
-   attribute {
+  attribute {
     name = "SubmissionDateTime"
     type = "S"
   }
- 
+
   global_secondary_index {
     name            = "retrieved-index"
     hash_key        = "Retrieved"
@@ -70,8 +70,8 @@ resource "aws_dynamodb_table" "vault" {
   }
 
   global_secondary_index {
-    name = "SubmissionDateTime-index-vault"
-    hash_key = "SubmissionDateTime"
+    name            = "SubmissionDateTime-index-vault"
+    hash_key        = "SubmissionDateTime"
     projection_type = "ALL"
   }
 
