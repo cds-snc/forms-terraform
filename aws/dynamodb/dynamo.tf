@@ -9,6 +9,17 @@ resource "aws_dynamodb_table" "reliability_queue" {
     type = "S"
   }
 
+  attribute {
+    name = "SubmissionDateTime"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name = "SubmissionDateTime-index"
+    range_key = "SubmissionDateTime"
+    projection_type = "ALL"
+  }
+
   server_side_encryption {
     enabled     = true
     kms_key_arn = var.kms_key_dynamodb_arn
@@ -47,9 +58,20 @@ resource "aws_dynamodb_table" "vault" {
     type = "N"
   }
 
+   attribute {
+    name = "SubmissionDateTime"
+    type = "S"
+  }
+ 
   global_secondary_index {
     name            = "retrieved-index"
     hash_key        = "Retrieved"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name = "SubmissionDateTime-index-vault"
+    range_key = "SubmissionDateTime"
     projection_type = "ALL"
   }
 

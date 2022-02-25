@@ -19,9 +19,10 @@ exports.handler = async function (event) {
       formSubmission: messageData.Item?.FormData.S
           ? JSON.parse(messageData.Item?.FormData.S)
           : null,
+      submissionDateTime: messageData.Item?.SubmissionDateTime ?? null
     }
 
-    const {submissionID, formSubmission, formID, sendReceipt, language} = processedMessageData
+    const {submissionID, formSubmission, formID, sendReceipt, language, submissionDateTime} = processedMessageData
     submissionIDPlaceholder = submissionID;
     // Check if form data exists or was already processed.
     if (formSubmission === null || typeof formSubmission === "undefined") {
@@ -38,9 +39,9 @@ exports.handler = async function (event) {
 
     /// process submission to vault or Notify
     if (formSubmission.submission.vault) {
-      return await sendToVault(submissionID, sendReceipt, formSubmission, formID, message);
+      return await sendToVault(submissionID, sendReceipt, formSubmission, formID, message, submissionDateTime);
     } else {
-      return await sendToNotify(submissionID, sendReceipt, formSubmission, language,message);
+      return await sendToNotify(submissionID, sendReceipt, formSubmission, language, message, submissionDateTime);
     }
   } catch(err) {
     console.error(

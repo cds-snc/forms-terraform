@@ -1,7 +1,7 @@
 const json2md = require("json2md");
 const { extractFormData } = require("dataLayer");
 
-module.exports = (formResponse, language) => {
+module.exports = (formResponse, language, submissionDateTime) => {
 
   const title = `${language === "fr" ? (formResponse.form.emailSubjectFr
       ? formResponse.form.emailSubjectFr
@@ -16,8 +16,8 @@ module.exports = (formResponse, language) => {
 
   // use Notify lang attribute to denote the language https://notification.canada.ca/format
   const emailBody = language === "fr" ?
-      "[[fr]]\n" + json2md([{ h1: title }, mdBody])+ "\n[[/fr]]":
-      "[[en]]\n" + json2md([{ h1: title }, mdBody])+ "\n[[/en]]";
+      "[[fr]]\n" + json2md([{ h1: title }, { h5: "Date" }, { p: submissionDateTime }, mdBody])+ "\n[[/fr]]":
+      "[[en]]\n" + json2md([{ h1: title }, { h5: "Date" }, { p: submissionDateTime }, mdBody])+ "\n[[/en]]";
 
   return emailBody;
 };
