@@ -9,11 +9,6 @@ resource "aws_dynamodb_table" "reliability_queue" {
     type = "S"
   }
 
-  attribute {
-    name = "SubmissionDateTime"
-    type = "S"
-  }
-
   server_side_encryption {
     enabled     = true
     kms_key_arn = var.kms_key_dynamodb_arn
@@ -50,11 +45,6 @@ resource "aws_dynamodb_table" "vault" {
   attribute {
     name = "Retrieved"
     type = "N"
-  }
-
-  attribute {
-    name = "SubmissionDateTime"
-    type = "S"
   }
 
   global_secondary_index {
