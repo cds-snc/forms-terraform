@@ -66,7 +66,7 @@ const saveData = async (submissionID, formData) => {
       SendReceipt: { S: "unknown" },
       FormSubmissionLanguage: {S: formData.language},
       FormData: { S: formSubmission },
-      SubmissionDateTime: {S: (new Date()).toISOString()}
+      SubmissionDateTime: {S: new Date().getTime()}
     },
   };
   //save data to DynamoDB
