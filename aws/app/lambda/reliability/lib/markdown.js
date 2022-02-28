@@ -15,7 +15,7 @@ module.exports = (formResponse, language, submissionTimestamp) => {
  
   let formatedDate;  
   try {
-      formatedDate = submissionTimestamp ? new Date(submissionTimestamp * 1000).toISOString() : "";
+      formatedDate = submissionTimestamp ? new Date(submissionTimestamp).toISOString() : "";
    }catch(error){
       console.log(error);
   }  
