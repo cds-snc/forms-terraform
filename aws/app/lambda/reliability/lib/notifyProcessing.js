@@ -6,10 +6,10 @@ const {
   removeFilesFromReliabilityStorage,
 } = require("s3FileInput");
 
-module.exports = async (submissionID, sendReceipt, formSubmission, language, message, submissionDateTime) => {
+module.exports = async (submissionID, sendReceipt, formSubmission, language, message, submissionTimestamp) => {
   const templateID = "92096ac6-1cc5-40ae-9052-fffdb8439a90";
   const notify = new NotifyClient("https://api.notification.canada.ca", process.env.NOTIFY_API_KEY);
-  const emailBody = convertMessage(formSubmission, language, submissionDateTime);
+  const emailBody = convertMessage(formSubmission, language, submissionTimestamp);
   const messageSubject =
     language === "fr"
       ? formSubmission.form.emailSubjectFr

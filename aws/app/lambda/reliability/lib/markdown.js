@@ -1,7 +1,7 @@
 const json2md = require("json2md");
 const { extractFormData } = require("dataLayer");
 
-module.exports = (formResponse, language, submissionDateTime) => {
+module.exports = (formResponse, language, submissionTimestamp) => {
   const title = `${language === "fr" ? (formResponse.form.emailSubjectFr
       ? formResponse.form.emailSubjectFr
       : formResponse.form.titleFr): (formResponse.form.emailSubjectEn
@@ -15,7 +15,7 @@ module.exports = (formResponse, language, submissionDateTime) => {
  
   let formatedDate;  
   try {
-      formatedDate = submissionDateTime ? new Date(submissionDateTime * 1000).toISOString() : "";
+      formatedDate = submissionTimestamp ? new Date(submissionTimestamp * 1000).toISOString() : "";
    }catch(error){
       console.log(error);
   }  
