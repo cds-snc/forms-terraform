@@ -39,14 +39,19 @@ async function saveToVault(submissionID, formResponse, formID, submissionTimesta
 
   const formIdentifier = typeof formID === "string" ? formID : formID.toString();
 
+  let dbItems = {
+    SubmissionID: {S: submissionID},
+    FormID: {S: formIdentifier},
+    FormSubmission: {S: formSubmission},
+  }
+
+  if(submissionTimestamp){
+    dbItems["SubmissionTimestamp"] = { N: `${submissionTimestamp}` }
+  }
+
   const DBParams = {
     TableName: "Vault",
-    Item: {
-      SubmissionID: { S: submissionID },
-      FormID: { S: formIdentifier },
-      FormSubmission: { S: formSubmission },
-      SubmissionTimestamp: { N: submissionTimestamp },
-    },
+    Item: dbItems
   };
   //save data to DynamoDB
   return await db.send(new PutItemCommand(DBParams));

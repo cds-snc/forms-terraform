@@ -19,7 +19,7 @@ exports.handler = async function (event) {
       formSubmission: messageData.Item?.FormData.S
           ? JSON.parse(messageData.Item?.FormData.S)
           : null,
-      submissionTimestamp: messageData.Item?.SubmissionTimestamp ?? null
+      submissionTimestamp: messageData.Item?.SubmissionTimestamp.N ?? null
     }
 
     const {submissionID, formSubmission, formID, sendReceipt, language, submissionTimestamp} = processedMessageData
