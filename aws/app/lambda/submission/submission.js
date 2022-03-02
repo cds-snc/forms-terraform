@@ -13,6 +13,7 @@ const formatError = (err) => {
 // Store questions with responses
 exports.handler = async function (event) {
   try {
+
     const formData = event;
     const submissionID = uuid.v4();
     //-----------

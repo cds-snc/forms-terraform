@@ -10,6 +10,7 @@ exports.handler = async function (event) {
 
   const message = JSON.parse(event.Records[0].body);
   try{
+
     const messageData = await getSubmission(message)
     const processedMessageData = {
       submissionID: messageData.Item?.SubmissionID.S ?? message.submissionID,
