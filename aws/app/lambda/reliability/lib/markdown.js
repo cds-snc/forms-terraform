@@ -13,12 +13,7 @@ module.exports = (formResponse, language, submissionTimestamp) => {
     return { p: item };
   });
 
-  let formatedDate;
-  try {
-    formatedDate = submissionTimestamp ? new Date(submissionTimestamp).toISOString() : "";
-  } catch (error) {
-    console.log(error);
-  }
+  const formatedDate = submissionTimestamp ? new Date(submissionTimestamp).toISOString() : "";
   // use Notify lang attribute to denote the language https://notification.canada.ca/format
   const emailBody = language === "fr" ?
     "[[fr]]\n" + json2md([{ h1: title }, { h5: "Date" }, { p: formatedDate }, mdBody]) + "\n[[/fr]]" :
