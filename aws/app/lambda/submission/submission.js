@@ -15,6 +15,7 @@ exports.handler = async function (event) {
   try {
     const formData = event;
     const submissionID = uuid.v4();
+ 
     //-----------
     await saveData(submissionID, formData)
     const receiptID = await sendData(submissionID)
@@ -65,6 +66,7 @@ const saveData = async (submissionID, formData) => {
       SendReceipt: { S: "unknown" },
       FormSubmissionLanguage: {S: formData.language},
       FormData: { S: formSubmission },
+      SubmissionTimestamp: { N: new Date().getTime() }
     },
   };
   //save data to DynamoDB

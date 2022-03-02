@@ -30,7 +30,7 @@ remote_state {
   backend = "local"
   generate = {
     if_exists = "overwrite_terragrunt"
-    path = "../../terraform.tfstate"
+    path      = "../../terraform.tfstate"
   }
   config = {
     path = "../../terraform.tfstate"
