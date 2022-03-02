@@ -12,12 +12,9 @@ const formatError = (err) => {
 
 // Store questions with responses
 exports.handler = async function (event) {
+  const submissionID = uuid.v4()
   try {
-    const formData = event;
-    const submissionID = uuid.v4();
- 
-    //-----------
-    await saveData(submissionID, formData)
+    await saveData(submissionID, event)
     const receiptID = await sendData(submissionID)
     // Update DB entry for receipt ID
     await saveReceipt(submissionID, receiptID);
@@ -66,7 +63,7 @@ const saveData = async (submissionID, formData) => {
       SendReceipt: { S: "unknown" },
       FormSubmissionLanguage: {S: formData.language},
       FormData: { S: formSubmission },
-      SubmissionTimestamp: { N: new Date().getTime() }
+      SubmissionTimestamp: { N: `${Date.now()}`}
     },
   };
   //save data to DynamoDB
