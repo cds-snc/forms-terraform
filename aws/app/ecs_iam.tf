@@ -107,6 +107,42 @@ resource "aws_iam_role_policy_attachment" "dynamodb_forms" {
   policy_arn = aws_iam_policy.forms_dynamodb.arn
 }
 
+resource "aws_iam_role_policy_attachment" "sqs_forms" {
+  role       = aws_iam_role.forms.name
+  policy_arn = aws_iam_policy.forms_sqs.arn
+}
+
+#
+# IAM - SQS
+#
+
+resource "aws_iam_policy" "forms_sqs" {
+  name        = "forms_sqs"
+  path        = "/"
+  description = "IAM policy to allow access to SQS for Forms ECS task"
+  policy      = data.aws_iam_policy_document.forms_sqs.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+data "aws_iam_policy_document" "forms_sqs" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "sqs:GetQueueUrl",
+      "sqs:SendMessage"
+    ]
+
+    resources = [
+      var.sqs_reprocess_submission_queue_arn
+    ]
+  }
+}
+
 #
 # IAM - KMS (for encryption key access - needed for Dynamob DB)
 #
