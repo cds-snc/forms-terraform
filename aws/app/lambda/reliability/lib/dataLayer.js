@@ -20,18 +20,6 @@ async function getSubmission(message) {
   return await db.send(new GetItemCommand(DBParams));
 }
 
-async function removeSubmission(message) {
-  const db = new DynamoDBClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566": undefined });
-  const DBParams = {
-    TableName: "ReliabilityQueue",
-    Key: {
-      SubmissionID: { S: message.submissionID },
-    },
-  };
-  //remove data fron DynamoDB
-  return await db.send(new DeleteItemCommand(DBParams));
-}
-
 async function saveToVault(submissionID, formResponse, formID) {
   const db = new DynamoDBClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566": undefined });
   const formSubmission =
@@ -201,7 +189,6 @@ function formatError(err) {
 
 module.exports = {
   getSubmission,
-  removeSubmission,
   extractFileInputResponses,
   extractFormData,
   saveToVault,

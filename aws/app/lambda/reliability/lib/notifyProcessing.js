@@ -1,10 +1,7 @@
 const { NotifyClient } = require("notifications-node-client");
 const convertMessage = require("markdown");
-const { removeSubmission, formatError, extractFileInputResponses } = require("dataLayer");
-const {
-  retrieveFilesFromReliabilityStorage,
-  removeFilesFromReliabilityStorage,
-} = require("s3FileInput");
+const { extractFileInputResponses } = require("dataLayer");
+const { retrieveFilesFromReliabilityStorage } = require("s3FileInput");
 
 module.exports = async (submissionID, sendReceipt, formSubmission, language, message) => {
   const templateID = "92096ac6-1cc5-40ae-9052-fffdb8439a90";
@@ -78,21 +75,11 @@ module.exports = async (submissionID, sendReceipt, formSubmission, language, mes
       .catch((err) => {
         throw new Error(`Sending to Notify error: ${JSON.stringify(err)}`);
       })
-      .then(async () => await removeFilesFromReliabilityStorage(fileInputPaths))
       .then(async () => {
         console.log(
           `{"status": "success", "submissionID": "${submissionID}", "sqsMessage":"${sendReceipt}", "method":"notify"}`
         );
-        // Remove data
-        return await removeSubmission(message).catch((err) => {
-          // Not throwing an error back to SQS because the message was
-          // sucessfully processed by Notify.  Only cleanup required.
-          console.warn(
-            `{"status": "failed", "submissionID": "${submissionID}", "error": "Can not delete entry from reliability db.  Error:${formatError(
-              err
-            )}", "method":"notify"}`
-          );
-        });
+        return Promise.resolve();
       });
   } else {
     throw Error("Form can not be submitted due to missing Submission Parameters");
