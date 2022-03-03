@@ -58,6 +58,8 @@ const sendData = async (submissionID) => {
 const saveData = async (submissionID, formData) => {
   const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
 
+  const expiringTime = (Math.floor(Date.now() / 1000) + 172800).toString(); // expire after 48 hours
+
   const DBParams = {
     TableName: "ReliabilityQueue",
     Item: {
@@ -66,6 +68,7 @@ const saveData = async (submissionID, formData) => {
       SendReceipt: { S: "unknown" },
       FormSubmissionLanguage: {S: formData.language},
       FormData: { S: formSubmission },
+      TTL: { N: expiringTime },
     },
   };
   //save data to DynamoDB
