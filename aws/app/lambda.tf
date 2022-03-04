@@ -97,6 +97,13 @@ resource "aws_lambda_event_source_mapping" "reliability" {
   enabled          = true
 }
 
+resource "aws_lambda_event_source_mapping" "reprocess_submission" {
+  event_source_arn = var.sqs_reprocess_submission_queue_arn
+  function_name    = aws_lambda_function.reliability.arn
+  batch_size       = 1
+  enabled          = true
+}
+
 #
 # Form Submission API processing
 #

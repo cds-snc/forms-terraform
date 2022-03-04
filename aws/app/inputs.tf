@@ -184,6 +184,11 @@ variable "sqs_reliability_queue_arn" {
   type        = string
 }
 
+variable "sqs_reprocess_submission_queue_arn" {
+  description = "SQS reprocess submission queue ARN"
+  type        = string
+}
+
 variable "tracer_provider" {
   description = "Tracer provider, used by the ECS task"
   type        = string

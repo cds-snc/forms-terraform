@@ -95,8 +95,9 @@ inputs = {
   database_secret_arn        = ""
   database_url_secret_arn    = ""
 
-  sqs_reliability_queue_arn = ""
-  sqs_reliability_queue_id  = ""
+  sqs_reliability_queue_arn          = ""
+  sqs_reliability_queue_id           = ""
+  sqs_reprocess_submission_queue_arn = ""
 }
 
 remote_state {
