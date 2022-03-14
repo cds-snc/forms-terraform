@@ -60,3 +60,18 @@ resource "aws_secretsmanager_secret_version" "token_secret" {
   secret_id     = aws_secretsmanager_secret.token_secret.id
   secret_string = var.ecs_secret_token_secret
 }
+
+resource "aws_secretsmanager_secret" "recaptcha_secret" {
+  name                    = "recaptcha_secret"
+  recovery_window_in_days = 0
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_secretsmanager_secret_version" "recaptcha_secret" {
+  secret_id     = aws_secretsmanager_secret.recaptcha_secret.id
+  secret_string = var.recaptcha_site_secret
+}

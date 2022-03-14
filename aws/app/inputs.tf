@@ -104,6 +104,16 @@ variable "google_client_secret" {
   type        = string
 }
 
+variable "recaptcha_secret" {
+  description = "Secret Site Key for reCAPTCHA"
+  type = string
+}
+
+variable "recaptcha_public" {
+  description = "reCAPTCHA public key, client side"
+  type = "string"
+}
+
 variable "kms_key_cloudwatch_arn" {
   description = "CloudWatch KMS key ARN, used by the ECS task's CloudWatch log group"
   type        = string

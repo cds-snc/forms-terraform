@@ -52,12 +52,20 @@
       {
         "name": "RELIABILITY_FILE_STORAGE",
         "value": "${reliability_file_storage}"
+      },
+      {
+        "name": "NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY",
+        "value": "${recaptcha_public}"
       }
     ],
     "secrets": [
       {
         "name": "NOTIFY_API_KEY",
         "valueFrom": "${notify_api_key}"
+      },
+      {
+        "name": "RECAPTACHA_V3_SECRET_KEY",
+        "valueFrom": "${recaptcha_secret}"
       },
       {
         "name": "GOOGLE_CLIENT_ID",
