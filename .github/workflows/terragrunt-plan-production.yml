@@ -18,7 +18,7 @@ env:
   TF_VAR_ecs_secret_token_secret: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
   TF_VAR_google_client_id: ${{ secrets.PRODUCTION_GOOGLE_CLIENT_ID}}
   TF_VAR_google_client_secret: ${{secrets.PRODUCTION_GOOGLE_CLIENT_SECRET}}
-  TF_VAR_recaptcha_site_secret: ${{secrets.RECAPTCHA_SITE_SECRET}}
+  TF_VAR_recaptcha_site_secret: ${{secrets.PRODUCTION_RECAPTCHA_SITE_SECRET}}
   TF_VAR_recpatcha_public: 6LfJDN4eAAAAAGvdRF7ZnQ7ciqdo1RQnQDFmh0VY
   TF_VAR_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
   TF_VAR_rds_db_password: ${{ secrets.PRODUCTION_DB_PASSWORD }}
