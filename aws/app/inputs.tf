@@ -111,7 +111,7 @@ variable "recaptcha_secret" {
 
 variable "recaptcha_public" {
   description = "reCAPTCHA public key, client side"
-  type = "string"
+  type = string
 }
 
 variable "kms_key_cloudwatch_arn" {
