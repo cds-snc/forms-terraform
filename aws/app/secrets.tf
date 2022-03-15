@@ -73,5 +73,5 @@ resource "aws_secretsmanager_secret" "recaptcha_secret" {
 
 resource "aws_secretsmanager_secret_version" "recaptcha_secret" {
   secret_id     = aws_secretsmanager_secret.recaptcha_secret.id
-  secret_string = var.recaptcha_site_secret
+  secret_string = var.recaptcha_secret
 }
