@@ -106,12 +106,12 @@ variable "google_client_secret" {
 
 variable "recaptcha_secret" {
   description = "Secret Site Key for reCAPTCHA"
-  type = string
+  type        = string
 }
 
 variable "recaptcha_public" {
   description = "reCAPTCHA public key, client side"
-  type = string
+  type        = string
 }
 
 variable "kms_key_cloudwatch_arn" {
