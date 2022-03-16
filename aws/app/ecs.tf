@@ -23,25 +23,26 @@ data "template_file" "form_viewer_task" {
   template = file("ecs_task/form_viewer.json")
 
   vars = {
-    image                    = var.ecr_repository_url
-    awslogs-group            = aws_cloudwatch_log_group.forms.name
-    awslogs-region           = var.region
-    awslogs-stream-prefix    = "ecs-${var.ecs_form_viewer_name}"
-    metric_provider          = var.metric_provider
-    tracer_provider          = var.tracer_provider
-    notify_api_key           = aws_secretsmanager_secret_version.notify_api_key.arn
-    google_client_id         = aws_secretsmanager_secret_version.google_client_id.arn
-    google_client_secret     = aws_secretsmanager_secret_version.google_client_secret.arn
-    recaptcha_secret         = aws_secretsmanager_secret_version.recaptcha_secret.arn
-    recaptcha_public         = var.recaptcha_public
-    token_secret             = aws_secretsmanager_secret_version.token_secret.arn
-    database_url             = var.database_url_secret_arn
-    redis_url                = var.redis_url
-    nextauth_url             = "https://${var.domain}"
-    submission_api           = aws_lambda_function.submission.arn
-    templates_api            = aws_lambda_function.templates.arn
-    organizations_api        = aws_lambda_function.organizations.arn
-    reliability_file_storage = aws_s3_bucket.reliability_file_storage.id
+    image                           = var.ecr_repository_url
+    awslogs-group                   = aws_cloudwatch_log_group.forms.name
+    awslogs-region                  = var.region
+    awslogs-stream-prefix           = "ecs-${var.ecs_form_viewer_name}"
+    metric_provider                 = var.metric_provider
+    tracer_provider                 = var.tracer_provider
+    notify_api_key                  = aws_secretsmanager_secret_version.notify_api_key.arn
+    google_client_id                = aws_secretsmanager_secret_version.google_client_id.arn
+    google_client_secret            = aws_secretsmanager_secret_version.google_client_secret.arn
+    recaptcha_secret                = aws_secretsmanager_secret_version.recaptcha_secret.arn
+    recaptcha_public                = var.recaptcha_public
+    gc_notify_callback_bearer_token = aws_secretsmanager_secret_version.gc_notify_callback_bearer_token.arn
+    token_secret                    = aws_secretsmanager_secret_version.token_secret.arn
+    database_url                    = var.database_url_secret_arn
+    redis_url                       = var.redis_url
+    nextauth_url                    = "https://${var.domain}"
+    submission_api                  = aws_lambda_function.submission.arn
+    templates_api                   = aws_lambda_function.templates.arn
+    organizations_api               = aws_lambda_function.organizations.arn
+    reliability_file_storage        = aws_s3_bucket.reliability_file_storage.id
   }
 }
 

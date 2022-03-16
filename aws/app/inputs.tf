@@ -114,6 +114,12 @@ variable "recaptcha_public" {
   type        = string
 }
 
+variable "gc_notify_callback_bearer_token" {
+  description = "GC Notify callback bearer token which will be used as an authentication factor in GC Forms"
+  type        = string
+  sensitive   = true
+}
+
 variable "kms_key_cloudwatch_arn" {
   description = "CloudWatch KMS key ARN, used by the ECS task's CloudWatch log group"
   type        = string

@@ -75,3 +75,18 @@ resource "aws_secretsmanager_secret_version" "recaptcha_secret" {
   secret_id     = aws_secretsmanager_secret.recaptcha_secret.id
   secret_string = var.recaptcha_secret
 }
+
+resource "aws_secretsmanager_secret" "gc_notify_callback_bearer_token" {
+  name                    = "gc_notify_callback_bearer_token"
+  recovery_window_in_days = 0
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_secretsmanager_secret_version" "gc_notify_callback_bearer_token" {
+  secret_id     = aws_secretsmanager_secret.gc_notify_callback_bearer_token.id
+  secret_string = var.gc_notify_callback_bearer_token
+}

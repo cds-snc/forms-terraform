@@ -66,6 +66,7 @@ inputs = {
   notify_api_key                              = "local"
   rds_db_password                             = "local"
   slack_webhook                               = "local"
+  gc_notify_callback_bearer_token             = "local"
 
   sns_topic_alert_critical_arn  = ""
 
