@@ -54,7 +54,7 @@
         "value": "${reliability_file_storage}"
       },
       {
-        "name": "NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY",
+        "name": "RECAPTCHA_V3_SITE_KEY",
         "value": "${recaptcha_public}"
       }
     ],
