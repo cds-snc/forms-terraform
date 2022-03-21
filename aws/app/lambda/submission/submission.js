@@ -63,7 +63,7 @@ const saveData = async (submissionID, formData) => {
     TableName: "ReliabilityQueue",
     Item: {
       SubmissionID: { S: submissionID },
-      FormID: { S: formData.formID },
+      FormID: { S: `${formData.formID}` },
       SendReceipt: { S: "unknown" },
       FormSubmissionLanguage: {S: formData.language},
       FormData: { S: formSubmission },
