@@ -12,10 +12,11 @@ const formatError = (err) => {
 
 // Store questions with responses
 exports.handler = async function (event) {
-  try {
+  const submissionID = uuid.v4();
 
+  try {
     const formData = event;
-    const submissionID = uuid.v4();
+
     //-----------
     await saveData(submissionID, formData)
     const receiptID = await sendData(submissionID)
@@ -29,7 +30,7 @@ exports.handler = async function (event) {
     //----------
   } catch (err) {
     console.error(
-      `{"status": "failed", ""submissionID": "${
+      `{"status": "failed", "submissionID": "${
         submissionID ? submissionID : "Not yet created"
       }", "error": "${formatError(err)}"}`
     );
