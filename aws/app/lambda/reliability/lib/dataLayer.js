@@ -45,6 +45,7 @@ async function saveToVault(submissionID, formResponse, formID) {
       SubmissionID: { S: submissionID },
       FormID: { S: formIdentifier },
       FormSubmission: { S: formSubmission },
+      Retrieved: {N: "0"}
     },
   };
   //save data to DynamoDB
