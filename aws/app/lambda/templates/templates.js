@@ -114,7 +114,7 @@ exports.handler = async function (event) {
                 },
               },
             ]
-            : [formID, JSON.stringify(event.formConfig)];
+            : [JSON.stringify(event.formConfig), formID];
       } else {
         return { error: "Missing required Parameter" };
       }
