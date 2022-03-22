@@ -97,16 +97,19 @@ variable "egress_security_group_id" {
 variable "google_client_id" {
   description = "value"
   type        = string
+  sensitive   = true
 }
 
 variable "google_client_secret" {
   description = "value"
   type        = string
+  sensitive   = true
 }
 
 variable "recaptcha_secret" {
   description = "Secret Site Key for reCAPTCHA"
   type        = string
+  sensitive   = true
 }
 
 variable "recaptcha_public" {
@@ -152,6 +155,7 @@ variable "metric_provider" {
 variable "notify_api_key" {
   description = "The Notify API key used by the ECS task and Lambda"
   type        = string
+  sensitive   = true
 }
 
 variable "private_subnet_ids" {
