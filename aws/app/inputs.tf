@@ -176,7 +176,6 @@ variable "rds_db_name" {
 variable "redis_url" {
   description = "Redis URL used by the ECS task"
   type        = string
-  sensitive   = true
 }
 
 variable "sqs_reliability_queue_id" {
