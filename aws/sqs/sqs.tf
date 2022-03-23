@@ -42,3 +42,26 @@ resource "aws_sqs_queue" "deadletter_queue" {
     Terraform             = true
   }
 }
+
+resource "aws_sqs_queue" "reprocess_submission_queue" {
+  name                        = "reprocess_submission_queue.fifo"
+  delay_seconds               = 900 // 15 minutes
+  max_message_size            = 2048
+  message_retention_seconds   = 172800 // 2 days
+  fifo_queue                  = true
+  content_based_deduplication = true
+  receive_wait_time_seconds   = 0
+
+  kms_master_key_id                 = "alias/aws/sqs"
+  kms_data_key_reuse_period_seconds = 300
+
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.deadletter_queue.arn
+    maxReceiveCount     = 5
+  })
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}

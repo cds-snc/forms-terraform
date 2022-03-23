@@ -66,6 +66,7 @@ inputs = {
   notify_api_key                              = "local"
   rds_db_password                             = "local"
   slack_webhook                               = "local"
+  gc_notify_callback_bearer_token             = "local"
 
   sns_topic_alert_critical_arn  = ""
 
@@ -95,8 +96,9 @@ inputs = {
   database_secret_arn        = ""
   database_url_secret_arn    = ""
 
-  sqs_reliability_queue_arn = ""
-  sqs_reliability_queue_id  = ""
+  sqs_reliability_queue_arn          = ""
+  sqs_reliability_queue_id           = ""
+  sqs_reprocess_submission_queue_arn = ""
 }
 
 remote_state {

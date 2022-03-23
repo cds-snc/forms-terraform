@@ -9,6 +9,11 @@ resource "aws_dynamodb_table" "reliability_queue" {
     type = "S"
   }
 
+  ttl {
+    enabled        = true
+    attribute_name = "TTL"
+  }
+
   server_side_encryption {
     enabled     = true
     kms_key_arn = var.kms_key_dynamodb_arn
