@@ -19,6 +19,11 @@ resource "aws_sqs_queue" "reliability_queue" {
     maxReceiveCount     = 5
   })
 
+  redrive_allow_policy = jsonencode({
+    redrivePermission = "byQueue",
+    sourceQueueArns   = ["${aws_sqs_queue.deadletter_queue.arn}"]
+  })
+
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
@@ -58,6 +63,11 @@ resource "aws_sqs_queue" "reprocess_submission_queue" {
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.deadletter_queue.arn
     maxReceiveCount     = 5
+  })
+
+  redrive_allow_policy = jsonencode({
+    redrivePermission = "byQueue",
+    sourceQueueArns   = ["${aws_sqs_queue.deadletter_queue.arn}"]
   })
 
   tags = {

@@ -49,6 +49,7 @@ resource "aws_lambda_function" "reliability" {
   function_name = "Reliability"
   role          = aws_iam_role.lambda.arn
   handler       = "reliability.handler"
+  timeout       = 300
 
   source_code_hash = data.archive_file.reliability_main.output_base64sha256
 
