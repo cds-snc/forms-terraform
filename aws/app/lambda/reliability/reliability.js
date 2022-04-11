@@ -17,12 +17,13 @@ exports.handler = async function (event) {
       formID: messageData.Item?.FormID.S ?? null,
       sendReceipt: messageData.Item?.SendReceipt.S ?? null,
       language: messageData.Item?.FormSubmissionLanguage.S ?? "en",
+      createdAt: messageData.Item?.CreatedAt.N ?? null,
       formSubmission: messageData.Item?.FormData.S
           ? JSON.parse(messageData.Item?.FormData.S)
           : null,
     }
 
-    const {submissionID, formSubmission, formID, sendReceipt, language} = processedMessageData
+    const {submissionID, formSubmission, formID, sendReceipt, createdAt, language} = processedMessageData
     submissionIDPlaceholder = submissionID;
     // Check if form data exists or was already processed.
     if (formSubmission === null || typeof formSubmission === "undefined") {
@@ -39,9 +40,9 @@ exports.handler = async function (event) {
 
     /// process submission to vault or Notify
     if (formSubmission.submission.vault) {
-      return await sendToVault(submissionID, sendReceipt, formSubmission, formID, message);
+      return await sendToVault(submissionID, sendReceipt, formSubmission, formID, language, createdAt);
     } else {
-      return await sendToNotify(submissionID, sendReceipt, formSubmission, language,message);
+      return await sendToNotify(submissionID, sendReceipt, formSubmission, language, createdAt);
     }
   } catch(err) {
     console.error(
@@ -72,7 +73,7 @@ const getFormTemplate = async (formID) => {
       const decoder = new TextDecoder();
       const payload = decoder.decode(response.Payload);
       if (response.FunctionError) {
-        cosole.error("Lambda Template Client not successful");
+        console.error("Lambda Template Client not successful");
         return null;
       } else {
         console.info("Lambda Template Client successfully triggered");

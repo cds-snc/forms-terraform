@@ -1,7 +1,7 @@
 const json2md = require("json2md");
 const { extractFormData } = require("dataLayer");
 
-module.exports = (formResponse, language) => {
+module.exports = (formResponse, submissionID, language, createdAt) => {
 
   const title = `${language === "fr" ? (formResponse.form.emailSubjectFr
       ? formResponse.form.emailSubjectFr
@@ -14,10 +14,19 @@ module.exports = (formResponse, language) => {
     return { p: item };
   });
 
-  // use Notify lang attribute to denote the language https://notification.canada.ca/format
-  const emailBody = language === "fr" ?
-      "[[fr]]\n" + json2md([{ h1: title }, mdBody])+ "\n[[/fr]]":
-      "[[en]]\n" + json2md([{ h1: title }, mdBody])+ "\n[[/en]]";
+  let emailMarkdown = json2md([{ h1: title }, mdBody]);
+  const isoCreatedAtString = new Date(parseInt(createdAt)).toISOString();
 
-  return emailBody;
+
+  // Using language attribute tags https://notification.canada.ca/format
+  // This is done so screen readers can read in the correct voice
+  if (language === "fr"){
+    emailMarkdown =
+        `[[fr]]\n${emailMarkdown}\nDate de soumission: ${isoCreatedAtString}\nID: ${submissionID}\n[[/fr]]`;
+  }else{
+    emailMarkdown =
+        `[[en]]\n${emailMarkdown}\nSubmission Date: ${isoCreatedAtString}\nID: ${submissionID}\n[[/en]]`;
+  }
+
+  return emailMarkdown
 };
