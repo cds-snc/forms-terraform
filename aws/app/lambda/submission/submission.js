@@ -60,6 +60,7 @@ const saveData = async (submissionID, formData) => {
   const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
 
   const expiringTime = (Math.floor(Date.now() / 1000) + 172800).toString(); // expire after 48 hours
+  const timeStamp = Date.now().toString()
 
   const DBParams = {
     TableName: "ReliabilityQueue",
@@ -69,6 +70,7 @@ const saveData = async (submissionID, formData) => {
       SendReceipt: { S: "unknown" },
       FormSubmissionLanguage: {S: formData.language},
       FormData: { S: formSubmission },
+      CreatedAt: { N: timeStamp },
       TTL: { N: expiringTime },
     },
   };

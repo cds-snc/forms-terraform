@@ -14,13 +14,13 @@ async function getSubmission(message) {
     Key: {
       SubmissionID: { S: message.submissionID },
     },
-    ProjectExpression: "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage",
+    ProjectExpression: "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt",
   };
   //save data to DynamoDB
   return await db.send(new GetItemCommand(DBParams));
 }
 
-async function saveToVault(submissionID, formResponse, formID) {
+async function saveToVault(submissionID, formResponse, formID, language, createdAt) {
   const db = new DynamoDBClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566": undefined });
   const formSubmission =
     typeof formResponse === "string" ? formResponse : JSON.stringify(formResponse);
@@ -33,6 +33,8 @@ async function saveToVault(submissionID, formResponse, formID) {
       SubmissionID: { S: submissionID },
       FormID: { S: formIdentifier },
       FormSubmission: { S: formSubmission },
+      FormSubmissionLanguage: {S: language},
+      CreatedAt: {N: `${createdAt}`},
       Retrieved: {N: "0"}
     },
   };
