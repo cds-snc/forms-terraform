@@ -218,3 +218,19 @@ variable "dynamodb_vault_stream_arn" {
   description = "Vault DynamoDB stream ARN"
   type        = string
 }
+
+variable "gc_notify_url" {
+  description = "GC Notify URL"
+  type        = string
+}
+
+variable "gc_template_id" {
+  description = "GC Notify send a notification templateID"
+  type        = string
+}
+
+variable "gc_temp_token_template_id" {
+  description = "GC Notify temporary token templateID"
+  type        = string
+}
+

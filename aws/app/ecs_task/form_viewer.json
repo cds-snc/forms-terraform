@@ -56,6 +56,18 @@
       {
         "name": "RECAPTCHA_V3_SITE_KEY",
         "value": "${recaptcha_public}"
+      },
+      {
+        "name": "GC_NOTIFY_URL",
+        "value": "${gc_notify_url}"
+      },
+      {
+        "name": "TEMPORAY_TOKEN_TEMPLATE_ID",
+        "value": "${gc_temp_token_template_id}"
+      },
+      {
+        "name": "TEMPLATE_ID",
+        "value": "${gc_template_id}"
       }
     ],
     "secrets": [
