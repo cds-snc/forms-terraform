@@ -5,19 +5,19 @@ locals {
 
 
 module "oidc" {
-  source = "github.com/cds-snc/terraform-modules?ref=v2.0.1//gh_oidc_role"
-  billing_tag_key = var.billing_tag_key
+  source            = "github.com/cds-snc/terraform-modules?ref=v2.0.1//gh_oidc_role"
+  billing_tag_key   = var.billing_tag_key
   billing_tag_value = var.billing_tag_value
   roles = [
     {
       name : local.admin_name,
-      repo_name: "forms-terraform"
-      claim: "ref:refs/heads/main"
+      repo_name : "forms-terraform"
+      claim : "ref:refs/heads/main"
     },
     {
       name : local.plan_name,
-      repo_name: "forms-terraform"
-      claim: "*"
+      repo_name : "forms-terraform"
+      claim : "*"
     }
   ]
 
@@ -37,9 +37,9 @@ resource "aws_iam_role_policy_attachment" "readonly" {
 ## Gives the plan role access to all secrets in the repo this is needed since ReadOnly doesn't provide that access
 ## This also gives the plan role the ability to the state bucket and the dynamodb lock table.
 module "attach_tf_plan_policy" {
-  source            = "github.com/cds-snc/terraform-modules?ref=v2.0.1//attach_tf_plan_policy"
-  account_id        = var.account_id
-  role_name         = local.plan_name
+  source     = "github.com/cds-snc/terraform-modules?ref=v2.0.1//attach_tf_plan_policy"
+  account_id = var.account_id
+  role_name  = local.plan_name
   # This needs to match the data in the root terragrunt.hcl
   bucket_name       = "forms-terraform-{var.env}-tf"
   lock_table_name   = "tfstate-lock"
