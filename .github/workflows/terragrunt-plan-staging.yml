@@ -25,9 +25,9 @@ env:
   TF_VAR_rds_db_password: ${{ secrets.STAGING_DB_PASSWORD }}
   TF_VAR_slack_webhook: ${{ secrets.STAGING_SLACK_WEBHOOK }}
   TF_VAR_gc_notify_callback_bearer_token: ${{ secrets.STAGING_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
-  TF_VAR_gc_notify_url: https://staging.notification.cdssandbox.xyz
-  TF_VAR_gc_temp_token_template_id: 7199f6c9-41de-4941-85be-6fa6919b05d9
-  TF_VAR_gc_template_id: 48e64069-3dd7-4aa4-830d-d70e76732ce4
+  TF_VAR_gc_notify_url: https://notification.canada.ca
+  TF_VAR_gc_temp_token_template_id: b6885d06-d10a-422a-973f-05e274d9aa86
+  TF_VAR_gc_template_id: 8d597a1b-a1d6-4e3c-8421-042a2b4158b7
 
 jobs:
   terragrunt-plan:
