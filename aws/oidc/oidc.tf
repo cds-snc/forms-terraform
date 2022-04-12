@@ -44,7 +44,7 @@ module "attach_tf_plan_policy" {
   bucket_name       = "forms-terraform-{var.env}-tf"
   lock_table_name   = "tfstate-lock"
   billing_tag_key   = var.billing_tag_key
-  billing_tag_value = var.billing_code
+  billing_tag_value = var.billing_tag_value
 }
 
 data "aws_iam_policy" "admin" {
