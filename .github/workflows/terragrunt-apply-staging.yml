@@ -95,6 +95,9 @@ jobs:
             sqs:
               - 'aws/sqs/**'
               - 'env/staging/sqs/**'
+            oidc:
+              - 'aws/oidc/**'
+              - 'env/staging/oidc/**'
 
       # No dependencies
       - name: Terragrunt apply ecr
@@ -120,6 +123,11 @@ jobs:
       - name: Terragrunt apply sns
         if: ${{ steps.filter.outputs.sns == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/staging/sns
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply oidc
+        if: ${{ steps.filter.outputs.oidc == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/staging/oidc
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on kms

@@ -103,6 +103,9 @@ jobs:
             sqs:
               - 'aws/sqs/**'
               - 'env/staging/sqs/**'
+            oidc:
+              - 'aws/oidc/**'
+              - 'env/staging/oidc/**'
 
       # No dependencies
       - name: Terragrunt plan ecr
@@ -255,3 +258,13 @@ jobs:
       - name: Remove Lambda load_testing deps
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
         run: ./aws/load_testing/lambda/deps.sh delete
+
+      - name: Terragrunt plan OIDC
+        if: ${{ steps.filter.outputs.oidc == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/staging/oidc"
+          comment-delete: "true"
+          comment-title: "Staging: OIDC"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
