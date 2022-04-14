@@ -219,11 +219,6 @@ variable "dynamodb_vault_stream_arn" {
   type        = string
 }
 
-variable "gc_notify_url" {
-  description = "GC Notify URL"
-  type        = string
-}
-
 variable "gc_template_id" {
   description = "GC Notify send a notification templateID"
   type        = string

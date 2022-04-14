@@ -43,7 +43,6 @@ data "template_file" "form_viewer_task" {
     templates_api                   = aws_lambda_function.templates.arn
     organizations_api               = aws_lambda_function.organizations.arn
     reliability_file_storage        = aws_s3_bucket.reliability_file_storage.id
-    gc_notify_url                   = var.gc_notify_url
     gc_temp_token_template_id       = var.gc_temp_token_template_id
     gc_template_id                  = var.gc_template_id
   }
