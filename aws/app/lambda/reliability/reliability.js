@@ -81,13 +81,11 @@ const getFormTemplate = async (formID) => {
 
         const response = JSON.parse(payload);
         const { records } = response.data;
-        if (records?.length === 1 && records[0].formConfig.form) {          
-          return {
-            securityAttribute: records[0].formConfig.securityAttribute,
-            formID,                       
-            ...records[0].formConfig.form,
-          };
-        }
+        if (records?.length === 1 && records[0].formConfig.form) {    
+          const formConfig = {formID, ...records[0].formConfig.form} 
+          formConfig['securityAttribute'] = records[0].formConfig.hasOwnProperty('securityAttribut') ? records[0].formConfig.securityAttribute : null;
+          return formConfig;
+        }       
         return null;
       }
     })
