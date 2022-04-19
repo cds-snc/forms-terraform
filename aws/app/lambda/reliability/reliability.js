@@ -83,7 +83,7 @@ const getFormTemplate = async (formID) => {
         const { records } = response.data;
         if (records?.length === 1 && records[0].formConfig.form) {    
           const formConfig = {formID, ...records[0].formConfig.form} 
-          formConfig['securityAttribute'] = records[0].formConfig.hasOwnProperty('securityAttribut') ? records[0].formConfig.securityAttribute : null;
+          formConfig.securityAttribute = records[0].formConfig.hasOwnProperty('securityAttribut') ? records[0].formConfig.securityAttribute : null;
           return formConfig;
         }       
         return null;

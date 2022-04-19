@@ -52,11 +52,6 @@ resource "aws_dynamodb_table" "vault" {
     type = "N"
   }
 
-  attribute {
-    name = "SecurityAttribute"
-    type = "S"
-  }
-
   global_secondary_index {
     name            = "retrieved-index"
     hash_key        = "Retrieved"
