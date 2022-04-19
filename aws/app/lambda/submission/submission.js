@@ -72,6 +72,7 @@ const saveData = async (submissionID, formData) => {
       FormData: { S: formSubmission },
       CreatedAt: { N: timeStamp },
       TTL: { N: expiringTime },
+      SecurityAttribute: { S: `${formData.securityAttribute}`}
     },
   };
   //save data to DynamoDB

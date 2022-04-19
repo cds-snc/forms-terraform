@@ -35,7 +35,8 @@ async function saveToVault(submissionID, formResponse, formID, language, created
       FormSubmission: { S: formSubmission },
       FormSubmissionLanguage: {S: language},
       CreatedAt: {N: `${createdAt}`},
-      Retrieved: {N: "0"}
+      Retrieved: {N: "0"},
+      SecurityAttribute: { S: `${formData.securityAttribute}`}
     },
   };
   //save data to DynamoDB
