@@ -10,6 +10,7 @@ resource "aws_sqs_queue" "reliability_queue" {
   fifo_queue                  = true
   content_based_deduplication = true
   receive_wait_time_seconds   = 0
+  visibility_timeout_seconds  = 400
 
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
@@ -51,6 +52,7 @@ resource "aws_sqs_queue" "reprocess_submission_queue" {
   fifo_queue                  = true
   content_based_deduplication = true
   receive_wait_time_seconds   = 0
+  visibility_timeout_seconds  = 400
 
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
