@@ -31,7 +31,7 @@ Parameters:
   TEMPLATE_ID:
     Type: String
     Default: "8d597a1b-a1d6-4e3c-8421-042a2b4158b7"
-  TEMPORAY_TOKEN_TEMPLATE_ID:
+  TEMPORARY_TOKEN_TEMPLATE_ID:
     Type: String
     Default: "b6885d06-d10a-422a-973f-05e274d9aa86"
 
