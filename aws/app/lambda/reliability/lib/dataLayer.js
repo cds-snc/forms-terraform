@@ -31,7 +31,7 @@ async function saveToVault(submissionID, formSubmission, formID, language, creat
 
   const formIdentifier = typeof formID === "string" ? formID : formID.toString();
   //get the security attribute from the configBag attached to the formSubmission.
-  const securityAttribute = "form" in formSubmission ? formSubmission.form.securityAttribute : null;
+  const securityAttribute = "form" in formSubmission ? formSubmission.form.securityAttribute : "";
 
   const DBParams = {
     TableName: "Vault",
