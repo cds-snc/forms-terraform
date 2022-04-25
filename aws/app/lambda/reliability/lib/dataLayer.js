@@ -28,9 +28,6 @@ async function saveToVault(submissionID, formSubmission, formID, language, creat
     typeof formSubmissionData === "string" ? formSubmissionData : JSON.stringify(formSubmissionData);
 
   const formIdentifier = typeof formID === "string" ? formID : formID.toString();
-  //get the security attribute from the configBag attached to the formSubmission.
-  const securityAttribute = formSubmission?.form ? formSubmission.form.securityAttribute : "";
-
   const DBParams = {
     TableName: "Vault",
     Item: {
@@ -40,7 +37,8 @@ async function saveToVault(submissionID, formSubmission, formID, language, creat
       FormSubmissionLanguage: {S: language},
       CreatedAt: {N: `${createdAt}`},
       Retrieved: {N: "0"},
-      SecurityAttribute: { S: securityAttribute}
+      //get the security attribute from the configBag attached to the formSubmission.
+      SecurityAttribute: { S: formSubmission?.form ? formSubmission.form.securityAttribute : ""}
     },
   };
   //save data to DynamoDB

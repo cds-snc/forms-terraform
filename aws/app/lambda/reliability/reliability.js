@@ -82,8 +82,10 @@ const getFormTemplate = async (formID) => {
         const response = JSON.parse(payload);
         const { records } = response.data;
         if (records?.length === 1 && records[0].formConfig.form) {
-          const formTemplate = {formID, ...records[0].formConfig.form} 
-          formTemplate.securityAttribute = records[0].formConfig?.securityAttribute ?? "";
+          const formTemplate = {formID,
+            ...records[0].formConfig.form,
+            securityAttribute: records[0].formConfig?.securityAttribute ?? ""
+          }           
           return formTemplate;
         }
         return null;
