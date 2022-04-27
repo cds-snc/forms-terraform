@@ -84,7 +84,7 @@ const getFormTemplate = async (formID) => {
         if (records?.length === 1 && records[0].formConfig.form) {
           const formTemplate = {formID,
             ...records[0].formConfig.form,
-            securityAttribute: records[0].formConfig?.securityAttribute ?? ""
+            securityAttribute: records[0].formConfig.securityAttribute ?? ""
           }           
           return formTemplate;
         }
