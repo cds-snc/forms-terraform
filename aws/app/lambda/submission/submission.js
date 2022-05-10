@@ -57,6 +57,9 @@ const sendData = async (submissionID) => {
 };
 
 const saveData = async (submissionID, formData) => {
+  const securityAttribute = formData.securityAttribute;
+  delete formData.securityAttribute
+
   const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
 
   const expiringTime = (Math.floor(Date.now() / 1000) + 172800).toString(); // expire after 48 hours
@@ -72,6 +75,7 @@ const saveData = async (submissionID, formData) => {
       FormData: { S: formSubmission },
       CreatedAt: { N: timeStamp },
       TTL: { N: expiringTime },
+      SecurityAttribute: { S: securityAttribute},
     },
   };
   //save data to DynamoDB

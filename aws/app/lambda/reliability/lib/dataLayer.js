@@ -20,22 +20,25 @@ async function getSubmission(message) {
   return await db.send(new GetItemCommand(DBParams));
 }
 
-async function saveToVault(submissionID, formResponse, formID, language, createdAt) {
+async function saveToVault(submissionID, formSubmission, formID, language, createdAt) {
   const db = new DynamoDBClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566": undefined });
-  const formSubmission =
-    typeof formResponse === "string" ? formResponse : JSON.stringify(formResponse);
+  //get files from submission object.
+  let formSubmissionData = formSubmission.responses ?? formSubmission;
+  formSubmissionData =
+    typeof formSubmissionData === "string" ? formSubmissionData : JSON.stringify(formSubmissionData);
 
   const formIdentifier = typeof formID === "string" ? formID : formID.toString();
-
   const DBParams = {
     TableName: "Vault",
     Item: {
       SubmissionID: { S: submissionID },
       FormID: { S: formIdentifier },
-      FormSubmission: { S: formSubmission },
+      FormSubmission: { S: formSubmissionData },
       FormSubmissionLanguage: {S: language},
       CreatedAt: {N: `${createdAt}`},
-      Retrieved: {N: "0"}
+      Retrieved: {N: "0"},
+      //get the security attribute from the configBag attached to the formSubmission.
+      SecurityAttribute: { S: formSubmission.form ? formSubmission.form.securityAttribute : ""}
     },
   };
   //save data to DynamoDB
