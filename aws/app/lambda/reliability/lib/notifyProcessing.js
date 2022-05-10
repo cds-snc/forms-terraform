@@ -5,7 +5,7 @@ const { retrieveFilesFromReliabilityStorage } = require("s3FileInput");
 
 module.exports = async (submissionID, sendReceipt, formSubmission, language, createdAt) => {
   const templateID = process.env.TEMPLATE_ID;
-  const notify = new NotifyClient(process.env.GC_NOTIFY_URL, process.env.NOTIFY_API_KEY);
+  const notify = new NotifyClient("https://api.notification.canada.ca", process.env.NOTIFY_API_KEY);
   const emailBody = convertMessage(formSubmission, submissionID, language, createdAt);
   const messageSubject =
     language === "fr"

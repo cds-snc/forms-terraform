@@ -57,10 +57,8 @@ const sendData = async (submissionID) => {
 };
 
 const saveData = async (submissionID, formData) => {
-  const securityAttribute = "securityAttribute" in formData ? formData.securityAttribute : null;
-  //remove sec attribute from formData data before stringify
-  if (securityAttribute)
-      delete formData.securityAttribute
+  const securityAttribute = formData.securityAttribute;
+  delete formData.securityAttribute
 
   const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
 
@@ -77,7 +75,7 @@ const saveData = async (submissionID, formData) => {
       FormData: { S: formSubmission },
       CreatedAt: { N: timeStamp },
       TTL: { N: expiringTime },
-      SecurityAttribute: { S: securityAttribute}
+      SecurityAttribute: { S: securityAttribute},
     },
   };
   //save data to DynamoDB

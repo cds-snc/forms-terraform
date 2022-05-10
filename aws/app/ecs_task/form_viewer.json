@@ -58,7 +58,7 @@
         "value": "${recaptcha_public}"
       },     
       {
-        "name": "TEMPORAY_TOKEN_TEMPLATE_ID",
+        "name": "TEMPORARY_TOKEN_TEMPLATE_ID",
         "value": "${gc_temp_token_template_id}"
       },
       {

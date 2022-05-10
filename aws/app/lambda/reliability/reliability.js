@@ -21,7 +21,11 @@ exports.handler = async function (event) {
       formSubmission: messageData.Item?.FormData.S
           ? JSON.parse(messageData.Item?.FormData.S)
           : null,
+<<<<<<< HEAD
       securityAttribute: messageData.Item?.SecurityAttribute.S ?? null,
+=======
+      securityAttribute: messageData.Item?.SecurityAttribute.S ?? "Unclassified",
+>>>>>>> 7a826fe408ed37f753b7bb390a6a796fb5e2f350
     }
 
     const {submissionID, formSubmission, formID, sendReceipt, createdAt, language} = processedMessageData
@@ -81,11 +85,13 @@ const getFormTemplate = async (formID) => {
 
         const response = JSON.parse(payload);
         const { records } = response.data;
-        if (records?.length === 1 && records[0].formConfig.form) {    
-          const formConfig = {formID, ...records[0].formConfig.form} 
-          formConfig.securityAttribute = records[0].formConfig.hasOwnProperty('securityAttribute') ? records[0].formConfig.securityAttribute : null;
-          return formConfig;
-        }       
+        if (records?.length === 1 && records[0].formConfig.form) {
+          const formTemplate = {formID,
+            ...records[0].formConfig.form,
+            securityAttribute: records[0].formConfig.securityAttribute ?? "Unclassified"
+          }           
+          return formTemplate;
+        }
         return null;
       }
     })
