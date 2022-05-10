@@ -38,7 +38,7 @@ async function saveToVault(submissionID, formSubmission, formID, language, creat
       CreatedAt: {N: `${createdAt}`},
       Retrieved: {N: "0"},
       //get the security attribute from the configBag attached to the formSubmission.
-      SecurityAttribute: { S: formSubmission.form ? formSubmission.form.securityAttribute : ""}
+      SecurityAttribute: { S: formSubmission.form ? formSubmission.form.securityAttribute : "Unclassified"}
     },
   };
   //save data to DynamoDB

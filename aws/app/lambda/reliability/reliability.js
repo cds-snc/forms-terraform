@@ -21,7 +21,7 @@ exports.handler = async function (event) {
       formSubmission: messageData.Item?.FormData.S
           ? JSON.parse(messageData.Item?.FormData.S)
           : null,
-      securityAttribute: messageData.Item?.SecurityAttribute.S ?? "",
+      securityAttribute: messageData.Item?.SecurityAttribute.S ?? "Unclassified",
     }
 
     const {submissionID, formSubmission, formID, sendReceipt, createdAt, language} = processedMessageData
@@ -84,7 +84,7 @@ const getFormTemplate = async (formID) => {
         if (records?.length === 1 && records[0].formConfig.form) {
           const formTemplate = {formID,
             ...records[0].formConfig.form,
-            securityAttribute: records[0].formConfig.securityAttribute ?? ""
+            securityAttribute: records[0].formConfig.securityAttribute ?? "Unclassified"
           }           
           return formTemplate;
         }
