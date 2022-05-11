@@ -12,6 +12,7 @@ exports.handler = async function (event) {
   try{
 
     const messageData = await getSubmission(message)
+    const securityAttribute = messageData.Item?.SecurityAttribute.S ?? "Unclassified";
     const processedMessageData = {
       submissionID: messageData.Item?.SubmissionID.S ?? message.submissionID,
       formID: messageData.Item?.FormID.S ?? null,
@@ -21,7 +22,7 @@ exports.handler = async function (event) {
       formSubmission: messageData.Item?.FormData.S
           ? JSON.parse(messageData.Item?.FormData.S)
           : null,
-      securityAttribute: messageData.Item?.SecurityAttribute.S ?? "Unclassified",
+      securityAttribute: securityAttribute,
     }
 
     const {submissionID, formSubmission, formID, sendReceipt, createdAt, language} = processedMessageData
@@ -41,7 +42,7 @@ exports.handler = async function (event) {
 
     /// process submission to vault or Notify
     if (formSubmission.submission.vault) {
-      return await sendToVault(submissionID, sendReceipt, formSubmission, formID, language, createdAt);
+      return await sendToVault(submissionID, sendReceipt, formSubmission, formID, language, createdAt , securityAttribute);
     } else {
       return await sendToNotify(submissionID, sendReceipt, formSubmission, language, createdAt);
     }
@@ -82,11 +83,9 @@ const getFormTemplate = async (formID) => {
         const response = JSON.parse(payload);
         const { records } = response.data;
         if (records?.length === 1 && records[0].formConfig.form) {
-          const formTemplate = {formID,
-            ...records[0].formConfig.form,
-            securityAttribute: records[0].formConfig.securityAttribute ?? "Unclassified"
-          }           
-          return formTemplate;
+          return {formID,
+            ...records[0].formConfig.form            
+          };   
         }
         return null;
       }

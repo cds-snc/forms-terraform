@@ -63,8 +63,7 @@ const saveData = async (submissionID, formData) => {
   const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
 
   const expiringTime = (Math.floor(Date.now() / 1000) + 172800).toString(); // expire after 48 hours
-  const timeStamp = Date.now().toString()
- 
+  const timeStamp = Date.now().toString() 
   const DBParams = {
     TableName: "ReliabilityQueue",
     Item: {
