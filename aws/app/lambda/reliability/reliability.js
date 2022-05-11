@@ -12,7 +12,6 @@ exports.handler = async function (event) {
   try{
 
     const messageData = await getSubmission(message)
-    const securityAttribute = messageData.Item?.SecurityAttribute.S ?? "Unclassified";
     const processedMessageData = {
       submissionID: messageData.Item?.SubmissionID.S ?? message.submissionID,
       formID: messageData.Item?.FormID.S ?? null,
@@ -22,10 +21,10 @@ exports.handler = async function (event) {
       formSubmission: messageData.Item?.FormData.S
           ? JSON.parse(messageData.Item?.FormData.S)
           : null,
-      securityAttribute: securityAttribute,
+      securityAttribute: messageData.Item?.SecurityAttribute.S ?? "Unclassified",
     }
 
-    const {submissionID, formSubmission, formID, sendReceipt, createdAt, language} = processedMessageData
+    const {submissionID, formSubmission, formID, sendReceipt, createdAt, language, securityAttribute} = processedMessageData
     submissionIDPlaceholder = submissionID;
     // Check if form data exists or was already processed.
     if (formSubmission === null || typeof formSubmission === "undefined") {
