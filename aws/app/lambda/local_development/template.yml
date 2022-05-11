@@ -37,7 +37,7 @@ Parameters:
 
 Globals:
   Function:
-    Runtime: nodejs12.x
+    Runtime: nodejs14.x
     Tags:
       Environment:
         Ref: Environment
@@ -88,7 +88,6 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-reliability
       CodeUri: ../reliability/
       Handler: reliability.handler
-      Runtime: nodejs14.x
       Timeout: 300
       Layers:
         - Ref: ReliabilityLayer
