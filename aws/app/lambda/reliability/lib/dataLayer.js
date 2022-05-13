@@ -8,24 +8,36 @@ const {
 const REGION = process.env.REGION;
 
 async function getSubmission(message) {
-  const db = new DynamoDBClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566": undefined });
+  const db = new DynamoDBClient({
+    region: REGION,
+    endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+  });
   const DBParams = {
     TableName: "ReliabilityQueue",
     Key: {
       SubmissionID: { S: message.submissionID },
     },
-    ProjectExpression: "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt",
+    ProjectExpression:
+      "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt,SecurityAttribute",
   };
   //save data to DynamoDB
   return await db.send(new GetItemCommand(DBParams));
 }
 
-async function saveToVault(submissionID, formSubmission, formID, language, createdAt) {
-  const db = new DynamoDBClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566": undefined });
-  //get files from submission object.
-  let formSubmissionData = formSubmission.responses ?? formSubmission;
-  formSubmissionData =
-    typeof formSubmissionData === "string" ? formSubmissionData : JSON.stringify(formSubmissionData);
+async function saveToVault(
+  submissionID,
+  formResponse,
+  formID,
+  language,
+  createdAt,
+  securityAttribute
+) {
+  const db = new DynamoDBClient({
+    region: REGION,
+    endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+  });
+  const formSubmission =
+    typeof formResponse === "string" ? formResponse : JSON.stringify(formResponse);
 
   const formIdentifier = typeof formID === "string" ? formID : formID.toString();
   const DBParams = {
@@ -33,12 +45,11 @@ async function saveToVault(submissionID, formSubmission, formID, language, creat
     Item: {
       SubmissionID: { S: submissionID },
       FormID: { S: formIdentifier },
-      FormSubmission: { S: formSubmissionData },
-      FormSubmissionLanguage: {S: language},
-      CreatedAt: {N: `${createdAt}`},
-      Retrieved: {N: "0"},
-      //get the security attribute from the configBag attached to the formSubmission.
-      SecurityAttribute: { S: formSubmission.form ? formSubmission.form.securityAttribute : "Unclassified"}
+      FormSubmission: { S: formSubmission },
+      FormSubmissionLanguage: { S: language },
+      CreatedAt: { N: `${createdAt}` },
+      Retrieved: { N: "0" },
+      SecurityAttribute: { S: securityAttribute },
     },
   };
   //save data to DynamoDB

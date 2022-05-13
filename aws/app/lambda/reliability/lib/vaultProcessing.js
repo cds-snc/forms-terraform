@@ -1,10 +1,10 @@
 const { saveToVault, extractFileInputResponses } = require("dataLayer");
 const { copyFilesFromReliabilityToVaultStorage } = require("s3FileInput");
 
-module.exports = async (submissionID, sendReceipt, formSubmission, formID, language, createdAt) => {
+module.exports = async (submissionID, sendReceipt, formSubmission, formID, language, createdAt, securityAttribute) => {
   const fileInputPaths = extractFileInputResponses(formSubmission);
   return await copyFilesFromReliabilityToVaultStorage(fileInputPaths)
-    .then(async () => await saveToVault(submissionID, formSubmission, formID, language, createdAt))
+    .then(async () => await saveToVault(submissionID, formSubmission.responses, formID, language, createdAt, securityAttribute))
     .catch((err) => {
       throw new Error(`Saving to Vault error: ${formatErr(err)}`);
     })
