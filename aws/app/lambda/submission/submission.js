@@ -3,14 +3,28 @@ const { DynamoDBClient, PutItemCommand, UpdateItemCommand } = require("@aws-sdk/
 const uuid = require("uuid");
 
 const REGION = process.env.REGION;
-const db = new DynamoDBClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566": undefined});
-const sqs = new SQSClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL? "http://host.docker.internal:4566": undefined});
+const db = new DynamoDBClient({
+  region: REGION,
+  endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+});
+const sqs = new SQSClient({
+  region: REGION,
+  endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+});
 
 const formatError = (err) => {
   return typeof err === "object" ? JSON.stringify(err) : err;
 };
 
 // Store questions with responses
+
+/*
+Params:
+  formID - ID of form,
+  language - form submission language "fr" or "en",
+  submission - submission type: email, vault
+  responses - form responses: {formID, securityAttribute, questionID: answer}
+*/
 exports.handler = async function (event) {
   const submissionID = uuid.v4();
 
@@ -18,12 +32,12 @@ exports.handler = async function (event) {
     const formData = event;
 
     //-----------
-    await saveData(submissionID, formData)
-    const receiptID = await sendData(submissionID)
+    await saveData(submissionID, formData);
+    const receiptID = await sendData(submissionID);
     // Update DB entry for receipt ID
     await saveReceipt(submissionID, receiptID);
     console.log(
-        `{"status": "success", "sqsMessage": "${receiptID}", "submissionID": "${submissionID}"}`
+      `{"status": "success", "sqsMessage": "${receiptID}", "submissionID": "${submissionID}"}`
     );
     return { status: true };
 
@@ -58,23 +72,23 @@ const sendData = async (submissionID) => {
 
 const saveData = async (submissionID, formData) => {
   const securityAttribute = formData.securityAttribute ?? "Unclassified";
-  delete formData.securityAttribute
+  delete formData.securityAttribute;
 
   const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
 
   const expiringTime = (Math.floor(Date.now() / 1000) + 172800).toString(); // expire after 48 hours
-  const timeStamp = Date.now().toString() 
+  const timeStamp = Date.now().toString();
   const DBParams = {
     TableName: "ReliabilityQueue",
     Item: {
       SubmissionID: { S: submissionID },
       FormID: { S: `${formData.formID}` },
       SendReceipt: { S: "unknown" },
-      FormSubmissionLanguage: {S: formData.language},
+      FormSubmissionLanguage: { S: formData.language },
       FormData: { S: formSubmission },
       CreatedAt: { N: timeStamp },
       TTL: { N: expiringTime },
-      SecurityAttribute: { S: securityAttribute},
+      SecurityAttribute: { S: securityAttribute },
     },
   };
   //save data to DynamoDB
