@@ -23,13 +23,33 @@ async function getSubmission(message) {
   //save data to DynamoDB
   return await db.send(new GetItemCommand(DBParams));
 }
+/**
+ * Function that removes the submission from the Reliability Queue.
+ * @param {String} submissionID
+ * @returns
+ */
+
+async function removeSubmission(submissionID) {
+  const db = new DynamoDBClient({
+    region: REGION,
+    endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+  });
+  const DBParams = {
+    TableName: "ReliabilityQueue",
+    Key: {
+      SubmissionID: { S: submissionID },
+    },
+  };
+  //remove data fron DynamoDB
+  return await db.send(new DeleteItemCommand(DBParams));
+}
 
 /**
  * Function to update the TTL of a record in the ReliabilityQueue table
  * @param submissionID
  * @param formID
  */
-async function updateTTL(submissionID){
+async function updateTTL(submissionID) {
   const db = new DynamoDBClient({
     region: REGION,
     endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
@@ -43,17 +63,17 @@ async function updateTTL(submissionID){
     },
     UpdateExpression: "SET #ttl = :ttl",
     ExpressionAttributeNames: {
-      "#ttl": "TTL"
+      "#ttl": "TTL",
     },
     ExpressionAttributeValues: {
-      ":ttl":{
-        N : expiringTime
+      ":ttl": {
+        N: expiringTime,
       },
     },
-    ReturnValues: "NONE"
-  }
+    ReturnValues: "NONE",
+  };
 
-  return await db.send(new UpdateItemCommand(DBParams))
+  return await db.send(new UpdateItemCommand(DBParams));
 }
 
 async function saveToVault(
@@ -238,9 +258,10 @@ function formatError(err) {
 
 module.exports = {
   getSubmission,
+  removeSubmission,
   extractFileInputResponses,
   extractFormData,
   saveToVault,
   formatError,
-  updateTTL
+  updateTTL,
 };
