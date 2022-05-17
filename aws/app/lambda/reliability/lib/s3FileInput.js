@@ -7,11 +7,11 @@ const {
 
 const s3Client = new S3Client({
   region: process.env.REGION,
-  endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566": undefined,
-  forcePathStyle: process.env.AWS_SAM_LOCAL ? true: undefined
+  endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+  forcePathStyle: process.env.AWS_SAM_LOCAL ? true : undefined,
 });
 
-const environment = process.env.ENVIRONMENT || (process.env.AWS_SAM_LOCAL ? "local": "staging");
+const environment = process.env.ENVIRONMENT || (process.env.AWS_SAM_LOCAL ? "local" : "staging");
 const reliabilityBucketName = `forms-${environment}-reliability-file-storage`;
 const vaultBucketName = `forms-${environment}-vault-file-storage`;
 
@@ -75,7 +75,19 @@ async function copyFilesFromReliabilityToVaultStorage(filePaths) {
   }
 }
 
+async function removeFilesFromReliabilityStorage(filePaths) {
+  for (const filePath of filePaths) {
+    const commandInput = {
+      Bucket: reliabilityBucketName,
+      Key: filePath,
+    };
+
+    await s3Client.send(new DeleteObjectCommand(commandInput));
+  }
+}
+
 module.exports = {
   retrieveFilesFromReliabilityStorage,
   copyFilesFromReliabilityToVaultStorage,
+  removeFilesFromReliabilityStorage,
 };
