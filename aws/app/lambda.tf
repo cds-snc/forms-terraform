@@ -237,6 +237,60 @@ resource "aws_lambda_event_source_mapping" "vault_updated_item_stream" {
 }
 
 #
+# Dead letter queue consumer
+#
+
+data "archive_file" "dead_letter_queue_consumer_main" {
+  type        = "zip"
+  source_file = "lambda/dead_letter_queue_consumer/dead_letter_queue_consumer.js"
+  output_path = "/tmp/dead_letter_queue_consumer_main.zip"
+}
+
+data "archive_file" "dead_letter_queue_consumer_lib" {
+  type        = "zip"
+  source_dir  = "lambda/dead_letter_queue_consumer/"
+  excludes    = ["dead_letter_queue_consumer.js"]
+  output_path = "/tmp/dead_letter_queue_consumer_lib.zip"
+}
+
+resource "aws_lambda_function" "dead_letter_queue_consumer" {
+  filename      = "/tmp/dead_letter_queue_consumer_main.zip"
+  function_name = "DeadLetterQueueConsumer"
+  role          = aws_iam_role.lambda.arn
+  handler       = "dead_letter_queue_consumer.handler"
+
+  source_code_hash = data.archive_file.dead_letter_queue_consumer_main.output_base64sha256
+  runtime          = "nodejs14.x"
+  layers           = [aws_lambda_layer_version.dead_letter_queue_consumer_lib.arn]
+  timeout          = "300"
+
+  environment {
+    variables = {
+      REGION                              = var.region
+      SQS_DEAD_LETTER_QUEUE_URL           = var.sqs_dead_letter_queue_id
+      SQS_SUBMISSION_PROCESSING_QUEUE_URL = var.sqs_reliability_queue_id
+      SNS_ERROR_TOPIC_ARN                 = var.sns_topic_alert_critical_arn
+    }
+  }
+
+  tracing_config {
+    mode = "PassThrough"
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_lambda_layer_version" "dead_letter_queue_consumer_lib" {
+  filename            = "/tmp/dead_letter_queue_consumer_lib.zip"
+  layer_name          = "dead_letter_queue_consumer_node_packages"
+  source_code_hash    = data.archive_file.dead_letter_queue_consumer_lib.output_base64sha256
+  compatible_runtimes = ["nodejs14.x"]
+}
+
+#
 # Lambda permissions
 #
 resource "aws_lambda_permission" "submission" {
@@ -244,4 +298,12 @@ resource "aws_lambda_permission" "submission" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.submission.function_name
   principal     = aws_iam_role.forms.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_run_dead_letter_queue_consumer_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.dead_letter_queue_consumer.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.cron_4am_every_day.arn
 }

@@ -102,6 +102,7 @@ inputs = {
 
   gc_temp_token_template_id = "b6885d06-d10a-422a-973f-05e274d9aa86"
   gc_template_id = "8d597a1b-a1d6-4e3c-8421-042a2b4158b7"
+  sqs_dead_letter_queue_id           = ""
 }
 
 remote_state {

@@ -199,6 +199,11 @@ variable "sqs_reprocess_submission_queue_arn" {
   type        = string
 }
 
+variable "sqs_dead_letter_queue_id" {
+  description = "SQS dead letter queue ID"
+  type        = string
+}
+
 variable "tracer_provider" {
   description = "Tracer provider, used by the ECS task"
   type        = string
