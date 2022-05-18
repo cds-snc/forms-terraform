@@ -28,7 +28,3 @@ terragrunt apply --terragrunt-non-interactive -auto-approve
 printf "Creating the S3 buckets...\n"
 cd $basedir/env/local/app
 terragrunt apply --terragrunt-non-interactive -auto-approve
-
-printf "Installing lambda dependencies...\n"
-cd $basedir/aws/app/lambda
-find . -maxdepth 3 -name package.json -execdir yarn install \;

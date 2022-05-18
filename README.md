@@ -25,12 +25,13 @@ Install AWS SAM-CLI
 
 ### Starting LocalStack and E2E testing from devcontainers
 
-1. forms-terraform: **in** the devcontainer, run `.devcontainer/scripts/terraform_apply_localstack.sh`
-1. forms-terraform: while **not** in the devcontainer, run `make lambdas`
+```shell
+make terragrunt
+make lambdas
+```
+
 1. platform-forms-client: **in** the devcontainer, cd /migrations; run `yarn install` and `node index.js`
 1. platform-forms-client: **in** the devcontainer, run `yarn install` and `yarn dev`
-
-**Note:** Due to how aws sam mounts volumes, you cannot run the lambda from the devcontainer. To launch the lambdas execute the `make lambdas` command
 
 ### Starting LocalStack 
 
@@ -365,7 +366,6 @@ In directory:
 `template.yml` defines the local environment / project we will be running. Functions and environment variables can be defined here.
 
 Install Lambda dependencies and start local lambda service
-**NOTE:** if starting from inside the devcontainer add `/workspace` to from Docker -> Preferences... -> Resources -> File Sharing. 
 In directory: `./aws/app/lambda/` run the script `./start_local_lambdas.sh`
 
 If you want to invoke a lambda specifically, here’s the example command:
