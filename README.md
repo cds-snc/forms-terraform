@@ -23,6 +23,12 @@ Install AWS SAM-CLI
 `brew tap aws/tap`
 `brew install aws-sam-cli`
 
+### Starting LocalStack from devcontainer
+```shell
+.devcontainer/scripts/terraform_apply_localstack.sh
+```
+
+**Note:** Due to how aws sam mounts volumes, you cannot run the lambda from the devcontainer. To launch the lambdas execute the `make lambdas` command
 
 ### Starting LocalStack 
 
@@ -357,6 +363,7 @@ In directory:
 `template.yml` defines the local environment / project we will be running. Functions and environment variables can be defined here.
 
 Install Lambda dependencies and start local lambda service
+**NOTE:** if starting from inside the devcontainer add `/workspace` to from Docker -> Preferences... -> Resources -> File Sharing. 
 In directory: `./aws/app/lambda/` run the script `./start_local_lambdas.sh`
 
 If you want to invoke a lambda specifically, here’s the example command:

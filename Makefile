@@ -18,6 +18,10 @@ validate: 	## Terragrunt validate all resources
 	cd env/scratch &&\
 	terragrunt run-all validate
 
+lambdas:
+	cd aws/app/lambda &&\
+	./start_local_lambdas.sh
+
 .PHONY: \
 	checkov \
 	default \
