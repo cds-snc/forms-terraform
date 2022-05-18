@@ -18,7 +18,7 @@ services:
       DEVCONTAINER: "True"
 
   localstack:
-    image: localstack/localstack
+    image: localstack/localstack@sha256:c6479ffb7fcb56899d9ead00af7fd5c64620bdea4ed303744cc33cb9361d2053
     hostname: localstack
     volumes:
       - "./data:/tmp/localstack"
@@ -27,7 +27,7 @@ services:
     ports:
       - 4566:4566
     environment:
-      - SERVICES=dynamodb,kms,sqs,s3,sns
+      - SERVICES=ec2,dynamodb,kms,sqs,s3,sns
       - DATA_DIR=/tmp/localstack/data
       - DOCKER_HOST=unix:///var/run/docker.sock`
       - DEBUG=1

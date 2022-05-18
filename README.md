@@ -23,10 +23,12 @@ Install AWS SAM-CLI
 `brew tap aws/tap`
 `brew install aws-sam-cli`
 
-### Starting LocalStack from devcontainer
-```shell
-.devcontainer/scripts/terraform_apply_localstack.sh
-```
+### Starting LocalStack and E2E testing from devcontainers
+
+1. forms-terraform: **in** the devcontainer, run `.devcontainer/scripts/terraform_apply_localstack.sh`
+1. forms-terraform: while **not** in the devcontainer, run `make lambdas`
+1. platform-forms-client: **in** the devcontainer, cd /migrations; run `yarn install` and `node index.js`
+1. platform-forms-client: **in** the devcontainer, run `yarn install` and `yarn dev`
 
 **Note:** Due to how aws sam mounts volumes, you cannot run the lambda from the devcontainer. To launch the lambdas execute the `make lambdas` command
 
