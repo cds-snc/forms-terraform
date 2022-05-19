@@ -93,6 +93,9 @@ exports.handler = async function (event) {
                 },
               }) 
             : parameters.push(formID);
+
+        // break here since if there is a formID, then "limit" and "offset" aren't needed
+        break;
       }
       if (limit) {
         SQL += !process.env.AWS_SAM_LOCAL
@@ -174,10 +177,6 @@ exports.handler = async function (event) {
       }
       break;
   }
-
-  console.log("=======================");
-  console.log(SQL);
-  console.log(parameters);
 
   if (!SQL) {
     return { error: "Method not supported" };
