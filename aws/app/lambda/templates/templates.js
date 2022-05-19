@@ -93,11 +93,8 @@ exports.handler = async function (event) {
                 },
               }) 
             : parameters.push(formID);
-
-        // break here since if there is a formID, then "limit" and "offset" aren't needed
-        break;
       }
-      if (limit) {
+      if (!formID && limit) {
         SQL += !process.env.AWS_SAM_LOCAL
           ? " LIMIT :limit"
           : " LIMIT ($1)";
@@ -112,7 +109,7 @@ exports.handler = async function (event) {
             }) 
           : parameters.push(limit);
       }
-      if (offset) {
+      if (!formID && offset) {
         SQL += !process.env.AWS_SAM_LOCAL
           ? " OFFSET :offset"
           : " OFFSET ($2)";
