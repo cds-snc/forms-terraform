@@ -50,7 +50,7 @@ make lambdas
 
 1. platform-forms-client: **in** the devcontainer:
 ```sh
-cd /migrations
+cd migrations
 yarn install
 node index.js
 
