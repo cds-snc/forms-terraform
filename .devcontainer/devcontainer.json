@@ -1,13 +1,13 @@
 {
-	"name": "Terraform",
-	"dockerComposeFile": "docker-compose.yml",
+  "name": "Terraform",
+  "dockerComposeFile": "docker-compose.yml",
   "service": "iac",
   "workspaceFolder": "/workspace",
-	"settings": {
-		"[terraform]": {
-			"editor.formatOnSave": true
-		}
-	},
+  "settings": {
+    "[terraform]": {
+      "editor.formatOnSave": true
+    }
+  },
   "features": {
     "docker-from-docker": {
       "version": "latest",
@@ -23,12 +23,12 @@
     }
   },
 
-	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": [
-		"hashicorp.terraform",
-		"redhat.vscode-yaml"
-	],
+  // Add the IDs of extensions you want installed when the container is created.
+  "extensions": [
+    "hashicorp.terraform",
+    "redhat.vscode-yaml"
+  ],
 
-	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-	"remoteUser": "vscode"
+  // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "vscode"
 }
