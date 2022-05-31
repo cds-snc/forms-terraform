@@ -38,17 +38,22 @@ Pre-requisites:
 
 ### Starting LocalStack and E2E testing from devcontainers
 
-1. forms-terraform: while **not** in the devcontainer:
+1. forms-terraform: while **in** the devcontainer:
 ```sh
 .devcontainer/scripts/terraform_apply_localstack.sh
 ```
 
-2. platform-forms-client: **in** the devcontainer:
+1. forms-terraform: while **not** in the devcontainer:
 ```sh
 make lambdas
 ```
 
-3. platform-forms-client: **in** the devcontainer:
+1. platform-forms-client: **in** the devcontainer:
+```sh
+make lambdas
+```
+
+1. platform-forms-client: **in** the devcontainer:
 ```sh
 cd /migrations
 yarn install
