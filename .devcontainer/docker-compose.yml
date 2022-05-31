@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  iac:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        AWS_SAM_VERSION: "1.50.0"
+        AWS_SAM_CHECKSUM: "093fc2cc40b098321dcc8635abe468642b72f8658821c9243a9357e400734207"
+        
+    volumes:
+      - ..:/workspace:cached
+    command: sleep infinity
+    environment:
+      AWS_LOCALSTACK: "True"
+      TF_VAR_region: "ca-central-1"
+      DEVCONTAINER: "True"
+
+  localstack:
+    image: localstack/localstack@sha256:c6479ffb7fcb56899d9ead00af7fd5c64620bdea4ed303744cc33cb9361d2053
+    hostname: localstack
+    volumes:
+      - "./data:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./scripts/init_localstack:/docker-entrypoint-initaws.d"
+    ports:
+      - 4566:4566
+    environment:
+      - SERVICES=ec2,dynamodb,kms,sqs,s3,sns
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock`
+      - DEBUG=1

@@ -4,25 +4,62 @@ Infrastructure as Code for the GC Forms environment.
 
 ## Running Lambdas and DBs locally
 
-You will need to have the following installed on a MacOS machine. To install these pre-requisits a quick google search using the names of these dependencies should yield many tutorials on how to do so
+You will need to have the following installed on a MacOS machine.
 
 Pre-requisites:
-- Docker Hub
-- LocalStack
-- Homebrew
-- Terragrunt
-- AWS CLI
+- Docker Hub: https://docs.docker.com/desktop/mac/install/
+
+- Homebrew:
+    ```bash
+     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+     ```
+- LocalStack : `brew install localstack`
+- Terragrunt: 
+
+  1. `brew install warrensbox/tap/tfswitch`
+  1. `tfswitch 1.0.10`
+  1. `brew install warrensbox/tap/tgswitch`
+  1. `tgswitch 0.35.6`
+
+- Yarn: `brew install yarn`
+
+- AWS CLI: `brew install awscli`
+
 - AWS SAM CLI
+
+  Please run these commands to install the aws sam cli using homebrew. The AWS SAM CLI is what we use to run the lambda functions locally and invoke them.
+
+  1. `brew tap aws/tap`
+  1. `brew install aws-sam-cli`
+
 - Postgres and PGAdmin
+  1. `brew install postgresql`
+  1. `brew install --cask pgadmin4`
 
-### Installing AWS SAM CLI
+### Starting LocalStack and E2E testing from devcontainers
 
-Please run these commands to install the aws sam cli using homebrew. The AWS SAM CLI is what we use to run the lambda functions locally and invoke them.
+1. forms-terraform: while **in** the devcontainer:
+```sh
+.devcontainer/scripts/terraform_apply_localstack.sh
+```
 
-Install AWS SAM-CLI
-`brew tap aws/tap`
-`brew install aws-sam-cli`
+1. forms-terraform: while **not** in the devcontainer:
+```sh
+make lambdas
+```
 
+1. platform-forms-client: **in** the devcontainer:
+```sh
+cd migrations
+yarn install
+node index.js
+
+cd ..
+yarn install
+yarn dev
+```
+
+**Note:** Due to how aws sam mounts volumes, you start the lambdas from the devcontainer. To launch the lambdas execute the `make lambdas` command outside the devcontainer
 
 ### Starting LocalStack 
 
@@ -101,7 +138,7 @@ Add the following configurations to `~/.aws/config` and `~/.aws/credentials`
 `~/.aws/config`
 ```text
 [profile local]
-region = us-east-1
+region = ca-central-1
 output = yaml
 ```
 
