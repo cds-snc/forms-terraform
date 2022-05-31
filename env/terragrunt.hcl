@@ -8,7 +8,7 @@ inputs = {
   billing_tag_value = "forms-platform-${local.vars.inputs.env}"   
   domain            = "${local.vars.inputs.domain}"
   env               = "${local.vars.inputs.env}"
-  region            = "${local.vars.inputs.region}"
+  region            = "ca-central-1"
 }
 
 
@@ -22,7 +22,7 @@ remote_state {
     encrypt        = true
     bucket         = "forms-${local.vars.inputs.env}-tfstate"
     dynamodb_table = "tfstate-lock"
-    region         = local.vars.inputs.region
+    region         = "ca-central-1"
     key            = "${path_relative_to_include()}/terraform.tfstate"
   }
 }
