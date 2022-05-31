@@ -38,10 +38,26 @@ Pre-requisites:
 
 ### Starting LocalStack and E2E testing from devcontainers
 
-1. forms-terraform: **in** the devcontainer, run `.devcontainer/scripts/terraform_apply_localstack.sh`
-1. forms-terraform: while **not** in the devcontainer, run `make lambdas`
-1. platform-forms-client: **in** the devcontainer, cd /migrations; run `yarn install` and `node index.js`
-1. platform-forms-client: **in** the devcontainer, run `yarn install` and `yarn dev`
+1. forms-terraform: while **not** in the devcontainer:
+```sh
+.devcontainer/scripts/terraform_apply_localstack.sh
+```
+
+2. platform-forms-client: **in** the devcontainer:
+```sh
+make lambdas
+```
+
+3. platform-forms-client: **in** the devcontainer:
+```sh
+cd /migrations
+yarn install
+node index.js
+
+cd ..
+yarn install
+yarn dev
+```
 
 **Note:** Due to how aws sam mounts volumes, you start the lambdas from the devcontainer. To launch the lambdas execute the `make lambdas` command outside the devcontainer
 
