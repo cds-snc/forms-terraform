@@ -38,24 +38,21 @@ Pre-requisites:
 
 ### Starting LocalStack and E2E testing from devcontainers
 
-1. forms-terraform: while **in** the devcontainer:
+1. forms-terraform: 
 ```sh
+# Run Terragrunt to create the local infrastructure
 make terragrunt
-```
 
-1. forms-terraform: while **not** in the devcontainer:
-```sh
+# Start the lambdas
 make lambdas
 ```
 
-1. platform-forms-client: **in** the devcontainer:
+1. platform-forms-client:
 ```sh
 yarn --cwd migrations install
 yarn install
 yarn dev
 ```
-
-**Note:** Due to how aws sam mounts volumes, you start the lambdas from the devcontainer. To launch the lambdas execute the `make lambdas` command outside the devcontainer
 
 ### Starting LocalStack 
 

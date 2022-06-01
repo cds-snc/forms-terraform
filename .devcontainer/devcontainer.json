@@ -9,7 +9,7 @@
     }
   },
   "features": {
-    "docker-from-docker": {
+    "docker-in-docker": {
       "version": "latest",
       "moby": true
     },
@@ -30,5 +30,6 @@
   ],
 
   // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-  "remoteUser": "vscode"
+  "remoteUser": "vscode",
+  "forwardPorts": [3001]
 }
