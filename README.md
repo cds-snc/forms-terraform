@@ -40,7 +40,7 @@ Pre-requisites:
 
 1. forms-terraform: while **in** the devcontainer:
 ```sh
-.devcontainer/scripts/terraform_apply_localstack.sh
+make terragrunt
 ```
 
 1. forms-terraform: while **not** in the devcontainer:
@@ -50,11 +50,7 @@ make lambdas
 
 1. platform-forms-client: **in** the devcontainer:
 ```sh
-cd migrations
-yarn install
-node index.js
-
-cd ..
+yarn --cwd migrations install
 yarn install
 yarn dev
 ```
