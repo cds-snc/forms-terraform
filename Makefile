@@ -22,8 +22,7 @@ terragrunt: ## Create localstack resources
 	.devcontainer/scripts/terraform_apply_localstack.sh
 
 lambdas: ## Start lambdas locally
-	cd aws/app/lambda &&\
-	./start_local_lambdas.sh
+	./aws/app/lambda/start_local_lambdas.sh
 
 local: terragrunt lambdas
 
