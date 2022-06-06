@@ -38,17 +38,18 @@ Pre-requisites:
 
 ### Starting LocalStack and E2E testing from devcontainers
 
-1. forms-terraform: 
+1. forms-terraform:
 ```sh
-# Run Terragrunt to create the local infrastructure
+# Build the local infrastructure (run on first setup and when there are Terraform changes)
 make terragrunt
 
-# Start the lambdas
+# Start the lambda functions
 make lambdas
 ```
 
-1. platform-forms-client:
+2. platform-forms-client:
 ```sh
+# Install dependencies, run database migrations and start local server
 yarn --cwd migrations install
 yarn install
 yarn dev
