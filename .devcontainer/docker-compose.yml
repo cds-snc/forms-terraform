@@ -8,7 +8,6 @@ services:
       args:
         AWS_SAM_VERSION: "1.50.0"
         AWS_SAM_CHECKSUM: "093fc2cc40b098321dcc8635abe468642b72f8658821c9243a9357e400734207"
-        
     volumes:
       - ..:/workspace:cached
     command: sleep infinity

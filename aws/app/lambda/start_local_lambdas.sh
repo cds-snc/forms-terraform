@@ -1,19 +1,13 @@
 #!/bin/bash
+set -euo pipefail
 
-find . -maxdepth 3 -name package.json -execdir yarn install \;
+SCRIPT_DIR="$(dirname $(readlink -f $0))"
 
-# Check if running locally or in the devcontainer
-if [[ -z "${DEVCONTAINER}" ]]; then
-  sam local start-lambda -t ./local_development/template.yml \
-    --host 0.0.0.0 \
-    --port 3001 \
-    --warm-containers EAGER
-else
-  # devcontainer detected: set the container host and resolve the IP of the docker host
-  HOST_IP="$(dig +short host.docker.internal)"
-  sam local start-lambda -t ./local_development/template.yml \
-    --host 0.0.0.0 \
-    --port 3001 \
-    --warm-containers EAGER \
-    --parameter-overrides "ParameterKey=DBHost,ParameterValue=$HOST_IP"
-fi
+# Install yarn dependencies
+find "$SCRIPT_DIR" -maxdepth 3 -name package.json -execdir yarn install \;
+
+# Start the lambda functions
+sam local start-lambda -t "$SCRIPT_DIR/local_development/template.yml" \
+  --host 0.0.0.0 \
+  --port 3001 \
+  --warm-containers EAGER
