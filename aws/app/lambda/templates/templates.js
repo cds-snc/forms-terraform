@@ -54,7 +54,7 @@ exports.handler = async function (event) {
 
   let SQL = "";
   let parameters = [];
-  
+
   switch (method) {
     case "INSERT":
       if (formConfig) {
@@ -91,7 +91,7 @@ exports.handler = async function (event) {
                 value: {
                   longValue: formID,
                 },
-              }) 
+              })
             : parameters.push(formID);
       }
       if (!formID && limit) {
@@ -106,7 +106,7 @@ exports.handler = async function (event) {
               value: {
                 longValue: limit,
               },
-            }) 
+            })
           : parameters.push(limit);
       }
       if (!formID && offset) {
@@ -121,8 +121,8 @@ exports.handler = async function (event) {
               value: {
                 longValue: offset,
               },
-            }) 
-          : parameters.push(offset);          
+            })
+          : parameters.push(offset);
       }
 
       break;
@@ -198,6 +198,9 @@ exports.handler = async function (event) {
           `{"status": "error", "error": "${formatError(error)}", "event": "${formatError(event)}"}`
       );
       return { error: error };
+    }
+    finally {
+      dbClient.end();
     }
   } else {
     const params = {
