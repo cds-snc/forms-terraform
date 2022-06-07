@@ -167,6 +167,9 @@ exports.handler = async function (event) {
         console.log("error:");
         console.log(error);
         return { error: error };
+      })
+      .finally(() => {
+        dbClient.end();
       });
   } else {
     const params = {
