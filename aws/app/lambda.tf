@@ -215,59 +215,6 @@ resource "aws_lambda_layer_version" "templates_lib" {
 }
 
 #
-# User and Organization management
-#
-data "archive_file" "organizations_main" {
-  type        = "zip"
-  source_file = "lambda/organizations/organizations.js"
-  output_path = "/tmp/organizations_main.zip"
-}
-
-data "archive_file" "organizations_lib" {
-  type        = "zip"
-  source_dir  = "lambda/organizations/"
-  excludes    = ["organizations.js"]
-  output_path = "/tmp/organizations_lib.zip"
-}
-
-resource "aws_lambda_function" "organizations" {
-  filename      = "/tmp/organizations_main.zip"
-  function_name = "Organizations"
-  role          = aws_iam_role.lambda.arn
-  handler       = "organizations.handler"
-
-  source_code_hash = data.archive_file.organizations_main.output_base64sha256
-  runtime          = "nodejs14.x"
-  layers           = [aws_lambda_layer_version.organizations_lib.arn]
-  timeout          = "10"
-
-  environment {
-    variables = {
-      REGION    = var.region
-      DB_ARN    = var.rds_cluster_arn
-      DB_SECRET = var.database_secret_arn
-      DB_NAME   = var.rds_db_name
-    }
-  }
-
-  tracing_config {
-    mode = "PassThrough"
-  }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
-}
-
-resource "aws_lambda_layer_version" "organizations_lib" {
-  filename            = "/tmp/organizations_lib.zip"
-  layer_name          = "organizations_node_packages"
-  source_code_hash    = data.archive_file.organizations_lib.output_base64sha256
-  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
-}
-
-#
 # Form responses archiver
 #
 data "archive_file" "archiver_main" {
@@ -348,13 +295,6 @@ resource "aws_lambda_permission" "templates" {
   statement_id  = "AllowInvokeECS"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.templates.function_name
-  principal     = aws_iam_role.forms.arn
-}
-
-resource "aws_lambda_permission" "organizations" {
-  statement_id  = "AllowInvokeECS"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.organizations.function_name
   principal     = aws_iam_role.forms.arn
 }
 

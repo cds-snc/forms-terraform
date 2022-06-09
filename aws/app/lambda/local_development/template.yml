@@ -96,26 +96,6 @@ Resources:
           NOTIFY_API_KEY:
             Ref: NOTIFY_API_KEY
 
-  Organizations:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName:
-        Fn::Sub: ${Environment}-${AppName}-Organizations
-      CodeUri: ../organizations/
-      Handler: organizations.handler
-      Layers:
-        - Ref: OrganizationsLayer
-      Environment:
-        Variables:
-          PGUSER:
-            Ref: DBUser
-          PGPASSWORD:
-            Ref: DBPassword
-          PGHOST:
-            Ref: DBHost
-          PGDATABASE:
-            Ref: DBName
-
   Archiver:
     Type: AWS::Serverless::Function
     Properties:
@@ -158,15 +138,6 @@ Resources:
       LayerName:
         Fn::Sub: ${Environment}-${AppName}-reliability-layer
       ContentUri: ../reliability/
-      CompatibleRuntimes:
-        - nodejs14.x
-
-  OrganizationsLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      LayerName:
-        Fn::Sub: ${Environment}-${AppName}-organizations-layer
-      ContentUri: ../organizations/
       CompatibleRuntimes:
         - nodejs14.x
 

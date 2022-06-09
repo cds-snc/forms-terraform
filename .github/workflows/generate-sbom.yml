@@ -24,9 +24,6 @@ jobs:
           - component: forms-terraform/lambda/archive-form-responses
             directory: ./aws/app/lambda/archive_form_responses/nodejs
 
-          - component: forms-terraform/lambda/organizations
-            directory: ./aws/app/lambda/organizations/nodejs
-
           - component: forms-terraform/lambda/reliability
             directory: ./aws/app/lambda/reliability/nodejs
 

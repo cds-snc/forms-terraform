@@ -4,7 +4,6 @@
   "main": "templates.js",
   "dependencies": {
     "@aws-sdk/client-rds-data": "^3.14.0",
-    "jsonwebtoken": "^8.5.1",
     "pg": "^8.6.0"
   }
 }
