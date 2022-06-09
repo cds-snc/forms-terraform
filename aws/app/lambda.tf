@@ -64,6 +64,7 @@ resource "aws_lambda_function" "reliability" {
       ENVIRONMENT    = var.env
       REGION         = var.region
       NOTIFY_API_KEY = aws_secretsmanager_secret_version.notify_api_key.secret_string
+      TEMPLATE_ID    = var.gc_template_id
     }
   }
 

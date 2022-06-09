@@ -99,6 +99,9 @@ inputs = {
   sqs_reliability_queue_arn          = ""
   sqs_reliability_queue_id           = ""
   sqs_reprocess_submission_queue_arn = ""
+
+  gc_temp_token_template_id = "b6885d06-d10a-422a-973f-05e274d9aa86"
+  gc_template_id = "8d597a1b-a1d6-4e3c-8421-042a2b4158b7"
 }
 
 remote_state {

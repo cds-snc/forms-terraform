@@ -9,9 +9,8 @@ exports.handler = async function (event) {
   let submissionIDPlaceholder = "";
 
   const message = JSON.parse(event.Records[0].body);
-  try{
-
-    const messageData = await getSubmission(message)
+  try {
+    const messageData = await getSubmission(message);
     const processedMessageData = {
       submissionID: messageData.Item?.SubmissionID.S ?? message.submissionID,
       formID: messageData.Item?.FormID.S ?? null,
@@ -19,12 +18,20 @@ exports.handler = async function (event) {
       language: messageData.Item?.FormSubmissionLanguage.S ?? "en",
       createdAt: messageData.Item?.CreatedAt.N ?? null,
       formSubmission: messageData.Item?.FormData.S
-          ? JSON.parse(messageData.Item?.FormData.S)
-          : null,
-      securityAttribute: messageData.Item?.SecurityAttribute.S ?? "",
-    }
+        ? JSON.parse(messageData.Item?.FormData.S)
+        : null,
+      securityAttribute: messageData.Item?.SecurityAttribute.S ?? "Unclassified",
+    };
 
-    const {submissionID, formSubmission, formID, sendReceipt, createdAt, language} = processedMessageData
+    const {
+      submissionID,
+      formSubmission,
+      formID,
+      sendReceipt,
+      createdAt,
+      language,
+      securityAttribute,
+    } = processedMessageData;
     submissionIDPlaceholder = submissionID;
     // Check if form data exists or was already processed.
     if (formSubmission === null || typeof formSubmission === "undefined") {
@@ -32,20 +39,37 @@ exports.handler = async function (event) {
       // Do not throw an error so it does not retry again
 
       console.warn(
-          `{"status": "warn", "submissionID": "${submissionID}", "warning": "Submission data does not exist in the DB" }`
+        `{"status": "warn", "submissionID": "${submissionID}", "warning": "Submission data does not exist in the DB" }`
       );
     }
 
     // Add form config back to submission to be processed
     formSubmission.form = await getFormTemplate(formSubmission.formID);
 
-    /// process submission to vault or Notify
+    /*
+     Process submission to vault or Notify
+     Form submission object contains:
+       formID - ID of form,
+       language - form submission language "fr" or "en",
+       submission - submission type: email, vault
+       responses - form responses: {formID, securityAttribute, questionID: answer}
+       form - Complete Form Template
+    */
+
     if (formSubmission.submission.vault) {
-      return await sendToVault(submissionID, sendReceipt, formSubmission, formID, language, createdAt);
+      return await sendToVault(
+        submissionID,
+        sendReceipt,
+        formSubmission,
+        formID,
+        language,
+        createdAt,
+        securityAttribute
+      );
     } else {
       return await sendToNotify(submissionID, sendReceipt, formSubmission, language, createdAt);
     }
-  } catch(err) {
+  } catch (err) {
     console.error(
       `{"status": "failed", "submissionID": "${submissionIDPlaceholder}", "error": "${formatError(
         err
@@ -56,7 +80,10 @@ exports.handler = async function (event) {
 };
 
 const getFormTemplate = async (formID) => {
-  const lambdaClient = new LambdaClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:3001": undefined });
+  const lambdaClient = new LambdaClient({
+    region: REGION,
+    endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:3001" : undefined,
+  });
   const encoder = new TextEncoder();
 
   const command = new InvokeCommand({
@@ -82,11 +109,7 @@ const getFormTemplate = async (formID) => {
         const response = JSON.parse(payload);
         const { records } = response.data;
         if (records?.length === 1 && records[0].formConfig.form) {
-          const formTemplate = {formID,
-            ...records[0].formConfig.form,
-            securityAttribute: records[0].formConfig.securityAttribute ?? ""
-          }           
-          return formTemplate;
+          return { formID, ...records[0].formConfig.form };
         }
         return null;
       }
