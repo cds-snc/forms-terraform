@@ -47,8 +47,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          ref: ${{ env.TARGET_VERSION }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@3d8debd658c92063839bc97da5c2427100420dec # v1.3.2
@@ -75,8 +73,6 @@ jobs:
       - uses: cds-snc/paths-filter@v2.10.3
         id: filter
         with:
-          ref: ${{ env.TARGET_VERSION }}
-          base: ${{ env.PREVIOUS_VERSION }}
           filters: |
             alarms:
               - 'aws/alarms/**'
