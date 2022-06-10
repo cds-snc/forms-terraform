@@ -24,6 +24,7 @@ Params:
   language - form submission language "fr" or "en",
   submission - submission type: email, vault
   responses - form responses: {formID, securityAttribute, questionID: answer}
+  securityAttribute - string of security classification
 */
 exports.handler = async function (event) {
   const submissionID = uuid.v4();

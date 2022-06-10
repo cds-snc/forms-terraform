@@ -45,28 +45,6 @@ Globals:
           Ref: AppName
 
 Resources:
-  Templates:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName:
-        Fn::Sub: ${Environment}-${AppName}-templates
-      CodeUri: ../templates/
-      Handler: templates.handler
-      Layers:
-        - Ref: TemplatesLayer
-      Environment:
-        Variables:
-          PGUSER:
-            Ref: DBUser
-          PGPASSWORD:
-            Ref: DBPassword
-          PGHOST:
-            Ref: DBHost
-          PGDATABASE:
-            Ref: DBName
-          TOKEN_SECRET:
-            Ref: TOKEN_SECRET
-
   Submission:
     Type: AWS::Serverless::Function
     Properties:
@@ -113,15 +91,6 @@ Resources:
             Ref: forms-local-archive-storage
           SNS_ERROR_TOPIC_ARN:
             Ref: arn:aws:sns:us-east-1:000000000000:alert-critical
-
-  TemplatesLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      LayerName:
-        Fn::Sub: ${Environment}-${AppName}-templates-layer
-      ContentUri: ../templates/
-      CompatibleRuntimes:
-        - nodejs14.x
 
   SubmissionLayer:
     Type: AWS::Serverless::LayerVersion

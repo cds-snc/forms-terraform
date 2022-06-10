@@ -65,6 +65,10 @@ resource "aws_lambda_function" "reliability" {
       REGION         = var.region
       NOTIFY_API_KEY = aws_secretsmanager_secret_version.notify_api_key.secret_string
       TEMPLATE_ID    = var.gc_template_id
+      DB_ARN       = var.rds_cluster_arn
+      DB_SECRET    = var.database_secret_arn
+      DB_NAME      = var.rds_db_name
+
     }
   }
 
@@ -161,60 +165,6 @@ resource "aws_lambda_layer_version" "submission_lib" {
 }
 
 #
-# Template Storage processing
-#
-data "archive_file" "templates_main" {
-  type        = "zip"
-  source_file = "lambda/templates/templates.js"
-  output_path = "/tmp/templates_main.zip"
-}
-
-data "archive_file" "templates_lib" {
-  type        = "zip"
-  source_dir  = "lambda/templates/"
-  excludes    = ["templates.js"]
-  output_path = "/tmp/templates_lib.zip"
-}
-
-resource "aws_lambda_function" "templates" {
-  filename      = "/tmp/templates_main.zip"
-  function_name = "Templates"
-  role          = aws_iam_role.lambda.arn
-  handler       = "templates.handler"
-
-  source_code_hash = data.archive_file.templates_main.output_base64sha256
-  runtime          = "nodejs14.x"
-  layers           = [aws_lambda_layer_version.templates_lib.arn]
-  timeout          = "10"
-
-  environment {
-    variables = {
-      REGION       = var.region
-      DB_ARN       = var.rds_cluster_arn
-      DB_SECRET    = var.database_secret_arn
-      DB_NAME      = var.rds_db_name
-      TOKEN_SECRET = aws_secretsmanager_secret_version.token_secret.arn
-    }
-  }
-
-  tracing_config {
-    mode = "PassThrough"
-  }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
-}
-
-resource "aws_lambda_layer_version" "templates_lib" {
-  filename            = "/tmp/templates_lib.zip"
-  layer_name          = "templates_node_packages"
-  source_code_hash    = data.archive_file.templates_lib.output_base64sha256
-  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
-}
-
-#
 # Form responses archiver
 #
 data "archive_file" "archiver_main" {
@@ -289,18 +239,4 @@ resource "aws_lambda_permission" "submission" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.submission.function_name
   principal     = aws_iam_role.forms.arn
-}
-
-resource "aws_lambda_permission" "templates" {
-  statement_id  = "AllowInvokeECS"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.templates.function_name
-  principal     = aws_iam_role.forms.arn
-}
-
-resource "aws_lambda_permission" "internal_templates" {
-  statement_id  = "AllowInvokeLambda"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.templates.function_name
-  principal     = aws_iam_role.lambda.arn
 }

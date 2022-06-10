@@ -278,7 +278,6 @@ data "aws_iam_policy_document" "lambda_app_invoke" {
     ]
 
     resources = [
-      aws_lambda_function.templates.arn,
       aws_lambda_function.submission.arn
     ]
   }

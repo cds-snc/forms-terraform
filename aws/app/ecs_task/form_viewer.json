@@ -34,10 +34,6 @@
         "value": "${submission_api}"
       },
       {
-        "name": "TEMPLATES_API",
-        "value": "${templates_api}"
-      },
-      {
         "name": "NEXTAUTH_URL",
         "value": "${nextauth_url}"
       },

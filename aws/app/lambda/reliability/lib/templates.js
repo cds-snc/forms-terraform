@@ -7,19 +7,11 @@ const formatError = (err) => {
   return typeof err === "object" ? JSON.stringify(err) : err;
 };
 
-exports.handler = async function (event) {
-  /*
-    Supported Methods:
-    GET:
-      - (Required) formID to return 
-  */
+const getTemplateFormConfig = (formID) => {
 
   try {
-    const method = event.method;
-    const formID = event.formID;
 
-    // Return early if require params / method not supported
-    if (method !== "GET") return { error: "Method not supported" };
+    // Return early if require params not provided
     if (formID === null || typeof formID === "undefined") return { error: "Missing formID" };
 
     const { SQL, parameters } = createSQLString(formID);
@@ -28,49 +20,20 @@ exports.handler = async function (event) {
 
     const data = await getTemplateData(SQL, parameters);
 
-    if (Array.isArray(data?.rows) && data.rows.length > 0) {
-      let returnedData = parseConfig(data.rows);
-      return { data: returnedData };
+    if (Array.isArray(data?.rows) && data.rows.length === 1) {
+      
+      return {...data.rows[0].json_config}
     } else {
-      return { data: [] };
+      return null;
     }
   } catch (e) {
     console.error(
-      `{"status": "error", "error": "${formatError(error)}", "event": "${formatError(event)}"}`
+      `{"status": "error", "error": "${formatError(error)}"}`
     );
     // Return as if no template with ID was found.
     // Handle error in calling function if template is not found.
     return { data: [] };
   }
-};
-
-/**
- * Parse raw RDS and PG Client data records into Form Template Objects
- * @param {Array[Form Template Records]} records
- * @returns Array of parsed template records in format Applcation is expecting
- */
-const parseConfig = (records) => {
-  const parsedRecords = records.map((record) => {
-    let formID, formConfig, organization;
-    if (!process.env.AWS_SAM_LOCAL) {
-      formID = record[0].longValue;
-      if (record.length > 1) {
-        formConfig = JSON.parse(record[1].stringValue.trim(1, -1)) || undefined;
-        organization = record[2].stringValue ? record[2].stringValue : null;
-      }
-    } else {
-      formID = record.id;
-      formConfig = record.json_config;
-      organization = record.organization;
-    }
-
-    return {
-      formID,
-      formConfig,
-      organization,
-    };
-  });
-  return { records: parsedRecords };
 };
 
 /**
@@ -135,7 +98,7 @@ const requestRDS = async (SQL, parameters) => {
  * @param {string} formID
  */
 const createSQLString = (formID) => {
-  const selectSQL = "SELECT id, json_config, organization FROM Templates";
+  const selectSQL = "SELECT json_config FROM Templates";
   if (!process.env.AWS_SAM_LOCAL) {
     return {
       SQL: `${selectSQL} WHERE id = :formID`,
@@ -155,3 +118,7 @@ const createSQLString = (formID) => {
     };
   }
 };
+
+module.exports = {
+  getTemplateFormConfig
+}

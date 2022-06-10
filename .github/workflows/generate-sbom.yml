@@ -30,9 +30,6 @@ jobs:
           - component: forms-terraform/lambda/submission
             directory: ./aws/app/lambda/submission/nodejs
 
-          - component: forms-terraform/lambda/templates
-            directory: ./aws/app/lambda/templates/nodejs
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
