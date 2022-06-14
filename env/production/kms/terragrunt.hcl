@@ -1,5 +1,5 @@
 terraform {
-  source = "git::https://github.com/cds-snc/forms-terraform//aws/kms?ref=${get_env("TARGET_VERSION")}"
+  source = "../../../aws//kms"
 }
 
 include {

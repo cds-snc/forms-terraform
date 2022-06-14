@@ -1,5 +1,5 @@
 terraform {
-  source = "git::https://github.com/cds-snc/forms-terraform//aws/network?ref=${get_env("TARGET_VERSION")}"
+  source = "../../../aws//network"
 }
 
 dependencies {

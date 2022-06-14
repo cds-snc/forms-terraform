@@ -1,5 +1,5 @@
 terraform {
-  source = "git::https://github.com/cds-snc/forms-terraform//aws/dynamodb?ref=${get_env("TARGET_VERSION")}"
+  source = "../../../aws//dynamodb"
 }
 
 dependencies {
