@@ -18,10 +18,21 @@ validate: 	## Terragrunt validate all resources
 	cd env/scratch &&\
 	terragrunt run-all validate
 
+terragrunt: ## Create localstack resources
+	.devcontainer/scripts/terraform_apply_localstack.sh
+
+lambdas: ## Start lambdas locally
+	./aws/app/lambda/start_local_lambdas.sh
+
+local: terragrunt lambdas
+
 .PHONY: \
 	checkov \
 	default \
 	fmt \
 	hclfmt \
 	help \
+	lambdas \
+	local \
+	terragrunt \
 	validate

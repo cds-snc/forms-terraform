@@ -11,7 +11,7 @@ resource "aws_s3_bucket" "reliability_file_storage" {
     enabled = true
 
     expiration {
-      days = 2
+      days = 30
     }
   }
   server_side_encryption_configuration {

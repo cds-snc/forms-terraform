@@ -1,0 +1,58 @@
+name: Generate SBOM
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ./**/yarn.lock
+      - .github/workflows/generate-sbom.yml
+  push:
+    branches:
+      - main
+    paths:
+      - ./**/yarn.lock
+      - .github/workflows/generate-sbom.yml
+
+jobs:
+  generate-sbom:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - component: forms-terraform/lambda/archive-form-responses
+            directory: ./aws/app/lambda/archive_form_responses/nodejs
+
+          - component: forms-terraform/lambda/organizations
+            directory: ./aws/app/lambda/organizations/nodejs
+
+          - component: forms-terraform/lambda/reliability
+            directory: ./aws/app/lambda/reliability/nodejs
+
+          - component: forms-terraform/lambda/submission
+            directory: ./aws/app/lambda/submission/nodejs
+
+          - component: forms-terraform/lambda/templates
+            directory: ./aws/app/lambda/templates/nodejs
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: dorny/paths-filter@b2feaf19c27470162a626bd6fa8438ae5b263721
+        id: changes
+        with:
+          filters: |
+            lock:
+              - '${{ matrix.directory }}/yarn.lock'
+              - '.github/workflows/generate-sbom.yml'
+
+      - name: Generate ${{ matrix.component }} SBOM
+        if: steps.changes.outputs.lock == 'true'
+        uses: cds-snc/security-tools/.github/actions/generate-sbom@4c6b386722985552f3f008d04279a3f01402cc35
+        with:
+          dependency_track_api_key: ${{ secrets.DEPENDENCY_TRACK_API_KEY }}
+          project_name: ${{ matrix.component }}
+          project_type: node
+          working_directory: ${{ matrix.directory }}

@@ -44,3 +44,6 @@ tf.plan
 
 #Ignore Mac OS file types
 .DS_Store
+
+# Ignore local stack data file
+.devcontainer/data

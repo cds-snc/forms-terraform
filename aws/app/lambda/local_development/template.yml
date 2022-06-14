@@ -28,10 +28,16 @@ Parameters:
   NOTIFY_API_KEY:
     Type: AWS::SSM::Parameter::Value<String>
     Default: "NOTIFY API KEY"
+  TEMPLATE_ID:
+    Type: String
+    Default: "8d597a1b-a1d6-4e3c-8421-042a2b4158b7"
+  TEMPORARY_TOKEN_TEMPLATE_ID:
+    Type: String
+    Default: "b6885d06-d10a-422a-973f-05e274d9aa86"
 
 Globals:
   Function:
-    Runtime: nodejs12.x
+    Runtime: nodejs14.x
     Tags:
       Environment:
         Ref: Environment
@@ -82,7 +88,6 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-reliability
       CodeUri: ../reliability/
       Handler: reliability.handler
-      Runtime: nodejs14.x
       Timeout: 300
       Layers:
         - Ref: ReliabilityLayer

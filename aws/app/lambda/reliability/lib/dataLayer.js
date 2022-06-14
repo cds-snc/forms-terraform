@@ -1,41 +1,107 @@
 const {
   DynamoDBClient,
   GetItemCommand,
-  DeleteItemCommand,
   PutItemCommand,
+  UpdateItemCommand,
 } = require("@aws-sdk/client-dynamodb");
 
 const REGION = process.env.REGION;
 
 async function getSubmission(message) {
-  const db = new DynamoDBClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566": undefined });
+  const db = new DynamoDBClient({
+    region: REGION,
+    endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+  });
   const DBParams = {
     TableName: "ReliabilityQueue",
     Key: {
       SubmissionID: { S: message.submissionID },
     },
-    ProjectExpression: "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt",
+    ProjectExpression:
+      "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt,SecurityAttribute",
   };
   //save data to DynamoDB
   return await db.send(new GetItemCommand(DBParams));
 }
+/**
+ * Function that removes the submission from the Reliability Queue.
+ * @param {String} submissionID
+ * @returns
+ */
 
-async function saveToVault(submissionID, formResponse, formID, language, createdAt) {
-  const db = new DynamoDBClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566": undefined });
+async function removeSubmission(submissionID) {
+  const db = new DynamoDBClient({
+    region: REGION,
+    endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+  });
+  const DBParams = {
+    TableName: "ReliabilityQueue",
+    Key: {
+      SubmissionID: { S: submissionID },
+    },
+  };
+  //remove data fron DynamoDB
+  return await db.send(new DeleteItemCommand(DBParams));
+}
+
+/**
+ * Function to update the TTL of a record in the ReliabilityQueue table
+ * @param submissionID
+ * @param formID
+ */
+async function updateTTL(submissionID) {
+  const db = new DynamoDBClient({
+    region: REGION,
+    endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+  });
+
+  const expiringTime = (Math.floor(Date.now() / 1000) + 2592000).toString(); // expire after 30 days
+  const DBParams = {
+    TableName: "ReliabilityQueue",
+    Key: {
+      SubmissionID: { S: submissionID },
+    },
+    UpdateExpression: "SET #ttl = :ttl",
+    ExpressionAttributeNames: {
+      "#ttl": "TTL",
+    },
+    ExpressionAttributeValues: {
+      ":ttl": {
+        N: expiringTime,
+      },
+    },
+    ReturnValues: "NONE",
+  };
+
+  return await db.send(new UpdateItemCommand(DBParams));
+}
+
+async function saveToVault(
+  submissionID,
+  formResponse,
+  formID,
+  language,
+  createdAt,
+  securityAttribute
+) {
+  const db = new DynamoDBClient({
+    region: REGION,
+    endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+  });
   const formSubmission =
     typeof formResponse === "string" ? formResponse : JSON.stringify(formResponse);
 
   const formIdentifier = typeof formID === "string" ? formID : formID.toString();
-
   const DBParams = {
     TableName: "Vault",
     Item: {
       SubmissionID: { S: submissionID },
       FormID: { S: formIdentifier },
       FormSubmission: { S: formSubmission },
-      FormSubmissionLanguage: {S: language},
-      CreatedAt: {N: `${createdAt}`},
-      Retrieved: {N: "0"}
+      FormSubmissionLanguage: { S: language },
+      CreatedAt: { N: `${createdAt}` },
+      Retrieved: { N: "0" },
+      SecurityAttribute: { S: securityAttribute },
     },
   };
   //save data to DynamoDB
@@ -192,8 +258,10 @@ function formatError(err) {
 
 module.exports = {
   getSubmission,
+  removeSubmission,
   extractFileInputResponses,
   extractFormData,
   saveToVault,
   formatError,
+  updateTTL,
 };

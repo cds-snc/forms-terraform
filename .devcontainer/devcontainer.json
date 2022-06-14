@@ -1,30 +1,35 @@
 {
-	"name": "Terraform",
-	"build": {
-		"dockerfile": "Dockerfile",
-		"context": "..",
-		"args": {
-			"TERRAFORM_VERSION": "1.0.10",
-			"TERRAGRUNT_VERSION": "0.35.6"
-		}
-	},
+  "name": "forms-terraform",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "iac",
+  "workspaceFolder": "/workspace",
+  "settings": {
+    "[terraform]": {
+      "editor.formatOnSave": true
+    }
+  },
+  "features": {
+    "docker-in-docker": {
+      "version": "latest",
+      "moby": true
+    },
+    "terraform": {
+      "version": "1.0.10",
+      "tflint": "latest",
+      "terragrunt": "0.35.6"
+    },
+    "aws-cli": {
+      "version": "2.5.6"
+    }
+  },
 
-	"containerEnv": {
-		"SHELL": "/bin/zsh"
-	},
+  // Add the IDs of extensions you want installed when the container is created.
+  "extensions": [
+    "hashicorp.terraform",
+    "redhat.vscode-yaml"
+  ],
 
-	"settings": {
-		"[terraform]": {
-			"editor.formatOnSave": true
-		}
-	},
-
-	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": [
-		"hashicorp.terraform",
-		"redhat.vscode-yaml"
-	],
-
-	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-	"remoteUser": "vscode"
+  // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "vscode",
+  "forwardPorts": [3001]
 }

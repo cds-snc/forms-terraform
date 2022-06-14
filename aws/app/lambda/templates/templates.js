@@ -35,6 +35,8 @@ exports.handler = async function (event) {
       - (Required) json_config - json config string defining a form
     GET:
       - (Optional) formID. Returns all entries if not provided
+      - (Optional) limit - number of rows to return
+      - (Optional) offset - row number where to start
     UPDATE:
       - (Required) formID to update
       - (Required) json_config - new json config string to update the entry
@@ -42,14 +44,16 @@ exports.handler = async function (event) {
       - (Required) formID to delete
   */
   const method = event.method;
-  let formID = event.formID ? parseInt(event.formID) : null,
-      formConfig = event.formConfig ? "'" + JSON.stringify(event.formConfig) + "'" : null;
+  let formID = event.formID ? parseInt(event.formID) : null
+  let formConfig = event.formConfig ? "'" + JSON.stringify(event.formConfig) + "'" : null;
+  let limit = event.limit ? parseInt(event.limit) : null;
+  let offset = event.offset ? parseInt(event.offset) : null;
 
   // if formID is NaN, assign it to an id we know will return no records
   if (isNaN(formID)) formID = 1;
 
-  let SQL = "",
-      parameters = [];
+  let SQL = "";
+  let parameters = [];
 
   switch (method) {
     case "INSERT":
@@ -73,24 +77,54 @@ exports.handler = async function (event) {
       }
       break;
     case "GET":
+      SQL = "SELECT id, json_config, organization FROM Templates";
       // Get a specific form if given the id, all forms if not
       if (formID) {
-        SQL = !process.env.AWS_SAM_LOCAL
-            ? "SELECT id, json_config, organization FROM Templates WHERE id = :formID"
-            : "SELECT id, json_config, organization FROM Templates WHERE id = ($1)";
-        parameters = !process.env.AWS_SAM_LOCAL
-            ? [
+        SQL += !process.env.AWS_SAM_LOCAL
+            ? " WHERE id = :formID"
+            : " WHERE id = ($1)";
+
+        !process.env.AWS_SAM_LOCAL
+            ? parameters.push (
               {
                 name: "formID",
                 value: {
                   longValue: formID,
                 },
-              },
-            ]
-            : [formID];
-      } else {
-        SQL = "SELECT id, json_config, organization FROM Templates";
+              })
+            : parameters.push(formID);
       }
+      if (!formID && limit) {
+        SQL += !process.env.AWS_SAM_LOCAL
+          ? " LIMIT :limit"
+          : " LIMIT ($1)";
+
+        !process.env.AWS_SAM_LOCAL
+          ? parameters.push (
+            {
+              name: "limit",
+              value: {
+                longValue: limit,
+              },
+            })
+          : parameters.push(limit);
+      }
+      if (!formID && offset) {
+        SQL += !process.env.AWS_SAM_LOCAL
+          ? " OFFSET :offset"
+          : " OFFSET ($2)";
+
+        !process.env.AWS_SAM_LOCAL
+          ? parameters.push (
+            {
+              name: "offset",
+              value: {
+                longValue: offset,
+              },
+            })
+          : parameters.push(offset);
+      }
+
       break;
     case "UPDATE":
       // needs the ID and the new json blob
@@ -164,6 +198,9 @@ exports.handler = async function (event) {
           `{"status": "error", "error": "${formatError(error)}", "event": "${formatError(event)}"}`
       );
       return { error: error };
+    }
+    finally {
+      dbClient.end();
     }
   } else {
     const params = {
