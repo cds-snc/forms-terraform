@@ -2,10 +2,7 @@ name: "Terragrunt plan PRODUCTION"
 
 on:
   pull_request:
-    branches:
-      - main
-    paths:
-      - "VERSION"
+    branches: [main]
 
 env:
   AWS_REGION: ca-central-1
@@ -50,8 +47,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          ref: ${{ env.TARGET_VERSION }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@3d8debd658c92063839bc97da5c2427100420dec # v1.3.2
@@ -74,58 +69,8 @@ jobs:
           && tar -zxvf "conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz" conftest \
           && mv conftest /usr/local/bin \
           && rm "conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz" checksums.txt
-
-      - uses: cds-snc/paths-filter@v2.10.3
-        id: filter
-        with:
-          ref: ${{ env.TARGET_VERSION }}
-          base: ${{ env.PREVIOUS_VERSION }}
-          filters: |
-            alarms:
-              - 'aws/alarms/**'
-              - 'env/production/alarms/**'
-            app:
-              - 'aws/app/**'
-              - 'env/production/app/**'
-            common:
-              - '.github/workflows/terragrunt-plan-production.yml'
-              - 'env/common/**'
-              - 'env/terragrunt.hcl'
-              - 'env/production/env_vars.hcl'
-            dynamodb:
-              - 'aws/dynamodb/**'
-              - 'env/production/dynamodb/**'
-            ecr:
-              - 'aws/ecr/**'
-              - 'env/production/ecr/**'
-            hosted_zone:
-              - 'aws/hosted_zone/**'
-              - 'env/production/hosted_zone/**'
-            kms:
-              - 'aws/kms/**'
-              - 'env/production/kms/**'
-            load_balancer:
-              - 'aws/load_balancer/**'
-              - 'env/production/load_balancer/**'
-            network:
-              - 'aws/network/**'
-              - 'env/production/network/**'
-            rds:
-              - 'aws/rds/**'
-              - 'env/production/rds/**'
-            redis:
-              - 'aws/redis/**'
-              - 'env/production/redis/**'
-            sns:
-              - 'aws/sns/**'
-              - 'env/production/sns/**'
-            sqs:
-              - 'aws/sqs/**'
-              - 'env/production/sqs/**'
-
       # No dependencies
       - name: Terragrunt plan ecr
-        if: ${{ steps.filter.outputs.ecr == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
         with:
           directory: "env/production/ecr"
@@ -135,7 +80,6 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan hosted_zone
-        if: ${{ steps.filter.outputs.hosted_zone == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
         with:
           directory: "env/production/hosted_zone"
@@ -145,7 +89,6 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan kms
-        if: ${{ steps.filter.outputs.kms == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
         with:
           directory: "env/production/kms"
@@ -155,7 +98,6 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan sqs
-        if: ${{ steps.filter.outputs.sqs == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
         with:
           directory: "env/production/sqs"
@@ -165,7 +107,6 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan sns
-        if: ${{ steps.filter.outputs.sns == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
         with:
           directory: "env/production/sns"
@@ -176,7 +117,6 @@ jobs:
 
       # Depends on kms
       - name: Terragrunt plan network
-        if: ${{ steps.filter.outputs.network == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
         with:
           directory: "env/production/network"
@@ -186,7 +126,6 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan dynamodb
-        if: ${{ steps.filter.outputs.dynamodb == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
         with:
           directory: "env/production/dynamodb"
@@ -197,7 +136,6 @@ jobs:
 
       # Depends on network
       - name: Terragrunt plan load_balancer
-        if: ${{ steps.filter.outputs.load_balancer == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
         with:
           directory: "env/production/load_balancer"
@@ -207,7 +145,6 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan redis
-        if: ${{ steps.filter.outputs.redis == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
         with:
           directory: "env/production/redis"
@@ -217,7 +154,6 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan rds
-        if: ${{ steps.filter.outputs.rds == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
         with:
           directory: "env/production/rds"
@@ -228,11 +164,9 @@ jobs:
 
       # Depends on everything
       - name: Install Lambda deps
-        if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
         run: ./aws/app/lambda/deps.sh install
 
       - name: Terragrunt plan app
-        if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
         with:
           directory: "env/production/app"
@@ -242,11 +176,9 @@ jobs:
           terragrunt: "true"
 
       - name: Remove Lambda deps
-        if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
         run: ./aws/app/lambda/deps.sh delete
 
       - name: Terragrunt plan alarms
-        if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@v2
         with:
           directory: "env/production/alarms"

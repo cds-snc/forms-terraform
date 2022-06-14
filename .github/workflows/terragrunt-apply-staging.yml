@@ -2,8 +2,7 @@ name: "Terragrunt apply STAGING"
 
 on:
   push:
-    branches:
-      - main
+    branches: [develop]
     paths:
       - "aws/**"
       - "env/common/**"

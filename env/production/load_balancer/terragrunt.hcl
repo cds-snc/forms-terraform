@@ -1,5 +1,5 @@
 terraform {
-  source = "git::https://github.com/cds-snc/forms-terraform//aws/load_balancer?ref=${get_env("TARGET_VERSION")}"
+  source = "../../../aws//load_balancer"
 }
 
 dependencies {
