@@ -25,7 +25,6 @@ env:
 
 jobs:
   terragrunt-apply:
-    needs: version-manifest
     runs-on: ubuntu-latest
     env:
       TARGET_VERSION: ${{ needs.version-manifest.outputs.current }}
