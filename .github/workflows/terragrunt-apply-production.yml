@@ -24,11 +24,6 @@ env:
   TF_VAR_gc_template_id: 92096ac6-1cc5-40ae-9052-fffdb8439a90
 
 jobs:
-  # Check the VERSION file to get the target version to deploy and previously deployed version.
-  # These are used to determine which Terraform modules need to have `terraform apply` run.
-  version-manifest:
-    uses: cds-snc/forms-terraform/.github/workflows/version-manifest.yml@main
-
   terragrunt-apply:
     needs: version-manifest
     runs-on: ubuntu-latest
