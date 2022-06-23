@@ -3,6 +3,7 @@ const {
   GetItemCommand,
   PutItemCommand,
   UpdateItemCommand,
+  DeleteItemCommand,
 } = require("@aws-sdk/client-dynamodb");
 
 const REGION = process.env.REGION;
