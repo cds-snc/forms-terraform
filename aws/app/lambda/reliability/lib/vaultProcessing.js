@@ -18,8 +18,9 @@ module.exports = async (
   createdAt,
   securityAttribute
 ) => {
+  let fileInputPaths
   try {
-    const fileInputPaths = extractFileInputResponses(formSubmission);
+    fileInputPaths = extractFileInputResponses(formSubmission);
     await copyFilesFromReliabilityToVaultStorage(fileInputPaths);
     await saveToVault(
       submissionID,
@@ -34,10 +35,8 @@ module.exports = async (
   }
 
   try {
-    await Promise.all([
-      removeSubmission(submissionID),
-      removeFilesFromReliabilityStorage(fileInputPaths),
-    ]);
+    await removeSubmission(submissionID);
+    await removeFilesFromReliabilityStorage(fileInputPaths);
   } catch (err) {
     // Not throwing an error back to SQS because the message was
     // sucessfully processed by the vault.  Only cleanup required.
