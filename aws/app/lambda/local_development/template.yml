@@ -7,6 +7,10 @@ Parameters:
     Type: String
     Description: Name of application (no spaces). Value must be globally unique
     Default: FormsTest
+  REGION:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: Name of application (no spaces). Value must be globally unique
+    Default: ca-central-1
   DBUser:
     Type: AWS::SSM::Parameter::Value<String>
     Default: "postgres"
@@ -78,6 +82,8 @@ Resources:
         - Ref: SubmissionLayer
       Environment:
         Variables:
+          REGION:
+            Ref: REGION
           SQS_URL:
             Ref: SQS_URL
 
@@ -93,6 +99,8 @@ Resources:
         - Ref: ReliabilityLayer
       Environment:
         Variables:
+          REGION:
+            Ref: REGION
           NOTIFY_API_KEY:
             Ref: NOTIFY_API_KEY
 
@@ -127,6 +135,8 @@ Resources:
         - Ref: ArchiverLayer
       Environment:
         Variables:
+          REGION:
+            Ref: REGION
           DYNAMODB_VAULT_TABLE_NAME:
             Ref: Vault
           ARCHIVING_S3_BUCKET:
