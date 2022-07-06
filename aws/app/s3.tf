@@ -53,6 +53,10 @@ resource "aws_s3_bucket" "vault_file_storage" {
     }
   }
 
+  versioning {
+    enabled = true
+  }
+
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
