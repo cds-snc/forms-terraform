@@ -48,7 +48,6 @@ async function removeSubmission(submissionID) {
 /**
  * Function to update the TTL of a record in the ReliabilityQueue table
  * @param submissionID
- * @param formID
  */
 async function updateTTL(submissionID) {
   const db = new DynamoDBClient({

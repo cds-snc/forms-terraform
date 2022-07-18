@@ -24,6 +24,7 @@ Params:
   language - form submission language "fr" or "en",
   submission - submission type: email, vault
   responses - form responses: {formID, securityAttribute, questionID: answer}
+  securityAttribute - string of security classification
 */
 exports.handler = async function (event) {
   const submissionID = uuid.v4();
@@ -80,7 +81,7 @@ const saveData = async (submissionID, formData) => {
     TableName: "ReliabilityQueue",
     Item: {
       SubmissionID: { S: submissionID },
-      FormID: { S: `${formData.formID}` },
+      FormID: { S: formData.formID },
       SendReceipt: { S: "unknown" },
       FormSubmissionLanguage: { S: formData.language },
       FormData: { S: formSubmission },

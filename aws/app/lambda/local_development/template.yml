@@ -49,28 +49,6 @@ Globals:
           Ref: AppName
 
 Resources:
-  Templates:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName:
-        Fn::Sub: ${Environment}-${AppName}-templates
-      CodeUri: ../templates/
-      Handler: templates.handler
-      Layers:
-        - Ref: TemplatesLayer
-      Environment:
-        Variables:
-          PGUSER:
-            Ref: DBUser
-          PGPASSWORD:
-            Ref: DBPassword
-          PGHOST:
-            Ref: DBHost
-          PGDATABASE:
-            Ref: DBName
-          TOKEN_SECRET:
-            Ref: TOKEN_SECRET
-
   Submission:
     Type: AWS::Serverless::Function
     Properties:
@@ -104,26 +82,6 @@ Resources:
           NOTIFY_API_KEY:
             Ref: NOTIFY_API_KEY
 
-  Organizations:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName:
-        Fn::Sub: ${Environment}-${AppName}-Organizations
-      CodeUri: ../organizations/
-      Handler: organizations.handler
-      Layers:
-        - Ref: OrganizationsLayer
-      Environment:
-        Variables:
-          PGUSER:
-            Ref: DBUser
-          PGPASSWORD:
-            Ref: DBPassword
-          PGHOST:
-            Ref: DBHost
-          PGDATABASE:
-            Ref: DBName
-
   Archiver:
     Type: AWS::Serverless::Function
     Properties:
@@ -144,15 +102,6 @@ Resources:
           SNS_ERROR_TOPIC_ARN:
             Ref: arn:aws:sns:us-east-1:000000000000:alert-critical
 
-  TemplatesLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      LayerName:
-        Fn::Sub: ${Environment}-${AppName}-templates-layer
-      ContentUri: ../templates/
-      CompatibleRuntimes:
-        - nodejs14.x
-
   SubmissionLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -168,15 +117,6 @@ Resources:
       LayerName:
         Fn::Sub: ${Environment}-${AppName}-reliability-layer
       ContentUri: ../reliability/
-      CompatibleRuntimes:
-        - nodejs14.x
-
-  OrganizationsLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      LayerName:
-        Fn::Sub: ${Environment}-${AppName}-organizations-layer
-      ContentUri: ../organizations/
       CompatibleRuntimes:
         - nodejs14.x
 

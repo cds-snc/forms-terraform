@@ -24,17 +24,11 @@ jobs:
           - component: forms-terraform/lambda/archive-form-responses
             directory: ./aws/app/lambda/archive_form_responses/nodejs
 
-          - component: forms-terraform/lambda/organizations
-            directory: ./aws/app/lambda/organizations/nodejs
-
           - component: forms-terraform/lambda/reliability
             directory: ./aws/app/lambda/reliability/nodejs
 
           - component: forms-terraform/lambda/submission
             directory: ./aws/app/lambda/submission/nodejs
-
-          - component: forms-terraform/lambda/templates
-            directory: ./aws/app/lambda/templates/nodejs
 
     steps:
       - name: Checkout
