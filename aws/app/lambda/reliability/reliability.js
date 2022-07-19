@@ -46,6 +46,9 @@ exports.handler = async function (event) {
 
     // Add form config back to submission to be processed
     formSubmission.form = await getTemplateFormConfig(formSubmission.formID);
+    if (formSubmission.form === null) {
+      throw new Error(`No Form with ID ${formSubmission.formID} found to process response`);
+    }
 
     /*
      Process submission to vault or Notify

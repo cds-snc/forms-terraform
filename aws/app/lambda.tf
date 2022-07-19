@@ -17,6 +17,11 @@ data "archive_file" "reliability_lib" {
   }
 
   source {
+    content  = file("./lambda/reliability/lib/templates.js")
+    filename = "nodejs/node_modules/templates/index.js"
+  }
+
+  source {
     content  = file("./lambda/reliability/lib/dataLayer.js")
     filename = "nodejs/node_modules/dataLayer/index.js"
   }

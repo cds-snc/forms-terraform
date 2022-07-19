@@ -6,11 +6,13 @@ const REGION = process.env.REGION;
 const formatError = (err) => {
   return typeof err === "object" ? JSON.stringify(err) : err;
 };
-
-const getTemplateFormConfig = (formID) => {
-
+/**
+ * Get's the Form property on the Form Configuration
+ * @param {string} formID
+ * @returns Form property of Form Configuration
+ */
+const getTemplateFormConfig = async (formID) => {
   try {
-
     // Return early if require params not provided
     if (formID === null || typeof formID === "undefined") return { error: "Missing formID" };
 
@@ -20,19 +22,16 @@ const getTemplateFormConfig = (formID) => {
 
     const data = await getTemplateData(SQL, parameters);
 
-    if (Array.isArray(data?.rows) && data.rows.length === 1) {
-      
-      return {...data.rows[0].json_config}
+    if (data.records.length === 1) {
+      return { ...data.records[0].formConfig.form };
     } else {
       return null;
     }
   } catch (e) {
-    console.error(
-      `{"status": "error", "error": "${formatError(error)}"}`
-    );
+    console.error(`{"status": "error", "error": "${formatError(error)}"}`);
     // Return as if no template with ID was found.
     // Handle error in calling function if template is not found.
-    return { data: [] };
+    return null;
   }
 };
 
@@ -56,7 +55,8 @@ const requestSAM = async (SQL, parameters) => {
     } else {
       throw new Error("Missing Environment Variables for DB config");
     }
-    return await dbClient.query(SQL, parameters);
+    const data = await dbClient.query(SQL, parameters);
+    return parseConfig(data.rows);
   } catch (error) {
     console.error(`{"status": "error", "error": "${formatError(error)}"}`);
     // Lift more generic error to be able to capture event info higher in scope
@@ -69,7 +69,7 @@ const requestSAM = async (SQL, parameters) => {
 /**
  * Creates and processes request to RDS
  * @param {string} SQL
- * @param {{name: string, value: {longValue: string}[]}} parameters
+ * @param {{name: string, value: {stringValue: string}[]}} parameters
  * @returns RDS client return value
  */
 const requestRDS = async (SQL, parameters) => {
@@ -85,7 +85,8 @@ const requestRDS = async (SQL, parameters) => {
     };
     const command = new ExecuteStatementCommand(params);
 
-    return await dbClient.send(command);
+    const data = await dbClient.send(command);
+    return parseConfig(data.records);
   } catch (error) {
     console.error(`{"status": "error", "error": "${formatError(error)}"}`);
     // Lift more generic error to be able to capture event info higher in scope
@@ -98,7 +99,7 @@ const requestRDS = async (SQL, parameters) => {
  * @param {string} formID
  */
 const createSQLString = (formID) => {
-  const selectSQL = "SELECT json_config FROM Templates";
+  const selectSQL = `SELECT "jsonConfig" FROM "Template"`;
   if (!process.env.AWS_SAM_LOCAL) {
     return {
       SQL: `${selectSQL} WHERE id = :formID`,
@@ -106,19 +107,35 @@ const createSQLString = (formID) => {
         {
           name: "formID",
           value: {
-            longValue: formID,
+            stringValue: formID,
           },
         },
       ],
     };
   } else {
     return {
-      SQL: `${selectSQL} WHERE id = ($1)`,
+      SQL: `${selectSQL} WHERE id = '($1)'`,
       parameters: [formID],
     };
   }
 };
 
+const parseConfig = (records) => {
+  const parsedRecords = records.map((record) => {
+    let formConfig;
+    if (!process.env.AWS_SAM_LOCAL) {
+      formConfig = JSON.parse(record[0].stringValue.trim(1, -1)) || undefined;
+    } else {
+      formConfig = record.jsonConfig;
+    }
+    return {
+      formConfig,
+    };
+  });
+
+  return { records: parsedRecords };
+};
+
 module.exports = {
-  getTemplateFormConfig
-}
+  getTemplateFormConfig,
+};
