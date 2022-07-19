@@ -1,25 +1,21 @@
-const { 
-  SQSClient, 
-  ReceiveMessageCommand, 
-  SendMessageCommand, 
-  DeleteMessageCommand 
+const {
+  SQSClient,
+  ReceiveMessageCommand,
+  SendMessageCommand,
+  DeleteMessageCommand,
 } = require("@aws-sdk/client-sqs");
 
-const {
-  SNSClient,
-  PublishCommand,
-} = require("@aws-sdk/client-sns");
+const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
 
 const REGION = process.env.REGION;
 const SQS_DEAD_LETTER_QUEUE_URL = process.env.SQS_DEAD_LETTER_QUEUE_URL;
 const SQS_SUBMISSION_PROCESSING_QUEUE_URL = process.env.SQS_SUBMISSION_PROCESSING_QUEUE_URL;
 const SNS_ERROR_TOPIC_ARN = process.env.SNS_ERROR_TOPIC_ARN;
 
-exports.handler = async(event) => {
-
+exports.handler = async (event) => {
   const sqsClient = new SQSClient({
     region: REGION,
-    endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+    ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
   });
 
   try {
@@ -27,12 +23,14 @@ exports.handler = async(event) => {
       const receiveMessageCommandInput = {
         QueueUrl: SQS_DEAD_LETTER_QUEUE_URL,
       };
-  
-      const receiveMessageCommandOutput = await sqsClient.send(new ReceiveMessageCommand(receiveMessageCommandInput));
-  
+
+      const receiveMessageCommandOutput = await sqsClient.send(
+        new ReceiveMessageCommand(receiveMessageCommandInput)
+      );
+
       if (receiveMessageCommandOutput.Messages) {
         const message = receiveMessageCommandOutput.Messages[0];
-        
+
         const submissionID = message.Body;
         const sendMessageCommandInput = {
           QueueUrl: SQS_SUBMISSION_PROCESSING_QUEUE_URL,
@@ -45,9 +43,9 @@ exports.handler = async(event) => {
 
         const deleteMessageCommandInput = {
           QueueUrl: SQS_DEAD_LETTER_QUEUE_URL,
-          ReceiptHandle: message.ReceiptHandle
+          ReceiptHandle: message.ReceiptHandle,
         };
-  
+
         await sqsClient.send(new DeleteMessageCommand(deleteMessageCommandInput));
       } else {
         break;
@@ -55,10 +53,9 @@ exports.handler = async(event) => {
     }
 
     return {
-      statusCode: "SUCCESS"
+      statusCode: "SUCCESS",
     };
-  }
-  catch (err) {
+  } catch (err) {
     await reportErrorToSlack(err.message);
 
     return {
@@ -66,12 +63,13 @@ exports.handler = async(event) => {
       error: err.message,
     };
   }
-
 };
 
 async function reportErrorToSlack(errorMessage) {
-
-  const snsClient = new SNSClient({ region: REGION, endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined});
+  const snsClient = new SNSClient({
+    region: REGION,
+    ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
+  });
 
   const publishCommandInput = {
     Message: `End User Forms Critical - Dead letter queue consumer: ${errorMessage}`,
@@ -80,8 +78,7 @@ async function reportErrorToSlack(errorMessage) {
 
   try {
     await snsClient.send(new PublishCommand(publishCommandInput));
-  } 
-  catch (err) {
+  } catch (err) {
     throw new Error(`Failed to report error to Slack. Reason: ${err.message}.`);
   }
 }

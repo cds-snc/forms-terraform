@@ -7,8 +7,10 @@ const {
 
 const s3Client = new S3Client({
   region: process.env.REGION,
-  endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
-  forcePathStyle: process.env.AWS_SAM_LOCAL ? true : undefined,
+  ...(process.env.AWS_SAM_LOCAL && {
+    endpoint: "http://host.docker.internal:4566",
+    forcePathStyle: true,
+  }),
 });
 
 const environment = process.env.ENVIRONMENT || (process.env.AWS_SAM_LOCAL ? "local" : "staging");

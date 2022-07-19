@@ -5,11 +5,11 @@ const uuid = require("uuid");
 const REGION = process.env.REGION;
 const db = new DynamoDBClient({
   region: REGION,
-  endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+  ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
 });
 const sqs = new SQSClient({
   region: REGION,
-  endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+  ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
 });
 
 const formatError = (err) => {
