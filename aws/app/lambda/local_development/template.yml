@@ -102,6 +102,23 @@ Resources:
           SNS_ERROR_TOPIC_ARN:
             Ref: arn:aws:sns:us-east-1:000000000000:alert-critical
 
+  DeadLetterQueueConsumer:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-Dead-letter-queue-consumer
+      CodeUri: ../dead_letter_queue_consumer/
+      Handler: dead_letter_queue_consumer.handler
+      Timeout: 300
+      Layers:
+        - Ref: DeadLetterQueueConsumerLayer
+      Environment:
+        Variables:
+          SQS_DEAD_LETTER_QUEUE_URL:
+            Ref: http://localhost:4566/000000000000/deadletter_queue.fifo
+          SQS_SUBMISSION_PROCESSING_QUEUE_URL:
+            Ref: http://localhost:4566/000000000000/submission_processing.fifo
+
   SubmissionLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -126,5 +143,14 @@ Resources:
       LayerName:
         Fn::Sub: ${Environment}-${AppName}-archiver-layer
       ContentUri: ../archive_form_responses/
+      CompatibleRuntimes:
+        - nodejs14.x
+
+  DeadLetterQueueConsumerLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName:
+        Fn::Sub: ${Environment}-${AppName}-dead-letter-queue-consumer-layer
+      ContentUri: ../dead_letter_queue_consumer/
       CompatibleRuntimes:
         - nodejs14.x
