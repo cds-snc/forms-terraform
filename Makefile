@@ -19,9 +19,11 @@ validate: 	## Terragrunt validate all resources
 	terragrunt run-all validate
 
 terragrunt: ## Create localstack resources
+	./aws/app/lambda/deps.sh delete &&\
 	.devcontainer/scripts/terraform_apply_localstack.sh
 
 lambdas: ## Start lambdas locally
+	./aws/app/lambda/deps.sh install &&\
 	./aws/app/lambda/start_local_lambdas.sh
 
 local: terragrunt lambdas
