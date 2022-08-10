@@ -81,6 +81,14 @@ Resources:
             Ref: REGION
           NOTIFY_API_KEY:
             Ref: NOTIFY_API_KEY
+          PGUSER:
+            Ref: DBUser
+          PGPASSWORD:
+            Ref: DBPassword
+          PGHOST:
+            Ref: DBHost
+          PGDATABASE:
+            Ref: DBName
 
   Archiver:
     Type: AWS::Serverless::Function

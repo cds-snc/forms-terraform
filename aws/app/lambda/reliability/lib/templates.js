@@ -1,10 +1,11 @@
 const { RDSDataClient, ExecuteStatementCommand } = require("@aws-sdk/client-rds-data");
 const { Client } = require("pg");
+const util = require("util");
 
 const REGION = process.env.REGION;
 
 const formatError = (err) => {
-  return typeof err === "object" ? JSON.stringify(err) : err;
+  return typeof err === "object" ? util.inspect(err) : err;
 };
 /**
  * Get's the Form property on the Form Configuration
@@ -27,7 +28,7 @@ const getTemplateFormConfig = async (formID) => {
     } else {
       return null;
     }
-  } catch (e) {
+  } catch (error) {
     console.error(`{"status": "error", "error": "${formatError(error)}"}`);
     // Return as if no template with ID was found.
     // Handle error in calling function if template is not found.
@@ -114,7 +115,7 @@ const createSQLString = (formID) => {
     };
   } else {
     return {
-      SQL: `${selectSQL} WHERE id = '($1)'`,
+      SQL: `${selectSQL} WHERE id = $1`,
       parameters: [formID],
     };
   }
