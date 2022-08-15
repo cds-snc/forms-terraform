@@ -41,6 +41,7 @@ data "template_file" "form_viewer_task" {
     nextauth_url                    = "https://${var.domain}"
     submission_api                  = aws_lambda_function.submission.arn
     reliability_file_storage        = aws_s3_bucket.reliability_file_storage.id
+    vault_file_storage              = aws_s3_bucket.vault_file_storage.id
     gc_temp_token_template_id       = var.gc_temp_token_template_id
     gc_template_id                  = var.gc_template_id
   }
