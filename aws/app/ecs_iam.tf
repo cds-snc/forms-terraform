@@ -81,6 +81,23 @@ data "aws_iam_policy_document" "forms_s3" {
       "${aws_s3_bucket.reliability_file_storage.arn}/*"
     ]
   }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:ListBucket",
+      "s3:GetObject",
+      "s3:GetObjectTagging",
+      "s3:GetObjectVersion",
+      "s3:GetObjectVersionTagging"
+    ]
+
+    resources = [
+      aws_s3_bucket.vault_file_storage.arn,
+      "${aws_s3_bucket.vault_file_storage.arn}/*"
+    ]
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_forms" {

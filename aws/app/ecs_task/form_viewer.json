@@ -56,6 +56,10 @@
       {
         "name": "TEMPLATE_ID",
         "value": "${gc_template_id}"
+      },
+      {
+        "name": "VAULT_FILE_STORAGE",
+        "value": "${vault_file_storage}"
       }
     ],
     "secrets": [
