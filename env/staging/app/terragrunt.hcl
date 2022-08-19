@@ -100,6 +100,8 @@ dependency "sns" {
   mock_outputs_merge_with_state           = true
   mock_outputs = {
     sns_topic_alert_critical_arn = ""
+    sns_topic_alert_warning_arn  = ""
+    sns_topic_alert_ok_arn       = ""
   }
 }
 
@@ -150,6 +152,8 @@ inputs = {
   sqs_dead_letter_queue_id           = dependency.sqs.outputs.sqs_dead_letter_queue_id
 
   sns_topic_alert_critical_arn = dependency.sns.outputs.sns_topic_alert_critical_arn
+  sns_topic_alert_warning_arn  = dependency.sns.outputs.sns_topic_alert_warning_arn
+  sns_topic_alert_ok_arn       = dependency.sns.outputs.sns_topic_alert_ok_arn
 }
 
 include {
