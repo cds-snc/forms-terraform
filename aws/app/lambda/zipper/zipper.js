@@ -1,6 +1,7 @@
 "use strict";
 
 const archiver = require("archiver");
+const archiveEncrypted = require("archiver-zip-encrypted");
 const pino = require("pino");
 const { lambdaRequestTracker, pinoLambdaDestination } = require("pino-lambda");
 const { PassThrough } = require("stream");
@@ -17,6 +18,10 @@ const s3Client = new S3Client({
     forcePathStyle: true,
   }),
 });
+
+// Register the password protected zip format.
+// This should only be done once per
+archiver.registerFormat("zip-encrypted", archiveEncrypted);
 
 // Setup logging and add a custom requestId attribute to all log messages
 const logger = pino({ level: LOGGING_LEVEL }, pinoLambdaDestination());
@@ -49,7 +54,7 @@ exports.handler = async (event, context) => {
 const createArchive = (s3Objects) => {
   return new Promise((resolve, reject) => {
     // Compression level, higher = slower/better
-    const archive = archiver("zip", { zlib: { level: 9 } });
+    const archive = archiver("zip-encrypted", { zlib: { level: 9 }, encryptionMethod: "aes256", password: "123" });
     const buffer = [];
 
     archive
