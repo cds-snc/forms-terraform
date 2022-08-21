@@ -6,6 +6,7 @@ const pino = require("pino");
 const { lambdaRequestTracker, pinoLambdaDestination } = require("pino-lambda");
 const { PassThrough } = require("stream");
 const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
+const { Upload } = require("@aws-sdk/lib-storage");
 
 const REGION = process.env.REGION;
 const BUCKET_NAME = process.env.BUCKET_NAME;
@@ -48,7 +49,18 @@ exports.handler = async (event, context) => {
     }))
   );
 
-  return createArchive(s3Objects);
+  // Upload zip to S3
+  const buffer = await createArchive(s3Objects);
+  const upload = new Upload({
+    client: s3Client,
+    params: {
+      Bucket: BUCKET_NAME,
+      Key: "file.zip",
+      Body: buffer,
+      ContentType: "application/zip"
+    },
+  });
+  await upload.done();
 };
 
 const createArchive = (s3Objects) => {
@@ -66,7 +78,7 @@ const createArchive = (s3Objects) => {
       .on("end", () => {
         logger.info(`Created ${archive.pointer()} byte archive`);
         const data = Buffer.concat(buffer);
-        resolve(formatResponse(data));
+        resolve(data);
       });
 
     // Add s3Objects to the zip archive
