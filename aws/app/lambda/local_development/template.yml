@@ -127,6 +127,23 @@ Resources:
           SQS_SUBMISSION_PROCESSING_QUEUE_URL:
             Ref: http://localhost:4566/000000000000/submission_processing.fifo
 
+  Zipper:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-Zipper
+      CodeUri: ../zipper/
+      Handler: zipper.handler
+      Timeout: 300
+      Layers:
+        - Ref: ZipperLayer
+      Environment:
+        Variables:
+          REGION:
+            Ref: REGION
+          BUCKET_NAME:
+            Ref: forms-local-vault-file-storage                  
+
   SubmissionLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -160,5 +177,14 @@ Resources:
       LayerName:
         Fn::Sub: ${Environment}-${AppName}-dead-letter-queue-consumer-layer
       ContentUri: ../dead_letter_queue_consumer/
+      CompatibleRuntimes:
+        - nodejs14.x
+
+  ZipperLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName:
+        Fn::Sub: ${Environment}-${AppName}-zipper-layer
+      ContentUri: ../zipper/
       CompatibleRuntimes:
         - nodejs14.x
