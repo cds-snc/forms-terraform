@@ -4,7 +4,6 @@ const archiver = require("archiver");
 const archiveEncrypted = require("archiver-zip-encrypted");
 const pino = require("pino");
 const { lambdaRequestTracker, pinoLambdaDestination } = require("pino-lambda");
-const { PassThrough } = require("stream");
 const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
 const { Upload } = require("@aws-sdk/lib-storage");
 
@@ -43,7 +42,7 @@ exports.handler = async (event, context) => {
 
   // TODO - extract these from the event and pass object key + filename
   const s3Objects = await Promise.all(
-    ["upload.txt", "upload1.txt"].map(async (file) => ({
+    ["nod.gif", "upload.txt", "upload1.txt"].map(async (file) => ({
       name: file,
       object: await getS3Ojbect(BUCKET_NAME, file),
     }))
@@ -84,10 +83,7 @@ const createArchive = (s3Objects) => {
     // Add s3Objects to the zip archive
     for (const s3Object of s3Objects) {
       logger.info(`Adding ${s3Object.name} to archive`);
-
-      const passthrough = new PassThrough();
-      s3Object.object.Body.pipe(passthrough);
-      archive.append(passthrough, { name: s3Object.name });
+      archive.append(s3Object.object.Body, { name: s3Object.name });
     }
 
     // Everything added, trigger the response
@@ -104,6 +100,7 @@ const getS3Ojbect = async (bucket, key) => {
   );
 };
 
+// Somewhat uselss for us since there's a 6MB limit on lambda request/response body size
 const formatResponse = (data) => ({
   statusCode: 200,
   headers: {
