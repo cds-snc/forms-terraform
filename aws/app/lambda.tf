@@ -350,6 +350,13 @@ resource "aws_lambda_permission" "submission" {
   principal     = aws_iam_role.forms.arn
 }
 
+resource "aws_lambda_permission" "zipper" {
+  statement_id  = "AllowInvokeECSZipper"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.zipper.function_name
+  principal     = aws_iam_role.forms.arn
+}
+
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_dead_letter_queue_consumer_lambda" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
