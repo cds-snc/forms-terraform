@@ -1,5 +1,20 @@
 "use strict";
 
+/**
+ * Lambda that accepts a list of S3 object keys, creates an encrypted zip and then
+ * uploads the back to the given S3 bucket.
+ *
+ * S3 event format:
+ * {
+ *   "submissionId": "123",
+ *   "s3ObjectKeys": [
+ *     "some/object/key.png",
+ *     "another/object/key.png",
+ *     "root-key.txt"
+ *   ]
+ * }
+ */
+
 const archiver = require("archiver");
 const archiveEncrypted = require("archiver-zip-encrypted");
 const pino = require("pino");
@@ -20,41 +35,45 @@ const s3Client = new S3Client({
 });
 
 // Register the password protected zip format.
-// This should only be done once per
+// This should only be done once on Lambda cold start
 archiver.registerFormat("zip-encrypted", archiveEncrypted);
 
-// Setup logging and add a custom requestId attribute to all log messages
+// Setup logging and add a custom submissionId attribute to all log messages
 const logger = pino({ level: LOGGING_LEVEL }, pinoLambdaDestination());
 const withRequest = lambdaRequestTracker({
-  requestMixin: (event, context) => {
+  requestMixin: (event) => {
     return {
-      correlation_id: context.awsRequestId,
+      correlation_id: event.submissionId,
     };
   },
 });
 
 /**
- * Lambda handler function.
+ * Create an archive from the passed in S3 object keys and upload back to the bucket
  * @param {Object} event Lambda invocation event
  */
-exports.handler = async (event, context) => {
-  withRequest(event, context);
+exports.handler = async (event) => {
+  withRequest(event);
 
-  // TODO - extract these from the event and pass object key + filename
+  const { submissionId, s3ObjectKeys } = event;
+
+  // Get the S3 objects from from the bucket
   const s3Objects = await Promise.all(
-    ["nod.gif", "upload.txt", "upload1.txt"].map(async (file) => ({
-      name: file,
-      object: await getS3Ojbect(BUCKET_NAME, file),
+    s3ObjectKeys.map(async (key) => ({
+      name: getFileNameFromPath(key),
+      object: await getS3Ojbect(BUCKET_NAME, key),
     }))
   );
 
-  // Upload zip to S3
+  // Create the zip archive
   const buffer = await createArchive(s3Objects);
+
+  // Upload the zip archive to the bucket
   const upload = new Upload({
     client: s3Client,
     params: {
       Bucket: BUCKET_NAME,
-      Key: "file.zip",
+      Key: `downloads/${submissionId}.zip`,
       Body: buffer,
       ContentType: "application/zip"
     },
@@ -62,6 +81,11 @@ exports.handler = async (event, context) => {
   await upload.done();
 };
 
+/**
+ * Given an array of S3 objects, add them to an ecrypted zip archive and return the archive as a buffer
+ * @param {{name: string, object: GetObjectCommandOutput}[]} s3Objects - List of S3 objects to archive
+ * @returns {Promise} buffer - Buffer representing the zip archive
+ */
 const createArchive = (s3Objects) => {
   return new Promise((resolve, reject) => {
     // Compression level, higher = slower/better
@@ -91,6 +115,12 @@ const createArchive = (s3Objects) => {
   });
 };
 
+/**
+ * Get an S3 object defined by a given bucket and object key.
+ * @param {string} bucket - S3 bucket name
+ * @param {string} key - S3 object key
+ * @returns {GetObjectCommandOutput} - S3 object response from the GetObjectCommand
+ */
 const getS3Ojbect = async (bucket, key) => {
   return await s3Client.send(
     new GetObjectCommand({
@@ -100,13 +130,11 @@ const getS3Ojbect = async (bucket, key) => {
   );
 };
 
-// Somewhat uselss for us since there's a 6MB limit on lambda request/response body size
-const formatResponse = (data) => ({
-  statusCode: 200,
-  headers: {
-    "Content-Type": "application/zip",
-    "Content-disposition": "attachment; filename=files.zip",
-  },
-  isBase64Encoded: true,
-  body: data.toString("base64"),
-});
+/**
+ * Given a file path returns the file name.
+ * @param filePath - The file path to get the file name from
+ * @returns {string} - The file name
+ */
+ const getFileNameFromPath = (filePath) => {
+  return filePath.substring(filePath.lastIndexOf("/") + 1);
+};
