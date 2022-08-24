@@ -237,6 +237,56 @@ resource "aws_lambda_event_source_mapping" "vault_updated_item_stream" {
 }
 
 #
+# Form submission file attachment zipper
+#
+data "archive_file" "zipper_main" {
+  type        = "zip"
+  source_file = "lambda/zipper/zipper.js"
+  output_path = "/tmp/zipper_main.zip"
+}
+
+data "archive_file" "zipper_lib" {
+  type        = "zip"
+  source_dir  = "lambda/zipper/"
+  excludes    = ["zipper.js"]
+  output_path = "/tmp/zipper_lib.zip"
+}
+
+resource "aws_lambda_function" "zipper" {
+  filename      = "/tmp/zipper_main.zip"
+  function_name = "Zipper"
+  role          = aws_iam_role.lambda.arn
+  handler       = "zipper.handler"
+
+  source_code_hash = data.archive_file.zipper_main.output_base64sha256
+  runtime          = "nodejs14.x"
+  layers           = [aws_lambda_layer_version.zipper_lib.arn]
+  timeout          = "30"
+
+  environment {
+    variables = {
+      BUCKET_NAME = aws_s3_bucket.vault_file_storage.id
+    }
+  }
+
+  tracing_config {
+    mode = "PassThrough"
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_lambda_layer_version" "zipper_lib" {
+  filename            = "/tmp/zipper_lib.zip"
+  layer_name          = "zipper_node_packages"
+  source_code_hash    = data.archive_file.zipper_lib.output_base64sha256
+  compatible_runtimes = ["nodejs14.x"]
+}
+
+#
 # Dead letter queue consumer
 #
 
