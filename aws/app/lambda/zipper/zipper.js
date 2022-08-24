@@ -75,7 +75,7 @@ exports.handler = async (event) => {
       Bucket: BUCKET_NAME,
       Key: `downloads/${submissionId}.zip`,
       Body: buffer,
-      ContentType: "application/zip"
+      ContentType: "application/zip",
     },
   });
   await upload.done();
@@ -135,6 +135,6 @@ const getS3Ojbect = async (bucket, key) => {
  * @param filePath - The file path to get the file name from
  * @returns {string} - The file name
  */
- const getFileNameFromPath = (filePath) => {
+const getFileNameFromPath = (filePath) => {
   return filePath.substring(filePath.lastIndexOf("/") + 1);
 };
