@@ -68,7 +68,7 @@
         "valueFrom": "${notify_api_key}"
       },
       {
-        "name": "RECAPTACHA_V3_SECRET_KEY",
+        "name": "RECAPTCHA_V3_SECRET_KEY",
         "valueFrom": "${recaptcha_secret}"
       },
       {
