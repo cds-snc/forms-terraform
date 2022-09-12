@@ -1,5 +1,5 @@
 terraform {
-  source = "../../../aws//dynamodb"
+  source = "../../../aws//cognito"
 }
 
 include {
