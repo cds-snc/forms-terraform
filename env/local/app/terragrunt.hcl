@@ -2,8 +2,8 @@ terraform {
   source = "../../../aws//app"
   extra_arguments "target_s3" {
     commands = [
-       "plan",
-       "apply"
+      "plan",
+      "apply"
     ]
 
     arguments = [
@@ -18,7 +18,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms",  "../dynamodb" ]
+  paths = ["../kms", "../dynamodb"]
 }
 
 dependency "dynamodb" {
@@ -26,10 +26,10 @@ dependency "dynamodb" {
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    dynamodb_relability_queue_arn       = ""
-    dynamodb_vault_arn                  = ""
-    dynamodb_vault_table_name           = ""
-    dynamodb_vault_stream_arn           = ""
+    dynamodb_relability_queue_arn = ""
+    dynamodb_vault_arn            = ""
+    dynamodb_vault_table_name     = ""
+    dynamodb_vault_stream_arn     = ""
   }
 }
 
@@ -68,7 +68,7 @@ inputs = {
   slack_webhook                               = "local"
   gc_notify_callback_bearer_token             = "local"
 
-  sns_topic_alert_critical_arn  = ""
+  sns_topic_alert_critical_arn = ""
 
   dynamodb_relability_queue_arn = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
   dynamodb_vault_arn            = dependency.dynamodb.outputs.dynamodb_vault_arn
@@ -91,25 +91,25 @@ inputs = {
 
   redis_url = ""
 
-  rds_cluster_arn            = ""
-  rds_db_name                = ""
-  database_secret_arn        = ""
-  database_url_secret_arn    = ""
+  rds_cluster_arn         = ""
+  rds_db_name             = ""
+  database_secret_arn     = ""
+  database_url_secret_arn = ""
 
   sqs_reliability_queue_arn          = ""
   sqs_reliability_queue_id           = ""
   sqs_reprocess_submission_queue_arn = ""
 
   gc_temp_token_template_id = "b6885d06-d10a-422a-973f-05e274d9aa86"
-  gc_template_id = "8d597a1b-a1d6-4e3c-8421-042a2b4158b7"
-  sqs_dead_letter_queue_id           = ""
+  gc_template_id            = "8d597a1b-a1d6-4e3c-8421-042a2b4158b7"
+  sqs_dead_letter_queue_id  = ""
 }
 
 remote_state {
   backend = "local"
   generate = {
     if_exists = "overwrite_terragrunt"
-    path = "../../terraform.tfstate"
+    path      = "../../terraform.tfstate"
   }
   config = {
     path = "../../terraform.tfstate"

@@ -60,6 +60,14 @@
       {
         "name": "VAULT_FILE_STORAGE",
         "value": "${vault_file_storage}"
+      },
+      {
+        "name": "COGNITO_ENDPOINT_URL",
+        "value": "${cognito_endpoint_url}"
+      },
+      {
+        "name": "COGNITO_CLIENT_ID",
+        "value": "${cognito_client_id}"
       }
     ],
     "secrets": [
@@ -90,6 +98,10 @@
       {
         "name": "GC_NOTIFY_CALLBACK_BEARER_TOKEN",
         "valueFrom": "${gc_notify_callback_bearer_token}"
+      },
+      {
+        "name": "COGNITO_CLIENT_SECRET",
+        "valueFrom": "${cognito_client_secret}"
       }
     ]
   }

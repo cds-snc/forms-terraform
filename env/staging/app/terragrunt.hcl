@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../sns"]
+  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../sns", "../cognito"]
 }
 
 dependency "dynamodb" {
@@ -12,10 +12,10 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_with_state           = true
   mock_outputs = {
-    dynamodb_relability_queue_arn       = ""
-    dynamodb_vault_arn                  = ""
-    dynamodb_vault_table_name           = ""
-    dynamodb_vault_stream_arn           = ""
+    dynamodb_relability_queue_arn = ""
+    dynamodb_vault_arn            = ""
+    dynamodb_vault_table_name     = ""
+    dynamodb_vault_stream_arn     = ""
   }
 }
 
@@ -55,7 +55,7 @@ dependency "network" {
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    private_subnet_ids    = [""]
+    private_subnet_ids = [""]
   }
 }
 
@@ -86,7 +86,7 @@ dependency "sqs" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_with_state           = true
   mock_outputs = {
-    sqs_reliability_queue_arn          = "" 
+    sqs_reliability_queue_arn          = ""
     sqs_reliability_queue_id           = ""
     sqs_reprocess_submission_queue_arn = ""
     sqs_dead_letter_queue_id           = ""
@@ -100,6 +100,18 @@ dependency "sns" {
   mock_outputs_merge_with_state           = true
   mock_outputs = {
     sns_topic_alert_critical_arn = ""
+  }
+}
+
+dependency "cognito" {
+  config_path = "../cognito"
+
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_with_state           = true
+  mock_outputs = {
+    cognito_endpoint_url      = ""
+    cognito_client_id         = ""
+    cognito_client_secret_arn = ""
   }
 }
 
@@ -118,10 +130,10 @@ inputs = {
   metric_provider                             = "stdout"
   tracer_provider                             = "stdout"
 
-  dynamodb_relability_queue_arn       = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
-  dynamodb_vault_arn                  = dependency.dynamodb.outputs.dynamodb_vault_arn
-  dynamodb_vault_table_name           = dependency.dynamodb.outputs.dynamodb_vault_table_name
-  dynamodb_vault_stream_arn           = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
+  dynamodb_relability_queue_arn = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
+  dynamodb_vault_arn            = dependency.dynamodb.outputs.dynamodb_vault_arn
+  dynamodb_vault_table_name     = dependency.dynamodb.outputs.dynamodb_vault_table_name
+  dynamodb_vault_stream_arn     = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
 
   ecr_repository_url = dependency.ecr.outputs.ecr_repository_url
 
@@ -131,7 +143,7 @@ inputs = {
   lb_https_listener_arn  = dependency.load_balancer.outputs.lb_https_listener_arn
   lb_target_group_1_arn  = dependency.load_balancer.outputs.lb_target_group_1_arn
   lb_target_group_1_name = dependency.load_balancer.outputs.lb_target_group_1_name
-  lb_target_group_2_name = dependency.load_balancer.outputs.lb_target_group_2_name 
+  lb_target_group_2_name = dependency.load_balancer.outputs.lb_target_group_2_name
 
   ecs_security_group_id    = dependency.network.outputs.ecs_security_group_id
   egress_security_group_id = dependency.network.outputs.egress_security_group_id
@@ -139,17 +151,21 @@ inputs = {
 
   redis_url = dependency.redis.outputs.redis_url
 
-  rds_cluster_arn            = dependency.rds.outputs.rds_cluster_arn
-  rds_db_name                = dependency.rds.outputs.rds_db_name
-  database_secret_arn        = dependency.rds.outputs.database_secret_arn
-  database_url_secret_arn    = dependency.rds.outputs.database_url_secret_arn
+  rds_cluster_arn         = dependency.rds.outputs.rds_cluster_arn
+  rds_db_name             = dependency.rds.outputs.rds_db_name
+  database_secret_arn     = dependency.rds.outputs.database_secret_arn
+  database_url_secret_arn = dependency.rds.outputs.database_url_secret_arn
 
-  sqs_reliability_queue_arn          = dependency.sqs.outputs.sqs_reliability_queue_arn 
+  sqs_reliability_queue_arn          = dependency.sqs.outputs.sqs_reliability_queue_arn
   sqs_reliability_queue_id           = dependency.sqs.outputs.sqs_reliability_queue_id
   sqs_reprocess_submission_queue_arn = dependency.sqs.outputs.sqs_reprocess_submission_queue_arn
   sqs_dead_letter_queue_id           = dependency.sqs.outputs.sqs_dead_letter_queue_id
 
   sns_topic_alert_critical_arn = dependency.sns.outputs.sns_topic_alert_critical_arn
+
+  cognito_endpoint_url      = dependency.cognito.outputs.cognito_endpoint_url
+  cognito_client_id         = dependency.cognito.outputs.cognito_client_id
+  cognito_client_secret_arn = dependency.cognito.outputs.cognito_client_secret_arn
 }
 
 include {
