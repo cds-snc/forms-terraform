@@ -8,7 +8,7 @@ resource "aws_cognito_user_pool" "forms" {
     require_uppercase = true
   }
   account_recovery_setting {
-    recovery_mechanism = {
+    recovery_mechanism {
       name     = "verified_email"
       priority = 1
     }
@@ -22,7 +22,7 @@ resource "aws_cognito_user_pool" "forms" {
   }
   admin_create_user_config {
     allow_admin_create_user_only = true
-    invite_message_template = {
+    invite_message_template {
       email_message = "Welcome!  Please log in using the following credentials:/n  Username: {username}/n  Password: {####}"
       email_subject = "Welcome to GCForms"
     }
