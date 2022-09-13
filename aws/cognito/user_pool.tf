@@ -25,7 +25,7 @@ resource "aws_cognito_user_pool" "forms" {
     invite_message_template {
       email_message = "Welcome!  Please log in using the following credentials:/n  Username: {username}/n  Password: {####}"
       email_subject = "Welcome to GCForms"
-      sms_message = ""Welcome!  Please log in using the following credentials:/n  Username: {username}/n  Password: {####}"
+      sms_message = "Welcome!  Please log in using the following credentials:/n  Username: {username}/n  Password: {####}"
     }
   }
 
