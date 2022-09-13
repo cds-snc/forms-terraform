@@ -18,7 +18,6 @@ resource "aws_cognito_user_pool" "forms" {
   }
   email_configuration {
     email_sending_account = "COGNITO_DEFAULT"
-    from_email_address    = "noreply.forms-formulaires@cds-snc.ca"
   }
   admin_create_user_config {
     allow_admin_create_user_only = true
