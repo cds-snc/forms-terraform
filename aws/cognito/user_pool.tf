@@ -41,4 +41,5 @@ resource "aws_cognito_user_pool_client" "forms" {
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
   supported_identity_providers         = ["COGNITO"]
+  generate_secret                      = true
 }
