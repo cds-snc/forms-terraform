@@ -234,3 +234,17 @@ variable "gc_temp_token_template_id" {
   type        = string
 }
 
+variable "cognito_client_id" {
+  description = "User Pool Client ID for Forms Client"
+  type        = string
+}
+
+variable "cognito_endpoint_url" {
+  description = "Cognito endpoint url"
+  type        = string
+}
+
+variable "cognito_client_secret_arn" {
+  description = "User Pool Client Secret for Forms Client"
+  type        = string
+}
