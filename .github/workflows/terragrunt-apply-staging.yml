@@ -58,6 +58,9 @@ jobs:
             app:
               - 'aws/app/**'
               - 'env/staging/app/**'
+            cognito:
+              - 'aws/cognito/**'
+              - 'aws/staging/cognito/**'
             common:
               - '.github/workflows/terragrunt-apply-staging.yml'
               - 'env/common/**'
@@ -121,6 +124,11 @@ jobs:
       - name: Terragrunt apply sns
         if: ${{ steps.filter.outputs.sns == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/staging/sns
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply cognito
+        if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/staging/cognito
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on kms

@@ -68,6 +68,9 @@ jobs:
             app:
               - 'aws/app/**'
               - 'env/staging/app/**'
+            cognito:
+              - 'aws/cognito/**'
+              - 'env/staging/cognito/**'
             common:
               - '.github/workflows/terragrunt-plan-staging.yml'
               - 'env/common/**'
@@ -155,6 +158,16 @@ jobs:
           directory: "env/staging/sns"
           comment-delete: "true"
           comment-title: "Staging: sns"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan cognito
+        if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@v2
+        with:
+          directory: "env/staging/cognito"
+          comment-delete: "true"
+          comment-title: "Staging: cognito"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
