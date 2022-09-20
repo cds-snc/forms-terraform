@@ -458,3 +458,35 @@ resource "aws_cloudwatch_metric_alarm" "generate_temporary_token_api_failure" {
     Terraform             = true
   }
 }
+
+resource "aws_cloudwatch_log_metric_filter" "request_temporary_token_api_using_unauthorized_email_address" {
+  name           = "RequestTemporaryTokenApiUsingUnauthorizedEmailAddress"
+  pattern        = "\"An email address with no access to any form has been locked out\""
+  log_group_name = var.ecs_cloudwatch_log_group_name
+  metric_transformation {
+    name      = "RequestTemporaryTokenApiUsingUnauthorizedEmailAddress"
+    namespace = "forms"
+    value     = "1"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "request_temporary_token_api_using_unauthorized_email_address" {
+  alarm_name          = "RequestTemporaryTokenApiUsingUnauthorizedEmailAddress"
+  namespace           = "forms"
+  metric_name         = aws_cloudwatch_log_metric_filter.request_temporary_token_api_using_unauthorized_email_address.metric_transformation[0].name
+  statistic           = "SampleCount"
+  period              = "60"
+  comparison_operator = "GreaterThanThreshold"
+  threshold           = "0"
+  evaluation_periods  = "1"
+  treat_missing_data  = "notBreaching"
+
+  alarm_description = "End User Forms Warning - Someone tried to request a temporary token using an unauthorized email address"
+  alarm_actions     = [var.sns_topic_alert_warning_arn]
+  ok_actions        = [var.sns_topic_alert_ok_arn]
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
