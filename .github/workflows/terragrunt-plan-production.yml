@@ -25,25 +25,8 @@ env:
   TF_VAR_gc_template_id: 92096ac6-1cc5-40ae-9052-fffdb8439a90
 
 jobs:
-  # Check the VERSION file to get the target version to deploy and previously deployed version.
-  # These are used to determine which Terraform modules need to have `terraform plan` run.
-  version-manifest:
-    uses: cds-snc/forms-terraform/.github/workflows/version-manifest.yml@main
-
-  # Create a comment with a link showing the diff between versions
-  diff-comment:
-    needs: version-manifest
-    uses: cds-snc/forms-terraform/.github/workflows/diff-comment.yml@main
-    with:
-      base: ${{ needs.version-manifest.outputs.previous }}
-      ref: ${{ needs.version-manifest.outputs.current }}
-
   terragrunt-plan:
-    needs: version-manifest
     runs-on: ubuntu-latest
-    env:
-      TARGET_VERSION: ${{ needs.version-manifest.outputs.current }}
-      PREVIOUS_VERSION: ${{ needs.version-manifest.outputs.previous }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
