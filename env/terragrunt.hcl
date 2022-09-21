@@ -3,12 +3,13 @@ locals {
 }
 
 inputs = {
-  account_id        = "${local.vars.inputs.account_id}"
-  billing_tag_key   = "CostCentre"
-  billing_tag_value = "forms-platform-${local.vars.inputs.env}"   
-  domain            = "${local.vars.inputs.domain}"
-  env               = "${local.vars.inputs.env}"
-  region            = "ca-central-1"
+  account_id                = "${local.vars.inputs.account_id}"
+  billing_tag_key           = "CostCentre"
+  billing_tag_value         = "forms-platform-${local.vars.inputs.env}"   
+  domain                    = "${local.vars.inputs.domain}"
+  env                       = "${local.vars.inputs.env}"
+  region                    = "ca-central-1"
+  cbs_satellite_bucket_name = "cbs-satellite-${local.vars.inputs.account_id}"
 }
 
 
