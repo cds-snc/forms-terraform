@@ -3,15 +3,17 @@
 #
 resource "aws_kinesis_firehose_delivery_stream" "firehose_waf_logs" {
   name        = "aws-waf-logs-forms"
-  destination = "s3"
+  destination = "extended_s3"
 
   server_side_encryption {
     enabled = true
   }
 
-  s3_configuration {
-    role_arn   = aws_iam_role.firehose_waf_logs.arn
-    bucket_arn = aws_s3_bucket.firehose_waf_logs.arn
+  extended_s3_configuration {
+    role_arn           = aws_iam_role.firehose_waf_logs.arn
+    prefix             = "waf_acl_logs/AWSLogs/${var.account_id}/"
+    bucket_arn         = local.cbs_satellite_bucket_arn
+    compression_format = "GZIP"
   }
 
   tags = {
@@ -22,6 +24,8 @@ resource "aws_kinesis_firehose_delivery_stream" "firehose_waf_logs" {
 
 #
 # Log bucket
+# This is no longer being used and can be removed in 90 days from the 
+# terraform apply date (expiration lifecycle_rule will have deleted all objects by then).
 #
 resource "aws_s3_bucket" "firehose_waf_logs" {
   # checkov:skip=CKV_AWS_18: Versioning not required
@@ -99,8 +103,8 @@ data "aws_iam_policy_document" "firehose_waf_policy" {
       "s3:PutObject"
     ]
     resources = [
-      aws_s3_bucket.firehose_waf_logs.arn,
-      "${aws_s3_bucket.firehose_waf_logs.arn}/*"
+      local.cbs_satellite_bucket_arn,
+      "${local.cbs_satellite_bucket_arn}/*"
     ]
   }
 
