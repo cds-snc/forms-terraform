@@ -98,10 +98,6 @@
       {
         "name": "GC_NOTIFY_CALLBACK_BEARER_TOKEN",
         "valueFrom": "${gc_notify_callback_bearer_token}"
-      },
-      {
-        "name": "COGNITO_CLIENT_SECRET",
-        "valueFrom": "${cognito_client_secret}"
       }
     ]
   }
