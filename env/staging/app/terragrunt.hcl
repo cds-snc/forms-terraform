@@ -111,6 +111,7 @@ dependency "cognito" {
   mock_outputs = {
     cognito_endpoint_url      = ""
     cognito_client_id         = ""
+    cognito_user_pool_arn     = ""
   }
 }
 
@@ -164,6 +165,7 @@ inputs = {
 
   cognito_endpoint_url      = dependency.cognito.outputs.cognito_endpoint_url
   cognito_client_id         = dependency.cognito.outputs.cognito_client_id
+  cognito_user_pool_arn     = dependency.cognito.outputs.cognito_user_pool_arn
 }
 
 include {
