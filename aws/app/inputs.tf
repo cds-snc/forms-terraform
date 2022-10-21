@@ -234,6 +234,11 @@ variable "gc_temp_token_template_id" {
   type        = string
 }
 
+variable "cognito_user_pool_arn" {
+  description = "User Pool ARN for the Forms Client"
+  type        = string
+}
+
 variable "cognito_client_id" {
   description = "User Pool Client ID for Forms Client"
   type        = string
