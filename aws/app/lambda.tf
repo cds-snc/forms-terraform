@@ -169,6 +169,13 @@ resource "aws_lambda_layer_version" "submission_lib" {
   compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
 }
 
+resource "aws_lambda_permission" "submission" {
+  statement_id  = "AllowInvokeECS"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.submission.function_name
+  principal     = aws_iam_role.forms.arn
+}
+
 #
 # Form responses archiver
 #
@@ -290,20 +297,62 @@ resource "aws_lambda_layer_version" "dead_letter_queue_consumer_lib" {
   compatible_runtimes = ["nodejs14.x"]
 }
 
-#
-# Lambda permissions
-#
-resource "aws_lambda_permission" "submission" {
-  statement_id  = "AllowInvokeECS"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.submission.function_name
-  principal     = aws_iam_role.forms.arn
-}
-
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_dead_letter_queue_consumer_lambda" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.dead_letter_queue_consumer.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.cron_4am_every_day.arn
+}
+
+#
+# Archive form templates
+#
+data "archive_file" "archive_form_templates_main" {
+  type        = "zip"
+  source_file = "lambda/archive_form_templates/archiver.js"
+  output_path = "/tmp/archive_form_templates_main.zip"
+}
+
+resource "aws_lambda_function" "archive_form_templates" {
+  filename      = "/tmp/archive_form_templates_main.zip"
+  function_name = "ArchiveFormTemplates"
+  role          = aws_iam_role.lambda.arn
+  handler       = "archiver.handler"
+
+  source_code_hash = data.archive_file.archive_form_templates_main.output_base64sha256
+
+  runtime = "nodejs14.x"
+  layers = [ // Using the reliability lib layer on purpose since the archive form lambda now also uses the templates lib file
+    aws_lambda_layer_version.reliability_lib.arn,
+    aws_lambda_layer_version.reliability_nodejs.arn
+  ]
+
+  environment {
+    variables = {
+      ENVIRONMENT = var.env
+      REGION      = var.region
+      DB_ARN      = var.rds_cluster_arn
+      DB_SECRET   = var.database_secret_arn
+      DB_NAME     = var.rds_db_name
+
+    }
+  }
+
+  tracing_config {
+    mode = "PassThrough"
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_templates_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.archive_form_templates.function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.cron_4am_every_day.arn
 }

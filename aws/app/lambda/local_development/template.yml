@@ -127,6 +127,28 @@ Resources:
           SQS_SUBMISSION_PROCESSING_QUEUE_URL:
             Ref: http://localhost:4566/000000000000/submission_processing.fifo
 
+  ArchiveFormTemplates:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-ArchiveFormTemplates
+      CodeUri: ../archive_form_templates/
+      Handler: archiver.handler
+      Layers:
+        - Ref: ReliabilityLayer
+      Environment:
+        Variables:
+          REGION:
+            Ref: REGION
+          PGUSER:
+            Ref: DBUser
+          PGPASSWORD:
+            Ref: DBPassword
+          PGHOST:
+            Ref: DBHost
+          PGDATABASE:
+            Ref: DBName
+
   SubmissionLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:

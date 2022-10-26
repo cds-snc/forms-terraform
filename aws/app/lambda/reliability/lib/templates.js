@@ -4,9 +4,6 @@ const util = require("util");
 
 const REGION = process.env.REGION;
 
-const formatError = (err) => {
-  return typeof err === "object" ? util.inspect(err) : err;
-};
 /**
  * Get's the Form property on the Form Configuration
  * @param {string} formID
@@ -33,6 +30,20 @@ const getTemplateFormConfig = async (formID) => {
     // Return as if no template with ID was found.
     // Handle error in calling function if template is not found.
     return null;
+  }
+};
+
+/**
+ * Delete all form templates that have been marked as archived (has an TTL value that is not null)
+ */
+const deleteFormTemplatesMarkedAsArchived = async () => {
+  try {
+    const request = `DELETE FROM "Template" WHERE ttl IS NOT NULL AND ttl < CURRENT_TIMESTAMP`;
+    const database = process.env.AWS_SAM_LOCAL ? requestSAM : requestRDS;
+    await database(request, []);
+  } catch (error) {
+    console.error(`{"status": "error", "error": "${formatError(error)}"}`);
+    throw new Error("Failed to delete archived form templates");
   }
 };
 
@@ -137,6 +148,11 @@ const parseConfig = (records) => {
   return { records: parsedRecords };
 };
 
+const formatError = (err) => {
+  return typeof err === "object" ? util.inspect(err) : err;
+};
+
 module.exports = {
   getTemplateFormConfig,
+  deleteFormTemplatesMarkedAsArchived,
 };
