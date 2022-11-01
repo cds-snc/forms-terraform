@@ -133,19 +133,23 @@ const createSQLString = (formID) => {
 };
 
 const parseConfig = (records) => {
-  const parsedRecords = records.map((record) => {
-    let formConfig;
-    if (!process.env.AWS_SAM_LOCAL) {
-      formConfig = JSON.parse(record[0].stringValue.trim(1, -1)) || undefined;
-    } else {
-      formConfig = record.jsonConfig;
-    }
-    return {
-      formConfig,
-    };
-  });
+  if (records) {
+    const parsedRecords = records.map((record) => {
+      let formConfig;
+      if (!process.env.AWS_SAM_LOCAL) {
+        formConfig = JSON.parse(record[0].stringValue.trim(1, -1)) || undefined;
+      } else {
+        formConfig = record.jsonConfig;
+      }
+      return {
+        formConfig,
+      };
+    });
 
-  return { records: parsedRecords };
+    return { records: parsedRecords };
+  }
+
+  return { records: [] };
 };
 
 const formatError = (err) => {
