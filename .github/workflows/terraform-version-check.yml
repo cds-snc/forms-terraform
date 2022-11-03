@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # tag=v2
+        uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791 # tag=v2.5.0
 
       - name: Get latest versions
         id: latest
@@ -36,7 +36,7 @@ jobs:
           echo "::set-output name=terragrunt::${TERRAGRUNT_USED}"
 
       - name: Delete previous comments
-        uses: actions/github-script@deb7ae927cc19ae3a8b57293dd5cd2f16171e1e2 # tag=v4
+        uses: actions/github-script@deb7ae927cc19ae3a8b57293dd5cd2f16171e1e2 # tag=v4.1.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -48,7 +48,7 @@ jobs:
 
       - name: Add version comment
         if: steps.latest.outputs.terraform != steps.used.outputs.terraform || steps.latest.outputs.terragrunt != steps.used.outputs.terragrunt
-        uses: actions/github-script@deb7ae927cc19ae3a8b57293dd5cd2f16171e1e2 # tag=v4
+        uses: actions/github-script@deb7ae927cc19ae3a8b57293dd5cd2f16171e1e2 # tag=v4.1.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |

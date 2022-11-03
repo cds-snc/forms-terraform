@@ -31,7 +31,7 @@ jobs:
       PREVIOUS_VERSION: ${{ needs.version-manifest.outputs.previous }}
     steps:
       - name: Checkout
-        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # tag=v2
+        uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791 # tag=v2.5.0
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@3d8debd658c92063839bc97da5c2427100420dec # v1.3.2
