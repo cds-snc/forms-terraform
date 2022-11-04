@@ -184,6 +184,21 @@ variable "redis_url" {
   type        = string
 }
 
+variable "sns_topic_alert_critical_arn" {
+  description = "SNS topic ARN that critical alerts are sent to"
+  type        = string
+}
+
+variable "sns_topic_alert_warning_arn" {
+  description = "SNS topic ARN that warning alerts are sent to"
+  type        = string
+}
+
+variable "sns_topic_alert_ok_arn" {
+  description = "SNS topic ARN that ok alerts are sent to"
+  type        = string
+}
+
 variable "sqs_reliability_queue_id" {
   description = "SQS reliability queue ID"
   type        = string
@@ -211,11 +226,6 @@ variable "tracer_provider" {
 
 variable "dynamodb_vault_table_name" {
   description = "Vault DynamodDB table name"
-  type        = string
-}
-
-variable "sns_topic_alert_critical_arn" {
-  description = "SNS topic ARN that critical alerts are sent to"
   type        = string
 }
 
