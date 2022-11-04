@@ -32,9 +32,9 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791 # tag=v2.5.0
 
-      - uses: dorny/paths-filter@b2feaf19c27470162a626bd6fa8438ae5b263721
+      - uses: dorny/paths-filter@4512585405083f25c027a35db413c2b3b9006d50
         id: changes
         with:
           filters: |
@@ -44,7 +44,7 @@ jobs:
 
       - name: Generate ${{ matrix.component }} SBOM
         if: steps.changes.outputs.lock == 'true'
-        uses: cds-snc/security-tools/.github/actions/generate-sbom@4c6b386722985552f3f008d04279a3f01402cc35
+        uses: cds-snc/security-tools/.github/actions/generate-sbom@ed1f03ec5972adc238b8b024a321f2a49c2d1746
         with:
           dependency_track_api_key: ${{ secrets.DEPENDENCY_TRACK_API_KEY }}
           project_name: ${{ matrix.component }}

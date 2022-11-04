@@ -475,6 +475,28 @@ REPORT RequestId: fc1f1509-63af-4a96-a798-81a295e6ca2f	Init Duration: 0.27 ms	Du
 {"statusCode":"SUCCESS"}
 ```
 
+#### Running the archive_form_templates lambda
+
+Unfortunately due to AWS SAM limitations it is not possible to automatically trigger the archive_form_templates lambda function on a daily basis.
+
+In order to run the archive_form_templates lambda you will have to call the `invoke_archive_form_templates.sh` script.
+
+```shell
+$ ./invoke_archive_form_templates.sh
+
+Reading invoke payload from stdin (you can also pass it from file with --event)
+Invoking archiver.handler (nodejs14.x)
+ReliabilityLayer is a local Layer in the template
+Building image.......................
+Skip pulling image and use local one: samcli/lambda:nodejs14.x-x86_64-2ab34c74bed6bccfbae4c6fc8.
+
+Mounting /Users/clementjanin/github/forms-terraform/aws/app/lambda/archive_form_templates as /var/task:ro,delegated inside runtime container
+START RequestId: 9ce70de4-77c1-4a39-9d4e-e46bd73d1091 Version: $LATEST
+END RequestId: 9ce70de4-77c1-4a39-9d4e-e46bd73d1091
+REPORT RequestId: 9ce70de4-77c1-4a39-9d4e-e46bd73d1091	Init Duration: 0.05 ms	Duration: 426.80 ms	Billed Duration: 427 ms	Memory Size: 128 MB	Max Memory Used: 128 MB
+{"statusCode":"SUCCESS"}
+```
+
 ## Terraform secrets
 
 Terraform will require the following variables to plan and apply:
