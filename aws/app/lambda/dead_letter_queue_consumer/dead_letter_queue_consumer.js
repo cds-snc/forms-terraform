@@ -29,12 +29,12 @@ exports.handler = async (event) => {
       );
 
       if (receiveMessageCommandOutput.Messages) {
-        const message = receiveMessageCommandOutput.Messages[0];
+        const message = JSON.parse(receiveMessageCommandOutput.Messages[0]);
 
-        const submissionID = message.Body;
+        const { submissionID } = message.Body;
         const sendMessageCommandInput = {
           QueueUrl: SQS_SUBMISSION_PROCESSING_QUEUE_URL,
-          MessageBody: JSON.stringify({ submissionID: submissionID }),
+          MessageBody: JSON.stringify(message.Body),
           MessageDeduplicationId: submissionID,
           MessageGroupId: "Group-" + submissionID,
         };
