@@ -34,7 +34,7 @@ exports.handler = async (event) => {
         const { submissionID } = JSON.parse(message.Body);
         const sendMessageCommandInput = {
           QueueUrl: SQS_SUBMISSION_PROCESSING_QUEUE_URL,
-          MessageBody: JSON.stringify(message.Body),
+          MessageBody: message.Body,
           MessageDeduplicationId: submissionID,
           MessageGroupId: "Group-" + submissionID,
         };
