@@ -17,7 +17,7 @@ services:
       DEVCONTAINER: "True"
 
   localstack:
-    image: localstack/localstack@sha256:6b6ac4989a6b8b34d88f00457df0e0d9ade38235ff6446524253f4ab25fd7ae9
+    image: localstack/localstack@sha256:f7d4a90d96b53d6eb5e6a9e0fa9fe4f4191f35430fe51c143305c88869a855a4
     hostname: localstack
     volumes:
       - "./data:/tmp/localstack"
