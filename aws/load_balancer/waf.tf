@@ -4,12 +4,8 @@
 #
 
 locals {
-  is_production = var.env == "production"
-
-  # AWSManagedRulesCommonRuleSet to exclude.  Only exclude XSS in non-production environments.
-  excluded_rules_upload = ["GenericRFI_QUERYARGUMENTS", "GenericRFI_BODY", "SizeRestrictions_BODY"]
-  excluded_xss          = ["CrossSiteScripting_BODY"]
-  excluded_rules_common = !local.is_production ? concat(local.excluded_rules_upload, local.excluded_xss) : local.excluded_rules_upload
+  # AWSManagedRulesCommonRuleSet to exclude.
+  excluded_rules_common = ["GenericRFI_QUERYARGUMENTS", "GenericRFI_BODY", "SizeRestrictions_BODY"]
 }
 
 resource "aws_wafv2_web_acl" "forms_acl" {
@@ -42,90 +38,13 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     }
   }
 
-  rule {
-    name     = "AWSManagedRulesCommonRuleSet"
-    priority = 2
-
-    override_action {
-      none {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesCommonRuleSet"
-        vendor_name = "AWS"
-
-        dynamic "excluded_rule" {
-          for_each = local.excluded_rules_common
-          content {
-            name = excluded_rule.value
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesCommonRuleSet"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "AWSManagedRulesKnownBadInputsRuleSet"
-    priority = 3
-    override_action {
-      none {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesKnownBadInputsRuleSet"
-        vendor_name = "AWS"
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesKnownBadInputsRuleSet"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "AWSManagedRulesLinuxRuleSet"
-    priority = 4
-    override_action {
-      none {}
-    }
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesLinuxRuleSet"
-        vendor_name = "AWS"
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesLinuxRuleSet"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
+    rule {
     name     = "PostRequestLimit"
-    priority = 102
+    priority = 2
 
     # Only block in `production`
     action {
-      dynamic "block" {
-        for_each = local.is_production ? [true] : []
-        content {}
-      }
-      dynamic "count" {
-        for_each = !local.is_production ? [true] : []
-        content {}
-      }
+      block {}
     }
 
     statement {
@@ -154,6 +73,78 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       sampled_requests_enabled   = true
     }
   }
+
+  rule {
+    name     = "AWSManagedRulesCommonRuleSet"
+    priority = 3
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesCommonRuleSet"
+        vendor_name = "AWS"
+
+        dynamic "excluded_rule" {
+          for_each = local.excluded_rules_common
+          content {
+            name = excluded_rule.value
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesCommonRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWSManagedRulesKnownBadInputsRuleSet"
+    priority = 4
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesKnownBadInputsRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesKnownBadInputsRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWSManagedRulesLinuxRuleSet"
+    priority = 6
+    override_action {
+      none {}
+    }
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesLinuxRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesLinuxRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+
 
   rule {
     # make sure to update line 33 of output.tf if you change the name of the rule
