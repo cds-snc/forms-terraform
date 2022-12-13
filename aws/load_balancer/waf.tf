@@ -38,7 +38,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     }
   }
 
-    rule {
+  rule {
     name     = "PostRequestLimit"
     priority = 2
 
