@@ -42,7 +42,6 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     name     = "PostRequestLimit"
     priority = 2
 
-    # Only block in `production`
     action {
       block {}
     }
