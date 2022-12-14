@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/vscode/devcontainers/base:buster
+FROM mcr.microsoft.com/vscode/devcontainers/base:buster@sha256:ae4ccc0c04594f732cbfb02b855c3bf9bc0f72a05ed52ce5e8da8a4a8ff985af
 
 ARG USERNAME=vscode
 ARG AWS_SAM_VERSION
@@ -6,11 +6,8 @@ ARG AWS_SAM_CHECKSUM
 
 # Install packages
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends build-essential ca-certificates curl dnsutils git gnupg2 jq libffi-dev make nodejs npm openssh-client python3-dev python3-pip vim zsh \
+    && apt-get -y install --no-install-recommends build-essential ca-certificates curl dnsutils git gnupg2 jq libffi-dev make openssh-client python3-dev python3-pip vim zsh \
     && apt-get autoremove -y && apt-get clean -y 
-
-# Install yarn
-RUN npm install -g yarn
 
 # Install aws-sam
 ARG AWS_SAM_SRC=https://github.com/aws/aws-sam-cli/releases/download
@@ -50,5 +47,4 @@ complete -C /usr/local/bin/terraform terragrunt\n\
 alias tf='terraform'\n\
 alias tg='terragrunt'\n\
 alias ll='la -la' \n\
-alias laws='aws --endpoint-url=http://localstack:4566 --region=ca-central-1' \n\
-export PATH=$PATH:/usr/local/go/bin/" >> /home/vscode/.zshrc
+alias laws='aws --endpoint-url=http://localstack:4566 --region=ca-central-1'" >> /home/vscode/.zshrc

@@ -8,7 +8,7 @@ env:
   AWS_REGION: ca-central-1
   AWS_ACCESS_KEY_ID: ${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}
-  TERRAFORM_VERSION: 1.0.10
+  TERRAFORM_VERSION: 1.3.3
   TERRAGRUNT_VERSION: 0.35.6
   TF_INPUT: false
   TF_VAR_ecs_secret_token_secret: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
@@ -31,10 +31,10 @@ jobs:
       PREVIOUS_VERSION: ${{ needs.version-manifest.outputs.previous }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791 # tag=v2.5.0
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@3d8debd658c92063839bc97da5c2427100420dec # v1.3.2
+        uses: hashicorp/setup-terraform@ed3a0531877aca392eb870f440d9ae7aba83a6bd # v1.4.0
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           terraform_wrapper: false

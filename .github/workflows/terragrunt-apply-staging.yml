@@ -1,6 +1,7 @@
 name: "Terragrunt apply STAGING"
 
 on:
+  workflow_dispatch:
   push:
     branches: [develop]
     paths:
@@ -13,7 +14,7 @@ env:
   AWS_REGION: ca-central-1
   AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
-  TERRAFORM_VERSION: 1.0.10
+  TERRAFORM_VERSION: 1.3.3
   TERRAGRUNT_VERSION: 0.35.6
   TF_INPUT: false
   TF_VAR_ecs_secret_token_secret: ${{ secrets.STAGING_TOKEN_SECRET }}
@@ -33,10 +34,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791 # tag=v2.5.0
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@3d8debd658c92063839bc97da5c2427100420dec # v1.3.2
+        uses: hashicorp/setup-terraform@ed3a0531877aca392eb870f440d9ae7aba83a6bd # v1.4.0
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           terraform_wrapper: false
@@ -48,7 +49,7 @@ jobs:
           chmod +x bin/*
           echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
 
-      - uses: cds-snc/paths-filter@v2.10.3
+      - uses: cds-snc/paths-filter@87bb78bc509076907db04d7f616bd2533af0e7fe # tag=v2.10.3
         id: filter
         with:
           filters: |
@@ -58,6 +59,9 @@ jobs:
             app:
               - 'aws/app/**'
               - 'env/staging/app/**'
+            cognito:
+              - 'aws/cognito/**'
+              - 'aws/staging/cognito/**'
             common:
               - '.github/workflows/terragrunt-apply-staging.yml'
               - 'env/common/**'
@@ -121,6 +125,11 @@ jobs:
       - name: Terragrunt apply sns
         if: ${{ steps.filter.outputs.sns == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/staging/sns
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply cognito
+        if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/staging/cognito
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on kms

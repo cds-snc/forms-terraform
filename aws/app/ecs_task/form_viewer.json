@@ -34,14 +34,6 @@
         "value": "${submission_api}"
       },
       {
-        "name": "TEMPLATES_API",
-        "value": "${templates_api}"
-      },
-      {
-        "name": "ORGANIZATIONS_API",
-        "value": "${organizations_api}"
-      },
-      {
         "name": "NEXTAUTH_URL",
         "value": "${nextauth_url}"
       },
@@ -56,7 +48,7 @@
       {
         "name": "RECAPTCHA_V3_SITE_KEY",
         "value": "${recaptcha_public}"
-      },     
+      },
       {
         "name": "TEMPORARY_TOKEN_TEMPLATE_ID",
         "value": "${gc_temp_token_template_id}"
@@ -64,6 +56,18 @@
       {
         "name": "TEMPLATE_ID",
         "value": "${gc_template_id}"
+      },
+      {
+        "name": "VAULT_FILE_STORAGE",
+        "value": "${vault_file_storage}"
+      },
+      {
+        "name": "COGNITO_ENDPOINT_URL",
+        "value": "${cognito_endpoint_url}"
+      },
+      {
+        "name": "COGNITO_CLIENT_ID",
+        "value": "${cognito_client_id}"
       }
     ],
     "secrets": [
@@ -72,7 +76,7 @@
         "valueFrom": "${notify_api_key}"
       },
       {
-        "name": "RECAPTACHA_V3_SECRET_KEY",
+        "name": "RECAPTCHA_V3_SECRET_KEY",
         "valueFrom": "${recaptcha_secret}"
       },
       {

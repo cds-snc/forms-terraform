@@ -5,11 +5,11 @@ const uuid = require("uuid");
 const REGION = process.env.REGION;
 const db = new DynamoDBClient({
   region: REGION,
-  endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+  ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
 });
 const sqs = new SQSClient({
   region: REGION,
-  endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
+  ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
 });
 
 const formatError = (err) => {
@@ -24,6 +24,7 @@ Params:
   language - form submission language "fr" or "en",
   submission - submission type: email, vault
   responses - form responses: {formID, securityAttribute, questionID: answer}
+  securityAttribute - string of security classification
 */
 exports.handler = async function (event) {
   const submissionID = uuid.v4();
@@ -80,7 +81,7 @@ const saveData = async (submissionID, formData) => {
     TableName: "ReliabilityQueue",
     Item: {
       SubmissionID: { S: submissionID },
-      FormID: { S: `${formData.formID}` },
+      FormID: { S: formData.formID },
       SendReceipt: { S: "unknown" },
       FormSubmissionLanguage: { S: formData.language },
       FormData: { S: formSubmission },

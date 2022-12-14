@@ -7,14 +7,15 @@ Infrastructure as Code for the GC Forms environment.
 You will need to have the following installed on a MacOS machine.
 
 Pre-requisites:
+
 - Docker Hub: https://docs.docker.com/desktop/mac/install/
 
 - Homebrew:
-    ```bash
-     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-     ```
+  ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  ```
 - LocalStack : `brew install localstack`
-- Terragrunt: 
+- Terragrunt:
 
   1. `brew install warrensbox/tap/tfswitch`
   1. `tfswitch 1.0.10`
@@ -39,6 +40,7 @@ Pre-requisites:
 ### Starting LocalStack and E2E testing from devcontainers
 
 1. forms-terraform:
+
 ```sh
 # Build the local infrastructure (run on first setup and when there are Terraform changes)
 make terragrunt
@@ -48,6 +50,7 @@ make lambdas
 ```
 
 2. platform-forms-client:
+
 ```sh
 # Install dependencies, run database migrations and start local server
 yarn --cwd migrations install
@@ -55,7 +58,7 @@ yarn install
 yarn dev
 ```
 
-### Starting LocalStack 
+### Starting LocalStack
 
 Once you have localstack installed you should be able to start the localstack container and services using the following command.
 
@@ -63,7 +66,7 @@ Once you have localstack installed you should be able to start the localstack co
 $ localstack start
 ```
 
-You should see the following output if localstack has successfully started 
+You should see the following output if localstack has successfully started
 
 ```shell
 
@@ -82,7 +85,7 @@ You should see the following output if localstack has successfully started
 
 If you have installed localstack via pip (python's package manager) and are receiving command not found errors. Please ensure that your python's bin is directly in the `$PATH`. If you are using pyenv with shims... this will not work. You need to reference the bin of the python version you are using directly in the path.
 
-If you want to additionally verify what localstack services are running you can issue the following command 
+If you want to additionally verify what localstack services are running you can issue the following command
 
 ```shell
 $ localstack status services
@@ -130,6 +133,7 @@ our aws cli profiles.
 Add the following configurations to `~/.aws/config` and `~/.aws/credentials`
 
 `~/.aws/config`
+
 ```text
 [profile local]
 region = ca-central-1
@@ -137,6 +141,7 @@ output = yaml
 ```
 
 `./aws/credentials`
+
 ```text
 [local]
 aws_access_key_id = test
@@ -145,7 +150,7 @@ aws_secret_access_key = test
 
 **ensure that you do not have a default profile as this will cause errors**
 
-### Setting up local infrastructure 
+### Setting up local infrastructure
 
 Now that we have localstack up and running it's time to configure our local AWS services with what the lambdas would expect as if running in an AWS environment.
 
@@ -155,12 +160,12 @@ You must configure the following in the order they appear otherwise this will fa
 
 #### Setting up local KMS
 
-The first thing to do is to deploy KMS. Navigate to `./env/local/kms` and use terragrunt to apply it to localstack. Here is an example with the expected output 
+The first thing to do is to deploy KMS. Navigate to `./env/local/kms` and use terragrunt to apply it to localstack. Here is an example with the expected output
 
 ```shell
 $ cd ./env/local/kms
 $ terragrunt apply
-# JSON showing changes 
+# JSON showing changes
 
 Plan: 3 to add, 0 to change, 0 to destroy.
 
@@ -195,12 +200,11 @@ kms_key_dynamodb_arn = "arn:aws:kms:us-east-1:000000000000:key/bb42f69d-66e9-438
 
 ```
 
-
 #### Creating SQS queue
 
 Now to create our local SQS queue.
 
-Navigate to `./env/local/sqs` and use terragrunt to apply it to localstack. Here is an example with the expected output. 
+Navigate to `./env/local/sqs` and use terragrunt to apply it to localstack. Here is an example with the expected output.
 
 ```shell
 $ cd ./env/local/sqs
@@ -236,7 +240,7 @@ sqs_reliability_queue_id = "http://localhost:4566/000000000000/submission_proces
 
 Now to create our local SNS queue.
 
-Navigate to `./env/local/sns` and use terragrunt to apply it to localstack. Make sure you delete the terragrunt cache folder beforehand. Here is an example with the expected output. 
+Navigate to `./env/local/sns` and use terragrunt to apply it to localstack. Make sure you delete the terragrunt cache folder beforehand. Here is an example with the expected output.
 
 ```shell
 $ cd ./env/local/sns
@@ -280,12 +284,11 @@ sns_topic_alert_warning_arn = "arn:aws:sns:us-east-1:000000000000:alert-warning"
 sns_topic_alert_warning_us_east_arn = "arn:aws:sns:us-east-1:000000000000:alert-warning"
 ```
 
-
 #### Creating the DynamoDB database
 
 Since we have configured KMS we can now configure our DynamoDB database.
 
-Navigate to `./env/local/dynamodb` and use terragrunt apply to configure dynamodb on localstack. Here is an example with the expected output 
+Navigate to `./env/local/dynamodb` and use terragrunt apply to configure dynamodb on localstack. Here is an example with the expected output
 
 ```shell
 $ cd ./env/local/dynamodb
@@ -320,7 +323,7 @@ dynamodb_vault_retrieved_index_name = tolist([
 dynamodb_vault_table_name = "Vault"
 ```
 
-#### Creating the S3 buckets 
+#### Creating the S3 buckets
 
 Now that we have everything configured it's time for the final step of configuring the s3 buckets.
 
@@ -333,11 +336,11 @@ $ terragrunt apply
 Plan: 6 to add, 0 to change, 0 to destroy.
 ╷
 │ Warning: Resource targeting is in effect
-│ 
+│
 │ You are creating a plan with the -target option, which means that the
 │ result of this plan may not represent all of the changes requested by the
 │ current configuration.
-│               
+│
 │ The -target option is not for routine use, and is provided only for
 │ exceptional situations such as recovering from errors or mistakes, or when
 │ Terraform specifically suggests to use it as part of an error message.
@@ -363,13 +366,13 @@ aws_s3_bucket_public_access_block.archive_storage: Creation complete after 1s [i
 aws_s3_bucket_public_access_block.reliability_file_storage: Creation complete after 0s [id=forms-local-reliability-file-storage]
 ╷
 │ Warning: Applied changes may be incomplete
-│ 
+│
 │ The plan was created with the -target option in effect, so some changes
 │ requested in the configuration may have been ignored and the output values
 │ may not be fully updated. Run the following command to verify that no other
 │ changes are pending:
 │     terraform plan
-│       
+│
 │ Note that the -target option is not suitable for routine use, and is
 │ provided only for exceptional situations such as recovering from errors or
 │ mistakes, or when Terraform specifically suggests to use it as part of an
@@ -391,8 +394,8 @@ Install Lambda dependencies and start local lambda service
 In directory: `./aws/app/lambda/` run the script `./start_local_lambdas.sh`
 
 If you want to invoke a lambda specifically, here’s the example command:
-`aws lambda invoke --function-name "Templates" --endpoint-url "http://127.0.0.1:3001" --no-verify-ssl --payload fileb://./file.json out.txt`
-**NOTE:** *`fileb://` allows a JSON file that uses UTF-8 encoding for the payload.*
+`aws lambda invoke --function-name "Submission" --endpoint-url "http://127.0.0.1:3001" --no-verify-ssl --payload fileb://./file.json out.txt`
+**NOTE:** _`fileb://` allows a JSON file that uses UTF-8 encoding for the payload._
 
 Otherwise, in the platform-forms-client, you just modify the ‘endpoint’ parameter of the LambdaClient to hit `http://127.0.0.1:3001` . I’ve done this through an environment variable:
 `LOCAL_LAMBDA_ENDPOINT=http://127.0.0.1:3001`
@@ -415,22 +418,21 @@ if you get connection errors: postgresql.conf listen address “\*”
 Notes:
 When running locally using AWS SAM, the env var `AWS_SAM_LOCAL = true` is set automatically - so I hook into this for local testing
 
-#### Running the reliability lambda 
+#### Running the reliability lambda
 
-Unfortunately due to AWS SAM limitations it is not possible to automatically trigger the reliability lambda function whenever an event is pushed to the SQS queue via the Submission lambda. 
+Unfortunately due to AWS SAM limitations it is not possible to automatically trigger the reliability lambda function whenever an event is pushed to the SQS queue via the Submission lambda.
 
 In order to run the reliability lambda. First spin up local lambdas using the `start_local_lambda` script and submit a form through the platform-forms-client.
 
-You should see in the console the submission ID after the Submission function has successfully been invoked 
+You should see in the console the submission ID after the Submission function has successfully been invoked
 
 ```shell
 START RequestId: 21a1df8b-ed4b-4fd5-8dad-e92ee76341ee Version: $LATEST
 2022-01-19T09:16:08.084Z        21a1df8b-ed4b-4fd5-8dad-e92ee76341ee    INFO    {"status": "success", "sqsMessage": "aab25a19-e12e-5e72-fcde-b26ca07b2cda", "submissionID": "2dd4930d-cd77-41b3-a68e-9f44ef9e80f5"}
 END RequestId: 21a1df8b-ed4b-4fd5-8dad-e92ee76341ee
-REPORT RequestId: 21a1df8b-ed4b-4fd5-8dad-e92ee76341ee  Init Duration: 0.48 ms  Duration: 797.46 ms     Billed Duration: 798 ms Memory Size: 128 MB     Max Memory Used: 128 MB 
+REPORT RequestId: 21a1df8b-ed4b-4fd5-8dad-e92ee76341ee  Init Duration: 0.48 ms  Duration: 797.46 ms     Billed Duration: 798 ms Memory Size: 128 MB     Max Memory Used: 128 MB
 2022-01-19 04:16:08 127.0.0.1 - - [19/Jan/2022 04:16:08] "POST /2015-03-31/functions/Submission/invocations HTTP/1.1" 200 -
 ```
-
 
 You can then take this submission id and use the `invoke_reliability` script to simulate the reliability function being invoked by a SQS event.
 
@@ -447,12 +449,12 @@ START RequestId: ca3b4eed-9c78-46b0-ab55-62ccb8a93357 Version: $LATEST
 2022-01-19T09:19:07.811Z        ca3b4eed-9c78-46b0-ab55-62ccb8a93357    INFO    Lambda Template Client successfully triggered
 2022-01-19T09:19:09.199Z        ca3b4eed-9c78-46b0-ab55-62ccb8a93357    INFO    {"status": "success", "submissionID": "2dd4930d-cd77-41b3-a68e-9f44ef9e80f5", "sqsMessage":"aab25a19-e12e-5e72-fcde-b26ca07b2cda", "method":"notify"}
 {"$metadata":{"httpStatusCode":200,"requestId":"44208450-2823-491c-8fbd-47248443e97a","attempts":1,"totalRetryDelay":0},"ConsumedCapacity":{"CapacityUnits":1,"TableName":"ReliabilityQueue"}}END RequestId: ca3b4eed-9c78-46b0-ab55-62ccb8a93357
-REPORT RequestId: ca3b4eed-9c78-46b0-ab55-62ccb8a93357  Init Duration: 0.17 ms  Duration: 8051.83 ms    Billed Duration: 8052 ms        Memory Size: 128 MB     Max Memory Used: 128 MB 
+REPORT RequestId: ca3b4eed-9c78-46b0-ab55-62ccb8a93357  Init Duration: 0.17 ms  Duration: 8051.83 ms    Billed Duration: 8052 ms        Memory Size: 128 MB     Max Memory Used: 128 MB
 ```
 
-Please note you must configure the `NOTIFY_API_KEY` in the `templates.yml` for this to work. If you have configured it correctly... you should successfully receive an email with the form response 
+Please note you must configure the `NOTIFY_API_KEY` in the `templates.yml` for this to work. If you have configured it correctly... you should successfully receive an email with the form response
 
-#### Running the archiver lambda 
+#### Running the archiver lambda
 
 Unfortunately due to AWS SAM limitations it is not possible to automatically trigger the archiver lambda function whenever a modification is made to the DynamoDB Vault table.
 
@@ -473,9 +475,32 @@ REPORT RequestId: fc1f1509-63af-4a96-a798-81a295e6ca2f	Init Duration: 0.27 ms	Du
 {"statusCode":"SUCCESS"}
 ```
 
+#### Running the archive_form_templates lambda
+
+Unfortunately due to AWS SAM limitations it is not possible to automatically trigger the archive_form_templates lambda function on a daily basis.
+
+In order to run the archive_form_templates lambda you will have to call the `invoke_archive_form_templates.sh` script.
+
+```shell
+$ ./invoke_archive_form_templates.sh
+
+Reading invoke payload from stdin (you can also pass it from file with --event)
+Invoking archiver.handler (nodejs14.x)
+ReliabilityLayer is a local Layer in the template
+Building image.......................
+Skip pulling image and use local one: samcli/lambda:nodejs14.x-x86_64-2ab34c74bed6bccfbae4c6fc8.
+
+Mounting /Users/clementjanin/github/forms-terraform/aws/app/lambda/archive_form_templates as /var/task:ro,delegated inside runtime container
+START RequestId: 9ce70de4-77c1-4a39-9d4e-e46bd73d1091 Version: $LATEST
+END RequestId: 9ce70de4-77c1-4a39-9d4e-e46bd73d1091
+REPORT RequestId: 9ce70de4-77c1-4a39-9d4e-e46bd73d1091	Init Duration: 0.05 ms	Duration: 426.80 ms	Billed Duration: 427 ms	Memory Size: 128 MB	Max Memory Used: 128 MB
+{"statusCode":"SUCCESS"}
+```
 
 ## Terraform secrets
+
 Terraform will require the following variables to plan and apply:
+
 ```hcl
 ecs_secret_token_secret # JSON Web Token signing secret
 google_client_id        # Google OAuth client ID (used for authentication)
@@ -484,4 +509,3 @@ notify_api_key          # Notify API key to send messages
 rds_db_password         # Database password
 slack_webhook           # Slack webhook to send CloudWatch notifications
 ```
-

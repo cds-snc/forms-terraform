@@ -184,6 +184,21 @@ variable "redis_url" {
   type        = string
 }
 
+variable "sns_topic_alert_critical_arn" {
+  description = "SNS topic ARN that critical alerts are sent to"
+  type        = string
+}
+
+variable "sns_topic_alert_warning_arn" {
+  description = "SNS topic ARN that warning alerts are sent to"
+  type        = string
+}
+
+variable "sns_topic_alert_ok_arn" {
+  description = "SNS topic ARN that ok alerts are sent to"
+  type        = string
+}
+
 variable "sqs_reliability_queue_id" {
   description = "SQS reliability queue ID"
   type        = string
@@ -199,6 +214,11 @@ variable "sqs_reprocess_submission_queue_arn" {
   type        = string
 }
 
+variable "sqs_dead_letter_queue_id" {
+  description = "SQS dead letter queue ID"
+  type        = string
+}
+
 variable "tracer_provider" {
   description = "Tracer provider, used by the ECS task"
   type        = string
@@ -206,11 +226,6 @@ variable "tracer_provider" {
 
 variable "dynamodb_vault_table_name" {
   description = "Vault DynamodDB table name"
-  type        = string
-}
-
-variable "sns_topic_alert_critical_arn" {
-  description = "SNS topic ARN that critical alerts are sent to"
   type        = string
 }
 
@@ -229,3 +244,17 @@ variable "gc_temp_token_template_id" {
   type        = string
 }
 
+variable "cognito_user_pool_arn" {
+  description = "User Pool ARN for the Forms Client"
+  type        = string
+}
+
+variable "cognito_client_id" {
+  description = "User Pool Client ID for Forms Client"
+  type        = string
+}
+
+variable "cognito_endpoint_url" {
+  description = "Cognito endpoint url"
+  type        = string
+}

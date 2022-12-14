@@ -17,6 +17,11 @@ data "archive_file" "reliability_lib" {
   }
 
   source {
+    content  = file("./lambda/reliability/lib/templates.js")
+    filename = "nodejs/node_modules/templates/index.js"
+  }
+
+  source {
     content  = file("./lambda/reliability/lib/dataLayer.js")
     filename = "nodejs/node_modules/dataLayer/index.js"
   }
@@ -65,6 +70,10 @@ resource "aws_lambda_function" "reliability" {
       REGION         = var.region
       NOTIFY_API_KEY = aws_secretsmanager_secret_version.notify_api_key.secret_string
       TEMPLATE_ID    = var.gc_template_id
+      DB_ARN         = var.rds_cluster_arn
+      DB_SECRET      = var.database_secret_arn
+      DB_NAME        = var.rds_db_name
+
     }
   }
 
@@ -160,111 +169,11 @@ resource "aws_lambda_layer_version" "submission_lib" {
   compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
 }
 
-#
-# Template Storage processing
-#
-data "archive_file" "templates_main" {
-  type        = "zip"
-  source_file = "lambda/templates/templates.js"
-  output_path = "/tmp/templates_main.zip"
-}
-
-data "archive_file" "templates_lib" {
-  type        = "zip"
-  source_dir  = "lambda/templates/"
-  excludes    = ["templates.js"]
-  output_path = "/tmp/templates_lib.zip"
-}
-
-resource "aws_lambda_function" "templates" {
-  filename      = "/tmp/templates_main.zip"
-  function_name = "Templates"
-  role          = aws_iam_role.lambda.arn
-  handler       = "templates.handler"
-
-  source_code_hash = data.archive_file.templates_main.output_base64sha256
-  runtime          = "nodejs14.x"
-  layers           = [aws_lambda_layer_version.templates_lib.arn]
-  timeout          = "10"
-
-  environment {
-    variables = {
-      REGION       = var.region
-      DB_ARN       = var.rds_cluster_arn
-      DB_SECRET    = var.database_secret_arn
-      DB_NAME      = var.rds_db_name
-      TOKEN_SECRET = aws_secretsmanager_secret_version.token_secret.arn
-    }
-  }
-
-  tracing_config {
-    mode = "PassThrough"
-  }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
-}
-
-resource "aws_lambda_layer_version" "templates_lib" {
-  filename            = "/tmp/templates_lib.zip"
-  layer_name          = "templates_node_packages"
-  source_code_hash    = data.archive_file.templates_lib.output_base64sha256
-  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
-}
-
-#
-# User and Organization management
-#
-data "archive_file" "organizations_main" {
-  type        = "zip"
-  source_file = "lambda/organizations/organizations.js"
-  output_path = "/tmp/organizations_main.zip"
-}
-
-data "archive_file" "organizations_lib" {
-  type        = "zip"
-  source_dir  = "lambda/organizations/"
-  excludes    = ["organizations.js"]
-  output_path = "/tmp/organizations_lib.zip"
-}
-
-resource "aws_lambda_function" "organizations" {
-  filename      = "/tmp/organizations_main.zip"
-  function_name = "Organizations"
-  role          = aws_iam_role.lambda.arn
-  handler       = "organizations.handler"
-
-  source_code_hash = data.archive_file.organizations_main.output_base64sha256
-  runtime          = "nodejs14.x"
-  layers           = [aws_lambda_layer_version.organizations_lib.arn]
-  timeout          = "10"
-
-  environment {
-    variables = {
-      REGION    = var.region
-      DB_ARN    = var.rds_cluster_arn
-      DB_SECRET = var.database_secret_arn
-      DB_NAME   = var.rds_db_name
-    }
-  }
-
-  tracing_config {
-    mode = "PassThrough"
-  }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
-}
-
-resource "aws_lambda_layer_version" "organizations_lib" {
-  filename            = "/tmp/organizations_lib.zip"
-  layer_name          = "organizations_node_packages"
-  source_code_hash    = data.archive_file.organizations_lib.output_base64sha256
-  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+resource "aws_lambda_permission" "submission" {
+  statement_id  = "AllowInvokeECS"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.submission.function_name
+  principal     = aws_iam_role.forms.arn
 }
 
 #
@@ -335,32 +244,115 @@ resource "aws_lambda_event_source_mapping" "vault_updated_item_stream" {
 }
 
 #
-# Lambda permissions
+# Dead letter queue consumer
 #
-resource "aws_lambda_permission" "submission" {
-  statement_id  = "AllowInvokeECS"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.submission.function_name
-  principal     = aws_iam_role.forms.arn
+
+data "archive_file" "dead_letter_queue_consumer_main" {
+  type        = "zip"
+  source_file = "lambda/dead_letter_queue_consumer/dead_letter_queue_consumer.js"
+  output_path = "/tmp/dead_letter_queue_consumer_main.zip"
 }
 
-resource "aws_lambda_permission" "templates" {
-  statement_id  = "AllowInvokeECS"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.templates.function_name
-  principal     = aws_iam_role.forms.arn
+data "archive_file" "dead_letter_queue_consumer_lib" {
+  type        = "zip"
+  source_dir  = "lambda/dead_letter_queue_consumer/"
+  excludes    = ["dead_letter_queue_consumer.js"]
+  output_path = "/tmp/dead_letter_queue_consumer_lib.zip"
 }
 
-resource "aws_lambda_permission" "organizations" {
-  statement_id  = "AllowInvokeECS"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.organizations.function_name
-  principal     = aws_iam_role.forms.arn
+resource "aws_lambda_function" "dead_letter_queue_consumer" {
+  filename      = "/tmp/dead_letter_queue_consumer_main.zip"
+  function_name = "DeadLetterQueueConsumer"
+  role          = aws_iam_role.lambda.arn
+  handler       = "dead_letter_queue_consumer.handler"
+
+  source_code_hash = data.archive_file.dead_letter_queue_consumer_main.output_base64sha256
+  runtime          = "nodejs14.x"
+  layers           = [aws_lambda_layer_version.dead_letter_queue_consumer_lib.arn]
+  timeout          = "300"
+
+  environment {
+    variables = {
+      REGION                              = var.region
+      SQS_DEAD_LETTER_QUEUE_URL           = var.sqs_dead_letter_queue_id
+      SQS_SUBMISSION_PROCESSING_QUEUE_URL = var.sqs_reliability_queue_id
+      SNS_ERROR_TOPIC_ARN                 = var.sns_topic_alert_critical_arn
+    }
+  }
+
+  tracing_config {
+    mode = "PassThrough"
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
 }
 
-resource "aws_lambda_permission" "internal_templates" {
-  statement_id  = "AllowInvokeLambda"
+resource "aws_lambda_layer_version" "dead_letter_queue_consumer_lib" {
+  filename            = "/tmp/dead_letter_queue_consumer_lib.zip"
+  layer_name          = "dead_letter_queue_consumer_node_packages"
+  source_code_hash    = data.archive_file.dead_letter_queue_consumer_lib.output_base64sha256
+  compatible_runtimes = ["nodejs14.x"]
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_run_dead_letter_queue_consumer_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.templates.function_name
-  principal     = aws_iam_role.lambda.arn
+  function_name = aws_lambda_function.dead_letter_queue_consumer.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.cron_4am_every_day.arn
+}
+
+#
+# Archive form templates
+#
+data "archive_file" "archive_form_templates_main" {
+  type        = "zip"
+  source_file = "lambda/archive_form_templates/archiver.js"
+  output_path = "/tmp/archive_form_templates_main.zip"
+}
+
+resource "aws_lambda_function" "archive_form_templates" {
+  filename      = "/tmp/archive_form_templates_main.zip"
+  function_name = "ArchiveFormTemplates"
+  role          = aws_iam_role.lambda.arn
+  handler       = "archiver.handler"
+
+  source_code_hash = data.archive_file.archive_form_templates_main.output_base64sha256
+
+  runtime = "nodejs14.x"
+  layers = [ // Using the reliability lib layer on purpose since the archive form lambda now also uses the templates lib file
+    aws_lambda_layer_version.reliability_lib.arn,
+    aws_lambda_layer_version.reliability_nodejs.arn
+  ]
+
+  environment {
+    variables = {
+      ENVIRONMENT = var.env
+      REGION      = var.region
+      DB_ARN      = var.rds_cluster_arn
+      DB_SECRET   = var.database_secret_arn
+      DB_NAME     = var.rds_db_name
+
+    }
+  }
+
+  tracing_config {
+    mode = "PassThrough"
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_templates_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.archive_form_templates.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.cron_4am_every_day.arn
 }
