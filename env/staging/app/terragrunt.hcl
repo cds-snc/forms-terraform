@@ -33,8 +33,9 @@ dependency "kms" {
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    kms_key_cloudwatch_arn = ""
-    kms_key_dynamodb_arn   = ""
+    kms_key_cloudwatch_arn         = ""
+    kms_key_dynamodb_arn           = ""
+    kms_key_cognito_encryption_arn = ""
   }
 }
 
@@ -111,9 +112,10 @@ dependency "cognito" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_with_state           = true
   mock_outputs = {
-    cognito_endpoint_url      = ""
-    cognito_client_id         = ""
-    cognito_user_pool_arn     = ""
+    cognito_endpoint_url  = ""
+    cognito_client_id     = ""
+    cognito_user_pool_arn = ""
+    cognito_user_pool_id  = ""
   }
 }
 
@@ -139,8 +141,9 @@ inputs = {
 
   ecr_repository_url = dependency.ecr.outputs.ecr_repository_url
 
-  kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
-  kms_key_dynamodb_arn   = dependency.kms.outputs.kms_key_dynamodb_arn
+  kms_key_cloudwatch_arn         = dependency.kms.outputs.kms_key_cloudwatch_arn
+  kms_key_dynamodb_arn           = dependency.kms.outputs.kms_key_dynamodb_arn
+  kms_key_cognito_encryption_arn = dependency.kms.outputs.kms_key_cognito_encryption_arn
 
   lb_https_listener_arn  = dependency.load_balancer.outputs.lb_https_listener_arn
   lb_target_group_1_arn  = dependency.load_balancer.outputs.lb_target_group_1_arn
@@ -167,9 +170,9 @@ inputs = {
   sns_topic_alert_warning_arn  = dependency.sns.outputs.sns_topic_alert_warning_arn
   sns_topic_alert_ok_arn       = dependency.sns.outputs.sns_topic_alert_ok_arn
 
-  cognito_endpoint_url      = dependency.cognito.outputs.cognito_endpoint_url
-  cognito_client_id         = dependency.cognito.outputs.cognito_client_id
-  cognito_user_pool_arn     = dependency.cognito.outputs.cognito_user_pool_arn
+  cognito_endpoint_url  = dependency.cognito.outputs.cognito_endpoint_url
+  cognito_client_id     = dependency.cognito.outputs.cognito_client_id
+  cognito_user_pool_arn = dependency.cognito.outputs.cognito_user_pool_arn
 
 }
 

@@ -133,6 +133,11 @@ variable "kms_key_dynamodb_arn" {
   type        = string
 }
 
+variable "kms_key_cognito_encryption_arn" {
+  description = "Cognito Encryption KMS key ARN, used by the Lambdas"
+  type        = string
+}
+
 variable "lb_https_listener_arn" {
   description = "Load balancer HTTPS listener ARN"
   type        = string
