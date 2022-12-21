@@ -42,12 +42,6 @@ data "aws_iam_policy_document" "kms_cognito_encryption" {
       identifiers = ["cognito-idp.amazonaws.com"]
       type        = "Service"
     }
-
-    condition {
-      test     = "ArnLike"
-      values   = ["arn:aws:cognito-idp:${var.region}:${var.account_id}:userpool/${aws_cognito_user_pool.forms.id}"]
-      variable = "aws:SourceArn"
-    }
   }
 
 }
