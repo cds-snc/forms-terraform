@@ -35,42 +35,25 @@ exports.handler = async (event) => {
   }
 
   const userEmail = event.request.userAttributes.email;
-  if(plainTextCode && userEmail){
+  if(
+    plainTextCode
+    && userEmail
+    && [
+      "CustomEmailSender_ForgotPassword",
+      "CustomEmailSender_ResendCode",
+      "CustomEmailSender_VerifyUserAttribute"
+    ].includes(event.triggerSource)
+  ){
     // attempt to send the code to the user through Notify
     try {
-      switch (event.triggerSource){
-        // https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-lambda-custom-email-sender.html#custom-email-sender-lambda-trigger-sources
-        case "CustomEmailSender_ForgotPassword":
-          await notify.sendEmail(TEMPLATE_ID, userEmail, {
-            personalisation: {
-              passwordReset: true,
-              accountVerification: false,
-              resendCode: false,
-              code: plainTextCode
-            }
-          });
-          break;
-        case "CustomEmailSender_ResendCode":
-          await notify.sendEmail(TEMPLATE_ID, userEmail, {
-            personalisation: {
-              passwordReset: false,
-              accountVerification: false,
-              resendCode: true,
-              code: plainTextCode
-            }
-          });
-          break;
-        case "CustomEmailSender_VerifyUserAttribute":
-          await notify.sendEmail(TEMPLATE_ID, userEmail, {
-            personalisation: {
-              passwordReset: false,
-              accountVerification: true,
-              resendCode: false,
-              code: plainTextCode
-            }
-          });
-          break;
-      }
+      await notify.sendEmail(TEMPLATE_ID, userEmail, {
+        personalisation: {
+          passwordReset: event.triggerSource === "CustomEmailSender_ForgotPassword",
+          accountVerification: event.triggerSource === "CustomEmailSender_VerifyUserAttribute",
+          resendCode: event.triggerSource === "CustomEmailSender_ResendCode",
+          code: plainTextCode
+        }
+      });
     }catch (e){
       console.error(
         `{"status": "failed", "message": "Notify Failed To Send the Code", "error":${JSON.stringify(err)}}`
