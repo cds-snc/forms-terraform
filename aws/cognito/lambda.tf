@@ -22,7 +22,7 @@ resource "aws_lambda_function" "cognito_email_sender" {
   handler       = "cognito_email_sender.handler"
   timeout       = 300
 
-  source_code_hash = data.archive_file.cognito_email_sender_main
+  source_code_hash = data.archive_file.cognito_email_sender_main.output_base64sha256
 
   runtime = "nodejs14.x"
   layers  = [aws_lambda_layer_version.cognito_email_sender_nodejs.arn]
