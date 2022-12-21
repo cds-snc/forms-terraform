@@ -163,6 +163,10 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
+      - name: Install Cognito Lambda deps
+        if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/cognito/lambda/deps.sh install
+
       - name: Terragrunt plan cognito
         if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
@@ -172,6 +176,10 @@ jobs:
           comment-title: "Staging: cognito"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
+
+      - name: Remove Cognito Lambda deps
+        if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/cognito/lambda/deps.sh delete
 
       # Depends on kms
       - name: Terragrunt plan network
