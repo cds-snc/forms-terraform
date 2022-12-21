@@ -33,8 +33,8 @@ dependency "kms" {
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    kms_key_cloudwatch_arn         = ""
-    kms_key_dynamodb_arn           = ""
+    kms_key_cloudwatch_arn = ""
+    kms_key_dynamodb_arn   = ""
   }
 }
 
@@ -140,8 +140,8 @@ inputs = {
 
   ecr_repository_url = dependency.ecr.outputs.ecr_repository_url
 
-  kms_key_cloudwatch_arn         = dependency.kms.outputs.kms_key_cloudwatch_arn
-  kms_key_dynamodb_arn           = dependency.kms.outputs.kms_key_dynamodb_arn
+  kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
+  kms_key_dynamodb_arn   = dependency.kms.outputs.kms_key_dynamodb_arn
 
   lb_https_listener_arn  = dependency.load_balancer.outputs.lb_https_listener_arn
   lb_target_group_1_arn  = dependency.load_balancer.outputs.lb_target_group_1_arn

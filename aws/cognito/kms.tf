@@ -10,7 +10,7 @@ resource "aws_kms_key" "cognito_encryption" {
 }
 
 resource "aws_kms_alias" "cognito_encryption_alias" {
-  name = "alias/cognito-encryption-key"
+  name          = "alias/cognito-encryption-key"
   target_key_id = aws_kms_key.cognito_encryption.key_id
 }
 
