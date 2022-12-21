@@ -114,7 +114,6 @@ dependency "cognito" {
     cognito_endpoint_url  = ""
     cognito_client_id     = ""
     cognito_user_pool_arn = ""
-    cognito_user_pool_id  = ""
   }
 }
 
