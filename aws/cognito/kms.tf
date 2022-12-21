@@ -1,7 +1,7 @@
 resource "aws_kms_key" "cognito_encryption" {
   description         = "Key used by AWS Cognito to encrypt data sent to lambda triggers"
   enable_key_rotation = true
-  policy              = data.aws_iam_policy_document.kms_cognito_encryption
+  policy              = data.aws_iam_policy_document.kms_cognito_encryption.json
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
