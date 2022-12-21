@@ -187,7 +187,6 @@ data "aws_iam_policy_document" "lambda_kms" {
     resources = [
       var.kms_key_dynamodb_arn,
       var.kms_key_cloudwatch_arn,
-      var.kms_key_cognito_encryption_arn,
     ]
   }
 }

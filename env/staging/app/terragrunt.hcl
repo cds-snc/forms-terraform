@@ -35,7 +35,6 @@ dependency "kms" {
   mock_outputs = {
     kms_key_cloudwatch_arn         = ""
     kms_key_dynamodb_arn           = ""
-    kms_key_cognito_encryption_arn = ""
   }
 }
 
@@ -143,7 +142,6 @@ inputs = {
 
   kms_key_cloudwatch_arn         = dependency.kms.outputs.kms_key_cloudwatch_arn
   kms_key_dynamodb_arn           = dependency.kms.outputs.kms_key_dynamodb_arn
-  kms_key_cognito_encryption_arn = dependency.kms.outputs.kms_key_cognito_encryption_arn
 
   lb_https_listener_arn  = dependency.load_balancer.outputs.lb_https_listener_arn
   lb_target_group_1_arn  = dependency.load_balancer.outputs.lb_target_group_1_arn

@@ -12,8 +12,3 @@ output "kms_key_dynamodb_arn" {
   description = "DynamoDB KMS key ARN"
   value       = aws_kms_key.dynamo_db.arn
 }
-
-output "kms_key_cognito_encryption_arn" {
-  value       = aws_kms_key.cognito_encryption.arn
-  description = "Cognito Encryption KMS key ARN"
-}
