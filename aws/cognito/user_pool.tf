@@ -17,6 +17,7 @@ resource "aws_cognito_user_pool" "forms" {
   }
 
   lambda_config {
+    kms_key_id = aws_kms_key.cognito_encryption.key_id
     custom_email_sender {
       lambda_arn     = aws_lambda_function.cognito_email_sender.arn
       lambda_version = aws_lambda_function.cognito_email_sender.version
