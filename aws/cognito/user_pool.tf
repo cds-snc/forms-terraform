@@ -15,21 +15,11 @@ resource "aws_cognito_user_pool" "forms" {
       priority = 1
     }
   }
-  email_configuration {
-    email_sending_account = "COGNITO_DEFAULT"
-  }
-  verification_message_template {
-    default_email_option = "CONFIRM_WITH_CODE"
-    email_message        = "Please confirm your email / S.V.P confirmer votre email {####}"
-    email_subject        = "Please confirm your email for GC Forms / S.V.P confirmer votre email pour GC Formulaire  "
-  }
 
-  admin_create_user_config {
-    allow_admin_create_user_only = false
-    invite_message_template {
-      email_message = "Welcome!  Please log in using the following credentials:/n  Username: {username}/n  Password: {####}"
-      email_subject = "Welcome to GCForms"
-      sms_message   = "Welcome!  Please log in using the following credentials:/n  Username: {username}/n  Password: {####}"
+  lambda_config {
+    custom_email_sender {
+      lambda_arn     = aws_lambda_function.cognito_email_sender.arn
+      lambda_version = aws_lambda_function.cognito_email_sender.version
     }
   }
 

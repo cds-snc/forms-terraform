@@ -111,9 +111,9 @@ dependency "cognito" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_with_state           = true
   mock_outputs = {
-    cognito_endpoint_url      = ""
-    cognito_client_id         = ""
-    cognito_user_pool_arn     = ""
+    cognito_endpoint_url  = ""
+    cognito_client_id     = ""
+    cognito_user_pool_arn = ""
   }
 }
 
@@ -167,9 +167,9 @@ inputs = {
   sns_topic_alert_warning_arn  = dependency.sns.outputs.sns_topic_alert_warning_arn
   sns_topic_alert_ok_arn       = dependency.sns.outputs.sns_topic_alert_ok_arn
 
-  cognito_endpoint_url      = dependency.cognito.outputs.cognito_endpoint_url
-  cognito_client_id         = dependency.cognito.outputs.cognito_client_id
-  cognito_user_pool_arn     = dependency.cognito.outputs.cognito_user_pool_arn
+  cognito_endpoint_url  = dependency.cognito.outputs.cognito_endpoint_url
+  cognito_client_id     = dependency.cognito.outputs.cognito_client_id
+  cognito_user_pool_arn = dependency.cognito.outputs.cognito_user_pool_arn
 
 }
 
