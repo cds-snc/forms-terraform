@@ -69,6 +69,8 @@ inputs = {
   gc_notify_callback_bearer_token             = "local"
 
   sns_topic_alert_critical_arn = ""
+  sns_topic_alert_warning_arn  = ""
+  sns_topic_alert_ok_arn       = ""
 
   dynamodb_relability_queue_arn = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
   dynamodb_vault_arn            = dependency.dynamodb.outputs.dynamodb_vault_arn
