@@ -25,7 +25,7 @@ exports.handler = async (event) => {
       const codeBuffer = Buffer.from(event.request.code, "base64");
       // decrypt the code into plaintext using the sdk and keyring
       const {plaintext} = await decrypt(keyring, Uint8Array.from(codeBuffer));
-      plainTextCode = plaintext;
+      plainTextCode = plaintext.toString();
     } catch (err) {
       console.error(
         `{"status": "failed", "message": "Failed to Decrypt Cognito Code", "error":${JSON.stringify(err)}}`
@@ -54,7 +54,7 @@ exports.handler = async (event) => {
           code: plainTextCode
         }
       });
-    }catch (e){
+    }catch (err){
       console.error(
         `{"status": "failed", "message": "Notify Failed To Send the Code", "error":${JSON.stringify(err)}}`
       );
