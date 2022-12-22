@@ -25,8 +25,6 @@ data "aws_iam_policy_document" "cognito_lambda_assume" {
 
     actions = ["lambda:InvokeFunction"]
 
-    resources = ["*"]
-
     principals {
       identifiers = ["cognito-idp.amazonaws.com"]
       type        = "Service"
