@@ -20,10 +20,8 @@ data "aws_iam_policy_document" "cognito_lambda_assume" {
   }
 
   statement {
-    sid    = "Enable Cognito Access to invoke Lambda"
-    effect = "Allow"
-
     actions = ["lambda:InvokeFunction"]
+    effect = "Allow"
 
     principals {
       identifiers = ["cognito-idp.amazonaws.com"]
