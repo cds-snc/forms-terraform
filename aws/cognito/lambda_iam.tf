@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "cognito_lambda_assume" {
 
     principals {
       type        = "Service"
-      identifiers = ["lambda.amazonaws.com", "cognito-idp.amazonaws.com"]
+      identifiers = ["lambda.amazonaws.com"]
     }
   }
 }
