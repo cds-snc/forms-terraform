@@ -15,17 +15,7 @@ data "aws_iam_policy_document" "cognito_lambda_assume" {
 
     principals {
       type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
-    }
-  }
-
-  statement {
-    actions = ["lambda:InvokeFunction"]
-    effect = "Allow"
-
-    principals {
-      identifiers = ["cognito-idp.amazonaws.com"]
-      type        = "Service"
+      identifiers = ["lambda.amazonaws.com", "cognito-idp.amazonaws.com"]
     }
   }
 }
