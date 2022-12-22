@@ -104,13 +104,50 @@ data "aws_iam_policy_document" "cognito_lambda_secrets" {
   }
 }
 
+## Allow Lambda to be invoked by cognito
+resource "aws_iam_policy" "lambda_cognito_invoke" {
+  name        = "lambda_cognito_invoke"
+  path        = "/"
+  description = "IAM policy for allowing cognito to invoke Lambda functions"
+  policy      = data.aws_iam_policy_document.lambda_cognito_invoke.json
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+data "aws_iam_policy_document" "lambda_cognito_invoke" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "lambda:InvokeFunction"
+    ]
+
+    resources = [
+      aws_lambda_function.cognito_email_sender.arn
+    ]
+
+    principals {
+      identifiers = ["cognito-idp.amazonaws.com"]
+      type        = "Service"
+    }
+
+  }
+}
+
 resource "aws_iam_role_policy_attachment" "cognito_lambda_logs" {
   role       = aws_iam_role.cognito_lambda.name
   policy_arn = aws_iam_policy.cognito_lambda_logging.arn
 }
 
-
 resource "aws_iam_role_policy_attachment" "cognito_lambda_kms" {
   role       = aws_iam_role.cognito_lambda.name
   policy_arn = aws_iam_policy.cognito_lambda_kms.arn
+}
+
+resource "aws_iam_role_policy_attachment" "cognito_lambda_secrets" {
+  role       = aws_iam_role.cognito_lambda.name
+  policy_arn = aws_iam_policy.cognito_lambda_secrets.arn
 }
