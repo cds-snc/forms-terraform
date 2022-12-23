@@ -28,7 +28,7 @@ exports.handler = async (event) => {
       plainTextCode = plaintext.toString();
     } catch (err) {
       console.error(
-        `{"status": "failed", "message": "Failed to Decrypt Cognito Code", "error":${JSON.stringify(err)}}`
+        `{"status": "failed", "message": "Failed to Decrypt Cognito Code", "error":${err.message}}`
       );
       throw new Error("Could not decrypt Cognito Code");
     }
@@ -56,7 +56,7 @@ exports.handler = async (event) => {
       });
     }catch (err){
       console.error(
-        `{"status": "failed", "message": "Notify Failed To Send the Code", "error":${JSON.stringify(err)}}`
+        `{"status": "failed", "message": "Notify Failed To Send the Code", "error":${err.message}}`
       );
       throw new Error("Notify failed to send the code")
     }

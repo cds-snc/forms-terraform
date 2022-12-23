@@ -17,7 +17,6 @@ module.exports = (formResponse, submissionID, language, createdAt) => {
   let emailMarkdown = json2md([{ h1: title }, mdBody]);
   const isoCreatedAtString = new Date(parseInt(createdAt)).toISOString();
 
-
   // Using language attribute tags https://notification.canada.ca/format
   // This is done so screen readers can read in the correct voice
   if (language === "fr"){

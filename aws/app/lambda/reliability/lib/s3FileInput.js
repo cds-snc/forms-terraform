@@ -51,9 +51,8 @@ async function retrieveFilesFromReliabilityStorage(filePaths) {
       return result.toString("base64");
     });
     return await Promise.all(files);
-  } catch (err) {
-    console.error(err);
-    throw new Error("Could not retrieve files");
+  } catch (error) {
+    throw new Error(`Failed to retrieve files from reliability storage because of following error: ${error.message}.`);
   }
 }
 

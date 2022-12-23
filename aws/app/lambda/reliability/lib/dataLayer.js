@@ -13,15 +13,15 @@ async function getSubmission(message) {
     region: REGION,
     ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
   });
+
   const DBParams = {
     TableName: "ReliabilityQueue",
     Key: {
       SubmissionID: { S: message.submissionID },
     },
-    ProjectExpression:
-      "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt,SecurityAttribute",
+    ProjectExpression: "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt,SecurityAttribute",
   };
-  //save data to DynamoDB
+
   return await db.send(new GetItemCommand(DBParams));
 }
 /**
@@ -252,16 +252,11 @@ function handleFileInputResponse(title, response, collector) {
   collector.push(`**${title}**${String.fromCharCode(13)}No Response`);
 }
 
-function formatError(err) {
-  return typeof err === "object" ? JSON.stringify(err) : err;
-}
-
 module.exports = {
   getSubmission,
   removeSubmission,
   extractFileInputResponses,
   extractFormData,
   saveToVault,
-  formatError,
   updateTTL,
 };
