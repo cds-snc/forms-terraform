@@ -17,11 +17,13 @@ env:
   TF_VAR_recaptcha_secret: ${{secrets.PRODUCTION_RECAPTCHA_SITE_SECRET}}
   TF_VAR_recaptcha_public: 6LfJDN4eAAAAAGvdRF7ZnQ7ciqdo1RQnQDFmh0VY
   TF_VAR_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
+  TF_VAR_cognito_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
   TF_VAR_rds_db_password: ${{ secrets.PRODUCTION_DB_PASSWORD }}
   TF_VAR_slack_webhook: ${{ secrets.PRODUCTION_SLACK_WEBHOOK }}
   TF_VAR_gc_notify_callback_bearer_token: ${{ secrets.PRODUCTION_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
   TF_VAR_gc_temp_token_template_id: 61cec9c4-64ca-4e4d-b4d2-a0e931c44422
   TF_VAR_gc_template_id: 92096ac6-1cc5-40ae-9052-fffdb8439a90
+  TF_VAR_cognito_code_template_id: 8dde39b6-05b9-43ce-807f-c2364ed3bdb6
 
 jobs:
   terragrunt-apply:
@@ -65,6 +67,16 @@ jobs:
       - name: Terragrunt apply sns
         working-directory: env/production/sns
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Install Cognito Lambda deps
+        run: ./aws/cognito/lambda/deps.sh install
+
+      - name: Terragrunt apply cognito
+        working-directory: env/production/cognito
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Remove Cognito Lambda deps
+        run: ./aws/cognito/lambda/deps.sh delete
 
       # Depends on kms
       - name: Terragrunt apply network
