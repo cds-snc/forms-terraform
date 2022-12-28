@@ -45,6 +45,7 @@ data "aws_iam_policy_document" "cognito_userpool_import_logging" {
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
+      "logs:DescribeLogStreams",
       "logs:PutLogEvents"
     ]
 
