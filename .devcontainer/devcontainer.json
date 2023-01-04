@@ -20,6 +20,9 @@
     },
     "aws-cli": {
       "version": "2.5.6"
+    },
+    "node": {
+      "version": "lts"
     }
   },
 

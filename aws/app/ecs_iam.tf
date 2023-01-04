@@ -81,6 +81,23 @@ data "aws_iam_policy_document" "forms_s3" {
       "${aws_s3_bucket.reliability_file_storage.arn}/*"
     ]
   }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:ListBucket",
+      "s3:GetObject",
+      "s3:GetObjectTagging",
+      "s3:GetObjectVersion",
+      "s3:GetObjectVersionTagging"
+    ]
+
+    resources = [
+      aws_s3_bucket.vault_file_storage.arn,
+      "${aws_s3_bucket.vault_file_storage.arn}/*"
+    ]
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_forms" {
@@ -111,6 +128,11 @@ resource "aws_iam_role_policy_attachment" "dynamodb_forms" {
 resource "aws_iam_role_policy_attachment" "sqs_forms" {
   role       = aws_iam_role.forms.name
   policy_arn = aws_iam_policy.forms_sqs.arn
+}
+
+resource "aws_iam_role_policy_attachment" "cognito_forms" {
+  role       = aws_iam_role.forms.name
+  policy_arn = aws_iam_policy.cognito.arn
 }
 
 #
@@ -246,4 +268,40 @@ data "aws_iam_policy_document" "assume_role_policy_codedeploy" {
 resource "aws_iam_role_policy_attachment" "codedeploy" {
   role       = aws_iam_role.codedeploy.name
   policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
+}
+
+#
+# IAM cognito
+#
+
+resource "aws_iam_policy" "cognito" {
+  name        = "cognito"
+  path        = "/"
+  description = "IAM policy for allowing ECS access to cognito"
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+  policy = data.aws_iam_policy_document.assume_role_policy_cognito.json
+}
+
+data "aws_iam_policy_document" "assume_role_policy_cognito" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "cognito-idp:GetUser",
+      "cognito-idp:SignUp",
+      "cognito-idp:ConfirmSignUp",
+      "cognito-idp:ResendConfirmationCode",
+      "cognito-idp:AdminInitiateAuth",
+      "cognito-idp:AddCustomAttributes",
+      "cognito-idp:AdminUpdateUserAttributes"
+    ]
+
+    resources = [
+      var.cognito_user_pool_arn
+    ]
+  }
 }

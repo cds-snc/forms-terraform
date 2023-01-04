@@ -3,6 +3,11 @@ output "sqs_reliability_queue_id" {
   value       = aws_sqs_queue.reliability_queue.id
 }
 
+output "sqs_dead_letter_queue_id" {
+  description = "SQS dead letter queue ID"
+  value       = aws_sqs_queue.deadletter_queue.id
+}
+
 output "sqs_reliability_queue_arn" {
   description = "SQS reliability queue ARN"
   value       = aws_sqs_queue.reliability_queue.arn

@@ -14,7 +14,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
   CONFTEST_VERSION: 0.27.0
-  TERRAFORM_VERSION: 1.0.10
+  TERRAFORM_VERSION: 1.3.3
   TERRAGRUNT_VERSION: 0.35.6
   TF_INPUT: false
   TF_VAR_ecs_secret_token_secret: ${{ secrets.STAGING_TOKEN_SECRET }}
@@ -23,21 +23,23 @@ env:
   TF_VAR_recaptcha_secret: ${{secrets.STAGING_RECAPTCHA_SITE_SECRET}}
   TF_VAR_recaptcha_public: 6LfJDN4eAAAAAGvdRF7ZnQ7ciqdo1RQnQDFmh0VY
   TF_VAR_notify_api_key: ${{ secrets.STAGING_NOTIFY_API_KEY }}
+  TF_VAR_cognito_notify_api_key: ${{ secrets.STAGING_NOTIFY_API_KEY }}
   TF_VAR_rds_db_password: ${{ secrets.STAGING_DB_PASSWORD }}
   TF_VAR_slack_webhook: ${{ secrets.STAGING_SLACK_WEBHOOK }}
   TF_VAR_gc_notify_callback_bearer_token: ${{ secrets.STAGING_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
   TF_VAR_gc_temp_token_template_id: b6885d06-d10a-422a-973f-05e274d9aa86
   TF_VAR_gc_template_id: 8d597a1b-a1d6-4e3c-8421-042a2b4158b7
+  TF_VAR_cognito_code_template_id: 12a18f84-062c-4a67-8310-bf114af051ea
 
 jobs:
   terragrunt-plan:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 # v2.6.0
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@3d8debd658c92063839bc97da5c2427100420dec # v1.3.2
+        uses: hashicorp/setup-terraform@ed3a0531877aca392eb870f440d9ae7aba83a6bd # v1.4.0
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           terraform_wrapper: false
@@ -58,7 +60,7 @@ jobs:
           && mv conftest /usr/local/bin \
           && rm "conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz" checksums.txt
 
-      - uses: cds-snc/paths-filter@v2.10.3
+      - uses: cds-snc/paths-filter@87bb78bc509076907db04d7f616bd2533af0e7fe # tag=v2.10.3
         id: filter
         with:
           filters: |
@@ -68,6 +70,9 @@ jobs:
             app:
               - 'aws/app/**'
               - 'env/staging/app/**'
+            cognito:
+              - 'aws/cognito/**'
+              - 'env/staging/cognito/**'
             common:
               - '.github/workflows/terragrunt-plan-staging.yml'
               - 'env/common/**'
@@ -110,7 +115,7 @@ jobs:
       # No dependencies
       - name: Terragrunt plan ecr
         if: ${{ steps.filter.outputs.ecr == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@v2
+        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
           directory: "env/staging/ecr"
           comment-delete: "true"
@@ -120,7 +125,7 @@ jobs:
 
       - name: Terragrunt plan hosted_zone
         if: ${{ steps.filter.outputs.hosted_zone == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@v2
+        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
           directory: "env/staging/hosted_zone"
           comment-delete: "true"
@@ -130,7 +135,7 @@ jobs:
 
       - name: Terragrunt plan kms
         if: ${{ steps.filter.outputs.kms == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@v2
+        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
           directory: "env/staging/kms"
           comment-delete: "true"
@@ -140,7 +145,7 @@ jobs:
 
       - name: Terragrunt plan sqs
         if: ${{ steps.filter.outputs.sqs == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@v2
+        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
           directory: "env/staging/sqs"
           comment-delete: "true"
@@ -150,7 +155,7 @@ jobs:
 
       - name: Terragrunt plan sns
         if: ${{ steps.filter.outputs.sns == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@v2
+        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
           directory: "env/staging/sns"
           comment-delete: "true"
@@ -158,10 +163,28 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
+      - name: Install Cognito Lambda deps
+        if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/cognito/lambda/deps.sh install
+
+      - name: Terragrunt plan cognito
+        if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        with:
+          directory: "env/staging/cognito"
+          comment-delete: "true"
+          comment-title: "Staging: cognito"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Remove Cognito Lambda deps
+        if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/cognito/lambda/deps.sh delete
+
       # Depends on kms
       - name: Terragrunt plan network
         if: ${{ steps.filter.outputs.network == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@v2
+        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
           directory: "env/staging/network"
           comment-delete: "true"
@@ -171,7 +194,7 @@ jobs:
 
       - name: Terragrunt plan dynamodb
         if: ${{ steps.filter.outputs.dynamodb == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@v2
+        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
           directory: "env/staging/dynamodb"
           comment-delete: "true"
@@ -182,7 +205,7 @@ jobs:
       # Depends on network
       - name: Terragrunt plan load_balancer
         if: ${{ steps.filter.outputs.load_balancer == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@v2
+        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
           directory: "env/staging/load_balancer"
           comment-delete: "true"
@@ -192,7 +215,7 @@ jobs:
 
       - name: Terragrunt plan redis
         if: ${{ steps.filter.outputs.redis == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@v2
+        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
           directory: "env/staging/redis"
           comment-delete: "true"
@@ -202,7 +225,7 @@ jobs:
 
       - name: Terragrunt plan rds
         if: ${{ steps.filter.outputs.rds == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@v2
+        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
           directory: "env/staging/rds"
           comment-delete: "true"
@@ -217,7 +240,7 @@ jobs:
 
       - name: Terragrunt plan app
         if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@v2
+        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
           directory: "env/staging/app"
           comment-delete: "true"
@@ -231,7 +254,7 @@ jobs:
 
       - name: Terragrunt plan alarms
         if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@v2
+        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
           directory: "env/staging/alarms"
           comment-delete: "true"
@@ -247,7 +270,7 @@ jobs:
 
       - name: Terragrunt plan load_testing
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@v2
+        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
           directory: "env/staging/load_testing"
           comment-delete: "true"
