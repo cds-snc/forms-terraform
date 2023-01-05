@@ -258,3 +258,13 @@ variable "cognito_endpoint_url" {
   description = "Cognito endpoint url"
   type        = string
 }
+
+variable "email_address_contact_us" {
+  description = "Email address for Form Contact Us"
+  type        = string
+}
+
+variable "email_address_support" {
+  description = "Email address for Form Support"
+  type        = string
+}

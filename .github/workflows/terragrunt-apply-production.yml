@@ -22,6 +22,8 @@ env:
   TF_VAR_gc_notify_callback_bearer_token: ${{ secrets.PRODUCTION_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
   TF_VAR_gc_temp_token_template_id: 61cec9c4-64ca-4e4d-b4d2-a0e931c44422
   TF_VAR_gc_template_id: 92096ac6-1cc5-40ae-9052-fffdb8439a90
+  TF_VAR_email_address_contact_us: jose.jimenez@cds-snc.ca
+  TF_VAR_email_address_support: assistance+forms@cds-snc.freshdesk.com
 
 jobs:
   terragrunt-apply:

@@ -46,7 +46,8 @@ data "template_file" "form_viewer_task" {
     gc_template_id                  = var.gc_template_id
     cognito_endpoint_url            = var.cognito_endpoint_url
     cognito_client_id               = var.cognito_client_id
-
+    email_address_contact_us        = var.email_address_contact_us
+    email_address_support           = var.email_address_support
   }
 }
 
