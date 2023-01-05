@@ -68,6 +68,14 @@
       {
         "name": "COGNITO_CLIENT_ID",
         "value": "${cognito_client_id}"
+      },
+      {
+        "name": "EMAIL_ADDRESS_CONTACTUS",
+        "value": "${email_address_contact_us}"
+      },
+      {
+        "name": "EMAIL_ADDRESS_SUPPORT",
+        "value": "${email_address_support}"
       }
     ],
     "secrets": [
