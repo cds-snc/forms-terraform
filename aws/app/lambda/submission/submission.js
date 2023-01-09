@@ -12,10 +12,6 @@ const sqs = new SQSClient({
   ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
 });
 
-const formatError = (err) => {
-  return typeof err === "object" ? JSON.stringify(err) : err;
-};
-
 // Store questions with responses
 
 /*
@@ -47,7 +43,7 @@ exports.handler = async function (event) {
     console.error(
       `{"status": "failed", "submissionID": "${
         submissionID ? submissionID : "Not yet created"
-      }", "error": "${formatError(err)}"}`
+      }", "error": "${err.message}"}`
     );
     return { status: false };
   }
@@ -108,6 +104,6 @@ const saveReceipt = async (submissionID, receiptID) => {
     //save data to DynamoDB
     await db.send(new UpdateItemCommand(DBParams));
   } catch (err) {
-    console.warn(`{status: warn, submissionID: ${submissionID}, warning: ${formatError(err)}}`);
+    console.warn(`{status: warn, submissionID: ${submissionID}, warning: ${err.message}}`);
   }
 };

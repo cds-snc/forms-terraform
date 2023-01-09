@@ -12,7 +12,10 @@ const REGION = process.env.REGION;
 const getTemplateFormConfig = async (formID) => {
   try {
     // Return early if require params not provided
-    if (formID === null || typeof formID === "undefined") return { error: "Missing formID" };
+    if (formID === null || typeof formID === "undefined") {
+      console.error(`Can not retrieve template form config because no form ID was provided`);
+      return null;
+    }
 
     const { SQL, parameters } = createSQLString(formID);
 
@@ -26,9 +29,9 @@ const getTemplateFormConfig = async (formID) => {
       return null;
     }
   } catch (error) {
-    console.error(`{"status": "error", "error": "${formatError(error)}"}`);
     // Return as if no template with ID was found.
     // Handle error in calling function if template is not found.
+    console.error(`Failed to retrieve template form config because of following error: ${error.message}`);
     return null;
   }
 };
@@ -42,7 +45,7 @@ const deleteFormTemplatesMarkedAsArchived = async () => {
     const database = process.env.AWS_SAM_LOCAL ? requestSAM : requestRDS;
     await database(request, []);
   } catch (error) {
-    console.error(`{"status": "error", "error": "${formatError(error)}"}`);
+    console.error(`{"status": "error", "error": "${error.message}"}`);
     throw new Error("Failed to delete archived form templates");
   }
 };
@@ -70,7 +73,7 @@ const requestSAM = async (SQL, parameters) => {
     const data = await dbClient.query(SQL, parameters);
     return parseConfig(data.rows);
   } catch (error) {
-    console.error(`{"status": "error", "error": "${formatError(error)}"}`);
+    console.error(`{"status": "error", "error": "${error.message}"}`);
     // Lift more generic error to be able to capture event info higher in scope
     throw new Error("Error connecting to LOCAL AWS SAM DB");
   } finally {
@@ -100,7 +103,7 @@ const requestRDS = async (SQL, parameters) => {
     const data = await dbClient.send(command);
     return parseConfig(data.records);
   } catch (error) {
-    console.error(`{"status": "error", "error": "${formatError(error)}"}`);
+    console.error(`{"status": "error", "error": "${error.message}"}`);
     // Lift more generic error to be able to capture event info higher in scope
     throw new Error("Error connecting to RDS");
   }
@@ -150,10 +153,6 @@ const parseConfig = (records) => {
   }
 
   return { records: [] };
-};
-
-const formatError = (err) => {
-  return typeof err === "object" ? util.inspect(err) : err;
 };
 
 module.exports = {
