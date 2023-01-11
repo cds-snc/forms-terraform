@@ -18,10 +18,6 @@ RUN curl -Lo aws-sam-cli.zip "${AWS_SAM_SRC}/v${AWS_SAM_VERSION}/aws-sam-cli-lin
     && rm -r aws-sam* \
     && rm -r sam-installation*
 
-# Install Checkov
-RUN pip3 install --upgrade requests setuptools \
-    && pip3 install --upgrade botocore checkov
-
 # Setup AWS Credentials
 RUN mkdir -p /home/vscode/.aws
 

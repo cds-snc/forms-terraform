@@ -493,7 +493,7 @@ resource "aws_cloudwatch_metric_alarm" "request_temporary_token_api_using_unauth
 
 resource "aws_cloudwatch_log_metric_filter" "cognito_signin_exceeded" {
   name           = "CognitoSigninExceeded"
-  pattern        = "Cognito Lockout: Password attempts exceeded"
+  pattern        = "\"Cognito Lockout: Password attempts exceeded\""
   log_group_name = var.ecs_cloudwatch_log_group_name
 
   metric_transformation {
