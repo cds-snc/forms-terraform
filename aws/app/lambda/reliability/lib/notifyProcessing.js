@@ -6,7 +6,7 @@ const { retrieveFilesFromReliabilityStorage } = require("s3FileInput");
 module.exports = async (submissionID, sendReceipt, formSubmission, language, createdAt) => {
   try {
     // Making sure currently processed submission email address is defined
-    if (!formSubmission.submission?.email || formSubmission.submission.email === "") {
+    if (!formSubmission.deliveryOption?.emailAddress || formSubmission.deliveryOption.emailAddress === "") {
       throw Error("Email address is missing or empty.");
     }
 
@@ -28,15 +28,15 @@ module.exports = async (submissionID, sendReceipt, formSubmission, language, cre
     const emailBody = convertMessage(formSubmission, submissionID, language, createdAt);
     const messageSubject =
       language === "fr"
-        ? formSubmission.form.emailSubjectFr
-          ? formSubmission.form.emailSubjectFr
+        ? formSubmission.deliveryOption.emailSubjectFr
+          ? formSubmission.deliveryOption.emailSubjectFr
           : formSubmission.form.titleFr
-        : formSubmission.form.emailSubjectEn
-        ? formSubmission.form.emailSubjectEn
+        : formSubmission.deliveryOption.emailSubjectEn
+        ? formSubmission.deliveryOption.emailSubjectEn
         : formSubmission.form.titleEn;
 
     await notify
-      .sendEmail(templateID, formSubmission.submission.email, {
+      .sendEmail(templateID, formSubmission.deliveryOption.emailAddress, {
         personalisation: {
           subject: messageSubject,
           formResponse: emailBody,
@@ -79,8 +79,8 @@ module.exports = async (submissionID, sendReceipt, formSubmission, language, cre
 
     console.error(JSON.stringify({
       status: "failed",
-      submissionId: submissionID,
-      sendReceipt: sendReceipt,
+      submissionId: submissionID ?? "n/a",
+      sendReceipt: sendReceipt ?? "n/a",
       message: "Failed to send submission through GC Notify.",
       error: errorMessage,
     }));

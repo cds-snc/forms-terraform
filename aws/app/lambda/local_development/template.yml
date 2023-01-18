@@ -81,6 +81,8 @@ Resources:
             Ref: REGION
           NOTIFY_API_KEY:
             Ref: NOTIFY_API_KEY
+          TEMPLATE_ID:
+            Ref: TEMPLATE_ID
           PGUSER:
             Ref: DBUser
           PGPASSWORD:

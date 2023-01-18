@@ -18,8 +18,8 @@ const sqs = new SQSClient({
 Params:
   formID - ID of form,
   language - form submission language "fr" or "en",
-  submission - submission type: email, vault
   responses - form responses: {formID, securityAttribute, questionID: answer}
+  deliveryOption - (optional) Will be present if user wants to receive form responses by email (`{ emailAddress: string; emailSubjectEn?: string; emailSubjectFr?: string }`)
   securityAttribute - string of security classification
 */
 exports.handler = async function (event) {
