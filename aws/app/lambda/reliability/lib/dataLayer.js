@@ -5,6 +5,7 @@ const {
   UpdateItemCommand,
   DeleteItemCommand,
 } = require("@aws-sdk/client-dynamodb");
+const uuid = require("uuid");
 
 const REGION = process.env.REGION;
 
@@ -88,10 +89,11 @@ async function saveToVault(
     region: REGION,
     ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
   });
+
+  const formIdentifier = typeof formID === "string" ? formID : formID.toString();
   const formSubmission =
     typeof formResponse === "string" ? formResponse : JSON.stringify(formResponse);
 
-  const formIdentifier = typeof formID === "string" ? formID : formID.toString();
   const DBParams = {
     TableName: "Vault",
     Item: {
@@ -102,8 +104,11 @@ async function saveToVault(
       CreatedAt: { N: `${createdAt}` },
       Retrieved: { N: "0" },
       SecurityAttribute: { S: securityAttribute },
+      Status: { S: "New" },
+      ConfirmationCode: { S: uuid.v4() },
     },
   };
+
   //save data to DynamoDB
   return await db.send(new PutItemCommand(DBParams));
 }
