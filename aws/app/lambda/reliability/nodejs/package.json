@@ -12,6 +12,7 @@
     "axios": "^0.27.0",
     "json2md": "^1.10.0",
     "notifications-node-client": "^5.1.0",
-    "pg": "^8.7.3"
+    "pg": "^8.7.3",
+    "uuid": "^8.3.2"
   }
 }
