@@ -20,7 +20,8 @@ async function getSubmission(message) {
     Key: {
       SubmissionID: { S: message.submissionID },
     },
-    ProjectExpression: "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt,SecurityAttribute",
+    ProjectExpression:
+      "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt,SecurityAttribute,NotifyProcessed",
   };
 
   return await db.send(new GetItemCommand(DBParams));
@@ -50,7 +51,7 @@ async function removeSubmission(submissionID) {
  * Function to update the TTL of a record in the ReliabilityQueue table
  * @param submissionID
  */
-async function updateTTL(submissionID) {
+async function notifyProcessed(submissionID) {
   const db = new DynamoDBClient({
     region: REGION,
     endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
@@ -62,13 +63,17 @@ async function updateTTL(submissionID) {
     Key: {
       SubmissionID: { S: submissionID },
     },
-    UpdateExpression: "SET #ttl = :ttl",
+    UpdateExpression: "SET #ttl = :ttl, #processed = :processed",
     ExpressionAttributeNames: {
       "#ttl": "TTL",
+      "#processed": "NotifyProcessed",
     },
     ExpressionAttributeValues: {
       ":ttl": {
         N: expiringTime,
+      },
+      ":processed": {
+        BOOL: true,
       },
     },
     ReturnValues: "NONE",
@@ -263,5 +268,5 @@ module.exports = {
   extractFileInputResponses,
   extractFormData,
   saveToVault,
-  updateTTL,
+  notifyProcessed,
 };

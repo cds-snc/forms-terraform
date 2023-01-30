@@ -12,22 +12,28 @@ exports.handler = async function (event) {
     const messageData = await getSubmission(message);
     const submissionID = messageData.Item?.SubmissionID.S ?? message.submissionID;
     const formID = messageData.Item?.FormID.S ?? null;
-    const formSubmission = messageData.Item?.FormData.S ? JSON.parse(messageData.Item?.FormData.S) : null;
+    const formSubmission = messageData.Item?.FormData.S
+      ? JSON.parse(messageData.Item?.FormData.S)
+      : null;
     const language = messageData.Item?.FormSubmissionLanguage.S ?? "en";
     const securityAttribute = messageData.Item?.SecurityAttribute.S ?? "Unclassified";
     const createdAt = messageData.Item?.CreatedAt.N ?? null;
+    const notifyProcessed = messageData.Item?.NotifyProcessed?.BOOL ?? false;
     sendReceipt = messageData.Item?.SendReceipt.S ?? null;
 
     // Check if form data exists or was already processed.
-    if (formSubmission === null || typeof formSubmission === "undefined") {
+    if (formSubmission === null || notifyProcessed) {
       // Ack and remove message from queue if it doesn't exist in the DB
       // Do not throw an error so it does not retry again
-      console.warn(JSON.stringify({
-        status: "success",
-        submissionId: submissionID,
-        sendReceipt: sendReceipt,
-        message: "Submission will not be processed because it could not be found in the database.",
-      }));
+      console.warn(
+        JSON.stringify({
+          status: "success",
+          submissionId: submissionID,
+          sendReceipt: sendReceipt,
+          message:
+            "Submission will not be processed because it could not be found in the database or has already been processed.",
+        })
+      );
       return { status: true };
     }
 
@@ -47,7 +53,7 @@ exports.handler = async function (event) {
        form - Complete Form Template
        deliveryOption - (optional) Will be present if user wants to receive form responses by email (`{ emailAddress: string; emailSubjectEn?: string; emailSubjectFr?: string }`)
     */
-   
+
     if (formSubmission.deliveryOption) {
       return await sendToNotify(submissionID, sendReceipt, formSubmission, language, createdAt);
     } else {
@@ -62,13 +68,15 @@ exports.handler = async function (event) {
       );
     }
   } catch (error) {
-    console.error(JSON.stringify({
-      status: "failed",
-      submissionId: message.submissionID ?? "n/a",
-      sendReceipt: sendReceipt ?? "n/a",
-      message: "Failed to process submission.",
-      error: `${error.message}`,
-    }));
+    console.error(
+      JSON.stringify({
+        status: "failed",
+        submissionId: message.submissionID ?? "n/a",
+        sendReceipt: sendReceipt ?? "n/a",
+        message: "Failed to process submission.",
+        error: `${error.message}`,
+      })
+    );
     throw new Error(`Failed to process submission.`);
   }
 };
