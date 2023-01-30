@@ -10,7 +10,10 @@ resource "aws_sqs_queue" "reliability_queue" {
   fifo_queue                  = true
   content_based_deduplication = true
   receive_wait_time_seconds   = 0
-  visibility_timeout_seconds  = 400
+  visibility_timeout_seconds  = 1800
+  # https://aws.amazon.com/premiumsupport/knowledge-center/lambda-function-process-sqs-messages/
+  # The SQS visibility timeout must be at least six times the total of the function timeout and the batch window timeout.
+  # Lambda function timeout is 300.
 
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
@@ -52,7 +55,10 @@ resource "aws_sqs_queue" "reprocess_submission_queue" {
   fifo_queue                  = true
   content_based_deduplication = true
   receive_wait_time_seconds   = 0
-  visibility_timeout_seconds  = 400
+  visibility_timeout_seconds  = 1800
+  # https://aws.amazon.com/premiumsupport/knowledge-center/lambda-function-process-sqs-messages/
+  # The SQS visibility timeout must be at least six times the total of the function timeout and the batch window timeout.
+  # Lambda function timeout is 300.
 
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
