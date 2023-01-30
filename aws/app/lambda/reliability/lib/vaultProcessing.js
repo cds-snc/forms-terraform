@@ -58,8 +58,8 @@ module.exports = async (
     // Not throwing an error back to SQS because the message was sucessfully processed by the vault. Only cleanup required.
     console.warn(JSON.stringify({
       status: "success",
-      submissionId: submissionID,
-      sendReceipt: sendReceipt,
+      submissionId: submissionID  ?? "n/a",
+      sendReceipt: sendReceipt ?? "n/a",
       message: "Successfully saved submission to Vault but failed to clean up submission processing files from database.",
       error: `${error.message}`,
     }));

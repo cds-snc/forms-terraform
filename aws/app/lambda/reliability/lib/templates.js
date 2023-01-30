@@ -24,7 +24,7 @@ const getTemplateFormConfig = async (formID) => {
     const data = await getTemplateData(SQL, parameters);
 
     if (data.records.length === 1) {
-      return { ...data.records[0].formConfig.form };
+      return { ...data.records[0].formConfig };
     } else {
       return null;
     }
