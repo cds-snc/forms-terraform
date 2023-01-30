@@ -6,6 +6,8 @@ const { getSubmission } = require("dataLayer");
 exports.handler = async function (event) {
   const message = JSON.parse(event.Records[0].body);
 
+  let sendReceipt = null;
+
   try {
     const messageData = await getSubmission(message);
     const submissionID = messageData.Item?.SubmissionID.S ?? message.submissionID;
@@ -14,7 +16,7 @@ exports.handler = async function (event) {
     const language = messageData.Item?.FormSubmissionLanguage.S ?? "en";
     const securityAttribute = messageData.Item?.SecurityAttribute.S ?? "Unclassified";
     const createdAt = messageData.Item?.CreatedAt.N ?? null;
-    const sendReceipt = messageData.Item?.SendReceipt.S ?? null;
+    sendReceipt = messageData.Item?.SendReceipt.S ?? null;
 
     // Check if form data exists or was already processed.
     if (formSubmission === null || typeof formSubmission === "undefined") {
@@ -41,12 +43,14 @@ exports.handler = async function (event) {
      Form submission object contains:
        formID - ID of form,
        language - form submission language "fr" or "en",
-       submission - submission type: email, vault
        responses - form responses: {formID, securityAttribute, questionID: answer}
        form - Complete Form Template
+       deliveryOption - (optional) Will be present if user wants to receive form responses by email (`{ emailAddress: string; emailSubjectEn?: string; emailSubjectFr?: string }`)
     */
-
-    if (formSubmission.submission.vault) {
+   
+    if (formSubmission.deliveryOption) {
+      return await sendToNotify(submissionID, sendReceipt, formSubmission, language, createdAt);
+    } else {
       return await sendToVault(
         submissionID,
         sendReceipt,
@@ -56,14 +60,12 @@ exports.handler = async function (event) {
         createdAt,
         securityAttribute
       );
-    } else {
-      return await sendToNotify(submissionID, sendReceipt, formSubmission, language, createdAt);
     }
   } catch (error) {
     console.error(JSON.stringify({
       status: "failed",
-      submissionId: message.submissionID,
-      sendReceipt: sendReceipt,
+      submissionId: message.submissionID ?? "n/a",
+      sendReceipt: sendReceipt ?? "n/a",
       message: "Failed to process submission.",
       error: `${error.message}`,
     }));
