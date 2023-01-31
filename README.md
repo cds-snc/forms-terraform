@@ -72,10 +72,10 @@ yarn dev
 # localstack only simulates a us-east-1 region
 AWS_ACCESS_KEY_ID=test
 AWS_SECRET_ACCESS_KEY=test
-AWS_REGION=us-east-1
+AWS_REGION=ca-central-1
 RELIABILITY_FILE_STORAGE=forms-local-reliability-file-storage
 LOCAL_LAMBDA_ENDPOINT=http://127.0.0.1:3001
-LOCAL_S3_ENDPOINT=http://localhost:4566
+LOCAL_AWS_ENDPOINT=http://localhost:4566
 ```
 
 ##### Everytime you want to run localstack and lambdas locally
