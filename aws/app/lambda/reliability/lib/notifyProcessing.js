@@ -27,12 +27,12 @@ module.exports = async (submissionID, sendReceipt, formSubmission, language, cre
     }, {});
 
     const templateID = process.env.TEMPLATE_ID;
-    /*
+
     const notify = new NotifyClient(
       "https://api.notification.canada.ca",
       process.env.NOTIFY_API_KEY
     );
-    */
+
     const emailBody = convertMessage(formSubmission, submissionID, language, createdAt);
     const messageSubject =
       language === "fr"
@@ -42,7 +42,7 @@ module.exports = async (submissionID, sendReceipt, formSubmission, language, cre
         : formSubmission.deliveryOption.emailSubjectEn
         ? formSubmission.deliveryOption.emailSubjectEn
         : formSubmission.form.titleEn;
-    /*
+
     await notify.sendEmail(templateID, formSubmission.deliveryOption.emailAddress, {
       personalisation: {
         subject: messageSubject,
@@ -51,7 +51,7 @@ module.exports = async (submissionID, sendReceipt, formSubmission, language, cre
       },
       reference: submissionID,
     });
-*/
+
     await notifyProcessed(submissionID);
 
     console.log(
