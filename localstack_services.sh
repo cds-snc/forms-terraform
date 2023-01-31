@@ -6,6 +6,9 @@ export TF_VAR_cognito_user_pool_arn=""
 export TF_VAR_email_address_contact_us=""
 export TF_VAR_email_address_support=""
 
+# Usage:
+# Without any args will reuse the existing cached packages saving some tiem and bandwidth
+# With the 'clean' argument will remove all cached packages for terraform and node modules for lambdas.
 
 basedir=$(pwd)
 

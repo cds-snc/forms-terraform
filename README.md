@@ -81,7 +81,7 @@ LOCAL_AWS_ENDPOINT=http://localhost:4566
 ##### Everytime you want to run localstack and lambdas locally
 
 1. In one terminal run `localstack start`
-2. In a second terminal run `./localstack_services.sh`
+2. In a second terminal run `./localstack_services.sh` (If there have been infrastructure changes you'll want to run `./localstack_services.sh clean`)
 3. In a third terminal in the `platform-forms-client` repo run `yarn dev`
 
 #### It didn't work.... I need the details
