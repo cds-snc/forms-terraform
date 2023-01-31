@@ -1,17 +1,20 @@
 const { NotifyClient } = require("notifications-node-client");
 const convertMessage = require("markdown");
-const { extractFileInputResponses, updateTTL } = require("dataLayer");
+const { extractFileInputResponses, notifyProcessed } = require("dataLayer");
 const { retrieveFilesFromReliabilityStorage } = require("s3FileInput");
 
 module.exports = async (submissionID, sendReceipt, formSubmission, language, createdAt) => {
   try {
     // Making sure currently processed submission email address is defined
-    if (!formSubmission.deliveryOption?.emailAddress || formSubmission.deliveryOption.emailAddress === "") {
+    if (
+      !formSubmission.deliveryOption?.emailAddress ||
+      formSubmission.deliveryOption.emailAddress === ""
+    ) {
       throw Error("Email address is missing or empty.");
     }
 
     const fileInputPaths = extractFileInputResponses(formSubmission);
-    const files = await retrieveFilesFromReliabilityStorage(fileInputPaths)
+    const files = await retrieveFilesFromReliabilityStorage(fileInputPaths);
     const attachFileParameters = fileInputPaths.reduce((acc, current, index) => {
       return {
         [`file${index}`]: {
@@ -24,7 +27,12 @@ module.exports = async (submissionID, sendReceipt, formSubmission, language, cre
     }, {});
 
     const templateID = process.env.TEMPLATE_ID;
-    const notify = new NotifyClient("https://api.notification.canada.ca", process.env.NOTIFY_API_KEY);
+
+    const notify = new NotifyClient(
+      "https://api.notification.canada.ca",
+      process.env.NOTIFY_API_KEY
+    );
+
     const emailBody = convertMessage(formSubmission, submissionID, language, createdAt);
     const messageSubject =
       language === "fr"
@@ -35,24 +43,25 @@ module.exports = async (submissionID, sendReceipt, formSubmission, language, cre
         ? formSubmission.deliveryOption.emailSubjectEn
         : formSubmission.form.titleEn;
 
-    await notify
-      .sendEmail(templateID, formSubmission.deliveryOption.emailAddress, {
-        personalisation: {
-          subject: messageSubject,
-          formResponse: emailBody,
-          ...attachFileParameters,
-        },
-        reference: submissionID,
-      });
+    await notify.sendEmail(templateID, formSubmission.deliveryOption.emailAddress, {
+      personalisation: {
+        subject: messageSubject,
+        formResponse: emailBody,
+        ...attachFileParameters,
+      },
+      reference: submissionID,
+    });
 
-    await updateTTL(submissionID);
+    await notifyProcessed(submissionID);
 
-    console.log(JSON.stringify({
-      status: "success",
-      submissionId: submissionID,
-      sendReceipt: sendReceipt,
-      message: "Successfully sent submission through GC Notify.",
-    }));
+    console.log(
+      JSON.stringify({
+        status: "success",
+        submissionId: submissionID,
+        sendReceipt: sendReceipt,
+        message: "Successfully sent submission through GC Notify.",
+      })
+    );
   } catch (error) {
     let errorMessage = "";
 
@@ -77,13 +86,15 @@ module.exports = async (submissionID, sendReceipt, formSubmission, language, cre
       errorMessage = `${error.message}.`;
     }
 
-    console.error(JSON.stringify({
-      status: "failed",
-      submissionId: submissionID ?? "n/a",
-      sendReceipt: sendReceipt ?? "n/a",
-      message: "Failed to send submission through GC Notify.",
-      error: errorMessage,
-    }));
+    console.error(
+      JSON.stringify({
+        status: "failed",
+        submissionId: submissionID ?? "n/a",
+        sendReceipt: sendReceipt ?? "n/a",
+        message: "Failed to send submission through GC Notify.",
+        error: errorMessage,
+      })
+    );
     throw new Error(`Failed to send submission through GC Notify.`);
   }
 };

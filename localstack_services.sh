@@ -1,19 +1,36 @@
 #!/bin/bash
 
+export TF_VAR_cognito_client_id=""
+export TF_VAR_cognito_endpoint_url=""
+export TF_VAR_cognito_user_pool_arn=""
+export TF_VAR_email_address_contact_us=""
+export TF_VAR_email_address_support=""
+
+# Usage:
+# Without any args will reuse the existing cached packages saving some tiem and bandwidth
+# With the 'clean' argument will remove all cached packages for terraform and node modules for lambdas.
 
 basedir=$(pwd)
 
+ACTION=$1
 
 printf "Configuring localstack components via terraform...\n"
 
-printf "=> Cleaning up previous caches and lambda dependency packages\n"
+if [["${ACTION}" = "clean"]]; then
+  printf "=> Cleaning up previous caches, terraform state, and lambda dependencies\n"
 
-printf "...Purging stale localstack related files\n"
+  printf "...Purging stale localstack related files\n"
   find $basedir/env/local -type d -name .terragrunt-cache -prune -exec rm -rf {} \;
 
-printf "...Removing old lambda dependencies\n"
-  cd $basedir/aws/app/lambda
-  ./deps.sh delete
+  printf "...Removing old lambda dependencies\n"
+    cd $basedir/aws/app/lambda
+    ./deps.sh delete
+fi
+
+printf "=> Cleaning previous terrafrom state, keeping previous terraform packages and lambda dependencies\n"
+
+printf "...Purging stale terraform state files\n"
+  find $basedir/env/local -type d -name terraform.tfstate -prune -exec rm -rf {} \;
 
 printf "=> Creating AWS services in Localstack\n"
 
