@@ -99,6 +99,9 @@ async function saveToVault(
   const formSubmission =
     typeof formResponse === "string" ? formResponse : JSON.stringify(formResponse);
 
+  const submissionDate = new Date(Number(createdAt));
+  const name = `${('0' + submissionDate.getDate()).slice(-2)}-${('0' + (submissionDate.getMonth() + 1)).slice(-2)}-${submissionID.substring(0, 4)}`;
+
   const DBParams = {
     TableName: "Vault",
     Item: {
@@ -111,6 +114,7 @@ async function saveToVault(
       SecurityAttribute: { S: securityAttribute },
       Status: { S: "New" },
       ConfirmationCode: { S: uuid.v4() },
+      Name: { S: name },
     },
   };
 
