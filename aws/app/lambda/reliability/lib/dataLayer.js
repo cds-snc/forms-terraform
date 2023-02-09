@@ -1,7 +1,7 @@
 const {
   DynamoDBClient,
   GetItemCommand,
-  PutItemCommand,
+  TransactWriteItemsCommand,
   UpdateItemCommand,
   DeleteItemCommand,
 } = require("@aws-sdk/client-dynamodb");
@@ -102,24 +102,52 @@ async function saveToVault(
   const submissionDate = new Date(Number(createdAt));
   const name = `${('0' + submissionDate.getDate()).slice(-2)}-${('0' + (submissionDate.getMonth() + 1)).slice(-2)}-${submissionID.substring(0, 4)}`;
 
-  const DBParams = {
-    TableName: "Vault",
-    Item: {
-      SubmissionID: { S: submissionID },
-      FormID: { S: formIdentifier },
-      FormSubmission: { S: formSubmission },
-      FormSubmissionLanguage: { S: language },
-      CreatedAt: { N: `${createdAt}` },
-      Retrieved: { N: "0" },
-      SecurityAttribute: { S: securityAttribute },
-      Status: { S: "New" },
-      ConfirmationCode: { S: uuid.v4() },
-      Name: { S: name },
-    },
+  const confirmationCode = uuid.v4();
+
+  const requestInput = {
+    TransactItems: [
+      {
+        Put: {
+          TableName: "Vault",
+          Item: {
+            SubmissionID: { S: submissionID },
+            FormID: { S: formIdentifier },
+            FormSubmission: { S: formSubmission },
+            FormSubmissionLanguage: { S: language },
+            CreatedAt: { N: `${createdAt}` },
+            Retrieved: { N: "0" },
+            SecurityAttribute: { S: securityAttribute },
+            Status: { S: "New" },
+            ConfirmationCode: { S: confirmationCode },
+            Name: { S: name },
+          }
+        },
+      },
+      {
+        Put: {
+          TableName: "ConfirmationCode",
+          Item: {
+            ConfirmationCode: { S: confirmationCode },
+            FormID: { S: formIdentifier },
+            SubmissionID: { S: submissionID },
+          }
+        },
+      },
+      {
+        Put: {
+          TableName: "SubmissionName",
+          Item: {
+            Name: { S: name },
+            FormID: { S: formIdentifier },
+            SubmissionID: { S: submissionID },
+          }
+        },
+      }
+    ]
   };
 
   //save data to DynamoDB
-  return await db.send(new PutItemCommand(DBParams));
+  return await db.send(new TransactWriteItemsCommand(requestInput));
 }
 
 // Email submission data manipulation

@@ -72,3 +72,67 @@ resource "aws_dynamodb_table" "vault" {
     Terraform             = true
   }
 }
+
+resource "aws_dynamodb_table" "confirmation_code" {
+  name           = "ConfirmationCode"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "ConfirmationCode"
+  range_key      = "FormID"
+  stream_enabled = false
+
+  attribute {
+    name = "ConfirmationCode"
+    type = "S"
+  }
+
+  attribute {
+    name = "FormID"
+    type = "S"
+  }
+
+  server_side_encryption {
+    enabled     = true
+    kms_key_arn = var.kms_key_dynamodb_arn
+  }
+
+  point_in_time_recovery {
+    enabled = var.env == "local" ? false : true
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_dynamodb_table" "submission_name" {
+  name           = "SubmissionName"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "Name"
+  range_key      = "FormID"
+  stream_enabled = false
+
+  attribute {
+    name = "Name"
+    type = "S"
+  }
+
+  attribute {
+    name = "FormID"
+    type = "S"
+  }
+
+  server_side_encryption {
+    enabled     = true
+    kms_key_arn = var.kms_key_dynamodb_arn
+  }
+
+  point_in_time_recovery {
+    enabled = var.env == "local" ? false : true
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
