@@ -16,7 +16,7 @@ ACTION=$1
 
 printf "Configuring localstack components via terraform...\n"
 
-if [["${ACTION}" = "clean"]]; then
+if ["${ACTION}" = "clean"]; then
   printf "=> Cleaning up previous caches, terraform state, and lambda dependencies\n"
 
   printf "...Purging stale localstack related files\n"
@@ -36,19 +36,19 @@ printf "=> Creating AWS services in Localstack\n"
 
 printf "...Setting up local KMS\n"
 cd $basedir/env/local/kms
-terragrunt apply --terragrunt-non-interactive -auto-approve
+terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "...Creating SQS queue\n"
 cd $basedir/env/local/sqs
-terragrunt apply --terragrunt-non-interactive -auto-approve
+terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "...Creating SNS queue\n"
 cd $basedir/env/local/sns
-terragrunt apply --terragrunt-non-interactive -auto-approve
+terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "...Creating the DynamoDB database\n"
 cd $basedir/env/local/dynamodb
-terragrunt apply --terragrunt-non-interactive -auto-approve
+terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "...Installing lambda dependencies\n"
 cd $basedir/aws/app/lambda
@@ -56,7 +56,7 @@ cd $basedir/aws/app/lambda
 
 printf "...Creating the S3 buckets...\n"
 cd $basedir/env/local/app
-terragrunt apply --terragrunt-non-interactive -auto-approve
+terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "=> Starting Lambdas\n"
 cd $basedir/aws/app/lambda
