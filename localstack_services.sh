@@ -16,7 +16,7 @@ ACTION=$1
 
 printf "Configuring localstack components via terraform...\n"
 
-if ["${ACTION}" = "clean"]; then
+if [[ "${ACTION}" == "clean" ]]; then
   printf "=> Cleaning up previous caches, terraform state, and lambda dependencies\n"
 
   printf "...Purging stale localstack related files\n"
