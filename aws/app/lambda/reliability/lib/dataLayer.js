@@ -100,26 +100,42 @@ async function saveToVault(
     typeof formResponse === "string" ? formResponse : JSON.stringify(formResponse);
 
   const submissionDate = new Date(Number(createdAt));
-  const name = `${('0' + submissionDate.getDate()).slice(-2)}-${('0' + (submissionDate.getMonth() + 1)).slice(-2)}-${submissionID.substring(0, 4)}`;
+  const name = `${("0" + submissionDate.getDate()).slice(-2)}-${(
+    "0" +
+    (submissionDate.getMonth() + 1)
+  ).slice(-2)}-${submissionID.substring(0, 4)}`;
 
-  const DBParams = {
+  const confirmationCode = uuid.v4();
+
+  const SubmissionParams = {
     TableName: "Vault",
     Item: {
       SubmissionID: { S: submissionID },
       FormID: { S: formIdentifier },
+      NAME_OR_CONF: { S: `NAME#${name}` },
       FormSubmission: { S: formSubmission },
       FormSubmissionLanguage: { S: language },
       CreatedAt: { N: `${createdAt}` },
-      Retrieved: { N: "0" },
       SecurityAttribute: { S: securityAttribute },
       Status: { S: "New" },
-      ConfirmationCode: { S: uuid.v4() },
+      ConfirmationCode: { S: confirmationCode },
       Name: { S: name },
+    },
+  };
+  const ConfirmationParams = {
+    TableName: "Vault",
+    Item: {
+      FormID: { S: formIdentifier },
+      NAME_OR_CONF: { S: `CONF#${name}` },
+      Name: { S: `NAME#${name}` },
     },
   };
 
   //save data to DynamoDB
-  return await db.send(new PutItemCommand(DBParams));
+  return await Promise.all([
+    db.send(new PutItemCommand(SubmissionParams)),
+    db.send(new PutItemCommand(ConfirmationParams)),
+  ]);
 }
 
 // Email submission data manipulation

@@ -43,18 +43,30 @@ resource "aws_dynamodb_table" "vault" {
   }
 
   attribute {
-    name = "SubmissionID"
+    name = "NAME_OR_CONF"
     type = "S"
   }
 
   attribute {
-    name = "Retrieved"
+    name = "Status"
+    type = "S"
+  }
+
+  attribute {
+    name = "RemovalDate"
     type = "N"
   }
 
   global_secondary_index {
-    name            = "retrieved-index"
-    hash_key        = "Retrieved"
+    name            = "Status"
+    hash_key        = "FormID"
+    range_key       = "Status"   
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "Archive"
+    hash_key        = "RemovalDate"
     projection_type = "ALL"
   }
 
