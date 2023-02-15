@@ -60,7 +60,7 @@ resource "aws_dynamodb_table" "vault" {
   global_secondary_index {
     name            = "Status"
     hash_key        = "FormID"
-    range_key       = "Status"   
+    range_key       = "Status"
     projection_type = "ALL"
   }
 

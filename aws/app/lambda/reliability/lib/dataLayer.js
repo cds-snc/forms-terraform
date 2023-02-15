@@ -126,7 +126,7 @@ async function saveToVault(
     TableName: "Vault",
     Item: {
       FormID: { S: formIdentifier },
-      NAME_OR_CONF: { S: `CONF#${name}` },
+      NAME_OR_CONF: { S: `CONF#${confirmationCode}` },
       Name: { S: `NAME#${name}` },
     },
   };
