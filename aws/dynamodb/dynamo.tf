@@ -33,7 +33,7 @@ resource "aws_dynamodb_table" "vault" {
   name             = "Vault"
   billing_mode     = "PAY_PER_REQUEST"
   hash_key         = "FormID"
-  range_key        = "SubmissionID"
+  range_key        = "NAME_OR_CONF"
   stream_enabled   = true
   stream_view_type = "NEW_IMAGE"
 
