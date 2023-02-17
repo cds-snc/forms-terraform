@@ -250,10 +250,6 @@ variable "dynamodb_vault_table_name" {
   type        = string
 }
 
-variable "dynamodb_vault_stream_arn" {
-  description = "Vault DynamoDB stream ARN"
-  type        = string
-}
 variable "dynamodb_audit_logs_arn" {
   description = "Audit Logs table ARN"
   type        = string

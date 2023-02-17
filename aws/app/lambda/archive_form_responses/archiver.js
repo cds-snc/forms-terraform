@@ -1,13 +1,15 @@
-const { DynamoDBClient, BatchWriteItemCommand } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBClient, BatchWriteItemCommand, QueryCommand } = require("@aws-sdk/client-dynamodb");
 
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { S3Client, PutObjectCommand, CopyObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 
 const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
+const {getFileAttachments} = require("fileAttachments");
 
 const REGION = process.env.REGION;
 const DYNAMODB_VAULT_TABLE_NAME = process.env.DYNAMODB_VAULT_TABLE_NAME;
 const ARCHIVING_S3_BUCKET = process.env.ARCHIVING_S3_BUCKET;
 const SNS_ERROR_TOPIC_ARN = process.env.SNS_ERROR_TOPIC_ARN;
+const VAULT_FILE_STORAGE_S3_BUCKET = process.env.VAULT_FILE_STORAGE_S3_BUCKET;
 
 exports.handler = async (event) => {
   try {
@@ -15,6 +17,7 @@ exports.handler = async (event) => {
       region: REGION,
       ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
     });
+
     const s3Client = new S3Client({
       region: REGION,
       ...(process.env.AWS_SAM_LOCAL && {
@@ -51,6 +54,7 @@ exports.handler = async (event) => {
  */
 async function archiveConsumedFormResponses(dynamoDb, s3Client) {
   const formResponses = await retrieveFormResponsesToBeArchived(dynamoDb);
+
   if (formResponses.length > 0) {
     for (const formResponse of formResponses) {
       let attachment = getFileAttachments(formResponse.formSubmission);
@@ -68,7 +72,6 @@ async function archiveConsumedFormResponses(dynamoDb, s3Client) {
         formResponse.formSubmission
       );
     }
-
     await removeFormResponseFilesFromVaultStorage(s3Client, formResponses);
     await deleteFormResponsesFromDynamoDb(dynamoDb, formResponses);
   }
@@ -110,15 +113,17 @@ async function retrieveFormResponsesToBeArchived(dynamoDb) {
 
       if (response.Items?.length) {
         formResponses = formResponses.concat(
-          response.Items.map((item) => ({
-            formID: item.FormID.S,
-            name: item.Name.S,
-            submissionID: item.SubmissionID.S,
-            formSubmission: item.FormSubmission.S,
-            removalDate: item.RemovalDate.N,
-            createdAt: item.CreatedAt.N,
-            confirmationCode: item.ConfirmationCode.S,
-          }))
+          response.Items.map(
+            (item) => ({
+              formID: item.FormID.S,
+              name: item.Name.S,
+              submissionID: item.SubmissionID.S,
+              formSubmission: item.FormSubmission.S,
+              removalDate: item.RemovalDate.N,
+              createdAt: item.CreatedAt.N,
+              confirmationCode: item.ConfirmationCode.S,
+            })
+          )
         );
       } else {
         lastEvaluatedKey = undefined;
@@ -226,17 +231,14 @@ async function removeFormResponseFilesFromVaultStorage(s3Client, formResponses) 
 }
 
 async function deleteFormResponsesFromDynamoDb(dynamoDb, formResponses) {
-  const chunks = (arr, size) =>
-    Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
-      arr.slice(i * size, i * size + size)
-    );
-
+  const chunks = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }, (v, i) => arr.slice(i * size, i * size + size));
+  
   /**
    * The `BatchWriteItemCommand` can only take up to 25 `DeleteRequest` at a time.
    * We have to delete 2 items from DynamoDB for each form response (12*2=24).
    */
   for (const formResponsesChunk of chunks(formResponses, 12)) {
-    const deleteRequests = formResponsesChunk.flatMap((formResponse) => {
+    const deleteRequests = formResponsesChunk.flatMap(formResponse => {
       return [
         {
           DeleteRequest: {
@@ -262,7 +264,7 @@ async function deleteFormResponsesFromDynamoDb(dynamoDb, formResponses) {
             },
           },
         },
-      ];
+      ]
     });
 
     const batchWriteItemCommandInput = {
@@ -270,7 +272,7 @@ async function deleteFormResponsesFromDynamoDb(dynamoDb, formResponses) {
         [DYNAMODB_VAULT_TABLE_NAME]: deleteRequests,
       },
     };
-
+  
     try {
       await dynamoDb.send(new BatchWriteItemCommand(batchWriteItemCommandInput));
       await Promise.resolve();
