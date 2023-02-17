@@ -1,6 +1,5 @@
 const { RDSDataClient, ExecuteStatementCommand } = require("@aws-sdk/client-rds-data");
 const { Client } = require("pg");
-const util = require("util");
 
 const REGION = process.env.REGION;
 
@@ -31,7 +30,9 @@ const getTemplateFormConfig = async (formID) => {
   } catch (error) {
     // Return as if no template with ID was found.
     // Handle error in calling function if template is not found.
-    console.error(`Failed to retrieve template form config because of following error: ${error.message}`);
+    console.error(
+      `Failed to retrieve template form config because of following error: ${error.message}`
+    );
     return null;
   }
 };

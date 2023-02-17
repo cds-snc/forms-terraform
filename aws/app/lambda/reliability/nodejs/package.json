@@ -9,6 +9,7 @@
     "@aws-sdk/client-rds-data": "^3.105.0",
     "@aws-sdk/client-s3": "^3.33.0",
     "@aws-sdk/client-sqs": "^3.7.0",
+    "@aws-sdk/lib-dynamodb": "^3.272.0",
     "axios": "^0.27.0",
     "json2md": "^1.10.0",
     "notifications-node-client": "^5.1.0",
