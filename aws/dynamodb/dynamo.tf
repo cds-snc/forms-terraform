@@ -66,7 +66,8 @@ resource "aws_dynamodb_table" "vault" {
 
   global_secondary_index {
     name            = "Archive"
-    hash_key        = "RemovalDate"
+    hash_key        = "Status"
+    range_key       = "RemovalDate"
     projection_type = "ALL"
   }
 
