@@ -72,3 +72,49 @@ resource "aws_dynamodb_table" "vault" {
     Terraform             = true
   }
 }
+
+resource "aws_dynamodb_table" "audit_logs" {
+  name           = "AuditLogs"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "userID"
+  range_key      = "Event#TimeStamp"
+  stream_enabled = false
+
+  attribute {
+    name = "userID"
+    type = "S"
+  }
+
+  attribute {
+    name = "Event#TimeStamp"
+    type = "S"
+  }
+
+  attribute {
+    name = "TimeStamp"
+    type = "N"
+  }
+
+  global_secondary_index {
+    name            = "Archive"
+    hash_key        = "userID"
+    range_key       = "TimeStamp"
+    projection_type = "KEYS_ONLY"
+  }
+
+ 
+
+  server_side_encryption {
+    enabled     = true
+    kms_key_arn = var.kms_key_dynamodb_arn
+  }
+
+  point_in_time_recovery {
+    enabled = var.env == "local" ? false : true
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
