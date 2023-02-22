@@ -200,6 +200,24 @@ In the directory:
 `./aws/app/lambda/local-development/`
 `template.yml` defines the local environment / project we will be running. Functions and environment variables can be defined here.
 
+### Dynamo Datbase Table Schemas
+
+#### Vault Table
+
+##### Table
+
+![Vault Table](./readme_images/Vault.png)
+
+##### Archive Global Secondary Index
+
+This Index supports the archiving of Vault responses
+![Archive GSI](./readme_images/GSI_Vault_Archive.png)
+
+##### Status Global Secondary Index
+
+This Index supports the future feature of the Retrieval API. Essentially the ability to retrieve responses without using the Application Interface.
+![Status Index](./readme_images/GSI_Vault_Status.png)
+
 ### Invoking Lambdas manually
 
 If you want to invoke a lambda specifically, here’s the example command:

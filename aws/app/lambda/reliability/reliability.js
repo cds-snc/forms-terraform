@@ -10,16 +10,16 @@ exports.handler = async function (event) {
 
   try {
     const messageData = await getSubmission(message);
-    const submissionID = messageData.Item?.SubmissionID.S ?? message.submissionID;
-    const formID = messageData.Item?.FormID.S ?? null;
-    const formSubmission = messageData.Item?.FormData.S
-      ? JSON.parse(messageData.Item?.FormData.S)
+    const submissionID = messageData.Item?.SubmissionID ?? message.submissionID;
+    const formID = messageData.Item?.FormID ?? null;
+    const formSubmission = messageData.Item?.FormData
+      ? JSON.parse(messageData.Item?.FormData)
       : null;
-    const language = messageData.Item?.FormSubmissionLanguage.S ?? "en";
-    const securityAttribute = messageData.Item?.SecurityAttribute.S ?? "Unclassified";
-    const createdAt = messageData.Item?.CreatedAt.N ?? null;
-    const notifyProcessed = messageData.Item?.NotifyProcessed?.BOOL ?? false;
-    sendReceipt = messageData.Item?.SendReceipt.S ?? null;
+    const language = messageData.Item?.FormSubmissionLanguage ?? "en";
+    const securityAttribute = messageData.Item?.SecurityAttribute ?? "Unclassified";
+    const createdAt = messageData.Item?.CreatedAt ?? null;
+    const notifyProcessed = messageData.Item?.NotifyProcessed ?? false;
+    sendReceipt = messageData.Item?.SendReceipt ?? null;
 
     // Check if form data exists or was already processed.
     if (formSubmission === null || notifyProcessed) {

@@ -1,30 +1,33 @@
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const {
-  DynamoDBClient,
-  GetItemCommand,
-  PutItemCommand,
-  UpdateItemCommand,
-  DeleteItemCommand,
-} = require("@aws-sdk/client-dynamodb");
+  DynamoDBDocumentClient,
+  GetCommand,
+  UpdateCommand,
+  DeleteCommand,
+  TransactWriteCommand,
+} = require("@aws-sdk/lib-dynamodb");
 const uuid = require("uuid");
 
 const REGION = process.env.REGION;
 
-async function getSubmission(message) {
-  const db = new DynamoDBClient({
+const db = DynamoDBDocumentClient.from(
+  new DynamoDBClient({
     region: REGION,
     ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
-  });
+  })
+);
 
+async function getSubmission(message) {
   const DBParams = {
     TableName: "ReliabilityQueue",
     Key: {
-      SubmissionID: { S: message.submissionID },
+      SubmissionID: message.submissionID,
     },
     ProjectExpression:
       "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt,SecurityAttribute,NotifyProcessed",
   };
 
-  return await db.send(new GetItemCommand(DBParams));
+  return await db.send(new GetCommand(DBParams));
 }
 /**
  * Function that removes the submission from the Reliability Queue.
@@ -33,18 +36,14 @@ async function getSubmission(message) {
  */
 
 async function removeSubmission(submissionID) {
-  const db = new DynamoDBClient({
-    region: REGION,
-    endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
-  });
   const DBParams = {
     TableName: "ReliabilityQueue",
     Key: {
-      SubmissionID: { S: submissionID },
+      SubmissionID: submissionID,
     },
   };
   //remove data fron DynamoDB
-  return await db.send(new DeleteItemCommand(DBParams));
+  return await db.send(new DeleteCommand(DBParams));
 }
 
 /**
@@ -52,16 +51,11 @@ async function removeSubmission(submissionID) {
  * @param submissionID
  */
 async function notifyProcessed(submissionID) {
-  const db = new DynamoDBClient({
-    region: REGION,
-    endpoint: process.env.AWS_SAM_LOCAL ? "http://host.docker.internal:4566" : undefined,
-  });
-
   const expiringTime = (Math.floor(Date.now() / 1000) + 2592000).toString(); // expire after 30 days
   const DBParams = {
     TableName: "ReliabilityQueue",
     Key: {
-      SubmissionID: { S: submissionID },
+      SubmissionID: submissionID,
     },
     UpdateExpression: "SET #ttl = :ttl, #processed = :processed",
     ExpressionAttributeNames: {
@@ -69,17 +63,13 @@ async function notifyProcessed(submissionID) {
       "#processed": "NotifyProcessed",
     },
     ExpressionAttributeValues: {
-      ":ttl": {
-        N: expiringTime,
-      },
-      ":processed": {
-        BOOL: true,
-      },
+      ":ttl": expiringTime,
+      ":processed": true,
     },
     ReturnValues: "NONE",
   };
 
-  return await db.send(new UpdateItemCommand(DBParams));
+  return await db.send(new UpdateCommand(DBParams));
 }
 
 async function saveToVault(
@@ -90,36 +80,78 @@ async function saveToVault(
   createdAt,
   securityAttribute
 ) {
-  const db = new DynamoDBClient({
-    region: REGION,
-    ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
-  });
-
   const formIdentifier = typeof formID === "string" ? formID : formID.toString();
   const formSubmission =
     typeof formResponse === "string" ? formResponse : JSON.stringify(formResponse);
 
+  const confirmationCode = uuid.v4();
   const submissionDate = new Date(Number(createdAt));
-  const name = `${('0' + submissionDate.getDate()).slice(-2)}-${('0' + (submissionDate.getMonth() + 1)).slice(-2)}-${submissionID.substring(0, 4)}`;
 
-  const DBParams = {
-    TableName: "Vault",
-    Item: {
-      SubmissionID: { S: submissionID },
-      FormID: { S: formIdentifier },
-      FormSubmission: { S: formSubmission },
-      FormSubmissionLanguage: { S: language },
-      CreatedAt: { N: `${createdAt}` },
-      Retrieved: { N: "0" },
-      SecurityAttribute: { S: securityAttribute },
-      Status: { S: "New" },
-      ConfirmationCode: { S: uuid.v4() },
-      Name: { S: name },
-    },
-  };
+  let duplicateFound = false;
+  let writeSucessfull = false;
 
-  //save data to DynamoDB
-  return await db.send(new PutItemCommand(DBParams));
+  while (!writeSucessfull) {
+    try {
+      const name = `${("0" + submissionDate.getDate()).slice(-2)}-${(
+        "0" +
+        (submissionDate.getMonth() + 1)
+      ).slice(-2)}-${
+        duplicateFound
+          ? Math.floor(1000 + Math.random() * 9000).toString()
+          : submissionID.substring(0, 4)
+      }`;
+
+      const PutSubmission = {
+        Put: {
+          TableName: "Vault",
+          ConditionExpression: "attribute_not_exists(FormID)",
+          Item: {
+            SubmissionID: submissionID,
+            FormID: formIdentifier,
+            NAME_OR_CONF: `NAME#${name}`,
+            FormSubmission: formSubmission,
+            FormSubmissionLanguage: language,
+            CreatedAt: Number(createdAt),
+            SecurityAttribute: securityAttribute,
+            Status: "New",
+            ConfirmationCode: confirmationCode,
+            Name: name,
+          },
+        },
+      };
+      const PutConfirmation = {
+        Put: {
+          TableName: "Vault",
+          Item: {
+            FormID: formIdentifier,
+            NAME_OR_CONF: `CONF#${confirmationCode}`,
+            Name: name,
+            ConfirmationCode: confirmationCode,
+          },
+        },
+      };
+      await db.send(
+        new TransactWriteCommand({
+          TransactItems: [PutSubmission, PutConfirmation],
+        })
+      );
+
+      writeSucessfull = true;
+    } catch (error) {
+      if (error.CancellationReasons) {
+        error.CancellationReasons.forEach((reason) => {
+          if (reason.Code === "ConditionalCheckFailed") {
+            console.warn("Duplicate Submission Name Found - recreating with randomized name");
+            duplicateFound = true;
+          }
+        });
+      } else {
+        // Not a duplication error, something else has gone wrong
+        console.error(error);
+        throw error;
+      }
+    }
+  }
 }
 
 // Email submission data manipulation

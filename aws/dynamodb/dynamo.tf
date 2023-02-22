@@ -33,7 +33,7 @@ resource "aws_dynamodb_table" "vault" {
   name             = "Vault"
   billing_mode     = "PAY_PER_REQUEST"
   hash_key         = "FormID"
-  range_key        = "SubmissionID"
+  range_key        = "NAME_OR_CONF"
   stream_enabled   = true
   stream_view_type = "NEW_IMAGE"
 
@@ -43,18 +43,31 @@ resource "aws_dynamodb_table" "vault" {
   }
 
   attribute {
-    name = "SubmissionID"
+    name = "NAME_OR_CONF"
     type = "S"
   }
 
   attribute {
-    name = "Retrieved"
+    name = "Status"
+    type = "S"
+  }
+
+  attribute {
+    name = "RemovalDate"
     type = "N"
   }
 
   global_secondary_index {
-    name            = "retrieved-index"
-    hash_key        = "Retrieved"
+    name            = "Status"
+    hash_key        = "FormID"
+    range_key       = "Status"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "Archive"
+    hash_key        = "Status"
+    range_key       = "RemovalDate"
     projection_type = "ALL"
   }
 
