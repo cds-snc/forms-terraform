@@ -1,0 +1,10 @@
+{
+  "name": "reliability",
+  "version": "1.0.0",
+  "main": "reliability.js",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-rds-data": "^3.105.0",
+    "pg": "^8.7.3"
+  }
+}

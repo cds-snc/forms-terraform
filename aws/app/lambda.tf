@@ -314,6 +314,14 @@ data "archive_file" "archive_form_templates_main" {
   output_path = "/tmp/archive_form_templates_main.zip"
 }
 
+data "archive_file" "archive_form_templates_lib" {
+  type        = "zip"
+  source_dir  = "lambda/archive_form_templates/"
+  excludes    = ["archiver.js"]
+  output_path = "/tmp/archive_form_templates_lib.zip"
+}
+
+
 resource "aws_lambda_function" "archive_form_templates" {
   filename      = "/tmp/archive_form_templates_main.zip"
   function_name = "ArchiveFormTemplates"
@@ -323,10 +331,7 @@ resource "aws_lambda_function" "archive_form_templates" {
   source_code_hash = data.archive_file.archive_form_templates_main.output_base64sha256
 
   runtime = "nodejs14.x"
-  layers = [ // Using the reliability lib layer on purpose since the archive form lambda now also uses the templates lib file
-    aws_lambda_layer_version.reliability_lib.arn,
-    aws_lambda_layer_version.reliability_nodejs.arn
-  ]
+  layers = [ aws_lambda_layer_version.archive_form_templates_lib.arn ]
 
   environment {
     variables = {
@@ -347,6 +352,13 @@ resource "aws_lambda_function" "archive_form_templates" {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
   }
+}
+
+resource "aws_lambda_layer_version" "archive_form_templates_lib" {
+  filename            = "/tmp/archive_form_templates_lib.zip"
+  layer_name          = "archive_form_templates_node_packages"
+  source_code_hash    = data.archive_file.archive_form_templates_lib.output_base64sha256
+  compatible_runtimes = ["nodejs14.x"]
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_templates_lambda" {

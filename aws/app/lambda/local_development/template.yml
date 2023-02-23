@@ -137,7 +137,7 @@ Resources:
       CodeUri: ../archive_form_templates/
       Handler: archiver.handler
       Layers:
-        - Ref: ReliabilityLayer
+        - Ref: ArchiveFormTemplatesLayer
       Environment:
         Variables:
           REGION:
@@ -175,6 +175,15 @@ Resources:
       LayerName:
         Fn::Sub: ${Environment}-${AppName}-archiver-layer
       ContentUri: ../archive_form_responses/
+      CompatibleRuntimes:
+        - nodejs14.x
+
+  ArchiveFormTemplatesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName:
+        Fn::Sub: ${Environment}-${AppName}-archive_form_templates-layer
+      ContentUri: ../archive_form_templates/
       CompatibleRuntimes:
         - nodejs14.x
 
