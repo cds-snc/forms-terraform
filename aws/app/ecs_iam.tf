@@ -154,14 +154,18 @@ resource "aws_iam_policy" "forms_sqs" {
 data "aws_iam_policy_document" "forms_sqs" {
   statement {
     effect = "Allow"
-
-    actions = [
+# To reduce env vars for local development the app has access to
+# query the url.  In staging and production the app does not. 
+    actions = var.env == "local" ? [
       "sqs:GetQueueUrl",
+      "sqs:SendMessage"
+    ] : [
       "sqs:SendMessage"
     ]
 
     resources = [
-      var.sqs_reprocess_submission_queue_arn
+      var.sqs_reprocess_submission_queue_arn,
+      var.sqs_audit_log_queue_arn
     ]
   }
 }
