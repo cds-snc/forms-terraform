@@ -190,6 +190,11 @@ data "archive_file" "archiver_main" {
 data "archive_file" "archiver_lib" {
   type        = "zip"
   output_path = "/tmp/archiver_lib.zip"
+
+  source {
+    content  = file("./lambda/archive_form_responses/lib/fileAttachments.js")
+    filename = "nodejs/node_modules/fileAttchments/index.js"
+  }
 }
 
 resource "aws_lambda_function" "archiver" {
