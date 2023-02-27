@@ -166,6 +166,28 @@ Resources:
           SNS_ERROR_TOPIC_ARN:
             Ref: arn:aws:sns:us-east-1:000000000000:alert-critical
 
+  ArchiveFormResponses:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-ArchiveFormResponses
+      CodeUri: ../archive_form_responses/
+      Handler: archiver.handler
+      Layers:
+        - Ref: ArchiveFormResponsesLayer
+      Environment:
+        Variables:
+          REGION:
+            Ref: REGION
+          DYNAMODB_VAULT_TABLE_NAME:
+            Ref: Vault
+          ARCHIVING_S3_BUCKET:
+            Ref: forms-local-archive-storage
+          VAULT_FILE_STORAGE_S3_BUCKET:
+            Ref: forms-local-vault-file-storage
+          SNS_ERROR_TOPIC_ARN:
+            Ref: arn:aws:sns:ca-central-1:000000000000:alert-critical
+
   SubmissionLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
