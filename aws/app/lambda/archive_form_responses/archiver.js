@@ -150,7 +150,7 @@ async function retrieveFormResponsesToBeArchived(dynamoDb) {
  */
 async function archiveResponseFiles(s3Client, formID, submissionID, removalDate, fileAttachments) {
   try {
-    const promises = fileAttachments.map(async function (attachment) {
+    const promises = fileAttachments.map((attachment) => {
       const fromUri = `${attachment.fileS3Path}`;
       const toUri = `${new Date(parseInt(removalDate))
         .toISOString()
@@ -203,7 +203,7 @@ async function removeFormResponseFilesFromVaultStorage(s3Client, formResponses) 
   try {
     for (const formResponse of formResponses) {
       let attachments = getFileAttachments(formResponse.formSubmission);
-      const promises = attachments.map(async function (attachment) {
+      const promises = attachments.map((attachment) => {
         const commandInput = {
           Bucket: VAULT_FILE_STORAGE_S3_BUCKET,
           Key: `${attachment.fileS3Path}`,
