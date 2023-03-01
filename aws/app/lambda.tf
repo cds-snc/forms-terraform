@@ -193,7 +193,7 @@ data "archive_file" "archiver_lib" {
 
   source {
     content  = file("./lambda/archive_form_responses/lib/fileAttachments.js")
-    filename = "nodejs/node_modules/fileAttchments/index.js"
+    filename = "nodejs/node_modules/fileAttachments/index.js"
   }
 }
 

@@ -1,9 +1,14 @@
 const { DynamoDBClient, BatchWriteItemCommand, QueryCommand } = require("@aws-sdk/client-dynamodb");
 
-const { S3Client, PutObjectCommand, CopyObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const {
+  S3Client,
+  PutObjectCommand,
+  CopyObjectCommand,
+  DeleteObjectCommand,
+} = require("@aws-sdk/client-s3");
 
 const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
-const {getFileAttachments} = require("fileAttachments");
+const { getFileAttachments } = require("fileAttachments");
 
 const REGION = process.env.REGION;
 const DYNAMODB_VAULT_TABLE_NAME = process.env.DYNAMODB_VAULT_TABLE_NAME;
@@ -26,13 +31,12 @@ exports.handler = async (event) => {
       }),
     });
 
-    await archiveConsumedFormResponses(dynamoDb, s3Client, event.Records);
+    await archiveConfirmedFormResponses(dynamoDb, s3Client, event.Records);
 
     return {
       statusCode: "SUCCESS",
     };
   } catch (err) {
-    console.log(err);
     const snsClient = new SNSClient({
       region: REGION,
       ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
@@ -52,7 +56,7 @@ exports.handler = async (event) => {
  * @param dynamoDb
  * @param s3Client
  */
-async function archiveConsumedFormResponses(dynamoDb, s3Client) {
+async function archiveConfirmedFormResponses(dynamoDb, s3Client) {
   const formResponses = await retrieveFormResponsesToBeArchived(dynamoDb);
 
   if (formResponses.length > 0) {
@@ -113,17 +117,15 @@ async function retrieveFormResponsesToBeArchived(dynamoDb) {
 
       if (response.Items?.length) {
         formResponses = formResponses.concat(
-          response.Items.map(
-            (item) => ({
-              formID: item.FormID.S,
-              name: item.Name.S,
-              submissionID: item.SubmissionID.S,
-              formSubmission: item.FormSubmission.S,
-              removalDate: item.RemovalDate.N,
-              createdAt: item.CreatedAt.N,
-              confirmationCode: item.ConfirmationCode.S,
-            })
-          )
+          response.Items.map((item) => ({
+            formID: item.FormID.S,
+            name: item.Name.S,
+            submissionID: item.SubmissionID.S,
+            formSubmission: item.FormSubmission.S,
+            removalDate: item.RemovalDate.N,
+            createdAt: item.CreatedAt.N,
+            confirmationCode: item.ConfirmationCode.S,
+          }))
         );
       } else {
         lastEvaluatedKey = undefined;
@@ -147,38 +149,25 @@ async function retrieveFormResponsesToBeArchived(dynamoDb) {
  * @param  fileAttachments
  */
 async function archiveResponseFiles(s3Client, formID, submissionID, removalDate, fileAttachments) {
-  const promises = fileAttachments.map(async function (attachment) {
-    const fromUri = `${attachment.fileS3Path}`;
-    const toUri = `${new Date(parseInt(removalDate))
-      .toISOString()
-      .slice(0, 10)}/${formID}/${submissionID}/${attachment.fileName}`;
-
-    await copyFilesFromVaultStorageToArchiveBucket(s3Client, fromUri, toUri);
-  });
-  await Promise.all(promises);
-}
-
-/**
- *
- * @param s3Client
- * @param {string} fromUri
- * @param {string} toUri
- */
-async function copyFilesFromVaultStorageToArchiveBucket(s3Client, fromUri, toUri) {
-  const commandInput = {
-    Bucket: ARCHIVING_S3_BUCKET,
-    CopySource: encodeURI(`${VAULT_FILE_STORAGE_S3_BUCKET}/${fromUri}`),
-    Key: toUri,
-  };
-
   try {
-    await s3Client.send(new CopyObjectCommand(commandInput)).catch((err) => {
-      console.error(err);
-      throw new Error("Oops... Something went wrong");
+    const promises = fileAttachments.map(async function (attachment) {
+      const fromUri = `${attachment.fileS3Path}`;
+      const toUri = `${new Date(parseInt(removalDate))
+        .toISOString()
+        .slice(0, 10)}/${formID}/${submissionID}/${attachment.fileName}`;
+
+      return s3Client.send(
+        new CopyObjectCommand({
+          Bucket: ARCHIVING_S3_BUCKET,
+          CopySource: encodeURI(`${VAULT_FILE_STORAGE_S3_BUCKET}/${fromUri}`),
+          Key: toUri,
+        })
+      );
     });
+
+    await Promise.all(promises);
   } catch (err) {
-    console.error(err);
-    throw new Error("Could not copy file");
+    throw new Error(`Could not copy file due to ${err.message}.`);
   }
 }
 
@@ -220,25 +209,27 @@ async function removeFormResponseFilesFromVaultStorage(s3Client, formResponses) 
           Key: `${attachment.fileS3Path}`,
         };
 
-        await s3Client.send(new DeleteObjectCommand(commandInput));
+        return s3Client.send(new DeleteObjectCommand(commandInput));
       });
       await Promise.all(promises);
     }
   } catch (err) {
-    console.error(err);
-    throw new Error("Oops... Unable to delete file");
+    throw new Error(`Oops... Unable to delete file. Reason: ${err.message}`);
   }
 }
 
 async function deleteFormResponsesFromDynamoDb(dynamoDb, formResponses) {
-  const chunks = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }, (v, i) => arr.slice(i * size, i * size + size));
-  
+  const chunks = (arr, size) =>
+    Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
+      arr.slice(i * size, i * size + size)
+    );
+
   /**
    * The `BatchWriteItemCommand` can only take up to 25 `DeleteRequest` at a time.
    * We have to delete 2 items from DynamoDB for each form response (12*2=24).
    */
   for (const formResponsesChunk of chunks(formResponses, 12)) {
-    const deleteRequests = formResponsesChunk.flatMap(formResponse => {
+    const deleteRequests = formResponsesChunk.flatMap((formResponse) => {
       return [
         {
           DeleteRequest: {
@@ -264,7 +255,7 @@ async function deleteFormResponsesFromDynamoDb(dynamoDb, formResponses) {
             },
           },
         },
-      ]
+      ];
     });
 
     const batchWriteItemCommandInput = {
@@ -272,10 +263,9 @@ async function deleteFormResponsesFromDynamoDb(dynamoDb, formResponses) {
         [DYNAMODB_VAULT_TABLE_NAME]: deleteRequests,
       },
     };
-  
+
     try {
       await dynamoDb.send(new BatchWriteItemCommand(batchWriteItemCommandInput));
-      await Promise.resolve();
     } catch (err) {
       throw new Error(`Failed to delete form responses from DynamoDB. Reason: ${err.message}.`);
     }
