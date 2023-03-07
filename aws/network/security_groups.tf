@@ -231,3 +231,22 @@ resource "aws_default_network_acl" "forms" {
     Terraform             = true
   }
 }
+
+resource "aws_security_group_rule" "deny_paths" {
+
+  count             = length(var.deny_paths)
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  security_group_id = aws_security_group.forms.id
+  description       = "Deny access to ${var.deny_paths[count.index]}"
+
+  condition {
+    test     = "http-request-uri"
+    values   = ["/(%0ASet-Cookie%3Acrlfinjection|\\b(en|En)?/(\\.|)RestAPI(/LogonCustomization|/Connection)?(\\.|))/"]
+    type     = "match"
+    priority = 100
+    negate   = false
+  }
+}

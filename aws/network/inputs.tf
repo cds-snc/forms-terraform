@@ -12,3 +12,16 @@ variable "vpc_name" {
   description = "The name of the VPC"
   type        = string
 }
+
+variable "deny_paths" {
+  description = "Urs paths to be denied"
+  type        = list(string)
+  default = [
+    "/%0ASet-Cookie%3Acrlfinjection/..",
+    "/en/./RestAPI/Connection",
+    "/en/RestAPI/Connection",
+    "/./RestAPI/LogonCustomization",
+    "/RestAPI/LogonCustomization",
+    "/RestAPI/Connection",
+  ]
+}
