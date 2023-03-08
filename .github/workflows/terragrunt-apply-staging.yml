@@ -30,8 +30,8 @@ env:
   TF_VAR_gc_temp_token_template_id: b6885d06-d10a-422a-973f-05e274d9aa86
   TF_VAR_gc_template_id: 8d597a1b-a1d6-4e3c-8421-042a2b4158b7
   TF_VAR_cognito_code_template_id: 12a18f84-062c-4a67-8310-bf114af051ea
-  TF_VAR_email_address_contact_us: jose.jimenez@cds-snc.ca
-  TF_VAR_email_address_support: assistance+forms@cds-snc.ca
+  TF_VAR_email_address_contact_us: ${{ vars.STAGING_CONTACT_US_EMAIL }}
+  TF_VAR_email_address_support: ${{ vars.STAGING_SUPPORT_EMAIL }}
 
 jobs:
   terragrunt-apply:
