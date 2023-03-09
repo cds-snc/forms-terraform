@@ -115,7 +115,7 @@ resource "aws_dynamodb_table" "audit_logs" {
     projection_type = "KEYS_ONLY"
   }
 
- 
+
 
   server_side_encryption {
     enabled     = true

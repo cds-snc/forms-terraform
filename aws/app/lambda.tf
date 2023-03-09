@@ -334,7 +334,7 @@ resource "aws_lambda_function" "archive_form_templates" {
   source_code_hash = data.archive_file.archive_form_templates_main.output_base64sha256
 
   runtime = "nodejs14.x"
-  layers = [ aws_lambda_layer_version.archive_form_templates_lib.arn ]
+  layers  = [aws_lambda_layer_version.archive_form_templates_lib.arn]
 
   environment {
     variables = {
@@ -404,8 +404,8 @@ resource "aws_lambda_function" "audit_logs" {
 
   environment {
     variables = {
-      REGION               = var.region
-      SNS_ERROR_TOPIC_ARN  = var.sns_topic_alert_critical_arn
+      REGION              = var.region
+      SNS_ERROR_TOPIC_ARN = var.sns_topic_alert_critical_arn
     }
   }
 
@@ -428,10 +428,10 @@ resource "aws_lambda_layer_version" "audit_logs_lib" {
 }
 
 resource "aws_lambda_event_source_mapping" "audit_logs" {
-  event_source_arn = var.sqs_audit_log_queue_arn
-  function_name    = aws_lambda_function.audit_logs.arn
-  function_response_types = ["ReportBatchItemFailures"]
-  batch_size       = 10
+  event_source_arn                   = var.sqs_audit_log_queue_arn
+  function_name                      = aws_lambda_function.audit_logs.arn
+  function_response_types            = ["ReportBatchItemFailures"]
+  batch_size                         = 10
   maximum_batching_window_in_seconds = 30
-  enabled          = true
+  enabled                            = true
 }

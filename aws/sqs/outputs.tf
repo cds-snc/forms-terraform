@@ -30,7 +30,7 @@ output "sqs_deadletter_queue_arn" {
 
 output "sqs_audit_log_queue_arn" {
   description = "SQS audit log queue ARN"
-  value = aws_sqs_queue.audit_log_queue.arn
+  value       = aws_sqs_queue.audit_log_queue.arn
 }
 
 output "sqs_audit_log_queue_id" {
