@@ -82,7 +82,7 @@
         "value": "${reprocess_submission_queue}"
       },
       {
-        "name": "AUDIT_LOG_QUEUE",
+        "name": "AUDIT_LOG_QUEUE_URL",
         "value": "${audit_log_queue}"
       }
     ],

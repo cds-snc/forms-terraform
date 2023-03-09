@@ -89,17 +89,17 @@ resource "aws_dynamodb_table" "vault" {
 resource "aws_dynamodb_table" "audit_logs" {
   name           = "AuditLogs"
   billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "userID"
-  range_key      = "Event#TimeStamp"
+  hash_key       = "UserID"
+  range_key      = "Event#SubjectID#TimeStamp"
   stream_enabled = false
 
   attribute {
-    name = "userID"
+    name = "UserID"
     type = "S"
   }
 
   attribute {
-    name = "Event#TimeStamp"
+    name = "Event#SubjectID#TimeStamp"
     type = "S"
   }
 
@@ -110,7 +110,7 @@ resource "aws_dynamodb_table" "audit_logs" {
 
   global_secondary_index {
     name            = "Archive"
-    hash_key        = "userID"
+    hash_key        = "UserID"
     range_key       = "TimeStamp"
     projection_type = "KEYS_ONLY"
   }

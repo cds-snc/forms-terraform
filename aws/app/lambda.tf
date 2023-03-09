@@ -390,7 +390,7 @@ data "archive_file" "audit_logs_lib" {
 
 resource "aws_lambda_function" "audit_logs" {
   filename      = "/tmp/audit_logs_main.zip"
-  function_name = "Audit Logs"
+  function_name = "AuditLogs"
   role          = aws_iam_role.lambda.arn
   handler       = "audit_log.handler"
   timeout       = 60
@@ -404,10 +404,8 @@ resource "aws_lambda_function" "audit_logs" {
 
   environment {
     variables = {
-      REGION  = var.region
-      SQS_URL = var.sqs_audit_log_queue_id
-      SNS_ERROR_TOPIC_ARN       = var.sns_topic_alert_critical_arn
-      DYNAMODB_VAULT_TABLE_NAME = var.dynamodb_audit_logs_table_name
+      REGION               = var.region
+      SNS_ERROR_TOPIC_ARN  = var.sns_topic_alert_critical_arn
     }
   }
 
@@ -433,7 +431,7 @@ resource "aws_lambda_event_source_mapping" "audit_logs" {
   event_source_arn = var.sqs_audit_log_queue_arn
   function_name    = aws_lambda_function.audit_logs.arn
   function_response_types = ["ReportBatchItemFailures"]
-  batch_size       = 30
+  batch_size       = 10
   maximum_batching_window_in_seconds = 30
   enabled          = true
 }
