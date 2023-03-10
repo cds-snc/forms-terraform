@@ -50,7 +50,7 @@ exports.handler = async function (event) {
     }));
 
     // Archive after 1 year
-    const archiveDate = ((d) => d.setFullYear(d.getFullYear() + 1))(new Date());
+    const archiveDate = ((d) => Math.floor(d.setFullYear(d.getFullYear() + 1) / 1000))(new Date());
 
     const putTransactionItems = logEvents.map(({ logEvent }) => ({
       PutRequest: {
