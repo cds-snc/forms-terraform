@@ -218,6 +218,11 @@ This Index supports the archiving of Vault responses
 This Index supports the future feature of the Retrieval API. Essentially the ability to retrieve responses without using the Application Interface.
 ![Status Index](./readme_images/GSI_Vault_Status.png)
 
+##### Nagware Global Secondary Index
+
+This Index supports the Nagware feature. It gives the ability to retrieve form submissions with a specific status and creation date.
+![Nagware Index](./readme_images/GSI_Vault_Nagware.png)
+
 ### Invoking Lambdas manually
 
 If you want to invoke a lambda specifically, here’s the example command:
