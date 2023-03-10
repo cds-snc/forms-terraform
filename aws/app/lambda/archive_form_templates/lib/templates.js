@@ -4,40 +4,6 @@ const { Client } = require("pg");
 const REGION = process.env.REGION;
 
 /**
- * Get's the Form property on the Form Configuration
- * @param {string} formID
- * @returns Form property of Form Configuration
- */
-const getTemplateFormConfig = async (formID) => {
-  try {
-    // Return early if require params not provided
-    if (formID === null || typeof formID === "undefined") {
-      console.error(`Can not retrieve template form config because no form ID was provided`);
-      return null;
-    }
-
-    const { SQL, parameters } = createSQLString(formID);
-
-    const getTemplateData = process.env.AWS_SAM_LOCAL ? requestSAM : requestRDS;
-
-    const data = await getTemplateData(SQL, parameters);
-
-    if (data.records.length === 1) {
-      return { ...data.records[0].formConfig };
-    } else {
-      return null;
-    }
-  } catch (error) {
-    // Return as if no template with ID was found.
-    // Handle error in calling function if template is not found.
-    console.error(
-      `Failed to retrieve template form config because of following error: ${error.message}`
-    );
-    return null;
-  }
-};
-
-/**
  * Delete all form templates that have been marked as archived (has an TTL value that is not null)
  */
 const deleteFormTemplatesMarkedAsArchived = async () => {
@@ -110,32 +76,6 @@ const requestRDS = async (SQL, parameters) => {
   }
 };
 
-/**
- * Creates correct SQL string and params depending on environment
- * @param {string} formID
- */
-const createSQLString = (formID) => {
-  const selectSQL = `SELECT "jsonConfig" FROM "Template"`;
-  if (!process.env.AWS_SAM_LOCAL) {
-    return {
-      SQL: `${selectSQL} WHERE id = :formID`,
-      parameters: [
-        {
-          name: "formID",
-          value: {
-            stringValue: formID,
-          },
-        },
-      ],
-    };
-  } else {
-    return {
-      SQL: `${selectSQL} WHERE id = $1`,
-      parameters: [formID],
-    };
-  }
-};
-
 const parseConfig = (records) => {
   if (records) {
     const parsedRecords = records.map((record) => {
@@ -157,6 +97,5 @@ const parseConfig = (records) => {
 };
 
 module.exports = {
-  getTemplateFormConfig,
   deleteFormTemplatesMarkedAsArchived,
 };
