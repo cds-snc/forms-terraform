@@ -49,6 +49,9 @@ exports.handler = async function (event) {
       logEvent: JSON.parse(record.Body),
     }));
 
+    // Archive after 1 year
+    const archiveDate = ((d) => d.setFullYear(d.getFullYear() + 1))(new Date());
+
     const putTransactionItems = logEvents.map(({ logEvent }) => ({
       PutRequest: {
         Item: {
@@ -62,6 +65,7 @@ exports.handler = async function (event) {
           }`,
           TimeStamp: logEvent.timestamp,
           ...(logEvent.description && { Description: logEvent.description }),
+          ArchiveDate: archiveDate,
         },
       },
     }));

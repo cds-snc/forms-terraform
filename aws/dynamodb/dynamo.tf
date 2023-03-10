@@ -91,7 +91,8 @@ resource "aws_dynamodb_table" "audit_logs" {
   billing_mode   = "PAY_PER_REQUEST"
   hash_key       = "UserID"
   range_key      = "Event#SubjectID#TimeStamp"
-  stream_enabled = false
+  stream_enabled = true
+  stream_view_type = "NEW_AND_OLD_IMAGES"
 
   attribute {
     name = "UserID"
@@ -109,12 +110,16 @@ resource "aws_dynamodb_table" "audit_logs" {
   }
 
   global_secondary_index {
-    name            = "Archive"
+    name            = "UserByTime"
     hash_key        = "UserID"
     range_key       = "TimeStamp"
     projection_type = "KEYS_ONLY"
   }
 
+  ttl {
+    enabled        = true
+    attribute_name = "ArchiveDate"
+  }
 
 
   server_side_encryption {
