@@ -87,11 +87,11 @@ resource "aws_dynamodb_table" "vault" {
 }
 
 resource "aws_dynamodb_table" "audit_logs" {
-  name           = "AuditLogs"
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "UserID"
-  range_key      = "Event#SubjectID#TimeStamp"
-  stream_enabled = true
+  name             = "AuditLogs"
+  billing_mode     = "PAY_PER_REQUEST"
+  hash_key         = "UserID"
+  range_key        = "Event#SubjectID#TimeStamp"
+  stream_enabled   = true
   stream_view_type = "NEW_AND_OLD_IMAGES"
 
   attribute {
