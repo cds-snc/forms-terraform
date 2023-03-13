@@ -1,7 +1,7 @@
 resource "aws_dynamodb_table" "reliability_queue" {
-  name           = "ReliabilityQueue"
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "SubmissionID"
+  name         = "ReliabilityQueue"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "SubmissionID"
 
   attribute {
     name = "SubmissionID"
@@ -29,10 +29,10 @@ resource "aws_dynamodb_table" "reliability_queue" {
 }
 
 resource "aws_dynamodb_table" "vault" {
-  name             = "Vault"
-  billing_mode     = "PAY_PER_REQUEST"
-  hash_key         = "FormID"
-  range_key        = "NAME_OR_CONF"
+  name         = "Vault"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "FormID"
+  range_key    = "NAME_OR_CONF"
 
   attribute {
     name = "FormID"
