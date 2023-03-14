@@ -83,7 +83,7 @@
       },
       {
         "name": "AUDIT_LOG_QUEUE_URL",
-        "value": "${audit_log_queue}"
+        "value": "${audit_log_queue_url}"
       }
     ],
     "secrets": [
