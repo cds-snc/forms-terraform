@@ -200,7 +200,7 @@ variable "sns_topic_alert_ok_arn" {
 }
 
 variable "sqs_reliability_queue_id" {
-  description = "SQS reliability queue ID"
+  description = "SQS reliability queue URL"
   type        = string
 }
 
@@ -214,8 +214,29 @@ variable "sqs_reprocess_submission_queue_arn" {
   type        = string
 }
 
+variable "sqs_reprocess_submission_queue_id" {
+  description = "SQS reprocess submission queue URL"
+  type        = string
+}
+
+
 variable "sqs_dead_letter_queue_id" {
-  description = "SQS dead letter queue ID"
+  description = "SQS dead letter queue URL"
+  type        = string
+}
+
+variable "sqs_audit_log_queue_arn" {
+  description = "SQS audit log queue ARN"
+  type        = string
+}
+
+variable "sqs_audit_log_queue_id" {
+  description = "SQS audit log queue URL"
+  type        = string
+}
+
+variable "sqs_audit_log_deadletter_queue_arn" {
+  description = "Audit Log queues dead-letter queue ARN"
   type        = string
 }
 
@@ -231,6 +252,15 @@ variable "dynamodb_vault_table_name" {
 
 variable "dynamodb_vault_stream_arn" {
   description = "Vault DynamoDB stream ARN"
+  type        = string
+}
+variable "dynamodb_audit_logs_arn" {
+  description = "Audit Logs table ARN"
+  type        = string
+}
+
+variable "dynamodb_audit_logs_table_name" {
+  description = "Audit Logs table name"
   type        = string
 }
 

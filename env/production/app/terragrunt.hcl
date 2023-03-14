@@ -19,6 +19,7 @@ dependency "dynamodb" {
     dynamodb_vault_arn                  = ""
     dynamodb_vault_table_name           = ""
     dynamodb_vault_stream_arn           = ""
+    dynamodb_audit_logs_arn             = ""
   }
 }
 

@@ -137,7 +137,7 @@ Resources:
       CodeUri: ../archive_form_templates/
       Handler: archiver.handler
       Layers:
-        - Ref: ReliabilityLayer
+        - Ref: ArchiveFormTemplatesLayer
       Environment:
         Variables:
           REGION:
@@ -150,6 +150,21 @@ Resources:
             Ref: DBHost
           PGDATABASE:
             Ref: DBName
+  AuditLogs:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-AuditLogs
+      CodeUri: ../audit_logs/
+      Handler: audit_logs.handler
+      Layers:
+        - Ref: AuditLogsLayer
+      Environment:
+        Variables:
+          REGION:
+            Ref: REGION
+          SNS_ERROR_TOPIC_ARN:
+            Ref: arn:aws:sns:us-east-1:000000000000:alert-critical
 
   SubmissionLayer:
     Type: AWS::Serverless::LayerVersion
@@ -178,11 +193,28 @@ Resources:
       CompatibleRuntimes:
         - nodejs14.x
 
+  ArchiveFormTemplatesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName:
+        Fn::Sub: ${Environment}-${AppName}-archive_form_templates-layer
+      ContentUri: ../archive_form_templates/
+      CompatibleRuntimes:
+        - nodejs14.x
+
   DeadLetterQueueConsumerLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       LayerName:
         Fn::Sub: ${Environment}-${AppName}-dead-letter-queue-consumer-layer
       ContentUri: ../dead_letter_queue_consumer/
+      CompatibleRuntimes:
+        - nodejs14.x
+  AuditLogsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName:
+        Fn::Sub: ${Environment}-${AppName}-audit_logs_node_packages
+      ContentUri: ../audit_logs/
       CompatibleRuntimes:
         - nodejs14.x

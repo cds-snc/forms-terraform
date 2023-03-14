@@ -154,14 +154,14 @@ resource "aws_iam_policy" "forms_sqs" {
 data "aws_iam_policy_document" "forms_sqs" {
   statement {
     effect = "Allow"
-
     actions = [
       "sqs:GetQueueUrl",
       "sqs:SendMessage"
     ]
 
     resources = [
-      var.sqs_reprocess_submission_queue_arn
+      var.sqs_reprocess_submission_queue_arn,
+      var.sqs_audit_log_queue_arn
     ]
   }
 }
@@ -222,14 +222,9 @@ data "aws_iam_policy_document" "forms_dynamodb" {
       "dynamodb:GetItem",
       "dynamodb:PutItem",
       "dynamodb:UpdateItem",
-      "dynamodb:DeleteItem",
       "dynamodb:BatchWriteItem",
-      "dynamodb:Scan",
+      "dynamodb:BatchGetItem",
       "dynamodb:Query",
-      "dynamodb:PartiQLSelect",
-      "dynamodb:PartiQLDelete",
-      "dynamodb:PartiQLInsert",
-      "dynamodb:PartiQLUpdate"
     ]
 
     resources = [

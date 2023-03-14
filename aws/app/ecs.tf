@@ -48,6 +48,8 @@ data "template_file" "form_viewer_task" {
     cognito_client_id               = var.cognito_client_id
     email_address_contact_us        = var.email_address_contact_us
     email_address_support           = var.email_address_support
+    reprocess_submission_queue      = var.sqs_reprocess_submission_queue_id
+    audit_log_queue_url             = var.sqs_audit_log_queue_id
   }
 }
 

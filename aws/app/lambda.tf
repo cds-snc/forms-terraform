@@ -136,6 +136,8 @@ resource "aws_lambda_function" "submission" {
   function_name = "Submission"
   role          = aws_iam_role.lambda.arn
   handler       = "submission.handler"
+  timeout       = 60
+
 
   source_code_hash = data.archive_file.submission_main.output_base64sha256
 
@@ -201,7 +203,7 @@ resource "aws_lambda_function" "archiver" {
   source_code_hash = data.archive_file.archiver_main.output_base64sha256
   runtime          = "nodejs14.x"
   layers           = [aws_lambda_layer_version.archiver_lib.arn]
-  timeout          = "10"
+  timeout          = 10
 
   environment {
     variables = {
@@ -269,7 +271,7 @@ resource "aws_lambda_function" "dead_letter_queue_consumer" {
   source_code_hash = data.archive_file.dead_letter_queue_consumer_main.output_base64sha256
   runtime          = "nodejs14.x"
   layers           = [aws_lambda_layer_version.dead_letter_queue_consumer_lib.arn]
-  timeout          = "300"
+  timeout          = 300
 
   environment {
     variables = {
@@ -314,19 +316,25 @@ data "archive_file" "archive_form_templates_main" {
   output_path = "/tmp/archive_form_templates_main.zip"
 }
 
+data "archive_file" "archive_form_templates_lib" {
+  type        = "zip"
+  source_dir  = "lambda/archive_form_templates/"
+  excludes    = ["archiver.js"]
+  output_path = "/tmp/archive_form_templates_lib.zip"
+}
+
+
 resource "aws_lambda_function" "archive_form_templates" {
   filename      = "/tmp/archive_form_templates_main.zip"
   function_name = "ArchiveFormTemplates"
   role          = aws_iam_role.lambda.arn
   handler       = "archiver.handler"
+  timeout       = 300
 
   source_code_hash = data.archive_file.archive_form_templates_main.output_base64sha256
 
   runtime = "nodejs14.x"
-  layers = [ // Using the reliability lib layer on purpose since the archive form lambda now also uses the templates lib file
-    aws_lambda_layer_version.reliability_lib.arn,
-    aws_lambda_layer_version.reliability_nodejs.arn
-  ]
+  layers  = [aws_lambda_layer_version.archive_form_templates_lib.arn]
 
   environment {
     variables = {
@@ -349,10 +357,81 @@ resource "aws_lambda_function" "archive_form_templates" {
   }
 }
 
+resource "aws_lambda_layer_version" "archive_form_templates_lib" {
+  filename            = "/tmp/archive_form_templates_lib.zip"
+  layer_name          = "archive_form_templates_node_packages"
+  source_code_hash    = data.archive_file.archive_form_templates_lib.output_base64sha256
+  compatible_runtimes = ["nodejs14.x"]
+}
+
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_templates_lambda" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.archive_form_templates.function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.cron_4am_every_day.arn
+}
+
+#
+# Audit Log Processing
+#
+data "archive_file" "audit_logs_main" {
+  type        = "zip"
+  source_file = "lambda/audit_logs/audit_logs.js"
+  output_path = "/tmp/audit_logs_main.zip"
+}
+
+data "archive_file" "audit_logs_lib" {
+  type        = "zip"
+  source_dir  = "lambda/audit_logs/"
+  excludes    = ["audit_logs.js"]
+  output_path = "/tmp/audit_logs_lib.zip"
+}
+
+resource "aws_lambda_function" "audit_logs" {
+  filename      = "/tmp/audit_logs_main.zip"
+  function_name = "AuditLogs"
+  role          = aws_iam_role.lambda.arn
+  handler       = "audit_log.handler"
+  timeout       = 60
+
+  source_code_hash = data.archive_file.audit_logs_main.output_base64sha256
+
+  runtime = "nodejs14.x"
+  layers = [
+    aws_lambda_layer_version.audit_logs_lib.arn
+  ]
+
+  environment {
+    variables = {
+      REGION              = var.region
+      SNS_ERROR_TOPIC_ARN = var.sns_topic_alert_critical_arn
+    }
+  }
+
+  tracing_config {
+    mode = "PassThrough"
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+
+}
+
+resource "aws_lambda_layer_version" "audit_logs_lib" {
+  filename            = "/tmp/audit_logs_lib.zip"
+  layer_name          = "audit_logs_node_packages"
+  source_code_hash    = data.archive_file.audit_logs_lib.output_base64sha256
+  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+}
+
+resource "aws_lambda_event_source_mapping" "audit_logs" {
+  event_source_arn                   = var.sqs_audit_log_queue_arn
+  function_name                      = aws_lambda_function.audit_logs.arn
+  function_response_types            = ["ReportBatchItemFailures"]
+  batch_size                         = 10
+  maximum_batching_window_in_seconds = 30
+  enabled                            = true
 }
