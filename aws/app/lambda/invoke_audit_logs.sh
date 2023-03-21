@@ -31,7 +31,7 @@ while :; do
   echo "Raw SQS Messages: $RAW_MESSAGE"
 
   if [[ $RAW_MESSAGE == "null" ]]; then
-    echo "No messages to process"s
+    echo "No messages to process"
     break
   fi
 
