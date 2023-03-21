@@ -441,7 +441,7 @@ resource "aws_lambda_event_source_mapping" "audit_logs" {
 data "archive_file" "nagware_main" {
   type        = "zip"
   source_file = "lambda/nagware/nagware.js"
-  output_path = "/tmp/nagware.zip"
+  output_path = "/tmp/nagware_main.zip"
 }
 
 data "archive_file" "nagware_lib" {
