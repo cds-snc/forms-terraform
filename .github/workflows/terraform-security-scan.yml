@@ -20,9 +20,10 @@ jobs:
         uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 # v2.6.0
 
       - name: Checkov security scan
-        uses: bridgecrewio/checkov-action@f621ecfe2d83b0e2028c7e93f082812eb56d3743 # latest as of Sept 9, 2021
+        uses: bridgecrewio/checkov-action@v12 # latest as of Sept 9, 2021
         with:
           directory: aws
           framework: terraform
+          quiet: true
           output_format: cli
           soft_fail: false
