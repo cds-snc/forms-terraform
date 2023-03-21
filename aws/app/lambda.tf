@@ -392,7 +392,7 @@ resource "aws_lambda_function" "audit_logs" {
   filename      = "/tmp/audit_logs_main.zip"
   function_name = "AuditLogs"
   role          = aws_iam_role.lambda.arn
-  handler       = "audit_log.handler"
+  handler       = "audit_logs.handler"
   timeout       = 60
 
   source_code_hash = data.archive_file.audit_logs_main.output_base64sha256
