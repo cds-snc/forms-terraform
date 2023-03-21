@@ -31,7 +31,7 @@ exports.handler = async (event) => {
       }),
     });
 
-    await archiveConfirmedFormResponses(dynamoDb, s3Client, event.Records);
+    await archiveConfirmedFormResponses(dynamoDb, s3Client);
 
     return {
       statusCode: "SUCCESS",
