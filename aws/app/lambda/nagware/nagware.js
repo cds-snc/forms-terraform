@@ -44,7 +44,7 @@ async function findOldestFormResponseByFormID() {
 }
 
 async function nag(oldestFormResponseByFormID) {
-  for (formResponse of oldestFormResponseByFormID) {
+  for (const formResponse of oldestFormResponseByFormID) {
     const diffMs = Math.abs(Date.now() - formResponse.createdAt);
     const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
