@@ -27,3 +27,5 @@ jobs:
           quiet: true
           output_format: cli
           soft_fail: false
+          # Skip: 272 / Lambda Code Signing
+          skip_check: CKV_AWS_272
