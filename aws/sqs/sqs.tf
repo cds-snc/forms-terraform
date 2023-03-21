@@ -115,3 +115,12 @@ resource "aws_sqs_queue" "audit_log_deadletter_queue" {
     Terraform             = true
   }
 }
+
+resource "aws_sqs_queue_redrive_allow_policy" "audit_log_redrive" {
+  queue_url = aws_sqs_queue.audit_log_deadletter_queue.id
+
+  redrive_allow_policy = jsonencode({
+    redrivePermission = "byQueue",
+    sourceQueueArns   = [aws_sqs_queue.audit_log_queue.arn]
+  })
+}
