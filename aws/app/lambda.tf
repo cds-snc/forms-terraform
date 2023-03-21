@@ -433,3 +433,106 @@ resource "aws_lambda_event_source_mapping" "audit_logs" {
   maximum_batching_window_in_seconds = 30
   enabled                            = true
 }
+
+#
+# Nagware
+#
+
+data "archive_file" "nagware_main" {
+  type        = "zip"
+  source_file = "lambda/nagware/nagware.js"
+  output_path = "/tmp/nagware.zip"
+}
+
+data "archive_file" "nagware_lib" {
+  type        = "zip"
+  output_path = "/tmp/nagware_lib.zip"
+
+  source {
+    content  = file("./lambda/nagware/lib/dynamodbDataLayer.js")
+    filename = "nodejs/node_modules/dynamodbDataLayer/index.js"
+  }
+
+  source {
+    content  = file("./lambda/nagware/lib/postgreSQLDataLayer.js")
+    filename = "nodejs/node_modules/postgreSQLDataLayer/index.js"
+  }
+
+  source {
+    content  = file("./lambda/nagware/lib/emailNotification.js")
+    filename = "nodejs/node_modules/emailNotification/index.js"
+  }
+
+  source {
+    content  = file("./lambda/nagware/lib/slackNotification.js")
+    filename = "nodejs/node_modules/slackNotification/index.js"
+  }
+}
+
+data "archive_file" "nagware_nodejs" {
+  type        = "zip"
+  source_dir  = "lambda/nagware/"
+  excludes    = ["nagware.js", "./lib", ]
+  output_path = "/tmp/nagware_nodejs.zip"
+}
+
+resource "aws_lambda_function" "nagware" {
+  filename      = "/tmp/nagware_main.zip"
+  function_name = "Nagware"
+  role          = aws_iam_role.lambda.arn
+  handler       = "nagware.handler"
+
+  source_code_hash = data.archive_file.nagware_main.output_base64sha256
+
+  runtime = "nodejs14.x"
+  layers = [
+    aws_lambda_layer_version.nagware_lib.arn,
+    aws_lambda_layer_version.nagware_nodejs.arn
+  ]
+
+  environment {
+    variables = {
+      ENVIRONMENT               = var.env
+      REGION                    = var.region
+      DOMAIN                    = var.domain
+      DYNAMODB_VAULT_TABLE_NAME = var.dynamodb_vault_table_name
+      DB_ARN                    = var.rds_cluster_arn
+      DB_SECRET                 = var.database_secret_arn
+      DB_NAME                   = var.rds_db_name
+      NOTIFY_API_KEY            = aws_secretsmanager_secret_version.notify_api_key.secret_string
+      TEMPLATE_ID               = var.gc_template_id
+      SNS_ERROR_TOPIC_ARN       = var.sns_topic_alert_critical_arn
+    }
+  }
+
+  tracing_config {
+    mode = "PassThrough"
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_lambda_layer_version" "nagware_lib" {
+  filename            = "/tmp/nagware_lib.zip"
+  layer_name          = "nagware_lib_packages"
+  source_code_hash    = data.archive_file.nagware_lib.output_base64sha256
+  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+}
+
+resource "aws_lambda_layer_version" "nagware_nodejs" {
+  filename            = "/tmp/nagware_nodejs.zip"
+  layer_name          = "nagware_node_packages"
+  source_code_hash    = data.archive_file.nagware_nodejs.output_base64sha256
+  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_run_nagware_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.nagware.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.cron_5am_every_business_day.arn
+}

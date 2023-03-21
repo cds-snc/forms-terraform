@@ -54,6 +54,11 @@ resource "aws_dynamodb_table" "vault" {
     type = "N"
   }
 
+  attribute {
+    name = "CreatedAt"
+    type = "N"
+  }
+
   global_secondary_index {
     name            = "Status"
     hash_key        = "FormID"
@@ -65,6 +70,13 @@ resource "aws_dynamodb_table" "vault" {
     name            = "Archive"
     hash_key        = "Status"
     range_key       = "RemovalDate"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "Nagware"
+    hash_key        = "Status"
+    range_key       = "CreatedAt"
     projection_type = "ALL"
   }
 

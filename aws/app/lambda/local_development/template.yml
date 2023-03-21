@@ -38,6 +38,12 @@ Parameters:
   TEMPORARY_TOKEN_TEMPLATE_ID:
     Type: String
     Default: "b6885d06-d10a-422a-973f-05e274d9aa86"
+  ENVIRONMENT:
+    Type: String
+    Default: "local"
+  DOMAIN:
+    Type: String
+    Default: "localhost:3000"
 
 Globals:
   Function:
@@ -168,6 +174,40 @@ Resources:
           SNS_ERROR_TOPIC_ARN:
             Ref: arn:aws:sns:ca-central-1:000000000000:alert-critical
 
+  Nagware:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-Nagware
+      CodeUri: ../nagware/
+      Handler: nagware.handler
+      Layers:
+        - Ref: NagWareLayer
+      Environment:
+        Variables:
+          REGION:
+            Ref: REGION
+          DYNAMODB_VAULT_TABLE_NAME:
+            Ref: Vault
+          SNS_ERROR_TOPIC_ARN:
+            Ref: arn:aws:sns:ca-central-1:000000000000:alert-critical
+          NOTIFY_API_KEY:
+            Ref: NOTIFY_API_KEY
+          TEMPLATE_ID:
+            Ref: TEMPLATE_ID
+          PGUSER:
+            Ref: DBUser
+          PGPASSWORD:
+            Ref: DBPassword
+          PGHOST:
+            Ref: DBHost
+          PGDATABASE:
+            Ref: DBName
+          ENVIRONMENT:
+            Ref: ENVIRONMENT
+          DOMAIN:
+            Ref: DOMAIN
+
   SubmissionLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -212,11 +252,21 @@ Resources:
       ContentUri: ../dead_letter_queue_consumer/
       CompatibleRuntimes:
         - nodejs14.x
+  
   AuditLogsLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       LayerName:
         Fn::Sub: ${Environment}-${AppName}-audit_logs_node_packages
       ContentUri: ../audit_logs/
+      CompatibleRuntimes:
+        - nodejs14.x
+
+  NagWareLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName:
+        Fn::Sub: ${Environment}-${AppName}-nagware-layer
+      ContentUri: ../nagware/
       CompatibleRuntimes:
         - nodejs14.x

@@ -20,6 +20,12 @@ resource "aws_cloudwatch_event_rule" "cron_4am_every_day" {
   schedule_expression = "cron(0 9 * * ? *)" # 4 AM EST = 9 AM UTC
 }
 
+resource "aws_cloudwatch_event_rule" "cron_5am_every_business_day" {
+  name                = "every-business-day-at-5am"
+  description         = "Fires every business day at 5am EST"
+  schedule_expression = "cron(0 10 ? * MON-FRI *)" # 5 AM EST = 10 AM UTC ; every Monday through Friday
+}
+
 #
 # Connect CRON to Dead letter queue consumer lambda function
 #
@@ -45,4 +51,13 @@ resource "aws_cloudwatch_event_target" "run_archive_form_responses_lambda_every_
 resource "aws_cloudwatch_event_target" "run_archive_form_templates_lambda_every_day" {
   rule = aws_cloudwatch_event_rule.cron_4am_every_day.name
   arn  = aws_lambda_function.archive_form_templates.arn
+}
+
+#
+# Connect CRON to Nagware lambda function
+#
+
+resource "aws_cloudwatch_event_target" "run_nagware_lambda_every_day" {
+  rule = aws_cloudwatch_event_rule.cron_5am_every_business_day.name
+  arn  = aws_lambda_function.nagware.arn
 }
