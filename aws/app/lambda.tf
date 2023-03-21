@@ -179,7 +179,7 @@ resource "aws_lambda_permission" "submission" {
 }
 
 #
-# Form responses archiver
+# Archive form responses
 #
 data "archive_file" "archiver_main" {
   type        = "zip"
@@ -189,9 +189,12 @@ data "archive_file" "archiver_main" {
 
 data "archive_file" "archiver_lib" {
   type        = "zip"
-  source_dir  = "lambda/archive_form_responses/"
-  excludes    = ["archiver.js"]
   output_path = "/tmp/archiver_lib.zip"
+
+  source {
+    content  = file("./lambda/archive_form_responses/lib/fileAttachments.js")
+    filename = "nodejs/node_modules/fileAttachments/index.js"
+  }
 }
 
 resource "aws_lambda_function" "archiver" {
@@ -207,10 +210,11 @@ resource "aws_lambda_function" "archiver" {
 
   environment {
     variables = {
-      REGION                    = var.region
-      SNS_ERROR_TOPIC_ARN       = var.sns_topic_alert_critical_arn
-      DYNAMODB_VAULT_TABLE_NAME = var.dynamodb_vault_table_name
-      ARCHIVING_S3_BUCKET       = aws_s3_bucket.archive_storage.bucket
+      REGION                       = var.region
+      SNS_ERROR_TOPIC_ARN          = var.sns_topic_alert_critical_arn
+      DYNAMODB_VAULT_TABLE_NAME    = var.dynamodb_vault_table_name
+      ARCHIVING_S3_BUCKET          = aws_s3_bucket.archive_storage.bucket
+      VAULT_FILE_STORAGE_S3_BUCKET = aws_s3_bucket.vault_file_storage.bucket
     }
   }
 
@@ -231,18 +235,12 @@ resource "aws_lambda_layer_version" "archiver_lib" {
   compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
 }
 
-resource "aws_lambda_event_source_mapping" "vault_updated_item_stream" {
-  event_source_arn       = var.dynamodb_vault_stream_arn
-  function_name          = aws_lambda_function.archiver.arn
-  starting_position      = "LATEST"
-  batch_size             = 25 // The lambda being invoked has some limitation due to AWS API so we want batches of 25 items.
-  maximum_retry_attempts = 3
-
-  filter_criteria {
-    filter {
-      pattern = "{\"dynamodb\":{\"NewImage\":{\"Retrieved\":{\"N\":[\"1\"]}}}}"
-    }
-  }
+resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_responses_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.archiver.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.cron_3am_every_day.arn
 }
 
 #
@@ -304,7 +302,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_dead_letter_queue_cons
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.dead_letter_queue_consumer.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.cron_4am_every_day.arn
+  source_arn    = aws_cloudwatch_event_rule.cron_2am_every_day.arn
 }
 
 #
