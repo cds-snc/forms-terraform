@@ -45,8 +45,8 @@ exports.handler = async function (event) {
   */
   try {
     const logEvents = event.Records.map((record) => ({
-      messageId: record.MessageId,
-      logEvent: JSON.parse(record.Body),
+      messageId: record.messageId,
+      logEvent: JSON.parse(record.body),
     }));
 
     // Archive after 1 year
@@ -113,7 +113,7 @@ exports.handler = async function (event) {
     console.error(error);
 
     return {
-      batchItemFailures: event.Records.map((record) => ({ itemIdentifier: record.MessageId })),
+      batchItemFailures: event.Records.map((record) => ({ itemIdentifier: record.messageId })),
     };
   }
 };
