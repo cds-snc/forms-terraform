@@ -213,11 +213,11 @@ resource "aws_lambda_function" "archiver" {
   source_code_hash = data.archive_file.archiver_main.output_base64sha256
   runtime          = "nodejs14.x"
   timeout          = 10
-  layers           = [
+  layers = [
     aws_lambda_layer_version.archiver_lib.arn,
     aws_lambda_layer_version.archiver_nodejs.arn
   ]
-  
+
   environment {
     variables = {
       REGION                       = var.region
