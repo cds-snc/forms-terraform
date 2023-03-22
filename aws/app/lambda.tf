@@ -197,6 +197,13 @@ data "archive_file" "archiver_lib" {
   }
 }
 
+data "archive_file" "archiver_nodejs" {
+  type        = "zip"
+  source_dir  = "lambda/archive_form_responses/"
+  excludes    = ["archiver.js", "./lib", ]
+  output_path = "/tmp/archiver_nodejs.zip"
+}
+
 resource "aws_lambda_function" "archiver" {
   filename      = "/tmp/archiver_main.zip"
   function_name = "Archiver"
@@ -205,9 +212,12 @@ resource "aws_lambda_function" "archiver" {
 
   source_code_hash = data.archive_file.archiver_main.output_base64sha256
   runtime          = "nodejs14.x"
-  layers           = [aws_lambda_layer_version.archiver_lib.arn]
   timeout          = 10
-
+  layers           = [
+    aws_lambda_layer_version.archiver_lib.arn,
+    aws_lambda_layer_version.archiver_nodejs.arn
+  ]
+  
   environment {
     variables = {
       REGION                       = var.region
@@ -230,8 +240,15 @@ resource "aws_lambda_function" "archiver" {
 
 resource "aws_lambda_layer_version" "archiver_lib" {
   filename            = "/tmp/archiver_lib.zip"
-  layer_name          = "archiver_node_packages"
+  layer_name          = "archiver_lib_packages"
   source_code_hash    = data.archive_file.archiver_lib.output_base64sha256
+  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+}
+
+resource "aws_lambda_layer_version" "archiver_nodejs" {
+  filename            = "/tmp/archiver_nodejs.zip"
+  layer_name          = "archiver_node_packages"
+  source_code_hash    = data.archive_file.archiver_nodejs.output_base64sha256
   compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
 }
 
