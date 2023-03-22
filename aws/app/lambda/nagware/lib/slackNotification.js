@@ -19,7 +19,7 @@ async function notifyFormsTeam(formID, age) {
 async function reportError(errorMessage) {
   try {
     await snsClient.send(new PublishCommand({
-      Message: `End User Forms Critical - Form responses archiver: ${errorMessage}`,
+      Message: `End User Forms Critical - Nagware: ${errorMessage}`,
       TopicArn: process.env.SNS_ERROR_TOPIC_ARN,
     }));
   } catch (error) {
