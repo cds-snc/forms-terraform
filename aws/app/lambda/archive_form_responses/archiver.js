@@ -106,7 +106,7 @@ async function retrieveFormResponsesToBeArchived(dynamoDb) {
             S: "Confirmed",
           },
           ":removalDate": {
-            N: Date.now(),
+            N: Date.now().toString(),
           },
         },
         ProjectionExpression:
