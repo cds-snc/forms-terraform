@@ -24,7 +24,7 @@ async function retrieveFormResponsesOver28DaysOld(status) {
             S: status,
           },
           ":createdAt": {
-            N: Date.now() - 2419200000, // 2419200000 milliseconds = 28 days
+            N: (Date.now() - 2419200000).toString(), // 2419200000 milliseconds = 28 days
           },
         },
         ProjectionExpression: "FormID,CreatedAt",
