@@ -6,7 +6,7 @@ const REGION = process.env.REGION;
 /**
  * Get's the Form property on the Form Configuration
  * @param {string} formID
- * @returns Form property of Form Configuration
+ * @returns Form property of Form Configuration including Delivery option
  */
 const getTemplateFormConfig = async (formID) => {
   try {
@@ -23,7 +23,7 @@ const getTemplateFormConfig = async (formID) => {
     const data = await getTemplateData(SQL, parameters);
 
     if (data.records.length === 1) {
-      return { ...data.records[0].formConfig };
+      return { ...data.records[0] };
     } else {
       return null;
     }
@@ -115,10 +115,12 @@ const requestRDS = async (SQL, parameters) => {
  * @param {string} formID
  */
 const createSQLString = (formID) => {
-  const selectSQL = `SELECT "jsonConfig" FROM "Template"`;
+  const selectSQL = `SELECT  t."jsonConfig", deli."emailAddress", deli."emailSubjectEn", deli."emailSubjectFr"
+                    FROM "Template" t
+                    LEFT JOIN "DeliveryOption" deli ON t.id = deli."templateId"`;
   if (!process.env.AWS_SAM_LOCAL) {
     return {
-      SQL: `${selectSQL} WHERE id = :formID`,
+      SQL: `${selectSQL} WHERE t.id = :formID`,
       parameters: [
         {
           name: "formID",
@@ -130,7 +132,7 @@ const createSQLString = (formID) => {
     };
   } else {
     return {
-      SQL: `${selectSQL} WHERE id = $1`,
+      SQL: `${selectSQL} WHERE t.id = $1`,
       parameters: [formID],
     };
   }
@@ -145,11 +147,18 @@ const parseConfig = (records) => {
       } else {
         formConfig = record.jsonConfig;
       }
+      deliveryOption = record.emailAddress
+        ? {
+            emailAddress: record.emailAddress,
+            emailSubjectEn: record.emailSubjectEn,
+            emailSubjectFr: record.emailSubjectFr,
+          }
+        : null;
       return {
         formConfig,
+        deliveryOption,
       };
     });
-
     return { records: parsedRecords };
   }
 
