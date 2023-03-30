@@ -208,6 +208,43 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
   }
+
+  rule {
+    name     = "BlockInvalidURLPath"
+    priority = 7
+
+    action {
+      block {}
+    }
+
+
+    statement {
+      not_statement {
+        statement {
+          regex_pattern_set_reference_statement {
+            arn = aws_wafv2_regex_pattern_set.valid_app_uri_paths.arn
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 1
+              type     = "COMPRESS_WHITE_SPACE"
+            }
+            text_transformation {
+              priority = 2
+              type     = "LOWERCASE"
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "BlockInvalidURLPath"
+      sampled_requests_enabled   = false
+    }
+  }
 }
 
 #
@@ -230,4 +267,17 @@ resource "aws_wafv2_web_acl_logging_configuration" "firehose_waf_logs_forms" {
       name = "authorization"
     }
   }
+}
+
+
+
+resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
+  name        = "valid_app_uri_paths"
+  description = "Regex to match the app valid paths"
+  scope       = "REGIONAL"
+
+  regular_expression {
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|myforms|not-supported|terms-avis|index|404|js-disabled|form-builder|sla|unlock-publishing|changelog|static|_next|img|favicon\\.ico)(?:\\/[\\w-]+)*)?(?:\\/.*)?$"
+  }
+
 }
