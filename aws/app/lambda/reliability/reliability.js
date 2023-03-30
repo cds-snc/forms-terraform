@@ -39,13 +39,13 @@ exports.handler = async function (event) {
 
     const configs = await getTemplateFormConfig(formID);
 
-    if (configs === null || configs.formConfig === null) {
-      throw new Error(`No associated form template (ID: ${formID}) exist in the database.`);
-    } else {
+    if (configs !== null && configs.formConfig !== null) {
       // Add form config back to submission to be processed
       formSubmission.form = configs.formConfig;
       // add delivery option to formsubmission
       formSubmission.deliveryOption = configs.deliveryOption;
+    } else {
+      throw new Error(`No associated form template (ID: ${formID}) exist in the database.`);
     }
 
     /*
