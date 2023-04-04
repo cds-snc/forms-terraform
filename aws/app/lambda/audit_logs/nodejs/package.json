@@ -4,9 +4,9 @@
   "main": "audit_logs.js",
   "license": "MIT",
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "3.287.0",
-    "@aws-sdk/client-sns": "3.287.0",
-    "@aws-sdk/client-sqs": "3.287.0",
-    "@aws-sdk/lib-dynamodb": "3.287.0"
+    "@aws-sdk/client-dynamodb": "3.300.0",
+    "@aws-sdk/client-sns": "3.300.0",
+    "@aws-sdk/client-sqs": "3.300.0",
+    "@aws-sdk/lib-dynamodb": "3.300.0"
   }
 }
