@@ -178,7 +178,7 @@ resource "aws_cloudwatch_metric_alarm" "reliability_dead_letter_queue_warn" {
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
   threshold           = "0"
-  alarm_description   = "Detect when a message is sent to the Audit Log Dead Letter Queue"
+  alarm_description   = "Detect when a message is sent to the Reliability Dead Letter Queue"
   alarm_actions       = [var.sns_topic_alert_warning_arn]
 
   metric_query {
