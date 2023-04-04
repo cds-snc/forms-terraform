@@ -39,8 +39,13 @@ variable "slack_webhook" {
   sensitive   = true
 }
 
-variable "sqs_deadletter_queue_arn" {
+variable "sqs_reliability_deadletter_queue_arn" {
   description = "ARN of the Reliability queue's SQS Dead Letter Queue"
+  type        = string
+}
+
+variable "sqs_audit_log_deadletter_queue_arn" {
+  description = "ARN of the Audit Log queue's SQS Dead Letter Queue"
   type        = string
 }
 

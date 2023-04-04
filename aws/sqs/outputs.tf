@@ -5,7 +5,7 @@ output "sqs_reliability_queue_id" {
 
 output "sqs_dead_letter_queue_id" {
   description = "SQS dead letter queue URL"
-  value       = aws_sqs_queue.deadletter_queue.id
+  value       = aws_sqs_queue.reliability_deadletter_queue.id
 }
 
 output "sqs_reliability_queue_arn" {
@@ -23,9 +23,14 @@ output "sqs_reprocess_submission_queue_id" {
   value       = aws_sqs_queue.reprocess_submission_queue.id
 }
 
-output "sqs_deadletter_queue_arn" {
+output "sqs_reliability_deadletter_queue_arn" {
   description = "Reliability queue's dead-letter queue ARN"
-  value       = aws_sqs_queue.deadletter_queue.name
+  value       = aws_sqs_queue.reliability_deadletter_queue.name
+}
+
+output "sqs_audit_log_deadletter_queue_arn" {
+  description = "Audit Log queue's dead-letter queue ARN"
+  value       = aws_sqs_queue.audit_log_deadletter_queue.name
 }
 
 output "sqs_audit_log_queue_arn" {
