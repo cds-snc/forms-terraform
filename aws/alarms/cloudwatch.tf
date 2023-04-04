@@ -175,11 +175,11 @@ resource "aws_cloudwatch_metric_alarm" "reliability_error_warn" {
 #
 resource "aws_cloudwatch_metric_alarm" "reliability_dead_letter_queue_warn" {
   alarm_name          = "ReliabilityDeadLetterQueueWarn"
-  comparison_operator       = "GreaterThanThreshold"
-  evaluation_periods        = "1"
-  threshold                 = "0"
-  alarm_description         = "Detect when a message is sent to the Audit Log Dead Letter Queue"
-  alarm_actions = [var.sns_topic_alert_warning_arn]
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  threshold           = "0"
+  alarm_description   = "Detect when a message is sent to the Audit Log Dead Letter Queue"
+  alarm_actions       = [var.sns_topic_alert_warning_arn]
 
   metric_query {
     id          = "e1"
@@ -193,13 +193,13 @@ resource "aws_cloudwatch_metric_alarm" "reliability_dead_letter_queue_warn" {
 
     metric {
       metric_name = "ApproximateNumberOfMessagesVisible"
-      namespace                 = "AWS/SQS"
+      namespace   = "AWS/SQS"
       period      = "60"
       stat        = "Sum"
       unit        = "Count"
 
       dimensions = {
-        QueueName    = var.sqs_reliability_deadletter_queue_arn
+        QueueName = var.sqs_reliability_deadletter_queue_arn
       }
     }
   }
@@ -209,13 +209,13 @@ resource "aws_cloudwatch_metric_alarm" "reliability_dead_letter_queue_warn" {
 
     metric {
       metric_name = "ApproximateNumberOfMessagesNotVisible"
-      namespace                 = "AWS/SQS"
+      namespace   = "AWS/SQS"
       period      = "60"
       stat        = "Sum"
       unit        = "Count"
 
       dimensions = {
-        QueueName    = var.sqs_reliability_deadletter_queue_arn
+        QueueName = var.sqs_reliability_deadletter_queue_arn
       }
     }
   }
@@ -230,12 +230,12 @@ resource "aws_cloudwatch_metric_alarm" "reliability_dead_letter_queue_warn" {
 # Audit Log Dead Letter Queue
 #
 resource "aws_cloudwatch_metric_alarm" "audit_log_dead_letter_queue_warn" {
-  alarm_name                = "AuditLogDeadLetterQueueWarn"
-  comparison_operator       = "GreaterThanThreshold"
-  evaluation_periods        = "1"
-  threshold                 = "0"
-  alarm_description         = "Detect when a message is sent to the Audit Log Dead Letter Queue"
-  alarm_actions = [var.sns_topic_alert_warning_arn]
+  alarm_name          = "AuditLogDeadLetterQueueWarn"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  threshold           = "0"
+  alarm_description   = "Detect when a message is sent to the Audit Log Dead Letter Queue"
+  alarm_actions       = [var.sns_topic_alert_warning_arn]
 
   metric_query {
     id          = "e1"
@@ -249,13 +249,13 @@ resource "aws_cloudwatch_metric_alarm" "audit_log_dead_letter_queue_warn" {
 
     metric {
       metric_name = "ApproximateNumberOfMessagesVisible"
-      namespace                 = "AWS/SQS"
+      namespace   = "AWS/SQS"
       period      = "60"
       stat        = "Sum"
       unit        = "Count"
 
       dimensions = {
-        QueueName    = var.sqs_audit_log_deadletter_queue_arn
+        QueueName = var.sqs_audit_log_deadletter_queue_arn
       }
     }
   }
@@ -265,17 +265,17 @@ resource "aws_cloudwatch_metric_alarm" "audit_log_dead_letter_queue_warn" {
 
     metric {
       metric_name = "ApproximateNumberOfMessagesNotVisible"
-      namespace                 = "AWS/SQS"
+      namespace   = "AWS/SQS"
       period      = "60"
       stat        = "Sum"
       unit        = "Count"
 
       dimensions = {
-        QueueName    = var.sqs_audit_log_deadletter_queue_arn
+        QueueName = var.sqs_audit_log_deadletter_queue_arn
       }
     }
   }
-    tags = {
+  tags = {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
   }
