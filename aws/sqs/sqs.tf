@@ -19,7 +19,7 @@ resource "aws_sqs_queue" "reliability_queue" {
   kms_data_key_reuse_period_seconds = 300
 
   redrive_policy = jsonencode({
-    deadLetterTargetArn = aws_sqs_queue.deadletter_queue.arn
+    deadLetterTargetArn = aws_sqs_queue.reliability_deadletter_queue.arn
     maxReceiveCount     = 5
   })
 
@@ -29,8 +29,8 @@ resource "aws_sqs_queue" "reliability_queue" {
   }
 }
 
-resource "aws_sqs_queue" "deadletter_queue" {
-  name                        = "deadletter_queue.fifo"
+resource "aws_sqs_queue" "reliability_deadletter_queue" {
+  name                        = "reliability_deadletter_queue.fifo"
   delay_seconds               = 60
   max_message_size            = 262144
   message_retention_seconds   = 1209600
@@ -64,7 +64,7 @@ resource "aws_sqs_queue" "reprocess_submission_queue" {
   kms_data_key_reuse_period_seconds = 300
 
   redrive_policy = jsonencode({
-    deadLetterTargetArn = aws_sqs_queue.deadletter_queue.arn
+    deadLetterTargetArn = aws_sqs_queue.reliability_deadletter_queue.arn
     maxReceiveCount     = 5
   })
 
@@ -92,6 +92,11 @@ resource "aws_sqs_queue" "audit_log_queue" {
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.audit_log_deadletter_queue.arn
     maxReceiveCount     = 5
+  })
+
+  redrive_allow_policy = jsonencode({
+    redrivePermission = "byQueue",
+    sourceQueueArns   = [aws_sqs_queue.audit_log_deadletter_queue.arn]
   })
 
   tags = {

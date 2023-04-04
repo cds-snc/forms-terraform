@@ -44,7 +44,8 @@ dependency "sqs" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_with_state           = true
   mock_outputs = {
-    sqs_deadletter_queue_arn = ""
+    sqs_reliability_deadletter_queue_arn = ""
+    sqs_audit_log_deadletter_queue_arn = ""
   }
 }
 
@@ -88,7 +89,8 @@ inputs = {
   lb_arn        = dependency.load_balancer.outputs.lb_arn
   lb_arn_suffix = dependency.load_balancer.outputs.lb_arn_suffix
 
-  sqs_deadletter_queue_arn = dependency.sqs.outputs.sqs_deadletter_queue_arn
+  sqs_reliability_deadletter_queue_arn = dependency.sqs.outputs.sqs_reliability_deadletter_queue_arn
+  sqs_audit_log_deadletter_queue_arn   = dependency.sqs.outputs.sqs_audit_log_deadletter_queue_arn
 
   ecs_cloudwatch_log_group_name     = dependency.app.outputs.ecs_cloudwatch_log_group_name
   ecs_cluster_name                  = dependency.app.outputs.ecs_cluster_name
