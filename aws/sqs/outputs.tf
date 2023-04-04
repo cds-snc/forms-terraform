@@ -28,11 +28,6 @@ output "sqs_reliability_deadletter_queue_arn" {
   value       = aws_sqs_queue.reliability_deadletter_queue.name
 }
 
-output "sqs_audit_log_deadletter_queue_arn" {
-  description = "Audit Log queue's dead-letter queue ARN"
-  value       = aws_sqs_queue.audit_log_deadletter_queue.name
-}
-
 output "sqs_audit_log_queue_arn" {
   description = "SQS audit log queue ARN"
   value       = aws_sqs_queue.audit_log_queue.arn
