@@ -40,7 +40,7 @@ dependency "sqs" {
     sqs_reliability_queue_arn          = ""
     sqs_reliability_queue_id           = ""
     sqs_reprocess_submission_queue_arn = ""
-    sqs_dead_letter_queue_id           = ""
+    sqs_reliability_dead_letter_queue_id           = ""
     sqs_audit_log_queue_arn            = ""
     sqs_audit_log_queue_id             = ""
     sqs_audit_log_deadletter_queue_arn = ""
@@ -117,7 +117,7 @@ inputs = {
   sqs_reliability_queue_arn          = dependency.sqs.outputs.sqs_reliability_queue_arn
   sqs_reliability_queue_id           = dependency.sqs.outputs.sqs_reliability_queue_id
   sqs_reprocess_submission_queue_arn = dependency.sqs.outputs.sqs_reprocess_submission_queue_arn
-  sqs_dead_letter_queue_id           = dependency.sqs.outputs.sqs_dead_letter_queue_id
+  sqs_reliability_dead_letter_queue_id           = dependency.sqs.outputs.sqs_reliability_dead_letter_queue_id
   sqs_audit_log_queue_arn            = dependency.sqs.outputs.sqs_audit_log_queue_arn
   sqs_audit_log_queue_id             = dependency.sqs.outputs.sqs_audit_log_queue_id
   sqs_audit_log_deadletter_queue_arn = dependency.sqs.outputs.sqs_audit_log_deadletter_queue_arn

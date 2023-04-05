@@ -220,8 +220,8 @@ variable "sqs_reprocess_submission_queue_id" {
 }
 
 
-variable "sqs_dead_letter_queue_id" {
-  description = "SQS dead letter queue URL"
+variable "sqs_reliability_dead_letter_queue_id" {
+  description = "SQS Reliability dead letter queue URL"
   type        = string
 }
 

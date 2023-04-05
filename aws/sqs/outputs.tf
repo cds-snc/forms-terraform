@@ -3,8 +3,8 @@ output "sqs_reliability_queue_id" {
   value       = aws_sqs_queue.reliability_queue.id
 }
 
-output "sqs_dead_letter_queue_id" {
-  description = "SQS dead letter queue URL"
+output "sqs_reliability_dead_letter_queue_id" {
+  description = "SQS Reliability dead letter queue URL"
   value       = aws_sqs_queue.reliability_deadletter_queue.id
 }
 
