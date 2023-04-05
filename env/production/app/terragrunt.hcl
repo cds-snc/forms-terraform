@@ -92,7 +92,7 @@ dependency "sqs" {
     sqs_reliability_queue_arn          = "" 
     sqs_reliability_queue_id           = ""
     sqs_reprocess_submission_queue_arn = ""
-    sqs_dead_letter_queue_id           = ""
+    sqs_reliability_dead_letter_queue_id           = ""
   }
 }
 
@@ -151,7 +151,7 @@ inputs = {
   sqs_reliability_queue_arn          = dependency.sqs.outputs.sqs_reliability_queue_arn 
   sqs_reliability_queue_id           = dependency.sqs.outputs.sqs_reliability_queue_id
   sqs_reprocess_submission_queue_arn = dependency.sqs.outputs.sqs_reprocess_submission_queue_arn
-  sqs_dead_letter_queue_id           = dependency.sqs.outputs.sqs_dead_letter_queue_id
+  sqs_reliability_           = dependency.sqs.outputs.sqs_reliability_dead_letter_queue_id
 
   sns_topic_alert_critical_arn = dependency.sns.outputs.sns_topic_alert_critical_arn
   sns_topic_alert_warning_arn  = dependency.sns.outputs.sns_topic_alert_warning_arn
