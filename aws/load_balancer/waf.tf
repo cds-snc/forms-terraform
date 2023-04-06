@@ -75,7 +75,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AWSManagedRulesCommonRuleSet"
-    priority = 3
+    priority = 4
 
     override_action {
       none {}
@@ -104,7 +104,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AWSManagedRulesKnownBadInputsRuleSet"
-    priority = 4
+    priority = 5
     override_action {
       none {}
     }
@@ -125,7 +125,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AWSManagedRulesLinuxRuleSet"
-    priority = 6
+    priority = 7
     override_action {
       none {}
     }
@@ -148,7 +148,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   rule {
     # make sure to update line 33 of output.tf if you change the name of the rule
     name     = "TemporaryTokenGeneratedOutsideCanada"
-    priority = 5
+    priority = 6
 
     action {
       count {}
@@ -211,7 +211,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "BlockInvalidURLPath"
-    priority = 7
+    priority = 3
 
     action {
       block {}
