@@ -15,7 +15,7 @@ dependency "dynamodb" {
     dynamodb_relability_queue_arn = ""
     dynamodb_vault_arn            = ""
     dynamodb_vault_table_name     = ""
-    dynamodb_vault_stream_arn     = ""
+    dynamodb_audit_logs_arn       = ""
   }
 }
 
@@ -89,7 +89,7 @@ dependency "sqs" {
     sqs_reliability_queue_arn          = ""
     sqs_reliability_queue_id           = ""
     sqs_reprocess_submission_queue_arn = ""
-    sqs_dead_letter_queue_id           = ""
+    sqs_reliability_dead_letter_queue_id           = ""
   }
 }
 
@@ -102,18 +102,6 @@ dependency "sns" {
     sns_topic_alert_critical_arn = ""
     sns_topic_alert_warning_arn  = ""
     sns_topic_alert_ok_arn       = ""
-  }
-}
-
-dependency "cognito" {
-  config_path = "../cognito"
-
-  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_with_state           = true
-  mock_outputs = {
-    cognito_endpoint_url      = ""
-    cognito_client_id         = ""
-    cognito_user_pool_arn     = ""
   }
 }
 
@@ -135,7 +123,6 @@ inputs = {
   dynamodb_relability_queue_arn = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
   dynamodb_vault_arn            = dependency.dynamodb.outputs.dynamodb_vault_arn
   dynamodb_vault_table_name     = dependency.dynamodb.outputs.dynamodb_vault_table_name
-  dynamodb_vault_stream_arn     = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
 
   ecr_repository_url = dependency.ecr.outputs.ecr_repository_url
 
@@ -161,16 +148,11 @@ inputs = {
   sqs_reliability_queue_arn          = dependency.sqs.outputs.sqs_reliability_queue_arn
   sqs_reliability_queue_id           = dependency.sqs.outputs.sqs_reliability_queue_id
   sqs_reprocess_submission_queue_arn = dependency.sqs.outputs.sqs_reprocess_submission_queue_arn
-  sqs_dead_letter_queue_id           = dependency.sqs.outputs.sqs_dead_letter_queue_id
+  sqs_reliability_           = dependency.sqs.outputs.sqs_reliability_dead_letter_queue_id
 
   sns_topic_alert_critical_arn = dependency.sns.outputs.sns_topic_alert_critical_arn
   sns_topic_alert_warning_arn  = dependency.sns.outputs.sns_topic_alert_warning_arn
   sns_topic_alert_ok_arn       = dependency.sns.outputs.sns_topic_alert_ok_arn
-
-  cognito_endpoint_url      = dependency.cognito.outputs.cognito_endpoint_url
-  cognito_client_id         = dependency.cognito.outputs.cognito_client_id
-  cognito_user_pool_arn     = dependency.cognito.outputs.cognito_user_pool_arn
-
 }
 
 include {

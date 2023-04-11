@@ -1,81 +1,100 @@
 const { NotifyClient } = require("notifications-node-client");
 const convertMessage = require("markdown");
-const { extractFileInputResponses, updateTTL } = require("dataLayer");
+const { extractFileInputResponses, notifyProcessed } = require("dataLayer");
 const { retrieveFilesFromReliabilityStorage } = require("s3FileInput");
 
 module.exports = async (submissionID, sendReceipt, formSubmission, language, createdAt) => {
-  const templateID = process.env.TEMPLATE_ID;
-  const notify = new NotifyClient("https://api.notification.canada.ca", process.env.NOTIFY_API_KEY);
-  const emailBody = convertMessage(formSubmission, submissionID, language, createdAt);
-  const messageSubject =
-    language === "fr"
-      ? formSubmission.form.emailSubjectFr
-        ? formSubmission.form.emailSubjectFr
-        : formSubmission.form.titleFr
-      : formSubmission.form.emailSubjectEn
-      ? formSubmission.form.emailSubjectEn
-      : formSubmission.form.titleEn;
-
-  // Need to get this from the submission now.. not the app.
-  const submissionFormat = formSubmission.submission;
-
-  const fileInputPaths = extractFileInputResponses(formSubmission);
-
-  // Send to Notify
-  if ((submissionFormat !== null) & (submissionFormat.email !== "")) {
-    try {
-      const files = await retrieveFilesFromReliabilityStorage(fileInputPaths)
-      const attachFileParameters = fileInputPaths.reduce((acc, current, index) => {
-        return {
-          [`file${index}`]: {
-            file: files[index],
-            filename: current.split("/").pop(), // Extract file name from storage path
-            sending_method: "attach",
-          },
-          ...acc,
-        };
-      }, {});
-
-      await notify
-        // Send to static email address and not submission address in form
-        .sendEmail(templateID, submissionFormat.email, {
-          personalisation: {
-            subject: messageSubject,
-            formResponse: emailBody,
-            ...attachFileParameters,
-          },
-          reference: submissionID,
-        });
-
-      await updateTTL(submissionID)
-      console.log(
-          `{"status": "success", "submissionID": "${submissionID}", "sqsMessage":"${sendReceipt}", "method":"notify"}`
-      );
-    } catch (err) {
-      if (err.response) {
-        /*
-         * The request was made and the server responded with a
-         * status code that falls out of the range of 2xx
-         */
-        const notifyErrors = Array.isArray(err.response.data.errors)
-          ? JSON.stringify(err.response.data.errors)
-          : err.response.data.errors;
-        const errorMessage = `Notify Errored with status code ${err.response.status} and returned the following detailed errors ${notifyErrors}`;
-        console.log(errorMessage);
-      } else if (err.request) {
-        /*
-         * The request was made but no response was received, `error.request`
-         * is an instance of XMLHttpRequest in the browser and an instance
-         * of http.ClientRequest in Node.js
-         */
-        console.log(err.request);
-      } else {
-        // Something happened in setting up the request and triggered an Error
-        console.log(err.message);
-      }
-      throw new Error("Problem sending to Notify");
+  try {
+    // Making sure currently processed submission email address is defined
+    if (
+      !formSubmission.deliveryOption?.emailAddress ||
+      formSubmission.deliveryOption.emailAddress === ""
+    ) {
+      throw Error("Email address is missing or empty.");
     }
-  } else {
-    throw Error("Form can not be submitted due to missing Submission Parameters");
+
+    const fileInputPaths = extractFileInputResponses(formSubmission);
+    const files = await retrieveFilesFromReliabilityStorage(fileInputPaths);
+    const attachFileParameters = fileInputPaths.reduce((acc, current, index) => {
+      return {
+        [`file${index}`]: {
+          file: files[index],
+          filename: current.split("/").pop(), // Extract file name from storage path
+          sending_method: "attach",
+        },
+        ...acc,
+      };
+    }, {});
+
+    const templateID = process.env.TEMPLATE_ID;
+
+    const notify = new NotifyClient(
+      "https://api.notification.canada.ca",
+      process.env.NOTIFY_API_KEY
+    );
+
+    const emailBody = convertMessage(formSubmission, submissionID, language, createdAt);
+    const messageSubject =
+      language === "fr"
+        ? formSubmission.deliveryOption.emailSubjectFr
+          ? formSubmission.deliveryOption.emailSubjectFr
+          : formSubmission.form.titleFr
+        : formSubmission.deliveryOption.emailSubjectEn
+        ? formSubmission.deliveryOption.emailSubjectEn
+        : formSubmission.form.titleEn;
+
+    await notify.sendEmail(templateID, formSubmission.deliveryOption.emailAddress, {
+      personalisation: {
+        subject: messageSubject,
+        formResponse: emailBody,
+        ...attachFileParameters,
+      },
+      reference: submissionID,
+    });
+
+    await notifyProcessed(submissionID);
+
+    console.log(
+      JSON.stringify({
+        status: "success",
+        submissionId: submissionID,
+        sendReceipt: sendReceipt,
+        message: "Successfully sent submission through GC Notify.",
+      })
+    );
+  } catch (error) {
+    let errorMessage = "";
+
+    if (error.response) {
+      /*
+       * The request was made and the server responded with a
+       * status code that falls out of the range of 2xx
+       */
+      const notifyErrors = Array.isArray(error.response.data.errors)
+        ? JSON.stringify(error.response.data.errors)
+        : error.response.data.errors;
+      errorMessage = `GC Notify errored with status code ${error.response.status} and returned the following detailed errors ${notifyErrors}.`;
+    } else if (error.request) {
+      /*
+       * The request was made but no response was received, `error.request`
+       * is an instance of XMLHttpRequest in the browser and an instance
+       * of http.ClientRequest in Node.js
+       */
+      errorMessage = `${error.request}.`;
+    } else {
+      // Something else happened during processing
+      errorMessage = `${error.message}.`;
+    }
+
+    console.error(
+      JSON.stringify({
+        status: "failed",
+        submissionId: submissionID ?? "n/a",
+        sendReceipt: sendReceipt ?? "n/a",
+        message: "Failed to send submission through GC Notify.",
+        error: errorMessage,
+      })
+    );
+    throw new Error(`Failed to send submission through GC Notify.`);
   }
 };

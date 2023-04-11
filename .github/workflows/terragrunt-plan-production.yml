@@ -9,7 +9,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}
   CONFTEST_VERSION: 0.27.0
-  TERRAFORM_VERSION: 1.3.3
+  TERRAFORM_VERSION: 1.4.2
   TERRAGRUNT_VERSION: 0.35.6
   TF_INPUT: false
   TF_VAR_ecs_secret_token_secret: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
@@ -25,7 +25,8 @@ env:
   TF_VAR_gc_temp_token_template_id: 61cec9c4-64ca-4e4d-b4d2-a0e931c44422
   TF_VAR_gc_template_id: 92096ac6-1cc5-40ae-9052-fffdb8439a90
   TF_VAR_cognito_code_template_id: 8dde39b6-05b9-43ce-807f-c2364ed3bdb6
-
+  TF_VAR_email_address_contact_us: ${{ vars.PRODUCTION_CONTACT_US_EMAIL }}
+  TF_VAR_email_address_support: ${{ vars.PRODUCTION_SUPPORT_EMAIL }}
 jobs:
   terragrunt-plan:
     runs-on: ubuntu-latest

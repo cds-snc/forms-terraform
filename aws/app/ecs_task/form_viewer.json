@@ -68,6 +68,22 @@
       {
         "name": "COGNITO_CLIENT_ID",
         "value": "${cognito_client_id}"
+      },
+      {
+        "name": "EMAIL_ADDRESS_CONTACT_US",
+        "value": "${email_address_contact_us}"
+      },
+      {
+        "name": "EMAIL_ADDRESS_SUPPORT",
+        "value": "${email_address_support}"
+      },
+      {
+        "name": "REPROCESS_SUBMISSION_QUEUE_URL",
+        "value": "${reprocess_submission_queue}"
+      },
+      {
+        "name": "AUDIT_LOG_QUEUE_URL",
+        "value": "${audit_log_queue_url}"
       }
     ],
     "secrets": [

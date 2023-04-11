@@ -1,0 +1,13 @@
+{
+  "name": "nagware",
+  "version": "1.0.0",
+  "main": "nagware.js",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.300.0",
+    "@aws-sdk/client-sns": "3.300.0",
+    "@aws-sdk/client-rds-data": "3.300.0",
+    "pg": "8.10.0",
+    "notifications-node-client": "5.2.3"
+  }
+}

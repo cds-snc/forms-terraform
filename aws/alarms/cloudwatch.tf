@@ -171,24 +171,53 @@ resource "aws_cloudwatch_metric_alarm" "reliability_error_warn" {
 }
 
 #
-# Submissions in Dead Letter Queue
+# Submissions Dead Letter Queue
 #
-resource "aws_cloudwatch_metric_alarm" "forms_dead_letter_queue_warn" {
-  alarm_name          = "DeadLetterQueueWarn"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = "2"
-  datapoints_to_alarm = "1"
-  metric_name         = "ApproximateNumberOfMessagesDelayed"
-  namespace           = "AWS/SQS"
-  period              = "300"
-  statistic           = "Sum"
-  threshold           = "1"
-  treat_missing_data  = "notBreaching"
-  alarm_description   = "End User Forms Warning - A message has been sent to the Dead Letter Queue."
+resource "aws_cloudwatch_metric_alarm" "reliability_dead_letter_queue_warn" {
+  alarm_name          = "ReliabilityDeadLetterQueueWarn"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  threshold           = "0"
+  alarm_description   = "Detect when a message is sent to the Reliability Dead Letter Queue"
+  alarm_actions       = [var.sns_topic_alert_warning_arn]
 
-  alarm_actions = [var.sns_topic_alert_warning_arn]
-  dimensions = {
-    QueueName = var.sqs_deadletter_queue_arn
+  metric_query {
+    id          = "e1"
+    expression  = "RATE(m2+m1)"
+    label       = "Error Rate"
+    return_data = "true"
+  }
+
+  metric_query {
+    id = "m1"
+
+    metric {
+      metric_name = "ApproximateNumberOfMessagesVisible"
+      namespace   = "AWS/SQS"
+      period      = "60"
+      stat        = "Sum"
+      unit        = "Count"
+
+      dimensions = {
+        QueueName = var.sqs_reliability_deadletter_queue_arn
+      }
+    }
+  }
+
+  metric_query {
+    id = "m2"
+
+    metric {
+      metric_name = "ApproximateNumberOfMessagesNotVisible"
+      namespace   = "AWS/SQS"
+      period      = "60"
+      stat        = "Sum"
+      unit        = "Count"
+
+      dimensions = {
+        QueueName = var.sqs_reliability_deadletter_queue_arn
+      }
+    }
   }
 
   tags = {
@@ -196,6 +225,64 @@ resource "aws_cloudwatch_metric_alarm" "forms_dead_letter_queue_warn" {
     Terraform             = true
   }
 }
+
+#
+# Audit Log Dead Letter Queue
+#
+resource "aws_cloudwatch_metric_alarm" "audit_log_dead_letter_queue_warn" {
+  alarm_name          = "AuditLogDeadLetterQueueWarn"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  threshold           = "0"
+  alarm_description   = "Detect when a message is sent to the Audit Log Dead Letter Queue"
+  alarm_actions       = [var.sns_topic_alert_warning_arn]
+
+  metric_query {
+    id          = "e1"
+    expression  = "RATE(m2+m1)"
+    label       = "Error Rate"
+    return_data = "true"
+  }
+
+  metric_query {
+    id = "m1"
+
+    metric {
+      metric_name = "ApproximateNumberOfMessagesVisible"
+      namespace   = "AWS/SQS"
+      period      = "60"
+      stat        = "Sum"
+      unit        = "Count"
+
+      dimensions = {
+        QueueName = var.sqs_audit_log_deadletter_queue_arn
+      }
+    }
+  }
+
+  metric_query {
+    id = "m2"
+
+    metric {
+      metric_name = "ApproximateNumberOfMessagesNotVisible"
+      namespace   = "AWS/SQS"
+      period      = "60"
+      stat        = "Sum"
+      unit        = "Count"
+
+      dimensions = {
+        QueueName = var.sqs_audit_log_deadletter_queue_arn
+      }
+    }
+  }
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+
+
 
 #
 # Service down alarm
@@ -484,6 +571,39 @@ resource "aws_cloudwatch_metric_alarm" "request_temporary_token_api_using_unauth
   alarm_description = "End User Forms Warning - Someone tried to request a temporary token using an unauthorized email address"
   alarm_actions     = [var.sns_topic_alert_warning_arn]
   ok_actions        = [var.sns_topic_alert_ok_arn]
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_cloudwatch_log_metric_filter" "cognito_signin_exceeded" {
+  name           = "CognitoSigninExceeded"
+  pattern        = "\"Cognito Lockout: Password attempts exceeded\""
+  log_group_name = var.ecs_cloudwatch_log_group_name
+
+  metric_transformation {
+    name          = "CognitoSigninExceeded"
+    namespace     = "forms"
+    value         = "1"
+    default_value = "0"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "cognito_signin_exceeded" {
+  alarm_name          = "CognitoSigninExceeded"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = aws_cloudwatch_log_metric_filter.cognito_signin_exceeded.metric_transformation[0].name
+  namespace           = aws_cloudwatch_log_metric_filter.cognito_signin_exceeded.metric_transformation[0].namespace
+  period              = "60"
+  statistic           = "Sum"
+  threshold           = "10" # this could also be adjusted depending on what we think is a good threshold
+  treat_missing_data  = "notBreaching"
+  alarm_description   = "Cognito - multiple failed sign-in attempts detected."
+
+  alarm_actions = [var.sns_topic_alert_warning_arn]
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value

@@ -136,6 +136,8 @@ resource "aws_lambda_function" "submission" {
   function_name = "Submission"
   role          = aws_iam_role.lambda.arn
   handler       = "submission.handler"
+  timeout       = 60
+
 
   source_code_hash = data.archive_file.submission_main.output_base64sha256
 
@@ -177,7 +179,7 @@ resource "aws_lambda_permission" "submission" {
 }
 
 #
-# Form responses archiver
+# Archive form responses
 #
 data "archive_file" "archiver_main" {
   type        = "zip"
@@ -187,9 +189,19 @@ data "archive_file" "archiver_main" {
 
 data "archive_file" "archiver_lib" {
   type        = "zip"
-  source_dir  = "lambda/archive_form_responses/"
-  excludes    = ["archiver.js"]
   output_path = "/tmp/archiver_lib.zip"
+
+  source {
+    content  = file("./lambda/archive_form_responses/lib/fileAttachments.js")
+    filename = "nodejs/node_modules/fileAttachments/index.js"
+  }
+}
+
+data "archive_file" "archiver_nodejs" {
+  type        = "zip"
+  source_dir  = "lambda/archive_form_responses/"
+  excludes    = ["archiver.js", "./lib", ]
+  output_path = "/tmp/archiver_nodejs.zip"
 }
 
 resource "aws_lambda_function" "archiver" {
@@ -200,15 +212,19 @@ resource "aws_lambda_function" "archiver" {
 
   source_code_hash = data.archive_file.archiver_main.output_base64sha256
   runtime          = "nodejs14.x"
-  layers           = [aws_lambda_layer_version.archiver_lib.arn]
-  timeout          = "10"
+  timeout          = 10
+  layers = [
+    aws_lambda_layer_version.archiver_lib.arn,
+    aws_lambda_layer_version.archiver_nodejs.arn
+  ]
 
   environment {
     variables = {
-      REGION                    = var.region
-      SNS_ERROR_TOPIC_ARN       = var.sns_topic_alert_critical_arn
-      DYNAMODB_VAULT_TABLE_NAME = var.dynamodb_vault_table_name
-      ARCHIVING_S3_BUCKET       = aws_s3_bucket.archive_storage.bucket
+      REGION                       = var.region
+      SNS_ERROR_TOPIC_ARN          = var.sns_topic_alert_critical_arn
+      DYNAMODB_VAULT_TABLE_NAME    = var.dynamodb_vault_table_name
+      ARCHIVING_S3_BUCKET          = aws_s3_bucket.archive_storage.bucket
+      VAULT_FILE_STORAGE_S3_BUCKET = aws_s3_bucket.vault_file_storage.bucket
     }
   }
 
@@ -224,23 +240,24 @@ resource "aws_lambda_function" "archiver" {
 
 resource "aws_lambda_layer_version" "archiver_lib" {
   filename            = "/tmp/archiver_lib.zip"
-  layer_name          = "archiver_node_packages"
+  layer_name          = "archiver_lib_packages"
   source_code_hash    = data.archive_file.archiver_lib.output_base64sha256
   compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
 }
 
-resource "aws_lambda_event_source_mapping" "vault_updated_item_stream" {
-  event_source_arn       = var.dynamodb_vault_stream_arn
-  function_name          = aws_lambda_function.archiver.arn
-  starting_position      = "LATEST"
-  batch_size             = 25 // The lambda being invoked has some limitation due to AWS API so we want batches of 25 items.
-  maximum_retry_attempts = 3
+resource "aws_lambda_layer_version" "archiver_nodejs" {
+  filename            = "/tmp/archiver_nodejs.zip"
+  layer_name          = "archiver_node_packages"
+  source_code_hash    = data.archive_file.archiver_nodejs.output_base64sha256
+  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+}
 
-  filter_criteria {
-    filter {
-      pattern = "{\"dynamodb\":{\"NewImage\":{\"Retrieved\":{\"N\":[\"1\"]}}}}"
-    }
-  }
+resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_responses_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.archiver.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.cron_3am_every_day.arn
 }
 
 #
@@ -269,12 +286,12 @@ resource "aws_lambda_function" "dead_letter_queue_consumer" {
   source_code_hash = data.archive_file.dead_letter_queue_consumer_main.output_base64sha256
   runtime          = "nodejs14.x"
   layers           = [aws_lambda_layer_version.dead_letter_queue_consumer_lib.arn]
-  timeout          = "300"
+  timeout          = 300
 
   environment {
     variables = {
       REGION                              = var.region
-      SQS_DEAD_LETTER_QUEUE_URL           = var.sqs_dead_letter_queue_id
+      SQS_DEAD_LETTER_QUEUE_URL           = var.sqs_reliability_dead_letter_queue_id
       SQS_SUBMISSION_PROCESSING_QUEUE_URL = var.sqs_reliability_queue_id
       SNS_ERROR_TOPIC_ARN                 = var.sns_topic_alert_critical_arn
     }
@@ -302,7 +319,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_dead_letter_queue_cons
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.dead_letter_queue_consumer.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.cron_4am_every_day.arn
+  source_arn    = aws_cloudwatch_event_rule.cron_2am_every_day.arn
 }
 
 #
@@ -314,19 +331,25 @@ data "archive_file" "archive_form_templates_main" {
   output_path = "/tmp/archive_form_templates_main.zip"
 }
 
+data "archive_file" "archive_form_templates_lib" {
+  type        = "zip"
+  source_dir  = "lambda/archive_form_templates/"
+  excludes    = ["archiver.js"]
+  output_path = "/tmp/archive_form_templates_lib.zip"
+}
+
+
 resource "aws_lambda_function" "archive_form_templates" {
   filename      = "/tmp/archive_form_templates_main.zip"
   function_name = "ArchiveFormTemplates"
   role          = aws_iam_role.lambda.arn
   handler       = "archiver.handler"
+  timeout       = 300
 
   source_code_hash = data.archive_file.archive_form_templates_main.output_base64sha256
 
   runtime = "nodejs14.x"
-  layers = [ // Using the reliability lib layer on purpose since the archive form lambda now also uses the templates lib file
-    aws_lambda_layer_version.reliability_lib.arn,
-    aws_lambda_layer_version.reliability_nodejs.arn
-  ]
+  layers  = [aws_lambda_layer_version.archive_form_templates_lib.arn]
 
   environment {
     variables = {
@@ -349,10 +372,184 @@ resource "aws_lambda_function" "archive_form_templates" {
   }
 }
 
+resource "aws_lambda_layer_version" "archive_form_templates_lib" {
+  filename            = "/tmp/archive_form_templates_lib.zip"
+  layer_name          = "archive_form_templates_node_packages"
+  source_code_hash    = data.archive_file.archive_form_templates_lib.output_base64sha256
+  compatible_runtimes = ["nodejs14.x"]
+}
+
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_templates_lambda" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.archive_form_templates.function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.cron_4am_every_day.arn
+}
+
+#
+# Audit Log Processing
+#
+data "archive_file" "audit_logs_main" {
+  type        = "zip"
+  source_file = "lambda/audit_logs/audit_logs.js"
+  output_path = "/tmp/audit_logs_main.zip"
+}
+
+data "archive_file" "audit_logs_lib" {
+  type        = "zip"
+  source_dir  = "lambda/audit_logs/"
+  excludes    = ["audit_logs.js"]
+  output_path = "/tmp/audit_logs_lib.zip"
+}
+
+resource "aws_lambda_function" "audit_logs" {
+  filename      = "/tmp/audit_logs_main.zip"
+  function_name = "AuditLogs"
+  role          = aws_iam_role.lambda.arn
+  handler       = "audit_logs.handler"
+  timeout       = 60
+
+  source_code_hash = data.archive_file.audit_logs_main.output_base64sha256
+
+  runtime = "nodejs14.x"
+  layers = [
+    aws_lambda_layer_version.audit_logs_lib.arn
+  ]
+
+  environment {
+    variables = {
+      REGION              = var.region
+      SNS_ERROR_TOPIC_ARN = var.sns_topic_alert_critical_arn
+    }
+  }
+
+  tracing_config {
+    mode = "PassThrough"
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+
+}
+
+resource "aws_lambda_layer_version" "audit_logs_lib" {
+  filename            = "/tmp/audit_logs_lib.zip"
+  layer_name          = "audit_logs_node_packages"
+  source_code_hash    = data.archive_file.audit_logs_lib.output_base64sha256
+  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+}
+
+resource "aws_lambda_event_source_mapping" "audit_logs" {
+  event_source_arn                   = var.sqs_audit_log_queue_arn
+  function_name                      = aws_lambda_function.audit_logs.arn
+  function_response_types            = ["ReportBatchItemFailures"]
+  batch_size                         = 10
+  maximum_batching_window_in_seconds = 30
+  enabled                            = true
+}
+
+#
+# Nagware
+#
+
+data "archive_file" "nagware_main" {
+  type        = "zip"
+  source_file = "lambda/nagware/nagware.js"
+  output_path = "/tmp/nagware_main.zip"
+}
+
+data "archive_file" "nagware_lib" {
+  type        = "zip"
+  output_path = "/tmp/nagware_lib.zip"
+
+  source {
+    content  = file("./lambda/nagware/lib/dynamodbDataLayer.js")
+    filename = "nodejs/node_modules/dynamodbDataLayer/index.js"
+  }
+
+  source {
+    content  = file("./lambda/nagware/lib/postgreSQLDataLayer.js")
+    filename = "nodejs/node_modules/postgreSQLDataLayer/index.js"
+  }
+
+  source {
+    content  = file("./lambda/nagware/lib/emailNotification.js")
+    filename = "nodejs/node_modules/emailNotification/index.js"
+  }
+
+  source {
+    content  = file("./lambda/nagware/lib/slackNotification.js")
+    filename = "nodejs/node_modules/slackNotification/index.js"
+  }
+}
+
+data "archive_file" "nagware_nodejs" {
+  type        = "zip"
+  source_dir  = "lambda/nagware/"
+  excludes    = ["nagware.js", "./lib", ]
+  output_path = "/tmp/nagware_nodejs.zip"
+}
+
+resource "aws_lambda_function" "nagware" {
+  filename      = "/tmp/nagware_main.zip"
+  function_name = "Nagware"
+  role          = aws_iam_role.lambda.arn
+  handler       = "nagware.handler"
+
+  source_code_hash = data.archive_file.nagware_main.output_base64sha256
+
+  runtime = "nodejs14.x"
+  layers = [
+    aws_lambda_layer_version.nagware_lib.arn,
+    aws_lambda_layer_version.nagware_nodejs.arn
+  ]
+
+  environment {
+    variables = {
+      ENVIRONMENT               = var.env
+      REGION                    = var.region
+      DOMAIN                    = var.domain
+      DYNAMODB_VAULT_TABLE_NAME = var.dynamodb_vault_table_name
+      DB_ARN                    = var.rds_cluster_arn
+      DB_SECRET                 = var.database_secret_arn
+      DB_NAME                   = var.rds_db_name
+      NOTIFY_API_KEY            = aws_secretsmanager_secret_version.notify_api_key.secret_string
+      TEMPLATE_ID               = var.gc_template_id
+      SNS_ERROR_TOPIC_ARN       = var.sns_topic_alert_critical_arn
+    }
+  }
+
+  tracing_config {
+    mode = "PassThrough"
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_lambda_layer_version" "nagware_lib" {
+  filename            = "/tmp/nagware_lib.zip"
+  layer_name          = "nagware_lib_packages"
+  source_code_hash    = data.archive_file.nagware_lib.output_base64sha256
+  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+}
+
+resource "aws_lambda_layer_version" "nagware_nodejs" {
+  filename            = "/tmp/nagware_nodejs.zip"
+  layer_name          = "nagware_node_packages"
+  source_code_hash    = data.archive_file.nagware_nodejs.output_base64sha256
+  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_run_nagware_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.nagware.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.cron_5am_every_business_day.arn
 }

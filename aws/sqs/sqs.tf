@@ -10,13 +10,16 @@ resource "aws_sqs_queue" "reliability_queue" {
   fifo_queue                  = true
   content_based_deduplication = true
   receive_wait_time_seconds   = 0
-  visibility_timeout_seconds  = 400
+  visibility_timeout_seconds  = 1800
+  # https://aws.amazon.com/premiumsupport/knowledge-center/lambda-function-process-sqs-messages/
+  # The SQS visibility timeout must be at least six times the total of the function timeout and the batch window timeout.
+  # Lambda function timeout is 300.
 
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
 
   redrive_policy = jsonencode({
-    deadLetterTargetArn = aws_sqs_queue.deadletter_queue.arn
+    deadLetterTargetArn = aws_sqs_queue.reliability_deadletter_queue.arn
     maxReceiveCount     = 5
   })
 
@@ -26,8 +29,8 @@ resource "aws_sqs_queue" "reliability_queue" {
   }
 }
 
-resource "aws_sqs_queue" "deadletter_queue" {
-  name                        = "deadletter_queue.fifo"
+resource "aws_sqs_queue" "reliability_deadletter_queue" {
+  name                        = "reliability_deadletter_queue.fifo"
   delay_seconds               = 60
   max_message_size            = 262144
   message_retention_seconds   = 1209600
@@ -52,15 +55,65 @@ resource "aws_sqs_queue" "reprocess_submission_queue" {
   fifo_queue                  = true
   content_based_deduplication = true
   receive_wait_time_seconds   = 0
-  visibility_timeout_seconds  = 400
+  visibility_timeout_seconds  = 1800
+  # https://aws.amazon.com/premiumsupport/knowledge-center/lambda-function-process-sqs-messages/
+  # The SQS visibility timeout must be at least six times the total of the function timeout and the batch window timeout.
+  # Lambda function timeout is 300.
 
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
 
   redrive_policy = jsonencode({
-    deadLetterTargetArn = aws_sqs_queue.deadletter_queue.arn
+    deadLetterTargetArn = aws_sqs_queue.reliability_deadletter_queue.arn
     maxReceiveCount     = 5
   })
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+# Audit Log Queue
+
+resource "aws_sqs_queue" "audit_log_queue" {
+  name                       = "audit_log_queue"
+  delay_seconds              = 0
+  max_message_size           = 2048
+  message_retention_seconds  = 172800 // 2 days
+  visibility_timeout_seconds = 1960
+  # https://aws.amazon.com/premiumsupport/knowledge-center/lambda-function-process-sqs-messages/
+  # The SQS visibility timeout must be at least six times the total of the function timeout and the batch window timeout.
+  # Lambda function timeout is 300.
+
+  kms_master_key_id                 = "alias/aws/sqs"
+  kms_data_key_reuse_period_seconds = 300
+
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.audit_log_deadletter_queue.arn
+    maxReceiveCount     = 5
+  })
+
+  redrive_allow_policy = jsonencode({
+    redrivePermission = "byQueue",
+    sourceQueueArns   = [aws_sqs_queue.audit_log_deadletter_queue.arn]
+  })
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_sqs_queue" "audit_log_deadletter_queue" {
+  name                      = "audit_log_deadletter_queue"
+  delay_seconds             = 60
+  max_message_size          = 262144
+  message_retention_seconds = 1209600
+  receive_wait_time_seconds = 5
+
+  kms_master_key_id                 = "alias/aws/sqs"
+  kms_data_key_reuse_period_seconds = 300
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value

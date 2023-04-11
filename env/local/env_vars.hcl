@@ -1,5 +1,5 @@
 inputs = {
   env = "local"
-  domain = ""
+  domain = "localhost:3000"
   account_id = ""
 }
