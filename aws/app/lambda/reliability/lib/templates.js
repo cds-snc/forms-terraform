@@ -145,16 +145,24 @@ const parseConfig = (records) => {
       let deliveryOption;
       if (!process.env.AWS_SAM_LOCAL) {
         formConfig = JSON.parse(record[0].stringValue.trim(1, -1)) || undefined;
+        deliveryOption = record[1].stringValue
+        ? {
+            emailAddress: record[1].stringValue,
+            emailSubjectEn: record[2].stringValue,
+            emailSubjectFr: record[3].stringValue,
+          }
+        : null;
       } else {
         formConfig = record.jsonConfig;
-      }
-      deliveryOption = record.emailAddress
+        deliveryOption = record.emailAddress
         ? {
             emailAddress: record.emailAddress,
             emailSubjectEn: record.emailSubjectEn,
             emailSubjectFr: record.emailSubjectFr,
           }
         : null;
+      }
+      
       return {
         formConfig,
         deliveryOption,
