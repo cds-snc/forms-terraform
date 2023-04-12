@@ -18,7 +18,7 @@ Pre-requisites:
 - Terragrunt:
 
   1. `brew install warrensbox/tap/tfswitch`
-  1. `tfswitch 1.3.3`
+  1. `tfswitch 1.4.2`
   1. `brew install warrensbox/tap/tgswitch`
   1. `tgswitch 0.35.6`
 
