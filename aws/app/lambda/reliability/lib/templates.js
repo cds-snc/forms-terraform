@@ -142,6 +142,7 @@ const parseConfig = (records) => {
   if (records) {
     const parsedRecords = records.map((record) => {
       let formConfig;
+      let deliveryOption;
       if (!process.env.AWS_SAM_LOCAL) {
         formConfig = JSON.parse(record[0].stringValue.trim(1, -1)) || undefined;
       } else {
