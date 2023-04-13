@@ -16,7 +16,7 @@ exports.handler = async function (event) {
       ? JSON.parse(messageData.Item?.FormData)
       : null;
     const language = messageData.Item?.FormSubmissionLanguage ?? "en";
-    const securityAttribute = messageData.Item?.SecurityAttribute ?? "Unclassified";
+    const securityAttribute = messageData.Item?.SecurityAttribute ?? "Protected A";
     const createdAt = messageData.Item?.CreatedAt ?? null;
     const notifyProcessed = messageData.Item?.NotifyProcessed ?? false;
     sendReceipt = messageData.Item?.SendReceipt ?? null;

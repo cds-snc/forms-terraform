@@ -68,7 +68,7 @@ const sendData = async (submissionID) => {
 };
 
 const saveData = async (submissionID, formData) => {
-  const securityAttribute = formData.securityAttribute ?? "Unclassified";
+  const securityAttribute = formData.securityAttribute ?? "Protected A";
   delete formData.securityAttribute;
 
   const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
