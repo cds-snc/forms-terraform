@@ -879,11 +879,11 @@
     tslib "^2.5.0"
 
 "@aws-sdk/types@^3.222.0":
-  version "3.290.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/types/-/types-3.290.0.tgz#06a14cf61c2e93d8d789665d2034260229a4de8f"
-  integrity sha512-uQLD9tLv8Q87CwrSB/taUoQ8wkGeFb1Gygc+kt5oClfMFP9HYzu944kW/1R7/J5LtBLT1QFYccd4gz6eOUNlsw==
+  version "3.310.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/types/-/types-3.310.0.tgz#b83a0580feb38b58417abb8b4ed3eae1a0cb7bc1"
+  integrity sha512-j8eamQJ7YcIhw7fneUfs8LYl3t01k4uHi4ZDmNRgtbmbmTTG3FZc2MotStZnp3nZB6vLiPF1o5aoJxWVvkzS6A==
   dependencies:
-    tslib "^2.3.1"
+    tslib "^2.5.0"
 
 "@aws-sdk/url-parser@3.296.0":
   version "3.296.0"
@@ -976,11 +976,11 @@
     tslib "^2.5.0"
 
 "@aws-sdk/util-locate-window@^3.0.0":
-  version "3.208.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/util-locate-window/-/util-locate-window-3.208.0.tgz#0f598fc238a1256e4bcb64d01459f03a922dd4c3"
-  integrity sha512-iua1A2+P7JJEDHVgvXrRJSvsnzG7stYSGQnBVphIUlemwl6nN5D+QrgbjECtrbxRz8asYFHSzhdhECqN+tFiBg==
+  version "3.310.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/util-locate-window/-/util-locate-window-3.310.0.tgz#b071baf050301adee89051032bd4139bba32cc40"
+  integrity sha512-qo2t/vBTnoXpjKxlsC2e1gBrRm80M3bId27r0BRB2VniSSe7bL1mmzM+/HFtujm0iAxtPM+aLEflLJlJeDPg0w==
   dependencies:
-    tslib "^2.3.1"
+    tslib "^2.5.0"
 
 "@aws-sdk/util-middleware@3.296.0":
   version "3.296.0"

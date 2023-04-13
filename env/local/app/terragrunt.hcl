@@ -26,9 +26,11 @@ dependency "dynamodb" {
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    dynamodb_relability_queue_arn = ""
-    dynamodb_vault_arn            = ""
-    dynamodb_vault_table_name     = ""
+    dynamodb_relability_queue_arn  = ""
+    dynamodb_vault_arn             = ""
+    dynamodb_vault_table_name      = ""
+    dynamodb_audit_logs_arn        = ""
+    dynamodb_audit_logs_table_name = ""
   }
 }
 
