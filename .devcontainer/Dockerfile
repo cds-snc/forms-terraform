@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/vscode/devcontainers/base:buster@sha256:46a3b59e49e4ceb770a1363fbd759e4212f9f779d2c16dc95616e45de36edfd6
+FROM mcr.microsoft.com/vscode/devcontainers/base:buster@sha256:7a20555c36ae7fa146201e42d098c98571ef0bead3116ffcd9314e46393f2191
 
 ARG USERNAME=vscode
 ARG AWS_SAM_VERSION
@@ -17,10 +17,6 @@ RUN curl -Lo aws-sam-cli.zip "${AWS_SAM_SRC}/v${AWS_SAM_VERSION}/aws-sam-cli-lin
     && ./sam-installation/install \
     && rm -r aws-sam* \
     && rm -r sam-installation*
-
-# Install Checkov
-RUN pip3 install --upgrade requests setuptools \
-    && pip3 install --upgrade botocore checkov
 
 # Setup AWS Credentials
 RUN mkdir -p /home/vscode/.aws

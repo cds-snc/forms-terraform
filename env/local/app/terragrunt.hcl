@@ -18,7 +18,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms", "../dynamodb"]
+  paths = ["../kms", "../dynamodb", "../sqs"]
 }
 
 dependency "dynamodb" {
@@ -26,10 +26,27 @@ dependency "dynamodb" {
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    dynamodb_relability_queue_arn = ""
-    dynamodb_vault_arn            = ""
-    dynamodb_vault_table_name     = ""
-    dynamodb_vault_stream_arn     = ""
+    dynamodb_relability_queue_arn  = ""
+    dynamodb_vault_arn             = ""
+    dynamodb_vault_table_name      = ""
+    dynamodb_audit_logs_arn        = ""
+    dynamodb_audit_logs_table_name = ""
+  }
+}
+
+dependency "sqs" {
+  config_path = "../sqs"
+
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    sqs_reliability_queue_arn          = ""
+    sqs_reliability_queue_id           = ""
+    sqs_reprocess_submission_queue_arn = ""
+    sqs_reliability_dead_letter_queue_id           = ""
+    sqs_audit_log_queue_arn            = ""
+    sqs_audit_log_queue_id             = ""
+    sqs_audit_log_deadletter_queue_arn = ""
+    sqs_reprocess_submission_queue_id  = ""
   }
 }
 
@@ -69,11 +86,14 @@ inputs = {
   gc_notify_callback_bearer_token             = "local"
 
   sns_topic_alert_critical_arn = ""
+  sns_topic_alert_warning_arn  = ""
+  sns_topic_alert_ok_arn       = ""
 
-  dynamodb_relability_queue_arn = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
-  dynamodb_vault_arn            = dependency.dynamodb.outputs.dynamodb_vault_arn
-  dynamodb_vault_table_name     = dependency.dynamodb.outputs.dynamodb_vault_table_name
-  dynamodb_vault_stream_arn     = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
+  dynamodb_relability_queue_arn  = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
+  dynamodb_vault_arn             = dependency.dynamodb.outputs.dynamodb_vault_arn
+  dynamodb_vault_table_name      = dependency.dynamodb.outputs.dynamodb_vault_table_name
+  dynamodb_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
+  dynamodb_audit_logs_table_name = dependency.dynamodb.outputs.dynamodb_audit_logs_table_name
 
   ecr_repository_url = ""
 
@@ -96,13 +116,17 @@ inputs = {
   database_secret_arn     = ""
   database_url_secret_arn = ""
 
-  sqs_reliability_queue_arn          = ""
-  sqs_reliability_queue_id           = ""
-  sqs_reprocess_submission_queue_arn = ""
+  sqs_reliability_queue_arn          = dependency.sqs.outputs.sqs_reliability_queue_arn
+  sqs_reliability_queue_id           = dependency.sqs.outputs.sqs_reliability_queue_id
+  sqs_reprocess_submission_queue_arn = dependency.sqs.outputs.sqs_reprocess_submission_queue_arn
+  sqs_reliability_dead_letter_queue_id           = dependency.sqs.outputs.sqs_reliability_dead_letter_queue_id
+  sqs_audit_log_queue_arn            = dependency.sqs.outputs.sqs_audit_log_queue_arn
+  sqs_audit_log_queue_id             = dependency.sqs.outputs.sqs_audit_log_queue_id
+  sqs_audit_log_deadletter_queue_arn = dependency.sqs.outputs.sqs_audit_log_deadletter_queue_arn
+  sqs_reprocess_submission_queue_id  = dependency.sqs.outputs.sqs_reprocess_submission_queue_id
 
   gc_temp_token_template_id = "b6885d06-d10a-422a-973f-05e274d9aa86"
   gc_template_id            = "8d597a1b-a1d6-4e3c-8421-042a2b4158b7"
-  sqs_dead_letter_queue_id  = ""
 }
 
 remote_state {

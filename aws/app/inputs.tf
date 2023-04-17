@@ -200,7 +200,7 @@ variable "sns_topic_alert_ok_arn" {
 }
 
 variable "sqs_reliability_queue_id" {
-  description = "SQS reliability queue ID"
+  description = "SQS reliability queue URL"
   type        = string
 }
 
@@ -214,8 +214,29 @@ variable "sqs_reprocess_submission_queue_arn" {
   type        = string
 }
 
-variable "sqs_dead_letter_queue_id" {
-  description = "SQS dead letter queue ID"
+variable "sqs_reprocess_submission_queue_id" {
+  description = "SQS reprocess submission queue URL"
+  type        = string
+}
+
+
+variable "sqs_reliability_dead_letter_queue_id" {
+  description = "SQS Reliability dead letter queue URL"
+  type        = string
+}
+
+variable "sqs_audit_log_queue_arn" {
+  description = "SQS audit log queue ARN"
+  type        = string
+}
+
+variable "sqs_audit_log_queue_id" {
+  description = "SQS audit log queue URL"
+  type        = string
+}
+
+variable "sqs_audit_log_deadletter_queue_arn" {
+  description = "Audit Log queues dead-letter queue ARN"
   type        = string
 }
 
@@ -229,8 +250,13 @@ variable "dynamodb_vault_table_name" {
   type        = string
 }
 
-variable "dynamodb_vault_stream_arn" {
-  description = "Vault DynamoDB stream ARN"
+variable "dynamodb_audit_logs_arn" {
+  description = "Audit Logs table ARN"
+  type        = string
+}
+
+variable "dynamodb_audit_logs_table_name" {
+  description = "Audit Logs table name"
   type        = string
 }
 
@@ -256,5 +282,15 @@ variable "cognito_client_id" {
 
 variable "cognito_endpoint_url" {
   description = "Cognito endpoint url"
+  type        = string
+}
+
+variable "email_address_contact_us" {
+  description = "Email address for Form Contact Us"
+  type        = string
+}
+
+variable "email_address_support" {
+  description = "Email address for Form Support"
   type        = string
 }

@@ -18,7 +18,7 @@ jobs:
     steps:
 
       - name: Delete previous comments
-        uses: actions/github-script@deb7ae927cc19ae3a8b57293dd5cd2f16171e1e2 # tag=v4.1.1
+        uses: actions/github-script@10b53a9ec6c222bb4ce97aa6bd2b5f739696b536 # v4.2.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -29,7 +29,7 @@ jobs:
             }
 
       - name: Add version diff comment
-        uses: actions/github-script@deb7ae927cc19ae3a8b57293dd5cd2f16171e1e2 # tag=v4.1.1
+        uses: actions/github-script@10b53a9ec6c222bb4ce97aa6bd2b5f739696b536 # v4.2.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |

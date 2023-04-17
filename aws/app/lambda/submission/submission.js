@@ -12,18 +12,14 @@ const sqs = new SQSClient({
   ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
 });
 
-const formatError = (err) => {
-  return typeof err === "object" ? JSON.stringify(err) : err;
-};
-
 // Store questions with responses
 
 /*
 Params:
   formID - ID of form,
   language - form submission language "fr" or "en",
-  submission - submission type: email, vault
   responses - form responses: {formID, securityAttribute, questionID: answer}
+  deliveryOption - (optional) Will be present if user wants to receive form responses by email (`{ emailAddress: string; emailSubjectEn?: string; emailSubjectFr?: string }`)
   securityAttribute - string of security classification
 */
 exports.handler = async function (event) {
@@ -47,7 +43,7 @@ exports.handler = async function (event) {
     console.error(
       `{"status": "failed", "submissionID": "${
         submissionID ? submissionID : "Not yet created"
-      }", "error": "${formatError(err)}"}`
+      }", "error": "${err.message}"}`
     );
     return { status: false };
   }
@@ -72,7 +68,7 @@ const sendData = async (submissionID) => {
 };
 
 const saveData = async (submissionID, formData) => {
-  const securityAttribute = formData.securityAttribute ?? "Unclassified";
+  const securityAttribute = formData.securityAttribute ?? "Protected A";
   delete formData.securityAttribute;
 
   const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
@@ -108,6 +104,6 @@ const saveReceipt = async (submissionID, receiptID) => {
     //save data to DynamoDB
     await db.send(new UpdateItemCommand(DBParams));
   } catch (err) {
-    console.warn(`{status: warn, submissionID: ${submissionID}, warning: ${formatError(err)}}`);
+    console.warn(`{status: warn, submissionID: ${submissionID}, warning: ${err.message}}`);
   }
 };

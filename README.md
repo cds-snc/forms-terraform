@@ -18,7 +18,7 @@ Pre-requisites:
 - Terragrunt:
 
   1. `brew install warrensbox/tap/tfswitch`
-  1. `tfswitch 1.0.10`
+  1. `tfswitch 1.4.2`
   1. `brew install warrensbox/tap/tgswitch`
   1. `tgswitch 0.35.6`
 
@@ -39,6 +39,8 @@ Pre-requisites:
 
 ### Starting LocalStack and E2E testing from devcontainers
 
+For instrutions on how to run without using dev containers please skip to the next section.
+
 1. forms-terraform:
 
 ```sh
@@ -58,7 +60,31 @@ yarn install
 yarn dev
 ```
 
-### Starting LocalStack
+### Starting LocalStack and services without dev containers
+
+#### Spare me the details and give me the commands
+
+##### Only do once as part of setup
+
+- You will also have to supply the following environment variables and values to platform-forms-client to get everything working with the local lambdas and localstack.
+
+```shell
+# localstack only simulates a us-east-1 region
+AWS_ACCESS_KEY_ID=test
+AWS_SECRET_ACCESS_KEY=test
+AWS_REGION=ca-central-1
+RELIABILITY_FILE_STORAGE=forms-local-reliability-file-storage
+LOCAL_LAMBDA_ENDPOINT=http://127.0.0.1:3001
+LOCAL_AWS_ENDPOINT=http://localhost:4566
+```
+
+##### Everytime you want to run localstack and lambdas locally
+
+1. In one terminal run `localstack start`
+2. In a second terminal run `./localstack_services.sh` (If there have been infrastructure changes you'll want to run `./localstack_services.sh clean`)
+3. In a third terminal in the `platform-forms-client` repo run `yarn dev`
+
+#### It didn't work.... I need the details
 
 Once you have localstack installed you should be able to start the localstack container and services using the following command.
 
@@ -125,291 +151,83 @@ $ localstack status services
 └──────────────────────────┴───────────┘
 ```
 
-### Setting up AWS CLI to work with localstack
-
-In order to have the SDKs properly working with localstack we need to correctly set up
-our aws cli profiles.
-
-Add the following configurations to `~/.aws/config` and `~/.aws/credentials`
-
-`~/.aws/config`
-
-```text
-[profile local]
-region = ca-central-1
-output = yaml
-```
-
-`./aws/credentials`
-
-```text
-[local]
-aws_access_key_id = test
-aws_secret_access_key = test
-```
-
-**ensure that you do not have a default profile as this will cause errors**
-
 ### Setting up local infrastructure
 
 Now that we have localstack up and running it's time to configure our local AWS services with what the lambdas would expect as if running in an AWS environment.
 
-You must configure the following in the order they appear otherwise this will fail.
+**Please note if you stop localstack you will need to run this script again**
+**Localstack does not persist states between restarts of the service**
 
-**Please note if you stop localstack you will need to run through this process again to get it configured**
+run `./localstack_services.sh`
 
-#### Setting up local KMS
+You will be asked at one point to enter the following values:
 
-The first thing to do is to deploy KMS. Navigate to `./env/local/kms` and use terragrunt to apply it to localstack. Here is an example with the expected output
+```
+var.cognito_client_id
+  User Pool Client ID for Forms Client
 
-```shell
-$ cd ./env/local/kms
-$ terragrunt apply
-# JSON showing changes
+  Enter a value:
 
-Plan: 3 to add, 0 to change, 0 to destroy.
+var.cognito_endpoint_url
+  Cognito endpoint url
 
-Changes to Outputs:
-  ~ kms_key_cloudwatch_arn         = "arn:aws:kms:us-east-1:000000000000:key/4e4bf925-2704-4166-95e8-d61db99a5973" -> (known after apply)
-  ~ kms_key_cloudwatch_us_east_arn = "arn:aws:kms:us-east-1:000000000000:key/0c5e0274-e380-4d74-97cb-7c4efcd3dae2" -> (known after apply)
-  ~ kms_key_dynamodb_arn           = "arn:aws:kms:us-east-1:000000000000:key/f246fa41-5ae2-4c6f-a5d9-dc0d86b95ec4" -> (known after apply)
+  Enter a value:
 
-Do you want to perform these actions?
-  Terraform will perform the actions described above.
-  Only 'yes' will be accepted to approve.
+var.cognito_user_pool_arn
+  User Pool ARN for the Forms Client
 
-  Enter a value: yes
+  Enter a value:
 
-aws_kms_key.cloudwatch_us_east: Creating...
-aws_kms_key.dynamo_db: Creating...
-aws_kms_key.cloudwatch: Creating...
-aws_kms_key.cloudwatch: Still creating... [10s elapsed]
-aws_kms_key.cloudwatch_us_east: Still creating... [10s elapsed]
-aws_kms_key.dynamo_db: Still creating... [10s elapsed]
-aws_kms_key.dynamo_db: Creation complete after 12s [id=bb42f69d-66e9-438e-b5a6-98fdb61d4cb2]
-aws_kms_key.cloudwatch: Creation complete after 13s [id=7a777ca8-f0a7-40e6-baab-1d900343d7c6]
-aws_kms_key.cloudwatch_us_east: Creation complete after 13s [id=14b40854-f2f6-4002-9385-46859a9a95e7]
+var.email_address_contact_us
+  Email address for Form Contact Us
 
-Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
+  Enter a value:
 
-Outputs:
+var.email_address_support
+  Email address for Form Support
 
-kms_key_cloudwatch_arn = "arn:aws:kms:us-east-1:000000000000:key/7a777ca8-f0a7-40e6-baab-1d900343d7c6"
-kms_key_cloudwatch_us_east_arn = "arn:aws:kms:us-east-1:000000000000:key/14b40854-f2f6-4002-9385-46859a9a95e7"
-kms_key_dynamodb_arn = "arn:aws:kms:us-east-1:000000000000:key/bb42f69d-66e9-438e-b5a6-98fdb61d4cb2"
+  Enter a value:
 
 ```
 
-#### Creating SQS queue
+It is safe to leave them blank for now.
 
-Now to create our local SQS queue.
+Congratulations! You should now have all the necessary infrastructure configured on localstack to run lambda functions completely locally without needing an AWS account.
 
-Navigate to `./env/local/sqs` and use terragrunt to apply it to localstack. Here is an example with the expected output.
+### Configuring the environment
 
-```shell
-$ cd ./env/local/sqs
-$ terragrunt apply
-# JSON of changes beforehand
-Plan: 2 to add, 0 to change, 0 to destroy.
-
-Changes to Outputs:
-  ~ sqs_reliability_queue_arn = "arn:aws:sqs:us-east-1:000000000000:submission_processing.fifo" -> (known after apply)
-  ~ sqs_reliability_queue_id  = "http://localhost:4566/000000000000/submission_processing.fifo" -> (known after apply)
-
-Do you want to perform these actions?
-  Terraform will perform the actions described above.
-  Only 'yes' will be accepted to approve.
-
-  Enter a value: yes
-
-aws_sqs_queue.deadletter_queue: Creating...
-aws_sqs_queue.deadletter_queue: Creation complete after 1s [id=http://localhost:4566/000000000000/deadletter_queue.fifo]
-aws_sqs_queue.reliability_queue: Creating...
-aws_sqs_queue.reliability_queue: Creation complete after 0s [id=http://localhost:4566/000000000000/submission_processing.fifo]
-
-Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
-
-Outputs:
-
-sqs_deadletter_queue_arn = "deadletter_queue.fifo"
-sqs_reliability_queue_arn = "arn:aws:sqs:us-east-1:000000000000:submission_processing.fifo"
-sqs_reliability_queue_id = "http://localhost:4566/000000000000/submission_processing.fifo"
-```
-
-#### Creating SNS queue
-
-Now to create our local SNS queue.
-
-Navigate to `./env/local/sns` and use terragrunt to apply it to localstack. Make sure you delete the terragrunt cache folder beforehand. Here is an example with the expected output.
-
-```shell
-$ cd ./env/local/sns
-$ rm -rf .terragrunt-cache
-$ terragrunt apply
-# JSON of changes beforehand
-Plan: 5 to add, 0 to change, 0 to destroy.
-
-Changes to Outputs:
-  + sns_topic_alert_critical_arn        = (known after apply)
-  + sns_topic_alert_ok_arn              = (known after apply)
-  + sns_topic_alert_ok_us_east_arn      = (known after apply)
-  + sns_topic_alert_warning_arn         = (known after apply)
-  + sns_topic_alert_warning_us_east_arn = (known after apply)
-
-Do you want to perform these actions?
-  Terraform will perform the actions described above.
-  Only 'yes' will be accepted to approve.
-
-  Enter a value: yes
-
-aws_sns_topic.alert_warning_us_east: Creating...
-aws_sns_topic.alert_ok_us_east: Creating...
-aws_sns_topic.alert_warning_us_east: Creation complete after 0s [id=arn:aws:sns:us-east-1:000000000000:alert-warning]
-aws_sns_topic.alert_ok_us_east: Creation complete after 0s [id=arn:aws:sns:us-east-1:000000000000:alert-ok]
-aws_sns_topic.alert_warning: Creating...
-aws_sns_topic.alert_critical: Creating...
-aws_sns_topic.alert_ok: Creating...
-aws_sns_topic.alert_critical: Creation complete after 0s [id=arn:aws:sns:us-east-1:000000000000:alert-critical]
-aws_sns_topic.alert_warning: Creation complete after 0s [id=arn:aws:sns:us-east-1:000000000000:alert-warning]
-aws_sns_topic.alert_ok: Creation complete after 0s [id=arn:aws:sns:us-east-1:000000000000:alert-ok]
-
-Apply complete! Resources: 5 added, 0 changed, 0 destroyed.
-
-Outputs:
-
-sns_topic_alert_critical_arn = "arn:aws:sns:us-east-1:000000000000:alert-critical"
-sns_topic_alert_ok_arn = "arn:aws:sns:us-east-1:000000000000:alert-ok"
-sns_topic_alert_ok_us_east_arn = "arn:aws:sns:us-east-1:000000000000:alert-ok"
-sns_topic_alert_warning_arn = "arn:aws:sns:us-east-1:000000000000:alert-warning"
-sns_topic_alert_warning_us_east_arn = "arn:aws:sns:us-east-1:000000000000:alert-warning"
-```
-
-#### Creating the DynamoDB database
-
-Since we have configured KMS we can now configure our DynamoDB database.
-
-Navigate to `./env/local/dynamodb` and use terragrunt apply to configure dynamodb on localstack. Here is an example with the expected output
-
-```shell
-$ cd ./env/local/dynamodb
-$ terragrunt apply
-# JSON showing changes beforehand
-Plan: 2 to add, 0 to change, 0 to destroy.
-
-Changes to Outputs:
-  ~ dynamodb_relability_queue_arn = "arn:aws:dynamodb:us-east-1:000000000000:table/ReliabilityQueue" -> (known after apply)
-  ~ dynamodb_vault_arn            = "arn:aws:dynamodb:us-east-1:000000000000:table/Vault" -> (known after apply)
-
-Do you want to perform these actions?
-  Terraform will perform the actions described above.
-  Only 'yes' will be accepted to approve.
-
-  Enter a value: yes
-
-aws_dynamodb_table.reliability_queue: Creating...
-aws_dynamodb_table.vault: Creating...
-aws_dynamodb_table.reliability_queue: Creation complete after 0s [id=ReliabilityQueue]
-aws_dynamodb_table.vault: Creation complete after 0s [id=Vault]
-
-Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
-
-Outputs:
-
-dynamodb_relability_queue_arn = "arn:aws:dynamodb:us-east-1:000000000000:table/ReliabilityQueue"
-dynamodb_vault_arn = "arn:aws:dynamodb:us-east-1:000000000000:table/Vault"
-dynamodb_vault_retrieved_index_name = tolist([
-  "retrieved-index",
-])
-dynamodb_vault_table_name = "Vault"
-```
-
-#### Creating the S3 buckets
-
-Now that we have everything configured it's time for the final step of configuring the s3 buckets.
-
-Navigate to `./env/local/app` and use terragrunt apply to configure the s3 buckets on localstack. Please note that while the app TF module has a lot more than just configuring the s3 buckets, for the local environment we are only specifying to apply s3 configurations. Here is an example with the expected output
-
-```shell
-$ cd ./env/local/app
-$ terragrunt apply
-# JSON of changes beforehand
-Plan: 6 to add, 0 to change, 0 to destroy.
-╷
-│ Warning: Resource targeting is in effect
-│
-│ You are creating a plan with the -target option, which means that the
-│ result of this plan may not represent all of the changes requested by the
-│ current configuration.
-│
-│ The -target option is not for routine use, and is provided only for
-│ exceptional situations such as recovering from errors or mistakes, or when
-│ Terraform specifically suggests to use it as part of an error message.
-╵
-
-Do you want to perform these actions?
-  Terraform will perform the actions described above.
-  Only 'yes' will be accepted to approve.
-
-  Enter a value: yes
-
-aws_s3_bucket.vault_file_storage: Creating...
-aws_s3_bucket.archive_storage: Creating...
-aws_s3_bucket.reliability_file_storage: Creating...
-aws_s3_bucket.vault_file_storage: Creation complete after 2s [id=forms-local-vault-file-storage]
-aws_s3_bucket_public_access_block.vault_file_storage: Creating...
-aws_s3_bucket_public_access_block.vault_file_storage: Creation complete after 0s [id=forms-local-vault-file-storage]
-aws_s3_bucket.archive_storage: Creation complete after 2s [id=forms-local-archive-storage]
-aws_s3_bucket_public_access_block.archive_storage: Creating...
-aws_s3_bucket.reliability_file_storage: Creation complete after 3s [id=forms-local-reliability-file-storage]
-aws_s3_bucket_public_access_block.reliability_file_storage: Creating...
-aws_s3_bucket_public_access_block.archive_storage: Creation complete after 1s [id=forms-local-archive-storage]
-aws_s3_bucket_public_access_block.reliability_file_storage: Creation complete after 0s [id=forms-local-reliability-file-storage]
-╷
-│ Warning: Applied changes may be incomplete
-│
-│ The plan was created with the -target option in effect, so some changes
-│ requested in the configuration may have been ignored and the output values
-│ may not be fully updated. Run the following command to verify that no other
-│ changes are pending:
-│     terraform plan
-│
-│ Note that the -target option is not suitable for routine use, and is
-│ provided only for exceptional situations such as recovering from errors or
-│ mistakes, or when Terraform specifically suggests to use it as part of an
-│ error message.
-╵
-
-Apply complete! Resources: 6 added, 0 changed, 0 destroyed.
-```
-
-You should now have all the necessary infrastructure configured on localstack to run lambda functions completely locally without needing an AWS account.
-
-### Starting the environment:
-
-In directory:
+In the directory:
 `./aws/app/lambda/local-development/`
 `template.yml` defines the local environment / project we will be running. Functions and environment variables can be defined here.
 
-Install Lambda dependencies and start local lambda service
-In directory: `./aws/app/lambda/` run the script `./start_local_lambdas.sh`
+### Dynamo Datbase Table Schemas
+
+#### Vault Table
+
+##### Table
+
+![Vault Table](./readme_images/Vault.png)
+
+##### Archive Global Secondary Index
+
+This Index supports the archiving of Vault responses
+![Archive GSI](./readme_images/GSI_Vault_Archive.png)
+
+##### Status Global Secondary Index
+
+This Index supports the future feature of the Retrieval API. Essentially the ability to retrieve responses without using the Application Interface.
+![Status Index](./readme_images/GSI_Vault_Status.png)
+
+##### Nagware Global Secondary Index
+
+This Index supports the Nagware feature. It gives the ability to retrieve form submissions with a specific status and creation date.
+![Nagware Index](./readme_images/GSI_Vault_Nagware.png)
+
+### Invoking Lambdas manually
 
 If you want to invoke a lambda specifically, here’s the example command:
 `aws lambda invoke --function-name "Submission" --endpoint-url "http://127.0.0.1:3001" --no-verify-ssl --payload fileb://./file.json out.txt`
 **NOTE:** _`fileb://` allows a JSON file that uses UTF-8 encoding for the payload._
-
-Otherwise, in the platform-forms-client, you just modify the ‘endpoint’ parameter of the LambdaClient to hit `http://127.0.0.1:3001` . I’ve done this through an environment variable:
-`LOCAL_LAMBDA_ENDPOINT=http://127.0.0.1:3001`
-
-You will also have to supply the following environment variables and values to platform-forms-client to get everything working with the local lambdas and localstack.
-
-```shell
-# localstack only simulates a us-east-1 region
-AWS_REGION=us-east-1
-LOCAL_S3_ENDPOINT=http://localhost:4566
-RELIABILITY_FILE_STORAGE=forms-local-reliability-file-storage
-LOCAL_LAMBDA_ENDPOINT=http://127.0.0.1:3001
-LOCAL_S3_ENDPOINT=http://localhost:4566
-```
 
 Troubleshooting
 db host env var: runs in docker - need to get localhost for host machine

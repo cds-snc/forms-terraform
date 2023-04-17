@@ -1,9 +1,5 @@
-const {
-  saveToVault,
-  extractFileInputResponses,
-  removeSubmission,
-  formatErr,
-} = require("dataLayer");
+const { saveToVault, extractFileInputResponses, removeSubmission } = require("dataLayer");
+
 const {
   copyFilesFromReliabilityToVaultStorage,
   removeFilesFromReliabilityStorage,
@@ -18,7 +14,8 @@ module.exports = async (
   createdAt,
   securityAttribute
 ) => {
-  let fileInputPaths
+  let fileInputPaths = [];
+
   try {
     fileInputPaths = extractFileInputResponses(formSubmission);
     await copyFilesFromReliabilityToVaultStorage(fileInputPaths);
@@ -30,8 +27,17 @@ module.exports = async (
       createdAt,
       securityAttribute
     );
-  } catch (err) {
-    throw new Error(`Saving to Vault error: ${formatErr(err)}`);
+  } catch (error) {
+    console.error(
+      JSON.stringify({
+        status: "failed",
+        submissionId: submissionID,
+        sendReceipt: sendReceipt,
+        message: "Failed to save submission to Vault.",
+        error: `${error.message}`,
+      })
+    );
+    throw new Error(`Failed to save submission to Vault.`);
   }
 
   try {
@@ -39,17 +45,26 @@ module.exports = async (
       removeFilesFromReliabilityStorage(fileInputPaths),
       removeSubmission(submissionID),
     ]);
-  } catch (err) {
-    // Not throwing an error back to SQS because the message was
-    // sucessfully processed by the vault.  Only cleanup required.
+
     console.warn(
-      `{"status": "failed", "submissionID": "${submissionID}", "error": "Can not delete entry from reliability db.  Error:${formatError(
-        err
-      )}", "method":"vault" }`
+      JSON.stringify({
+        status: "success",
+        submissionId: submissionID,
+        sendReceipt: sendReceipt,
+        message: "Successfully saved submission to Vault.",
+      })
+    );
+  } catch (error) {
+    // Not throwing an error back to SQS because the message was sucessfully processed by the vault. Only cleanup required.
+    console.warn(
+      JSON.stringify({
+        status: "success",
+        submissionId: submissionID ?? "n/a",
+        sendReceipt: sendReceipt ?? "n/a",
+        message:
+          "Successfully saved submission to Vault but failed to clean up submission processing files from database.",
+        error: `${error.message}`,
+      })
     );
   }
-
-  console.log(
-    `{"status": "success", "submissionID": "${submissionID}", "sqsMessage":"${sendReceipt}", "method":"vault"}`
-  );
 };
