@@ -3,7 +3,7 @@ const { Client } = require("pg");
 
 async function getFormNameAndOwnerEmailAddress(formID) {
   try {
-    const { SQL, parameters } = createSQLString(formResponse.formID);
+    const { SQL, parameters } = createSQLString(formID);
     const requestFornNameAndOwnerEmailAddress = process.env.AWS_SAM_LOCAL ? requestSAM : requestRDS;
     const formNameAndOwnerEmailAddress = await requestFornNameAndOwnerEmailAddress(SQL, parameters);
 
