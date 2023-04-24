@@ -325,6 +325,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_dead_letter_queue_cons
 #
 # Archive form templates
 #
+
 data "archive_file" "archive_form_templates_main" {
   type        = "zip"
   source_file = "lambda/archive_form_templates/archiver.js"
@@ -333,11 +334,20 @@ data "archive_file" "archive_form_templates_main" {
 
 data "archive_file" "archive_form_templates_lib" {
   type        = "zip"
-  source_dir  = "lambda/archive_form_templates/"
-  excludes    = ["archiver.js"]
   output_path = "/tmp/archive_form_templates_lib.zip"
+  
+  source {
+    content  = file("./lambda/archive_form_templates/lib/templates.js")
+    filename = "nodejs/node_modules/templates/index.js"
+  }
 }
 
+data "archive_file" "archive_form_templates_nodejs" {
+  type        = "zip"
+  source_dir  = "lambda/archive_form_templates/"
+  excludes    = ["archiver.js", "./lib", ]
+  output_path = "/tmp/archive_form_templates_nodejs.zip"
+}
 
 resource "aws_lambda_function" "archive_form_templates" {
   filename      = "/tmp/archive_form_templates_main.zip"
@@ -349,7 +359,10 @@ resource "aws_lambda_function" "archive_form_templates" {
   source_code_hash = data.archive_file.archive_form_templates_main.output_base64sha256
 
   runtime = "nodejs14.x"
-  layers  = [aws_lambda_layer_version.archive_form_templates_lib.arn]
+  layers  = [
+    aws_lambda_layer_version.archive_form_templates_lib.arn,
+    aws_lambda_layer_version.archive_form_templates_nodejs.arn
+  ]
 
   environment {
     variables = {
@@ -358,7 +371,6 @@ resource "aws_lambda_function" "archive_form_templates" {
       DB_ARN      = var.rds_cluster_arn
       DB_SECRET   = var.database_secret_arn
       DB_NAME     = var.rds_db_name
-
     }
   }
 
@@ -374,8 +386,15 @@ resource "aws_lambda_function" "archive_form_templates" {
 
 resource "aws_lambda_layer_version" "archive_form_templates_lib" {
   filename            = "/tmp/archive_form_templates_lib.zip"
-  layer_name          = "archive_form_templates_node_packages"
+  layer_name          = "archive_form_templates_lib_packages"
   source_code_hash    = data.archive_file.archive_form_templates_lib.output_base64sha256
+  compatible_runtimes = ["nodejs14.x"]
+}
+
+resource "aws_lambda_layer_version" "archive_form_templates_nodejs" {
+  filename            = "/tmp/archive_form_templates_nodejs.zip"
+  layer_name          = "archive_form_templates_node_packages"
+  source_code_hash    = data.archive_file.archive_form_templates_nodejs.output_base64sha256
   compatible_runtimes = ["nodejs14.x"]
 }
 
