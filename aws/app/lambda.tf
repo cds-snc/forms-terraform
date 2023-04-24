@@ -335,7 +335,7 @@ data "archive_file" "archive_form_templates_main" {
 data "archive_file" "archive_form_templates_lib" {
   type        = "zip"
   output_path = "/tmp/archive_form_templates_lib.zip"
-  
+
   source {
     content  = file("./lambda/archive_form_templates/lib/templates.js")
     filename = "nodejs/node_modules/templates/index.js"
@@ -359,7 +359,7 @@ resource "aws_lambda_function" "archive_form_templates" {
   source_code_hash = data.archive_file.archive_form_templates_main.output_base64sha256
 
   runtime = "nodejs14.x"
-  layers  = [
+  layers = [
     aws_lambda_layer_version.archive_form_templates_lib.arn,
     aws_lambda_layer_version.archive_form_templates_nodejs.arn
   ]
