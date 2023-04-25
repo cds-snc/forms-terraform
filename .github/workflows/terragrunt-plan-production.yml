@@ -62,7 +62,7 @@ jobs:
       - name: Terragrunt plan ecr
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/production/ecr"
+          directory: "env/cloud/ecr"
           comment-delete: "true"
           comment-title: "Production: ecr"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -71,7 +71,7 @@ jobs:
       - name: Terragrunt plan hosted_zone
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/production/hosted_zone"
+          directory: "env/cloud/hosted_zone"
           comment-delete: "true"
           comment-title: "Production: hosted_zone"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -80,7 +80,7 @@ jobs:
       - name: Terragrunt plan kms
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/production/kms"
+          directory: "env/cloud/kms"
           comment-delete: "true"
           comment-title: "Production: kms"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -89,7 +89,7 @@ jobs:
       - name: Terragrunt plan sqs
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/production/sqs"
+          directory: "env/cloud/sqs"
           comment-delete: "true"
           comment-title: "Production: sqs"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -98,7 +98,7 @@ jobs:
       - name: Terragrunt plan sns
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/production/sns"
+          directory: "env/cloud/sns"
           comment-delete: "true"
           comment-title: "Production: sns"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -110,7 +110,7 @@ jobs:
       - name: Terragrunt plan cognito
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/production/cognito"
+          directory: "env/cloud/cognito"
           comment-delete: "true"
           comment-title: "Production: cognito"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -123,7 +123,7 @@ jobs:
       - name: Terragrunt plan network
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/production/network"
+          directory: "env/cloud/network"
           comment-delete: "true"
           comment-title: "Production: network"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -132,7 +132,7 @@ jobs:
       - name: Terragrunt plan dynamodb
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/production/dynamodb"
+          directory: "env/cloud/dynamodb"
           comment-delete: "true"
           comment-title: "Production: dynamodb"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -151,7 +151,7 @@ jobs:
       - name: Terragrunt plan redis
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/production/redis"
+          directory: "env/cloud/redis"
           comment-delete: "true"
           comment-title: "Production: redis"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -160,7 +160,7 @@ jobs:
       - name: Terragrunt plan rds
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/production/rds"
+          directory: "env/cloud/rds"
           comment-delete: "true"
           comment-title: "Production: rds"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -173,7 +173,7 @@ jobs:
       - name: Terragrunt plan app
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/production/app"
+          directory: "env/cloud/app"
           comment-delete: "true"
           comment-title: "Production: app"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -185,7 +185,7 @@ jobs:
       - name: Terragrunt plan alarms
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/production/alarms"
+          directory: "env/cloud/alarms"
           comment-delete: "true"
           comment-title: "Production: alarms"
           github-token: "${{ secrets.GITHUB_TOKEN }}"

@@ -7,7 +7,7 @@ on:
     paths:
       - "aws/**"
       - "env/common/**"
-      - "env/staging/**"
+      - "env/cloud/**"
       - ".github/workflows/terragrunt-apply-staging.yml"
 
 env:
@@ -62,76 +62,75 @@ jobs:
           filters: |
             alarms:
               - 'aws/alarms/**'
-              - 'env/staging/alarms/**'
+              - 'env/cloud/alarms/**'
             app:
               - 'aws/app/**'
-              - 'env/staging/app/**'
+              - 'env/cloud/app/**'
             cognito:
               - 'aws/cognito/**'
-              - 'aws/staging/cognito/**'
+              - 'aws/cloud/cognito/**'
             common:
               - '.github/workflows/terragrunt-apply-staging.yml'
               - 'env/common/**'
               - 'env/terragrunt.hcl'
-              - 'env/staging/env_vars.hcl'
             dynamodb:
               - 'aws/dynamodb/**'
-              - 'env/staging/dynamodb/**'
+              - 'env/cloud/dynamodb/**'
             ecr:
               - 'aws/ecr/**'
-              - 'env/staging/ecr/**'
+              - 'env/cloud/ecr/**'
             hosted_zone:
               - 'aws/hosted_zone/**'
-              - 'env/staging/hosted_zone/**'
+              - 'env/cloud/hosted_zone/**'
             kms:
               - 'aws/kms/**'
-              - 'env/staging/kms/**'
+              - 'env/cloud/kms/**'
             load_balancer:
               - 'aws/load_balancer/**'
-              - 'env/staging/load_balancer/**'
+              - 'env/cloud/load_balancer/**'
             load_testing:
               - 'aws/load_testing/**'
-              - 'env/staging/load_testing/**'
+              - 'env/cloud/load_testing/**'
             network:
               - 'aws/network/**'
-              - 'env/staging/network/**'
+              - 'env/cloud/network/**'
             rds:
               - 'aws/rds/**'
-              - 'env/staging/rds/**'
+              - 'env/cloud/rds/**'
             redis:
               - 'aws/redis/**'
-              - 'env/staging/redis/**'
+              - 'env/cloud/redis/**'
             sns:
               - 'aws/sns/**'
-              - 'env/staging/sns/**'
+              - 'env/cloud/sns/**'
             sqs:
               - 'aws/sqs/**'
-              - 'env/staging/sqs/**'
+              - 'env/cloud/sqs/**'
 
       # No dependencies
       - name: Terragrunt apply ecr
         if: ${{ steps.filter.outputs.ecr == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/staging/ecr
+        working-directory: env/cloud/ecr
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply hosted_zone
         if: ${{ steps.filter.outputs.hosted_zone == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/staging/hosted_zone
+        working-directory: env/cloud/hosted_zone
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply kms
         if: ${{ steps.filter.outputs.kms == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/staging/kms
+        working-directory: env/cloud/kms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply sqs
         if: ${{ steps.filter.outputs.sqs == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/staging/sqs
+        working-directory: env/cloud/sqs
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply sns
         if: ${{ steps.filter.outputs.sns == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/staging/sns
+        working-directory: env/cloud/sns
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Install Cognito Lambda deps
@@ -140,7 +139,7 @@ jobs:
 
       - name: Terragrunt apply cognito
         if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/staging/cognito
+        working-directory: env/cloud/cognito
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Remove Cognito Lambda deps
@@ -150,28 +149,28 @@ jobs:
       # Depends on kms
       - name: Terragrunt apply network
         if: ${{ steps.filter.outputs.network == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/staging/network
+        working-directory: env/cloud/network
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply dynamodb
         if: ${{ steps.filter.outputs.dynamodb == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/staging/dynamodb
+        working-directory: env/cloud/dynamodb
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on network
       - name: Terragrunt apply load_balancer
         if: ${{ steps.filter.outputs.load_balancer == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/staging/load_balancer
+        working-directory: env/cloud/load_balancer
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply redis
         if: ${{ steps.filter.outputs.redis == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/staging/redis
+        working-directory: env/cloud/redis
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply rds
         if: ${{ steps.filter.outputs.rds == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/staging/rds
+        working-directory: env/cloud/rds
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on everything
@@ -181,7 +180,7 @@ jobs:
 
       - name: Terragrunt apply app
         if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/staging/app
+        working-directory: env/cloud/app
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Remove Lambda deps
@@ -190,7 +189,7 @@ jobs:
 
       - name: Terragrunt apply alarms
         if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/staging/alarms
+        working-directory: env/cloud/alarms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Install Lambda load_testing deps
@@ -201,7 +200,7 @@ jobs:
 
       - name: Terragrunt apply load_testing
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: env/staging/load_testing
+        working-directory: env/cloud/load_testing
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Remove Lambda load_testing deps
