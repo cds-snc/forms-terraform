@@ -6,10 +6,13 @@ on:
     paths:
       - "aws/**"
       - "env/common/**"
-      - "env/staging/**"
+      - "env/cloud/**"
       - ".github/workflows/terragrunt-plan-staging.yml"
 
 env:
+  APP_ENV: staging
+  APP_DOMAIN: ${{ vars.STAGING_APP_DOMAIN }}
+  AWS_ACCOUNT_ID: ${{ vars.STAGING_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
   AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
@@ -67,58 +70,57 @@ jobs:
           filters: |
             alarms:
               - 'aws/alarms/**'
-              - 'env/staging/alarms/**'
+              - 'env/cloud/alarms/**'
             app:
               - 'aws/app/**'
-              - 'env/staging/app/**'
+              - 'env/cloud/app/**'
             cognito:
               - 'aws/cognito/**'
-              - 'env/staging/cognito/**'
+              - 'env/cloud/cognito/**'
             common:
               - '.github/workflows/terragrunt-plan-staging.yml'
               - 'env/common/**'
               - 'env/terragrunt.hcl'
-              - 'env/staging/env_vars.hcl'
             dynamodb:
               - 'aws/dynamodb/**'
-              - 'env/staging/dynamodb/**'
+              - 'env/cloud/dynamodb/**'
             ecr:
               - 'aws/ecr/**'
-              - 'env/staging/ecr/**'
+              - 'env/cloud/ecr/**'
             hosted_zone:
               - 'aws/hosted_zone/**'
-              - 'env/staging/hosted_zone/**'
+              - 'env/cloud/hosted_zone/**'
             kms:
               - 'aws/kms/**'
-              - 'env/staging/kms/**'
+              - 'env/cloud/kms/**'
             load_balancer:
               - 'aws/load_balancer/**'
-              - 'env/staging/load_balancer/**'
+              - 'env/cloud/load_balancer/**'
             load_testing:
               - 'aws/load_testing/**'
-              - 'env/staging/load_testing/**'
+              - 'env/cloud/load_testing/**'
             network:
               - 'aws/network/**'
-              - 'env/staging/network/**'
+              - 'env/cloud/network/**'
             rds:
               - 'aws/rds/**'
-              - 'env/staging/rds/**'
+              - 'env/cloud/rds/**'
             redis:
               - 'aws/redis/**'
-              - 'env/staging/redis/**'
+              - 'env/cloud/redis/**'
             sns:
               - 'aws/sns/**'
-              - 'env/staging/sns/**'
+              - 'env/cloud/sns/**'
             sqs:
               - 'aws/sqs/**'
-              - 'env/staging/sqs/**'
+              - 'env/cloud/sqs/**'
 
       # No dependencies
       - name: Terragrunt plan ecr
         if: ${{ steps.filter.outputs.ecr == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/staging/ecr"
+          directory: "env/cloud/ecr"
           comment-delete: "true"
           comment-title: "Staging: ecr"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -128,7 +130,7 @@ jobs:
         if: ${{ steps.filter.outputs.hosted_zone == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/staging/hosted_zone"
+          directory: "env/cloud/hosted_zone"
           comment-delete: "true"
           comment-title: "Staging: hosted_zone"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -138,7 +140,7 @@ jobs:
         if: ${{ steps.filter.outputs.kms == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/staging/kms"
+          directory: "env/cloud/kms"
           comment-delete: "true"
           comment-title: "Staging: kms"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -148,7 +150,7 @@ jobs:
         if: ${{ steps.filter.outputs.sqs == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/staging/sqs"
+          directory: "env/cloud/sqs"
           comment-delete: "true"
           comment-title: "Staging: sqs"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -158,7 +160,7 @@ jobs:
         if: ${{ steps.filter.outputs.sns == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/staging/sns"
+          directory: "env/cloud/sns"
           comment-delete: "true"
           comment-title: "Staging: sns"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -172,7 +174,7 @@ jobs:
         if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/staging/cognito"
+          directory: "env/cloud/cognito"
           comment-delete: "true"
           comment-title: "Staging: cognito"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -187,7 +189,7 @@ jobs:
         if: ${{ steps.filter.outputs.network == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/staging/network"
+          directory: "env/cloud/network"
           comment-delete: "true"
           comment-title: "Staging: network"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -197,7 +199,7 @@ jobs:
         if: ${{ steps.filter.outputs.dynamodb == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/staging/dynamodb"
+          directory: "env/cloud/dynamodb"
           comment-delete: "true"
           comment-title: "Staging: dynamodb"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -208,7 +210,7 @@ jobs:
         if: ${{ steps.filter.outputs.load_balancer == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/staging/load_balancer"
+          directory: "env/cloud/load_balancer"
           comment-delete: "true"
           comment-title: "Staging: load_balancer"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -218,7 +220,7 @@ jobs:
         if: ${{ steps.filter.outputs.redis == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/staging/redis"
+          directory: "env/cloud/redis"
           comment-delete: "true"
           comment-title: "Staging: redis"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -228,7 +230,7 @@ jobs:
         if: ${{ steps.filter.outputs.rds == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/staging/rds"
+          directory: "env/cloud/rds"
           comment-delete: "true"
           comment-title: "Staging: rds"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -243,7 +245,7 @@ jobs:
         if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/staging/app"
+          directory: "env/cloud/app"
           comment-delete: "true"
           comment-title: "Staging: app"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -257,7 +259,7 @@ jobs:
         if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/staging/alarms"
+          directory: "env/cloud/alarms"
           comment-delete: "true"
           comment-title: "Staging: alarms"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -273,7 +275,7 @@ jobs:
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/staging/load_testing"
+          directory: "env/cloud/load_testing"
           comment-delete: "true"
           comment-title: "Staging: load_testing"
           github-token: "${{ secrets.GITHUB_TOKEN }}"

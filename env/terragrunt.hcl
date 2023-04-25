@@ -1,15 +1,17 @@
 locals {
-  vars = read_terragrunt_config("../env_vars.hcl")
+  account_id = get_env("AWS_ACCOUNT_ID", "")
+  env = get_env("APP_ENV", "local")
+  domain = get_env("APP_DOMAIN", "localhost:3000")
 }
 
 inputs = {
-  account_id                = "${local.vars.inputs.account_id}"
+  account_id                = "${local.account_id}"
   billing_tag_key           = "CostCentre"
-  billing_tag_value         = "forms-platform-${local.vars.inputs.env}"   
-  domain                    = "${local.vars.inputs.domain}"
-  env                       = "${local.vars.inputs.env}"
+  billing_tag_value         = "forms-platform-${local.env}"   
+  domain                    = "${local.domain}"
+  env                       = "${local.env}"
   region                    = "ca-central-1"
-  cbs_satellite_bucket_name = "cbs-satellite-${local.vars.inputs.account_id}"
+  cbs_satellite_bucket_name = "cbs-satellite-${local.account_id}"
 }
 
 
@@ -21,7 +23,7 @@ remote_state {
   }
   config = {
     encrypt        = true
-    bucket         = "forms-${local.vars.inputs.env}-tfstate"
+    bucket         = "forms-${local.env}-tfstate"
     dynamodb_table = "tfstate-lock"
     region         = "ca-central-1"
     key            = "${path_relative_to_include()}/terraform.tfstate"
@@ -31,7 +33,7 @@ remote_state {
 generate "provider" {
   path      = "provider.tf"
   if_exists = "overwrite"
-  contents  = local.vars.inputs.env == "local" ? file("./common/local-provider.tf") : file("./common/provider.tf")
+  contents  = local.env == "local" ? file("./common/local-provider.tf") : file("./common/provider.tf")
 }
 
 generate "common_variables" {
