@@ -41,7 +41,7 @@ resource "aws_cognito_user_pool_client" "forms" {
 }
 
 resource "aws_cognito_user_pool_domain" "forms" {
-  domain       = "forms"
+  domain       = "forms-${var.env}"
   user_pool_id = aws_cognito_user_pool.forms.id
 }
 

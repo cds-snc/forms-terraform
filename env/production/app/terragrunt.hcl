@@ -1,12 +1,9 @@
-# The source for this module is local since it requires that the `aws/app/lambda` dependencies are installed
-# before running `terraform plan/apply`.  If a remote Terraform module is used, this step can't happen.
-# TODO: switch to using Docker image based Lambdas that would not require the dependency install step.
 terraform {
   source = "../../../aws//app"
 }
 
 dependencies {
-  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../sns"]
+  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../sns", "../cognito"]
 }
 
 dependency "dynamodb" {
@@ -19,6 +16,7 @@ dependency "dynamodb" {
     dynamodb_vault_arn            = ""
     dynamodb_vault_table_name     = ""
     dynamodb_audit_logs_arn       = ""
+    dynamodb_audit_logs_table_name = ""
   }
 }
 
@@ -58,7 +56,7 @@ dependency "network" {
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    private_subnet_ids    = [""]
+    private_subnet_ids = [""]
   }
 }
 
@@ -89,10 +87,14 @@ dependency "sqs" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_with_state           = true
   mock_outputs = {
-    sqs_reliability_queue_arn          = "" 
-    sqs_reliability_queue_id           = ""
-    sqs_reprocess_submission_queue_arn = ""
-    sqs_reliability_dead_letter_queue_id           = ""
+    sqs_reliability_queue_arn            = ""
+    sqs_reliability_queue_id             = ""
+    sqs_reprocess_submission_queue_arn   = ""
+    sqs_reliability_dead_letter_queue_id = ""
+    sqs_audit_log_queue_arn              = ""
+    sqs_audit_log_queue_id               = ""
+    sqs_audit_log_deadletter_queue_arn   = ""
+    sqs_reprocess_submission_queue_id    = ""
   }
 }
 
@@ -105,6 +107,18 @@ dependency "sns" {
     sns_topic_alert_critical_arn = ""
     sns_topic_alert_warning_arn  = ""
     sns_topic_alert_ok_arn       = ""
+  }
+}
+
+dependency "cognito" {
+  config_path = "../cognito"
+
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_with_state           = true
+  mock_outputs = {
+    cognito_endpoint_url  = ""
+    cognito_client_id     = ""
+    cognito_user_pool_arn = ""
   }
 }
 
@@ -126,6 +140,8 @@ inputs = {
   dynamodb_relability_queue_arn = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
   dynamodb_vault_arn            = dependency.dynamodb.outputs.dynamodb_vault_arn
   dynamodb_vault_table_name     = dependency.dynamodb.outputs.dynamodb_vault_table_name
+  dynamodb_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
+  dynamodb_audit_logs_table_name = dependency.dynamodb.outputs.dynamodb_audit_logs_table_name
 
   ecr_repository_url = dependency.ecr.outputs.ecr_repository_url
 
@@ -135,7 +151,7 @@ inputs = {
   lb_https_listener_arn  = dependency.load_balancer.outputs.lb_https_listener_arn
   lb_target_group_1_arn  = dependency.load_balancer.outputs.lb_target_group_1_arn
   lb_target_group_1_name = dependency.load_balancer.outputs.lb_target_group_1_name
-  lb_target_group_2_name = dependency.load_balancer.outputs.lb_target_group_2_name 
+  lb_target_group_2_name = dependency.load_balancer.outputs.lb_target_group_2_name
 
   ecs_security_group_id    = dependency.network.outputs.ecs_security_group_id
   egress_security_group_id = dependency.network.outputs.egress_security_group_id
@@ -143,19 +159,28 @@ inputs = {
 
   redis_url = dependency.redis.outputs.redis_url
 
-  rds_cluster_arn            = dependency.rds.outputs.rds_cluster_arn
-  rds_db_name                = dependency.rds.outputs.rds_db_name
-  database_secret_arn        = dependency.rds.outputs.database_secret_arn
-  database_url_secret_arn    = dependency.rds.outputs.database_url_secret_arn
+  rds_cluster_arn         = dependency.rds.outputs.rds_cluster_arn
+  rds_db_name             = dependency.rds.outputs.rds_db_name
+  database_secret_arn     = dependency.rds.outputs.database_secret_arn
+  database_url_secret_arn = dependency.rds.outputs.database_url_secret_arn
 
-  sqs_reliability_queue_arn          = dependency.sqs.outputs.sqs_reliability_queue_arn 
-  sqs_reliability_queue_id           = dependency.sqs.outputs.sqs_reliability_queue_id
-  sqs_reprocess_submission_queue_arn = dependency.sqs.outputs.sqs_reprocess_submission_queue_arn
-  sqs_reliability_           = dependency.sqs.outputs.sqs_reliability_dead_letter_queue_id
+  sqs_reliability_queue_arn            = dependency.sqs.outputs.sqs_reliability_queue_arn
+  sqs_reliability_queue_id             = dependency.sqs.outputs.sqs_reliability_queue_id
+  sqs_reprocess_submission_queue_arn   = dependency.sqs.outputs.sqs_reprocess_submission_queue_arn
+  sqs_reliability_dead_letter_queue_id = dependency.sqs.outputs.sqs_reliability_dead_letter_queue_id
+  sqs_audit_log_queue_arn              = dependency.sqs.outputs.sqs_audit_log_queue_arn
+  sqs_audit_log_queue_id               = dependency.sqs.outputs.sqs_audit_log_queue_id
+  sqs_audit_log_deadletter_queue_arn   = dependency.sqs.outputs.sqs_audit_log_deadletter_queue_arn
+  sqs_reprocess_submission_queue_id    = dependency.sqs.outputs.sqs_reprocess_submission_queue_id
 
   sns_topic_alert_critical_arn = dependency.sns.outputs.sns_topic_alert_critical_arn
   sns_topic_alert_warning_arn  = dependency.sns.outputs.sns_topic_alert_warning_arn
   sns_topic_alert_ok_arn       = dependency.sns.outputs.sns_topic_alert_ok_arn
+
+  cognito_endpoint_url  = dependency.cognito.outputs.cognito_endpoint_url
+  cognito_client_id     = dependency.cognito.outputs.cognito_client_id
+  cognito_user_pool_arn = dependency.cognito.outputs.cognito_user_pool_arn
+
 }
 
 include {
