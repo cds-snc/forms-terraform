@@ -1,22 +1,16 @@
 #
 # Load testing
 #
-data "archive_file" "load_testing" {
-  type        = "zip"
-  source_dir  = "lambda/load_testing/"
-  output_path = "/tmp/load_testing.zip"
-}
+
 
 resource "aws_lambda_function" "load_testing" {
-  filename         = "/tmp/load_testing.zip"
+  image_uri        = aws_ecr_repository.load_test_repository.repository_url
   function_name    = "LoadTesting"
   role             = aws_iam_role.load_test_lambda.arn
-  handler          = "lambda_locust.handler"
   timeout          = 300
   memory_size      = 200
-  source_code_hash = data.archive_file.load_testing.output_base64sha256
+  package_type     = "Image"
 
-  runtime     = "python3.8"
   description = "A function that runs a locust load test"
 
   environment {

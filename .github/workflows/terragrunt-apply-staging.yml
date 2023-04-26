@@ -19,6 +19,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
   TERRAFORM_VERSION: 1.4.2
   TERRAGRUNT_VERSION: 0.35.6
+  ECR_REPOSITORY: load_test
   TF_INPUT: false
   TF_VAR_ecs_secret_token_secret: ${{ secrets.STAGING_TOKEN_SECRET }}
   TF_VAR_google_client_id: ${{ secrets.STAGING_GOOGLE_CLIENT_ID}}
@@ -192,11 +193,40 @@ jobs:
         working-directory: env/cloud/alarms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Install Lambda load_testing deps
+      - name: Build Load Testing Lambda Container
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: aws/load_testing/lambda
+        run: docker build -t load_testing_lambda:latest .
+
+      - name: Configure Staging AWS credentials
+        id: aws-form-viewer
+        uses: aws-actions/configure-aws-credentials@31bd3ae2db62cebd1f7f32dfb55b31145fee0b40
+        with:
+          aws-access-key-id: $AWS_ACCESS_KEY_ID
+          aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
+          aws-region: ca-central-1
+
+      - name: Login to Staging Amazon ECR
+        id: login-ecr-staging
+        uses: aws-actions/amazon-ecr-login@68a8d266c7934a50d8dc78f37da40be57a98117a
+
+      - name: Tag Images for Staging
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr-staging.outputs.registry }}
         run: |
-          sudo apt-get update && sudo apt-get install -y python3-testresources
-          ./aws/load_testing/lambda/deps.sh install
+          docker tag base $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
+          docker tag base $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: Push containers to Staging Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr-staging.outputs.registry }}
+        run: |
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+
+      - name: Logout of Staging Amazon ECR
+        if: always()
+        run: docker logout ${{ steps.login-ecr-staging.outputs.registry }}
 
       - name: Terragrunt apply load_testing
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
