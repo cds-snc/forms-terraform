@@ -142,7 +142,7 @@ jobs:
       - name: Terragrunt plan load_balancer
         uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
         with:
-          directory: "env/production/load_balancer"
+          directory: "env/cloud/load_balancer"
           comment-delete: "true"
           comment-title: "Production: load_balancer"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
