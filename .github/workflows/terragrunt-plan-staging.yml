@@ -265,11 +265,10 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Install Lambda load_testing deps
+      - name: Build Load Testing Lambda Container
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        run: |
-          sudo apt-get update && sudo apt-get install -y python3-testresources
-          ./aws/load_testing/lambda/deps.sh install
+        working-directory: aws/load_testing/lambda
+        run: docker build -t load_testing_lambda:latest .
 
       - name: Terragrunt plan load_testing
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
@@ -280,7 +279,3 @@ jobs:
           comment-title: "Staging: load_testing"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
-
-      - name: Remove Lambda load_testing deps
-        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/load_testing/lambda/deps.sh delete
