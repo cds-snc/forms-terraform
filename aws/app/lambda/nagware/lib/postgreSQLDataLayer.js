@@ -3,7 +3,7 @@ const { Client } = require("pg");
 
 async function getFormNameAndOwnerEmailAddress(formID) {
   try {
-    const { SQL, parameters } = createSQLString(formResponse.formID);
+    const { SQL, parameters } = createSQLString(formID);
     const requestFornNameAndOwnerEmailAddress = process.env.AWS_SAM_LOCAL ? requestSAM : requestRDS;
     const formNameAndOwnerEmailAddress = await requestFornNameAndOwnerEmailAddress(SQL, parameters);
 
@@ -41,8 +41,15 @@ const createSQLString = (formID) => {
 
 const parseQueryResponse = (records) => {
   if (records.length === 1) {
-    const name = records[0].name !== "" ? records[0].name : `${records[0].jsonConfig.titleEn} - ${records[0].jsonConfig.titleFr}`;
-    return { name, emailAddress: records[0].email };
+    const record = records[0];
+    if (!process.env.AWS_SAM_LOCAL) {
+      const jsonConfig = JSON.parse(record[2].stringValue.trim(1, -1)) || undefined;
+      const name = record[1].stringValue !== "" ? record[1].stringValue : `${jsonConfig.titleEn} - ${jsonConfig.titleFr}`;
+      return { name, emailAddress: record[0].stringValue };
+    } else {
+      const name = record.name !== "" ? record.name : `${record.jsonConfig.titleEn} - ${record.jsonConfig.titleFr}`;
+      return { name, emailAddress: record.email };
+    }
   } else {
     return null;
   }

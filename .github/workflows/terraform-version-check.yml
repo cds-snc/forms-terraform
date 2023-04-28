@@ -23,8 +23,8 @@ jobs:
         run: |
           TERRAFORM_LATEST="$(curl https://api.github.com/repos/hashicorp/terraform/releases/latest | jq --raw-output '.tag_name' | cut -c 2-)"
           TERRAGRUNT_LATEST="$(curl https://api.github.com/repos/gruntwork-io/terragrunt/releases/latest | jq --raw-output '.tag_name' | cut -c 2-)"
-          echo "::set-output name=terraform::${TERRAFORM_LATEST}"
-          echo "::set-output name=terragrunt::${TERRAGRUNT_LATEST}"
+          echo "terraform=${TERRAFORM_LATEST}" >> $GITHUB_OUTPUT
+          echo "terragrunt=${TERRAGRUNT_LATEST}" >> $GITHUB_OUTPUT
 
       - name: Get used versions
         id: used
@@ -32,8 +32,8 @@ jobs:
           pip install yq
           TERRAFORM_USED="$(yq -r .env.TERRAFORM_VERSION .github/workflows/terragrunt-apply-${{ env.ENV }}.yml)"
           TERRAGRUNT_USED="$(yq -r .env.TERRAGRUNT_VERSION .github/workflows/terragrunt-apply-${{ env.ENV }}.yml)"
-          echo "::set-output name=terraform::${TERRAFORM_USED}"
-          echo "::set-output name=terragrunt::${TERRAGRUNT_USED}"
+          echo "terraform=${TERRAFORM_USED}" >> $GITHUB_OUTPUT
+          echo "terragrunt=${TERRAGRUNT_USED}" >> $GITHUB_OUTPUT
 
       - name: Delete previous comments
         uses: actions/github-script@10b53a9ec6c222bb4ce97aa6bd2b5f739696b536 # v4.2.0
