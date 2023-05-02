@@ -57,7 +57,7 @@ resource "aws_ecr_repository" "load_test_repository" {
 
 resource "aws_ecr_lifecycle_policy" "load_test_policy" {
   count      = var.env == "staging" ? 1 : 0
-  repository = aws_ecr_repository.load_test_repository.name[0]
+  repository = aws_ecr_repository.load_test_repository[0].name
   policy = jsonencode({
     rules = [{
       rulePriority = 1
