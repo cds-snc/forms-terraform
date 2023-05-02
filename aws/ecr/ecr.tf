@@ -15,7 +15,7 @@ resource "aws_ecr_repository" "viewer_repository" {
   }
 }
 
-resource "aws_ecr_lifecycle_policy" "policy" {
+resource "aws_ecr_lifecycle_policy" "form_viewer_policy" {
   repository = aws_ecr_repository.viewer_repository.name
   policy = jsonencode({
     rules = [{
@@ -54,7 +54,7 @@ resource "aws_ecr_repository" "load_test_repository" {
   }
 }
 
-resource "aws_ecr_lifecycle_policy" "policy" {
+resource "aws_ecr_lifecycle_policy" "load_test_policy" {
   repository = aws_ecr_repository.load_test_repository.name
   policy = jsonencode({
     rules = [{
