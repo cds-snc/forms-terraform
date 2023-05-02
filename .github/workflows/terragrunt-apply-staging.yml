@@ -14,12 +14,8 @@ env:
   APP_ENV: "staging"
   APP_DOMAIN: ${{ vars.STAGING_APP_DOMAIN }}
   AWS_ACCOUNT_ID: ${{ vars.STAGING_AWS_ACCOUNT_ID }}
-  AWS_REGION: ca-central-1
-  AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
   TERRAFORM_VERSION: 1.4.2
   TERRAGRUNT_VERSION: 0.35.6
-  ECR_REPOSITORY: load_test
   TF_INPUT: false
   TF_VAR_ecs_secret_token_secret: ${{ secrets.STAGING_TOKEN_SECRET }}
   TF_VAR_google_client_id: ${{ secrets.STAGING_GOOGLE_CLIENT_ID}}
@@ -202,8 +198,8 @@ jobs:
         id: aws-form-viewer
         uses: aws-actions/configure-aws-credentials@31bd3ae2db62cebd1f7f32dfb55b31145fee0b40
         with:
-          aws-access-key-id: $AWS_ACCESS_KEY_ID
-          aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
+          aws-access-key-id: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
           aws-region: ca-central-1
 
       - name: Login to Staging Amazon ECR
@@ -220,9 +216,9 @@ jobs:
       - name: Push containers to Staging Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr-staging.outputs.registry }}
+          ECR_REPOSITORY: load_test
         run: |
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
 
       - name: Logout of Staging Amazon ECR
         if: always()
