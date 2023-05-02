@@ -15,10 +15,11 @@ exports.handler = async (event) => {
       const notify = new NotifyClient("https://api.notification.canada.ca", NOTIFY_API_KEY);
       await notify.sendEmail(TEMPLATE_ID, userEmail, {
         personalisation: {
-          passwordReset: event.triggerSource === "CustomEmailSender_ForgotPassword",
-          accountVerification: event.triggerSource === "CustomEmailSender_SignUp",
-          resendCode: event.triggerSource === "CustomEmailSender_ResendCode",
-          code: plainTextCode,
+          passwordReset: false,
+          accountVerification: false,
+          resendCode: false,
+          mfa: true,
+          code: verificationCode,
         },
       });
     } catch (err) {
