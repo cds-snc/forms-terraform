@@ -41,7 +41,7 @@ resource "aws_ecr_lifecycle_policy" "form_viewer_policy" {
 # Holds the Load Test image used by the Lambda
 #
 resource "aws_ecr_repository" "load_test_repository" {
-  count = var.env == "staging" ? 1 :0
+  count                = var.env == "staging" ? 1 : 0
   name                 = "load_test"
   image_tag_mutability = "MUTABLE"
 
@@ -56,7 +56,7 @@ resource "aws_ecr_repository" "load_test_repository" {
 }
 
 resource "aws_ecr_lifecycle_policy" "load_test_policy" {
-  count = var.env == "staging" ? 1 :0
+  count      = var.env == "staging" ? 1 : 0
   repository = aws_ecr_repository.load_test_repository.name
   policy = jsonencode({
     rules = [{
