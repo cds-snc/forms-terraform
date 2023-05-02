@@ -38,7 +38,7 @@ variable "ecs_form_viewer_name" {
   type        = string
 }
 
-variable "ecr_repository_url" {
+variable "ecr_repository_url_form_viewer" {
   description = "ECR repository URL for the ECS task's Docker image"
   type        = string
 }
