@@ -57,7 +57,7 @@ jobs:
           chmod +x bin/*
           echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
 
-      - uses: cds-snc/paths-filter@87bb78bc509076907db04d7f616bd2533af0e7fe # tag=v2.10.3
+      - uses: cds-snc/paths-filter@b316143212d841aed668b7b29240c719d603a9b9 # tag=v2.10.4
         id: filter
         with:
           filters: |
