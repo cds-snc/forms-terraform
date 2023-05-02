@@ -1,13 +1,3 @@
-#In this script, i first create a backup/snapshot of the current form db V1 database using the aws_rds_cluster_snapshot resource. 
-#we then create a new V2 database using the aws_rds_cluster resource, specifying the engine, engine mode, and other configuration options.
-
-#Next, we restore the backup to the V2 database using the aws_rds_cluster_instance_snapshot and aws_rds_cluster_instance resources. 
-#We also update the application to use the new V2 database.
-
-#Finally, we destroy the V1/old database using the aws_rds_cluster resource and setting 
-#the skip_final_snapshot parameter to true, which will prevent a final snapshot from being created and save us from incurring additional charges.
-# 
-
 # Configure the AWS provider
 provider "aws" {
   region = "ca-central-1"
