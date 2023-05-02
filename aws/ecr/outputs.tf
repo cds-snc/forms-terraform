@@ -1,4 +1,4 @@
-output "ecr_repository_url_form_viewer'" {
+output "ecr_repository_url_form_viewer" {
   description = "URL of the Form viewer ECR"
   value       = aws_ecr_repository.viewer_repository.repository_url
 }
