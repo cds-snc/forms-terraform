@@ -4,7 +4,7 @@
 
 
 resource "aws_lambda_function" "load_testing" {
-  image_uri     = aws_ecr_repository.load_test_repository.repository_url
+  image_uri     = var.ecr_repository_url_load_test
   function_name = "LoadTesting"
   role          = aws_iam_role.load_test_lambda.arn
   timeout       = 300
