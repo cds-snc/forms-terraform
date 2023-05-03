@@ -216,6 +216,7 @@ jobs:
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
         env:
           ECR_REGISTRY: ${{ steps.login-ecr-staging.outputs.registry }}
+          ECR_REPOSITORY: load_test
         run: |
           docker tag load_testing_lambda $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
