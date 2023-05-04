@@ -208,7 +208,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
   }
-/*
+  /*
   rule {
     name     = "BlockInvalidURLPath"
     priority = 3
