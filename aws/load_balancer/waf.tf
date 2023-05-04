@@ -277,7 +277,7 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
   scope       = "REGIONAL"
 
   regular_expression {
-    regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|myforms|not-supported|terms-avis|index|404|js-disabled|form-builder|sla|unlock-publishing|changelog|static|_next|img|favicon\\.ico)(?:\\/[\\w-]+)*)?(?:\\/.*)?$"
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|myforms|not-supported|terms-of-use|terms-and-conditions|404|js-disabled|form-builder|sla|unlock-publishing|changelog|static|_next|img|favicon\\.ico)(?:\\/[\\w-]+)*)?(?:\\/.*)?$"
   }
 
 }
