@@ -431,7 +431,7 @@ resource "aws_lambda_function" "audit_logs" {
 
   source_code_hash = data.archive_file.audit_logs_main.output_base64sha256
 
-  runtime = "nodejs14.x"
+  runtime = "nodejs18.x"
   layers = [
     aws_lambda_layer_version.audit_logs_lib.arn
   ]
@@ -458,7 +458,7 @@ resource "aws_lambda_layer_version" "audit_logs_lib" {
   filename            = "/tmp/audit_logs_lib.zip"
   layer_name          = "audit_logs_node_packages"
   source_code_hash    = data.archive_file.audit_logs_lib.output_base64sha256
-  compatible_runtimes = ["nodejs12.x", "nodejs14.x"]
+  compatible_runtimes = ["nodejs18.x"]
 }
 
 resource "aws_lambda_event_source_mapping" "audit_logs" {
