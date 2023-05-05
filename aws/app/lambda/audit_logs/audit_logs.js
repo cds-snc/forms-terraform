@@ -1,6 +1,6 @@
-const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
-const { DynamoDBDocumentClient, BatchWriteCommand } = require("@aws-sdk/lib-dynamodb");
-const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
+import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 
 const SNS_ERROR_TOPIC_ARN = process.env.SNS_ERROR_TOPIC_ARN;
 
@@ -32,7 +32,7 @@ async function reportErrorToSlack(errorMessage) {
   }
 }
 
-exports.handler = async function (event) {
+export async function handler(event) {
   /* 
   LogEvent contains:
   {
@@ -81,6 +81,8 @@ exports.handler = async function (event) {
         },
       })
     );
+    console.log("AuditLogs");
+    console.log(AuditLogs);
 
     if (typeof AuditLogs !== "undefined") {
       const unprocessedIDs = AuditLogs.map(({ PutItem: { UserID, Event, TimeStamp } }, index) => {
@@ -94,11 +96,14 @@ exports.handler = async function (event) {
         if (!unprocessItem)
           throw new Error(
             `Unprocessed LogEvent could not be found. ${JSON.stringify(
-              UnprocessedItems.AuditLogs[index]
+              AuditLogs[index]
             )} not found.`
           );
         return unprocessItem.messageId;
       });
+      console.warn(`Failed to process ${unprocessedIDs.length} log events.`);
+      console.warn(unprocessedIDs);
+
       return {
         batchItemFailures: unprocessedIDs.map((id) => ({ itemIdentifier: id })),
       };
@@ -116,4 +121,4 @@ exports.handler = async function (event) {
       batchItemFailures: event.Records.map((record) => ({ itemIdentifier: record.messageId })),
     };
   }
-};
+}
