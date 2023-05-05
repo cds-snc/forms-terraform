@@ -517,6 +517,7 @@ resource "aws_lambda_function" "nagware" {
   function_name = "Nagware"
   role          = aws_iam_role.lambda.arn
   handler       = "nagware.handler"
+  timeout       = 300
 
   source_code_hash = data.archive_file.nagware_main.output_base64sha256
 
