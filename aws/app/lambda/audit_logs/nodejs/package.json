@@ -2,6 +2,7 @@
   "name": "audit_logs",
   "version": "1.0.0",
   "main": "audit_logs.js",
+  "type": "module",
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "3.300.0",
