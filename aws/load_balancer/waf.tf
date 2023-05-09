@@ -208,7 +208,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
   }
-
+  /*
   rule {
     name     = "BlockInvalidURLPath"
     priority = 3
@@ -245,7 +245,10 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       sampled_requests_enabled   = false
     }
   }
+  */
 }
+
+
 
 #
 # WAF ACL association with ALB
@@ -277,7 +280,7 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
   scope       = "REGIONAL"
 
   regular_expression {
-    regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|myforms|not-supported|terms-avis|index|404|js-disabled|form-builder|sla|unlock-publishing|changelog|static|_next|img|favicon\\.ico)(?:\\/[\\w-]+)*)?(?:\\/.*)?$"
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|myforms|not-supported|terms-of-use|404|js-disabled|form-builder|sla|unlock-publishing|changelog|static|_next|img|favicon\\.ico)(?:\\/[\\w-]+)*)?(?:\\/.*)?$"
   }
 
 }

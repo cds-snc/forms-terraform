@@ -39,7 +39,7 @@ Pre-requisites:
 
 ### Starting LocalStack and E2E testing from devcontainers
 
-For instrutions on how to run without using dev containers please skip to the next section.
+For instructions on how to run without using dev containers please skip to the next section.
 
 1. forms-terraform:
 
