@@ -1,6 +1,6 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
-import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBDocumentClient, BatchWriteCommand } = require("@aws-sdk/lib-dynamodb");
+const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
 
 const SNS_ERROR_TOPIC_ARN = process.env.SNS_ERROR_TOPIC_ARN;
 
@@ -32,7 +32,7 @@ async function reportErrorToSlack(errorMessage) {
   }
 }
 
-export async function handler(event) {
+exports.handler = async function (event) {
   /* 
   LogEvent contains:
   {
@@ -121,4 +121,4 @@ export async function handler(event) {
       batchItemFailures: event.Records.map((record) => ({ itemIdentifier: record.messageId })),
     };
   }
-}
+};
