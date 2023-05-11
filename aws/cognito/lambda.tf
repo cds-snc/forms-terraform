@@ -124,7 +124,7 @@ resource "aws_lambda_function" "create_auth_challenge" {
 }
 
 resource "aws_lambda_layer_version" "create_auth_challenge_nodejs" {
-  filename            = "/tmp/verify_create_auth_challenge_nodejs.zip"
+  filename            = "/tmp/create_auth_challenge_nodejs.zip"
   layer_name          = "create_auth_challenge_node_packages"
   source_code_hash    = data.archive_file.create_auth_challenge_nodejs.output_base64sha256
   compatible_runtimes = ["nodejs16.x"]
