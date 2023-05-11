@@ -23,6 +23,9 @@ resource "aws_cognito_user_pool" "forms" {
       lambda_arn     = aws_lambda_function.cognito_email_sender.arn
       lambda_version = "V1_0"
     }
+    define_auth_challenge          = aws_lambda_function.define_auth_challenge.arn
+    create_auth_challenge          = aws_lambda_function.create_auth_challenge.arn
+    verify_auth_challenge_response = aws_lambda_function.verify_auth_challenge.arn
   }
 
 }
@@ -36,7 +39,7 @@ resource "aws_cognito_user_pool_client" "forms" {
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
   supported_identity_providers         = ["COGNITO"]
-  explicit_auth_flows                  = ["ALLOW_ADMIN_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
+  explicit_auth_flows                  = ["ALLOW_ADMIN_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_CUSTOM_AUTH"]
   generate_secret                      = false
 }
 
