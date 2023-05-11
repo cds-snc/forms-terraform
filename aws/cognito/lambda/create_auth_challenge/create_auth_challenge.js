@@ -37,7 +37,6 @@ exports.handler = async (event) => {
   }
 
   //add to privateChallengeParameters. This will be used by verify auth lambda.
-  console.log(verificationCode);
   event.response.privateChallengeParameters = {
     verificationCode: verificationCode,
   };
