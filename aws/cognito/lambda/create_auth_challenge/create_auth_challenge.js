@@ -1,6 +1,5 @@
 const { NotifyClient } = require("notifications-node-client");
 const crypto = require("crypto");
-const aws = require("aws-sdk");
 const TEMPLATE_ID = process.env.TEMPLATE_ID;
 const NOTIFY_API_KEY = process.env.NOTIFY_API_KEY;
 
@@ -9,10 +8,13 @@ exports.handler = async (event) => {
   //Only called once after SRP_A and PASSWORD_VERIFIER challenges. Hence session.length == 2
   if (event.request.session.length === 2) {
     try {
-      verificationCode = crypto.randomBytes(3).toString("hex");
+      // Temporary - for testing purposes
+      // Will create more robust code generation in the future
+      verificationCode = crypto.randomBytes(5).toString("hex");
       // attempt to send the code to the user through Notify
       // setup the notify client
       const notify = new NotifyClient("https://api.notification.canada.ca", NOTIFY_API_KEY);
+      const userEmail = event.request.userAttributes.email;
       await notify.sendEmail(TEMPLATE_ID, userEmail, {
         personalisation: {
           passwordReset: false,

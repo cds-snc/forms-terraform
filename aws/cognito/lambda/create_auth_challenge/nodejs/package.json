@@ -1,7 +1,7 @@
 {
-  "name": "cognito_email_sender",
+  "name": "cognito_create_auth_challenge",
   "version": "1.0.0",
-  "main": "cognito_email_sender.js",
+  "main": "cognito_create_auth_challenge.js",
   "license": "MIT",
   "dependencies": {
     "@aws-crypto/client-node": "^3.1.1",
