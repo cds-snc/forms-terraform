@@ -23,8 +23,8 @@ resource "aws_cognito_user_pool" "forms" {
       lambda_arn     = aws_lambda_function.cognito_email_sender.arn
       lambda_version = "V1_0"
     }
-    define_auth_challenge = aws_lambda_function.define_auth_challenge.arn
-    create_auth_challenge = aws_lambda_function.create_auth_challenge.arn
+    define_auth_challenge          = aws_lambda_function.define_auth_challenge.arn
+    create_auth_challenge          = aws_lambda_function.create_auth_challenge.arn
     verify_auth_challenge_response = aws_lambda_function.verify_auth_challenge.arn
   }
 
