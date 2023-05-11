@@ -63,7 +63,7 @@ data "archive_file" "define_auth_challenge_main" {
   output_path = "/tmp/define_auth_challenge_main.zip"
 }
 
-resource "aws_lambda_function" "cognito_define_auth_challenge" {
+resource "aws_lambda_function" "define_auth_challenge" {
   filename      = "/tmp/define_auth_challenge_main.zip"
   function_name = "Cognito_Define_Auth_Challenge"
   role          = aws_iam_role.cognito_lambda.arn
@@ -141,7 +141,7 @@ data "archive_file" "verify_auth_challenge_main" {
   output_path = "/tmp/verify_auth_challenge_main.zip"
 }
 
-resource "aws_lambda_function" "cognito_verify_auth_challenge" {
+resource "aws_lambda_function" "verify_auth_challenge" {
   filename      = "/tmp/verify_auth_challenge_main.zip"
   function_name = "Cognito_Verify_Auth_Challenge"
   role          = aws_iam_role.cognito_lambda.arn
