@@ -57,7 +57,7 @@ resource "aws_lambda_layer_version" "cognito_email_sender_nodejs" {
 # Define Auth Challenge
 #################################
 
-data "archive_file" "cognito_define_auth_challenge_main" {
+data "archive_file" "define_auth_challenge_main" {
   type        = "zip"
   source_file = "lambda/define_auth_challenge/define_auth_challenge.js"
   output_path = "/tmp/define_auth_challenge_main.zip"
@@ -67,10 +67,10 @@ resource "aws_lambda_function" "cognito_define_auth_challenge" {
   filename      = "/tmp/define_auth_challenge_main.zip"
   function_name = "Cognito_Define_Auth_Challenge"
   role          = aws_iam_role.cognito_lambda.arn
-  handler       = "cognito_define_auth_challenge.handler"
+  handler       = "define_auth_challenge.handler"
   timeout       = 60
 
-  source_code_hash = data.archive_file.cognito_define_auth_challenge_main.output_base64sha256
+  source_code_hash = data.archive_file.define_auth_challenge_main.output_base64sha256
 
   runtime = "nodejs16.x"
 
@@ -88,30 +88,30 @@ resource "aws_lambda_function" "cognito_define_auth_challenge" {
 # Create Auth Challenge
 #################################
 
-data "archive_file" "cognito_create_auth_challenge_main" {
+data "archive_file" "create_auth_challenge_main" {
   type        = "zip"
   source_file = "lambda/create_auth_challenge/create_auth_challenge.js"
   output_path = "/tmp/create_auth_challenge_main.zip"
 }
 
-data "archive_file" "cognito_create_auth_challenge_nodejs" {
+data "archive_file" "create_auth_challenge_nodejs" {
   type        = "zip"
-  source_dir  = "lambda/cognito_create_auth_challenge"
-  excludes    = ["cognito_create_auth_challenge.js"]
-  output_path = "/tmp/cognito_create_auth_challenge_nodejs.zip"
+  source_dir  = "lambda/create_auth_challenge"
+  excludes    = ["create_auth_challenge.js"]
+  output_path = "/tmp/create_auth_challenge_nodejs.zip"
 }
 
-resource "aws_lambda_function" "cognito_create_auth_challenge" {
+resource "aws_lambda_function" "create_auth_challenge" {
   filename      = "/tmp/create_auth_challenge_main.zip"
   function_name = "Cognito_Create_Auth_Challenge"
   role          = aws_iam_role.cognito_lambda.arn
-  handler       = "cognito_create_auth_challenge.handler"
+  handler       = "create_auth_challenge.handler"
   timeout       = 60
 
-  source_code_hash = data.archive_file.cognito_create_auth_challenge_main.output_base64sha256
+  source_code_hash = data.archive_file.create_auth_challenge_main.output_base64sha256
 
   runtime = "nodejs16.x"
-  layers  = [aws_lambda_layer_version.cognito_create_auth_challenge_nodejs.arn]
+  layers  = [aws_lambda_layer_version.create_auth_challenge_nodejs.arn]
 
   tracing_config {
     mode = "PassThrough"
@@ -123,10 +123,10 @@ resource "aws_lambda_function" "cognito_create_auth_challenge" {
   }
 }
 
-resource "aws_lambda_layer_version" "cognito_create_auth_challenge_nodejs" {
-  filename            = "/tmp/cognito_verify_create_auth_challenge_nodejs.zip"
-  layer_name          = "cognito_create_auth_challenge_node_packages"
-  source_code_hash    = data.archive_file.cognito_create_auth_challenge_nodejs.output_base64sha256
+resource "aws_lambda_layer_version" "create_auth_challenge_nodejs" {
+  filename            = "/tmp/verify_create_auth_challenge_nodejs.zip"
+  layer_name          = "create_auth_challenge_node_packages"
+  source_code_hash    = data.archive_file.create_auth_challenge_nodejs.output_base64sha256
   compatible_runtimes = ["nodejs16.x"]
 }
 
@@ -135,7 +135,7 @@ resource "aws_lambda_layer_version" "cognito_create_auth_challenge_nodejs" {
 # Verify Auth Challenge
 #################################
 
-data "archive_file" "cognito_verify_auth_challenge_main" {
+data "archive_file" "verify_auth_challenge_main" {
   type        = "zip"
   source_file = "lambda/verify_auth_challenge/verify_auth_challenge.js"
   output_path = "/tmp/verify_auth_challenge_main.zip"
@@ -145,10 +145,10 @@ resource "aws_lambda_function" "cognito_verify_auth_challenge" {
   filename      = "/tmp/verify_auth_challenge_main.zip"
   function_name = "Cognito_Verify_Auth_Challenge"
   role          = aws_iam_role.cognito_lambda.arn
-  handler       = "cognito_verify_auth_challenge.handler"
+  handler       = "verify_auth_challenge.handler"
   timeout       = 60
 
-  source_code_hash = data.archive_file.cognito_verify_auth_challenge_main.output_base64sha256
+  source_code_hash = data.archive_file.verify_auth_challenge_main.output_base64sha256
 
   runtime = "nodejs16.x"
 
