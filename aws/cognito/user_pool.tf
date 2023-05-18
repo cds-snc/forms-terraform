@@ -23,9 +23,6 @@ resource "aws_cognito_user_pool" "forms" {
       lambda_arn     = aws_lambda_function.cognito_email_sender.arn
       lambda_version = "V1_0"
     }
-    define_auth_challenge          = aws_lambda_function.define_auth_challenge.arn
-    create_auth_challenge          = aws_lambda_function.create_auth_challenge.arn
-    verify_auth_challenge_response = aws_lambda_function.verify_auth_challenge.arn
   }
 
 }
@@ -39,7 +36,7 @@ resource "aws_cognito_user_pool_client" "forms" {
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
   supported_identity_providers         = ["COGNITO"]
-  explicit_auth_flows                  = ["ALLOW_ADMIN_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_CUSTOM_AUTH"]
+  explicit_auth_flows                  = ["ALLOW_ADMIN_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
   generate_secret                      = false
 }
 
@@ -51,27 +48,6 @@ resource "aws_cognito_user_pool_domain" "forms" {
 resource "aws_lambda_permission" "allow_cognito_to_call_cognito_email_sender_lambda" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.cognito_email_sender.function_name
-  principal     = "cognito-idp.amazonaws.com"
-  source_arn    = aws_cognito_user_pool.forms.arn
-}
-
-resource "aws_lambda_permission" "allow_cognito_to_call_define_auth_challenge_lambda" {
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.define_auth_challenge.function_name
-  principal     = "cognito-idp.amazonaws.com"
-  source_arn    = aws_cognito_user_pool.forms.arn
-}
-
-resource "aws_lambda_permission" "allow_cognito_to_call_create_auth_challenge_lambda" {
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.create_auth_challenge.function_name
-  principal     = "cognito-idp.amazonaws.com"
-  source_arn    = aws_cognito_user_pool.forms.arn
-}
-
-resource "aws_lambda_permission" "allow_cognito_to_call_verify_auth_challenge_lambda" {
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.verify_auth_challenge.function_name
   principal     = "cognito-idp.amazonaws.com"
   source_arn    = aws_cognito_user_pool.forms.arn
 }
