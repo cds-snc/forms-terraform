@@ -47,6 +47,9 @@ exports.handler = async (event) => {
       await notify.sendEmail(TEMPLATE_ID, userEmail, {
         personalisation: {
           passwordReset: event.triggerSource === "CustomEmailSender_ForgotPassword",
+          // Keeping `accountVerification` and `resendCode` variables in case we need them in the future. They were removed when we implemented 2FA.
+          accountVerification: false,
+          resendCode: false,
           code: plainTextCode
         }
       });
