@@ -39,9 +39,7 @@ exports.handler = async (event) => {
     plainTextCode
     && userEmail
     && [
-      "CustomEmailSender_ForgotPassword",
-      "CustomEmailSender_ResendCode",
-      "CustomEmailSender_SignUp"
+      "CustomEmailSender_ForgotPassword"
     ].includes(event.triggerSource)
   ){
     // attempt to send the code to the user through Notify
@@ -49,8 +47,6 @@ exports.handler = async (event) => {
       await notify.sendEmail(TEMPLATE_ID, userEmail, {
         personalisation: {
           passwordReset: event.triggerSource === "CustomEmailSender_ForgotPassword",
-          accountVerification: event.triggerSource === "CustomEmailSender_SignUp",
-          resendCode: event.triggerSource === "CustomEmailSender_ResendCode",
           code: plainTextCode
         }
       });
