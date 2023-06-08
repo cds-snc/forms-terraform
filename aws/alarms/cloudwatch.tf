@@ -610,3 +610,36 @@ resource "aws_cloudwatch_metric_alarm" "cognito_signin_exceeded" {
     Terraform             = true
   }
 }
+
+resource "aws_cloudwatch_log_metric_filter" "twoFa_verification_exceeded" {
+  name           = "2FAVerificationExceeded"
+  pattern        = "\"2FA Lockout: Verification code attempts exceeded\""
+  log_group_name = var.ecs_cloudwatch_log_group_name
+
+  metric_transformation {
+    name          = "2FAVerificationExceeded"
+    namespace     = "forms"
+    value         = "1"
+    default_value = "0"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "twoFa_verification_exceeded" {
+  alarm_name          = "2FAVerificationExceeded"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = aws_cloudwatch_log_metric_filter.twoFa_verification_exceeded.metric_transformation[0].name
+  namespace           = aws_cloudwatch_log_metric_filter.twoFa_verification_exceeded.metric_transformation[0].namespace
+  period              = "60"
+  statistic           = "Sum"
+  threshold           = "10" # this could also be adjusted depending on what we think is a good threshold
+  treat_missing_data  = "notBreaching"
+  alarm_description   = "2FA - multiple failed verification attempts detected. User has been locked out (see audit logs)."
+
+  alarm_actions = [var.sns_topic_alert_warning_arn]
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
