@@ -7,6 +7,7 @@ printf "Configuring localstack components via terraform...\n"
 
 printf "Purging stale localstack related files\n"
 find $basedir/env/local -type d -name .terragrunt-cache -prune -exec rm -rf {} \;
+find $basedir/env/local -type f -name terraform.tfstate -prune -exec rm -rf {} \;
 rm -rf $basedir/.devcontainer/data/data
 
 printf "Setting up local KMS...\n"
