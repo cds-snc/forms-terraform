@@ -23,6 +23,11 @@ output "private_subnet_ids" {
   value       = aws_subnet.forms_private.*.id
 }
 
+output "privatelink_security_group_id" {
+  description = "Privatelink security group ID"
+  value       = aws_security_group.privatelink.id
+}
+
 output "rds_security_group_id" {
   description = "RDS database task security group ID"
   value       = aws_security_group.forms_database.id
