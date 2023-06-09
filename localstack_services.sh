@@ -8,7 +8,7 @@ export TF_VAR_email_address_support=""
 
 # Set proper terraform and terragrunt versions
 
-tgswitch 0.35.6
+tgswitch 0.46.3
 tfswitch 1.4.2
 
 # Usage:

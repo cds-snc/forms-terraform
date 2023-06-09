@@ -18,7 +18,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
   CONFTEST_VERSION: 0.27.0
   TERRAFORM_VERSION: 1.4.2
-  TERRAGRUNT_VERSION: 0.35.6
+  TERRAGRUNT_VERSION: 0.46.3
   TF_INPUT: false
   TF_VAR_ecs_secret_token_secret: ${{ secrets.STAGING_TOKEN_SECRET }}
   TF_VAR_google_client_id: ${{ secrets.STAGING_GOOGLE_CLIENT_ID}}
@@ -114,6 +114,9 @@ jobs:
             sqs:
               - 'aws/sqs/**'
               - 'env/cloud/sqs/**'
+            pr_review:
+              - 'aws/pr_review/**'
+              - 'env/cloud/pr_review/**'
 
       # No dependencies
       - name: Terragrunt plan ecr
@@ -277,5 +280,15 @@ jobs:
           directory: "env/cloud/load_testing"
           comment-delete: "true"
           comment-title: "Staging: load_testing"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan pr_review
+        if: ${{ steps.filter.outputs.pr_review == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        with:
+          directory: "env/cloud/pr_review"
+          comment-delete: "true"
+          comment-title: "Staging: pr_review"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
