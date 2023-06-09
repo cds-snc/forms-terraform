@@ -94,7 +94,7 @@ resource "aws_security_group_rule" "redis_lambda_client_ingress" {
   count                    = var.env == "staging" ? 1 : 0
   description              = "Security group rule for Forms Redis ingress"
   type                     = "ingress"
-  from_port                = 6479
+  from_port                = 6379
   to_port                  = 6379
   protocol                 = "tcp"
   security_group_id        = var.forms_redis_security_group_id
