@@ -35,7 +35,7 @@ resource "aws_lb_target_group" "form_viewer_1" {
   health_check {
     enabled             = true
     interval            = 10
-    path                = "/api/version"
+    path                = "/form-builder/edit"
     port                = 3000
     matcher             = "301,200"
     timeout             = 5
@@ -62,7 +62,7 @@ resource "aws_lb_target_group" "form_viewer_2" {
     enabled             = true
     interval            = 10
     port                = 3000
-    path                = "/api/version"
+    path                = "/form-builder/edit"
     matcher             = "301,200"
     timeout             = 5
     healthy_threshold   = 2
