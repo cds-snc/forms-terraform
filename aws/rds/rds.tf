@@ -19,6 +19,7 @@ resource "aws_rds_cluster" "forms" {
   cluster_identifier        = "${var.rds_name}-cluster"
   engine                    = "aurora-postgresql"
   engine_mode               = "serverless"
+  engine_version            = "13.9"
   enable_http_endpoint      = true
   database_name             = var.rds_db_name
   deletion_protection       = true
@@ -29,6 +30,7 @@ resource "aws_rds_cluster" "forms" {
   preferred_backup_window   = "07:00-09:00"
   db_subnet_group_name      = aws_db_subnet_group.forms.name
   storage_encrypted         = true
+  allow_major_version_upgrade = true
 
 
   scaling_configuration {
