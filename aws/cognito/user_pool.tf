@@ -25,6 +25,9 @@ resource "aws_cognito_user_pool" "forms" {
       lambda_version = "V1_0"
     }
   }
+  username_configuration {
+    case_sensitive = false
+  }
 
 }
 
