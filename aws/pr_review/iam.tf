@@ -24,7 +24,7 @@ data "aws_iam_policy_document" "forms_lambda_client" {
 data "aws_iam_policy_document" "forms_lambda_parameter_store" {
   statement {
     actions = ["ssm:GetParameters"]
-    effect = "Allow"
+    effect  = "Allow"
     resources = [
       "arn:aws:ssm:ca-central-1:687401027353:parameter/form-viewer/env"
     ]
