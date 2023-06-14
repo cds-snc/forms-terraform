@@ -13,7 +13,7 @@ dependency "app" {
   mock_outputs_merge_with_state           = true
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    lambda_submission_function_name          = ""
+    lambda_submission_function_name          = "Submission"
     ecs_iam_forms_secrets_manager_policy_arn = ""
     ecs_iam_forms_kms_policy_arn             = ""
     ecs_iam_forms_s3_policy_arn              = ""
