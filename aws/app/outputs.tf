@@ -8,6 +8,11 @@ output "lambda_reliability_log_group_name" {
   value       = "/aws/lambda/${aws_lambda_function.reliability.function_name}"
 }
 
+output "lambda_submission_function_name" {
+  description = "Submission lambda function name"
+  value       = aws_lambda_function.submission.function_name
+}
+
 output "ecs_cluster_name" {
   description = "ECS cluster name"
   value       = aws_ecs_cluster.forms.name
