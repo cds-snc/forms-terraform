@@ -20,7 +20,7 @@ Pre-requisites:
   1. `brew install warrensbox/tap/tfswitch`
   1. `tfswitch 1.4.2`
   1. `brew install warrensbox/tap/tgswitch`
-  1. `tgswitch 0.35.6`
+  1. `tgswitch 0.46.3`
 
 - Yarn: `brew install yarn`
 

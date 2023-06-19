@@ -13,11 +13,17 @@ services:
     command: sleep infinity
     environment:
       AWS_LOCALSTACK: "True"
-      TF_VAR_region: "ca-central-1"
       DEVCONTAINER: "True"
-
+      TF_VAR_cognito_client_id: ""
+      TF_VAR_cognito_endpoint_url: ""
+      TF_VAR_cognito_user_pool_arn: ""
+      TF_VAR_email_address_contact_us: ""
+      TF_VAR_email_address_support: ""
+      TF_VAR_localstack_host: "host.docker.internal"
+      TF_VAR_region: "ca-central-1"
+      
   localstack:
-    image: localstack/localstack@sha256:cdee45345524120eeacdf494de1de645921148f1850159ce94fe1369d009a2c2
+    image: localstack/localstack@sha256:26502e0cdecce077bf3c3892e8aded68bcfac8ddbb61fca9f92af4a76d5df0c5
     hostname: localstack
     volumes:
       - "./data:/tmp/localstack"

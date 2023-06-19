@@ -81,6 +81,8 @@ exports.handler = async function (event) {
         },
       })
     );
+    console.log("AuditLogs");
+    console.log(AuditLogs);
 
     if (typeof AuditLogs !== "undefined") {
       const unprocessedIDs = AuditLogs.map(({ PutItem: { UserID, Event, TimeStamp } }, index) => {
@@ -94,11 +96,14 @@ exports.handler = async function (event) {
         if (!unprocessItem)
           throw new Error(
             `Unprocessed LogEvent could not be found. ${JSON.stringify(
-              UnprocessedItems.AuditLogs[index]
+              AuditLogs[index]
             )} not found.`
           );
         return unprocessItem.messageId;
       });
+      console.warn(`Failed to process ${unprocessedIDs.length} log events.`);
+      console.warn(unprocessedIDs);
+
       return {
         batchItemFailures: unprocessedIDs.map((id) => ({ itemIdentifier: id })),
       };

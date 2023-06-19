@@ -8,6 +8,11 @@ output "lambda_reliability_log_group_name" {
   value       = "/aws/lambda/${aws_lambda_function.reliability.function_name}"
 }
 
+output "lambda_submission_function_name" {
+  description = "Submission lambda function name"
+  value       = aws_lambda_function.submission.function_name
+}
+
 output "ecs_cluster_name" {
   description = "ECS cluster name"
   value       = aws_ecs_cluster.forms.name
@@ -16,4 +21,34 @@ output "ecs_cluster_name" {
 output "ecs_service_name" {
   description = "ECS service name"
   value       = aws_ecs_service.form_viewer.name
+}
+
+output "ecs_iam_forms_secrets_manager_policy_arn" {
+  description = "IAM policy for access to Secrets Manager"
+  value       = aws_iam_policy.forms_secrets_manager.arn
+}
+
+output "ecs_iam_forms_kms_policy_arn" {
+  description = "IAM policy for access to KMS"
+  value       = aws_iam_policy.forms_kms.arn
+}
+
+output "ecs_iam_forms_s3_policy_arn" {
+  description = "IAM policy access to S3"
+  value       = aws_iam_policy.forms_s3.arn
+}
+
+output "ecs_iam_forms_dynamodb_policy_arn" {
+  description = "IAM policy for access to DynamoDB"
+  value       = aws_iam_policy.forms_dynamodb.arn
+}
+
+output "ecs_iam_forms_sqs_policy_arn" {
+  description = "IAM policy for access to SQS"
+  value       = aws_iam_policy.forms_sqs.arn
+}
+
+output "ecs_iam_forms_cognito_policy_arn" {
+  description = "IAM policy for access to Cognito"
+  value       = aws_iam_policy.cognito.arn
 }

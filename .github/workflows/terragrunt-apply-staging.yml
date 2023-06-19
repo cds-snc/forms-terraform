@@ -18,7 +18,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
   TERRAFORM_VERSION: 1.4.2
-  TERRAGRUNT_VERSION: 0.35.6
+  TERRAGRUNT_VERSION: 0.46.3
   TF_INPUT: false
   TF_VAR_ecs_secret_token_secret: ${{ secrets.STAGING_TOKEN_SECRET }}
   TF_VAR_google_client_id: ${{ secrets.STAGING_GOOGLE_CLIENT_ID}}
@@ -106,6 +106,9 @@ jobs:
             sqs:
               - 'aws/sqs/**'
               - 'env/cloud/sqs/**'
+            pr_review:
+              - 'aws/pr_review/**'
+              - 'env/cloud/pr_review/**'
 
       # No dependencies
       - name: Terragrunt apply ecr
@@ -201,7 +204,7 @@ jobs:
       - name: Configure Staging AWS credentials
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
         id: aws-form-viewer
-        uses: aws-actions/configure-aws-credentials@31bd3ae2db62cebd1f7f32dfb55b31145fee0b40
+        uses: aws-actions/configure-aws-credentials@e7aae617199995b2b768664e5127a66abed5d399
         with:
           aws-access-key-id: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
@@ -210,7 +213,7 @@ jobs:
       - name: Login to Staging Amazon ECR
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
         id: login-ecr-staging
-        uses: aws-actions/amazon-ecr-login@68a8d266c7934a50d8dc78f37da40be57a98117a
+        uses: aws-actions/amazon-ecr-login@5a6d58d86199499a08217f0ce3d3d68863bba443
 
       - name: Tag Images for Staging
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
@@ -238,4 +241,9 @@ jobs:
       - name: Terragrunt apply load_testing
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/cloud/load_testing
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply pr_review
+        if: ${{ steps.filter.outputs.pr_review == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/cloud/pr_review
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
