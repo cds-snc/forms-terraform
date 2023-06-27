@@ -53,51 +53,6 @@ resource "aws_cloudwatch_metric_alarm" "forms_memory_utilization_high_warn" {
 #
 # Error alarms
 #
-resource "aws_cloudwatch_log_metric_filter" "five_hundred_response" {
-  name           = "500Response"
-  pattern        = "\"HTTP/1.1 5\""
-  log_group_name = var.ecs_cloudwatch_log_group_name
-
-  metric_transformation {
-    name          = "500Response"
-    namespace     = "forms"
-    value         = "1"
-    default_value = "0"
-  }
-}
-
-resource "aws_cloudwatch_metric_alarm" "five_hundred_response_warn" {
-  alarm_name          = "500ResponseWarn"
-  comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "1"
-  metric_name         = aws_cloudwatch_log_metric_filter.five_hundred_response.name
-  namespace           = "forms"
-  period              = "60"
-  statistic           = "Sum"
-  threshold           = "0"
-  treat_missing_data  = "notBreaching"
-  alarm_description   = "End User Forms Warning - A 5xx HTML error was detected coming from the Forms."
-
-  alarm_actions = [var.sns_topic_alert_warning_arn]
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
-}
-
-resource "aws_cloudwatch_log_metric_filter" "application_error" {
-  name           = "ApplicationError"
-  pattern        = "Error"
-  log_group_name = var.ecs_cloudwatch_log_group_name
-
-  metric_transformation {
-    name          = "ApplicationError"
-    namespace     = "forms"
-    value         = "1"
-    default_value = "0"
-  }
-}
 
 resource "aws_cloudwatch_metric_alarm" "ELB_5xx_error_warn" {
   alarm_name          = "HTTPCode_ELB_5XX_Count"
@@ -117,25 +72,7 @@ resource "aws_cloudwatch_metric_alarm" "ELB_5xx_error_warn" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "application_error_warn" {
-  alarm_name          = "ApplicationErrorWarn"
-  comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "1"
-  metric_name         = aws_cloudwatch_log_metric_filter.application_error.name
-  namespace           = "forms"
-  period              = "60"
-  statistic           = "Sum"
-  threshold           = "0"
-  treat_missing_data  = "notBreaching"
-  alarm_description   = "End User Forms Warning - An error message was detected in the ECS logs"
-
-  alarm_actions = [var.sns_topic_alert_warning_arn]
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
-}
+ ### Lambdas (to be replaced with subscription)
 
 resource "aws_cloudwatch_log_metric_filter" "reliability_error" {
   name           = "ReliabilityQueueError"
@@ -456,128 +393,6 @@ resource "aws_cloudwatch_metric_alarm" "route53_ddos" {
 # Monitoring alarms
 #
 
-resource "aws_cloudwatch_metric_alarm" "temporary_token_generated_outside_canada_warn" {
-  alarm_name          = "TemporaryTokenGeneratedOutsideCanadaWarn"
-  namespace           = "AWS/WAFV2"
-  metric_name         = "CountedRequests"
-  statistic           = "SampleCount"
-  period              = "300"
-  comparison_operator = "GreaterThanThreshold"
-  threshold           = "0"
-  evaluation_periods  = "1"
-  treat_missing_data  = "notBreaching"
-  dimensions = {
-    Region = "ca-central-1"
-    Rule   = "TemporaryTokenGeneratedOutsideCanada"
-    WebACL = "GCForms"
-  }
-
-  alarm_description = "End User Forms Warning - A temporary token has been generated from outside Canada"
-  alarm_actions     = [var.sns_topic_alert_warning_arn]
-  ok_actions        = [var.sns_topic_alert_ok_arn]
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
-}
-
-resource "aws_cloudwatch_log_metric_filter" "expired_bearer_token" {
-  name           = "ExpiredBearerToken"
-  pattern        = "expired bearer token"
-  log_group_name = var.ecs_cloudwatch_log_group_name
-  metric_transformation {
-    name      = "ExpiredBearerToken"
-    namespace = "forms"
-    value     = "1"
-  }
-}
-
-resource "aws_cloudwatch_metric_alarm" "expired_bearer_token" {
-  alarm_name          = "ExpiredBearerToken"
-  namespace           = "forms"
-  metric_name         = aws_cloudwatch_log_metric_filter.expired_bearer_token.metric_transformation[0].name
-  statistic           = "SampleCount"
-  period              = "60"
-  comparison_operator = "GreaterThanThreshold"
-  threshold           = "0"
-  evaluation_periods  = "1"
-  treat_missing_data  = "notBreaching"
-
-  alarm_description = "End User Forms Warning - An expired bearer token has been used"
-  alarm_actions     = [var.sns_topic_alert_warning_arn]
-  ok_actions        = [var.sns_topic_alert_ok_arn]
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
-}
-
-resource "aws_cloudwatch_log_metric_filter" "generate_temporary_token_api_failure" {
-  name           = "GenerateTemporaryTokenApiFailure"
-  pattern        = "Failed to generate temporary token"
-  log_group_name = var.ecs_cloudwatch_log_group_name
-  metric_transformation {
-    name      = "GenerateTemporaryTokenApiFailure"
-    namespace = "forms"
-    value     = "1"
-  }
-}
-
-resource "aws_cloudwatch_metric_alarm" "generate_temporary_token_api_failure" {
-  alarm_name          = "GenerateTemporaryTokenApiFailure"
-  namespace           = "forms"
-  metric_name         = aws_cloudwatch_log_metric_filter.generate_temporary_token_api_failure.metric_transformation[0].name
-  statistic           = "SampleCount"
-  period              = "300"
-  comparison_operator = "GreaterThanThreshold"
-  threshold           = "5"
-  evaluation_periods  = "1"
-  treat_missing_data  = "notBreaching"
-
-  alarm_description = "End User Forms Warning - Failed to generate temporary token too many times"
-  alarm_actions     = [var.sns_topic_alert_warning_arn]
-  ok_actions        = [var.sns_topic_alert_ok_arn]
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
-}
-
-resource "aws_cloudwatch_log_metric_filter" "request_temporary_token_api_using_unauthorized_email_address" {
-  name           = "RequestTemporaryTokenApiUsingUnauthorizedEmailAddress"
-  pattern        = "\"An email address with no access to any form has been locked out\""
-  log_group_name = var.ecs_cloudwatch_log_group_name
-  metric_transformation {
-    name      = "RequestTemporaryTokenApiUsingUnauthorizedEmailAddress"
-    namespace = "forms"
-    value     = "1"
-  }
-}
-
-resource "aws_cloudwatch_metric_alarm" "request_temporary_token_api_using_unauthorized_email_address" {
-  alarm_name          = "RequestTemporaryTokenApiUsingUnauthorizedEmailAddress"
-  namespace           = "forms"
-  metric_name         = aws_cloudwatch_log_metric_filter.request_temporary_token_api_using_unauthorized_email_address.metric_transformation[0].name
-  statistic           = "SampleCount"
-  period              = "60"
-  comparison_operator = "GreaterThanThreshold"
-  threshold           = "0"
-  evaluation_periods  = "1"
-  treat_missing_data  = "notBreaching"
-
-  alarm_description = "End User Forms Warning - Someone tried to request a temporary token using an unauthorized email address"
-  alarm_actions     = [var.sns_topic_alert_warning_arn]
-  ok_actions        = [var.sns_topic_alert_ok_arn]
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
-}
-
 resource "aws_cloudwatch_log_metric_filter" "cognito_signin_exceeded" {
   name           = "CognitoSigninExceeded"
   pattern        = "\"Cognito Lockout: Password attempts exceeded\""
@@ -642,4 +457,20 @@ resource "aws_cloudwatch_metric_alarm" "twoFa_verification_exceeded" {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
   }
+}
+
+// Dynamic Stream to Lambda
+
+resource "aws_cloudwatch_log_subscription_filter" "forms_unhandled_error_steam" {
+  name            = "forms_unhandled_error_stream"
+  log_group_name  = var.ecs_cloudwatch_log_group_name
+  filter_pattern  = "Error -level"
+  destination_arn = aws_lambda_function.notify_slack.arn
+}
+
+resource "aws_cloudwatch_log_subscription_filter" "forms_app_log_stream" {
+  name            = "forms_app_log_stream"
+  log_group_name  = var.ecs_cloudwatch_log_group_name
+  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
+  destination_arn = aws_lambda_function.notify_slack.arn
 }
