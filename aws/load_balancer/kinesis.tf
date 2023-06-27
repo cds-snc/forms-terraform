@@ -31,22 +31,6 @@ resource "aws_s3_bucket" "firehose_waf_logs" {
   # checkov:skip=CKV_AWS_18: Versioning not required
   # checkov:skip=CKV_AWS_21: Access logging not required  
   bucket = var.env == "production" ? "forms-waf-logs" : "forms-${var.env}-terraform-waf-logs"
-  acl    = "private"
-
-  lifecycle_rule {
-    enabled = true
-    expiration {
-      days = 90
-    }
-  }
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
@@ -54,12 +38,48 @@ resource "aws_s3_bucket" "firehose_waf_logs" {
   }
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "lifecycle_rules" {
+  bucket = aws_s3_bucket.firehose_waf_logs.id
+
+  rule {
+    id = "lifecycle_firehose_waf_logs"
+    expiration {
+      days = 90
+    }
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "firehose_waf_logs" {
+  bucket = aws_s3_bucket.firehose_waf_logs.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+
 resource "aws_s3_bucket_public_access_block" "firehose_waf_logs" {
   bucket                  = aws_s3_bucket.firehose_waf_logs.id
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_ownership_controls" "s3_bucket_acl_ownership" {
+  bucket = aws_s3_bucket.firehose_waf_logs.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_acl" "firehose_waf_logs" {
+  depends_on = [aws_s3_bucket_ownership_controls.s3_bucket_acl_ownership]
+
+  bucket = aws_s3_bucket.firehose_waf_logs.id
+  acl    = "private"
 }
 
 #

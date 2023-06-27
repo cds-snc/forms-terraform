@@ -11,11 +11,11 @@ resource "aws_lb" "form_viewer" {
   drop_invalid_header_fields = true
   enable_deletion_protection = true
 
-  access_logs {
-    bucket  = var.cbs_satellite_bucket_name
-    prefix  = "lb_logs"
-    enabled = true
-  }
+  #access_logs {
+  # bucket  = var.cbs_satellite_bucket_name
+  #  prefix  = "lb_logs"
+  # enabled = true
+  #}
 
   tags = {
     Name                  = "form_viewer"
