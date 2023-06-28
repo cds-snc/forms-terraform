@@ -4,7 +4,37 @@ variable "ecs_cloudwatch_log_group_name" {
 }
 
 variable "lambda_reliability_log_group_name" {
-  description = "Lambda Reliability Queue CloudWatch log group name, used by lambda error metric alarms"
+  description = "Reliability Queues CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_submission_log_group_name" {
+  description = "Submission Lambda CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_archiver_log_group_name" {
+  description = "Response Archiver Lambda CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_dlq_consumer_log_group_name" {
+  description = "DQL Consumer CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_template_archiver_log_group_name" {
+  description = "Template Archiver Lambda CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_audit_log_group_name" {
+  description = "Audit Log Lambda CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_nagware_log_group_name" {
+  description = "Nagware Lambda CloudWatch log group name"
   type        = string
 }
 

@@ -474,3 +474,41 @@ resource "aws_cloudwatch_log_subscription_filter" "forms_app_log_stream" {
   filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
   destination_arn = aws_lambda_function.notify_slack.arn
 }
+
+resource "aws_cloudwatch_log_subscription_filter" "reliability_log_stream" {
+  name            = "reliability_log_stream"
+  log_group_name  = var.lambda_reliability_log_group_name
+  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
+  destination_arn = aws_lambda_function.notify_slack.arn
+}
+
+resource "aws_cloudwatch_log_subscription_filter" "archiver_log_stream" {
+  name            = "archiver_log_stream"
+  log_group_name  = var.llambda_archiver_log_group_name
+  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
+  destination_arn = aws_lambda_function.notify_slack.arn
+}
+resource "aws_cloudwatch_log_subscription_filter" "dlq_consumer_log_stream" {
+  name            = "dql_consumer_log_stream"
+  log_group_name  = var.lambda_dlq_consumer_log_group_name
+  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
+  destination_arn = aws_lambda_function.notify_slack.arn
+}
+resource "aws_cloudwatch_log_subscription_filter" "template_archiver_log_stream" {
+  name            = "template_archiver_log_stream"
+  log_group_name  = var.lambda_template_archiver_log_group_name
+  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
+  destination_arn = aws_lambda_function.notify_slack.arn
+}
+resource "aws_cloudwatch_log_subscription_filter" "audit_log_stream" {
+  name            = "audit_log_stream"
+  log_group_name  = var.lambda_audit_log_group_name
+  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
+  destination_arn = aws_lambda_function.notify_slack.arn
+}
+resource "aws_cloudwatch_log_subscription_filter" "nagware_log_stream" {
+  name            = "nagware_log_stream"
+  log_group_name  = var.lambda_nagware_log_group_name
+  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
+  destination_arn = aws_lambda_function.notify_slack.arn
+}
