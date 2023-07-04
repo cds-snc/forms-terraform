@@ -59,7 +59,7 @@ function getSNSMessageSeverity(message) {
   return severity;
 }
 
-function sendToSlack(message, severity, context) {
+function sendToSlack(logGroup, message, severity, context) {
   var environment = process.env.ENVIRONMENT || "Staging";
 
   const icon_emoji = (severity) => {
@@ -78,7 +78,7 @@ function sendToSlack(message, severity, context) {
   var postData = {
     channel: "#forms-deploy-activities",
     username: "Forms Notifier",
-    text: `*${environment} Environment*`,
+    text: `*${environment} Environment: ${logGroup}*`,
     icon_emoji: icon_emoji(severity),
   };
 
@@ -126,12 +126,12 @@ exports.handler = function (input, context) {
 
         const logMessage = safeJsonParse(result.message);
         if (logMessage) {
-          sendToSlack(logMessage.msg, logMessage.level, context);
-          console.log("Event Data:", JSON.stringify(logMessage, null, 2));
+          sendToSlack(result.logGroup, logMessage.msg, logMessage.level, context);
+          console.log(`Event Data for ${result.logGroup}:`, JSON.stringify(logMessage, null, 2));
         } else {
-          // These are unhandled errors in the GCForms app
-          sendToSlack(result.message, "error", context);
-          console.log("Event Data:", JSON.stringify(result.message, null, 2));
+          // These are unhandled errors from the GCForms app only
+          sendToSlack(result.logGroup, result.message, "error", context);
+          console.log(`Event Data for ${result.logGroup}:`, result.message);
         }
       }
     });
@@ -144,6 +144,7 @@ exports.handler = function (input, context) {
     if (severity === "alarm_reset") {
       message = "Alarm Status now OK - " + getMessage(message);
     }
-    sendToSlack(message, severity, context);
+    console.log(`Event Data for Alarms:`, input.Records[0].Sns.Message);
+    sendToSlack("Alarm Event", message, severity, context);
   }
 };
