@@ -537,11 +537,6 @@ data "archive_file" "nagware_lib" {
     content  = file("./lambda/nagware/lib/emailNotification.js")
     filename = "nodejs/node_modules/emailNotification/index.js"
   }
-
-  source {
-    content  = file("./lambda/nagware/lib/slackNotification.js")
-    filename = "nodejs/node_modules/slackNotification/index.js"
-  }
 }
 
 data "archive_file" "nagware_nodejs" {
