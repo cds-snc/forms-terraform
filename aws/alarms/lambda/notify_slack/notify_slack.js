@@ -76,9 +76,9 @@ function sendToSlack(logGroup, message, severity, context) {
   };
 
   var postData = {
-    channel: "#forms-deploy-activities",
+    channel: `#forms-${environment.toLowerCase()}-events}`,
     username: "Forms Notifier",
-    text: `*${environment} Environment: ${logGroup}*`,
+    text: `*${logGroup}*`,
     icon_emoji: icon_emoji(severity),
   };
 
@@ -125,8 +125,10 @@ exports.handler = function (input, context) {
         result = JSON.parse(result.toString());
 
         const logMessage = safeJsonParse(result.message);
+        // If logMessage is false, then the message is not JSON
         if (logMessage) {
-          sendToSlack(result.logGroup, logMessage.msg, logMessage.level, context);
+          const message = logMessage.msg + logMessage.error ? "/n" + logMessage.error : "";
+          sendToSlack(result.logGroup, message, logMessage.level, context);
           console.log(`Event Data for ${result.logGroup}:`, JSON.stringify(logMessage, null, 2));
         } else {
           // These are unhandled errors from the GCForms app only
