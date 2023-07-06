@@ -121,7 +121,8 @@ const saveReceipt = async (submissionID, receiptID) => {
       JSON.stringify({
         level: "warn",
         submissionID: submissionID,
-        msg: `Could not update reliability queue response with SQS Receipt: ${err.message}`,
+        msg: `Could not update reliability queue response with SQS Receipt`,
+        error: err.message,
       })
     );
   }

@@ -34,7 +34,7 @@ module.exports = async (
         submissionId: submissionID,
         sendReceipt: sendReceipt,
         msg: "Failed to save submission to Vault.",
-        error: `${error.message}`,
+        error: error.message,
       })
     );
     throw new Error(`Failed to save submission to Vault.`);
@@ -63,7 +63,7 @@ module.exports = async (
         submissionId: submissionID ?? "n/a",
         sendReceipt: sendReceipt ?? "n/a",
         msg: "Successfully saved submission to Vault but failed to clean up submission processing files from database.",
-        error: `${error.message}`,
+        error: error.message,
       })
     );
   }
