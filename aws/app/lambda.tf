@@ -117,6 +117,7 @@ resource "aws_lambda_event_source_mapping" "reprocess_submission" {
 
 resource "aws_cloudwatch_log_group" "reliability" {
   name              = "/aws/lambda/${aws_lambda_function.reliability.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 90
 }
 
@@ -185,6 +186,7 @@ resource "aws_lambda_permission" "submission" {
 
 resource "aws_cloudwatch_log_group" "submission" {
   name              = "/aws/lambda/${aws_lambda_function.submission.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 90
 }
 
@@ -272,6 +274,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_responses
 
 resource "aws_cloudwatch_log_group" "archiver" {
   name              = "/aws/lambda/${aws_lambda_function.archiver.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 90
 }
 
@@ -340,6 +343,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_dead_letter_queue_cons
 
 resource "aws_cloudwatch_log_group" "dead_letter_queue_consumer" {
   name              = "/aws/lambda/${aws_lambda_function.dead_letter_queue_consumer.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 90
 }
 
@@ -430,6 +434,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_templates
 
 resource "aws_cloudwatch_log_group" "archive_form_templates" {
   name              = "/aws/lambda/${aws_lambda_function.archive_form_templates.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 90
 }
 
@@ -499,6 +504,7 @@ resource "aws_lambda_event_source_mapping" "audit_logs" {
 
 resource "aws_cloudwatch_log_group" "audit_logs" {
   name              = "/aws/lambda/${aws_lambda_function.audit_logs.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 90
 }
 
@@ -609,5 +615,6 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_nagware_lambda" {
 
 resource "aws_cloudwatch_log_group" "nagware" {
   name              = "/aws/lambda/${aws_lambda_function.nagware.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 90
 }

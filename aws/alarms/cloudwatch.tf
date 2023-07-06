@@ -462,6 +462,7 @@ resource "aws_cloudwatch_metric_alarm" "twoFa_verification_exceeded" {
 // Dynamic Stream to Lambda
 
 resource "aws_cloudwatch_log_subscription_filter" "forms_unhandled_error_steam" {
+  depends_on      = [aws_lambda_permission.allow_cloudwatch_to_run_lambda]
   name            = "forms_unhandled_error_stream"
   log_group_name  = var.ecs_cloudwatch_log_group_name
   filter_pattern  = "Error -level"
@@ -511,4 +512,14 @@ resource "aws_cloudwatch_log_subscription_filter" "nagware_log_stream" {
   log_group_name  = var.lambda_nagware_log_group_name
   filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
   destination_arn = aws_lambda_function.notify_slack.arn
+}
+
+// Allow Cloudwatch filters to trigger Lambda
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_run_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.notify_slack.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = "arn:aws:ssm:ca-central-1:${var.account_id}:log-group:*:*"
 }

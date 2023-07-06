@@ -1,3 +1,8 @@
+variable "kms_key_cloudwatch_arn" {
+  description = "CloudWatch KMS key ARN used to encrypt the logs"
+  type        = string
+}
+
 variable "ecs_cloudwatch_log_group_name" {
   description = "ECS Forms CloudWatch log group name, used by app error metric alarms"
   type        = string
