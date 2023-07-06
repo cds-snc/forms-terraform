@@ -44,11 +44,11 @@ resource "aws_lambda_function" "cognito_email_sender" {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
   }
+}
 
-  resource "aws_cloudwatch_log_group" "cognito_email_sender" {
-    name              = "/aws/lambda/${aws_lambda_function.cognito_email_sender.function_name}"
-    retention_in_days = 90
-  }
+resource "aws_cloudwatch_log_group" "cognito_email_sender" {
+  name              = "/aws/lambda/${aws_lambda_function.cognito_email_sender.function_name}"
+  retention_in_days = 90
 }
 
 resource "aws_lambda_layer_version" "cognito_email_sender_nodejs" {
