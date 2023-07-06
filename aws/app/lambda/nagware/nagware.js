@@ -1,6 +1,5 @@
 const { retrieveFormResponsesOver28DaysOld } = require("dynamodbDataLayer");
 const { getFormNameAndOwnerEmailAddress } = require("postgreSQLDataLayer");
-const { notifyFormsTeam } = require("slackNotification");
 const { notifyFormOwner } = require("emailNotification");
 
 const ENABLED_IN_STAGING = true;
@@ -54,7 +53,6 @@ async function nag(oldestFormResponseByFormID) {
     const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
     try {
       if (diffDays > 45) {
-        await notifyFormsTeam(formResponse.formID, diffDays);
         console.warn({
           level: "warn",
           msg: `Vault Nagware - ${diffDays} days old form response was detected. Form ID : ${formResponse.formID}.`,
