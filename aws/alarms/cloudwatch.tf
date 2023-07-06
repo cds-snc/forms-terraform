@@ -72,7 +72,7 @@ resource "aws_cloudwatch_metric_alarm" "ELB_5xx_error_warn" {
   }
 }
 
- ### Lambdas (to be replaced with subscription)
+### Lambdas (to be replaced with subscription)
 
 resource "aws_cloudwatch_log_metric_filter" "reliability_error" {
   name           = "ReliabilityQueueError"

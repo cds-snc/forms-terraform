@@ -46,9 +46,9 @@ resource "aws_lambda_function" "cognito_email_sender" {
   }
 
   resource "aws_cloudwatch_log_group" "cognito_email_sender" {
-  name              = "/aws/lambda/${aws_lambda_function.cognito_email_sender.function_name}"
-  retention_in_days = 90
-}
+    name              = "/aws/lambda/${aws_lambda_function.cognito_email_sender.function_name}"
+    retention_in_days = 90
+  }
 }
 
 resource "aws_lambda_layer_version" "cognito_email_sender_nodejs" {
@@ -82,7 +82,7 @@ resource "aws_lambda_function" "cognito_pre_sign_up" {
   tracing_config {
     mode = "PassThrough"
   }
-  
+
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
