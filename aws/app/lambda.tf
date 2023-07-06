@@ -232,7 +232,6 @@ resource "aws_lambda_function" "archiver" {
   environment {
     variables = {
       REGION                       = var.region
-      SNS_ERROR_TOPIC_ARN          = var.sns_topic_alert_critical_arn
       DYNAMODB_VAULT_TABLE_NAME    = var.dynamodb_vault_table_name
       ARCHIVING_S3_BUCKET          = aws_s3_bucket.archive_storage.bucket
       VAULT_FILE_STORAGE_S3_BUCKET = aws_s3_bucket.vault_file_storage.bucket
