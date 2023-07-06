@@ -466,8 +466,7 @@ resource "aws_lambda_function" "audit_logs" {
 
   environment {
     variables = {
-      REGION              = var.region
-      SNS_ERROR_TOPIC_ARN = var.sns_topic_alert_critical_arn
+      REGION = var.region
     }
   }
 
