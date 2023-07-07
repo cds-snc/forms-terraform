@@ -24,7 +24,7 @@ resource "aws_lambda_function" "cognito_email_sender" {
 
   source_code_hash = data.archive_file.cognito_email_sender_main.output_base64sha256
 
-  runtime = "nodejs14.x"
+  runtime = "nodejs16.x"
   layers  = [aws_lambda_layer_version.cognito_email_sender_nodejs.arn]
 
   environment {
@@ -50,7 +50,7 @@ resource "aws_lambda_layer_version" "cognito_email_sender_nodejs" {
   filename            = "/tmp/cognito_email_sender_nodejs.zip"
   layer_name          = "cognito_email_sender_node_packages"
   source_code_hash    = data.archive_file.cognito_email_sender_nodejs.output_base64sha256
-  compatible_runtimes = ["nodejs14.x"]
+  compatible_runtimes = ["nodejs16.x"]
 }
 
 ########################
@@ -72,7 +72,7 @@ resource "aws_lambda_function" "cognito_pre_sign_up" {
 
   source_code_hash = data.archive_file.cognito_pre_sign_up_main.output_base64sha256
 
-  runtime = "nodejs14.x"
+  runtime = "nodejs16.x"
 
   tracing_config {
     mode = "PassThrough"
