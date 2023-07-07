@@ -485,7 +485,7 @@ resource "aws_cloudwatch_log_subscription_filter" "reliability_log_stream" {
 
 resource "aws_cloudwatch_log_subscription_filter" "archiver_log_stream" {
   name            = "archiver_log_stream"
-  log_group_name  = var.llambda_archiver_log_group_name
+  log_group_name  = var.lambda_archiver_log_group_name
   filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
   destination_arn = aws_lambda_function.notify_slack.arn
 }
