@@ -19,10 +19,9 @@ resource "aws_ecs_cluster" "forms" {
 #
 # Task Definition
 #
-data "template_file" "form_viewer_task" {
-  template = file("ecs_task/form_viewer.json")
 
-  vars = {
+locals {
+ template_vars = {
     image                           = var.ecr_repository_url_form_viewer
     awslogs-group                   = aws_cloudwatch_log_group.forms.name
     awslogs-region                  = var.region
@@ -62,7 +61,7 @@ resource "aws_ecs_task_definition" "form_viewer" {
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = aws_iam_role.forms.arn
   task_role_arn            = aws_iam_role.forms.arn
-  container_definitions    = data.template_file.form_viewer_task.rendered
+  container_definitions    = templatefile("ecs_task/form_viewer.json",local.template_vars)
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
