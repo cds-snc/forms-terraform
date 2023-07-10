@@ -292,7 +292,8 @@ data "aws_iam_policy_document" "assume_role_policy_cognito" {
       "cognito-idp:ResendConfirmationCode",
       "cognito-idp:AdminInitiateAuth",
       "cognito-idp:AddCustomAttributes",
-      "cognito-idp:AdminUpdateUserAttributes"
+      "cognito-idp:AdminUpdateUserAttributes",
+      "cognito-idp:AdminUserGlobalSignOut",
     ]
 
     resources = [
