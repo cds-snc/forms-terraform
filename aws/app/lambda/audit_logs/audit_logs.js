@@ -1,5 +1,36 @@
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const { DynamoDBDocumentClient, BatchWriteCommand } = require("@aws-sdk/lib-dynamodb");
+const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
+
+const SNS_ERROR_TOPIC_ARN = process.env.SNS_ERROR_TOPIC_ARN;
+
+function connectToDynamo() {
+  return DynamoDBDocumentClient.from(
+    new DynamoDBClient({
+      region: process.env.REGION ?? "ca-central-1",
+      ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
+    })
+  );
+}
+
+async function reportErrorToSlack(errorMessage) {
+  const snsClient = new SNSClient({
+    region: process.env.REGION,
+    ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
+  });
+  const publishCommandInput = {
+    Message: `Audit Log Processing Critical - ${errorMessage}`,
+    TopicArn: SNS_ERROR_TOPIC_ARN,
+  };
+
+  try {
+    await snsClient.send(new PublishCommand(publishCommandInput));
+  } catch (err) {
+    console.log(
+      `ERROR: Failed to report error to Slack. Slack Error: ${err.message}. Message to Transmit: ${errorMessage}`
+    );
+  }
+}
 
 exports.handler = async function (event) {
   /* 
@@ -39,12 +70,7 @@ exports.handler = async function (event) {
       },
     }));
 
-    const dynamoDb = DynamoDBDocumentClient.from(
-      new DynamoDBClient({
-        region: process.env.REGION ?? "ca-central-1",
-        ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
-      })
-    );
+    const dynamoDb = connectToDynamo();
 
     const {
       UnprocessedItems: { AuditLogs },
@@ -55,7 +81,6 @@ exports.handler = async function (event) {
         },
       })
     );
-
     console.log("AuditLogs");
     console.log(AuditLogs);
 
@@ -68,24 +93,16 @@ exports.handler = async function (event) {
             logEvent.event === Event &&
             logEvent.timestamp === TimeStamp
         )[0];
-
         if (!unprocessItem)
           throw new Error(
             `Unprocessed LogEvent could not be found. ${JSON.stringify(
               AuditLogs[index]
             )} not found.`
           );
-
         return unprocessItem.messageId;
       });
-
-      console.warn(
-        JSON.stringify({
-          level: "warn",
-          msg: `Failed to process ${unprocessedIDs.length} log events. List of unprocessed IDs: ${unprocessedIDs.join(',')}.`,
-          error: error.message,
-        })
-      );
+      console.warn(`Failed to process ${unprocessedIDs.length} log events.`);
+      console.warn(unprocessedIDs);
 
       return {
         batchItemFailures: unprocessedIDs.map((id) => ({ itemIdentifier: id })),
@@ -96,14 +113,9 @@ exports.handler = async function (event) {
       batchItemFailures: [],
     };
   } catch (error) {
-    // Catastrophic Error - Fail whole batch -- Error Message will be sent to slack
-    console.error(
-      JSON.stringify({
-        level: "error",
-        msg: "Failed to run Audit Logs Processor.",
-        error: error.message,
-      })
-    );
+    // Catastrophic Error - Fail whole batch
+    reportErrorToSlack(error.message);
+    console.error(error);
 
     return {
       batchItemFailures: event.Records.map((record) => ({ itemIdentifier: record.messageId })),

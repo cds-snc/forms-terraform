@@ -30,11 +30,11 @@ module.exports = async (
   } catch (error) {
     console.error(
       JSON.stringify({
-        level: "error",
+        status: "failed",
         submissionId: submissionID,
         sendReceipt: sendReceipt,
-        msg: "Failed to save submission to Vault.",
-        error: error.message,
+        message: "Failed to save submission to Vault.",
+        error: `${error.message}`,
       })
     );
     throw new Error(`Failed to save submission to Vault.`);
@@ -46,24 +46,24 @@ module.exports = async (
       removeSubmission(submissionID),
     ]);
 
-    console.log(
+    console.warn(
       JSON.stringify({
-        level: "info",
         status: "success",
         submissionId: submissionID,
         sendReceipt: sendReceipt,
-        msg: "Successfully saved submission to Vault.",
+        message: "Successfully saved submission to Vault.",
       })
     );
   } catch (error) {
     // Not throwing an error back to SQS because the message was sucessfully processed by the vault. Only cleanup required.
     console.warn(
       JSON.stringify({
-        level: "warn",
+        status: "success",
         submissionId: submissionID ?? "n/a",
         sendReceipt: sendReceipt ?? "n/a",
-        msg: "Successfully saved submission to Vault but failed to clean up submission processing files from database.",
-        error: error.message,
+        message:
+          "Successfully saved submission to Vault but failed to clean up submission processing files from database.",
+        error: `${error.message}`,
       })
     );
   }

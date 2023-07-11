@@ -36,19 +36,14 @@ async function getSubmission(message) {
  */
 
 async function removeSubmission(submissionID) {
-  try {
-    const DBParams = {
-      TableName: "ReliabilityQueue",
-      Key: {
-        SubmissionID: submissionID,
-      },
-    };
-    //remove data fron DynamoDB
-    return await db.send(new DeleteCommand(DBParams));
-  } catch (err) {
-    console.error(err);
-    throw new Error(`Error removing submission ${submissionID} from ReliabilityQueue table`);
-  }
+  const DBParams = {
+    TableName: "ReliabilityQueue",
+    Key: {
+      SubmissionID: submissionID,
+    },
+  };
+  //remove data fron DynamoDB
+  return await db.send(new DeleteCommand(DBParams));
 }
 
 /**
@@ -56,30 +51,25 @@ async function removeSubmission(submissionID) {
  * @param submissionID
  */
 async function notifyProcessed(submissionID) {
-  try {
-    const expiringTime = (Math.floor(Date.now() / 1000) + 2592000).toString(); // expire after 30 days
-    const DBParams = {
-      TableName: "ReliabilityQueue",
-      Key: {
-        SubmissionID: submissionID,
-      },
-      UpdateExpression: "SET #ttl = :ttl, #processed = :processed",
-      ExpressionAttributeNames: {
-        "#ttl": "TTL",
-        "#processed": "NotifyProcessed",
-      },
-      ExpressionAttributeValues: {
-        ":ttl": expiringTime,
-        ":processed": true,
-      },
-      ReturnValues: "NONE",
-    };
+  const expiringTime = (Math.floor(Date.now() / 1000) + 2592000).toString(); // expire after 30 days
+  const DBParams = {
+    TableName: "ReliabilityQueue",
+    Key: {
+      SubmissionID: submissionID,
+    },
+    UpdateExpression: "SET #ttl = :ttl, #processed = :processed",
+    ExpressionAttributeNames: {
+      "#ttl": "TTL",
+      "#processed": "NotifyProcessed",
+    },
+    ExpressionAttributeValues: {
+      ":ttl": expiringTime,
+      ":processed": true,
+    },
+    ReturnValues: "NONE",
+  };
 
-    return await db.send(new UpdateCommand(DBParams));
-  } catch (err) {
-    console.error(err);
-    throw new Error(`Error updating Notify TTL for submission ${submissionID}`);
-  }
+  return await db.send(new UpdateCommand(DBParams));
 }
 
 async function saveToVault(
@@ -151,22 +141,14 @@ async function saveToVault(
       if (error.CancellationReasons) {
         error.CancellationReasons.forEach((reason) => {
           if (reason.Code === "ConditionalCheckFailed") {
+            console.warn("Duplicate Submission Name Found - recreating with randomized name");
             duplicateFound = true;
-            console.info(
-              JSON.stringify({
-                level: "info",
-                msg: `Duplicate Submission Name Found - recreating with randomized name`,
-              })
-            );
           }
         });
       } else {
         // Not a duplication error, something else has gone wrong
-
         console.error(error);
-        throw new Error(
-          `Error saving submission to vault for submission ID ${submissionID} / FormID: ${formID}`
-        );
+        throw error;
       }
     }
   }

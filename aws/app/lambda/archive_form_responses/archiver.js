@@ -7,11 +7,13 @@ const {
   DeleteObjectCommand,
 } = require("@aws-sdk/client-s3");
 
+const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
 const { getFileAttachments } = require("fileAttachments");
 
 const REGION = process.env.REGION;
 const DYNAMODB_VAULT_TABLE_NAME = process.env.DYNAMODB_VAULT_TABLE_NAME;
 const ARCHIVING_S3_BUCKET = process.env.ARCHIVING_S3_BUCKET;
+const SNS_ERROR_TOPIC_ARN = process.env.SNS_ERROR_TOPIC_ARN;
 const VAULT_FILE_STORAGE_S3_BUCKET = process.env.VAULT_FILE_STORAGE_S3_BUCKET;
 
 exports.handler = async (event) => {
@@ -34,64 +36,57 @@ exports.handler = async (event) => {
     return {
       statusCode: "SUCCESS",
     };
-  } catch (error) {
-    // Error Message will be sent to slack
-    console.error(
-      JSON.stringify({
-        level: "error",
-        msg: "Failed to run Form Responses Archiver.",
-        error: error.message,
-      })
-    );
+  } catch (err) {
+    const snsClient = new SNSClient({
+      region: REGION,
+      ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
+    });
+
+    await reportErrorToSlack(snsClient, err.message);
 
     return {
       statusCode: "ERROR",
-      error: error.message,
+      error: err.message,
     };
   }
 };
 
+/**
+ * Archive form's responses and its associated files.
+ * @param dynamoDb
+ * @param s3Client
+ */
 async function archiveConfirmedFormResponses(dynamoDb, s3Client) {
-  const formResponses = await retrieveConfirmedFormResponses(dynamoDb);
+  const formResponses = await retrieveFormResponsesToBeArchived(dynamoDb);
 
   if (formResponses.length > 0) {
     for (const formResponse of formResponses) {
-      try {
-        let attachment = getFileAttachments(formResponse.formSubmission);
-
-        await archiveFormResponseAttachments(
-          s3Client,
-          formResponse.formID,
-          formResponse.submissionID,
-          formResponse.removalDate,
-          attachment
-        );
-
-        await archiveFormResponse(
-          s3Client,
-          formResponse.formID,
-          formResponse.submissionID,
-          formResponse.formSubmission
-        );
-      } catch (error) {
-        // Warn Message will be sent to slack
-        console.warn(
-          JSON.stringify({
-            level: "warn",
-            msg: `Failed to archive form response ${formResponse.submissionID}. (Form ID: ${formResponse.formID})`,
-            error: error.message,
-          })
-        );
-        // Continue to attempt to archive form responses even if one fails
-      }
+      let attachment = getFileAttachments(formResponse.formSubmission);
+      await archiveResponseFiles(
+        s3Client,
+        formResponse.formID,
+        formResponse.submissionID,
+        formResponse.removalDate,
+        attachment
+      );
+      await saveFormResponseToS3(
+        s3Client,
+        formResponse.formID,
+        formResponse.submissionID,
+        formResponse.formSubmission
+      );
     }
-
-    await deleteFormResponsesAttachmentsFromVault(s3Client, formResponses);
-    await deleteFormResponsesFromVault(dynamoDb, formResponses);
+    await removeFormResponseFilesFromVaultStorage(s3Client, formResponses);
+    await deleteFormResponsesFromDynamoDb(dynamoDb, formResponses);
   }
 }
 
-async function retrieveConfirmedFormResponses(dynamoDb) {
+/**
+ *
+ * @param {*} dynamoDb
+ * @returns an array of Responses
+ */
+async function retrieveFormResponsesToBeArchived(dynamoDb) {
   try {
     let formResponses = [];
     let lastEvaluatedKey = null;
@@ -140,12 +135,20 @@ async function retrieveConfirmedFormResponses(dynamoDb) {
     }
 
     return formResponses;
-  } catch (error) {
-    throw new Error(`Failed to retrieve confirmed form responses. Reason: ${error.message}.`);
+  } catch (err) {
+    throw new Error(`Failed to retrieve form responses. Reason: ${err.message}.`);
   }
 }
 
-async function archiveFormResponseAttachments(s3Client, formID, submissionID, removalDate, fileAttachments) {
+/**
+ * Archives all attachments of a given submission
+ * @param  s3Client
+ * @param {string} formID
+ * @param {string} submissionID
+ * @param {string} removalDate
+ * @param  fileAttachments
+ */
+async function archiveResponseFiles(s3Client, formID, submissionID, removalDate, fileAttachments) {
   try {
     const promises = fileAttachments.map((attachment) => {
       const fromUri = `${attachment.fileS3Path}`;
@@ -163,12 +166,19 @@ async function archiveFormResponseAttachments(s3Client, formID, submissionID, re
     });
 
     await Promise.all(promises);
-  } catch (error) {
-    throw new Error(`Failed to copy form response attachments from Vault to Archiving S3 buckets. Reason: ${error.message}.`);
+  } catch (err) {
+    throw new Error(`Could not copy file due to ${err.message}.`);
   }
 }
 
-async function archiveFormResponse(s3Client, formID, submissionID, formResponse) {
+/**
+ *
+ * @param s3Client
+ * @param {string} formID
+ * @param {string} submissionID
+ * @param {string} formResponse
+ */
+async function saveFormResponseToS3(s3Client, formID, submissionID, formResponse) {
   const putObjectCommandInput = {
     Bucket: ARCHIVING_S3_BUCKET,
     Body: formResponse,
@@ -177,16 +187,22 @@ async function archiveFormResponse(s3Client, formID, submissionID, formResponse)
 
   try {
     await s3Client.send(new PutObjectCommand(putObjectCommandInput));
-  } catch (error) {
-    throw new Error(`Failed to put form response in Archiving S3 bucket. Reason: ${error.message}.`);
+  } catch (err) {
+    throw new Error(
+      `Failed to save form response to S3 (SubmissionID = ${submissionID}). Reason: ${err.message}.`
+    );
   }
 }
 
-async function deleteFormResponsesAttachmentsFromVault(s3Client, formResponses) {
+/**
+ *
+ * @param s3Client
+ * @param {string} formResponses
+ */
+async function removeFormResponseFilesFromVaultStorage(s3Client, formResponses) {
   try {
     for (const formResponse of formResponses) {
       let attachments = getFileAttachments(formResponse.formSubmission);
-
       const promises = attachments.map((attachment) => {
         const commandInput = {
           Bucket: VAULT_FILE_STORAGE_S3_BUCKET,
@@ -195,21 +211,14 @@ async function deleteFormResponsesAttachmentsFromVault(s3Client, formResponses) 
 
         return s3Client.send(new DeleteObjectCommand(commandInput));
       });
-
       await Promise.all(promises);
     }
-  } catch (error) {
-    console.warn(
-      JSON.stringify({
-        level: "warn",
-        msg: `Failed to delete form responses attachments from S3 bucket. Submissions: ${formResponses.map((r) => `${r.submissionID}`).join(',')}.`,
-        error: error.message,
-      })
-    );
+  } catch (err) {
+    throw new Error(`Oops... Unable to delete file. Reason: ${err.message}`);
   }
 }
 
-async function deleteFormResponsesFromVault(dynamoDb, formResponses) {
+async function deleteFormResponsesFromDynamoDb(dynamoDb, formResponses) {
   const chunks = (arr, size) =>
     Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
       arr.slice(i * size, i * size + size)
@@ -257,14 +266,21 @@ async function deleteFormResponsesFromVault(dynamoDb, formResponses) {
 
     try {
       await dynamoDb.send(new BatchWriteItemCommand(batchWriteItemCommandInput));
-    } catch (error) {
-      console.warn(
-        JSON.stringify({
-          level: "warn",
-          msg: `Failed to delete form responses from DynamoDB. Submissions: ${formResponses.map((r) => `${r.submissionID}`).join(',')}.`,
-          error: error.message,
-        })
-      );
+    } catch (err) {
+      throw new Error(`Failed to delete form responses from DynamoDB. Reason: ${err.message}.`);
     }
+  }
+}
+
+async function reportErrorToSlack(snsClient, errorMessage) {
+  const publishCommandInput = {
+    Message: `End User Forms Critical - Form responses archiver: ${errorMessage}`,
+    TopicArn: SNS_ERROR_TOPIC_ARN,
+  };
+
+  try {
+    await snsClient.send(new PublishCommand(publishCommandInput));
+  } catch (err) {
+    throw new Error(`Failed to report error to Slack. Reason: ${err.message}.`);
   }
 }
