@@ -46,12 +46,6 @@ resource "aws_lambda_function" "cognito_email_sender" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "cognito_email_sender" {
-  name              = "/aws/lambda/${aws_lambda_function.cognito_email_sender.function_name}"
-  kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 90
-}
-
 resource "aws_lambda_layer_version" "cognito_email_sender_nodejs" {
   filename            = "/tmp/cognito_email_sender_nodejs.zip"
   layer_name          = "cognito_email_sender_node_packages"
@@ -84,14 +78,8 @@ resource "aws_lambda_function" "cognito_pre_sign_up" {
     mode = "PassThrough"
   }
 
-
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
   }
-}
-resource "aws_cloudwatch_log_group" "cognito_pre_sign_up" {
-  name              = "/aws/lambda/${aws_lambda_function.cognito_pre_sign_up.function_name}"
-  kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 90
 }

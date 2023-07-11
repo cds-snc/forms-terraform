@@ -34,24 +34,16 @@ exports.handler = async function (event) {
     // Update DB entry for receipt ID
     await saveReceipt(submissionID, receiptID);
     console.log(
-      JSON.stringify({
-        level: "info",
-        status: "success",
-        sqsMessage: receiptID,
-        submissionID: submissionID,
-      })
+      `{"status": "success", "sqsMessage": "${receiptID}", "submissionID": "${submissionID}"}`
     );
     return { status: true };
 
     //----------
   } catch (err) {
     console.error(
-      JSON.stringify({
-        level: "error",
-        status: "failed",
-        submissionID: submissionID ? submissionID : "Not yet created",
-        msg: err.message,
-      })
+      `{"status": "failed", "submissionID": "${
+        submissionID ? submissionID : "Not yet created"
+      }", "error": "${err.message}"}`
     );
     return { status: false };
   }
@@ -71,35 +63,30 @@ const sendData = async (submissionID) => {
     const queueResponse = await sqs.send(new SendMessageCommand(SQSParams));
     return queueResponse.MessageId;
   } catch (err) {
-    throw new Error("Could not create mesasge on Reliability Queue");
+    throw Error(err);
   }
 };
 
 const saveData = async (submissionID, formData) => {
-  try {
-    const securityAttribute = formData.securityAttribute ?? "Protected A";
-    delete formData.securityAttribute;
+  const securityAttribute = formData.securityAttribute ?? "Protected A";
+  delete formData.securityAttribute;
 
-    const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
-    const timeStamp = Date.now().toString();
-    const DBParams = {
-      TableName: "ReliabilityQueue",
-      Item: {
-        SubmissionID: { S: submissionID },
-        FormID: { S: formData.formID },
-        SendReceipt: { S: "unknown" },
-        FormSubmissionLanguage: { S: formData.language },
-        FormData: { S: formSubmission },
-        CreatedAt: { N: timeStamp },
-        SecurityAttribute: { S: securityAttribute },
-      },
-    };
-    //save data to DynamoDB
-    await db.send(new PutItemCommand(DBParams));
-  } catch (err) {
-    console.error(err);
-    throw new Error("Could not save data to Reliability Temporary Storage");
-  }
+  const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
+  const timeStamp = Date.now().toString();
+  const DBParams = {
+    TableName: "ReliabilityQueue",
+    Item: {
+      SubmissionID: { S: submissionID },
+      FormID: { S: formData.formID },
+      SendReceipt: { S: "unknown" },
+      FormSubmissionLanguage: { S: formData.language },
+      FormData: { S: formSubmission },
+      CreatedAt: { N: timeStamp },
+      SecurityAttribute: { S: securityAttribute },
+    },
+  };
+  //save data to DynamoDB
+  await db.send(new PutItemCommand(DBParams));
 };
 
 const saveReceipt = async (submissionID, receiptID) => {
@@ -117,13 +104,6 @@ const saveReceipt = async (submissionID, receiptID) => {
     //save data to DynamoDB
     await db.send(new UpdateItemCommand(DBParams));
   } catch (err) {
-    console.warn(
-      JSON.stringify({
-        level: "warn",
-        submissionID: submissionID,
-        msg: `Could not update reliability queue response with SQS Receipt`,
-        error: err.message,
-      })
-    );
+    console.warn(`{status: warn, submissionID: ${submissionID}, warning: ${err.message}}`);
   }
 };
