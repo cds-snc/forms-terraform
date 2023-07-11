@@ -60,60 +60,48 @@ jobs:
 
       # No dependencies
       - name: Terragrunt plan ecr
-        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/ecr"
-          comment-delete: "true"
-          comment-title: "Staging: ecr"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Terragrunt plan hosted_zone
-        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/hosted_zone"
-          comment-delete: "true"
-          comment-title: "Staging: hosted_zone"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Terragrunt plan kms
-        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/kms"
-          comment-delete: "true"
-          comment-title: "Staging: kms"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Terragrunt plan sqs
-        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/sqs"
-          comment-delete: "true"
-          comment-title: "Staging: sqs"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Terragrunt plan sns
-        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/sns"
-          comment-delete: "true"
-          comment-title: "Staging: sns"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Install Cognito Lambda deps
         run: ./aws/cognito/lambda/deps.sh install
 
       - name: Terragrunt plan cognito
-        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/cognito"
-          comment-delete: "true"
-          comment-title: "Staging: cognito"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Remove Cognito Lambda deps
@@ -121,49 +109,39 @@ jobs:
 
       # Depends on kms
       - name: Terragrunt plan network
-        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/network"
-          comment-delete: "true"
-          comment-title: "Staging: network"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Terragrunt plan dynamodb
-        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/dynamodb"
-          comment-delete: "true"
-          comment-title: "Staging: dynamodb"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       # Depends on network
       - name: Terragrunt plan load_balancer
-        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/load_balancer"
-          comment-delete: "true"
-          comment-title: "Staging: load_balancer"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Terragrunt plan redis
-        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/redis"
-          comment-delete: "true"
-          comment-title: "Staging: redis"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Terragrunt plan rds
-        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/rds"
-          comment-delete: "true"
-          comment-title: "Staging: rds"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       # Depends on everything
@@ -171,24 +149,20 @@ jobs:
         run: ./aws/app/lambda/deps.sh install
 
       - name: Terragrunt plan app
-        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/app"
-          comment-delete: "true"
-          comment-title: "Staging: app"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Remove Lambda deps
         run: ./aws/app/lambda/deps.sh delete
 
       - name: Terragrunt plan alarms
-        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/alarms"
-          comment-delete: "true"
-          comment-title: "Staging: alarms"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Build Load Testing Lambda Container
@@ -196,19 +170,15 @@ jobs:
         run: docker build -t load_testing_lambda:latest .
 
       - name: Terragrunt plan load_testing
-        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/load_testing"
-          comment-delete: "true"
-          comment-title: "Staging: load_testing"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Terragrunt plan pr_review
-        uses: cds-snc/terraform-plan@8be66db9c815352044405fd33120b91918bf1f2e # tag=v2.3.1
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/pr_review"
-          comment-delete: "true"
-          comment-title: "Staging: pr_review"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
