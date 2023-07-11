@@ -521,5 +521,5 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_lambda" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.notify_slack.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = "arn:aws:ssm:ca-central-1:${var.account_id}:log-group:*:*"
+  source_arn    = "arn:aws:logs:ca-central-1:${var.account_id}:log-group:*:*"
 }
