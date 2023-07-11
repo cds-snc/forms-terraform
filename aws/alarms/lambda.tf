@@ -10,7 +10,7 @@ data "archive_file" "notify_slack" {
 #tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "notify_slack" {
   filename      = "/tmp/notify_slack.zip"
-  function_name = "NotifySlackSNS"
+  function_name = "NotifySlack"
   role          = aws_iam_role.notify_slack_lambda.arn
   handler       = "notify_slack.handler"
 
