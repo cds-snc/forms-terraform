@@ -12,8 +12,14 @@ const deleteFormTemplatesMarkedAsArchived = async () => {
     const database = process.env.AWS_SAM_LOCAL ? requestSAM : requestRDS;
     await database(request, []);
   } catch (error) {
-    console.error(`{"status": "error", "error": "${error.message}"}`);
-    throw new Error("Failed to delete archived form templates");
+    // Warn Message will be sent to slack
+    console.warn(
+      JSON.stringify({
+        level: "warn",
+        msg: `Failed to delete form templates marked as archived.`,
+        error: error.message,
+      })
+    );
   }
 };
 
@@ -24,8 +30,8 @@ const deleteFormTemplatesMarkedAsArchived = async () => {
  * @returns PG Client return value
  */
 const requestSAM = async (SQL, parameters) => {
-  // Placed outside of try block to be referenced in finally
   const dbClient = new Client();
+
   try {
     if (
       process.env.PGHOST &&
@@ -37,12 +43,12 @@ const requestSAM = async (SQL, parameters) => {
     } else {
       throw new Error("Missing Environment Variables for DB config");
     }
+
     const data = await dbClient.query(SQL, parameters);
+
     return parseConfig(data.rows);
   } catch (error) {
-    console.error(`{"status": "error", "error": "${error.message}"}`);
-    // Lift more generic error to be able to capture event info higher in scope
-    throw new Error("Error connecting to LOCAL AWS SAM DB");
+    throw new Error(`Error issuing command to Local SAM AWS DB. Reason: ${error.message}.`);
   } finally {
     dbClient.end();
   }
@@ -57,6 +63,7 @@ const requestSAM = async (SQL, parameters) => {
 const requestRDS = async (SQL, parameters) => {
   try {
     const dbClient = new RDSDataClient({ region: REGION });
+
     const params = {
       database: process.env.DB_NAME,
       resourceArn: process.env.DB_ARN,
@@ -65,14 +72,14 @@ const requestRDS = async (SQL, parameters) => {
       includeResultMetadata: false, // set to true if we want metadata like column names
       parameters: parameters,
     };
+
     const command = new ExecuteStatementCommand(params);
 
     const data = await dbClient.send(command);
+
     return parseConfig(data.records);
   } catch (error) {
-    console.error(`{"status": "error", "error": "${error.message}"}`);
-    // Lift more generic error to be able to capture event info higher in scope
-    throw new Error("Error connecting to RDS");
+    throw new Error(`Error issuing command to AWS RDS. Reason: ${error.message}.`);
   }
 };
 
