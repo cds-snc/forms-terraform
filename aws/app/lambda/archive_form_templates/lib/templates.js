@@ -48,7 +48,7 @@ const requestSAM = async (SQL, parameters) => {
 
     return parseConfig(data.rows);
   } catch (error) {
-    throw new Error(`Failed to execute SQL request within LOCAL AWS SAM DB. Reason: ${error.message}.`);
+    throw new Error(`Error issuing command to Local SAM AWS DB. Reason: ${error.message}.`);
   } finally {
     dbClient.end();
   }
@@ -79,7 +79,7 @@ const requestRDS = async (SQL, parameters) => {
 
     return parseConfig(data.records);
   } catch (error) {
-    throw new Error(`Failed to execute SQL request within RDS. Reason: ${error.message}.`);
+    throw new Error(`Error issuing command to AWS RDS. Reason: ${error.message}.`);
   }
 };
 

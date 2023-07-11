@@ -46,7 +46,7 @@ exports.handler = async function (event) {
     //----------
   } catch (err) {
     console.error(
-      JSON.Stringify({
+      JSON.stringify({
         level: "error",
         status: "failed",
         submissionID: submissionID ? submissionID : "Not yet created",

@@ -465,7 +465,7 @@ resource "aws_cloudwatch_log_subscription_filter" "forms_unhandled_error_steam" 
   depends_on      = [aws_lambda_permission.allow_cloudwatch_to_run_lambda]
   name            = "forms_unhandled_error_stream"
   log_group_name  = var.ecs_cloudwatch_log_group_name
-  filter_pattern  = "Error -level"
+  filter_pattern  = "Error -level" # Do not catch JSON formatted logs with `level` property because those will be handled by the filters below
   destination_arn = aws_lambda_function.notify_slack.arn
 }
 

@@ -25,7 +25,7 @@ function getSNSMessageSeverity(message) {
   var severity = "info";
   var keepProcessing = true;
 
-  for (var errorMessagesItem in warningMessages) {
+  for (var errorMessagesItem in errorMessages) {
     if (
       message.indexOf(errorMessages[errorMessagesItem]) != -1 &&
       // Does not inform about OK status
