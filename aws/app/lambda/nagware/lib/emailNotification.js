@@ -43,12 +43,24 @@ Si les réponses ne sont toujours pas confirmées après 45 jours, un processus 
   } catch (error) {
     if (process.env.ENVIRONMENT === "staging") {
       if (error.response?.data?.errors) {
-        if (error.response.data.errors.find(e => e.message.includes("Can’t send to this recipient using a team-only API key")) !== undefined) 
+        if (
+          error.response.data.errors.find((e) =>
+            e.message.includes("Can’t send to this recipient using a team-only API key")
+          ) !== undefined
+        )
           return;
       }
     }
-    
-    throw new Error(`Failed to send email to form owner. Reason: ${error.response?.data?.errors ? JSON.stringify(error.response.data.errors) : error.message}.`);
+    // Error Message will be sent to slack
+    console.error({
+      level: "error",
+      msg: `Failed to send nagware email to form owner: ${formOwnerEmailAddress} for form ID ${formID} .`,
+      error: error.response?.data?.errors
+        ? JSON.stringify(error.response.data.errors)
+        : error.message,
+    });
+    // Continue to send nagware emails even if one fails
+    return;
   }
 }
 

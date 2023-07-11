@@ -27,11 +27,11 @@ exports.handler = async function (event) {
       // Do not throw an error so it does not retry again
       console.warn(
         JSON.stringify({
+          level: "warn",
           status: "success",
           submissionId: submissionID,
           sendReceipt: sendReceipt,
-          message:
-            "Submission will not be processed because it could not be found in the database or has already been processed.",
+          msg: "Submission will not be processed because it could not be found in the database or has already been processed.",
         })
       );
       return { status: true };
@@ -72,15 +72,18 @@ exports.handler = async function (event) {
       );
     }
   } catch (error) {
-    console.error(
+    console.warn(
       JSON.stringify({
+        level: "warn",
         status: "failed",
         submissionId: message.submissionID ?? "n/a",
         sendReceipt: sendReceipt ?? "n/a",
-        message: "Failed to process submission.",
-        error: `${error.message}`,
+        msg: `Failed to process submission ID ${message.submissionID ?? "n/a"}`,
+        error: error.message,
       })
     );
-    throw new Error(`Failed to process submission.`);
+    // Log full error to console, it will not be sent to Slack
+    console.warn(error);
+    throw new Error({ status: "failed" });
   }
 };

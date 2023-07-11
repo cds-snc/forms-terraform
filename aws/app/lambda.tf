@@ -115,6 +115,12 @@ resource "aws_lambda_event_source_mapping" "reprocess_submission" {
   enabled          = true
 }
 
+resource "aws_cloudwatch_log_group" "reliability" {
+  name              = "/aws/lambda/${aws_lambda_function.reliability.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
+  retention_in_days = 90
+}
+
 #
 # Form Submission API processing
 #
@@ -178,6 +184,13 @@ resource "aws_lambda_permission" "submission" {
   principal     = aws_iam_role.forms.arn
 }
 
+resource "aws_cloudwatch_log_group" "submission" {
+  name              = "/aws/lambda/${aws_lambda_function.submission.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
+  retention_in_days = 90
+}
+
+
 #
 # Archive form responses
 #
@@ -221,7 +234,6 @@ resource "aws_lambda_function" "archiver" {
   environment {
     variables = {
       REGION                       = var.region
-      SNS_ERROR_TOPIC_ARN          = var.sns_topic_alert_critical_arn
       DYNAMODB_VAULT_TABLE_NAME    = var.dynamodb_vault_table_name
       ARCHIVING_S3_BUCKET          = aws_s3_bucket.archive_storage.bucket
       VAULT_FILE_STORAGE_S3_BUCKET = aws_s3_bucket.vault_file_storage.bucket
@@ -259,6 +271,13 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_responses
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.cron_3am_every_day.arn
 }
+
+resource "aws_cloudwatch_log_group" "archiver" {
+  name              = "/aws/lambda/${aws_lambda_function.archiver.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
+  retention_in_days = 90
+}
+
 
 #
 # Dead letter queue consumer
@@ -321,6 +340,13 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_dead_letter_queue_cons
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.cron_2am_every_day.arn
 }
+
+resource "aws_cloudwatch_log_group" "dead_letter_queue_consumer" {
+  name              = "/aws/lambda/${aws_lambda_function.dead_letter_queue_consumer.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
+  retention_in_days = 90
+}
+
 
 #
 # Archive form templates
@@ -406,6 +432,13 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_templates
   source_arn    = aws_cloudwatch_event_rule.cron_4am_every_day.arn
 }
 
+resource "aws_cloudwatch_log_group" "archive_form_templates" {
+  name              = "/aws/lambda/${aws_lambda_function.archive_form_templates.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
+  retention_in_days = 90
+}
+
+
 #
 # Audit Log Processing
 #
@@ -438,8 +471,7 @@ resource "aws_lambda_function" "audit_logs" {
 
   environment {
     variables = {
-      REGION              = var.region
-      SNS_ERROR_TOPIC_ARN = var.sns_topic_alert_critical_arn
+      REGION = var.region
     }
   }
 
@@ -470,6 +502,13 @@ resource "aws_lambda_event_source_mapping" "audit_logs" {
   enabled                            = true
 }
 
+resource "aws_cloudwatch_log_group" "audit_logs" {
+  name              = "/aws/lambda/${aws_lambda_function.audit_logs.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
+  retention_in_days = 90
+}
+
+
 #
 # Nagware
 #
@@ -497,11 +536,6 @@ data "archive_file" "nagware_lib" {
   source {
     content  = file("./lambda/nagware/lib/emailNotification.js")
     filename = "nodejs/node_modules/emailNotification/index.js"
-  }
-
-  source {
-    content  = file("./lambda/nagware/lib/slackNotification.js")
-    filename = "nodejs/node_modules/slackNotification/index.js"
   }
 }
 
@@ -572,4 +606,10 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_nagware_lambda" {
   function_name = aws_lambda_function.nagware.function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.cron_5am_every_business_day.arn
+}
+
+resource "aws_cloudwatch_log_group" "nagware" {
+  name              = "/aws/lambda/${aws_lambda_function.nagware.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
+  retention_in_days = 90
 }
