@@ -11,7 +11,7 @@ env:
   AWS_REGION: ca-central-1
   AWS_ACCESS_KEY_ID: ${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}
-  CONFTEST_VERSION: 0.27.0
+  CONFTEST_VERSION: 0.36.0
   TERRAFORM_VERSION: 1.5.0
   TERRAGRUNT_VERSION: 0.46.3
   TF_INPUT: false
@@ -42,8 +42,8 @@ jobs:
         uses: cds-snc/terraform-tools-setup@v1
         env:
           CONFTEST_VERSION: ${{env.CONFTEST_VERSION}}
-          TERRAFORM_VERSION: ${{env.TERRAFORM_VERSION}}}
-          TERRAGRUNT_VERSION: ${{env.TERRAGRUNT_VERSION}}}
+          TERRAFORM_VERSION: ${{env.TERRAFORM_VERSION}}
+          TERRAGRUNT_VERSION: ${{env.TERRAGRUNT_VERSION}}
 
       # No dependencies
       - name: Terragrunt plan ecr
