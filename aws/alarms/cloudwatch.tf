@@ -483,6 +483,13 @@ resource "aws_cloudwatch_log_subscription_filter" "reliability_log_stream" {
   destination_arn = aws_lambda_function.notify_slack.arn
 }
 
+resource "aws_cloudwatch_log_subscription_filter" "submission_log_stream" {
+  name            = "submission_log_stream"
+  log_group_name  = var.lambda_submission_log_group_name
+  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
+  destination_arn = aws_lambda_function.notify_slack.arn
+}
+
 resource "aws_cloudwatch_log_subscription_filter" "archiver_log_stream" {
   name            = "archiver_log_stream"
   log_group_name  = var.lambda_archiver_log_group_name
