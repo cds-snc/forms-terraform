@@ -1,35 +1,34 @@
-name: "Terragrunt plan PRODUCTION"
+name: "Terragrunt plan all modules STAGING"
 
 on:
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
 
 env:
-  APP_ENV: production
-  APP_DOMAIN: ${{ vars.PRODUCTION_APP_DOMAIN}}
-  AWS_ACCOUNT_ID: ${{ vars.PRODUCTION_AWS_ACCOUNT_ID }}
+  APP_ENV: staging
+  APP_DOMAIN: ${{ vars.STAGING_APP_DOMAIN }}
+  AWS_ACCOUNT_ID: ${{ vars.STAGING_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
-  AWS_ACCESS_KEY_ID: ${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
   CONFTEST_VERSION: 0.36.0
   TERRAFORM_VERSION: 1.4.2
   TERRAGRUNT_VERSION: 0.46.3
   TF_INPUT: false
-  TF_VAR_ecs_secret_token_secret: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
-  TF_VAR_google_client_id: ${{ secrets.PRODUCTION_GOOGLE_CLIENT_ID}}
-  TF_VAR_google_client_secret: ${{secrets.PRODUCTION_GOOGLE_CLIENT_SECRET}}
-  TF_VAR_recaptcha_secret: ${{secrets.PRODUCTION_RECAPTCHA_SITE_SECRET}}
+  TF_VAR_ecs_secret_token_secret: ${{ secrets.STAGING_TOKEN_SECRET }}
+  TF_VAR_google_client_id: ${{ secrets.STAGING_GOOGLE_CLIENT_ID}}
+  TF_VAR_google_client_secret: ${{secrets.STAGING_GOOGLE_CLIENT_SECRET}}
+  TF_VAR_recaptcha_secret: ${{secrets.STAGING_RECAPTCHA_SITE_SECRET}}
   TF_VAR_recaptcha_public: 6LfJDN4eAAAAAGvdRF7ZnQ7ciqdo1RQnQDFmh0VY
-  TF_VAR_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
-  TF_VAR_cognito_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
-  TF_VAR_rds_db_password: ${{ secrets.PRODUCTION_DB_PASSWORD }}
-  TF_VAR_slack_webhook: ${{ secrets.PRODUCTION_SLACK_WEBHOOK }}
-  TF_VAR_gc_notify_callback_bearer_token: ${{ secrets.PRODUCTION_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
-  TF_VAR_gc_temp_token_template_id: 61cec9c4-64ca-4e4d-b4d2-a0e931c44422
-  TF_VAR_gc_template_id: 92096ac6-1cc5-40ae-9052-fffdb8439a90
-  TF_VAR_cognito_code_template_id: 8dde39b6-05b9-43ce-807f-c2364ed3bdb6
-  TF_VAR_email_address_contact_us: ${{ vars.PRODUCTION_CONTACT_US_EMAIL }}
-  TF_VAR_email_address_support: ${{ vars.PRODUCTION_SUPPORT_EMAIL }}
+  TF_VAR_notify_api_key: ${{ secrets.STAGING_NOTIFY_API_KEY }}
+  TF_VAR_cognito_notify_api_key: ${{ secrets.STAGING_NOTIFY_API_KEY }}
+  TF_VAR_rds_db_password: ${{ secrets.STAGING_DB_PASSWORD }}
+  TF_VAR_slack_webhook: ${{ secrets.STAGING_SLACK_WEBHOOK }}
+  TF_VAR_gc_notify_callback_bearer_token: ${{ secrets.STAGING_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
+  TF_VAR_gc_temp_token_template_id: b6885d06-d10a-422a-973f-05e274d9aa86
+  TF_VAR_gc_template_id: 8d597a1b-a1d6-4e3c-8421-042a2b4158b7
+  TF_VAR_cognito_code_template_id: 12a18f84-062c-4a67-8310-bf114af051ea
+  TF_VAR_email_address_contact_us: ${{ vars.STAGING_CONTACT_US_EMAIL }}
+  TF_VAR_email_address_support: ${{ vars.STAGING_SUPPORT_EMAIL }}
 jobs:
   terragrunt-plan:
     runs-on: ubuntu-latest
@@ -50,45 +49,35 @@ jobs:
         uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/ecr"
-          comment-delete: "true"
-          comment-title: "Production: ecr"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Terragrunt plan hosted_zone
         uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/hosted_zone"
-          comment-delete: "true"
-          comment-title: "Production: hosted_zone"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Terragrunt plan kms
         uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/kms"
-          comment-delete: "true"
-          comment-title: "Production: kms"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Terragrunt plan sqs
         uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/sqs"
-          comment-delete: "true"
-          comment-title: "Production: sqs"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Terragrunt plan sns
         uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/sns"
-          comment-delete: "true"
-          comment-title: "Production: sns"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Install Cognito Lambda deps
@@ -98,9 +87,7 @@ jobs:
         uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/cognito"
-          comment-delete: "true"
-          comment-title: "Production: cognito"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Remove Cognito Lambda deps
@@ -111,18 +98,14 @@ jobs:
         uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/network"
-          comment-delete: "true"
-          comment-title: "Production: network"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Terragrunt plan dynamodb
         uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/dynamodb"
-          comment-delete: "true"
-          comment-title: "Production: dynamodb"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       # Depends on network
@@ -130,27 +113,21 @@ jobs:
         uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/load_balancer"
-          comment-delete: "true"
-          comment-title: "Production: load_balancer"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Terragrunt plan redis
         uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/redis"
-          comment-delete: "true"
-          comment-title: "Production: redis"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Terragrunt plan rds
         uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/rds"
-          comment-delete: "true"
-          comment-title: "Production: rds"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       # Depends on everything
@@ -161,9 +138,7 @@ jobs:
         uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/app"
-          comment-delete: "true"
-          comment-title: "Production: app"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
           terragrunt: "true"
 
       - name: Remove Lambda deps
@@ -173,7 +148,23 @@ jobs:
         uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
         with:
           directory: "env/cloud/alarms"
-          comment-delete: "true"
-          comment-title: "Production: alarms"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          comment: "false"
+          terragrunt: "true"
+
+      - name: Build Load Testing Lambda Container
+        working-directory: aws/load_testing/lambda
+        run: docker build -t load_testing_lambda:latest .
+
+      - name: Terragrunt plan load_testing
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
+        with:
+          directory: "env/cloud/load_testing"
+          comment: "false"
+          terragrunt: "true"
+
+      - name: Terragrunt plan pr_review
+        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
+        with:
+          directory: "env/cloud/pr_review"
+          comment: "false"
           terragrunt: "true"
