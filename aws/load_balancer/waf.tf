@@ -276,6 +276,7 @@ resource "aws_wafv2_web_acl_logging_configuration" "firehose_waf_logs_forms" {
 
 
 resource "aws_waf_regex_pattern_set" "valid_app_uri_path_regex_array" {
-  name                  = "valid_app_uri_paths"
+  name                  = "valid_app_uri_path_regex_array"
+  scope                 = "REGIONAL"
   regex_pattern_strings = ["^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|myforms|unsupported-browser|terms-of-use|404)(?:\\/[\\w-]+))?\\/?$", "^\\/(?:en|fr)?\\/?(?:(form-builder|sla|unlock-publishing|terms-and-conditions|javascript-disabled)(?:\\/[\\w-]+))?\\/?$", "^\\/(?:en|fr)?\\/?(?:(static|_next|img|favicon\\.ico)(?:\\/[\\w-]+))?\\/?$", "^\\/(?:en|fr)?\\/?(?:\\/[\\w-]+)?\\/?$"]
 }
