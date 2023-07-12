@@ -78,7 +78,12 @@ const requestSAM = async (SQL, parameters) => {
     const data = await dbClient.query(SQL, parameters);
     return parseQueryResponse(data.rows);
   } catch (error) {
-    console.error(`{"status": "error", "error": "${error.message}"}`);
+    console.error(
+      JSON.stringify({
+        status: "error",
+        error: error.message,
+      })
+    );
     // Lift more generic error to be able to capture event info higher in scope
     throw new Error("Error connecting to LOCAL AWS SAM DB");
   } finally {
@@ -108,7 +113,12 @@ const requestRDS = async (SQL, parameters) => {
     const data = await dbClient.send(command);
     return parseQueryResponse(data.records);
   } catch (error) {
-    console.error(`{"status": "error", "error": "${error.message}"}`);
+    console.error(
+      JSON.stringify({
+        status: "error",
+        error: error.message,
+      })
+    );
     // Lift more generic error to be able to capture event info higher in scope
     throw new Error("Error connecting to RDS");
   }

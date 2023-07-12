@@ -82,8 +82,10 @@ exports.handler = async function (event) {
         error: error.message,
       })
     );
+
     // Log full error to console, it will not be sent to Slack
-    console.warn(error);
+    console.warn(JSON.stringify(error));
+    
     throw new Error({ status: "failed" });
   }
 };
