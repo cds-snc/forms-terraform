@@ -106,7 +106,11 @@ function sendToSlack(logGroup, message, severity, context) {
   });
 
   req.on("error", function (e) {
-    console.log("problem with request: " + e.message);
+    console.log(
+      JSON.stringify({
+        msg: `problem with request: ${e.message}`,
+      })
+    );
     context.fail(e);
   });
 
@@ -129,11 +133,19 @@ exports.handler = function (input, context) {
         if (logMessage) {
           const message = logMessage.msg + logMessage.error ? "/n" + logMessage.error : "";
           sendToSlack(result.logGroup, message, logMessage.level, context);
-          console.log(`Event Data for ${result.logGroup}:`, JSON.stringify(logMessage, null, 2));
+          console.log(
+            JSON.stringify({
+              msg: `Event Data for ${result.logGroup}: ${JSON.stringify(logMessage, null, 2)}`,
+            })
+          );
         } else {
           // These are unhandled errors from the GCForms app only
           sendToSlack(result.logGroup, result.message, "error", context);
-          console.log(`Event Data for ${result.logGroup}:`, result.message);
+          console.log(
+            JSON.stringify({
+              msg: `Event Data for ${result.logGroup}: ${result.message}`,
+            })
+          );
         }
       }
     });
@@ -146,7 +158,11 @@ exports.handler = function (input, context) {
     if (severity === "alarm_reset") {
       message = "Alarm Status now OK - " + getMessage(message);
     }
-    console.log(`Event Data for Alarms:`, input.Records[0].Sns.Message);
+    console.log(
+      JSON.stringify({
+        msg: `Event Data for Alarms: ${input.Records[0].Sns.Message}`,
+      })
+    );
     sendToSlack("Alarm Event", message, severity, context);
   }
 };

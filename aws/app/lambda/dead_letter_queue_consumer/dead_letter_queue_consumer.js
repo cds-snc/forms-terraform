@@ -56,11 +56,13 @@ exports.handler = async () => {
     };
   } catch (err) {
     // Report Errorr to Slack
-    console.error({
-      level: "error",
-      msg: "Reliability DLQ could not process waiting messages.",
-      error: err.message,
-    });
+    console.error(
+      JSON.stringify({
+        level: "error",
+        msg: "Reliability DLQ could not process waiting messages.",
+        error: err.message,
+      })
+    );
 
     return {
       statusCode: "ERROR",
