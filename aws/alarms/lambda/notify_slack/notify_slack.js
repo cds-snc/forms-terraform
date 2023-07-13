@@ -2,9 +2,11 @@ var https = require("https");
 var util = require("util");
 var zlib = require("zlib");
 
-function safeJsonParse(str) {
+function safeParseLogIncludingJSON(message) {
   try {
-    return JSON.parse(str);
+    // When we get a log it contains more than just the message we want. It also contains information like `2023-07-13T13:48:30.151Z	535741e0-25a9-4c8b-a0a1-25d2b24bf1b4	INFO`.
+    const jsonPartOfLogMessage = message.slice(message.indexOf('{'));
+    return JSON.parse(jsonPartOfLogMessage);
   } catch (e) {
     return false;
   }
@@ -62,32 +64,32 @@ function getSNSMessageSeverity(message) {
 function sendToSlack(logGroup, message, severity, context) {
   var environment = process.env.ENVIRONMENT || "Staging";
 
-  const icon_emoji = (severity) => {
+  const severityAsEmojiAndColor = (severity) => {
     switch (severity) {
       case "danger":
       case "error":
-        return ":rotating_light:";
+        return { emoji: ":rotating_light:", color: "danger" };
       case "warning":
       case "warn":
-        return ":warning:";
+        return { emoji: ":warning:", color: "warning" };
       default:
-        return ":loudspeaker:";
+        return { emoji: ":loudspeaker:", color: "good" };
     }
   };
+  
+  const severityThemeForSlack = severityAsEmojiAndColor(severity);
 
   var postData = {
-    channel: `#forms-${environment.toLowerCase()}-events}`,
+    channel: `#forms-${environment.toLowerCase()}-events`,
     username: "Forms Notifier",
     text: `*${logGroup}*`,
-    icon_emoji: icon_emoji(severity),
+    icon_emoji: severityThemeForSlack.emoji,
   };
 
-  postData.attachments = [
-    {
-      color: severity,
-      text: message,
-    },
-  ];
+  postData.attachments = [{
+    color: severityThemeForSlack.color,
+    text: message,
+  }];
 
   var options = {
     method: "POST",
@@ -96,16 +98,16 @@ function sendToSlack(logGroup, message, severity, context) {
     path: process.env.SLACK_WEBHOOK,
   };
 
-  var req = https.request(options, function (res) {
+  var req = https.request(options, function(res) {
     res.setEncoding("utf8");
-    res.on("data", function () {
+    res.on("data", function() {
       context.succeed(
         `Message successfully sent to Slack... severity: ${severity}, message: ${message}`
       );
     });
   });
 
-  req.on("error", function (e) {
+  req.on("error", function(e) {
     console.log(
       JSON.stringify({
         msg: `problem with request: ${e.message}`,
@@ -118,34 +120,39 @@ function sendToSlack(logGroup, message, severity, context) {
   req.end();
 }
 
-exports.handler = function (input, context) {
+exports.handler = function(input, context) {
   if (input.awslogs) {
     // This is a CloudWatch log event
     var payload = Buffer.from(input.awslogs.data, "base64");
-    zlib.gunzip(payload, function (e, result) {
+    zlib.gunzip(payload, function(e, result) {
       if (e) {
         context.fail(e);
       } else {
-        result = JSON.parse(result.toString());
+        const parsedResult = JSON.parse(result.toString());
+          
+        // We can get events with a `CONTROL_MESSAGE` type. It happens when CloudWatch checks if the Lambda is reachable.
+        if (parsedResult.messageType !== "DATA_MESSAGE") return;
 
-        const logMessage = safeJsonParse(result.message);
-        // If logMessage is false, then the message is not JSON
-        if (logMessage) {
-          const message = logMessage.msg + logMessage.error ? "/n" + logMessage.error : "";
-          sendToSlack(result.logGroup, message, logMessage.level, context);
-          console.log(
-            JSON.stringify({
-              msg: `Event Data for ${result.logGroup}: ${JSON.stringify(logMessage, null, 2)}`,
-            })
-          );
-        } else {
-          // These are unhandled errors from the GCForms app only
-          sendToSlack(result.logGroup, result.message, "error", context);
-          console.log(
-            JSON.stringify({
-              msg: `Event Data for ${result.logGroup}: ${result.message}`,
-            })
-          );
+        for (const log of parsedResult.logEvents) {
+          const logMessage = safeParseLogIncludingJSON(log.message);
+          // If logMessage is false, then the message is not JSON
+          if (logMessage) {
+            const message = `${logMessage.msg} ${logMessage.error ? "\n".concat(logMessage.error) : ""}`;
+            sendToSlack(parsedResult.logGroup, message, logMessage.level, context);
+            console.log(
+              JSON.stringify({
+                msg: `Event Data for ${parsedResult.logGroup}: ${JSON.stringify(logMessage, null, 2)}`,
+              })
+            );
+          } else {
+            // These are unhandled errors from the GCForms app only
+            sendToSlack(parsedResult.logGroup, log.message, "error", context);
+            console.log(
+              JSON.stringify({
+                msg: `Event Data for ${parsedResult.logGroup}: ${log.message}`,
+              })
+            );
+          }
         }
       }
     });
