@@ -283,23 +283,23 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
   description = "Regex to match the app valid urls"
 
   regular_expression {
-    regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|myforms|unsupported-browser|terms-of-use|404)(?:\\/[\\w-]+))?\\/?$"
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|myforms|unsupported-browser|terms-of-use|404)(?:\\/[\\w-]+)*)?(?:\\/.*)?$"
   }
 
   regular_expression {
-    regex_string = "^\\/(?:en|fr)?\\/?(?:(form-builder|sla|unlock-publishing|terms-and-conditions|javascript-disabled)(?:\\/[\\w-]+))?\\/?$"
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(form-builder|sla|unlock-publishing|terms-and-conditions|javascript-disabled)(?:\\/[\\w-]+)*)?(?:\\/.*)?$"
   }
 
   regular_expression {
-    regex_string = "^\\/(?:en|fr)?\\/?(?:(form-builder|sla|unlock-publishing|terms-and-conditions|javascript-disabled)(?:\\/[\\w-]+))?\\/?$"
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(form-builder|sla|unlock-publishing|terms-and-conditions|javascript-disabled)(?:\\/[\\w-]+)*)?(?:\\/.*)?$"
   }
 
   regular_expression {
-    regex_string = "^\\/(?:en|fr)?\\/?(?:(static|_next|img|favicon\\.ico)(?:\\/[\\w-]+))?\\/?$"
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(static|_next|img|favicon\\.ico)(?:\\/[\\w-]+)*)?(?:\\/.*)?$"
   }
 
   regular_expression {
-    regex_string = "^\\/(?:en|fr)?\\/?(?:\\/[\\w-]+)?\\/?$"
+    regex_string = "^\\/(?:en|fr)?\\/?(?:\\/[\\w-]+)*)?(?:\\/.*)?$"
   }
 }
 
