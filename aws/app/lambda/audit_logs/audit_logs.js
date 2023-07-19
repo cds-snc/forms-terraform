@@ -86,8 +86,9 @@ exports.handler = async function (event) {
       console.warn(
         JSON.stringify({
           level: "warn",
-          msg: `Failed to process ${unprocessedIDs.length} log events. List of unprocessed IDs: ${unprocessedIDs.join(',')}.`,
-          error: error.message,
+          msg: `Failed to process ${
+            unprocessedIDs.length
+          } log events. List of unprocessed IDs: ${unprocessedIDs.join(",")}.`,
         })
       );
 
