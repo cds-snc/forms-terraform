@@ -291,10 +291,6 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
   }
 
   regular_expression {
-    regex_string = "^\\/(?:en|fr)?\\/?(?:(form-builder|sla|unlock-publishing|terms-and-conditions|javascript-disabled)(?:\\/[\\w-]+)*)?(?:\\/.*)?$"
-  }
-
-  regular_expression {
     regex_string = "^\\/(?:en|fr)?\\/?(?:(static|_next|img|favicon\\.ico)(?:\\/[\\w-]+)*)?(?:\\/.*)?$"
   }
 
