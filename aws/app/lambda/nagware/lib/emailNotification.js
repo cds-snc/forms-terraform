@@ -52,13 +52,15 @@ Si les réponses ne sont toujours pas confirmées après 45 jours, un processus 
       }
     }
     // Error Message will be sent to slack
-    console.error({
-      level: "error",
-      msg: `Failed to send nagware email to form owner: ${formOwnerEmailAddress} for form ID ${formID} .`,
-      error: error.response?.data?.errors
-        ? JSON.stringify(error.response.data.errors)
-        : error.message,
-    });
+    console.error(
+      JSON.stringify({
+        level: "error",
+        msg: `Failed to send nagware email to form owner: ${formOwnerEmailAddress} for form ID ${formID} .`,
+        error: error.response?.data?.errors
+          ? JSON.stringify(error.response.data.errors)
+          : error.message,
+      })
+    );
     // Continue to send nagware emails even if one fails
     return;
   }

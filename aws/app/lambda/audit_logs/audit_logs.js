@@ -56,8 +56,12 @@ exports.handler = async function (event) {
       })
     );
 
-    console.log("AuditLogs");
-    console.log(AuditLogs);
+    console.log(
+      JSON.stringify({
+        msg: "AuditLogs",
+        audit_logs: JSON.stringify(AuditLogs),
+      })
+    );
 
     if (typeof AuditLogs !== "undefined") {
       const unprocessedIDs = AuditLogs.map(({ PutItem: { UserID, Event, TimeStamp } }, index) => {

@@ -16,11 +16,13 @@ exports.handler = async () => {
     };
   } catch (error) {
     // Error Message will be sent to slack
-    console.error({
-      level: "error",
-      msg: "Failed to run Nagware.",
-      error: error.message,
-    });
+    console.error(
+      JSON.stringify({
+        level: "error",
+        msg: "Failed to run Nagware.",
+        error: error.message,
+      })
+    );
 
     return {
       statusCode: "ERROR",
@@ -53,10 +55,12 @@ async function nag(oldestFormResponseByFormID) {
     const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
     try {
       if (diffDays > 45) {
-        console.warn({
-          level: "warn",
-          msg: `Vault Nagware - ${diffDays} days old form response was detected. Form ID : ${formResponse.formID}.`,
-        });
+        console.warn(
+          JSON.stringify({
+            level: "warn",
+            msg: `Vault Nagware - ${diffDays} days old form response was detected. Form ID : ${formResponse.formID}.`,
+          })
+        );
       } else {
         const formNameAndOwnerEmailAddress = await getFormNameAndOwnerEmailAddress(
           formResponse.formID
@@ -69,11 +73,13 @@ async function nag(oldestFormResponseByFormID) {
       }
     } catch (error) {
       // Error Message will be sent to slack
-      console.error({
-        level: "error",
-        msg: `Failed to send nagware for form ID ${formResponse.formID} .`,
-        error: error.message,
-      });
+      console.error(
+        JSON.stringify({
+          level: "error",
+          msg: `Failed to send nagware for form ID ${formResponse.formID} .`,
+          error: error.message,
+        })
+      );
       // Continue to attempt to send Nagware even if one fails
     }
   }

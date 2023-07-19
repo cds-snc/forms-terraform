@@ -209,6 +209,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     Terraform             = true
   }
 
+
   /*
   rule {
     name     = "BlockInvalidURLPath"
@@ -245,9 +246,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       metric_name                = "BlockInvalidURLPath"
       sampled_requests_enabled   = false
     }
-  } **/
-
-
+} **/
 
 }
 

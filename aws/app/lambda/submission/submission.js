@@ -96,8 +96,8 @@ const saveData = async (submissionID, formData) => {
     };
     //save data to DynamoDB
     await db.send(new PutItemCommand(DBParams));
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(JSON.stringify(error));
     throw new Error("Could not save data to Reliability Temporary Storage");
   }
 };

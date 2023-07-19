@@ -45,8 +45,8 @@ async function removeSubmission(submissionID) {
     };
     //remove data fron DynamoDB
     return await db.send(new DeleteCommand(DBParams));
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(JSON.stringify(error));
     throw new Error(`Error removing submission ${submissionID} from ReliabilityQueue table`);
   }
 }
@@ -76,8 +76,8 @@ async function notifyProcessed(submissionID) {
     };
 
     return await db.send(new UpdateCommand(DBParams));
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(JSON.stringify(error));
     throw new Error(`Error updating Notify TTL for submission ${submissionID}`);
   }
 }
@@ -162,8 +162,7 @@ async function saveToVault(
         });
       } else {
         // Not a duplication error, something else has gone wrong
-
-        console.error(error);
+        console.error(JSON.stringify(error));
         throw new Error(
           `Error saving submission to vault for submission ID ${submissionID} / FormID: ${formID}`
         );
