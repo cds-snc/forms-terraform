@@ -276,7 +276,6 @@ resource "aws_wafv2_web_acl_logging_configuration" "firehose_waf_logs_forms" {
 }
 
 
-
 resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
   name        = "valid_app_uri_paths"
   scope       = "REGIONAL"
