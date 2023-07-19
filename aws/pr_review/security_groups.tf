@@ -1,6 +1,6 @@
 #
-# Security group allowing the lambda forms-client PR review environment to communicate
-# with Redis, DB, and receive recieve HTTPS requests.
+# Security group allowing the lambda forms-client PR review environment to 
+# communicate with Redis, DB, and receive recieve HTTPS requests.
 #
 resource "aws_security_group" "lambda_client_pr_review" {
   count       = var.env == "staging" ? 1 : 0
