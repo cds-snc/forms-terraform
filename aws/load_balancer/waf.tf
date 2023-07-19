@@ -209,9 +209,9 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     Terraform             = true
   }
 
-  /*
+
   rule {
-    name     = "BlockInvalidURLPath"
+    name     = "AllowOnlyAppUrls"
     priority = 3
 
     action {
@@ -242,11 +242,10 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "BlockInvalidURLPath"
+      metric_name                = "AllowOnlyAppUrls"
       sampled_requests_enabled   = false
     }
-  } **/
-
+  }
 
 
 }
@@ -279,7 +278,7 @@ resource "aws_wafv2_web_acl_logging_configuration" "firehose_waf_logs_forms" {
 resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
   name        = "valid_app_uri_paths"
   scope       = "REGIONAL"
-  description = "Regex to match the app valid paths"
+  description = "Regex to match the app valid urls"
 
   regular_expression {
     regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|myforms|unsupported-browser|terms-of-use|404)(?:\\/[\\w-]+))?\\/?$"
