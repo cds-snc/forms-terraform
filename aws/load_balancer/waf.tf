@@ -210,6 +210,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   }
 
 
+
   rule {
     name     = "AllowOnlyAppUrls"
     priority = 3
@@ -223,7 +224,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       not_statement {
         statement {
           regex_pattern_set_reference_statement {
-            arn = aws_wafv2_regex_pattern_set.valid_app_uri_paths.arn
+            arn = aws_waf_regex_pattern_set.valid_app_uri_path_regex_array.arn
             field_to_match {
               uri_path {}
             }
@@ -275,6 +276,7 @@ resource "aws_wafv2_web_acl_logging_configuration" "firehose_waf_logs_forms" {
 }
 
 
+
 resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
   name        = "valid_app_uri_paths"
   scope       = "REGIONAL"
@@ -300,3 +302,4 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
     regex_string = "^\\/(?:en|fr)?\\/?(?:\\/[\\w-]+)?\\/?$"
   }
 }
+
