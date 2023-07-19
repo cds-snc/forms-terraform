@@ -274,8 +274,16 @@ resource "aws_wafv2_web_acl_logging_configuration" "firehose_waf_logs_forms" {
   }
 }
 
+# Generic path : ^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|myforms|unsupported-browser|terms-of-use|404)(?:\\/[\\w-]+))?\\/?$
+# example : /fr/auth/secure/ ,  /signup/, /en/myforms/builder/
+# explain : this regex pattern is used to match paths that start with an optional language code (en or fr), followed by an optional forward slash. Then, it matches one of the specified keywords (admin, id, api, auth, signup, myforms, unsupported-browser, terms-of-use, 404) followed by an optional path segment containing alphanumeric characters or hyphens. Finally, it allows for an optional trailing forward slash at the end of the path.
+
+# Path #2 : ^\\/(?:en|fr)?\\/?(?:(admin\\/accounts)(?:\\/[\\w-]+\\/[\\w-]+))\\/?$
+# example path : /en/admin/accounts/xxxx/manage-permissions/
+# explain : (?:\/[\w-]+\/[\w-]+) - Matches a forward slash /, followed by one or more alphanumeric characters or hyphens ([\w-]+), repeated twice separated by forward slashes (\/).
+# With this updated pattern, the section "xxxx" user id can be any combination of alphanumeric characters and hyphens. It allows for a dynamic value in that section while keeping the rest of the path fixed
 
 resource "aws_waf_regex_pattern_set" "valid_app_uri_path_regex_array" {
   name                  = "valid_app_uri_path_regex_array"
-  regex_pattern_strings = ["^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|myforms|unsupported-browser|terms-of-use|404)(?:\\/[\\w-]+))?\\/?$", "^\\/(?:en|fr)?\\/?(?:(form-builder|sla|unlock-publishing|terms-and-conditions|javascript-disabled)(?:\\/[\\w-]+))?\\/?$", "^\\/(?:en|fr)?\\/?(?:(static|_next|img|favicon\\.ico)(?:\\/[\\w-]+))?\\/?$", "^\\/(?:en|fr)?\\/?(?:\\/[\\w-]+)?\\/?$"]
+  regex_pattern_strings = ["^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|myforms|unsupported-browser|terms-of-use|404)(?:\\/[\\w-]+))?\\/?$", "^\\/(?:en|fr)?\\/?(?:(form-builder|sla|unlock-publishing|terms-and-conditions|javascript-disabled)(?:\\/[\\w-]+))?\\/?$", "^\\/(?:en|fr)?\\/?(?:(static|_next|img|favicon\\.ico)(?:\\/[\\w-]+))?\\/?$", "^\\/(?:en|fr)?\\/?(?:\\/[\\w-]+)?\\/?$", "^\\/(?:en|fr)?\\/?(?:(admin\\/accounts)(?:\\/[\\w-]+\\/[\\w-]+))\\/?$"]
 }
