@@ -144,7 +144,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   }
 
 
-
+  /*
   rule {
     # make sure to update line 33 of output.tf if you change the name of the rule
     name     = "TemporaryTokenGeneratedOutsideCanada"
@@ -196,7 +196,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       cloudwatch_metrics_enabled = true
       sampled_requests_enabled   = true
     }
-  }
+  } */
 
   visibility_config {
     cloudwatch_metrics_enabled = true
@@ -223,7 +223,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       not_statement {
         statement {
           regex_pattern_set_reference_statement {
-            arn = aws_waf_regex_pattern_set.valid_app_uri_path_regex_array.arn
+            arn = aws_wafv2_regex_pattern_set.valid_app_uri_paths.arn
             field_to_match {
               uri_path {}
             }
@@ -275,9 +275,29 @@ resource "aws_wafv2_web_acl_logging_configuration" "firehose_waf_logs_forms" {
   }
 }
 
-/*
-resource "aws_waf_regex_pattern_set" "valid_app_uri_path_regex_array" {
-  name                  = "valid_app_uri_path_regex_array"
-  regex_pattern_strings = ["^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|myforms|unsupported-browser|terms-of-use|404)(?:\\/[\\w-]+))?\\/?$", "^\\/(?:en|fr)?\\/?(?:(form-builder|sla|unlock-publishing|terms-and-conditions|javascript-disabled)(?:\\/[\\w-]+))?\\/?$", "^\\/(?:en|fr)?\\/?(?:(static|_next|img|favicon\\.ico)(?:\\/[\\w-]+))?\\/?$", "^\\/(?:en|fr)?\\/?(?:\\/[\\w-]+)?\\/?$"]
+
+resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
+  name        = "valid_app_uri_paths"
+  scope       = "REGIONAL"
+  description = "Regex to match the app valid paths"
+
+  regular_expression {
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|myforms|unsupported-browser|terms-of-use|404)(?:\\/[\\w-]+))?\\/?$"
+  }
+
+  regular_expression {
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(form-builder|sla|unlock-publishing|terms-and-conditions|javascript-disabled)(?:\\/[\\w-]+))?\\/?$"
+  }
+
+  regular_expression {
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(form-builder|sla|unlock-publishing|terms-and-conditions|javascript-disabled)(?:\\/[\\w-]+))?\\/?$"
+  }
+
+  regular_expression {
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(static|_next|img|favicon\\.ico)(?:\\/[\\w-]+))?\\/?$"
+  }
+
+  regular_expression {
+    regex_string = "^\\/(?:en|fr)?\\/?(?:\\/[\\w-]+)?\\/?$"
+  }
 }
-*/
