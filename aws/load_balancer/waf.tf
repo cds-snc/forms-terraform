@@ -224,7 +224,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       not_statement {
         statement {
           regex_pattern_set_reference_statement {
-            arn = aws_waf_regex_pattern_set.valid_app_uri_path_regex_array.arn
+            arn = aws_waf_regex_pattern_set.valid_app_uri_paths.arn
             field_to_match {
               uri_path {}
             }
