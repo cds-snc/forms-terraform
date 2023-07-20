@@ -4,8 +4,8 @@ const { Client } = require("pg");
 async function getFormNameAndUserEmailAddresses(formID) {
   try {
     const { SQL, parameters } = createSQLString(formID);
-    const requestFornNameAndOwnerEmailAddress = process.env.AWS_SAM_LOCAL ? requestSAM : requestRDS;
-    const formNameAndUserEmailAddresses = await requestFornNameAndOwnerEmailAddress(SQL, parameters);
+    const requestFormNameAndUserEmailAddresses = process.env.AWS_SAM_LOCAL ? requestSAM : requestRDS;
+    const formNameAndUserEmailAddresses = await requestFormNameAndUserEmailAddresses(SQL, parameters);
 
     if (formNameAndUserEmailAddresses) {
       return formNameAndUserEmailAddresses;
