@@ -8,6 +8,11 @@ output "lambda_reliability_log_group_name" {
   value       = aws_cloudwatch_log_group.reliability.name
 }
 
+output "lambda_submission_function_name" {
+  description = "Submission lambda function name"
+  value       = aws_lambda_function.submission.function_name
+}
+
 output "lambda_submission_log_group_name" {
   description = "Submission Lambda CloudWatch log group name"
   value       = aws_cloudwatch_log_group.submission.name
