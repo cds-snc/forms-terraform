@@ -1,5 +1,5 @@
 const { retrieveFormResponsesOver28DaysOld } = require("dynamodbDataLayer");
-const { getFormNameAndOwnerEmailAddress } = require("postgreSQLDataLayer");
+const { getFormNameAndUserEmailAddresses } = require("postgreSQLDataLayer");
 const { notifyFormOwner } = require("emailNotification");
 
 const ENABLED_IN_STAGING = true;
@@ -62,14 +62,17 @@ async function nag(oldestFormResponseByFormID) {
           })
         );
       } else {
-        const formNameAndOwnerEmailAddress = await getFormNameAndOwnerEmailAddress(
+        const formNameAndUserEmailAddresses = await getFormNameAndUserEmailAddresses(
           formResponse.formID
         );
-        await notifyFormOwner(
-          formResponse.formID,
-          formNameAndOwnerEmailAddress.name,
-          formNameAndOwnerEmailAddress.emailAddress
-        );
+
+        for (const emailAddress of formNameAndUserEmailAddresses.emailAddresses) {
+          await notifyFormOwner(
+            formResponse.formID,
+            formNameAndUserEmailAddresses.formName,
+            emailAddress
+          );
+        }        
       }
     } catch (error) {
       // Error Message will be sent to slack
