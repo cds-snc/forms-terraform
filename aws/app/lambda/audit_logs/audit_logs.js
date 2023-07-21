@@ -20,16 +20,14 @@ const warnOnEvents = [
 ];
 
 const notifyOnEvent = async (logEvents) => {
-  const eventsToNotify = logEvents.filter(({ logEvent }) => warnOnEvents.includes(logEvent.event));
+  const eventsToNotify = logEvents.filter((logEvent) => warnOnEvents.includes(logEvent.event));
   eventsToNotify.forEach((logEvent) =>
     console.warn(
       JSON.stringify({
         level: "warn",
-        msg: `User ${logEvent.logEvent.userID} performed ${logEvent.logEvent.event} on ${
-          logEvent.subject.type
-        } ${logEvent.subject.id ?? `with id ${logEvent.subject.id}.`}${
-          logEvent.description ? "\n".concat(logEvent.description) : ""
-        }`,
+        msg: `User ${logEvent.userID} performed ${logEvent.event} on ${logEvent.subject?.type} ${
+          logEvent.subject.id ?? `with id ${logEvent.subject.id}.`
+        }${logEvent.description ? "\n".concat(logEvent.description) : ""}`,
       })
     )
   );
@@ -53,7 +51,7 @@ exports.handler = async function (event) {
     }));
 
     // Warn on events that should be notified
-    await notifyOnEvent(logEvents);
+    await notifyOnEvent(logEvents.map((event) => event.logEvent));
 
     // Archive after 1 year
     const archiveDate = ((d) => Math.floor(d.setFullYear(d.getFullYear() + 1) / 1000))(new Date());
