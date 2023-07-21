@@ -1,6 +1,40 @@
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const { DynamoDBDocumentClient, BatchWriteCommand } = require("@aws-sdk/lib-dynamodb");
 
+const warnOnEvents = [
+  // Form Events
+  "GrantFormAccess",
+  "RevokeFormAccess",
+  // User Events
+  "UserActivated",
+  "UserDeactivated",
+  "UserTooManyFailedAttempts",
+  "GrantPrivilege",
+  "RevokePrivilege",
+  // Application events
+  "EnableFlag",
+  "DisableFlag",
+  "ChangeSetting",
+  "CreateSetting",
+  "DeleteSetting",
+];
+
+const notifyOnEvent = async (logEvents) => {
+  const eventsToNotify = logEvents.filter(({ logEvent }) => warnOnEvents.includes(logEvent.event));
+  eventsToNotify.forEach((logEvent) =>
+    console.warn(
+      JSON.stringify({
+        level: "warn",
+        msg: `User ${logEvent.logEvent.userID} performed ${logEvent.logEvent.event} on ${
+          logEvent.subject.type
+        } ${logEvent.subject.id ?? `with id ${logEvent.subject.id}.`}${
+          logEvent.description ? "\n".concat(logEvent.description) : ""
+        }`,
+      })
+    )
+  );
+};
+
 exports.handler = async function (event) {
   /* 
   LogEvent contains:
@@ -17,6 +51,9 @@ exports.handler = async function (event) {
       messageId: record.messageId,
       logEvent: JSON.parse(record.body),
     }));
+
+    // Warn on events that should be notified
+    await notifyOnEvent(logEvents);
 
     // Archive after 1 year
     const archiveDate = ((d) => Math.floor(d.setFullYear(d.getFullYear() + 1) / 1000))(new Date());
@@ -53,13 +90,6 @@ exports.handler = async function (event) {
         RequestItems: {
           AuditLogs: putTransactionItems,
         },
-      })
-    );
-
-    console.log(
-      JSON.stringify({
-        msg: "AuditLogs",
-        audit_logs: JSON.stringify(AuditLogs),
       })
     );
 
