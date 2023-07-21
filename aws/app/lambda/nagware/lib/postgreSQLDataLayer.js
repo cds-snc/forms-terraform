@@ -1,14 +1,14 @@
 const { RDSDataClient, ExecuteStatementCommand } = require("@aws-sdk/client-rds-data");
 const { Client } = require("pg");
 
-async function getFormNameAndOwnerEmailAddress(formID) {
+async function getFormNameAndUserEmailAddresses(formID) {
   try {
     const { SQL, parameters } = createSQLString(formID);
-    const requestFornNameAndOwnerEmailAddress = process.env.AWS_SAM_LOCAL ? requestSAM : requestRDS;
-    const formNameAndOwnerEmailAddress = await requestFornNameAndOwnerEmailAddress(SQL, parameters);
+    const requestFormNameAndUserEmailAddresses = process.env.AWS_SAM_LOCAL ? requestSAM : requestRDS;
+    const formNameAndUserEmailAddresses = await requestFormNameAndUserEmailAddresses(SQL, parameters);
 
-    if (formNameAndOwnerEmailAddress) {
-      return formNameAndOwnerEmailAddress;
+    if (formNameAndUserEmailAddresses) {
+      return formNameAndUserEmailAddresses;
     } else {
       throw new Error(`Could not find any owner email address associated to Form ID: ${formID}.`);
     }
@@ -40,19 +40,28 @@ const createSQLString = (formID) => {
 };
 
 const parseQueryResponse = (records) => {
-  if (records.length === 1) {
-    const record = records[0];
-    if (!process.env.AWS_SAM_LOCAL) {
-      const jsonConfig = JSON.parse(record[2].stringValue.trim(1, -1)) || undefined;
-      const name = record[1].stringValue !== "" ? record[1].stringValue : `${jsonConfig.titleEn} - ${jsonConfig.titleFr}`;
-      return { name, emailAddress: record[0].stringValue };
-    } else {
-      const name = record.name !== "" ? record.name : `${record.jsonConfig.titleEn} - ${record.jsonConfig.titleFr}`;
-      return { name, emailAddress: record.email };
-    }
+  if (records.length === 0) return null;
+
+  let formName = "";
+
+  const firstRecord = records[0];
+
+  if (!process.env.AWS_SAM_LOCAL) {
+    const jsonConfig = JSON.parse(firstRecord[2].stringValue.trim(1, -1)) || undefined;
+    formName = firstRecord[1].stringValue !== "" ? firstRecord[1].stringValue : `${jsonConfig.titleEn} - ${jsonConfig.titleFr}`;
   } else {
-    return null;
+    formName = firstRecord.name !== "" ? firstRecord.name : `${firstRecord.jsonConfig.titleEn} - ${firstRecord.jsonConfig.titleFr}`;
   }
+
+  const emailAddresses = records.map((record) => {
+    if (!process.env.AWS_SAM_LOCAL) {
+      return record[0].stringValue;
+    } else {
+      return record.email;
+    }
+  });
+
+  return { formName, emailAddresses };
 };
 
 /**
@@ -125,5 +134,5 @@ const requestRDS = async (SQL, parameters) => {
 };
 
 module.exports = {
-  getFormNameAndOwnerEmailAddress,
+  getFormNameAndUserEmailAddresses,
 };
