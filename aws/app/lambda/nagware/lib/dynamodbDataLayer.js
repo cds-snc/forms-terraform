@@ -79,9 +79,7 @@ async function deleteOldTestResponses(formID) {
           )
         );
       }
-
       lastEvaluatedKey = response.LastEvaluatedKey;
-
     }
 
     console.log(
