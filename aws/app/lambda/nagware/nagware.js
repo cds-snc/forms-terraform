@@ -1,5 +1,5 @@
-const { retrieveFormResponsesOver28DaysOld } = require("dynamodbDataLayer");
-const { getFormNameAndUserEmailAddresses } = require("postgreSQLDataLayer");
+const { retrieveFormResponsesOver28DaysOld, deleteOldTestResponses } = require("dynamodbDataLayer");
+const { getTemplateInfo } = require("templates");
 const { notifyFormOwner } = require("emailNotification");
 
 const ENABLED_IN_STAGING = true;
@@ -9,7 +9,7 @@ exports.handler = async () => {
     if (!ENABLED_IN_STAGING && process.env.ENVIRONMENT === "staging") return;
 
     const oldestFormResponseByFormID = await findOldestFormResponseByFormID();
-    await nag(oldestFormResponseByFormID);
+    await nagOrDelete(oldestFormResponseByFormID);
 
     return {
       statusCode: "SUCCESS",
@@ -49,30 +49,34 @@ async function findOldestFormResponseByFormID() {
   return Object.values(reduceResult);
 }
 
-async function nag(oldestFormResponseByFormID) {
+async function nagOrDelete(oldestFormResponseByFormID) {
   for (const formResponse of oldestFormResponseByFormID) {
     const diffMs = Math.abs(Date.now() - formResponse.createdAt);
     const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-    try {
-      if (diffDays > 45) {
-        console.warn(
-          JSON.stringify({
-            level: "warn",
-            msg: `Vault Nagware - ${diffDays} days old form response was detected. Form ID : ${formResponse.formID}.`,
-          })
-        );
-      } else {
-        const formNameAndUserEmailAddresses = await getFormNameAndUserEmailAddresses(
-          formResponse.formID
-        );
 
-        for (const emailAddress of formNameAndUserEmailAddresses.emailAddresses) {
-          await notifyFormOwner(
-            formResponse.formID,
-            formNameAndUserEmailAddresses.formName,
-            emailAddress
+    const templateInfo = await getTemplateInfo(formResponse.formID);
+    try {
+      if(templateInfo.isPublished) {
+        if (diffDays > 45) {
+          console.warn(
+            JSON.stringify({
+              level: "warn",
+              msg: `Vault Nagware - ${diffDays} days old form response was detected. Form ID : ${formResponse.formID}.`,
+            })
           );
-        }        
+        } else {
+          for (const emailAddress of templateInfo.emailAddresses) {
+            await notifyFormOwner(
+              formResponse.formID,
+              templateInfo.formName,
+              emailAddress
+            );
+          }
+        }
+      }
+      else {
+        // delete form response if form is not published and older than 28 days
+        await deleteOldTestResponses(formResponse.formID);
       }
     } catch (error) {
       // Error Message will be sent to slack
