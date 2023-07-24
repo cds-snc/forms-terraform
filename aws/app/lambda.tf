@@ -529,8 +529,8 @@ data "archive_file" "nagware_lib" {
   }
 
   source {
-    content  = file("./lambda/nagware/lib/postgreSQLDataLayer.js")
-    filename = "nodejs/node_modules/postgreSQLDataLayer/index.js"
+    content  = file("./lambda/nagware/lib/template.js")
+    filename = "nodejs/node_modules/template/index.js"
   }
 
   source {
