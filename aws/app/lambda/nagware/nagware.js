@@ -75,7 +75,7 @@ async function nagOrDelete(oldestFormResponseByFormID) {
         }
       }
       else {
-        // delete form response if form is not published and older than 28 days
+        // Delete form response if form is not published and older than 28 days
         await deleteOldTestResponses(formResponse.formID);
       }
     } catch (error) {
