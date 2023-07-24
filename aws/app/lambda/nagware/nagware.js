@@ -54,8 +54,9 @@ async function nagOrDelete(oldestFormResponseByFormID) {
     const diffMs = Math.abs(Date.now() - formResponse.createdAt);
     const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
-    const templateInfo = await getTemplateInfo(formResponse.formID);
     try {
+      const templateInfo = await getTemplateInfo(formResponse.formID);
+
       if(templateInfo.isPublished) {
         if (diffDays > 45) {
           console.warn(
