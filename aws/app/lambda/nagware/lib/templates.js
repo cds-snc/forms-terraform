@@ -50,7 +50,6 @@ const parseQueryResponse = (records) => {
   if (!process.env.AWS_SAM_LOCAL) {
     const jsonConfig = JSON.parse(firstRecord[2].stringValue.trim(1, -1)) || undefined;
     formName = firstRecord[1].stringValue !== "" ? firstRecord[1].stringValue : `${jsonConfig.titleEn} - ${jsonConfig.titleFr}`;
-    // TODO: Not sure what field the isPublished value is in, but based on the SQL query, it should be in the 4th index
     isPublished = firstRecord[3].booleanValue;
   } else {
     formName = firstRecord.name !== "" ? firstRecord.name : `${firstRecord.jsonConfig.titleEn} - ${firstRecord.jsonConfig.titleFr}`;
