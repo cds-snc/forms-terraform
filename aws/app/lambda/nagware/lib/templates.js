@@ -1,7 +1,7 @@
 const { RDSDataClient, ExecuteStatementCommand } = require("@aws-sdk/client-rds-data");
 const { Client } = require("pg");
 
-async function getFormNameAndUserEmailAddresses(formID) {
+async function getTemplateInfo(formID) {
   try {
     const { SQL, parameters } = createSQLString(formID);
     const requestFormNameAndUserEmailAddresses = process.env.AWS_SAM_LOCAL ? requestSAM : requestRDS;
@@ -18,7 +18,7 @@ async function getFormNameAndUserEmailAddresses(formID) {
 }
 
 const createSQLString = (formID) => {
-  const selectSQL = `SELECT usr."email", tem."name", tem."jsonConfig" FROM "User" usr JOIN "_TemplateToUser" ttu ON usr."id" = ttu."B" JOIN "Template" tem ON tem."id" = ttu."A"`;
+  const selectSQL = `SELECT usr."email", tem."name", tem."jsonConfig", tem."isPublished" FROM "User" usr JOIN "_TemplateToUser" ttu ON usr."id" = ttu."B" JOIN "Template" tem ON tem."id" = ttu."A"`;
   if (!process.env.AWS_SAM_LOCAL) {
     return {
       SQL: `${selectSQL} WHERE ttu."A" = :formID`,
@@ -45,12 +45,16 @@ const parseQueryResponse = (records) => {
   let formName = "";
 
   const firstRecord = records[0];
+  let isPublished = false;
 
   if (!process.env.AWS_SAM_LOCAL) {
     const jsonConfig = JSON.parse(firstRecord[2].stringValue.trim(1, -1)) || undefined;
     formName = firstRecord[1].stringValue !== "" ? firstRecord[1].stringValue : `${jsonConfig.titleEn} - ${jsonConfig.titleFr}`;
+    // TODO: Not sure what field the isPublished value is in, but based on the SQL query, it should be in the 4th index
+    isPublished = firstRecord[3].booleanValue;
   } else {
     formName = firstRecord.name !== "" ? firstRecord.name : `${firstRecord.jsonConfig.titleEn} - ${firstRecord.jsonConfig.titleFr}`;
+    isPublished = firstRecord.isPublished;
   }
 
   const emailAddresses = records.map((record) => {
@@ -61,7 +65,7 @@ const parseQueryResponse = (records) => {
     }
   });
 
-  return { formName, emailAddresses };
+  return { formName, emailAddresses, isPublished };
 };
 
 /**
@@ -134,5 +138,5 @@ const requestRDS = async (SQL, parameters) => {
 };
 
 module.exports = {
-  getFormNameAndUserEmailAddresses,
+  getTemplateInfo,
 };
