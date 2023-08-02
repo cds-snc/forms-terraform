@@ -648,7 +648,7 @@ resource "aws_lambda_function" "archive_audit_logs" {
   environment {
     variables = {
       REGION = var.region
-      AUDIT_LOG_ARCHIVING_S3_BUCKET = aws_s3_bucket.audit_logs_archive_storage.bucket
+      AUDIT_LOG_ARCHIVE_S3_BUCKET = aws_s3_bucket.audit_logs_archive_storage.bucket
     }
   }
 
@@ -677,6 +677,7 @@ resource "aws_lambda_event_source_mapping" "archive_audit_logs" {
   batch_size                         = 100
   maximum_batching_window_in_seconds = 15
   enabled                            = true
+  MaximumRetryAttempts               = 3
   filter_criteria_json = jsonencode({
     Filters = [
       {

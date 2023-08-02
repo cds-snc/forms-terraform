@@ -17,13 +17,12 @@ exports.handler = async (event) => {
       }),
     });
 
-    archiveAuditLogs(event, s3Client);
+    await archiveAuditLogs(event, s3Client);
 
     return {
       statusCode: "SUCCESS",
     };
   } catch (error) {
-    // Error Message will be sent to slack
     console.error(
       JSON.stringify({
         level: "error",
@@ -52,7 +51,7 @@ const archiveAuditLogs = async (event, s3Client) => {
       const putObjectCommandInput = {
         Bucket: AUDIT_LOG_ARCHIVE_S3_BUCKET,
         Body: JSON.stringify(expiredAuditLog),
-        //
+        // key composition up for discussion
         Key: `${new Date().toISOString().slice(0, 10)}/${expiredAuditLog.UserID}/_${
           record.eventID
         }`,
