@@ -59,6 +59,7 @@ exports.handler = async () => {
     console.error(
       JSON.stringify({
         level: "error",
+        severity: 2,
         msg: "Reliability DLQ could not process waiting messages.",
         error: err.message,
       })

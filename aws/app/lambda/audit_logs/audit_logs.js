@@ -114,6 +114,7 @@ exports.handler = async function (event) {
       console.warn(
         JSON.stringify({
           level: "warn",
+          severity: 1,
           msg: `Failed to process ${
             unprocessedIDs.length
           } log events. List of unprocessed IDs: ${unprocessedIDs.join(",")}.`,
@@ -133,6 +134,7 @@ exports.handler = async function (event) {
     console.error(
       JSON.stringify({
         level: "error",
+        severity: 1,
         msg: "Failed to run Audit Logs Processor.",
         error: error.message,
       })
