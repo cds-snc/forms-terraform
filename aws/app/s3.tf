@@ -108,3 +108,40 @@ resource "aws_s3_bucket_public_access_block" "archive_storage" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
+
+
+#
+# Audit log archive storage
+#
+resource "aws_s3_bucket" "audit_logs_archive_storage" {
+  bucket = "audit-logs-${var.env}-archive-storage"
+  acl    = "private"
+
+  lifecycle_rule {
+    enabled = true
+    expiration {
+      days = 30
+    }
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "audit_logs_archive_storage" {
+  bucket                  = aws_s3_bucket.audit_logs_archive_storage.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}

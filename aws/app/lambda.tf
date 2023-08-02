@@ -613,3 +613,82 @@ resource "aws_cloudwatch_log_group" "nagware" {
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 90
 }
+
+
+#
+# Archive Audit Logs
+#
+data "archive_file" "archive_audit_logs_main" {
+  type        = "zip"
+  source_file = "lambda/archive_audit_logs/archiver.js"
+  output_path = "/tmp/archive_audit_logs_main.zip"
+}
+
+data "archive_file" "archive_audit_logs_lib" {
+  type        = "zip"
+  source_dir  = "lambda/archive_audit_logs/"
+  excludes    = ["archiver.js"]
+  output_path = "/tmp/archive_audit_logs_lib.zip"
+}
+
+resource "aws_lambda_function" "archive_audit_logs" {
+  filename      = "/tmp/archive_audit_logs_main.zip"
+  function_name = "ArchiveAuditLogs"
+  role          = aws_iam_role.lambda.arn
+  handler       = "archiver.handler"
+  timeout       = 120
+
+  source_code_hash = data.archive_file.archive_audit_logs_main.output_base64sha256
+
+  runtime = "nodejs16.x"
+  layers = [
+    aws_lambda_layer_version.archive_audit_logs_lib.arn
+  ]
+
+  environment {
+    variables = {
+      REGION = var.region
+      AUDIT_LOG_ARCHIVING_S3_BUCKET = aws_s3_bucket.audit_logs_archive_storage.bucket
+    }
+  }
+
+  tracing_config {
+    mode = "PassThrough"
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+
+}
+
+resource "aws_lambda_layer_version" "archive_audit_logs_lib" {
+  filename            = "/tmp/archive_audit_logs_lib.zip"
+  layer_name          = "archive_audit_logs_node_packages"
+  source_code_hash    = data.archive_file.archive_audit_logs_lib.output_base64sha256
+  compatible_runtimes = ["nodejs14.x","nodejs16.x"]
+}
+
+resource "aws_lambda_event_source_mapping" "archive_audit_logs" {
+  event_source_arn                   = aws_dynamodb_table.audit_logs.stream_arn
+  function_name                      = aws_lambda_function.archive_audit_logs.arn
+  starting_position                  = "LATEST"
+  batch_size                         = 100
+  maximum_batching_window_in_seconds = 15
+  enabled                            = true
+  filter_criteria_json = jsonencode({
+    Filters = [
+      {
+        Pattern = "{\"userIdentity\":{\"type\":[\"Service\"],\"principalId\":[\"dynamodb.amazonaws.com\"]}}"
+      }
+    ]
+  })
+
+}
+
+resource "aws_cloudwatch_log_group" "archive_audit_logs" {
+  name              = "/aws/lambda/${aws_lambda_function.archive_audit_logs.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
+  retention_in_days = 90
+}
