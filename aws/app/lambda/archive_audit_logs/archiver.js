@@ -38,7 +38,7 @@ exports.handler = async (event) => {
   }
 };
 
-const archiveAuditLogs = async (event, s3Client) => {
+async function  archiveAuditLogs (event, s3Client) {
   // TODO to be removed
   console.log(`Archived expired items to S3:`);
   // Process each record in the DynamoDB stream
