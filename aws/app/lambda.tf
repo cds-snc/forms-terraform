@@ -647,7 +647,7 @@ resource "aws_lambda_function" "archive_audit_logs" {
 
   environment {
     variables = {
-      REGION = var.region
+      REGION                      = var.region
       AUDIT_LOG_ARCHIVE_S3_BUCKET = aws_s3_bucket.audit_logs_archive_storage.bucket
     }
   }
@@ -667,7 +667,7 @@ resource "aws_lambda_layer_version" "archive_audit_logs_lib" {
   filename            = "/tmp/archive_audit_logs_lib.zip"
   layer_name          = "archive_audit_logs_node_packages"
   source_code_hash    = data.archive_file.archive_audit_logs_lib.output_base64sha256
-  compatible_runtimes = ["nodejs14.x","nodejs16.x"]
+  compatible_runtimes = ["nodejs14.x", "nodejs16.x"]
 }
 
 resource "aws_lambda_event_source_mapping" "archive_audit_logs" {
