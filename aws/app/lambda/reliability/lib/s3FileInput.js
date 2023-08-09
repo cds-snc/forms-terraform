@@ -41,6 +41,7 @@ async function getObject(bucket, key) {
       console.error(
         JSON.stringify({
           level: "error",
+          severity: 2,
           msg: `Failed to retrieve object from S3: ${bucket}/${key}}`,
           error: error.message,
         })

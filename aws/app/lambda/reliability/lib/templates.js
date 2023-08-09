@@ -114,6 +114,7 @@ const requestRDS = async (SQL, parameters) => {
     console.error(
       JSON.stringify({
         level: "error",
+        severity: 2,
         status: "error",
         msg: "Error issuing command to AWS RDS",
         error: error.message,

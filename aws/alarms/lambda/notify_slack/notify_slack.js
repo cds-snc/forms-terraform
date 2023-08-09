@@ -61,11 +61,11 @@ function getSNSMessageSeverity(message) {
   return severity;
 }
 
-function sendToSlack(logGroup, message, severity, context) {
+function sendToSlack(logGroup, logMessage, logLevel, context) {
   var environment = process.env.ENVIRONMENT || "Staging";
 
-  const severityAsEmojiAndColor = (severity) => {
-    switch (severity) {
+  const logLevelAsEmojiAndColor = (logLevel) => {
+    switch (logLevel) {
       case "danger":
       case "error":
         return { emoji: ":rotating_light:", color: "danger" };
@@ -77,18 +77,18 @@ function sendToSlack(logGroup, message, severity, context) {
     }
   };
   
-  const severityThemeForSlack = severityAsEmojiAndColor(severity);
+  const logLevelThemeForSlack = logLevelAsEmojiAndColor(logLevel);
 
   var postData = {
     channel: `#forms-${environment.toLowerCase()}-events`,
     username: "Forms Notifier",
     text: `*${logGroup}*`,
-    icon_emoji: severityThemeForSlack.emoji,
+    icon_emoji: logLevelThemeForSlack.emoji,
   };
 
   postData.attachments = [{
-    color: severityThemeForSlack.color,
-    text: message,
+    color: logLevelThemeForSlack.color,
+    text: logMessage,
   }];
 
   var options = {
@@ -102,7 +102,7 @@ function sendToSlack(logGroup, message, severity, context) {
     res.setEncoding("utf8");
     res.on("data", function() {
       context.succeed(
-        `Message successfully sent to Slack... severity: ${severity}, message: ${message}`
+        `Message successfully sent to Slack... log level: ${logLevel}, log message: ${logMessage}`
       );
     });
   });
@@ -137,7 +137,11 @@ exports.handler = function(input, context) {
           const logMessage = safeParseLogIncludingJSON(log.message);
           // If logMessage is false, then the message is not JSON
           if (logMessage) {
-            const message = `${logMessage.msg} ${logMessage.error ? "\n".concat(logMessage.error) : ""}`;
+            const message = `
+            ${logMessage.msg}
+            ${logMessage.error ? "\n".concat(logMessage.error) : ""}
+            ${logMessage.severity ? "\n\nSeverity level: ".concat(logMessage.severity) : ""}
+            `;
             sendToSlack(parsedResult.logGroup, message, logMessage.level, context);
             console.log(
               JSON.stringify({
@@ -165,11 +169,13 @@ exports.handler = function(input, context) {
     if (severity === "alarm_reset") {
       message = "Alarm Status now OK - " + getMessage(message);
     }
+
     console.log(
       JSON.stringify({
         msg: `Event Data for Alarms: ${input.Records[0].Sns.Message}`,
       })
     );
+    
     sendToSlack("Alarm Event", message, severity, context);
   }
 };

@@ -45,6 +45,13 @@ exports.handler = async function (event) {
       // add delivery option to formsubmission
       formSubmission.deliveryOption = configs.deliveryOption;
     } else {
+      console.error(
+        JSON.stringify({
+          level: "error",
+          severity: 1,
+          msg: `No associated form template (ID: ${formID}) exist in the database.`,
+        })
+      );
       throw new Error(`No associated form template (ID: ${formID}) exist in the database.`);
     }
 
@@ -75,6 +82,7 @@ exports.handler = async function (event) {
     console.warn(
       JSON.stringify({
         level: "warn",
+        severity: 2,
         status: "failed",
         submissionId: message.submissionID ?? "n/a",
         sendReceipt: sendReceipt ?? "n/a",

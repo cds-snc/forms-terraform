@@ -48,6 +48,7 @@ exports.handler = async function (event) {
     console.error(
       JSON.stringify({
         level: "error",
+        severity: 1,
         status: "failed",
         submissionID: submissionID ? submissionID : "Not yet created",
         msg: err.message,
@@ -70,8 +71,9 @@ const sendData = async (submissionID) => {
 
     const queueResponse = await sqs.send(new SendMessageCommand(SQSParams));
     return queueResponse.MessageId;
-  } catch (err) {
-    throw new Error("Could not create mesasge on Reliability Queue");
+  } catch (error) {
+    console.error(JSON.stringify(error));
+    throw new Error("Could not create message on Reliability Queue");
   }
 };
 
