@@ -2,6 +2,9 @@
 
 Infrastructure as Code for the GC Forms environment.
 
+## Contributing
+Pull Requests in this repository require all commits to be signed before they can be merged. Please see [this guide](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification) for more information.
+
 ## Running Lambdas and DBs locally
 
 You will need to have the following installed on a MacOS machine.

@@ -4,19 +4,19 @@
 resource "aws_sns_topic_subscription" "topic_critical" {
   topic_arn = var.sns_topic_alert_critical_arn
   protocol  = "lambda"
-  endpoint  = aws_lambda_function.notify_slack_sns.arn
+  endpoint  = aws_lambda_function.notify_slack.arn
 }
 
 resource "aws_sns_topic_subscription" "topic_warning" {
   topic_arn = var.sns_topic_alert_warning_arn
   protocol  = "lambda"
-  endpoint  = aws_lambda_function.notify_slack_sns.arn
+  endpoint  = aws_lambda_function.notify_slack.arn
 }
 
 resource "aws_sns_topic_subscription" "topic_ok" {
   topic_arn = var.sns_topic_alert_ok_arn
   protocol  = "lambda"
-  endpoint  = aws_lambda_function.notify_slack_sns.arn
+  endpoint  = aws_lambda_function.notify_slack.arn
 }
 
 resource "aws_sns_topic_subscription" "topic_warning_us_east" {
@@ -24,7 +24,7 @@ resource "aws_sns_topic_subscription" "topic_warning_us_east" {
 
   topic_arn = var.sns_topic_alert_warning_us_east_arn
   protocol  = "lambda"
-  endpoint  = aws_lambda_function.notify_slack_sns.arn
+  endpoint  = aws_lambda_function.notify_slack.arn
 }
 
 resource "aws_sns_topic_subscription" "topic_ok_us_east" {
@@ -32,7 +32,7 @@ resource "aws_sns_topic_subscription" "topic_ok_us_east" {
 
   topic_arn = var.sns_topic_alert_ok_us_east_arn
   protocol  = "lambda"
-  endpoint  = aws_lambda_function.notify_slack_sns.arn
+  endpoint  = aws_lambda_function.notify_slack.arn
 }
 
 #
