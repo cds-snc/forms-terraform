@@ -1,4 +1,4 @@
-FROM amazon/aws-lambda-python:3.11@sha256:8d7a189af42d0cbd14ccda1621192e0caeca1e131c16c6ad94ce4541335e7057
+FROM amazon/aws-lambda-python:3.11@sha256:b0eb4dec74144e9c78a5111659833a5fd4eca1fa01f08b7668db07436c18c40b
 
 COPY lambda_locust.py .
 COPY tests ./tests
