@@ -62,15 +62,23 @@ async function nagOrDelete(oldestFormResponseByFormID) {
           console.warn(
             JSON.stringify({
               level: "warn",
-              msg: `Vault Nagware - ${diffDays} days old form response was detected. Form ID : ${formResponse.formID}.`,
+              msg: `
+              *Form*\n
+              Identifier: ${formResponse.formID}\n
+              Name: ${templateInfo.formName}
+              \n*Owner(s)*\n
+              ${templateInfo.owners.map(owner => `${owner.name} (${owner.email})`).join("\n")}
+              \n*Oldest response*\n
+              ${diffDays} days since submission
+              `,
             })
           );
         } else {
-          for (const emailAddress of templateInfo.emailAddresses) {
+          for (const owner of templateInfo.owners) {
             await notifyFormOwner(
               formResponse.formID,
               templateInfo.formName,
-              emailAddress
+              owner.email
             );
           }
         }
