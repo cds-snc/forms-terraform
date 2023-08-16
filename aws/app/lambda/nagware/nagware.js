@@ -63,14 +63,14 @@ async function nagOrDelete(oldestFormResponseByFormID) {
             JSON.stringify({
               level: "warn",
               msg: `
-              *Form*\n
-              Identifier: ${formResponse.formID}\n
-              Name: ${templateInfo.formName}
-              \n*Owner(s)*\n
-              ${templateInfo.owners.map(owner => `${owner.name} (${owner.email})`).join("\n")}
-              \n*Oldest response*\n
-              ${diffDays} days since submission
-              `,
+*Form*\n
+Identifier: ${formResponse.formID}\n
+Name: ${templateInfo.formName}
+\n*Owner(s)*\n
+${templateInfo.owners.map(owner => `${owner.name} (${owner.email})`).join("\n")}
+\n*Oldest response*\n
+${diffDays} days since submission
+`,
             })
           );
         } else {
