@@ -112,7 +112,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AWSManagedRulesCommonRuleSet"
-    priority = 4
+    priority = 5
 
     override_action {
       none {}
@@ -141,7 +141,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AWSManagedRulesKnownBadInputsRuleSet"
-    priority = 5
+    priority = 6
     override_action {
       none {}
     }
@@ -198,7 +198,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AllowOnlyAppUrls"
-    priority = 3
+    priority = 4
 
     action {
       block {}
