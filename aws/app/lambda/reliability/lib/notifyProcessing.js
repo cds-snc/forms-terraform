@@ -56,10 +56,11 @@ module.exports = async (submissionID, sendReceipt, formSubmission, language, cre
 
     console.log(
       JSON.stringify({
+        level: "info",
         status: "success",
         submissionId: submissionID,
         sendReceipt: sendReceipt,
-        message: "Successfully sent submission through GC Notify.",
+        msg: "Successfully sent submission through GC Notify.",
       })
     );
   } catch (error) {
@@ -88,13 +89,18 @@ module.exports = async (submissionID, sendReceipt, formSubmission, language, cre
 
     console.error(
       JSON.stringify({
-        status: "failed",
+        level: "error",
+        severity: 2,
         submissionId: submissionID ?? "n/a",
         sendReceipt: sendReceipt ?? "n/a",
-        message: "Failed to send submission through GC Notify.",
+        msg: "Failed to send submission through GC Notify",
         error: errorMessage,
       })
     );
+
+    // Log full error to console, it will not be sent to Slack
+    console.log(JSON.stringify(error));
+
     throw new Error(`Failed to send submission through GC Notify.`);
   }
 };

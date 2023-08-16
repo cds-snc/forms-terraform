@@ -5,25 +5,22 @@ const {
   DeleteMessageCommand,
 } = require("@aws-sdk/client-sqs");
 
-const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
-
 const REGION = process.env.REGION;
 const SQS_DEAD_LETTER_QUEUE_URL = process.env.SQS_DEAD_LETTER_QUEUE_URL;
 const SQS_SUBMISSION_PROCESSING_QUEUE_URL = process.env.SQS_SUBMISSION_PROCESSING_QUEUE_URL;
-const SNS_ERROR_TOPIC_ARN = process.env.SNS_ERROR_TOPIC_ARN;
 
-exports.handler = async (event) => {
+exports.handler = async () => {
   const sqsClient = new SQSClient({
     region: REGION,
     ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
   });
+  const receiveMessageCommandInput = {
+    QueueUrl: SQS_DEAD_LETTER_QUEUE_URL,
+  };
+  var messagesToProcess = true;
 
   try {
-    while (true) {
-      const receiveMessageCommandInput = {
-        QueueUrl: SQS_DEAD_LETTER_QUEUE_URL,
-      };
-
+    while (messagesToProcess) {
       const receiveMessageCommandOutput = await sqsClient.send(
         new ReceiveMessageCommand(receiveMessageCommandInput)
       );
@@ -50,7 +47,7 @@ exports.handler = async (event) => {
 
         await sqsClient.send(new DeleteMessageCommand(deleteMessageCommandInput));
       } else {
-        break;
+        messagesToProcess = false;
       }
     }
 
@@ -58,7 +55,15 @@ exports.handler = async (event) => {
       statusCode: "SUCCESS",
     };
   } catch (err) {
-    await reportErrorToSlack(err.message);
+    // Report Errorr to Slack
+    console.error(
+      JSON.stringify({
+        level: "error",
+        severity: 2,
+        msg: "Reliability DLQ could not process waiting messages.",
+        error: err.message,
+      })
+    );
 
     return {
       statusCode: "ERROR",
@@ -66,21 +71,3 @@ exports.handler = async (event) => {
     };
   }
 };
-
-async function reportErrorToSlack(errorMessage) {
-  const snsClient = new SNSClient({
-    region: REGION,
-    ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
-  });
-
-  const publishCommandInput = {
-    Message: `End User Forms Critical - Dead letter queue consumer: ${errorMessage}`,
-    TopicArn: SNS_ERROR_TOPIC_ARN,
-  };
-
-  try {
-    await snsClient.send(new PublishCommand(publishCommandInput));
-  } catch (err) {
-    throw new Error(`Failed to report error to Slack. Reason: ${err.message}.`);
-  }
-}

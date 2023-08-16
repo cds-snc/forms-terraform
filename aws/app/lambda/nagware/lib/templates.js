@@ -1,24 +1,29 @@
 const { RDSDataClient, ExecuteStatementCommand } = require("@aws-sdk/client-rds-data");
 const { Client } = require("pg");
 
-async function getFormNameAndOwnerEmailAddress(formID) {
+async function getTemplateInfo(formID) {
   try {
     const { SQL, parameters } = createSQLString(formID);
-    const requestFornNameAndOwnerEmailAddress = process.env.AWS_SAM_LOCAL ? requestSAM : requestRDS;
-    const formNameAndOwnerEmailAddress = await requestFornNameAndOwnerEmailAddress(SQL, parameters);
+    const requestResult = process.env.AWS_SAM_LOCAL ? requestSAM : requestRDS;
+    const result = await requestResult(SQL, parameters);
 
-    if (formNameAndOwnerEmailAddress) {
-      return formNameAndOwnerEmailAddress;
+    if (result) {
+      return result;
     } else {
-      throw new Error(`Could not find any owner email address associated to Form ID: ${formID}.`);
+      throw new Error(`Could not find any template with form identifier: ${formID}.`);
     }
   } catch (error) {
-    throw new Error(`Failed to retrieve owner email address. Reason: ${error.message}.`);
+    throw new Error(`Failed to retrieve template information. Reason: ${error.message}.`);
   }
 }
 
 const createSQLString = (formID) => {
-  const selectSQL = `SELECT usr."email", tem."name", tem."jsonConfig" FROM "User" usr JOIN "_TemplateToUser" ttu ON usr."id" = ttu."B" JOIN "Template" tem ON tem."id" = ttu."A"`;
+  const selectSQL = `
+  SELECT usr."name", usr."email", tem."name", tem."jsonConfig", tem."isPublished" 
+  FROM "User" usr 
+  JOIN "_TemplateToUser" ttu ON usr."id" = ttu."B" 
+  JOIN "Template" tem ON tem."id" = ttu."A"
+  `;
   if (!process.env.AWS_SAM_LOCAL) {
     return {
       SQL: `${selectSQL} WHERE ttu."A" = :formID`,
@@ -40,19 +45,31 @@ const createSQLString = (formID) => {
 };
 
 const parseQueryResponse = (records) => {
-  if (records.length === 1) {
-    const record = records[0];
-    if (!process.env.AWS_SAM_LOCAL) {
-      const jsonConfig = JSON.parse(record[2].stringValue.trim(1, -1)) || undefined;
-      const name = record[1].stringValue !== "" ? record[1].stringValue : `${jsonConfig.titleEn} - ${jsonConfig.titleFr}`;
-      return { name, emailAddress: record[0].stringValue };
-    } else {
-      const name = record.name !== "" ? record.name : `${record.jsonConfig.titleEn} - ${record.jsonConfig.titleFr}`;
-      return { name, emailAddress: record.email };
-    }
+  if (records.length === 0) return null;
+
+  let formName = "";
+
+  const firstRecord = records[0];
+  let isPublished = false;
+
+  if (!process.env.AWS_SAM_LOCAL) {
+    const jsonConfig = JSON.parse(firstRecord[3].stringValue.trim(1, -1)) || undefined;
+    formName = firstRecord[2].stringValue !== "" ? firstRecord[2].stringValue : `${jsonConfig.titleEn} - ${jsonConfig.titleFr}`;
+    isPublished = firstRecord[4].booleanValue;
   } else {
-    return null;
+    formName = firstRecord.name !== "" ? firstRecord.name : `${firstRecord.jsonConfig.titleEn} - ${firstRecord.jsonConfig.titleFr}`;
+    isPublished = firstRecord.isPublished;
   }
+
+  const owners = records.map((record) => {
+    if (!process.env.AWS_SAM_LOCAL) {
+      return { name: record[0].stringValue, email: record[1].stringValue };
+    } else {
+      return { name: record.name, email: record.email };
+    }
+  });
+
+  return { formName, owners, isPublished };
 };
 
 /**
@@ -78,7 +95,12 @@ const requestSAM = async (SQL, parameters) => {
     const data = await dbClient.query(SQL, parameters);
     return parseQueryResponse(data.rows);
   } catch (error) {
-    console.error(`{"status": "error", "error": "${error.message}"}`);
+    console.error(
+      JSON.stringify({
+        status: "error",
+        error: error.message,
+      })
+    );
     // Lift more generic error to be able to capture event info higher in scope
     throw new Error("Error connecting to LOCAL AWS SAM DB");
   } finally {
@@ -108,12 +130,17 @@ const requestRDS = async (SQL, parameters) => {
     const data = await dbClient.send(command);
     return parseQueryResponse(data.records);
   } catch (error) {
-    console.error(`{"status": "error", "error": "${error.message}"}`);
+    console.error(
+      JSON.stringify({
+        status: "error",
+        error: error.message,
+      })
+    );
     // Lift more generic error to be able to capture event info higher in scope
     throw new Error("Error connecting to RDS");
   }
 };
 
 module.exports = {
-  getFormNameAndOwnerEmailAddress,
+  getTemplateInfo,
 };

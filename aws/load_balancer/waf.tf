@@ -74,8 +74,45 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   }
 
   rule {
+    name     = "PreventHostInjections"
+    priority = 3
+
+    statement {
+      not_statement {
+        statement {
+          regex_pattern_set_reference_statement {
+
+            arn = aws_wafv2_regex_pattern_set.forms_base_url.arn
+
+            field_to_match {
+              single_header {
+                name = "host"
+              }
+            }
+
+            text_transformation {
+              priority = 0
+              type     = "NONE"
+            }
+          }
+        }
+      }
+    }
+
+    action {
+      block {}
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "PreventHostInjections"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
     name     = "AWSManagedRulesCommonRuleSet"
-    priority = 4
+    priority = 5
 
     override_action {
       none {}
@@ -104,7 +141,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AWSManagedRulesKnownBadInputsRuleSet"
-    priority = 5
+    priority = 6
     override_action {
       none {}
     }
@@ -145,58 +182,6 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
 
 
-  rule {
-    # make sure to update line 33 of output.tf if you change the name of the rule
-    name     = "TemporaryTokenGeneratedOutsideCanada"
-    priority = 6
-
-    action {
-      count {}
-    }
-
-    statement {
-
-      and_statement {
-        statement {
-          not_statement {
-            statement {
-              geo_match_statement {
-                country_codes = ["CA"]
-              }
-            }
-          }
-        }
-
-        statement {
-          byte_match_statement {
-
-            field_to_match {
-              uri_path {}
-            }
-
-            positional_constraint = "CONTAINS"
-            search_string         = "/api/token/temporary"
-
-            text_transformation {
-              priority = 1
-              type     = "COMPRESS_WHITE_SPACE"
-            }
-
-            text_transformation {
-              priority = 2
-              type     = "LOWERCASE"
-            }
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      metric_name                = "TemporaryTokenGeneratedOutsideCanada"
-      cloudwatch_metrics_enabled = true
-      sampled_requests_enabled   = true
-    }
-  }
 
   visibility_config {
     cloudwatch_metrics_enabled = true
@@ -208,10 +193,12 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
   }
-  /*
+
+
+
   rule {
-    name     = "BlockInvalidURLPath"
-    priority = 3
+    name     = "AllowOnlyAppUrls"
+    priority = 4
 
     action {
       block {}
@@ -241,11 +228,12 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "BlockInvalidURLPath"
+      metric_name                = "AllowOnlyAppUrls"
       sampled_requests_enabled   = false
     }
   }
-  */
+
+
 }
 
 
@@ -273,14 +261,35 @@ resource "aws_wafv2_web_acl_logging_configuration" "firehose_waf_logs_forms" {
 }
 
 
-
 resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
   name        = "valid_app_uri_paths"
-  description = "Regex to match the app valid paths"
+  scope       = "REGIONAL"
+  description = "Regex to match the app valid urls"
+
+  regular_expression {
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|profile|myforms|unsupported-browser|terms-of-use|404)(?:\\/[\\w-]+)?)(?:\\/.*)?$"
+  }
+
+  regular_expression {
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(form-builder|sla|unlock-publishing|terms-and-conditions|javascript-disabled)(?:\\/[\\w-]+)?)(?:\\/.*)?$"
+  }
+
+  regular_expression {
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(static|_next|img|favicon\\.ico)(?:\\/[\\w-]+)*)(?:\\/.*)?$"
+  }
+
+  regular_expression {
+    regex_string = "^\\/(?:en|fr)?\\/?$"
+  }
+}
+
+resource "aws_wafv2_regex_pattern_set" "forms_base_url" {
+  name        = "forms_base_url"
+  description = "Regex matching the root domain of GCForms"
   scope       = "REGIONAL"
 
   regular_expression {
-    regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|myforms|not-supported|terms-of-use|404|js-disabled|form-builder|sla|unlock-publishing|changelog|static|_next|img|favicon\\.ico)(?:\\/[\\w-]+)*)?(?:\\/.*)?$"
+    regex_string = "${var.domain}$"
   }
-
 }
+
