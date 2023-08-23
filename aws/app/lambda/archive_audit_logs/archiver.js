@@ -38,30 +38,66 @@ exports.handler = async (event) => {
   }
 };
 
-async function  archiveAuditLogs (event, s3Client) {
-  // TODO to be removed
-  console.log(`Archived expired items to S3:`);
-  // Process each record in the DynamoDB stream
-  for (const record of event.Records) {
-    if (record.eventName === "REMOVE") {
-      const expiredAuditLog = unmarshall(record.dynamodb.OldImage);
-      // TODO to be removed
-      console.log("Expired item details:", JSON.stringify(expiredAuditLog, null, 2));
+async function archiveAuditLogs(event, s3Client) {
+  const maxRetries = 2;
+  const failedRecords = [];
 
-      const putObjectCommandInput = {
-        Bucket: AUDIT_LOG_ARCHIVE_S3_BUCKET,
-        Body: JSON.stringify(expiredAuditLog),
-        // key composition up for discussion
-        Key: `${new Date().toISOString().slice(0, 10)}/${expiredAuditLog.UserID}/_${
-          record.eventID
-        }`,
-      };
+  try {
+    // Process each record in the DynamoDB stream
+    for (const record of event.Records) {
+      if (record.eventName === "REMOVE") {
+        let retries = 0;
 
-      try {
-        await s3Client.send(new PutObjectCommand(putObjectCommandInput));
-      } catch (error) {
-        throw new Error(`Failed to put audit logs into S3 bucket. Reason: ${error.message}.`);
+        while (retries <= maxRetries) {
+          const expiredAuditLog = unmarshall(record.dynamodb.OldImage);
+          const putObjectCommandInput = {
+            Bucket: AUDIT_LOG_ARCHIVE_S3_BUCKET,
+            Body: JSON.stringify(expiredAuditLog),
+            // key composition up for discussion
+            Key: `${new Date().toISOString().slice(0, 10)}/${expiredAuditLog.UserID}/_${
+              record.eventID
+            }`,
+          };
+
+          try {
+            await s3Client.send(new PutObjectCommand(putObjectCommandInput));
+            break; // sucessufully saved , exit retry loop
+          } catch (error) {
+            failedRecords.push(record.eventID);
+            retries++;
+
+            if (retries <= maxRetries) {
+              console.log(
+                JSON.stringify({
+                  level: "warn",
+                  msg: `Retrying event ${record.eventID} attemp ${retries}`,
+                })
+              );
+              await new Promise((resolve) => setTimeout(resolve, 1000)); // wait a short time before retrying
+            } else {
+              console.error(
+                JSON.stringify({
+                  level: "error",
+                  msg: `Max retries reached for event ${record.eventID}`,
+                  error: error.message,
+                })
+              );
+            }
+          }
+        }
       }
     }
+    // log failed records
+    if (Array.isArray(failedRecords) && failedRecords.length) {
+      console.error(
+        JSON.stringify({
+          level: "error",
+          msg: `failed records ${failedRecords}`,
+          error: error.message,
+        })
+      );
+    }
+  } catch (error) {
+    throw new Error("Failed to run Audit Logs Archiver.");
   }
-};
+}
