@@ -208,6 +208,22 @@ Resources:
           DOMAIN:
             Ref: DOMAIN
 
+  ArchiveAuditLogs:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-ArchiveAuditLogs
+      CodeUri: ../archive_audit_logs/
+      Handler: archiver.handler
+      Layers:
+        - Ref: ArchiveAuditLogsLayer
+      Environment:
+        Variables:
+          REGION:
+            Ref: REGION
+          SNS_ERROR_TOPIC_ARN:
+            Ref: arn:aws:sns:us-east-1:000000000000:alert-critical
+
   SubmissionLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -252,7 +268,7 @@ Resources:
       ContentUri: ../dead_letter_queue_consumer/
       CompatibleRuntimes:
         - nodejs14.x
-  
+
   AuditLogsLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -268,5 +284,14 @@ Resources:
       LayerName:
         Fn::Sub: ${Environment}-${AppName}-nagware-layer
       ContentUri: ../nagware/
+      CompatibleRuntimes:
+        - nodejs14.x
+
+  ArchiveAuditLogsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName:
+        Fn::Sub: ${Environment}-${AppName}-archive_audit_logs-layer
+      ContentUri: ../archive_audit_logs/
       CompatibleRuntimes:
         - nodejs14.x
