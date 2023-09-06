@@ -216,9 +216,7 @@ data "aws_iam_policy_document" "lambda_secrets" {
     resources = [
       var.database_secret_arn,
       aws_secretsmanager_secret_version.notify_api_key.arn,
-      aws_secretsmanager_secret_version.token_secret.arn,
-      aws_secretsmanager_secret_version.freshdesk_api_key.arn,
-
+      aws_secretsmanager_secret_version.token_secret.arn
     ]
   }
 }

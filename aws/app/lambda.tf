@@ -66,14 +66,13 @@ resource "aws_lambda_function" "reliability" {
 
   environment {
     variables = {
-      ENVIRONMENT       = var.env
-      REGION            = var.region
-      NOTIFY_API_KEY    = aws_secretsmanager_secret_version.notify_api_key.secret_string
-      FRESHDESK_API_KEY = aws_secretsmanager_secret_version.freshdesk_api_key.secret_string
-      TEMPLATE_ID       = var.gc_template_id
-      DB_ARN            = var.rds_cluster_arn
-      DB_SECRET         = var.database_secret_arn
-      DB_NAME           = var.rds_db_name
+      ENVIRONMENT    = var.env
+      REGION         = var.region
+      NOTIFY_API_KEY = aws_secretsmanager_secret_version.notify_api_key.secret_string
+      TEMPLATE_ID    = var.gc_template_id
+      DB_ARN         = var.rds_cluster_arn
+      DB_SECRET      = var.database_secret_arn
+      DB_NAME        = var.rds_db_name
 
     }
   }
