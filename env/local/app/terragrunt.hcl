@@ -81,6 +81,7 @@ inputs = {
   recaptcha_secret                            = "local"
   recaptcha_public                            = "local"
   notify_api_key                              = "local"
+  freshdesk_api_key                              = "local"
   rds_db_password                             = "local"
   slack_webhook                               = "local"
   gc_notify_callback_bearer_token             = "local"

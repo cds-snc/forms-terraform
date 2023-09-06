@@ -1,8 +1,10 @@
-FROM amazon/aws-lambda-python:3.11@sha256:b0eb4dec74144e9c78a5111659833a5fd4eca1fa01f08b7668db07436c18c40b
+FROM amazon/aws-lambda-python:3.7@sha256:4aead3a75aa0c0b63a493bb8c5417ee0f1a166cde60e9c49f382817761ea827e
 
 COPY lambda_locust.py .
 COPY tests ./tests
 COPY requirements.txt .
+
+RUN pip3 install --upgrade pip
 
 RUN pip3 install -r requirements.txt
 

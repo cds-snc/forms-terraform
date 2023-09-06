@@ -46,6 +46,21 @@ resource "aws_secretsmanager_secret_version" "notify_api_key" {
   secret_string = var.notify_api_key
 }
 
+resource "aws_secretsmanager_secret" "freshdesk_api_key" {
+  name                    = "freshdesk_api_key"
+  recovery_window_in_days = 0
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_secretsmanager_secret_version" "freshdesk_api_key" {
+  secret_id     = aws_secretsmanager_secret.freshdesk_api_key.id
+  secret_string = var.freshdesk_api_key
+}
+
 resource "aws_secretsmanager_secret" "token_secret" {
   name                    = "token_secret"
   recovery_window_in_days = 0
