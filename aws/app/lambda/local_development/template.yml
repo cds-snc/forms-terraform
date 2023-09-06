@@ -32,6 +32,9 @@ Parameters:
   NOTIFY_API_KEY:
     Type: AWS::SSM::Parameter::Value<String>
     Default: "NOTIFY API KEY"
+  FRESHDESK_API_KEY:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: "FRESHDESK API KEY"
   TEMPLATE_ID:
     Type: String
     Default: "8d597a1b-a1d6-4e3c-8421-042a2b4158b7"
@@ -87,6 +90,8 @@ Resources:
             Ref: REGION
           NOTIFY_API_KEY:
             Ref: NOTIFY_API_KEY
+          FRESHDESK_API_KEY:
+            Ref: FRESHDESK_API_KEY
           TEMPLATE_ID:
             Ref: TEMPLATE_ID
           PGUSER:
@@ -252,7 +257,7 @@ Resources:
       ContentUri: ../dead_letter_queue_consumer/
       CompatibleRuntimes:
         - nodejs14.x
-  
+
   AuditLogsLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
