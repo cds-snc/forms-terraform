@@ -87,8 +87,6 @@ Resources:
             Ref: REGION
           NOTIFY_API_KEY:
             Ref: NOTIFY_API_KEY
-          FRESHDESK_API_KEY:
-            Ref: FRESHDESK_API_KEY
           TEMPLATE_ID:
             Ref: TEMPLATE_ID
           PGUSER:
