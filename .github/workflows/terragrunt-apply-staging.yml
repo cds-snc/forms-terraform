@@ -205,7 +205,7 @@ jobs:
       - name: Configure Staging AWS credentials
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
         id: aws-form-viewer
-        uses: aws-actions/configure-aws-credentials@360ea313a73f8d3b7839fb5db64aecf801ad5fda
+        uses: aws-actions/configure-aws-credentials@a2593d09d1cd363771039c69414c00300c05bae0
         with:
           aws-access-key-id: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
@@ -214,7 +214,7 @@ jobs:
       - name: Login to Staging Amazon ECR
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
         id: login-ecr-staging
-        uses: aws-actions/amazon-ecr-login@e20c7e407b9882916b0967c1ea26eeee047fe7fc
+        uses: aws-actions/amazon-ecr-login@865664b3240e20b35d3528593d496632704f48af
 
       - name: Tag Images for Staging
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
