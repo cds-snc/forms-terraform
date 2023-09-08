@@ -3,7 +3,7 @@ COPY lambda_locust.py .
 COPY tests ./tests
 COPY requirements.txt .
 
-RUN yum groupinstall "Development Tools"
+RUN yum -y groupinstall "Development Tools"
 
 RUN pip3 install --upgrade pip
 
