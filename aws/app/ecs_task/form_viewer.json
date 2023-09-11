@@ -114,6 +114,10 @@
       {
         "name": "GC_NOTIFY_CALLBACK_BEARER_TOKEN",
         "valueFrom": "${gc_notify_callback_bearer_token}"
+      },
+      {
+        "name": "FRESHDESK_API_KEY",
+        "valueFrom": "${freshdesk_api_key}"
       }
     ]
   }
