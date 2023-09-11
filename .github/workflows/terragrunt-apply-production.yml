@@ -1,8 +1,8 @@
 name: "Terragrunt apply PRODUCTION"
 
 on:
-  push:
-    branches: [main]
+  release:
+    types: [published]
 
 env:
   APP_ENV: production

@@ -1,8 +1,9 @@
 name: "Terragrunt plan PRODUCTION"
 
 on:
-  pull_request:
-    branches: [main]
+  push:
+    branches:
+      - release-please--*
 
 env:
   APP_ENV: production
