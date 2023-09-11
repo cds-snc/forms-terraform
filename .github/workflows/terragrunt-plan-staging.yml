@@ -2,7 +2,9 @@ name: "Terragrunt plan STAGING"
 
 on:
   pull_request:
-    branches: [develop]
+    branches:
+      - "develop"
+      - "!release-please--*" # ignore release-please PRs
     paths:
       - "aws/**"
       - "env/common/**"

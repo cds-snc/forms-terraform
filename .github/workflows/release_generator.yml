@@ -1,0 +1,21 @@
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: write
+  pull-requests: write
+
+name: Release Generator
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@ca6063f4ed81b55db15b8c42d1b6f7925866342d # v3.7.11
+        with:
+          command: manifest
+          token: ${{secrets.RELEASE_GENERATOR_TOKEN}}
+          release-type: simple
+          default-branch: develop
