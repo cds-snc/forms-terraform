@@ -103,9 +103,6 @@ jobs:
             sqs:
               - 'aws/sqs/**'
               - 'env/cloud/sqs/**'
-            pr_review:
-              - 'aws/pr_review/**'
-              - 'env/cloud/pr_review/**'
 
       # No dependencies
       - name: Terragrunt plan ecr
@@ -273,7 +270,6 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan pr_review
-        if: ${{ steps.filter.outputs.pr_review == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/pr_review"
