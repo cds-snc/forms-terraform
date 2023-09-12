@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - "develop"
-      - "!release-please--*" # ignore release-please PRs
     paths:
       - "aws/**"
       - "env/common/**"
@@ -40,6 +39,7 @@ env:
   TF_VAR_email_address_support: ${{ vars.STAGING_SUPPORT_EMAIL }}
 jobs:
   terragrunt-plan:
+    if: ${{!startsWith(github.ref_name , 'release-please--*')}}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

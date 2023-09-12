@@ -1,9 +1,9 @@
 name: "Terragrunt plan PRODUCTION"
 
 on:
-  push:
+  pull_request:
     branches:
-      - release-please--*
+      - "develop"
 
 env:
   APP_ENV: production
@@ -34,6 +34,7 @@ env:
   TF_VAR_email_address_support: ${{ vars.PRODUCTION_SUPPORT_EMAIL }}
 jobs:
   terragrunt-plan:
+    if: ${{startsWith(github.ref_name, 'release-please--*')}}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
