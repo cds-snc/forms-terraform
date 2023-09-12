@@ -123,6 +123,9 @@ jobs:
 
       - name: Notify Slack on failure
         if: failure()
+        env:
+          WORKFLOW_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          WORKFLOW_NAME: "${{ github.workflow }}"
         run: |
-          json='{"blocks":[{"type":"section","text":{"type":"mrkdwn","text":":red: GitHub workflow failed: <${{ github.event.workflow_run.html_url }}|${{ github.event.workflow.name }}>"}}]}'
+          json='{"blocks":[{"type":"section","text":{"type":"mrkdwn","text":":red: GitHub workflow failed: <${{ env.WORKFLOW_URL }}|${{ env.WORKFLOW_NAME }}>"}}]}'
           curl -X POST -H 'Content-type: application/json' --data "$json" ${{ secrets.PRODUCTION_SLACK_WEBHOOK }}    
