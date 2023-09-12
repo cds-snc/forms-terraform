@@ -107,9 +107,6 @@ jobs:
             sqs:
               - 'aws/sqs/**'
               - 'env/cloud/sqs/**'
-            pr_review:
-              - 'aws/pr_review/**'
-              - 'env/cloud/pr_review/**'
 
       # No dependencies
       - name: Terragrunt apply ecr
@@ -245,6 +242,11 @@ jobs:
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply pr_review
-        if: ${{ steps.filter.outputs.pr_review == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/cloud/pr_review
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Notify Slack on failure
+        if: failure()
+        run: |
+          json='{"blocks":[{"type":"section","text":{"type":"mrkdwn","text":":red: GitHub workflow failed: <${{ github.event.workflow_run.html_url }}|${{ github.event.workflow.name }}>"}}]}'
+          curl -X POST -H 'Content-type: application/json' --data "$json" ${{ secrets.STAGING_SLACK_WEBHOOK }}
