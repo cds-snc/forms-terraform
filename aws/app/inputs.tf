@@ -164,6 +164,12 @@ variable "notify_api_key" {
   sensitive   = true
 }
 
+variable "freshdesk_api_key" {
+  description = "The FreshDesk API key used by the ECS task and Lambda"
+  type        = string
+  sensitive   = true
+}
+
 variable "private_subnet_ids" {
   description = "Private subnet IDs for the ECS service"
   type        = list(string)

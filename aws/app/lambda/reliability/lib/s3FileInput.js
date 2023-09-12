@@ -17,16 +17,15 @@ const environment = process.env.ENVIRONMENT || (process.env.AWS_SAM_LOCAL ? "loc
 const reliabilityBucketName = `forms-${environment}-reliability-file-storage`;
 const vaultBucketName = `forms-${environment}-vault-file-storage`;
 
-function getObject(bucket, key) {
-  return new Promise(async (resolve, reject) => {
-    const getObjectCommand = new GetObjectCommand({
-      Bucket: bucket,
-      Key: key,
-    });
+async function getObject(bucket, key) {
+  const getObjectCommand = new GetObjectCommand({
+    Bucket: bucket,
+    Key: key,
+  });
+  const response = await s3Client.send(getObjectCommand);
 
+  return new Promise((resolve, reject) => {
     try {
-      const response = await s3Client.send(getObjectCommand);
-
       // Store all of data chunks returned from the response data stream
       // into an array then use Array#join() to use the returned contents as a String
       let responseDataChunks = [];
@@ -37,9 +36,21 @@ function getObject(bucket, key) {
 
       // Once the stream has no more data, join the chunks into a string and return the string
       response.Body.once("end", () => resolve(Buffer.concat(responseDataChunks)));
-    } catch (err) {
+    } catch (error) {
       // Handle the error or throw
-      return reject(err);
+      console.error(
+        JSON.stringify({
+          level: "error",
+          severity: 2,
+          msg: `Failed to retrieve object from S3: ${bucket}/${key}}`,
+          error: error.message,
+        })
+      );
+
+      // Log full error to console, it will not be sent to Slack
+      console.error(JSON.stringify(error));
+
+      return reject(error);
     }
   });
 }
@@ -52,7 +63,8 @@ async function retrieveFilesFromReliabilityStorage(filePaths) {
     });
     return await Promise.all(files);
   } catch (error) {
-    throw new Error(`Failed to retrieve files from reliability storage because of following error: ${error.message}.`);
+    console.error(JSON.stringify(error));
+    throw new Error(`Failed to retrieve files from reliability storage: ${filePaths.toString()}`);
   }
 }
 
@@ -65,25 +77,29 @@ async function copyFilesFromReliabilityToVaultStorage(filePaths) {
         Key: filePath,
       };
 
-      const response = await s3Client.send(new CopyObjectCommand(commandInput)).catch((err) => {
-        console.error(err);
-        throw new Error("Argh.. there's a problem here");
-      });
+      await s3Client.send(new CopyObjectCommand(commandInput));
     }
-  } catch (err) {
-    console.error(err);
-    throw new Error("Could not copy files");
+  } catch (error) {
+    console.error(JSON.stringify(error));
+    throw new Error(
+      `Failed to copy files from reliability storage to vault storage: ${filePaths.toString()}`
+    );
   }
 }
 
 async function removeFilesFromReliabilityStorage(filePaths) {
-  for (const filePath of filePaths) {
-    const commandInput = {
-      Bucket: reliabilityBucketName,
-      Key: filePath,
-    };
+  try {
+    for (const filePath of filePaths) {
+      const commandInput = {
+        Bucket: reliabilityBucketName,
+        Key: filePath,
+      };
 
-    await s3Client.send(new DeleteObjectCommand(commandInput));
+      await s3Client.send(new DeleteObjectCommand(commandInput));
+    }
+  } catch (error) {
+    console.log(JSON.stringify(error));
+    throw new Error(`Failed to remove files from reliability storage: ${filePaths.toString()}`);
   }
 }
 

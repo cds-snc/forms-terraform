@@ -252,7 +252,7 @@ Resources:
       ContentUri: ../dead_letter_queue_consumer/
       CompatibleRuntimes:
         - nodejs14.x
-  
+
   AuditLogsLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:

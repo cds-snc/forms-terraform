@@ -5,7 +5,6 @@
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "3.300.0",
-    "@aws-sdk/client-s3": "3.300.0",
-    "@aws-sdk/client-sns": "3.300.0"
+    "@aws-sdk/client-s3": "3.300.0"
   }
 }
