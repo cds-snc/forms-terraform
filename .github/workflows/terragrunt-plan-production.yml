@@ -34,7 +34,7 @@ env:
   TF_VAR_email_address_support: ${{ vars.PRODUCTION_SUPPORT_EMAIL }}
 jobs:
   terragrunt-plan:
-    if: ${{startsWith(github.ref_name, 'release-please--*')}}
+    if: ${{startsWith(github.ref_name, 'release-please--')}}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
