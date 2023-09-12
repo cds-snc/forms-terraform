@@ -1,6 +1,7 @@
 {
   "packages": {
     ".": {
+      "bootstrap-sha": "cd40445afffa124cdef3d173062eaaf1da4e6fc7",
       "changelog-path": "CHANGELOG.md",
       "release-type": "simple",
       "bump-minor-pre-major": false,
