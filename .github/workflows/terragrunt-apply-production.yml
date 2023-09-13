@@ -1,8 +1,8 @@
 name: "Terragrunt apply PRODUCTION"
 
 on:
-  push:
-    branches: [main]
+  release:
+    types: [published]
 
 env:
   APP_ENV: production
@@ -12,15 +12,16 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}
   TERRAFORM_VERSION: 1.4.2
-  TERRAGRUNT_VERSION: 0.35.6
+  TERRAGRUNT_VERSION: 0.46.3
   TF_INPUT: false
   TF_VAR_ecs_secret_token_secret: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
   TF_VAR_google_client_id: ${{ secrets.PRODUCTION_GOOGLE_CLIENT_ID}}
   TF_VAR_google_client_secret: ${{secrets.PRODUCTION_GOOGLE_CLIENT_SECRET}}
   TF_VAR_recaptcha_secret: ${{secrets.PRODUCTION_RECAPTCHA_SITE_SECRET}}
-  TF_VAR_recaptcha_public: 6LfJDN4eAAAAAGvdRF7ZnQ7ciqdo1RQnQDFmh0VY
+  TF_VAR_recaptcha_public: 6LfuLrQnAAAAAK9Df3gem4XLMRVY2Laq6t2fhZhZ
   TF_VAR_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
   TF_VAR_cognito_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
+  TF_VAR_freshdesk_api_key: ${{ secrets.PRODUCTION_FRESHDESK_API_KEY }}
   TF_VAR_rds_db_password: ${{ secrets.PRODUCTION_DB_PASSWORD }}
   TF_VAR_slack_webhook: ${{ secrets.PRODUCTION_SLACK_WEBHOOK }}
   TF_VAR_gc_notify_callback_bearer_token: ${{ secrets.PRODUCTION_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
@@ -119,3 +120,12 @@ jobs:
       - name: Terragrunt apply alarms
         working-directory: env/cloud/alarms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Notify Slack on failure
+        if: failure()
+        env:
+          WORKFLOW_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          WORKFLOW_NAME: "${{ github.workflow }}"
+        run: |
+          json='{"blocks":[{"type":"section","text":{"type":"mrkdwn","text":":red: GitHub workflow failed: <${{ env.WORKFLOW_URL }}|${{ env.WORKFLOW_NAME }}>"}}]}'
+          curl -X POST -H 'Content-type: application/json' --data "$json" ${{ secrets.PRODUCTION_SLACK_WEBHOOK }}    

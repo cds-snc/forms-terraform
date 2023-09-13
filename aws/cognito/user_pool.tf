@@ -18,7 +18,8 @@ resource "aws_cognito_user_pool" "forms" {
   }
 
   lambda_config {
-    kms_key_id = aws_kms_key.cognito_encryption.arn
+    kms_key_id  = aws_kms_key.cognito_encryption.arn
+    pre_sign_up = aws_lambda_function.cognito_pre_sign_up.arn
     custom_email_sender {
       lambda_arn     = aws_lambda_function.cognito_email_sender.arn
       lambda_version = "V1_0"
@@ -45,7 +46,14 @@ resource "aws_cognito_user_pool_domain" "forms" {
   user_pool_id = aws_cognito_user_pool.forms.id
 }
 
-resource "aws_lambda_permission" "allow_cognito" {
+resource "aws_lambda_permission" "allow_cognito_to_call_cognito_pre_sign_up_lambda" {
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.cognito_pre_sign_up.function_name
+  principal     = "cognito-idp.amazonaws.com"
+  source_arn    = aws_cognito_user_pool.forms.arn
+}
+
+resource "aws_lambda_permission" "allow_cognito_to_call_cognito_email_sender_lambda" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.cognito_email_sender.function_name
   principal     = "cognito-idp.amazonaws.com"

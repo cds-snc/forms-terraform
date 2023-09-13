@@ -1,0 +1,171 @@
+name: "Terragrunt plan all modules STAGING"
+
+on:
+  workflow_dispatch:
+
+env:
+  APP_ENV: staging
+  APP_DOMAIN: ${{ vars.STAGING_APP_DOMAIN }}
+  AWS_ACCOUNT_ID: ${{ vars.STAGING_AWS_ACCOUNT_ID }}
+  AWS_REGION: ca-central-1
+  AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
+  CONFTEST_VERSION: 0.36.0
+  TERRAFORM_VERSION: 1.4.2
+  TERRAGRUNT_VERSION: 0.46.3
+  TF_INPUT: false
+  TF_VAR_ecs_secret_token_secret: ${{ secrets.STAGING_TOKEN_SECRET }}
+  TF_VAR_google_client_id: ${{ secrets.STAGING_GOOGLE_CLIENT_ID}}
+  TF_VAR_google_client_secret: ${{secrets.STAGING_GOOGLE_CLIENT_SECRET}}
+  TF_VAR_recaptcha_secret: ${{secrets.STAGING_RECAPTCHA_SITE_SECRET}}
+  TF_VAR_recaptcha_public: 6LfJDN4eAAAAAGvdRF7ZnQ7ciqdo1RQnQDFmh0VY
+  TF_VAR_notify_api_key: ${{ secrets.STAGING_NOTIFY_API_KEY }}
+  TF_VAR_freshdesk_api_key: ${{ secrets.STAGING_FRESHDESK_API_KEY }}
+  TF_VAR_cognito_notify_api_key: ${{ secrets.STAGING_NOTIFY_API_KEY }}
+  TF_VAR_rds_db_password: ${{ secrets.STAGING_DB_PASSWORD }}
+  TF_VAR_slack_webhook: ${{ secrets.STAGING_SLACK_WEBHOOK }}
+  TF_VAR_gc_notify_callback_bearer_token: ${{ secrets.STAGING_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
+  TF_VAR_gc_temp_token_template_id: b6885d06-d10a-422a-973f-05e274d9aa86
+  TF_VAR_gc_template_id: 8d597a1b-a1d6-4e3c-8421-042a2b4158b7
+  TF_VAR_cognito_code_template_id: 12a18f84-062c-4a67-8310-bf114af051ea
+  TF_VAR_email_address_contact_us: ${{ vars.STAGING_CONTACT_US_EMAIL }}
+  TF_VAR_email_address_support: ${{ vars.STAGING_SUPPORT_EMAIL }}
+jobs:
+  terragrunt-plan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
+
+      # Setup Terraform, Terragrunt, and Conftest
+      - name: Setup terraform tools
+        uses: cds-snc/terraform-tools-setup@v1
+        env:
+          CONFTEST_VERSION: ${{env.CONFTEST_VERSION}}
+          TERRAFORM_VERSION: ${{env.TERRAFORM_VERSION}}
+          TERRAGRUNT_VERSION: ${{env.TERRAGRUNT_VERSION}}
+
+      # No dependencies
+      - name: Terragrunt plan ecr
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/ecr"
+          comment: "false"
+          terragrunt: "true"
+
+      - name: Terragrunt plan hosted_zone
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/hosted_zone"
+          comment: "false"
+          terragrunt: "true"
+
+      - name: Terragrunt plan kms
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/kms"
+          comment: "false"
+          terragrunt: "true"
+
+      - name: Terragrunt plan sqs
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/sqs"
+          comment: "false"
+          terragrunt: "true"
+
+      - name: Terragrunt plan sns
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/sns"
+          comment: "false"
+          terragrunt: "true"
+
+      - name: Install Cognito Lambda deps
+        run: ./aws/cognito/lambda/deps.sh install
+
+      - name: Terragrunt plan cognito
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/cognito"
+          comment: "false"
+          terragrunt: "true"
+
+      - name: Remove Cognito Lambda deps
+        run: ./aws/cognito/lambda/deps.sh delete
+
+      # Depends on kms
+      - name: Terragrunt plan network
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/network"
+          comment: "false"
+          terragrunt: "true"
+
+      - name: Terragrunt plan dynamodb
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/dynamodb"
+          comment: "false"
+          terragrunt: "true"
+
+      # Depends on network
+      - name: Terragrunt plan load_balancer
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/load_balancer"
+          comment: "false"
+          terragrunt: "true"
+
+      - name: Terragrunt plan redis
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/redis"
+          comment: "false"
+          terragrunt: "true"
+
+      - name: Terragrunt plan rds
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/rds"
+          comment: "false"
+          terragrunt: "true"
+
+      # Depends on everything
+      - name: Install Lambda deps
+        run: ./aws/app/lambda/deps.sh install
+
+      - name: Terragrunt plan app
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/app"
+          comment: "false"
+          terragrunt: "true"
+
+      - name: Remove Lambda deps
+        run: ./aws/app/lambda/deps.sh delete
+
+      - name: Terragrunt plan alarms
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/alarms"
+          comment: "false"
+          terragrunt: "true"
+
+      - name: Build Load Testing Lambda Container
+        working-directory: aws/load_testing/lambda
+        run: docker build -t load_testing_lambda:latest .
+
+      - name: Terragrunt plan load_testing
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/load_testing"
+          comment: "false"
+          terragrunt: "true"
+
+      - name: Terragrunt plan pr_review
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/pr_review"
+          comment: "false"
+          terragrunt: "true"

@@ -2,6 +2,10 @@
 
 Infrastructure as Code for the GC Forms environment.
 
+## Contributing
+
+Pull Requests in this repository require all commits to be signed before they can be merged. Please see [this guide](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification) for more information.
+
 ## Running Lambdas and DBs locally
 
 You will need to have the following installed on a MacOS machine.
@@ -20,7 +24,7 @@ Pre-requisites:
   1. `brew install warrensbox/tap/tfswitch`
   1. `tfswitch 1.4.2`
   1. `brew install warrensbox/tap/tgswitch`
-  1. `tgswitch 0.35.6`
+  1. `tgswitch 0.46.3`
 
 - Yarn: `brew install yarn`
 
@@ -39,7 +43,7 @@ Pre-requisites:
 
 ### Starting LocalStack and E2E testing from devcontainers
 
-For instrutions on how to run without using dev containers please skip to the next section.
+For instructions on how to run without using dev containers please skip to the next section.
 
 1. forms-terraform:
 
@@ -324,6 +328,7 @@ ecs_secret_token_secret # JSON Web Token signing secret
 google_client_id        # Google OAuth client ID (used for authentication)
 google_client_secret:   # Google OAuth client secret (used for authentication)
 notify_api_key          # Notify API key to send messages
+freshdesk_api_key       # FreshDesk API key to send messages
 rds_db_password         # Database password
 slack_webhook           # Slack webhook to send CloudWatch notifications
 ```

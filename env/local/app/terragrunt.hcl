@@ -81,6 +81,7 @@ inputs = {
   recaptcha_secret                            = "local"
   recaptcha_public                            = "local"
   notify_api_key                              = "local"
+  freshdesk_api_key                              = "local"
   rds_db_password                             = "local"
   slack_webhook                               = "local"
   gc_notify_callback_bearer_token             = "local"
@@ -95,7 +96,7 @@ inputs = {
   dynamodb_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
   dynamodb_audit_logs_table_name = dependency.dynamodb.outputs.dynamodb_audit_logs_table_name
 
-  ecr_repository_url = ""
+  ecr_repository_url_form_viewer = ""
 
   kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
   kms_key_dynamodb_arn   = dependency.kms.outputs.kms_key_dynamodb_arn

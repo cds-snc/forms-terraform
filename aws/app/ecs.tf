@@ -23,13 +23,14 @@ data "template_file" "form_viewer_task" {
   template = file("ecs_task/form_viewer.json")
 
   vars = {
-    image                           = var.ecr_repository_url
+    image                           = var.ecr_repository_url_form_viewer
     awslogs-group                   = aws_cloudwatch_log_group.forms.name
     awslogs-region                  = var.region
     awslogs-stream-prefix           = "ecs-${var.ecs_form_viewer_name}"
     metric_provider                 = var.metric_provider
     tracer_provider                 = var.tracer_provider
     notify_api_key                  = aws_secretsmanager_secret_version.notify_api_key.arn
+    freshdesk_api_key               = aws_secretsmanager_secret_version.freshdesk_api_key.arn
     google_client_id                = aws_secretsmanager_secret_version.google_client_id.arn
     google_client_secret            = aws_secretsmanager_secret_version.google_client_secret.arn
     recaptcha_secret                = aws_secretsmanager_secret_version.recaptcha_secret.arn

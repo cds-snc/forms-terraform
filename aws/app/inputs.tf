@@ -38,7 +38,7 @@ variable "ecs_form_viewer_name" {
   type        = string
 }
 
-variable "ecr_repository_url" {
+variable "ecr_repository_url_form_viewer" {
   description = "ECR repository URL for the ECS task's Docker image"
   type        = string
 }
@@ -160,6 +160,12 @@ variable "metric_provider" {
 
 variable "notify_api_key" {
   description = "The Notify API key used by the ECS task and Lambda"
+  type        = string
+  sensitive   = true
+}
+
+variable "freshdesk_api_key" {
+  description = "The FreshDesk API key used by the ECS task and Lambda"
   type        = string
   sensitive   = true
 }

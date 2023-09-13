@@ -28,7 +28,11 @@ exports.handler = async (event) => {
       plainTextCode = plaintext.toString();
     } catch (err) {
       console.error(
-        `{"status": "failed", "message": "Failed to Decrypt Cognito Code", "error":${err.message}}`
+        JSON.stringify({
+          status: "failed",
+          message: "Failed to Decrypt Cognito Code.",
+          error: err.message,
+        })
       );
       throw new Error("Could not decrypt Cognito Code");
     }
@@ -39,9 +43,7 @@ exports.handler = async (event) => {
     plainTextCode
     && userEmail
     && [
-      "CustomEmailSender_ForgotPassword",
-      "CustomEmailSender_ResendCode",
-      "CustomEmailSender_SignUp"
+      "CustomEmailSender_ForgotPassword"
     ].includes(event.triggerSource)
   ){
     // attempt to send the code to the user through Notify
@@ -49,14 +51,19 @@ exports.handler = async (event) => {
       await notify.sendEmail(TEMPLATE_ID, userEmail, {
         personalisation: {
           passwordReset: event.triggerSource === "CustomEmailSender_ForgotPassword",
-          accountVerification: event.triggerSource === "CustomEmailSender_SignUp",
-          resendCode: event.triggerSource === "CustomEmailSender_ResendCode",
+          // Keeping `accountVerification` and `resendCode` variables in case we need them in the future. They were removed when we implemented 2FA.
+          accountVerification: false,
+          resendCode: false,
           code: plainTextCode
         }
       });
     }catch (err){
       console.error(
-        `{"status": "failed", "message": "Notify Failed To Send the Code", "error":${err.message}}`
+        JSON.stringify({
+          status: "failed",
+          message: "Notify Failed To Send the Code.",
+          error: err.message,
+        })
       );
       throw new Error("Notify failed to send the code")
     }
