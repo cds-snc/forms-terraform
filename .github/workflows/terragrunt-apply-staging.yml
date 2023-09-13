@@ -26,6 +26,7 @@ env:
   TF_VAR_recaptcha_secret: ${{secrets.STAGING_RECAPTCHA_SITE_SECRET}}
   TF_VAR_recaptcha_public: 6LfJDN4eAAAAAGvdRF7ZnQ7ciqdo1RQnQDFmh0VY
   TF_VAR_notify_api_key: ${{ secrets.STAGING_NOTIFY_API_KEY }}
+  TF_VAR_freshdesk_api_key: ${{ secrets.STAGING_FRESHDESK_API_KEY }}
   TF_VAR_cognito_notify_api_key: ${{ secrets.STAGING_NOTIFY_API_KEY }}
   TF_VAR_rds_db_password: ${{ secrets.STAGING_DB_PASSWORD }}
   TF_VAR_slack_webhook: ${{ secrets.STAGING_SLACK_WEBHOOK }}
@@ -106,9 +107,6 @@ jobs:
             sqs:
               - 'aws/sqs/**'
               - 'env/cloud/sqs/**'
-            pr_review:
-              - 'aws/pr_review/**'
-              - 'env/cloud/pr_review/**'
 
       # No dependencies
       - name: Terragrunt apply ecr
@@ -204,7 +202,7 @@ jobs:
       - name: Configure Staging AWS credentials
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
         id: aws-form-viewer
-        uses: aws-actions/configure-aws-credentials@35d8f9588bf190a9a7fda3411cd548fb8234bee2
+        uses: aws-actions/configure-aws-credentials@3d11655d76b27285031fd4e26dd365a469bad2fe
         with:
           aws-access-key-id: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
@@ -213,7 +211,7 @@ jobs:
       - name: Login to Staging Amazon ECR
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
         id: login-ecr-staging
-        uses: aws-actions/amazon-ecr-login@e7d6d8d06d70976dafcce04be74ce814d9e25bc0
+        uses: aws-actions/amazon-ecr-login@99fe8befaecdc063ad51266ca32e2983e58efd9e
 
       - name: Tag Images for Staging
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
@@ -244,6 +242,14 @@ jobs:
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply pr_review
-        if: ${{ steps.filter.outputs.pr_review == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/cloud/pr_review
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Notify Slack on failure
+        if: failure()
+        env:
+          WORKFLOW_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          WORKFLOW_NAME: "${{ github.workflow }}"
+        run: |
+          json='{"blocks":[{"type":"section","text":{"type":"mrkdwn","text":":red: GitHub workflow failed: <${{ env.WORKFLOW_URL }}|${{ env.WORKFLOW_NAME }}>"}}]}'
+          curl -X POST -H 'Content-type: application/json' --data "$json" ${{ secrets.STAGING_SLACK_WEBHOOK }}
