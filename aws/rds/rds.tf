@@ -16,11 +16,11 @@ resource "aws_db_subnet_group" "forms" {
 }
 
 resource "aws_rds_cluster" "forms" {
-  cluster_identifier          = "${var.rds_name}-cluster"
-  engine                      = "aurora-postgresql"
-  engine_mode                 = "provisioned"
-  engine_version              = "13.9"
-  enable_http_endpoint        = true
+  cluster_identifier = "${var.rds_name}-cluster"
+  engine             = "aurora-postgresql"
+  engine_mode        = "provisioned"
+  engine_version     = "13.9"
+  # enable_http_endpoint        = true
   database_name               = var.rds_db_name
   deletion_protection         = true
   final_snapshot_identifier   = "server-${random_string.random.result}"
@@ -34,11 +34,11 @@ resource "aws_rds_cluster" "forms" {
   apply_immediately           = true
 
 
-  scaling_configuration {
-    auto_pause   = false
-    max_capacity = 8
-    min_capacity = 2
-  }
+  #  scaling_configuration {
+  #    auto_pause   = false
+  #    max_capacity = 8
+  #    min_capacity = 2
+  #  }
 
   vpc_security_group_ids = [var.rds_security_group_id]
 
