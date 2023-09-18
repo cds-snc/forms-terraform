@@ -62,7 +62,7 @@ resource "aws_ecs_task_definition" "form_viewer" {
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = aws_iam_role.forms.arn
   task_role_arn            = aws_iam_role.forms.arn
-  container_definitions    = templatefile("ecs_task/form_viewer.json", local.template_vars)
+  container_definitions    = templatefile("./ecs_task/form_viewer.json", local.template_vars)
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
