@@ -44,8 +44,6 @@ data "aws_iam_policy_document" "forms_secrets_manager" {
 
     resources = [
       var.database_url_secret_arn,
-      aws_secretsmanager_secret_version.google_client_id.arn,
-      aws_secretsmanager_secret_version.google_client_secret.arn,
       aws_secretsmanager_secret_version.recaptcha_secret.arn,
       aws_secretsmanager_secret_version.notify_api_key.arn,
       aws_secretsmanager_secret_version.token_secret.arn,

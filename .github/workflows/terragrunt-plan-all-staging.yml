@@ -15,8 +15,6 @@ env:
   TERRAGRUNT_VERSION: 0.46.3
   TF_INPUT: false
   TF_VAR_ecs_secret_token_secret: ${{ secrets.STAGING_TOKEN_SECRET }}
-  TF_VAR_google_client_id: ${{ secrets.STAGING_GOOGLE_CLIENT_ID}}
-  TF_VAR_google_client_secret: ${{secrets.STAGING_GOOGLE_CLIENT_SECRET}}
   TF_VAR_recaptcha_secret: ${{secrets.STAGING_RECAPTCHA_SITE_SECRET}}
   TF_VAR_recaptcha_public: 6LfJDN4eAAAAAGvdRF7ZnQ7ciqdo1RQnQDFmh0VY
   TF_VAR_notify_api_key: ${{ secrets.STAGING_NOTIFY_API_KEY }}
