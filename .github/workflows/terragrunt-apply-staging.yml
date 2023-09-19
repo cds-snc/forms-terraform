@@ -250,4 +250,4 @@ jobs:
           WORKFLOW_NAME: "${{ github.workflow }}"
         run: |
           json='{"channel":"#forms-staging-events", "blocks":[{"type":"section","text":{"type":"mrkdwn","text":":red: GitHub workflow failed: <${{ env.WORKFLOW_URL }}|${{ env.WORKFLOW_NAME }}>"}}]}'
-          curl -X POST -H 'Content-type: application/json' --data "$json" ${{ secrets.STAGING_SLACK_WEBHOOK }}
+          curl -X POST -H 'Content-type: application/json' --data "$json" "https://hooks.slack.com${{ secrets.STAGING_SLACK_WEBHOOK }}"
