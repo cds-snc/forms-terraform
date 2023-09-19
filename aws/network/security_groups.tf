@@ -142,20 +142,22 @@ resource "aws_security_group" "forms_database" {
   description = "Ingress - Forms Database"
   vpc_id      = aws_vpc.forms.id
 
-  ingress {
-    protocol  = "tcp"
-    from_port = 5432
-    to_port   = 5432
-    security_groups = [
-      aws_security_group.forms.id,
-    ]
-  }
-
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
   }
 }
+
+resource "aws_security_group_rule" "forms_database_ingress" {
+  description              = "Security group rule for Forms Database ingress"
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.forms_database.id
+  source_security_group_id = aws_security_group.forms.id
+}
+
 
 # Allow traffic from the app
 resource "aws_security_group" "forms_redis" {
@@ -163,19 +165,22 @@ resource "aws_security_group" "forms_redis" {
   description = "Ingress - Forms Redis"
   vpc_id      = aws_vpc.forms.id
 
-  ingress {
-    protocol  = "tcp"
-    from_port = 6379
-    to_port   = 6379
-    security_groups = [
-      aws_security_group.forms.id,
-    ]
-  }
+
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
   }
+}
+
+resource "aws_security_group_rule" "forms_redis_ingress" {
+  description              = "Security group rule for Forms Database ingress"
+  type                     = "ingress"
+  from_port                = 6379
+  to_port                  = 6379
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.forms_redis.id
+  source_security_group_id = aws_security_group.forms.id
 }
 
 #
