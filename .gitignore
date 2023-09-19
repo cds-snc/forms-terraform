@@ -47,3 +47,6 @@ tf.plan
 
 # Ignore local stack data file
 .devcontainer/data
+
+# Local environment variables
+.env*
