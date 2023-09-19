@@ -16,7 +16,7 @@ jobs:
       - uses: actions/create-github-app-token@49ce228ea7cddec9f88dd09c5b7740dbac82d7ba # v1.2.1
         id: sre_app_token
         with:
-          app_id: ${{ vars.SRE_APP_ID }}
+          app_id: ${{ secrets.SRE_APP_ID }}
           private_key: ${{ secrets.SRE_APP_PRIVATE_KEY }}
 
       - uses: google-github-actions/release-please-action@ca6063f4ed81b55db15b8c42d1b6f7925866342d # v3.7.11
