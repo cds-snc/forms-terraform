@@ -200,7 +200,7 @@ jobs:
       - name: Configure Staging AWS credentials
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
         id: aws-form-viewer
-        uses: aws-actions/configure-aws-credentials@3d11655d76b27285031fd4e26dd365a469bad2fe
+        uses: aws-actions/configure-aws-credentials@fbaaea849082b09c6da098c397edb77cf7d2875a
         with:
           aws-access-key-id: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
