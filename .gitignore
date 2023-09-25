@@ -36,13 +36,13 @@ override.tf.json
 *tfplan*
 tf.plan
 
-#Ignore vscode settings
+# Ignore vscode settings
 .vscode
 
-#Ignore node modules folders for Lambda functions
+# Ignore node modules folders for Lambda functions
 **/node_modules/
 
-#Ignore Mac OS file types
+# Ignore Mac OS file types
 .DS_Store
 
 # Ignore local stack data file
