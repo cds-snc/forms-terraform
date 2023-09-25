@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.3.1](https://github.com/cds-snc/forms-terraform/compare/v3.3.0...v3.3.1) (2023-09-25)
+
+
+### Miscellaneous Chores
+
+* Add release manifest code owners ([#499](https://github.com/cds-snc/forms-terraform/issues/499)) ([d63e8a2](https://github.com/cds-snc/forms-terraform/commit/d63e8a22a174119248bb33728d006aba5c456426))
+* synced file(s) with cds-snc/site-reliability-engineering ([#498](https://github.com/cds-snc/forms-terraform/issues/498)) ([9a93c2f](https://github.com/cds-snc/forms-terraform/commit/9a93c2f70ba3dffa206e53a977aa36219d147e04))
+
 ## [3.3.0](https://github.com/cds-snc/forms-terraform/compare/v3.2.1...v3.3.0) (2023-09-19)
 
 
