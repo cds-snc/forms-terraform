@@ -8,7 +8,7 @@ Pull Requests in this repository require all commits to be signed before they ca
 
 ## Running Lambdas and DBs locally
 
-You will need to have the following installed on a MacOS machine.
+You will need to have the following installed on a macOS machine.
 
 Pre-requisites:
 
@@ -82,13 +82,13 @@ LOCAL_LAMBDA_ENDPOINT=http://127.0.0.1:3001
 LOCAL_AWS_ENDPOINT=http://localhost:4566
 ```
 
-##### Everytime you want to run localstack and lambdas locally
+##### Every time you want to run localstack and lambdas locally
 
 1. In one terminal run `localstack start`
 2. In a second terminal run `./localstack_services.sh` (If there have been infrastructure changes you'll want to run `./localstack_services.sh clean`)
 3. In a third terminal in the `platform-forms-client` repo run `yarn dev`
 
-#### It didn't work.... I need the details
+#### It didn't work...I need the details
 
 Once you have localstack installed you should be able to start the localstack container and services using the following command.
 
@@ -204,7 +204,7 @@ In the directory:
 `./aws/app/lambda/local-development/`
 `template.yml` defines the local environment / project we will be running. Functions and environment variables can be defined here.
 
-### Dynamo Datbase Table Schemas
+### Dynamo Database Table Schemas
 
 #### Vault Table
 
