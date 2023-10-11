@@ -280,7 +280,7 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
 
   # This is a temporary rule to allow search engines tools to access ownership verification files
   regular_expression {
-    regex_string = "^\\/(?:en|fr)?\\/?(?:(BingSiteAuth\\.xml|googlef34bd8c094c26cb0\\.html)$"
+    regex_string = "^\\/?(BingSiteAuth\\.xml|googlef34bd8c094c26cb0\\.html)$"
   }
 
   regular_expression {
