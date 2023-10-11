@@ -74,6 +74,28 @@ exports.handler = async function (event) {
       },
     }));
 
+    const uniquePutTransactionItems = [
+      ...new Map(
+        putTransactionItems.map((v) => [
+          JSON.stringify([
+            v.PutRequest.Item.UserID,
+            v.PutRequest.Item["Event#SubjectID#TimeStamp"],
+          ]),
+          v,
+        ])
+      ).values(),
+    ];
+
+    if (putTransactionItems.length !== uniquePutTransactionItems.length) {
+      console.warn(
+        JSON.stringify({
+          level: "warn",
+          severity: 3,
+          msg: `Duplicate log events were detected and removed.`,
+        })
+      );
+    }
+
     const dynamoDb = DynamoDBDocumentClient.from(
       new DynamoDBClient({
         region: process.env.REGION ?? "ca-central-1",
@@ -86,7 +108,7 @@ exports.handler = async function (event) {
     } = await dynamoDb.send(
       new BatchWriteCommand({
         RequestItems: {
-          AuditLogs: putTransactionItems,
+          AuditLogs: uniquePutTransactionItems,
         },
       })
     );
