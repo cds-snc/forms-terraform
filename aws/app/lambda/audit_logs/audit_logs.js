@@ -87,11 +87,31 @@ exports.handler = async function (event) {
     ];
 
     if (putTransactionItems.length !== uniquePutTransactionItems.length) {
+      // Find duplicated items that were removed
+
+      // clone array so the original is not modified
+      const clonedPutTransactionItems = [...putTransactionItems];
+
+      uniquePutTransactionItems.forEach((u) => {
+        const itemIndex = clonedPutTransactionItems.findIndex(
+          (o) =>
+            o.PutRequest.Item.UserID === u.PutRequest.Item.UserID &&
+            o.PutRequest.Item["Event#SubjectID#TimeStamp"] ===
+              u.PutRequest.Item["Event#SubjectID#TimeStamp"]
+        );
+        // If it exists, remove it from the cloned array so we are only left with duplicates
+        if (itemIndex >= 0) {
+          clonedPutTransactionItems.splice(itemIndex, 1);
+        }
+      });
+
       console.warn(
         JSON.stringify({
           level: "warn",
           severity: 3,
-          msg: `Duplicate log events were detected and removed.`,
+          msg: `Duplicate log events were detected and removed. List of duplicate events: ${JSON.stringify(
+            clonedPutTransactionItems
+          )}`,
         })
       );
     }
@@ -116,21 +136,21 @@ exports.handler = async function (event) {
     if (typeof AuditLogs !== "undefined") {
       const unprocessedIDs = AuditLogs.map(({ PutItem: { UserID, Event, TimeStamp } }, index) => {
         // Find the original LogEvent item that has the messageID
-        const [unprocessItem] = logEvents.filter(
+        const [unprocessedItem] = logEvents.filter(
           ({ logEvent }) =>
             logEvent.userID === UserID &&
             logEvent.event === Event &&
             logEvent.timestamp === TimeStamp
         )[0];
 
-        if (!unprocessItem)
+        if (!unprocessedItem)
           throw new Error(
             `Unprocessed LogEvent could not be found. ${JSON.stringify(
               AuditLogs[index]
             )} not found.`
           );
 
-        return unprocessItem.messageId;
+        return unprocessedItem.messageId;
       });
 
       console.warn(
