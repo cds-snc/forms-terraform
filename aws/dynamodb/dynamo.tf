@@ -32,7 +32,7 @@ resource "aws_dynamodb_table" "vault" {
   name         = "Vault"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "FormID"
-  range_key    = "NAME_OR_CONF"
+  range_key    = "NAME_OR_CONF_OR_TEST"
 
   attribute {
     name = "FormID"
@@ -40,7 +40,7 @@ resource "aws_dynamodb_table" "vault" {
   }
 
   attribute {
-    name = "NAME_OR_CONF"
+    name = "NAME_OR_CONF_OR_TEST"
     type = "S"
   }
 

@@ -3,18 +3,20 @@ const { DynamoDBClient, PutItemCommand, UpdateItemCommand } = require("@aws-sdk/
 const uuid = require("uuid");
 
 const REGION = process.env.REGION;
+
 const db = new DynamoDBClient({
   region: REGION,
   ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
 });
+
 const sqs = new SQSClient({
   region: REGION,
   ...(process.env.AWS_SAM_LOCAL && { endpoint: "http://host.docker.internal:4566" }),
 });
 
-// Store questions with responses
-
 /*
+Store questions with responses
+
 Params:
   formID - ID of form,
   language - form submission language "fr" or "en",
@@ -28,11 +30,12 @@ exports.handler = async function (event) {
   try {
     const formData = event;
 
-    //-----------
     await saveData(submissionID, formData);
+    await saveSubmissionResponsesIntegrityHash(formData.responses);
+
     const receiptID = await sendData(submissionID);
-    // Update DB entry for receipt ID
-    await saveReceipt(submissionID, receiptID);
+    await saveReceipt(submissionID, receiptID); // Update DB entry for receipt ID
+
     console.log(
       JSON.stringify({
         level: "info",
@@ -41,9 +44,8 @@ exports.handler = async function (event) {
         submissionID: submissionID,
       })
     );
-    return { status: true };
 
-    //----------
+    return { status: true };
   } catch (err) {
     console.error(
       JSON.stringify({
@@ -54,26 +56,8 @@ exports.handler = async function (event) {
         msg: err.message,
       })
     );
+
     return { status: false };
-  }
-};
-
-const sendData = async (submissionID) => {
-  try {
-    const SQSParams = {
-      MessageBody: JSON.stringify({
-        submissionID: submissionID,
-      }),
-      MessageDeduplicationId: submissionID,
-      MessageGroupId: "Group-" + submissionID,
-      QueueUrl: process.env.SQS_URL,
-    };
-
-    const queueResponse = await sqs.send(new SendMessageCommand(SQSParams));
-    return queueResponse.MessageId;
-  } catch (error) {
-    console.error(JSON.stringify(error));
-    throw new Error("Could not create message on Reliability Queue");
   }
 };
 
@@ -101,6 +85,52 @@ const saveData = async (submissionID, formData) => {
   } catch (error) {
     console.error(JSON.stringify(error));
     throw new Error("Could not save data to Reliability Temporary Storage");
+  }
+};
+
+const saveSubmissionResponsesIntegrityHash = async (submissionResponses) => {
+  try {
+    /*const securityAttribute = formData.securityAttribute ?? "Protected A";
+    delete formData.securityAttribute;
+
+    const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
+    const timeStamp = Date.now().toString();*/
+    const putItemCommandInput = {
+      TableName: "ReliabilityQueue",
+      Item: {
+        SubmissionID: { S: submissionID },
+        FormID: { S: formData.formID },
+        SendReceipt: { S: "unknown" },
+        FormSubmissionLanguage: { S: formData.language },
+        FormData: { S: formSubmission },
+        CreatedAt: { N: timeStamp },
+        SecurityAttribute: { S: securityAttribute },
+      },
+    };
+
+    await db.send(new PutItemCommand(putItemCommandInput));
+  } catch (error) {
+    console.error(JSON.stringify(error));
+    throw new Error("Could not save data integrity hash in DynamoDB");
+  }
+};
+
+const sendData = async (submissionID) => {
+  try {
+    const SQSParams = {
+      MessageBody: JSON.stringify({
+        submissionID: submissionID,
+      }),
+      MessageDeduplicationId: submissionID,
+      MessageGroupId: "Group-" + submissionID,
+      QueueUrl: process.env.SQS_URL,
+    };
+
+    const queueResponse = await sqs.send(new SendMessageCommand(SQSParams));
+    return queueResponse.MessageId;
+  } catch (error) {
+    console.error(JSON.stringify(error));
+    throw new Error("Could not create message on Reliability Queue");
   }
 };
 
