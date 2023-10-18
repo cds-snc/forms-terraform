@@ -58,7 +58,7 @@ resource "aws_lambda_function" "reliability" {
 
   source_code_hash = data.archive_file.reliability_main.output_base64sha256
 
-  runtime = "nodejs18.x"
+  runtime = "nodejs16.x"
   layers = [
     aws_lambda_layer_version.reliability_lib.arn,
     aws_lambda_layer_version.reliability_nodejs.arn
@@ -91,14 +91,14 @@ resource "aws_lambda_layer_version" "reliability_lib" {
   filename            = "/tmp/reliability_lib.zip"
   layer_name          = "reliability_lib_packages"
   source_code_hash    = data.archive_file.reliability_lib.output_base64sha256
-  compatible_runtimes = ["nodejs18.x"]
+  compatible_runtimes = ["nodejs16.x"]
 }
 
 resource "aws_lambda_layer_version" "reliability_nodejs" {
   filename            = "/tmp/reliability_nodejs.zip"
   layer_name          = "reliability_node_packages"
   source_code_hash    = data.archive_file.reliability_nodejs.output_base64sha256
-  compatible_runtimes = ["nodejs18.x"]
+  compatible_runtimes = ["nodejs16.x"]
 }
 
 resource "aws_lambda_event_source_mapping" "reliability" {
@@ -147,7 +147,7 @@ resource "aws_lambda_function" "submission" {
 
   source_code_hash = data.archive_file.submission_main.output_base64sha256
 
-  runtime = "nodejs18.x"
+  runtime = "nodejs16.x"
   layers = [
     aws_lambda_layer_version.submission_lib.arn
   ]
@@ -174,7 +174,7 @@ resource "aws_lambda_layer_version" "submission_lib" {
   filename            = "/tmp/submission_lib.zip"
   layer_name          = "submission_node_packages"
   source_code_hash    = data.archive_file.submission_lib.output_base64sha256
-  compatible_runtimes = ["nodejs18.x"]
+  compatible_runtimes = ["nodejs16.x"]
 }
 
 resource "aws_lambda_permission" "submission" {
@@ -224,7 +224,7 @@ resource "aws_lambda_function" "archiver" {
   handler       = "archiver.handler"
 
   source_code_hash = data.archive_file.archiver_main.output_base64sha256
-  runtime          = "nodejs18.x"
+  runtime          = "nodejs16.x"
   timeout          = 10
   layers = [
     aws_lambda_layer_version.archiver_lib.arn,
@@ -254,14 +254,14 @@ resource "aws_lambda_layer_version" "archiver_lib" {
   filename            = "/tmp/archiver_lib.zip"
   layer_name          = "archiver_lib_packages"
   source_code_hash    = data.archive_file.archiver_lib.output_base64sha256
-  compatible_runtimes = ["nodejs18.x"]
+  compatible_runtimes = ["nodejs16.x"]
 }
 
 resource "aws_lambda_layer_version" "archiver_nodejs" {
   filename            = "/tmp/archiver_nodejs.zip"
   layer_name          = "archiver_node_packages"
   source_code_hash    = data.archive_file.archiver_nodejs.output_base64sha256
-  compatible_runtimes = ["nodejs18.x"]
+  compatible_runtimes = ["nodejs16.x"]
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_responses_lambda" {
@@ -303,7 +303,7 @@ resource "aws_lambda_function" "dead_letter_queue_consumer" {
   handler       = "dead_letter_queue_consumer.handler"
 
   source_code_hash = data.archive_file.dead_letter_queue_consumer_main.output_base64sha256
-  runtime          = "nodejs18.x"
+  runtime          = "nodejs16.x"
   layers           = [aws_lambda_layer_version.dead_letter_queue_consumer_lib.arn]
   timeout          = 300
 
@@ -330,7 +330,7 @@ resource "aws_lambda_layer_version" "dead_letter_queue_consumer_lib" {
   filename            = "/tmp/dead_letter_queue_consumer_lib.zip"
   layer_name          = "dead_letter_queue_consumer_node_packages"
   source_code_hash    = data.archive_file.dead_letter_queue_consumer_lib.output_base64sha256
-  compatible_runtimes = ["nodejs18.x"]
+  compatible_runtimes = ["nodejs16.x"]
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_dead_letter_queue_consumer_lambda" {
@@ -384,7 +384,7 @@ resource "aws_lambda_function" "archive_form_templates" {
 
   source_code_hash = data.archive_file.archive_form_templates_main.output_base64sha256
 
-  runtime = "nodejs18.x"
+  runtime = "nodejs16.x"
   layers = [
     aws_lambda_layer_version.archive_form_templates_lib.arn,
     aws_lambda_layer_version.archive_form_templates_nodejs.arn
@@ -414,14 +414,14 @@ resource "aws_lambda_layer_version" "archive_form_templates_lib" {
   filename            = "/tmp/archive_form_templates_lib.zip"
   layer_name          = "archive_form_templates_lib_packages"
   source_code_hash    = data.archive_file.archive_form_templates_lib.output_base64sha256
-  compatible_runtimes = ["nodejs18.x"]
+  compatible_runtimes = ["nodejs16.x"]
 }
 
 resource "aws_lambda_layer_version" "archive_form_templates_nodejs" {
   filename            = "/tmp/archive_form_templates_nodejs.zip"
   layer_name          = "archive_form_templates_node_packages"
   source_code_hash    = data.archive_file.archive_form_templates_nodejs.output_base64sha256
-  compatible_runtimes = ["nodejs18.x"]
+  compatible_runtimes = ["nodejs16.x"]
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_templates_lambda" {
@@ -555,7 +555,7 @@ resource "aws_lambda_function" "nagware" {
 
   source_code_hash = data.archive_file.nagware_main.output_base64sha256
 
-  runtime = "nodejs18.x"
+  runtime = "nodejs16.x"
   layers = [
     aws_lambda_layer_version.nagware_lib.arn,
     aws_lambda_layer_version.nagware_nodejs.arn
@@ -590,14 +590,14 @@ resource "aws_lambda_layer_version" "nagware_lib" {
   filename            = "/tmp/nagware_lib.zip"
   layer_name          = "nagware_lib_packages"
   source_code_hash    = data.archive_file.nagware_lib.output_base64sha256
-  compatible_runtimes = ["nodejs18.x"]
+  compatible_runtimes = ["nodejs16.x"]
 }
 
 resource "aws_lambda_layer_version" "nagware_nodejs" {
   filename            = "/tmp/nagware_nodejs.zip"
   layer_name          = "nagware_node_packages"
   source_code_hash    = data.archive_file.nagware_nodejs.output_base64sha256
-  compatible_runtimes = ["nodejs18.x"]
+  compatible_runtimes = ["nodejs16.x"]
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_nagware_lambda" {
