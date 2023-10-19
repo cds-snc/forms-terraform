@@ -22,7 +22,7 @@ resource "aws_route53_record" "form_viewer_certificate_validation" {
   zone_id = var.hosted_zone_id[count.index]
 
   for_each = {
-    for dvo in aws_acm_certificate.form_viewer.domain_validation_options : dvo.domain_name => {
+    for dvo in aws_acm_certificate.form_viewer[count.index].domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
       type   = dvo.resource_record_type
       record = dvo.resource_record_value
