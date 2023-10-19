@@ -5,7 +5,7 @@ variable "alb_security_group_id" {
 
 variable "hosted_zone_id" {
   description = "Route53 hosted zone ID"
-  type        = string
+  type        = list(string)
 }
 
 variable "public_subnet_ids" {

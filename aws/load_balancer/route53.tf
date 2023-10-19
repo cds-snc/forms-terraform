@@ -2,8 +2,9 @@
 # Route53 records
 #
 resource "aws_route53_record" "form_viewer" {
-  zone_id = var.hosted_zone_id
-  name    = var.domain
+  count = length(var.domain)
+  zone_id = var.hosted_zone_id[count.index]
+  name    = var.domain[count.index]
   type    = "A"
 
   alias {
@@ -17,7 +18,8 @@ resource "aws_route53_record" "form_viewer" {
 # Certificate validation
 #
 resource "aws_route53_record" "form_viewer_certificate_validation" {
-  zone_id = var.hosted_zone_id
+  count = length(var.domain)
+  zone_id = var.hosted_zone_id[count.index]
 
   for_each = {
     for dvo in aws_acm_certificate.form_viewer.domain_validation_options : dvo.domain_name => {

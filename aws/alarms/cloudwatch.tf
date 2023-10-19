@@ -262,7 +262,7 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_route53_warn" {
   alarm_actions = [var.sns_topic_alert_warning_arn]
 
   dimensions = {
-    ResourceArn = "arn:aws:route53:::hostedzone/${var.hosted_zone_id}"
+    ResourceArn = formatlist("arn:aws:route53:::hostedzone/%s", var.hosted_zone_id)
   }
 
   tags = {
@@ -350,7 +350,7 @@ resource "aws_cloudwatch_metric_alarm" "route53_ddos" {
   ok_actions        = [var.sns_topic_alert_ok_us_east_arn]
 
   dimensions = {
-    ResourceArn = "arn:aws:route53:::hostedzone/${var.hosted_zone_id}"
+    ResourceArn = formatlist("arn:aws:route53:::hostedzone/%s", var.hosted_zone_id)
   }
 }
 

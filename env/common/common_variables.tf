@@ -20,7 +20,7 @@ variable "billing_tag_value" {
 
 variable "domain" {
   description = "The server domain"
-  type        = string
+  type        = list(string)
 }
 
 variable "env" {

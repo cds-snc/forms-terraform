@@ -55,7 +55,7 @@ variable "ecs_service_name" {
 
 variable "hosted_zone_id" {
   description = "Hosted zone ID, used by DDoS alarm"
-  type        = string
+  type        = list(string)
 }
 
 variable "lb_arn" {
