@@ -2,7 +2,7 @@
 # Domain certificate
 #
 resource "aws_acm_certificate" "form_viewer" {
-  count = length(var.domain)
+  count             = length(var.domain)
   domain_name       = var.domain[count.index]
   validation_method = "DNS"
 

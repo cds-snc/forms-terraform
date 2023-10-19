@@ -4,7 +4,7 @@
 #
 resource "aws_route53_zone" "form_viewer" {
   count = length(var.domain)
-  name = var.domain[count.index]
+  name  = var.domain[count.index]
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value

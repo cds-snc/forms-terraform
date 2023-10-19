@@ -2,7 +2,7 @@
 # Route53 records
 #
 resource "aws_route53_record" "form_viewer" {
-  count = length(var.domain)
+  count   = length(var.domain)
   zone_id = var.hosted_zone_id[count.index]
   name    = var.domain[count.index]
   type    = "A"
@@ -18,7 +18,7 @@ resource "aws_route53_record" "form_viewer" {
 # Certificate validation
 #
 resource "aws_route53_record" "form_viewer_certificate_validation" {
-  count = length(var.domain)
+  count   = length(var.domain)
   zone_id = var.hosted_zone_id[count.index]
 
   for_each = {

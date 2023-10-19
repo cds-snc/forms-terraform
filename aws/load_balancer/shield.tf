@@ -9,7 +9,7 @@ resource "aws_shield_protection" "alb" {
 }
 
 resource "aws_shield_protection" "route53_hosted_zone" {
-  count = length(var.hosted_zone_id)
+  count        = length(var.hosted_zone_id)
   name         = "Route53HostedZone"
   resource_arn = "arn:aws:route53:::hostedzone/${var.hosted_zone_id[count.index]}"
 
