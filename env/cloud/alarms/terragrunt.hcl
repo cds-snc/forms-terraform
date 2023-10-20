@@ -6,12 +6,16 @@ dependencies {
   paths = ["../hosted_zone", "../kms", "../load_balancer", "../sqs", "../app", "../sns"]
 }
 
+locals {
+  domain = get_env("APP_DOMAIN", ["localhost:3000"])
+}
+
 dependency "hosted_zone" {
   config_path = "../hosted_zone"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    hosted_zone_ids = formatlist("mocked_zone_id_%s", [var.domain])
+    hosted_zone_ids = formatlist("mocked_zone_id_%s", [local.domain])
   }
 }
 
