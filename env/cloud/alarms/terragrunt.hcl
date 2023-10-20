@@ -8,9 +8,8 @@ dependencies {
 
 dependency "hosted_zone" {
   config_path = "../hosted_zone"
-
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_with_state           = true
   mock_outputs = {
     hosted_zone_ids = [""]
   }
@@ -20,7 +19,7 @@ dependency "kms" {
   config_path = "../kms"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_with_state           = true
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     kms_key_cloudwatch_arn         = ""
     kms_key_cloudwatch_us_east_arn = ""
@@ -31,7 +30,7 @@ dependency "load_balancer" {
   config_path = "../load_balancer"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_with_state           = true
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     lb_arn        = ""
     lb_arn_suffix = ""
@@ -42,7 +41,7 @@ dependency "sqs" {
   config_path = "../sqs"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_with_state           = true
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     sqs_reliability_deadletter_queue_arn = ""
     sqs_audit_log_deadletter_queue_arn = ""
@@ -53,7 +52,7 @@ dependency "app" {
   config_path = "../app"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_with_state           = true
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     ecs_cloudwatch_log_group_name           = ""
     ecs_cluster_name                        = ""
@@ -72,7 +71,7 @@ dependency "sns" {
   config_path = "../sns"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_with_state           = true
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     sns_topic_alert_critical_arn        = ""
     sns_topic_alert_warning_arn         = ""
