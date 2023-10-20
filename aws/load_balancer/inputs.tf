@@ -3,7 +3,7 @@ variable "alb_security_group_id" {
   type        = string
 }
 
-variable "hosted_zone_id" {
+variable "hosted_zone_ids" {
   description = "Route53 hosted zone ID"
   type        = list(string)
 }

@@ -12,7 +12,7 @@ dependency "hosted_zone" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_with_state           = true
   mock_outputs = {
-    hosted_zone_id = [""]
+    hosted_zone_ids = [""]
   }
 }
 
@@ -87,7 +87,7 @@ inputs = {
   threshold_ecs_memory_utilization_high = "50"
   threshold_lb_response_time            = "1"
 
-  hosted_zone_id = dependency.hosted_zone.outputs.hosted_zone_id
+  hosted_zone_ids = dependency.hosted_zone.outputs.hosted_zone_ids
 
   kms_key_cloudwatch_arn         = dependency.kms.outputs.kms_key_cloudwatch_arn
   kms_key_cloudwatch_us_east_arn = dependency.kms.outputs.kms_key_cloudwatch_us_east_arn

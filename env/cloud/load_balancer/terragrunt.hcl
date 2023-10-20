@@ -11,7 +11,7 @@ dependency "hosted_zone" {
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    hosted_zone_id = [""]
+    hosted_zone_ids = [""]
   }
 }
 
@@ -27,7 +27,7 @@ dependency "network" {
 }
 
 inputs = {
-  hosted_zone_id = dependency.hosted_zone.outputs.hosted_zone_id
+  hosted_zone_ids = dependency.hosted_zone.outputs.hosted_zone_ids
 
   alb_security_group_id = dependency.network.outputs.alb_security_group_id
   public_subnet_ids     = dependency.network.outputs.public_subnet_ids

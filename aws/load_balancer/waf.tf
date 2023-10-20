@@ -289,13 +289,15 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
 }
 
 resource "aws_wafv2_regex_pattern_set" "forms_base_url" {
-  count       = length(var.domain)
+
   name        = "forms_base_url"
   description = "Regex matching the root domain of GCForms"
   scope       = "REGIONAL"
-
-  regular_expression {
-    regex_string = "${var.domain[count.index]}$"
+  dynamic "regular_expression" {
+    for_each = var.domain
+    content {
+      regex_string = "^${regular_expression.value}$"
+    }
   }
 }
 

@@ -3,7 +3,7 @@
 #
 resource "aws_route53_record" "form_viewer" {
   count   = length(var.domain)
-  zone_id = var.hosted_zone_id[count.index]
+  zone_id = var.hosted_zone_ids[count.index]
   name    = var.domain[count.index]
   type    = "A"
 
@@ -18,7 +18,7 @@ resource "aws_route53_record" "form_viewer" {
 # Certificate validation
 # 
 locals {
-  cert_validation_by_zone_id = setproduct(var.hosted_zone_id, [for dvo in aws_acm_certificate.form_viewer.domain_validation_options : {
+  cert_validation_by_zone_id = setproduct(var.hosted_zone_ids, [for dvo in aws_acm_certificate.form_viewer.domain_validation_options : {
     name   = dvo.resource_record_name
     type   = dvo.resource_record_type
     record = dvo.resource_record_value
