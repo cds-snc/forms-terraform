@@ -28,16 +28,16 @@ locals {
 
 resource "aws_route53_record" "form_viewer_certificate_validation" {
 
-for_each = {
-  for idx, entry in local.cert_validation_by_zone_id : idx => {
-    zone_id = entry[0]
-    name   = entry[1].name
-    type   = entry[1].type
-    record = entry[1].record
+  for_each = {
+    for idx, entry in local.cert_validation_by_zone_id : idx => {
+      zone_id = entry[0]
+      name    = entry[1].name
+      type    = entry[1].type
+      record  = entry[1].record
+    }
   }
-}
   allow_overwrite = true
-  zone_id = each.value.zone_id
+  zone_id         = each.value.zone_id
   name            = each.value.name
   records         = [each.value.record]
   type            = each.value.type
