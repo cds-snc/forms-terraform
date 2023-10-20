@@ -29,7 +29,7 @@ locals {
 resource "aws_route53_record" "form_viewer_certificate_validation" {
 
 for_each = {
-  for idx, entry in locals.cert_validation_by_zone_id : idx => {
+  for idx, entry in local.cert_validation_by_zone_id : idx => {
     zone_id = entry[0]
     name   = entry[1].name
     type   = entry[1].type
