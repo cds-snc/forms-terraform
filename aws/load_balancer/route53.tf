@@ -16,20 +16,28 @@ resource "aws_route53_record" "form_viewer" {
 
 #
 # Certificate validation
-#
+# 
+locals {
+  cert_validation_by_zone_id = setproduct(var.hosted_zone_id, [for dvo in aws_acm_certificate.form_viewer.domain_validation_options : {
+    name   = dvo.resource_record_name
+    type   = dvo.resource_record_type
+    record = dvo.resource_record_value
+  }])
+}
+
+
 resource "aws_route53_record" "form_viewer_certificate_validation" {
-  count   = length(var.domain)
-  zone_id = var.hosted_zone_id[count.index]
 
-  for_each = {
-    for dvo in aws_acm_certificate.form_viewer[count.index].domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      type   = dvo.resource_record_type
-      record = dvo.resource_record_value
-    }
+for_each = {
+  for idx, entry in locals.cert_validation_by_zone_id : idx => {
+    zone_id = entry[0]
+    name   = entry[1].name
+    type   = entry[1].type
+    record = entry[1].record
   }
-
+}
   allow_overwrite = true
+  zone_id = each.value.zone_id
   name            = each.value.name
   records         = [each.value.record]
   type            = each.value.type
