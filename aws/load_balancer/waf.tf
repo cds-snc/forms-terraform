@@ -82,7 +82,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
         statement {
           regex_pattern_set_reference_statement {
 
-            arn = aws_wafv2_regex_pattern_set.forms_base_url.*.arn
+            arn = aws_wafv2_regex_pattern_set.forms_base_url.arn
 
             field_to_match {
               single_header {
