@@ -43,6 +43,11 @@ output "lambda_nagware_log_group_name" {
   value       = aws_cloudwatch_log_group.nagware.name
 }
 
+output "lambda_vault_data_integrity_check_log_group_name" {
+  description = "Vault data integrity check Lambda CloudWatch log group name"
+  value       = aws_cloudwatch_log_group.vault_data_integrity_check.name
+}
+
 output "ecs_cluster_name" {
   description = "ECS cluster name"
   value       = aws_ecs_cluster.forms.name

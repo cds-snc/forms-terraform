@@ -488,6 +488,13 @@ resource "aws_cloudwatch_log_subscription_filter" "nagware_log_stream" {
   destination_arn = aws_lambda_function.notify_slack.arn
 }
 
+resource "aws_cloudwatch_log_subscription_filter" "vault_data_integrity_check_log_stream" {
+  name            = "vault_data_integrity_check_log_stream"
+  log_group_name  = var.lambda_vault_data_integrity_check_log_group_name
+  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
+  destination_arn = aws_lambda_function.notify_slack.arn
+}
+
 // Allow Cloudwatch filters to trigger Lambda
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_lambda" {
