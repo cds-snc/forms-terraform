@@ -7,7 +7,7 @@ dependencies {
 }
 
 locals {
-  domain = get_env("APP_DOMAIN", '["localhost:3000"]')
+  domain = get_env("APP_DOMAIN", "['localhost:3000']")
 }
 
 
