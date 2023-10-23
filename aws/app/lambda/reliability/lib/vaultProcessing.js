@@ -12,7 +12,8 @@ module.exports = async (
   formID,
   language,
   createdAt,
-  securityAttribute
+  securityAttribute,
+  formSubmissionHash
 ) => {
   let fileInputPaths = [];
 
@@ -25,7 +26,8 @@ module.exports = async (
       formID,
       language,
       createdAt,
-      securityAttribute
+      securityAttribute,
+      formSubmissionHash
     );
   } catch (error) {
     console.error(

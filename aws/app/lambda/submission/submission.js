@@ -1,6 +1,7 @@
 const { SQSClient, SendMessageCommand } = require("@aws-sdk/client-sqs");
 const { DynamoDBClient, PutItemCommand, UpdateItemCommand } = require("@aws-sdk/client-dynamodb");
 const uuid = require("uuid");
+const crypto = require('crypto');
 
 const REGION = process.env.REGION;
 const db = new DynamoDBClient({
@@ -28,11 +29,12 @@ exports.handler = async function (event) {
   try {
     const formData = event;
 
-    //-----------
     await saveData(submissionID, formData);
+
     const receiptID = await sendData(submissionID);
     // Update DB entry for receipt ID
     await saveReceipt(submissionID, receiptID);
+
     console.log(
       JSON.stringify({
         level: "info",
@@ -41,9 +43,8 @@ exports.handler = async function (event) {
         submissionID: submissionID,
       })
     );
-    return { status: true };
 
-    //----------
+    return { status: true };
   } catch (err) {
     console.error(
       JSON.stringify({
@@ -84,7 +85,18 @@ const saveData = async (submissionID, formData) => {
 
     const formSubmission = typeof formData === "string" ? formData : JSON.stringify(formData);
     const timeStamp = Date.now().toString();
-    const DBParams = {
+
+    const formSubmissionAsString = typeof formData.responses === "string" ? formData.responses : JSON.stringify(formData.responses);
+    const formSubmissionAsHash = crypto.createHash("md5").update(formSubmissionAsString).digest("hex");
+
+    console.log(
+      JSON.stringify({
+        level: "info",
+        msg: `MD5 hash ${formSubmissionAsHash} was calculated for submission ${submissionID} (formID: ${formData.formID}).`,
+      })
+    );
+
+    const putItemCommandInput = {
       TableName: "ReliabilityQueue",
       Item: {
         SubmissionID: { S: submissionID },
@@ -94,10 +106,11 @@ const saveData = async (submissionID, formData) => {
         FormData: { S: formSubmission },
         CreatedAt: { N: timeStamp },
         SecurityAttribute: { S: securityAttribute },
+        FormSubmissionHash: { S: formSubmissionAsHash },
       },
     };
-    //save data to DynamoDB
-    await db.send(new PutItemCommand(DBParams));
+    
+    await db.send(new PutItemCommand(putItemCommandInput));
   } catch (error) {
     console.error(JSON.stringify(error));
     throw new Error("Could not save data to Reliability Temporary Storage");
@@ -116,7 +129,7 @@ const saveReceipt = async (submissionID, receiptID) => {
         ":receipt": { S: receiptID },
       },
     };
-    //save data to DynamoDB
+    
     await db.send(new UpdateItemCommand(DBParams));
   } catch (err) {
     console.warn(
