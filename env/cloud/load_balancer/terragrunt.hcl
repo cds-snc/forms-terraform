@@ -16,7 +16,7 @@ dependency "hosted_zone" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    hosted_zone_ids = formatlist("mocked_zone_id_%s", [local.domain])
+    hosted_zone_ids = formatlist("mocked_zone_id_%s", local.domain)
   }
 }
 
