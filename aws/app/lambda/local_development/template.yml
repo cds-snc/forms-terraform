@@ -208,6 +208,14 @@ Resources:
           DOMAIN:
             Ref: DOMAIN
 
+  VaultDataIntegrityCheck:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-VaultDataIntegrityCheck
+      CodeUri: ../vault_data_integrity_check/
+      Handler: vault_data_integrity_check.handler
+
   SubmissionLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
