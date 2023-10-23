@@ -249,6 +249,7 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_forms_warn" {
 
 resource "aws_cloudwatch_metric_alarm" "ddos_detected_route53_warn" {
 
+  count = length(var.hosted_zone_ids)
   alarm_name          = "DDoSDetectedRoute53Warn"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
@@ -262,7 +263,7 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_route53_warn" {
   alarm_actions = [var.sns_topic_alert_warning_arn]
 
   dimensions = {
-    ResourceArn = formatlist("arn:aws:route53:::hostedzone/%s", var.hosted_zone_ids)
+    ResourceArn = hosted_zone_ids[count.index]
   }
 
   tags = {
@@ -334,6 +335,7 @@ resource "aws_cloudwatch_metric_alarm" "alb_ddos" {
 
 resource "aws_cloudwatch_metric_alarm" "route53_ddos" {
   provider = aws.us-east-1
+  count = length(var.hosted_zone_ids)
 
   alarm_name          = "Route53DDoS"
   comparison_operator = "GreaterThanThreshold"
@@ -350,7 +352,7 @@ resource "aws_cloudwatch_metric_alarm" "route53_ddos" {
   ok_actions        = [var.sns_topic_alert_ok_us_east_arn]
 
   dimensions = {
-    ResourceArn = formatlist("arn:aws:route53:::hostedzone/%s", var.hosted_zone_ids)
+    ResourceArn = var.hosted_zone_ids[count.index]
   }
 }
 
