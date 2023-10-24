@@ -17,14 +17,6 @@ resource "aws_route53_record" "form_viewer" {
 #
 # Certificate validation
 # 
-# locals {
-#   cert_validation_by_zone_id = setproduct(var.hosted_zone_ids, [for dvo in aws_acm_certificate.form_viewer.domain_validation_options : {
-#     name   = dvo.resource_record_name
-#     type   = dvo.resource_record_type
-#     record = dvo.resource_record_value
-#   }])
-# }
-
 locals {
   domain_name_to_zone_id = zipmap(var.domains, var.hosted_zone_ids)
 }
