@@ -4,21 +4,26 @@ const { Client } = require("pg");
 async function getTemplateInfo(formID) {
   try {
     const { SQL, parameters } = createSQLString(formID);
-    const requestFormNameAndUserEmailAddresses = process.env.AWS_SAM_LOCAL ? requestSAM : requestRDS;
-    const formNameAndUserEmailAddresses = await requestFormNameAndUserEmailAddresses(SQL, parameters);
+    const requestResult = process.env.AWS_SAM_LOCAL ? requestSAM : requestRDS;
+    const result = await requestResult(SQL, parameters);
 
-    if (formNameAndUserEmailAddresses) {
-      return formNameAndUserEmailAddresses;
+    if (result) {
+      return result;
     } else {
-      throw new Error(`Could not find any owner email address associated to Form ID: ${formID}.`);
+      throw new Error(`Could not find any template with form identifier: ${formID}.`);
     }
   } catch (error) {
-    throw new Error(`Failed to retrieve owner email address. Reason: ${error.message}.`);
+    throw new Error(`Failed to retrieve template information. Reason: ${error.message}.`);
   }
 }
 
 const createSQLString = (formID) => {
-  const selectSQL = `SELECT usr."email", tem."name", tem."jsonConfig", tem."isPublished" FROM "User" usr JOIN "_TemplateToUser" ttu ON usr."id" = ttu."B" JOIN "Template" tem ON tem."id" = ttu."A"`;
+  const selectSQL = `
+  SELECT usr."name", usr."email", tem."name", tem."jsonConfig", tem."isPublished" 
+  FROM "User" usr 
+  JOIN "_TemplateToUser" ttu ON usr."id" = ttu."B" 
+  JOIN "Template" tem ON tem."id" = ttu."A"
+  `;
   if (!process.env.AWS_SAM_LOCAL) {
     return {
       SQL: `${selectSQL} WHERE ttu."A" = :formID`,
@@ -48,23 +53,23 @@ const parseQueryResponse = (records) => {
   let isPublished = false;
 
   if (!process.env.AWS_SAM_LOCAL) {
-    const jsonConfig = JSON.parse(firstRecord[2].stringValue.trim(1, -1)) || undefined;
-    formName = firstRecord[1].stringValue !== "" ? firstRecord[1].stringValue : `${jsonConfig.titleEn} - ${jsonConfig.titleFr}`;
-    isPublished = firstRecord[3].booleanValue;
+    const jsonConfig = JSON.parse(firstRecord[3].stringValue.trim(1, -1)) || undefined;
+    formName = firstRecord[2].stringValue !== "" ? firstRecord[2].stringValue : `${jsonConfig.titleEn} - ${jsonConfig.titleFr}`;
+    isPublished = firstRecord[4].booleanValue;
   } else {
     formName = firstRecord.name !== "" ? firstRecord.name : `${firstRecord.jsonConfig.titleEn} - ${firstRecord.jsonConfig.titleFr}`;
     isPublished = firstRecord.isPublished;
   }
 
-  const emailAddresses = records.map((record) => {
+  const owners = records.map((record) => {
     if (!process.env.AWS_SAM_LOCAL) {
-      return record[0].stringValue;
+      return { name: record[0].stringValue, email: record[1].stringValue };
     } else {
-      return record.email;
+      return { name: record.name, email: record.email };
     }
   });
 
-  return { formName, emailAddresses, isPublished };
+  return { formName, owners, isPublished };
 };
 
 /**

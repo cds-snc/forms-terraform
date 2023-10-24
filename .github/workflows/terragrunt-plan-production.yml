@@ -2,7 +2,8 @@ name: "Terragrunt plan PRODUCTION"
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - "develop"
 
 env:
   APP_ENV: production
@@ -16,11 +17,10 @@ env:
   TERRAGRUNT_VERSION: 0.46.3
   TF_INPUT: false
   TF_VAR_ecs_secret_token_secret: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
-  TF_VAR_google_client_id: ${{ secrets.PRODUCTION_GOOGLE_CLIENT_ID}}
-  TF_VAR_google_client_secret: ${{secrets.PRODUCTION_GOOGLE_CLIENT_SECRET}}
   TF_VAR_recaptcha_secret: ${{secrets.PRODUCTION_RECAPTCHA_SITE_SECRET}}
-  TF_VAR_recaptcha_public: 6LfJDN4eAAAAAGvdRF7ZnQ7ciqdo1RQnQDFmh0VY
+  TF_VAR_recaptcha_public: 6LfuLrQnAAAAAK9Df3gem4XLMRVY2Laq6t2fhZhZ
   TF_VAR_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
+  TF_VAR_freshdesk_api_key: ${{ secrets.PRODUCTION_FRESHDESK_API_KEY }}
   TF_VAR_cognito_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
   TF_VAR_rds_db_password: ${{ secrets.PRODUCTION_DB_PASSWORD }}
   TF_VAR_slack_webhook: ${{ secrets.PRODUCTION_SLACK_WEBHOOK }}
@@ -32,6 +32,7 @@ env:
   TF_VAR_email_address_support: ${{ vars.PRODUCTION_SUPPORT_EMAIL }}
 jobs:
   terragrunt-plan:
+    if: ${{startsWith(github.head_ref, 'release-please--')}}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -47,7 +48,7 @@ jobs:
 
       # No dependencies
       - name: Terragrunt plan ecr
-        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/ecr"
           comment-delete: "true"
@@ -56,7 +57,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan hosted_zone
-        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/hosted_zone"
           comment-delete: "true"
@@ -65,7 +66,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan kms
-        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/kms"
           comment-delete: "true"
@@ -74,7 +75,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan sqs
-        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/sqs"
           comment-delete: "true"
@@ -83,7 +84,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan sns
-        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/sns"
           comment-delete: "true"
@@ -95,7 +96,7 @@ jobs:
         run: ./aws/cognito/lambda/deps.sh install
 
       - name: Terragrunt plan cognito
-        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/cognito"
           comment-delete: "true"
@@ -108,7 +109,7 @@ jobs:
 
       # Depends on kms
       - name: Terragrunt plan network
-        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/network"
           comment-delete: "true"
@@ -117,7 +118,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan dynamodb
-        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/dynamodb"
           comment-delete: "true"
@@ -127,7 +128,7 @@ jobs:
 
       # Depends on network
       - name: Terragrunt plan load_balancer
-        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/load_balancer"
           comment-delete: "true"
@@ -136,7 +137,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan redis
-        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/redis"
           comment-delete: "true"
@@ -145,7 +146,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan rds
-        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/rds"
           comment-delete: "true"
@@ -158,7 +159,7 @@ jobs:
         run: ./aws/app/lambda/deps.sh install
 
       - name: Terragrunt plan app
-        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/app"
           comment-delete: "true"
@@ -170,7 +171,7 @@ jobs:
         run: ./aws/app/lambda/deps.sh delete
 
       - name: Terragrunt plan alarms
-        uses: cds-snc/terraform-plan@7f4ce4a4bdffaba639d32a45272804e37a569408 # tag=v3.0.6
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/alarms"
           comment-delete: "true"

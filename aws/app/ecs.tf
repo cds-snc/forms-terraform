@@ -30,8 +30,7 @@ data "template_file" "form_viewer_task" {
     metric_provider                 = var.metric_provider
     tracer_provider                 = var.tracer_provider
     notify_api_key                  = aws_secretsmanager_secret_version.notify_api_key.arn
-    google_client_id                = aws_secretsmanager_secret_version.google_client_id.arn
-    google_client_secret            = aws_secretsmanager_secret_version.google_client_secret.arn
+    freshdesk_api_key               = aws_secretsmanager_secret_version.freshdesk_api_key.arn
     recaptcha_secret                = aws_secretsmanager_secret_version.recaptcha_secret.arn
     recaptcha_public                = var.recaptcha_public
     gc_notify_callback_bearer_token = aws_secretsmanager_secret_version.gc_notify_callback_bearer_token.arn

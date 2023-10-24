@@ -3,6 +3,7 @@
 Infrastructure as Code for the GC Forms environment.
 
 ## Contributing
+
 Pull Requests in this repository require all commits to be signed before they can be merged. Please see [this guide](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification) for more information.
 
 ## Running Lambdas and DBs locally
@@ -324,9 +325,8 @@ Terraform will require the following variables to plan and apply:
 
 ```hcl
 ecs_secret_token_secret # JSON Web Token signing secret
-google_client_id        # Google OAuth client ID (used for authentication)
-google_client_secret:   # Google OAuth client secret (used for authentication)
 notify_api_key          # Notify API key to send messages
+freshdesk_api_key       # FreshDesk API key to send messages
 rds_db_password         # Database password
 slack_webhook           # Slack webhook to send CloudWatch notifications
 ```

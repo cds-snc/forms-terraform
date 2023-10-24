@@ -74,6 +74,48 @@ exports.handler = async function (event) {
       },
     }));
 
+    const uniquePutTransactionItems = [
+      ...new Map(
+        putTransactionItems.map((v) => [
+          JSON.stringify([
+            v.PutRequest.Item.UserID,
+            v.PutRequest.Item["Event#SubjectID#TimeStamp"],
+          ]),
+          v,
+        ])
+      ).values(),
+    ];
+
+    if (putTransactionItems.length !== uniquePutTransactionItems.length) {
+      // Find duplicated items that were removed
+
+      // clone array so the original is not modified
+      const clonedPutTransactionItems = [...putTransactionItems];
+
+      uniquePutTransactionItems.forEach((u) => {
+        const itemIndex = clonedPutTransactionItems.findIndex(
+          (o) =>
+            o.PutRequest.Item.UserID === u.PutRequest.Item.UserID &&
+            o.PutRequest.Item["Event#SubjectID#TimeStamp"] ===
+              u.PutRequest.Item["Event#SubjectID#TimeStamp"]
+        );
+        // If it exists, remove it from the cloned array so we are only left with duplicates
+        if (itemIndex >= 0) {
+          clonedPutTransactionItems.splice(itemIndex, 1);
+        }
+      });
+
+      console.warn(
+        JSON.stringify({
+          level: "warn",
+          severity: 3,
+          msg: `Duplicate log events were detected and removed. List of duplicate events: ${JSON.stringify(
+            clonedPutTransactionItems
+          )}`,
+        })
+      );
+    }
+
     const dynamoDb = DynamoDBDocumentClient.from(
       new DynamoDBClient({
         region: process.env.REGION ?? "ca-central-1",
@@ -86,7 +128,7 @@ exports.handler = async function (event) {
     } = await dynamoDb.send(
       new BatchWriteCommand({
         RequestItems: {
-          AuditLogs: putTransactionItems,
+          AuditLogs: uniquePutTransactionItems,
         },
       })
     );
@@ -94,26 +136,27 @@ exports.handler = async function (event) {
     if (typeof AuditLogs !== "undefined") {
       const unprocessedIDs = AuditLogs.map(({ PutItem: { UserID, Event, TimeStamp } }, index) => {
         // Find the original LogEvent item that has the messageID
-        const [unprocessItem] = logEvents.filter(
+        const [unprocessedItem] = logEvents.filter(
           ({ logEvent }) =>
             logEvent.userID === UserID &&
             logEvent.event === Event &&
             logEvent.timestamp === TimeStamp
         )[0];
 
-        if (!unprocessItem)
+        if (!unprocessedItem)
           throw new Error(
             `Unprocessed LogEvent could not be found. ${JSON.stringify(
               AuditLogs[index]
             )} not found.`
           );
 
-        return unprocessItem.messageId;
+        return unprocessedItem.messageId;
       });
 
       console.warn(
         JSON.stringify({
           level: "warn",
+          severity: 1,
           msg: `Failed to process ${
             unprocessedIDs.length
           } log events. List of unprocessed IDs: ${unprocessedIDs.join(",")}.`,
@@ -133,6 +176,7 @@ exports.handler = async function (event) {
     console.error(
       JSON.stringify({
         level: "error",
+        severity: 1,
         msg: "Failed to run Audit Logs Processor.",
         error: error.message,
       })

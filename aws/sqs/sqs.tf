@@ -50,7 +50,7 @@ resource "aws_sqs_queue" "reliability_deadletter_queue" {
 resource "aws_sqs_queue" "reprocess_submission_queue" {
   name                        = "reprocess_submission_queue.fifo"
   delay_seconds               = 900 // 15 minutes
-  max_message_size            = 2262144
+  max_message_size            = 262144
   message_retention_seconds   = 172800 // 2 days
   fifo_queue                  = true
   content_based_deduplication = true
