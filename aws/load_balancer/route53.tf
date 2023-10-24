@@ -45,6 +45,6 @@ resource "aws_route53_record" "form_viewer_certificate_validation" {
   records         = [each.value.record]
   ttl             = 60
   type            = each.value.type
-  zone_id         = domain_name_to_zone_id[each.value.domain]
+  zone_id         = local.domain_name_to_zone_id[each.value.domain]
 
 }
