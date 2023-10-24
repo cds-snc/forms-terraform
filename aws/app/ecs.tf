@@ -37,7 +37,7 @@ data "template_file" "form_viewer_task" {
     token_secret                    = aws_secretsmanager_secret_version.token_secret.arn
     database_url                    = var.database_url_secret_arn
     redis_url                       = var.redis_url
-    nextauth_url                    = "https://${var.domain[0]}"
+    nextauth_url                    = "https://${var.domains[0]}"
     submission_api                  = aws_lambda_function.submission.arn
     reliability_file_storage        = aws_s3_bucket.reliability_file_storage.id
     vault_file_storage              = aws_s3_bucket.vault_file_storage.id

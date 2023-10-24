@@ -32,7 +32,7 @@ resource "aws_cognito_user_pool_client" "forms" {
   name = "forms_client"
 
   user_pool_id                         = aws_cognito_user_pool.forms.id
-  callback_urls                        = concat(formatlist("https://%s/api/auth/callback/cognito", var.domain), ["https://localhost:3000/api/auth/callback/cognito"])
+  callback_urls                        = concat(formatlist("https://%s/api/auth/callback/cognito", var.domains), ["https://localhost:3000/api/auth/callback/cognito"])
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
