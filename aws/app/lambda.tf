@@ -565,7 +565,7 @@ resource "aws_lambda_function" "nagware" {
     variables = {
       ENVIRONMENT               = var.env
       REGION                    = var.region
-      DOMAIN                    = var.domain[0]
+      DOMAIN                    = var.domains[0]
       DYNAMODB_VAULT_TABLE_NAME = var.dynamodb_vault_table_name
       DB_ARN                    = var.rds_cluster_arn
       DB_SECRET                 = var.database_secret_arn

@@ -18,8 +18,8 @@ variable "billing_tag_value" {
   type        = string
 }
 
-variable "domain" {
-  description = "The server domain"
+variable "domains" {
+  description = "The server domains"
   type        = list(string)
 }
 

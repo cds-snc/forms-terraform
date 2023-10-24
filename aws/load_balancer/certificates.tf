@@ -3,9 +3,9 @@
 #
 resource "aws_acm_certificate" "form_viewer" {
   # First entry in domain list is the primary domain
-  domain_name               = var.domain[0]
+  domain_name               = var.domains[0]
   validation_method         = "DNS"
-  subject_alternative_names = length(var.domain) > 1 ? setsubtract(var.domain, [var.domain[0]]) : []
+  subject_alternative_names = length(var.domains) > 1 ? setsubtract(var.domains, [var.domains[0]]) : []
 
   lifecycle {
     create_before_destroy = true
