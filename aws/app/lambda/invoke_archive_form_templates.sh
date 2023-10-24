@@ -4,6 +4,6 @@
 # Helper script to invoke archive form templates lambda function
 #
 
-cp -a ./reliability/lib/. ./reliability/nodejs/node_modules
+cp -a ./archive_form_templates/lib/. ./archive_form_templates/nodejs/node_modules
 
 echo '{}' | sam local invoke -t ./local_development/template.yml --event - "ArchiveFormTemplates"

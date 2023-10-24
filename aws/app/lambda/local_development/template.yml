@@ -111,7 +111,7 @@ Resources:
       Environment:
         Variables:
           SQS_DEAD_LETTER_QUEUE_URL:
-            Ref: http://localhost:4566/000000000000/deadletter_queue.fifo
+            Ref: http://localhost:4566/000000000000/reliability_deadletter_queue.fifo
           SQS_SUBMISSION_PROCESSING_QUEUE_URL:
             Ref: http://localhost:4566/000000000000/submission_processing.fifo
 
@@ -136,6 +136,7 @@ Resources:
             Ref: DBHost
           PGDATABASE:
             Ref: DBName
+  
   AuditLogs:
     Type: AWS::Serverless::Function
     Properties:
