@@ -10,7 +10,7 @@ dependency "dynamodb" {
   config_path = "../dynamodb"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_with_state  = true
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     dynamodb_relability_queue_arn  = ""
     dynamodb_vault_arn             = ""
@@ -24,7 +24,7 @@ dependency "ecr" {
   config_path = "../ecr"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_with_state  = true
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     ecr_repository_url_form_viewer = ""
   }
@@ -32,7 +32,7 @@ dependency "ecr" {
 
 dependency "kms" {
   config_path = "../kms"
-
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
     kms_key_cloudwatch_arn = ""
@@ -42,7 +42,7 @@ dependency "kms" {
 
 dependency "load_balancer" {
   config_path = "../load_balancer"
-
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
     lb_https_listener_arn  = ""
@@ -54,7 +54,7 @@ dependency "load_balancer" {
 
 dependency "network" {
   config_path = "../network"
-
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
     private_subnet_ids = [""]
@@ -63,7 +63,7 @@ dependency "network" {
 
 dependency "rds" {
   config_path = "../rds"
-
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
     rds_cluster_arn         = ""
@@ -75,7 +75,7 @@ dependency "rds" {
 
 dependency "redis" {
   config_path = "../redis"
-
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
     redis_url = ""
@@ -84,9 +84,8 @@ dependency "redis" {
 
 dependency "sqs" {
   config_path = "../sqs"
-
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_with_state           = true
   mock_outputs = {
     sqs_reliability_queue_arn            = ""
     sqs_reliability_queue_id             = ""
@@ -103,7 +102,7 @@ dependency "sns" {
   config_path = "../sns"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_with_state           = true
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     sns_topic_alert_critical_arn = ""
     sns_topic_alert_warning_arn  = ""
@@ -115,7 +114,7 @@ dependency "cognito" {
   config_path = "../cognito"
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_with_state           = true
+  mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     cognito_endpoint_url  = ""
     cognito_client_id     = ""
