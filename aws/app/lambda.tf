@@ -671,20 +671,30 @@ resource "aws_lambda_layer_version" "archive_audit_logs_lib" {
 }
 
 resource "aws_lambda_event_source_mapping" "archive_audit_logs" {
-  event_source_arn                   = aws_dynamodb_table.audit_logs.stream_arn
+  event_source_arn                   = var.dynamodb_audit_logs_stream_arn
   function_name                      = aws_lambda_function.archive_audit_logs.arn
   starting_position                  = "LATEST"
   batch_size                         = 100
   maximum_batching_window_in_seconds = 15
   enabled                            = true
-  MaximumRetryAttempts               = 3
-  filter_criteria_json = jsonencode({
-    Filters = [
-      {
-        Pattern = "{\"userIdentity\":{\"type\":[\"Service\"],\"principalId\":[\"dynamodb.amazonaws.com\"]}}"
-      }
-    ]
-  })
+  maximum_retry_attempts =                3
+  bisect_batch_on_function_error = true
+  destination_config {
+    on_failure {
+      destination_arn = var.sqs_audit_log_archiver_failure_queue_arn
+    }
+  }
+  filter_criteria {
+    filter {
+      pattern = jsonencode({
+        userIdentity = {
+          type = ["Service"]
+          principalId = ["dynamodb.amazonaws.com"]
+        }
+      })
+    }
+  }
+
 
 }
 

@@ -43,3 +43,8 @@ output "sqs_audit_log_deadletter_queue_arn" {
   value       = aws_sqs_queue.audit_log_deadletter_queue.arn
 }
 
+output "sqs_audit_log_archiver_failure_queue_arn" {
+  description = "SQS audit log archiver failure queue ARN"
+  value = aws_sqs_queue.audit_log_archiver_failure_queue.arn
+}
+

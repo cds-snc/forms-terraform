@@ -61,6 +61,8 @@ Resources:
       FunctionName:
         Fn::Sub: ${Environment}-${AppName}-submission
       CodeUri: ../submission/
+      Role: arn:aws:iam::000000000000:role/iam_for_lambda
+      Runtime: nodejs18.x
       Handler: submission.handler
       Layers:
         - Ref: SubmissionLayer
@@ -78,6 +80,8 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-reliability
       CodeUri: ../reliability/
       Handler: reliability.handler
+      Role: arn:aws:iam::000000000000:role/iam_for_lambda
+      Runtime: nodejs18.x
       Timeout: 300
       Layers:
         - Ref: ReliabilityLayer
@@ -105,6 +109,8 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-Dead-letter-queue-consumer
       CodeUri: ../dead_letter_queue_consumer/
       Handler: dead_letter_queue_consumer.handler
+      Role: arn:aws:iam::000000000000:role/iam_for_lambda
+      Runtime: nodejs18.x
       Timeout: 300
       Layers:
         - Ref: DeadLetterQueueConsumerLayer
@@ -122,6 +128,8 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-ArchiveFormTemplates
       CodeUri: ../archive_form_templates/
       Handler: archiver.handler
+      Role: arn:aws:iam::000000000000:role/iam_for_lambda
+      Runtime: nodejs18.x
       Layers:
         - Ref: ArchiveFormTemplatesLayer
       Environment:
@@ -143,6 +151,8 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-AuditLogs
       CodeUri: ../audit_logs/
       Handler: audit_logs.handler
+      Role: arn:aws:iam::000000000000:role/iam_for_lambda
+      Runtime: nodejs18.x
       Layers:
         - Ref: AuditLogsLayer
       Environment:
@@ -159,6 +169,8 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-ArchiveFormResponses
       CodeUri: ../archive_form_responses/
       Handler: archiver.handler
+      Role: arn:aws:iam::000000000000:role/iam_for_lambda
+      Runtime: nodejs18.x
       Layers:
         - Ref: ArchiveFormResponsesLayer
       Environment:
@@ -181,6 +193,8 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-Nagware
       CodeUri: ../nagware/
       Handler: nagware.handler
+      Role: arn:aws:iam::000000000000:role/iam_for_lambda
+      Runtime: nodejs18.x
       Layers:
         - Ref: NagWareLayer
       Environment:
@@ -215,6 +229,8 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-ArchiveAuditLogs
       CodeUri: ../archive_audit_logs/
       Handler: archiver.handler
+      Role: arn:aws:iam::000000000000:role/iam_for_lambda
+      Runtime: nodejs18.x
       Layers:
         - Ref: ArchiveAuditLogsLayer
       Environment:

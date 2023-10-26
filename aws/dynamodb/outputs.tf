@@ -22,3 +22,8 @@ output "dynamodb_audit_logs_table_name" {
   description = "Audit Logs table name"
   value       = aws_dynamodb_table.audit_logs.name
 }
+
+output "dynamodb_audit_logs_stream_arn" {
+  description = "Audit Logs stream ARN"
+  value = aws_dynamodb_table.audit_logs.stream_arn
+}

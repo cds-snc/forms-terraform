@@ -13,6 +13,31 @@ terraform {
       "-target=aws_s3_bucket_public_access_block.vault_file_storage",
       "-target=aws_s3_bucket.archive_storage",
       "-target=aws_s3_bucket_public_access_block.archive_storage",
+      "-target=aws_s3_bucket.audit_logs_file_storage",
+      "-target=aws_s3_bucket_public_access_block.audit_logs_file_storage",
+      "-target=aws_iam_role.lambda",
+      "-target=aws_iam_role_policy_document.lambda_assume",
+      "-target=aws_iam_policy.lambda_logging",
+      "-target=aws_iam_policy_document.lambda_logging",
+      "-target=aws_iam_policy.lambda_rds",
+      "-target=aws_aim_policy_document.lambda_rds",
+      "-target=aws_iam_policy.lambda_sqs",
+      "-target=aws_aim_policy_document.lambda_sqs",
+      "-target=aws_iam_policy.lambda_dynamodb",
+      "-target=aws_aim_policy_document.lambda_dynamodb",
+      "-target=aws_iam_policy.lambda_kms",
+      "-target=aws_aim_policy_document.lambda_kms",
+      "-target=aws_iam_policy.lambda_s3",
+      "-target=aws_aim_policy_document.lambda_s3",
+      "-target=aws_iam_policy.lambda_sns",
+      "-target=aws_aim_policy_document.lambda_sns",
+      "-target=aws_iam_role_policy_attachment.lambda_logs",
+      "-target=aws_iam_role_policy_attachment.lambda_sqs",
+      "-target=aws_iam_role_policy_attachment.lambda_dynamodb",
+      "-target=aws_iam_role_policy_attachment.lambda_kms",
+      "-target=aws_iam_role_policy_attachment.lambda_rds",
+      "-target=aws_iam_role_policy_attachment.lambda_s3",
+      "-target=aws_iam_role_policy_attachment.lambda_sns"
     ]
   }
 }
@@ -31,6 +56,7 @@ dependency "dynamodb" {
     dynamodb_vault_table_name      = ""
     dynamodb_audit_logs_arn        = ""
     dynamodb_audit_logs_table_name = ""
+    dynamodb_audit_logs_stream_arn = ""
   }
 }
 
@@ -47,6 +73,18 @@ dependency "sqs" {
     sqs_audit_log_queue_id             = ""
     sqs_audit_log_deadletter_queue_arn = ""
     sqs_reprocess_submission_queue_id  = ""
+    sqs_audit_log_archiver_failure_queue_arn = ""
+  }
+}
+
+dependency "sns" {
+  config_path = "../sns"
+
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    sns_topic_alert_critical_arn = ""
+    sns_topic_alert_warning_arn  = ""
+    sns_topic_alert_ok_arn       = ""
   }
 }
 
@@ -93,6 +131,7 @@ inputs = {
   dynamodb_vault_table_name      = dependency.dynamodb.outputs.dynamodb_vault_table_name
   dynamodb_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
   dynamodb_audit_logs_table_name = dependency.dynamodb.outputs.dynamodb_audit_logs_table_name
+  dynamodb_audit_logs_stream_arn = dependency.dynamodb.outputs.dynamodb_audit_logs_stream_arn
 
   ecr_repository_url_form_viewer = ""
 
@@ -123,6 +162,11 @@ inputs = {
   sqs_audit_log_queue_id             = dependency.sqs.outputs.sqs_audit_log_queue_id
   sqs_audit_log_deadletter_queue_arn = dependency.sqs.outputs.sqs_audit_log_deadletter_queue_arn
   sqs_reprocess_submission_queue_id  = dependency.sqs.outputs.sqs_reprocess_submission_queue_id
+  sqs_audit_log_archiver_failure_queue_arn = dependency.sqs.outputs.sqs_audit_log_archiver_failure_queue_arn
+
+  sns_topic_alert_critical_arn = dependency.sns.outputs.sns_topic_alert_critical_arn
+  sns_topic_alert_warning_arn  = dependency.sns.outputs.sns_topic_alert_warning_arn
+  sns_topic_alert_ok_arn       = dependency.sns.outputs.sns_topic_alert_ok_arn
 
   gc_temp_token_template_id = "b6885d06-d10a-422a-973f-05e274d9aa86"
   gc_template_id            = "8d597a1b-a1d6-4e3c-8421-042a2b4158b7"

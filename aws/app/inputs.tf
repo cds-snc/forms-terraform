@@ -234,6 +234,11 @@ variable "sqs_audit_log_deadletter_queue_arn" {
   type        = string
 }
 
+variable "sqs_audit_log_archiver_failure_queue_arn" {
+  description = "SQS audit log archiver failure queue ARN"
+  type = string
+}
+
 variable "tracer_provider" {
   description = "Tracer provider, used by the ECS task"
   type        = string
@@ -252,6 +257,11 @@ variable "dynamodb_audit_logs_arn" {
 variable "dynamodb_audit_logs_table_name" {
   description = "Audit Logs table name"
   type        = string
+}
+
+variable "dynamodb_audit_logs_stream_arn" {
+  description = "Audit Logs stream ARN"
+  type = string
 }
 
 variable "gc_template_id" {

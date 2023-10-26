@@ -17,6 +17,7 @@ dependency "dynamodb" {
     dynamodb_vault_table_name      = ""
     dynamodb_audit_logs_arn        = ""
     dynamodb_audit_logs_table_name = ""
+    dynamodb_audit_logs_stream_arn = ""
   }
 }
 
@@ -95,6 +96,7 @@ dependency "sqs" {
     sqs_audit_log_queue_id               = ""
     sqs_audit_log_deadletter_queue_arn   = ""
     sqs_reprocess_submission_queue_id    = ""
+    sqs_audit_log_archiver_failure_queue_arn = ""
   }
 }
 
@@ -142,6 +144,7 @@ inputs = {
   dynamodb_vault_table_name      = dependency.dynamodb.outputs.dynamodb_vault_table_name
   dynamodb_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
   dynamodb_audit_logs_table_name = dependency.dynamodb.outputs.dynamodb_audit_logs_table_name
+  dynamodb_audit_logs_stream_arn = dependency.dynamodb.outputs.dynamodb_audit_logs_stream_arn
 
   ecr_repository_url_form_viewer = dependency.ecr.outputs.ecr_repository_url_form_viewer
 
@@ -172,6 +175,7 @@ inputs = {
   sqs_audit_log_queue_id               = dependency.sqs.outputs.sqs_audit_log_queue_id
   sqs_audit_log_deadletter_queue_arn   = dependency.sqs.outputs.sqs_audit_log_deadletter_queue_arn
   sqs_reprocess_submission_queue_id    = dependency.sqs.outputs.sqs_reprocess_submission_queue_id
+  sqs_audit_log_archiver_failure_queue_arn = dependency.sqs.outputs.sqs_audit_log_archiver_failure_queue_arn
 
   sns_topic_alert_critical_arn = dependency.sns.outputs.sns_topic_alert_critical_arn
   sns_topic_alert_warning_arn  = dependency.sns.outputs.sns_topic_alert_warning_arn
