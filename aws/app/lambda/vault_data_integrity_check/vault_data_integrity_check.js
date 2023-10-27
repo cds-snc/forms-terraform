@@ -51,7 +51,7 @@ function checkInsertEvent(data) {
     if (!formSubmissionValidHash) {
       console.log(
         JSON.stringify({
-          level: "warn",
+          level: "info",
           msg: `Could not check data integrity for inserted submission (submissionId: ${formSubmissionId}). No valid hash was found in the record. This can happen if the submission was created prior to the introduction of Vault data integrity checks.`,
         })
       );
@@ -101,7 +101,7 @@ function checkModifyEvent(oldData, newData) {
     if (!oldFormSubmissionHash && !newFormSubmissionHash) {
       console.log(
         JSON.stringify({
-          level: "warn",
+          level: "info",
           msg: `Could not check data integrity for modified submission (oldSubmissionID: ${oldSubmissionID}, newSubmissionID: ${newSubmissionID}). No valid hash was found in the record. This can happen if the submission was created prior to the introduction of Vault data integrity checks.`,
         })
       );
