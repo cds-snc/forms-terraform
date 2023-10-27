@@ -650,6 +650,15 @@ resource "aws_lambda_event_source_mapping" "vault_updated_item_stream" {
   function_name                      = aws_lambda_function.vault_data_integrity_check.arn
   starting_position                  = "LATEST"
   maximum_batching_window_in_seconds = 60 # Either 1 minute of waiting or 100 events are available before the lambda is triggered
+  maximum_retry_attempts             = 3
+
+  filter_criteria {
+    filter {
+      pattern = jsonencode({
+        eventName : ["INSERT", "MODIFY"]
+      })
+    }
+  }
 }
 
 resource "aws_cloudwatch_log_group" "vault_data_integrity_check" {

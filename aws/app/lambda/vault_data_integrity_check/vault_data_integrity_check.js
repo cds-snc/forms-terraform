@@ -4,7 +4,6 @@ exports.handler = async(event) => {
 
   try {
     event.Records
-      .filter(r => r.eventName === "INSERT" || r.eventName === "MODIFY")
       .filter(r => r.dynamodb.NewImage.NAME_OR_CONF.S.startsWith('NAME#'))
       .forEach(r => {
         if (r.eventName === "INSERT") checkInsertEvent(r.dynamodb.NewImage);

@@ -87,6 +87,8 @@ const saveData = async (submissionID, formData) => {
     const timeStamp = Date.now().toString();
 
     const formSubmissionAsString = typeof formData.responses === "string" ? formData.responses : JSON.stringify(formData.responses);
+
+    // We use MD5 here because it is faster to generate and it will only be used as a checksum.
     const formSubmissionAsHash = crypto.createHash("md5").update(formSubmissionAsString).digest("hex");
 
     console.log(
