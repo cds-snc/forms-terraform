@@ -149,7 +149,8 @@ data "aws_iam_policy_document" "lambda_dynamodb" {
       "dynamodb:Query",
       "dynamodb:DescribeStream",
       "dynamodb:GetRecords",
-      "dynamodb:GetShardIterator"
+      "dynamodb:GetShardIterator",
+      "dynamodb:ListStreams"
     ]
 
     resources = [
