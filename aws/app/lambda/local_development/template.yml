@@ -61,7 +61,6 @@ Resources:
       FunctionName:
         Fn::Sub: ${Environment}-${AppName}-submission
       CodeUri: ../submission/
-      Role: arn:aws:iam::000000000000:role/iam_for_lambda
       Runtime: nodejs18.x
       Handler: submission.handler
       Layers:
@@ -80,8 +79,19 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-reliability
       CodeUri: ../reliability/
       Handler: reliability.handler
-      Role: arn:aws:iam::000000000000:role/iam_for_lambda
       Runtime: nodejs18.x
+      Policies:
+        - SQSPollerPolicy:
+          QueueName: arn:aws:sqs:ca-central-1:000000000000:submission_processing.fifo
+        - DynamoDBCrudPolicy:
+          TableName: arn:aws:dynamodb:ca-central-1:000000000000:ReliabilityQueue
+      Events:
+        Submission:
+          Type: SQS
+          Properties:
+            BatchSize: 1
+            Enabled: true
+            Queue: arn:aws:sqs:ca-central-1:000000000000:submission_processing.fifo
       Timeout: 300
       Layers:
         - Ref: ReliabilityLayer
@@ -153,6 +163,13 @@ Resources:
       Handler: audit_logs.handler
       Role: arn:aws:iam::000000000000:role/iam_for_lambda
       Runtime: nodejs18.x
+      Events:
+        AuditLogs:
+          Type: SQS
+          Properties:
+            BatchSize: 10
+            Enabled: true
+            Queue: arn:aws:sqs:ca-central-1:000000000000:audit_log_queue
       Layers:
         - Ref: AuditLogsLayer
       Environment:

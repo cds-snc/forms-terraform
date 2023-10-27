@@ -12,7 +12,7 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_relability_queue_arn  = ""
+    dynamodb_reliability_queue_arn  = ""
     dynamodb_vault_arn             = ""
     dynamodb_vault_table_name      = ""
     dynamodb_audit_logs_arn        = ""
@@ -139,7 +139,7 @@ inputs = {
   metric_provider                             = "stdout"
   tracer_provider                             = "stdout"
 
-  dynamodb_relability_queue_arn  = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
+  dynamodb_reliability_queue_arn  = dependency.dynamodb.outputs.dynamodb_reliability_queue_arn
   dynamodb_vault_arn             = dependency.dynamodb.outputs.dynamodb_vault_arn
   dynamodb_vault_table_name      = dependency.dynamodb.outputs.dynamodb_vault_table_name
   dynamodb_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_audit_logs_arn

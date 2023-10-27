@@ -18,7 +18,7 @@ variable "database_url_secret_arn" {
   type        = string
 }
 
-variable "dynamodb_relability_queue_arn" {
+variable "dynamodb_reliability_queue_arn" {
   description = "Reliability queue DynamodDB table ARN"
   type        = string
 }

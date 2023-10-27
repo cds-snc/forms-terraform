@@ -15,29 +15,6 @@ terraform {
       "-target=aws_s3_bucket_public_access_block.archive_storage",
       "-target=aws_s3_bucket.audit_logs_file_storage",
       "-target=aws_s3_bucket_public_access_block.audit_logs_file_storage",
-      "-target=aws_iam_role.lambda",
-      "-target=aws_iam_role_policy_document.lambda_assume",
-      "-target=aws_iam_policy.lambda_logging",
-      "-target=aws_iam_policy_document.lambda_logging",
-      "-target=aws_iam_policy.lambda_rds",
-      "-target=aws_aim_policy_document.lambda_rds",
-      "-target=aws_iam_policy.lambda_sqs",
-      "-target=aws_aim_policy_document.lambda_sqs",
-      "-target=aws_iam_policy.lambda_dynamodb",
-      "-target=aws_aim_policy_document.lambda_dynamodb",
-      "-target=aws_iam_policy.lambda_kms",
-      "-target=aws_aim_policy_document.lambda_kms",
-      "-target=aws_iam_policy.lambda_s3",
-      "-target=aws_aim_policy_document.lambda_s3",
-      "-target=aws_iam_policy.lambda_sns",
-      "-target=aws_aim_policy_document.lambda_sns",
-      "-target=aws_iam_role_policy_attachment.lambda_logs",
-      "-target=aws_iam_role_policy_attachment.lambda_sqs",
-      "-target=aws_iam_role_policy_attachment.lambda_dynamodb",
-      "-target=aws_iam_role_policy_attachment.lambda_kms",
-      "-target=aws_iam_role_policy_attachment.lambda_rds",
-      "-target=aws_iam_role_policy_attachment.lambda_s3",
-      "-target=aws_iam_role_policy_attachment.lambda_sns"
     ]
   }
 }
@@ -51,7 +28,7 @@ dependency "dynamodb" {
 
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    dynamodb_relability_queue_arn  = ""
+    dynamodb_reliability_queue_arn  = ""
     dynamodb_vault_arn             = ""
     dynamodb_vault_table_name      = ""
     dynamodb_audit_logs_arn        = ""
@@ -126,7 +103,7 @@ inputs = {
   sns_topic_alert_warning_arn  = ""
   sns_topic_alert_ok_arn       = ""
 
-  dynamodb_relability_queue_arn  = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
+  dynamodb_reliability_queue_arn  = dependency.dynamodb.outputs.dynamodb_reliability_queue_arn
   dynamodb_vault_arn             = dependency.dynamodb.outputs.dynamodb_vault_arn
   dynamodb_vault_table_name      = dependency.dynamodb.outputs.dynamodb_vault_table_name
   dynamodb_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_audit_logs_arn

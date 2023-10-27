@@ -5,6 +5,9 @@ export TF_VAR_cognito_endpoint_url=""
 export TF_VAR_cognito_user_pool_arn=""
 export TF_VAR_email_address_contact_us=""
 export TF_VAR_email_address_support=""
+export AWS_ACCESS_KEY_ID=test
+export AWS_SECRET_ACCESS_KEY=test
+export AWS_REGION=ca-central-1
 
 # Set proper terraform and terragrunt versions
 
@@ -62,6 +65,13 @@ cd $basedir/aws/app/lambda
 printf "...Creating the S3 buckets...\n"
 cd $basedir/env/local/app
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
+# printf "...Creating Lambda event sources...\n"
+# aws lambda create-event-source-mapping --function-name Reliability --batch-size 1 --event-source-arn arn:aws:sqs:ca-central-1:000000000000:submission_processing.fifo --endpoint-url=http://localhost:4566
+# aws lambda create-event-source-mapping --function-name AuditLogs --batch-size 10 --event-source-arn arn:aws:sqs:ca-central-1:000000000000:audit_log_queue --endpoint-url=http://localhost:4566
+# # Get Audit Log DynamoDB stream ARN
+# AUDIT_STREAM_ARN=$(aws dynamodbstreams list-streams --table-name AuditLogs  --endpoint-url http://localhost:4566 --query 'Streams[0].StreamArn' --output text)
+# aws lambda create-event-source-mapping --function-name ArchiveAuditLogs --batch-size 100 --event-source-arn $AUDIT_STREAM_ARN --endpoint-url=http://localhost:4566
 
 printf "=> Starting Lambdas\n"
 cd $basedir/aws/app/lambda
