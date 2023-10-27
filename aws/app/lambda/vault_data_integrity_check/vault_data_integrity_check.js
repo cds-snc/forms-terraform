@@ -4,7 +4,10 @@ exports.handler = async(event) => {
 
   try {
     event.Records
-      .filter(r => r.dynamodb.NewImage.NAME_OR_CONF.S.startsWith('NAME#'))
+      .filter(r => {
+        if (r.eventName === "INSERT") return r.dynamodb.NewImage.NAME_OR_CONF.S.startsWith('NAME#');
+        else return r.dynamodb.OldImage.NAME_OR_CONF.S.startsWith('NAME#'); // Someone could have changed the value during the update so we need to filter on the previous one.
+      })
       .forEach(r => {
         if (r.eventName === "INSERT") checkInsertEvent(r.dynamodb.NewImage);
         else checkModifyEvent(r.dynamodb.OldImage, r.dynamodb.NewImage);
