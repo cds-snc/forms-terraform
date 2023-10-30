@@ -426,6 +426,27 @@ resource "aws_cloudwatch_metric_alarm" "twoFa_verification_exceeded" {
   }
 }
 
+resource "aws_cloudwatch_metric_alarm" "vault_data_integrity_check_lambda_iterator_age" {
+  alarm_name = "Vault data integrity check lambda iterator age"
+
+  namespace           = "AWS/Lambda"
+  metric_name         = "IteratorAge"
+  statistic           = "Average"
+  comparison_operator = "GreaterThanThreshold"
+  threshold           = "30000"
+  period              = "60"
+  evaluation_periods  = "2"
+
+  alarm_description = "The Vault data integrity check lambda function is unable to keep up with the amount of events sent by the Vault DynamoDB stream"
+  alarm_actions     = [var.sns_topic_alert_warning_arn]
+  ok_actions        = [var.sns_topic_alert_ok_arn]
+
+  dimensions = {
+    FunctionName = var.lambda_vault_data_integrity_check_function_name
+    Resource     = var.lambda_vault_data_integrity_check_function_name
+  }
+}
+
 // Dynamic Stream to Lambda
 
 resource "aws_cloudwatch_log_subscription_filter" "forms_unhandled_error_steam" {

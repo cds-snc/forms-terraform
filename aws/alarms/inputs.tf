@@ -43,6 +43,11 @@ variable "lambda_nagware_log_group_name" {
   type        = string
 }
 
+variable "lambda_vault_data_integrity_check_function_name" {
+  description = "Vault data integrity check lambda function name"
+  type        = string
+}
+
 variable "lambda_vault_data_integrity_check_log_group_name" {
   description = "Vault data integrity check Lambda CloudWatch log group name"
   type        = string

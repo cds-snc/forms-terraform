@@ -69,6 +69,7 @@ dependency "app" {
     lambda_audit_log_group_name                      = ""
     lambda_nagware_log_group_name                    = ""
     lambda_vault_data_integrity_check_log_group_name = ""
+    lambda_vault_data_integrity_check_function_name  = ""
   }
 }
 
@@ -113,6 +114,7 @@ inputs = {
   lambda_audit_log_group_name                      = dependency.app.outputs.lambda_audit_log_group_name
   lambda_nagware_log_group_name                    = dependency.app.outputs.lambda_nagware_log_group_name
   lambda_vault_data_integrity_check_log_group_name = dependency.app.outputs.lambda_vault_data_integrity_check_log_group_name
+  lambda_vault_data_integrity_check_function_name  = dependency.app.outputs.lambda_vault_data_integrity_check_function_name
 
   sns_topic_alert_critical_arn        = dependency.sns.outputs.sns_topic_alert_critical_arn
   sns_topic_alert_warning_arn         = dependency.sns.outputs.sns_topic_alert_warning_arn
