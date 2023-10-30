@@ -613,3 +613,56 @@ resource "aws_cloudwatch_log_group" "nagware" {
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 90
 }
+
+#
+# Vault data integrity check
+#
+
+data "archive_file" "vault_data_integrity_check_main" {
+  type        = "zip"
+  source_file = "lambda/vault_data_integrity_check/vault_data_integrity_check.js"
+  output_path = "/tmp/vault_data_integrity_check_main.zip"
+}
+
+resource "aws_lambda_function" "vault_data_integrity_check" {
+  filename      = "/tmp/vault_data_integrity_check_main.zip"
+  function_name = "VaultDataIntegrityCheck"
+  role          = aws_iam_role.lambda.arn
+  handler       = "vault_data_integrity_check.handler"
+  timeout       = 60
+
+  source_code_hash = data.archive_file.vault_data_integrity_check_main.output_base64sha256
+
+  runtime = "nodejs18.x"
+
+  tracing_config {
+    mode = "PassThrough"
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
+
+resource "aws_lambda_event_source_mapping" "vault_updated_item_stream" {
+  event_source_arn                   = var.dynamodb_vault_stream_arn
+  function_name                      = aws_lambda_function.vault_data_integrity_check.arn
+  starting_position                  = "LATEST"
+  maximum_batching_window_in_seconds = 60 # Either 1 minute of waiting or 100 events are available before the lambda is triggered
+  maximum_retry_attempts             = 3
+
+  filter_criteria {
+    filter {
+      pattern = jsonencode({
+        eventName : ["INSERT", "MODIFY"]
+      })
+    }
+  }
+}
+
+resource "aws_cloudwatch_log_group" "vault_data_integrity_check" {
+  name              = "/aws/lambda/${aws_lambda_function.vault_data_integrity_check.function_name}"
+  kms_key_id        = var.kms_key_cloudwatch_arn
+  retention_in_days = 90
+}

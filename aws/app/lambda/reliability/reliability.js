@@ -20,6 +20,7 @@ exports.handler = async function (event) {
     const createdAt = messageData.Item?.CreatedAt ?? null;
     const notifyProcessed = messageData.Item?.NotifyProcessed ?? false;
     sendReceipt = messageData.Item?.SendReceipt ?? null;
+    const formSubmissionHash = messageData.Item?.FormSubmissionHash ?? null;
 
     // Check if form data exists or was already processed.
     if (formSubmission === null || notifyProcessed) {
@@ -75,7 +76,8 @@ exports.handler = async function (event) {
         formID,
         language,
         createdAt,
-        securityAttribute
+        securityAttribute,
+        formSubmissionHash
       );
     }
   } catch (error) {

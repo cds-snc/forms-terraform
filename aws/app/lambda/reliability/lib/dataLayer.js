@@ -43,7 +43,7 @@ async function removeSubmission(submissionID) {
         SubmissionID: submissionID,
       },
     };
-    //remove data fron DynamoDB
+    
     return await db.send(new DeleteCommand(DBParams));
   } catch (error) {
     console.error(JSON.stringify(error));
@@ -88,7 +88,8 @@ async function saveToVault(
   formID,
   language,
   createdAt,
-  securityAttribute
+  securityAttribute,
+  formSubmissionHash
 ) {
   const formIdentifier = typeof formID === "string" ? formID : formID.toString();
   const formSubmission =
@@ -126,9 +127,11 @@ async function saveToVault(
             Status: "New",
             ConfirmationCode: confirmationCode,
             Name: name,
+            FormSubmissionHash: formSubmissionHash,
           },
         },
       };
+
       const PutConfirmation = {
         Put: {
           TableName: "Vault",
@@ -140,6 +143,7 @@ async function saveToVault(
           },
         },
       };
+
       await db.send(
         new TransactWriteCommand({
           TransactItems: [PutSubmission, PutConfirmation],

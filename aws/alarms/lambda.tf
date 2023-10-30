@@ -16,7 +16,7 @@ resource "aws_lambda_function" "notify_slack" {
 
   source_code_hash = data.archive_file.notify_slack.output_base64sha256
 
-  runtime = "nodejs14.x"
+  runtime = "nodejs18.x"
 
   environment {
     variables = {

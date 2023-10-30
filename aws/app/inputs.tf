@@ -28,6 +28,11 @@ variable "dynamodb_vault_arn" {
   type        = string
 }
 
+variable "dynamodb_vault_stream_arn" {
+  description = "Vault DynamoDB stream ARN"
+  type        = string
+}
+
 variable "ecs_autoscale_enabled" {
   description = "Should memory/CPU threshold ECS task scaling be enabled"
   type        = bool
