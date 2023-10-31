@@ -7,7 +7,7 @@ dependencies {
 }
 
 locals {
-  domain = jsondecode(get_env("APP_DOMAINS", "['localhost:3000']"))
+  domain = jsondecode(get_env("APP_DOMAINS", "[\"localhost:3000\"]"))
 }
 
 

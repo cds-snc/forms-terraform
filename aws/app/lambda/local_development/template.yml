@@ -47,7 +47,7 @@ Parameters:
 
 Globals:
   Function:
-    Runtime: nodejs14.x
+    Runtime: nodejs18.x
     Tags:
       Environment:
         Ref: Environment
@@ -127,7 +127,7 @@ Resources:
       Environment:
         Variables:
           SQS_DEAD_LETTER_QUEUE_URL:
-            Ref: http://localhost:4566/000000000000/deadletter_queue.fifo
+            Ref: http://localhost:4566/000000000000/reliability_deadletter_queue.fifo
           SQS_SUBMISSION_PROCESSING_QUEUE_URL:
             Ref: http://localhost:4566/000000000000/submission_processing.fifo
 
@@ -154,6 +154,7 @@ Resources:
             Ref: DBHost
           PGDATABASE:
             Ref: DBName
+
   AuditLogs:
     Type: AWS::Serverless::Function
     Properties:
@@ -256,6 +257,13 @@ Resources:
             Ref: REGION
           SNS_ERROR_TOPIC_ARN:
             Ref: arn:aws:sns:us-east-1:000000000000:alert-critical
+  VaultDataIntegrityCheck:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-VaultDataIntegrityCheck
+      CodeUri: ../vault_data_integrity_check/
+      Handler: vault_data_integrity_check.handler
 
   SubmissionLayer:
     Type: AWS::Serverless::LayerVersion
@@ -264,7 +272,7 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-submission-layer
       ContentUri: ../submission/
       CompatibleRuntimes:
-        - nodejs14.x
+        - nodejs18.x
 
   ReliabilityLayer:
     Type: AWS::Serverless::LayerVersion
@@ -273,7 +281,7 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-reliability-layer
       ContentUri: ../reliability/
       CompatibleRuntimes:
-        - nodejs14.x
+        - nodejs18.x
 
   ArchiveFormResponsesLayer:
     Type: AWS::Serverless::LayerVersion
@@ -282,7 +290,7 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-archive-form-responses-layer
       ContentUri: ../archive_form_responses/
       CompatibleRuntimes:
-        - nodejs14.x
+        - nodejs18.x
 
   ArchiveFormTemplatesLayer:
     Type: AWS::Serverless::LayerVersion
@@ -291,7 +299,7 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-archive_form_templates-layer
       ContentUri: ../archive_form_templates/
       CompatibleRuntimes:
-        - nodejs14.x
+        - nodejs18.x
 
   DeadLetterQueueConsumerLayer:
     Type: AWS::Serverless::LayerVersion
@@ -300,7 +308,7 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-dead-letter-queue-consumer-layer
       ContentUri: ../dead_letter_queue_consumer/
       CompatibleRuntimes:
-        - nodejs14.x
+        - nodejs18.x
 
   AuditLogsLayer:
     Type: AWS::Serverless::LayerVersion
@@ -309,7 +317,7 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-audit_logs_node_packages
       ContentUri: ../audit_logs/
       CompatibleRuntimes:
-        - nodejs14.x
+        - nodejs18.x
 
   NagWareLayer:
     Type: AWS::Serverless::LayerVersion
@@ -318,7 +326,7 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-nagware-layer
       ContentUri: ../nagware/
       CompatibleRuntimes:
-        - nodejs14.x
+        - nodejs18.x
 
   ArchiveAuditLogsLayer:
     Type: AWS::Serverless::LayerVersion
@@ -327,4 +335,4 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-archive_audit_logs-layer
       ContentUri: ../archive_audit_logs/
       CompatibleRuntimes:
-        - nodejs14.x
+        - nodejs18.x

@@ -1,5 +1,27 @@
 # Changelog
 
+## [3.4.0](https://github.com/cds-snc/forms-terraform/compare/v3.3.1...v3.4.0) (2023-10-25)
+
+
+### Features
+
+* addition of canada.ca domain ([#515](https://github.com/cds-snc/forms-terraform/issues/515)) ([9c32551](https://github.com/cds-snc/forms-terraform/commit/9c3255128de31d0a9665d41078a93604cbba0f9d))
+
+
+### Bug Fixes
+
+* ACM cert not being recreated on domain name addition ([#518](https://github.com/cds-snc/forms-terraform/issues/518)) ([2ba215d](https://github.com/cds-snc/forms-terraform/commit/2ba215d4750037d9d7993e6dff4bd76283b621f6))
+* handle duplicate log events ([#511](https://github.com/cds-snc/forms-terraform/issues/511)) ([e8de8d6](https://github.com/cds-snc/forms-terraform/commit/e8de8d6a02a900fedde274c3de3f8f8d19818882))
+* site verification files allowed path were not properly included in regex ([#510](https://github.com/cds-snc/forms-terraform/issues/510)) ([30a9c8b](https://github.com/cds-snc/forms-terraform/commit/30a9c8bc7c9dacf6d05be80a03ae1d661abb7fc2))
+* temporarily remove additional domain names ([#519](https://github.com/cds-snc/forms-terraform/issues/519)) ([5e5a50f](https://github.com/cds-snc/forms-terraform/commit/5e5a50f6fa6e13a6d7babe48df10d7ccce58b8a8))
+
+
+### Miscellaneous Chores
+
+* allow path to verification files for search engines tool ([#509](https://github.com/cds-snc/forms-terraform/issues/509)) ([2fba19c](https://github.com/cds-snc/forms-terraform/commit/2fba19c6fa2cbd374735986e0aa6ca17b8ea1f70))
+* **deps:** update all non-major github action dependencies ([#501](https://github.com/cds-snc/forms-terraform/issues/501)) ([c9c3b84](https://github.com/cds-snc/forms-terraform/commit/c9c3b84684ad894e52186ae706b026f0eb9dae01))
+* synced file(s) with cds-snc/site-reliability-engineering ([#508](https://github.com/cds-snc/forms-terraform/issues/508)) ([14f249d](https://github.com/cds-snc/forms-terraform/commit/14f249d508d35c5d22302454d95093aecc22a38c))
+
 ## [3.3.1](https://github.com/cds-snc/forms-terraform/compare/v3.3.0...v3.3.1) (2023-09-25)
 
 

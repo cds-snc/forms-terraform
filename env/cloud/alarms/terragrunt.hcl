@@ -7,7 +7,7 @@ dependencies {
 }
 
 locals {
-  domain = jsondecode(get_env("APP_DOMAINS", "['localhost:3000']"))
+  domain = jsondecode(get_env("APP_DOMAINS", "[\"localhost:3000\"]"))
 }
 
 dependency "hosted_zone" {
@@ -58,16 +58,18 @@ dependency "app" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    ecs_cloudwatch_log_group_name           = ""
-    ecs_cluster_name                        = ""
-    ecs_service_name                        = ""
-    lambda_reliability_log_group_name       = ""
-    lambda_submission_log_group_name        = ""
-    lambda_archiver_log_group_name          = ""
-    lambda_dlq_consumer_log_group_name      = ""
-    lambda_template_archiver_log_group_name = ""
-    lambda_audit_log_group_name             = ""
-    lambda_nagware_log_group_name           = ""
+    ecs_cloudwatch_log_group_name                    = ""
+    ecs_cluster_name                                 = ""
+    ecs_service_name                                 = ""
+    lambda_reliability_log_group_name                = ""
+    lambda_submission_log_group_name                 = ""
+    lambda_archiver_log_group_name                   = ""
+    lambda_dlq_consumer_log_group_name               = ""
+    lambda_template_archiver_log_group_name          = ""
+    lambda_audit_log_group_name                      = ""
+    lambda_nagware_log_group_name                    = ""
+    lambda_vault_data_integrity_check_log_group_name = ""
+    lambda_vault_data_integrity_check_function_name  = ""
   }
 }
 
@@ -101,16 +103,18 @@ inputs = {
   sqs_reliability_deadletter_queue_arn = dependency.sqs.outputs.sqs_reliability_deadletter_queue_arn
   sqs_audit_log_deadletter_queue_arn   = dependency.sqs.outputs.sqs_audit_log_deadletter_queue_arn
 
-  ecs_cloudwatch_log_group_name           = dependency.app.outputs.ecs_cloudwatch_log_group_name
-  ecs_cluster_name                        = dependency.app.outputs.ecs_cluster_name
-  ecs_service_name                        = dependency.app.outputs.ecs_service_name
-  lambda_reliability_log_group_name       = dependency.app.outputs.lambda_reliability_log_group_name
-  lambda_submission_log_group_name         = dependency.app.outputs.lambda_submission_log_group_name
-  lambda_archiver_log_group_name          = dependency.app.outputs.lambda_archiver_log_group_name
-  lambda_dlq_consumer_log_group_name      = dependency.app.outputs.lambda_dlq_consumer_log_group_name
-  lambda_template_archiver_log_group_name = dependency.app.outputs.lambda_template_archiver_log_group_name
-  lambda_audit_log_group_name             = dependency.app.outputs.lambda_audit_log_group_name
-  lambda_nagware_log_group_name           = dependency.app.outputs.lambda_nagware_log_group_name
+  ecs_cloudwatch_log_group_name                    = dependency.app.outputs.ecs_cloudwatch_log_group_name
+  ecs_cluster_name                                 = dependency.app.outputs.ecs_cluster_name
+  ecs_service_name                                 = dependency.app.outputs.ecs_service_name
+  lambda_reliability_log_group_name                = dependency.app.outputs.lambda_reliability_log_group_name
+  lambda_submission_log_group_name                 = dependency.app.outputs.lambda_submission_log_group_name
+  lambda_archiver_log_group_name                   = dependency.app.outputs.lambda_archiver_log_group_name
+  lambda_dlq_consumer_log_group_name               = dependency.app.outputs.lambda_dlq_consumer_log_group_name
+  lambda_template_archiver_log_group_name          = dependency.app.outputs.lambda_template_archiver_log_group_name
+  lambda_audit_log_group_name                      = dependency.app.outputs.lambda_audit_log_group_name
+  lambda_nagware_log_group_name                    = dependency.app.outputs.lambda_nagware_log_group_name
+  lambda_vault_data_integrity_check_log_group_name = dependency.app.outputs.lambda_vault_data_integrity_check_log_group_name
+  lambda_vault_data_integrity_check_function_name  = dependency.app.outputs.lambda_vault_data_integrity_check_function_name
 
   sns_topic_alert_critical_arn        = dependency.sns.outputs.sns_topic_alert_critical_arn
   sns_topic_alert_warning_arn         = dependency.sns.outputs.sns_topic_alert_warning_arn

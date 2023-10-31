@@ -31,6 +31,7 @@ dependency "dynamodb" {
     dynamodb_reliability_queue_arn  = ""
     dynamodb_vault_arn             = ""
     dynamodb_vault_table_name      = ""
+    dynamodb_vault_stream_arn      = ""
     dynamodb_audit_logs_arn        = ""
     dynamodb_audit_logs_table_name = ""
     dynamodb_audit_logs_stream_arn = ""
@@ -106,6 +107,7 @@ inputs = {
   dynamodb_reliability_queue_arn  = dependency.dynamodb.outputs.dynamodb_reliability_queue_arn
   dynamodb_vault_arn             = dependency.dynamodb.outputs.dynamodb_vault_arn
   dynamodb_vault_table_name      = dependency.dynamodb.outputs.dynamodb_vault_table_name
+  dynamodb_vault_stream_arn      = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
   dynamodb_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
   dynamodb_audit_logs_table_name = dependency.dynamodb.outputs.dynamodb_audit_logs_table_name
   dynamodb_audit_logs_stream_arn = dependency.dynamodb.outputs.dynamodb_audit_logs_stream_arn

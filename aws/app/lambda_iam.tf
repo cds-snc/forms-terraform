@@ -149,13 +149,15 @@ data "aws_iam_policy_document" "lambda_dynamodb" {
       "dynamodb:Query",
       "dynamodb:DescribeStream",
       "dynamodb:GetRecords",
-      "dynamodb:GetShardIterator"
+      "dynamodb:GetShardIterator",
+      "dynamodb:ListStreams"
     ]
 
     resources = [
       var.dynamodb_reliability_queue_arn,
       var.dynamodb_vault_arn,
       "${var.dynamodb_vault_arn}/index/*",
+      var.dynamodb_vault_stream_arn,
       var.dynamodb_audit_logs_arn,
       "${var.dynamodb_audit_logs_arn}/index/*"
     ]
