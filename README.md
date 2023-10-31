@@ -19,8 +19,8 @@ Pre-requisites:
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   ```
 
-- LocalStack: 
-  
+- LocalStack:
+
   1. `brew install localstack`
 
   Please note that the latest tested version of Localstack with your infrastructure code was `2.3.2`.
