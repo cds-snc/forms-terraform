@@ -625,15 +625,16 @@ data "archive_file" "vault_data_integrity_check_main" {
 }
 
 resource "aws_lambda_function" "vault_data_integrity_check" {
-  filename      = "/tmp/vault_data_integrity_check_main.zip"
   function_name = "VaultDataIntegrityCheck"
   role          = aws_iam_role.lambda.arn
-  handler       = "vault_data_integrity_check.handler"
   timeout       = 60
+  runtime       = "nodejs18.x"
 
-  source_code_hash = data.archive_file.vault_data_integrity_check_main.output_base64sha256
-
-  runtime = "nodejs18.x"
+  s3_bucket               = aws_signer_signing_job.vault_data_integrity_check_lambda_signing_job.signed_object[0].s3[0].bucket
+  s3_key                  = aws_signer_signing_job.vault_data_integrity_check_lambda_signing_job.signed_object[0].s3[0].key
+  handler                 = "vault_data_integrity_check.handler"
+  source_code_hash        = data.archive_file.vault_data_integrity_check_main.output_base64sha256
+  code_signing_config_arn = aws_lambda_code_signing_config.lambda_code_signing_config.arn
 
   tracing_config {
     mode = "PassThrough"
