@@ -1,6 +1,7 @@
 #
 # Route53 records
 #
+
 resource "aws_route53_record" "form_viewer" {
   count   = length(var.domains)
   zone_id = var.hosted_zone_ids[count.index]
@@ -12,6 +13,32 @@ resource "aws_route53_record" "form_viewer" {
     zone_id                = aws_lb.form_viewer.zone_id
     evaluate_target_health = true
   }
+
+  failover_routing_policy {
+    type = "PRIMARY"
+  }
+
+  set_identifier  = "form_viewer_${var.domains[count.index]}_primary_failover"
+  health_check_id = var.gc_forms_application_health_check_id
+}
+
+resource "aws_route53_record" "form_viewer_failover_record" {
+  count   = length(var.domains)
+  zone_id = var.hosted_zone_ids[count.index]
+  name    = var.domains[count.index]
+  type    = "A"
+
+  alias {
+    name                   = var.maintenance_page_cloudfront_distribution_domain_name
+    zone_id                = var.maintenance_page_cloudfront_distribution_hosted_zone_id
+    evaluate_target_health = false
+  }
+
+  failover_routing_policy {
+    type = "SECONDARY"
+  }
+
+  set_identifier  = "form_viewer_${var.domains[count.index]}_secondary_failover"
 }
 
 #
