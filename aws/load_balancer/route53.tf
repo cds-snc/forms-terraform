@@ -18,19 +18,19 @@ resource "aws_route53_record" "form_viewer" {
     type = "PRIMARY"
   }
 
-  set_identifier  = "form_viewer_${var.domains[count.index]}_primary_failover"
+  set_identifier  = "form_viewer_${var.domains[count.index]}_primary"
   health_check_id = var.gc_forms_application_health_check_id
 }
 
-resource "aws_route53_record" "form_viewer_failover_record" {
+resource "aws_route53_record" "form_viewer_maintenance" {
   count   = length(var.domains)
   zone_id = var.hosted_zone_ids[count.index]
   name    = var.domains[count.index]
   type    = "A"
 
   alias {
-    name                   = var.maintenance_page_cloudfront_distribution_domain_name
-    zone_id                = var.maintenance_page_cloudfront_distribution_hosted_zone_id
+    name                   = var.maintenance_mode_cloudfront_distribution_domain_name
+    zone_id                = var.maintenance_mode_cloudfront_distribution_hosted_zone_id
     evaluate_target_health = false
   }
 
@@ -38,7 +38,7 @@ resource "aws_route53_record" "form_viewer_failover_record" {
     type = "SECONDARY"
   }
 
-  set_identifier  = "form_viewer_${var.domains[count.index]}_secondary_failover"
+  set_identifier  = "form_viewer_${var.domains[count.index]}_secondary"
 }
 
 #

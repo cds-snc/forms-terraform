@@ -23,12 +23,12 @@ variable "gc_forms_application_health_check_id" {
   type        = string
 }
 
-variable "maintenance_page_cloudfront_distribution_domain_name" {
-  description = "Domain name of Cloudfront distribution for maintenance page"
+variable "maintenance_mode_cloudfront_distribution_domain_name" {
+  description = "Domain name of Cloudfront distribution for maintenance mode"
   type        = string
 }
 
-variable "maintenance_page_cloudfront_distribution_hosted_zone_id" {
-  description = "Hosted zone identifier of Cloudfront distribution for maintenance page"
+variable "maintenance_mode_cloudfront_distribution_hosted_zone_id" {
+  description = "Hosted zone identifier of Cloudfront distribution for maintenance mode"
   type        = string
 }
