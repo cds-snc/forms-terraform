@@ -3,7 +3,7 @@
 #
 data "archive_file" "reliability_main" {
   type        = "zip"
-  source_file = "lambda/reliability/reliability.js"
+  source_file = "./reliability/reliability.js"
   output_path = "/tmp/reliability_main.zip"
 }
 
@@ -181,7 +181,7 @@ resource "aws_lambda_permission" "submission" {
   statement_id  = "AllowInvokeECS"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.submission.function_name
-  principal     = aws_iam_role.forms.arn
+  principal     = var.ecs_iam_role_arn
 }
 
 resource "aws_cloudwatch_log_group" "submission" {

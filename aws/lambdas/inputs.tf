@@ -9,6 +9,11 @@ variable "gc_template_id" {
   type        = string
 }
 
+variable "token_secret" {
+  description = "Token secret used for app"
+  type = string
+}
+
 variable "database_secret_arn" {
   description = "Database connection secret arn"
   type        = string
@@ -54,6 +59,12 @@ variable "kms_key_cloudwatch_arn" {
   type        = string
 }
 
+variable "kms_key_dynamodb_arn" {
+  description = "DynamoDB KMS key ARN, used by the Lambdas"
+  type        = string
+}
+
+
 variable "dynamodb_vault_arn" {
   description = "Vault DynamodDB table ARN"
   type        = string
@@ -64,12 +75,28 @@ variable "dynamodb_vault_table_name" {
   type        = string
 }
 
+variable "dynamodb_vault_stream_arn" {
+  description = "Vault DynamoDB stream ARN"
+  type        = string
+}
+
+variable "dynamodb_relability_queue_arn" {
+  description = "Reliability queue DynamodDB table ARN"
+  type        = string
+}
+
+variable "dynamodb_audit_logs_arn" {
+  description = "Audit Logs table ARN"
+  type        = string
+}
+
 variable "sns_topic_alert_critical_arn" {
   description = "SNS topic ARN that critical alerts are sent to"
   type        = string
 }
 
 
-
-
-/////////////
+variable "ecs_iam_role_arn" {
+  description = "ECS IAM role ARN"
+  type        = string
+}
