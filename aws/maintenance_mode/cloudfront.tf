@@ -13,7 +13,7 @@ resource "aws_cloudfront_distribution" "wordpress" {
   origin {
     origin_id   = local.s3_origin_id
     domain_name = aws_s3_bucket.maintenance_mode.bucket_regional_domain_name
-    
+
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.maintenance_mode.cloudfront_access_identity_path
     }
@@ -27,7 +27,7 @@ resource "aws_cloudfront_distribution" "wordpress" {
 
     forwarded_values {
       query_string = false
-      
+
       cookies {
         forward = "none"
       }

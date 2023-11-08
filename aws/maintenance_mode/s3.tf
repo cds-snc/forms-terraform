@@ -19,7 +19,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "maintenance_mode"
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm     = "AES256"
+      sse_algorithm = "AES256"
     }
   }
 }
@@ -42,10 +42,10 @@ resource "aws_s3_bucket_website_configuration" "maintenance_mode" {
 
 resource "aws_s3_object" "maintenance_static_page" {
   bucket = aws_s3_bucket.maintenance_mode.bucket
-  
+
   key          = "index.html"
   source       = "./static_website/index.html"
   content_type = "text/html"
-  
+
   etag = filemd5("./static_website/index.html")
 }
