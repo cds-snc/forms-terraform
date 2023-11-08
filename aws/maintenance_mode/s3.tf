@@ -1,4 +1,6 @@
 resource "aws_s3_bucket" "maintenance_mode" {
+  # checkov:skip=CKV_AWS_18: Versioning not required
+  # checkov:skip=CKV_AWS_21: Access logging not required
   bucket = "gc-forms-application-maintenance-page"
 
   tags = {

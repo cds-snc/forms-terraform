@@ -3,7 +3,7 @@
 #
 resource "aws_s3_bucket" "reliability_file_storage" {
   # checkov:skip=CKV_AWS_18: Versioning not required
-  # checkov:skip=CKV_AWS_21: Access logging not required  
+  # checkov:skip=CKV_AWS_21: Access logging not required
   bucket = "forms-${var.env}-reliability-file-storage"
   acl    = "private"
 
