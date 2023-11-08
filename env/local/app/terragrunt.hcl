@@ -130,17 +130,6 @@ inputs = {
   gc_template_id            = "8d597a1b-a1d6-4e3c-8421-042a2b4158b7"
 }
 
-remote_state {
-  backend = "local"
-  generate = {
-    if_exists = "overwrite_terragrunt"
-    path      = "../../terraform.tfstate"
-  }
-  config = {
-    path = "../../terraform.tfstate"
-  }
-}
-
 
 include {
   path = find_in_parent_folders()

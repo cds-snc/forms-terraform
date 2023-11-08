@@ -43,7 +43,7 @@ resource "aws_secretsmanager_secret" "token_secret" {
 
 resource "aws_secretsmanager_secret_version" "token_secret" {
   secret_id     = aws_secretsmanager_secret.token_secret.id
-  secret_string = var.ecs_secret_token_secret
+  secret_string = var.ecs_secret_token
 }
 
 resource "aws_secretsmanager_secret" "recaptcha_secret" {
@@ -61,8 +61,8 @@ resource "aws_secretsmanager_secret_version" "recaptcha_secret" {
   secret_string = var.recaptcha_secret
 }
 
-resource "aws_secretsmanager_secret" "gc_notify_callback_bearer_token" {
-  name                    = "gc_notify_callback_bearer_token"
+resource "aws_secretsmanager_secret" "notify_callback_bearer_token" {
+  name                    = "notify_callback_bearer_token"
   recovery_window_in_days = 0
 
   tags = {
@@ -71,7 +71,7 @@ resource "aws_secretsmanager_secret" "gc_notify_callback_bearer_token" {
   }
 }
 
-resource "aws_secretsmanager_secret_version" "gc_notify_callback_bearer_token" {
-  secret_id     = aws_secretsmanager_secret.gc_notify_callback_bearer_token.id
-  secret_string = var.gc_notify_callback_bearer_token
+resource "aws_secretsmanager_secret_version" "notify_callback_bearer_token" {
+  secret_id     = aws_secretsmanager_secret.notify_callback_bearer_token.id
+  secret_string = var.notify_callback_bearer_token
 }

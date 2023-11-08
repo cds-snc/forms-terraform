@@ -17,7 +17,7 @@ dependency "network" {
 }
 
 locals {
-  env = get_env("APP_ENV")
+  env = get_env("APP_ENV", "local")
 }
 
 inputs = {

@@ -16,19 +16,21 @@ inputs = {
 
 
 remote_state {
-  backend = "s3"
+  backend = local.env != "local" ? "s3" : "local"
   generate = {
-    path      = "backend.tf"
     if_exists = "overwrite_terragrunt"
+    path      = local.env != "local" ? "backend.tf" : "../../terraform.tfstate"
   }
   config = {
-    encrypt        = true
-    bucket         = "forms-${local.env}-tfstate"
-    dynamodb_table = "tfstate-lock"
-    region         = "ca-central-1"
-    key            = "${path_relative_to_include()}/terraform.tfstate"
+    encrypt        = local.env != "local" ? true : null
+    bucket         = local.env != "local" ? "forms-${local.env}-tfstate" : null
+    dynamodb_table = local.env != "local" ? "tfstate-lock" : null
+    region         = local.env != "local" ? "ca-central-1" : null
+    key            = local.env != "local" ? "${path_relative_to_include()}/terraform.tfstate" : null
+    path           = local.env != "local" ? null : "../../terraform.tfstate"
   }
 }
+
 
 generate "provider" {
   path      = "provider.tf"

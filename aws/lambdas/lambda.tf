@@ -12,39 +12,39 @@ data "archive_file" "reliability_lib" {
   output_path = "/tmp/reliability_lib.zip"
 
   source {
-    content  = file("./lambda/reliability/lib/markdown.js")
+    content  = file("./reliability/lib/markdown.js")
     filename = "nodejs/node_modules/markdown/index.js"
   }
 
   source {
-    content  = file("./lambda/reliability/lib/templates.js")
+    content  = file("./reliability/lib/templates.js")
     filename = "nodejs/node_modules/templates/index.js"
   }
 
   source {
-    content  = file("./lambda/reliability/lib/dataLayer.js")
+    content  = file("./reliability/lib/dataLayer.js")
     filename = "nodejs/node_modules/dataLayer/index.js"
   }
 
   source {
-    content  = file("./lambda/reliability/lib/notifyProcessing.js")
+    content  = file("./reliability/lib/notifyProcessing.js")
     filename = "nodejs/node_modules/notifyProcessing/index.js"
   }
 
   source {
-    content  = file("./lambda/reliability/lib/vaultProcessing.js")
+    content  = file("./reliability/lib/vaultProcessing.js")
     filename = "nodejs/node_modules/vaultProcessing/index.js"
   }
 
   source {
-    content  = file("./lambda/reliability/lib/s3FileInput.js")
+    content  = file("./reliability/lib/s3FileInput.js")
     filename = "nodejs/node_modules/s3FileInput/index.js"
   }
 }
 
 data "archive_file" "reliability_nodejs" {
   type        = "zip"
-  source_dir  = "lambda/reliability/"
+  source_dir  = "./reliability/"
   excludes    = ["reliability.js", "./lib", ]
   output_path = "/tmp/reliability_nodejs.zip"
 }
@@ -68,7 +68,7 @@ resource "aws_lambda_function" "reliability" {
     variables = {
       ENVIRONMENT    = var.env
       REGION         = var.region
-      NOTIFY_API_KEY = aws_secretsmanager_secret_version.notify_api_key.secret_string
+      NOTIFY_API_KEY = var.notify_api_key_secret
       TEMPLATE_ID    = var.gc_template_id
       DB_ARN         = var.rds_cluster_arn
       DB_SECRET      = var.database_secret_arn
@@ -126,13 +126,13 @@ resource "aws_cloudwatch_log_group" "reliability" {
 #
 data "archive_file" "submission_main" {
   type        = "zip"
-  source_file = "lambda/submission/submission.js"
+  source_file = "./submission/submission.js"
   output_path = "/tmp/submission_main.zip"
 }
 
 data "archive_file" "submission_lib" {
   type        = "zip"
-  source_dir  = "lambda/submission/"
+  source_dir  = "./submission/"
   excludes    = ["submission.js"]
   output_path = "/tmp/submission_lib.zip"
 }
@@ -196,7 +196,7 @@ resource "aws_cloudwatch_log_group" "submission" {
 #
 data "archive_file" "archiver_main" {
   type        = "zip"
-  source_file = "lambda/archive_form_responses/archiver.js"
+  source_file = "./archive_form_responses/archiver.js"
   output_path = "/tmp/archiver_main.zip"
 }
 
@@ -205,14 +205,14 @@ data "archive_file" "archiver_lib" {
   output_path = "/tmp/archiver_lib.zip"
 
   source {
-    content  = file("./lambda/archive_form_responses/lib/fileAttachments.js")
+    content  = file("./archive_form_responses/lib/fileAttachments.js")
     filename = "nodejs/node_modules/fileAttachments/index.js"
   }
 }
 
 data "archive_file" "archiver_nodejs" {
   type        = "zip"
-  source_dir  = "lambda/archive_form_responses/"
+  source_dir  = "./archive_form_responses/"
   excludes    = ["archiver.js", "./lib", ]
   output_path = "/tmp/archiver_nodejs.zip"
 }
@@ -285,13 +285,13 @@ resource "aws_cloudwatch_log_group" "archiver" {
 
 data "archive_file" "dead_letter_queue_consumer_main" {
   type        = "zip"
-  source_file = "lambda/dead_letter_queue_consumer/dead_letter_queue_consumer.js"
+  source_file = "./dead_letter_queue_consumer/dead_letter_queue_consumer.js"
   output_path = "/tmp/dead_letter_queue_consumer_main.zip"
 }
 
 data "archive_file" "dead_letter_queue_consumer_lib" {
   type        = "zip"
-  source_dir  = "lambda/dead_letter_queue_consumer/"
+  source_dir  = "./dead_letter_queue_consumer/"
   excludes    = ["dead_letter_queue_consumer.js"]
   output_path = "/tmp/dead_letter_queue_consumer_lib.zip"
 }
@@ -354,7 +354,7 @@ resource "aws_cloudwatch_log_group" "dead_letter_queue_consumer" {
 
 data "archive_file" "archive_form_templates_main" {
   type        = "zip"
-  source_file = "lambda/archive_form_templates/archiver.js"
+  source_file = "./archive_form_templates/archiver.js"
   output_path = "/tmp/archive_form_templates_main.zip"
 }
 
@@ -363,14 +363,14 @@ data "archive_file" "archive_form_templates_lib" {
   output_path = "/tmp/archive_form_templates_lib.zip"
 
   source {
-    content  = file("./lambda/archive_form_templates/lib/templates.js")
+    content  = file("./archive_form_templates/lib/templates.js")
     filename = "nodejs/node_modules/templates/index.js"
   }
 }
 
 data "archive_file" "archive_form_templates_nodejs" {
   type        = "zip"
-  source_dir  = "lambda/archive_form_templates/"
+  source_dir  = "./archive_form_templates/"
   excludes    = ["archiver.js", "./lib", ]
   output_path = "/tmp/archive_form_templates_nodejs.zip"
 }
@@ -444,13 +444,13 @@ resource "aws_cloudwatch_log_group" "archive_form_templates" {
 #
 data "archive_file" "audit_logs_main" {
   type        = "zip"
-  source_file = "lambda/audit_logs/audit_logs.js"
+  source_file = "./audit_logs/audit_logs.js"
   output_path = "/tmp/audit_logs_main.zip"
 }
 
 data "archive_file" "audit_logs_lib" {
   type        = "zip"
-  source_dir  = "lambda/audit_logs/"
+  source_dir  = "./audit_logs/"
   excludes    = ["audit_logs.js"]
   output_path = "/tmp/audit_logs_lib.zip"
 }
@@ -515,7 +515,7 @@ resource "aws_cloudwatch_log_group" "audit_logs" {
 
 data "archive_file" "nagware_main" {
   type        = "zip"
-  source_file = "lambda/nagware/nagware.js"
+  source_file = "./nagware/nagware.js"
   output_path = "/tmp/nagware_main.zip"
 }
 
@@ -524,24 +524,24 @@ data "archive_file" "nagware_lib" {
   output_path = "/tmp/nagware_lib.zip"
 
   source {
-    content  = file("./lambda/nagware/lib/dynamodbDataLayer.js")
+    content  = file("./nagware/lib/dynamodbDataLayer.js")
     filename = "nodejs/node_modules/dynamodbDataLayer/index.js"
   }
 
   source {
-    content  = file("./lambda/nagware/lib/templates.js")
+    content  = file("./nagware/lib/templates.js")
     filename = "nodejs/node_modules/templates/index.js"
   }
 
   source {
-    content  = file("./lambda/nagware/lib/emailNotification.js")
+    content  = file("./nagware/lib/emailNotification.js")
     filename = "nodejs/node_modules/emailNotification/index.js"
   }
 }
 
 data "archive_file" "nagware_nodejs" {
   type        = "zip"
-  source_dir  = "lambda/nagware/"
+  source_dir  = "./nagware/"
   excludes    = ["nagware.js", "./lib", ]
   output_path = "/tmp/nagware_nodejs.zip"
 }
@@ -570,7 +570,7 @@ resource "aws_lambda_function" "nagware" {
       DB_ARN                    = var.rds_cluster_arn
       DB_SECRET                 = var.database_secret_arn
       DB_NAME                   = var.rds_db_name
-      NOTIFY_API_KEY            = aws_secretsmanager_secret_version.notify_api_key.secret_string
+      NOTIFY_API_KEY            = var.notify_api_key_secret
       TEMPLATE_ID               = var.gc_template_id
       SNS_ERROR_TOPIC_ARN       = var.sns_topic_alert_critical_arn
     }
@@ -620,7 +620,7 @@ resource "aws_cloudwatch_log_group" "nagware" {
 
 data "archive_file" "vault_data_integrity_check_main" {
   type        = "zip"
-  source_file = "lambda/vault_data_integrity_check/vault_data_integrity_check.js"
+  source_file = "./vault_data_integrity_check/vault_data_integrity_check.js"
   output_path = "/tmp/vault_data_integrity_check_main.zip"
 }
 

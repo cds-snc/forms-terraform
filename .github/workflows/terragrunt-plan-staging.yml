@@ -19,17 +19,21 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
   CONFTEST_VERSION: 0.46.0
   TERRAFORM_VERSION: 1.4.2
-  TERRAGRUNT_VERSION: 0.46.3
+  TERRAGRUNT_VERSION: 0.53.2
   TF_INPUT: false
-  TF_VAR_ecs_secret_token_secret: ${{ secrets.STAGING_TOKEN_SECRET }}
-  TF_VAR_recaptcha_secret: ${{secrets.STAGING_RECAPTCHA_SITE_SECRET}}
+  ECS_SECRET_TOKEN: ${{ secrets.STAGING_TOKEN_SECRET }}
+  RECAPTCHA_SECRET: ${{secrets.STAGING_RECAPTCHA_SITE_SECRET}}
+  NOTIFY_CALLBACK_BEARER_TOKEN: ${{ secrets.STAGING_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
+  NOTIFY_API_KEY: ${{ secrets.STAGING_NOTIFY_API_KEY }}
+  FRESHDESK_API_KEY: ${{ secrets.STAGING_FRESHDESK_API_KEY }}
+
   TF_VAR_recaptcha_public: 6LfJDN4eAAAAAGvdRF7ZnQ7ciqdo1RQnQDFmh0VY
-  TF_VAR_notify_api_key: ${{ secrets.STAGING_NOTIFY_API_KEY }}
+
   TF_VAR_cognito_notify_api_key: ${{ secrets.STAGING_NOTIFY_API_KEY }}
-  TF_VAR_freshdesk_api_key: ${{ secrets.STAGING_FRESHDESK_API_KEY }}
+
   TF_VAR_rds_db_password: ${{ secrets.STAGING_DB_PASSWORD }}
   TF_VAR_slack_webhook: ${{ secrets.STAGING_SLACK_WEBHOOK }}
-  TF_VAR_gc_notify_callback_bearer_token: ${{ secrets.STAGING_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
+
   TF_VAR_gc_temp_token_template_id: b6885d06-d10a-422a-973f-05e274d9aa86
   TF_VAR_gc_template_id: 8d597a1b-a1d6-4e3c-8421-042a2b4158b7
   TF_VAR_cognito_code_template_id: 12a18f84-062c-4a67-8310-bf114af051ea
