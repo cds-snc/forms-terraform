@@ -38,7 +38,7 @@ resource "aws_route53_record" "form_viewer_maintenance" {
     type = "SECONDARY"
   }
 
-  set_identifier  = "form_viewer_${var.domains[count.index]}_secondary"
+  set_identifier = "form_viewer_${var.domains[count.index]}_secondary"
 }
 
 #
