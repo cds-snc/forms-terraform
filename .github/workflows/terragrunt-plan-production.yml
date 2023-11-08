@@ -126,7 +126,16 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      # Depends on network
+      - name: Terragrunt plan maintenance_mode
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/maintenance_mode"
+          comment-delete: "true"
+          comment-title: "Production: maintenance_mode"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      # Depends on maintenance_mode
       - name: Terragrunt plan load_balancer
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:

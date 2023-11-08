@@ -6,10 +6,6 @@ dependencies {
   paths = ["../hosted_zone", "../kms", "../load_balancer", "../sqs", "../app", "../sns"]
 }
 
-locals {
-  domain = jsondecode(get_env("APP_DOMAINS", "[\"localhost:3000\"]"))
-}
-
 dependency "hosted_zone" {
   config_path = "../hosted_zone"
   mock_outputs_merge_strategy_with_state  = "shallow"

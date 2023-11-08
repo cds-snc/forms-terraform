@@ -91,7 +91,11 @@ jobs:
         working-directory: env/cloud/dynamodb
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      # Depends on network
+      - name: Terragrunt apply maintenance_mode
+        working-directory: env/cloud/maintenance_mode
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      # Depends on maintenance_mode
       - name: Terragrunt apply load_balancer
         working-directory: env/cloud/load_balancer
         run: terragrunt apply --terragrunt-non-interactive -auto-approve

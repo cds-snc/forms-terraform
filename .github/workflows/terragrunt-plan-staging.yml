@@ -80,6 +80,9 @@ jobs:
             kms:
               - 'aws/kms/**'
               - 'env/cloud/kms/**'
+            maintenance_mode:
+              - 'aws/maintenance_mode/**'
+              - 'env/cloud/maintenance_mode/**'
             load_balancer:
               - 'aws/load_balancer/**'
               - 'env/cloud/load_balancer/**'
@@ -192,7 +195,17 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      # Depends on network
+      - name: Terragrunt plan maintenance_mode
+        if: ${{ steps.filter.outputs.maintenance_mode == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/maintenance_mode"
+          comment-delete: "true"
+          comment-title: "Staging: maintenance_mode"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      # Depends on maintenance_mode
       - name: Terragrunt plan load_balancer
         if: ${{ steps.filter.outputs.load_balancer == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7

@@ -84,6 +84,9 @@ jobs:
             kms:
               - 'aws/kms/**'
               - 'env/cloud/kms/**'
+            maintenance_mode:
+              - 'aws/maintenance_mode/**'
+              - 'env/cloud/maintenance_mode/**'
             load_balancer:
               - 'aws/load_balancer/**'
               - 'env/cloud/load_balancer/**'
@@ -156,7 +159,12 @@ jobs:
         working-directory: env/cloud/dynamodb
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      # Depends on network
+      - name: Terragrunt apply maintenance_mode
+        if: ${{ steps.filter.outputs.maintenance_mode == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/cloud/maintenance_mode
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      # Depends on maintenance mode
       - name: Terragrunt apply load_balancer
         if: ${{ steps.filter.outputs.load_balancer == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/cloud/load_balancer

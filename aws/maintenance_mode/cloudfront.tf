@@ -6,7 +6,7 @@ resource "aws_cloudfront_origin_access_identity" "maintenance_mode" {
   comment = "Access Identity for the Maintenance Website"
 }
 
-resource "aws_cloudfront_distribution" "wordpress" {
+resource "aws_cloudfront_distribution" "maintenance_mode" {
   enabled             = true
   default_root_object = "index.html"
 
