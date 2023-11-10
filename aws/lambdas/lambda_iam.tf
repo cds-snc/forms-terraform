@@ -259,33 +259,6 @@ data "aws_iam_policy_document" "lambda_s3" {
   }
 }
 
-## Allow Lambda to create and retrieve SQS messages
-resource "aws_iam_policy" "lambda_app_invoke" {
-  name        = "lambda_app_invoke"
-  path        = "/"
-  description = "IAM policy for allowing the Forms app to invoke Lambda functions"
-  policy      = data.aws_iam_policy_document.lambda_app_invoke.json
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
-}
-
-data "aws_iam_policy_document" "lambda_app_invoke" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "lambda:InvokeFunction"
-    ]
-
-    resources = [
-      aws_lambda_function.submission.arn
-    ]
-  }
-}
-
 ## Allow Lambda to access SNS
 resource "aws_iam_policy" "lambda_sns" {
   name        = "lambda_sns"
