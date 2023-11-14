@@ -1,7 +1,7 @@
 
 variable "notify_api_key_secret" {
   description = "ARN of notify_api_key secret"
-  type       = string
+  type        = string
 }
 
 variable "gc_template_id" {
@@ -11,7 +11,7 @@ variable "gc_template_id" {
 
 variable "token_secret" {
   description = "Token secret used for app"
-  type = string
+  type        = string
 }
 
 variable "database_secret_arn" {
@@ -99,4 +99,9 @@ variable "sns_topic_alert_critical_arn" {
 variable "ecs_iam_role_arn" {
   description = "ECS IAM role ARN"
   type        = string
+}
+
+variable "localstack_hosted" {
+  description = "Whether or not the stack is hosted in localstack"
+  type        = bool
 }

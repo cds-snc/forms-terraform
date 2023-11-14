@@ -30,6 +30,8 @@ provider "aws" {
     apigateway     = "http://${var.localstack_host}:4566"
     cloudformation = "http://${var.localstack_host}:4566"
     cloudwatch     = "http://${var.localstack_host}:4566"
+    cloudwatchlogs = "http://${var.localstack_host}:4566"
+    eventbridge    = "http://${var.localstack_host}:4566"
     dynamodb       = "http://${var.localstack_host}:4566"
     ec2            = "http://${var.localstack_host}:4566"
     es             = "http://${var.localstack_host}:4566"

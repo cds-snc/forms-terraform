@@ -1,0 +1,11 @@
+{
+  "name": "archive-form-responses",
+  "version": "1.0.0",
+  "main": "archiver.js",
+  "type" : "module",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.430.0",
+    "@aws-sdk/client-s3": "3.430.0"
+  }
+}

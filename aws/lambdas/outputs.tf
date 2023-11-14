@@ -1,16 +1,16 @@
 output "reliability_file_storage_id" {
-    description = "S3 bucket ID for reliability file storage"
-    value = aws_s3_bucket.reliability_file_storage.id
+  description = "S3 bucket ID for reliability file storage"
+  value       = aws_s3_bucket.reliability_file_storage.id
 }
 
 output "vault_file_storage_id" {
-    description = "S3 bucket ID for vault file storage"
-    value = aws_s3_bucket.vault_file_storage.id
+  description = "S3 bucket ID for vault file storage"
+  value       = aws_s3_bucket.vault_file_storage.id
 }
 
 output "archive_storage_id" {
-    description = "S3 bucket ID for archive storage"
-    value = aws_s3_bucket.archive_storage.id
+  description = "S3 bucket ID for archive storage"
+  value       = aws_s3_bucket.archive_storage.id
 }
 
 output "lambda_reliability_log_group_name" {
@@ -55,10 +55,10 @@ output "lambda_nagware_log_group_name" {
 
 output "lambda_vault_data_integrity_check_function_name" {
   description = "Vault data integrity check lambda function name"
-  value       = aws_lambda_function.vault_data_integrity_check.function_name
+  value       = aws_lambda_function.vault_integrity.function_name
 }
 
 output "lambda_vault_data_integrity_check_log_group_name" {
   description = "Vault data integrity check Lambda CloudWatch log group name"
-  value       = aws_cloudwatch_log_group.vault_data_integrity_check.name
+  value       = aws_cloudwatch_log_group.vault_integrity.name
 }

@@ -238,7 +238,7 @@ db host env var: runs in docker - need to get localhost for host machine
 if you get connection errors: postgresql.conf listen address “\*”
 
 Notes:
-When running locally using AWS SAM, the env var `AWS_SAM_LOCAL = true` is set automatically - so I hook into this for local testing
+When running locally using AWS SAM, the env var `LOCALSTACK = true` is set automatically - so I hook into this for local testing
 
 #### Running the reliability lambda
 

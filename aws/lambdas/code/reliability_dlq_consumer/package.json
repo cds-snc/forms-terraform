@@ -1,0 +1,10 @@
+{
+  "name": "dead_letter_queue_consumer",
+  "version": "1.0.0",
+  "main": "dead_letter_queue_consumer.js",
+  "type": "module",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-sqs": "3.430.0"
+  }
+}

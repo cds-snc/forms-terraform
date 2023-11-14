@@ -32,7 +32,7 @@ resource "aws_cloudwatch_event_rule" "cron_5am_every_business_day" {
 
 resource "aws_cloudwatch_event_target" "run_dead_letter_queue_consumer_lambda_every_day" {
   rule = aws_cloudwatch_event_rule.cron_2am_every_day.name
-  arn  = aws_lambda_function.dead_letter_queue_consumer.arn
+  arn  = aws_lambda_function.reliability_dlq_consumer.arn
 }
 
 #
@@ -41,7 +41,7 @@ resource "aws_cloudwatch_event_target" "run_dead_letter_queue_consumer_lambda_ev
 
 resource "aws_cloudwatch_event_target" "run_archive_form_responses_lambda_every_day" {
   rule = aws_cloudwatch_event_rule.cron_3am_every_day.name
-  arn  = aws_lambda_function.archiver.arn
+  arn  = aws_lambda_function.response_archiver.arn
 }
 
 #
@@ -50,7 +50,7 @@ resource "aws_cloudwatch_event_target" "run_archive_form_responses_lambda_every_
 
 resource "aws_cloudwatch_event_target" "run_archive_form_templates_lambda_every_day" {
   rule = aws_cloudwatch_event_rule.cron_4am_every_day.name
-  arn  = aws_lambda_function.archive_form_templates.arn
+  arn  = aws_lambda_function.form_archiver.arn
 }
 
 #

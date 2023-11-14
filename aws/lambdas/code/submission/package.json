@@ -1,0 +1,12 @@
+{
+  "name": "submission",
+  "version": "1.0.0",
+  "main": "submission.js",
+  "type": "module",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.430.0",
+    "@aws-sdk/client-sqs": "3.430.0",
+    "uuid": "^8.3.2"
+  }
+}

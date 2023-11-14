@@ -1,0 +1,33 @@
+{
+  "name": "reliability",
+  "version": "1.0.0",
+  "main": "reliability.js",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "tsc --project tsconfig.json",
+    "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cp -r node_modules dist/node_modules"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.430.0",
+    "@aws-sdk/client-lambda": "3.430.0",
+    "@aws-sdk/client-rds-data": "3.430.0",
+    "@aws-sdk/client-s3": "3.430.0",
+    "@aws-sdk/client-sqs": "3.430.0",
+    "@aws-sdk/lib-dynamodb": "3.430.0",
+    "axios": "^0.27.0",
+    "json2md": "^1.10.0",
+    "notifications-node-client": "^5.1.0",
+    "pg": "^8.7.3",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.126",
+    "@types/json2md": "^1.5.4",
+    "@types/node": "^20.9.0",
+    "@types/pg": "^8.10.9",
+    "@types/uuid": "^9.0.7",
+    "typescript": "^5.2.2"
+  }
+}
