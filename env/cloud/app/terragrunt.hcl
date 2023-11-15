@@ -32,7 +32,7 @@ dependency "ecr" {
 }
 
 dependency "kms" {
-  config_path = "../kms"
+  config_path                             = "../kms"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -42,7 +42,7 @@ dependency "kms" {
 }
 
 dependency "load_balancer" {
-  config_path = "../load_balancer"
+  config_path                             = "../load_balancer"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -54,7 +54,7 @@ dependency "load_balancer" {
 }
 
 dependency "network" {
-  config_path = "../network"
+  config_path                             = "../network"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -63,7 +63,7 @@ dependency "network" {
 }
 
 dependency "rds" {
-  config_path = "../rds"
+  config_path                             = "../rds"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -75,7 +75,7 @@ dependency "rds" {
 }
 
 dependency "redis" {
-  config_path = "../redis"
+  config_path                             = "../redis"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -84,7 +84,7 @@ dependency "redis" {
 }
 
 dependency "sqs" {
-  config_path = "../sqs"
+  config_path                             = "../sqs"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {

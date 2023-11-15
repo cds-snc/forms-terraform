@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../hosted_zone", "../kms", "../load_balancer", "../sqs", "../app", "../sns", "../lambdas""]
+  paths = ["../hosted_zone", "../kms", "../load_balancer", "../sqs", "../app", "../sns", "../lambdas"]
 }
 
 locals {
@@ -11,7 +11,7 @@ locals {
 }
 
 dependency "hosted_zone" {
-  config_path = "../hosted_zone"
+  config_path                             = "../hosted_zone"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -48,7 +48,7 @@ dependency "sqs" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     sqs_reliability_deadletter_queue_arn = ""
-    sqs_audit_log_deadletter_queue_arn = ""
+    sqs_audit_log_deadletter_queue_arn   = ""
   }
 }
 
@@ -58,13 +58,14 @@ dependency "app" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    ecs_cloudwatch_log_group_name                    = ""
-    ecs_cluster_name                                 = ""
-    ecs_service_name                                 = ""
+    ecs_cloudwatch_log_group_name = ""
+    ecs_cluster_name              = ""
+    ecs_service_name              = ""
   }
 }
 
 dependency "lambdas" {
+  config_path                             = "../lambdas"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
