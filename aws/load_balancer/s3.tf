@@ -1,4 +1,5 @@
 resource "aws_s3_bucket" "maintenance_mode" {
+  # checkov:skip=CKV2_AWS_6: Public access block is define in a different resource
   # checkov:skip=CKV_AWS_18: Versioning not required
   # checkov:skip=CKV_AWS_19: False-positive, server side encryption is enabled but probably not detected because defined in a different Terraform resource
   # checkov:skip=CKV_AWS_21: Access logging not required
@@ -19,11 +20,15 @@ resource "aws_s3_bucket_ownership_controls" "maintenance_mode" {
 }
 
 resource "aws_s3_bucket_public_access_block" "maintenance_mode" {
+  # checkov:skip=CKV_AWS_53: Ensure S3 bucket has block public ACLS enabled (not required)
+  # checkov:skip=CKV_AWS_54: Ensure S3 bucket has block public policy enabled (not required)
+  # checkov:skip=CKV_AWS_55: Ensure S3 bucket has ignore public ACLs enabled (not required)
+  # checkov:skip=CKV_AWS_56: Ensure S3 bucket has 'restrict_public_bucket' enabled (not required)
   bucket                  = aws_s3_bucket.maintenance_mode.id
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }
 
 resource "aws_s3_bucket_acl" "maintenance_mode" {

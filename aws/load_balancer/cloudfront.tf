@@ -13,7 +13,6 @@ resource "aws_cloudfront_distribution" "maintenance_mode" {
   http_version        = "http2"
   default_root_object = "index.html"
   # web_acl_id          = aws_wafv2_web_acl.forms_acl.arn - We may want to create a new WAF2 web acl resource with a CLOUDFRONT scope just for this
-  aliases     = var.domains
   price_class = "PriceClass_100"
 
   origin {
