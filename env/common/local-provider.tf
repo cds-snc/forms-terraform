@@ -10,9 +10,6 @@ terraform {
       version = "=3.4.3"
     }
   }
-  backend "local" {
-    path = "./terraform.tfstate"
-  }
 }
 
 variable "localstack_host" {

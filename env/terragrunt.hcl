@@ -15,6 +15,37 @@ inputs = {
 }
 
 
+generate "backend_remote_state" {
+disable = local.env == "local"
+  path      = "backend.tf"
+  if_exists = "overwrite"
+  contents = <<EOF
+terraform {
+  backend "s3" {
+    encrypt          = true
+    force_path_style = true
+    bucket           = "forms-${local.env}-tfstate"
+    dynamodb_table   = "tfstate-lock"
+    region           = "ca-central-1"
+    key              = "${path_relative_to_include()}/terraform.tfstate"
+  }
+}
+EOF
+}
+
+generate "backend_local_state" {
+disable = local.env != "local"
+  path      = "backend.tf"
+  if_exists = "overwrite"
+  contents = <<EOF
+terraform {
+  backend "local" {
+    path = "${path_relative_to_include()}/terraform.tfstate"
+  }
+}
+EOF
+}
+
 generate "provider" {
   path      = "provider.tf"
   if_exists = "overwrite"
