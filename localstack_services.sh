@@ -6,8 +6,6 @@ export TF_VAR_cognito_user_pool_arn=""
 export TF_VAR_email_address_contact_us=""
 export TF_VAR_email_address_support=""
 export APP_ENV="local"
-export AWS_ACCESS_KEY_ID="test"
-export AWS_SECRET_ACCESS_KEY="test"
 
 # Set proper terraform and terragrunt versions
 
@@ -27,18 +25,16 @@ printf "Configuring localstack components via terraform...\n"
 if [[ "${ACTION}" == "clean" ]]; then
   printf "=> Cleaning up previous caches, terraform state, and lambda dependencies\n"
 
+  printf "...Purging stale terraform state files\n"
+  find $basedir/env -type f -name terraform.tfstate -prune -exec rm -fv {} \;
+
   printf "...Purging stale localstack related files\n"
-  find $basedir/env/cloud -type d -name .terragrunt-cache -prune -exec rm -rfv {} \;
+  find $basedir/env -type d -name .terragrunt-cache -prune -exec rm -rf {} \;
 
   printf "...Removing old lambda dependencies\n"
     cd $basedir/aws/lambdas/code
     ./deps.sh delete
 fi
-
-printf "=> Cleaning previous terrafrom state, keeping previous terraform packages and lambda dependencies\n"
-
-printf "...Purging stale terraform state files\n"
-  find $basedir/env/cloud -type d -name terraform.tfstate -prune -exec rm -rf {} \;
 
 printf "=> Creating AWS services in Localstack\n"
 
