@@ -14,6 +14,7 @@ resource "aws_cloudfront_distribution" "maintenance_mode" {
   default_root_object = "index.html"
   web_acl_id          = aws_wafv2_web_acl.forms_acl.arn
   aliases             = var.domains
+  price_class         = "PriceClass_100"
 
   origin {
     origin_id   = local.s3_origin_id

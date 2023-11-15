@@ -73,7 +73,7 @@ resource "aws_route53_health_check" "gc_forms_application" {
   fqdn              = var.domains[0]
   port              = "443"
   type              = "HTTPS"
-  resource_path     = "/"
+  resource_path     = "/form-builder/edit"
   failure_threshold = "2"
   request_interval  = "30"
 
