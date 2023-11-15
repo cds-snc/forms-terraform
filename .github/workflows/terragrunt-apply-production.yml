@@ -68,6 +68,11 @@ jobs:
         working-directory: env/cloud/sqs
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Terragrunt apply secrets
+        working-directory: env/cloud/secrets
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      # Depends on kms
       - name: Terragrunt apply sns
         working-directory: env/cloud/sns
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
@@ -82,7 +87,6 @@ jobs:
       - name: Remove Cognito Lambda deps
         run: ./aws/cognito/lambda/deps.sh delete
 
-      # Depends on kms
       - name: Terragrunt apply network
         working-directory: env/cloud/network
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
@@ -105,15 +109,19 @@ jobs:
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on everything
-      - name: Install Lambda deps
-        run: ./aws/app/lambda/deps.sh install
-
       - name: Terragrunt apply app
         working-directory: env/cloud/app
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Install Lambda deps
+        run: ./aws/lambdas/code/deps.sh install
+
+      - name: Terragrunt apply lambdas
+        working-directory: env/cloud/lambdas
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
       - name: Remove Lambda deps
-        run: ./aws/app/lambda/deps.sh delete
+        run: ./aws/lambdas/code/deps.sh delete
 
       - name: Terragrunt apply alarms
         working-directory: env/cloud/alarms
