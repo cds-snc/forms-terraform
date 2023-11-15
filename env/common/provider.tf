@@ -11,7 +11,7 @@ terraform {
       version = "=3.4.3"
     }
   }
-  backend "remote" {
+  backend "s3" {
     encrypt        = true
     bucket         = "forms-${local.env}-tfstate"
     dynamodb_table = "tfstate-lock"
