@@ -433,11 +433,11 @@ resource "aws_cloudwatch_metric_alarm" "vault_data_integrity_check_lambda_iterat
   metric_name         = "IteratorAge"
   statistic           = "Average"
   comparison_operator = "GreaterThanThreshold"
-  threshold           = "30000"
+  threshold           = "90000" // 90 seconds (Lambda consumes events every 60 seconds if low traffic. Adding 30 seconds on top of that for the processing time of that Lambda)
   period              = "60"
   evaluation_periods  = "2"
 
-  alarm_description = "The Vault data integrity check lambda function is unable to keep up with the amount of events sent by the Vault DynamoDB stream"
+  alarm_description = "Warning - Vault data integrity check lambda is unable to keep up with the amount of events sent by the Vault DynamoDB stream"
   alarm_actions     = [var.sns_topic_alert_warning_arn]
   ok_actions        = [var.sns_topic_alert_ok_arn]
 

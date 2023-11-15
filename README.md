@@ -18,7 +18,13 @@ Pre-requisites:
   ```bash
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   ```
-- LocalStack : `brew install localstack`
+
+- LocalStack:
+
+  1. `brew install localstack`
+
+  Please note that the latest tested version of Localstack with your infrastructure code was `2.3.2`.
+
 - Terragrunt:
 
   1. `brew install warrensbox/tap/tfswitch`
@@ -32,10 +38,10 @@ Pre-requisites:
 
 - AWS SAM CLI
 
-  Please run these commands to install the aws sam cli using homebrew. The AWS SAM CLI is what we use to run the lambda functions locally and invoke them.
+  1. If you previously had it installed with Brew then you should first uninstall this package using `brew uninstall aws-sam-cli`
+  1. To install the AWS SAM CLI tool, follow the instructions on https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html under "macOS" and "Command line - All users" (you will have to download the .pkg file and run a command to install it on your machine)
 
-  1. `brew tap aws/tap`
-  1. `brew install aws-sam-cli`
+  Please note that the latest tested version of AWS SAM CLI with your infrastructure code was `1.99.0`.
 
 - Postgres and PGAdmin
   1. `brew install postgresql`
