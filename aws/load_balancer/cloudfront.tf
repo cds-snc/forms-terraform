@@ -12,8 +12,8 @@ resource "aws_cloudfront_distribution" "maintenance_mode" {
   enabled             = true
   http_version        = "http2"
   default_root_object = "index.html"
-  # web_acl_id          = aws_wafv2_web_acl.forms_acl.arn - We may want to create a new WAF2 web acl resource with a CLOUDFRONT scope just for this
-  price_class = "PriceClass_100"
+  web_acl_id          = aws_wafv2_web_acl.forms_maintenance_mode_acl.arn
+  price_class         = "PriceClass_100"
 
   origin {
     origin_id   = local.s3_origin_id
@@ -51,7 +51,9 @@ resource "aws_cloudfront_distribution" "maintenance_mode" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = aws_acm_certificate.form_viewer_maintenance_mode.arn
+    minimum_protocol_version = "TLSv1.2_2021"
+    ssl_support_method       = "sni-only"
   }
 
   tags = {
