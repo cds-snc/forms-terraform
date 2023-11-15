@@ -11,6 +11,14 @@ terraform {
       version = "=3.4.3"
     }
   }
+  backend "remote" {
+    encrypt        = true
+    bucket         = "forms-${local.env}-tfstate"
+    dynamodb_table = "tfstate-lock"
+    region         = "ca-central-1"
+    key            = "${path_relative_to_include()}/terraform.tfstate"
+    
+  }
 }
 
 provider "aws" {

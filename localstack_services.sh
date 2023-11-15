@@ -6,6 +6,8 @@ export TF_VAR_cognito_user_pool_arn=""
 export TF_VAR_email_address_contact_us=""
 export TF_VAR_email_address_support=""
 export APP_ENV="local"
+export AWS_ACCESS_KEY_ID="test"
+export AWS_SECRET_ACCESS_KEY="test"
 
 # Set proper terraform and terragrunt versions
 
@@ -26,10 +28,10 @@ if [[ "${ACTION}" == "clean" ]]; then
   printf "=> Cleaning up previous caches, terraform state, and lambda dependencies\n"
 
   printf "...Purging stale localstack related files\n"
-  find $basedir/env/cloud -type d -name .terragrunt-cache -prune -exec rm -rf {} \;
+  find $basedir/env/cloud -type d -name .terragrunt-cache -prune -exec rm -rfv {} \;
 
   printf "...Removing old lambda dependencies\n"
-    cd $basedir/aws/lambdas
+    cd $basedir/aws/lambdas/code
     ./deps.sh delete
 fi
 
@@ -61,20 +63,9 @@ cd $basedir/env/cloud/dynamodb
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "...Installing lambda dependencies\n"
-cd $basedir/aws/lambdas
+cd $basedir/aws/lambdas/code
 ./deps.sh install
 
 printf "...Creating lambdas\n"
 cd $basedir/env/cloud/lambdas
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-# printf "...Creating the S3 buckets...\n"
-# cd $basedir/env/local/app
-# terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-# printf "=> Starting Lambdas\n"
-# cd $basedir/aws/app/lambda
-# sam local start-lambda -t "./local_development/template.yml" \
-#   --host 127.0.0.1 \
-#   --port 3001 \
-#   --warm-containers EAGER

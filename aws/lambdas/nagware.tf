@@ -4,7 +4,7 @@
 
 data "archive_file" "nagware_code" {
   type        = "zip"
-  source_dir  = "./nagware/"
+  source_dir  = "./code/nagware/"
   output_path = "/tmp/nagware_code.zip"
 }
 
