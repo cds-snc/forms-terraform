@@ -8,11 +8,6 @@ variable "codedeploy_termination_wait_time_in_minutes" {
   type        = number
 }
 
-variable "database_secret_arn" {
-  description = "Database connection secret arn"
-  type        = string
-}
-
 variable "database_url_secret_arn" {
   description = "Database URL secret version ARN, used by the ECS task"
   type        = string
@@ -25,11 +20,6 @@ variable "dynamodb_relability_queue_arn" {
 
 variable "dynamodb_vault_arn" {
   description = "Vault DynamodDB table ARN"
-  type        = string
-}
-
-variable "dynamodb_vault_stream_arn" {
-  description = "Vault DynamoDB stream ARN"
   type        = string
 }
 
@@ -88,7 +78,7 @@ variable "ecs_security_group_id" {
   type        = string
 }
 
-variable "ecs_secret_token_secret" {
+variable "ecs_token_secret" {
   description = "Forms ECS JSON Web Token (JWT) secret used by Templates lambda"
   type        = string
   sensitive   = true
@@ -100,7 +90,7 @@ variable "egress_security_group_id" {
 }
 
 variable "recaptcha_secret" {
-  description = "Secret Site Key for reCAPTCHA"
+  description = "Secret Site Key for reCAPTCHA arn"
   type        = string
   sensitive   = true
 }
@@ -110,7 +100,7 @@ variable "recaptcha_public" {
   type        = string
 }
 
-variable "gc_notify_callback_bearer_token" {
+variable "notify_callback_bearer_token_secret" {
   description = "GC Notify callback bearer token which will be used as an authentication factor in GC Forms"
   type        = string
   sensitive   = true
@@ -151,14 +141,14 @@ variable "metric_provider" {
   type        = string
 }
 
-variable "notify_api_key" {
-  description = "The Notify API key used by the ECS task and Lambda"
+variable "notify_api_key_secret" {
+  description = "The Notify API key secret used by the ECS task and Lambda arn"
   type        = string
   sensitive   = true
 }
 
-variable "freshdesk_api_key" {
-  description = "The FreshDesk API key used by the ECS task and Lambda"
+variable "freshdesk_api_key_secret" {
+  description = "The FreshDesk API key secret used by the ECS task and Lambda"
   type        = string
   sensitive   = true
 }
@@ -168,43 +158,8 @@ variable "private_subnet_ids" {
   type        = list(string)
 }
 
-variable "rds_cluster_arn" {
-  description = "RDS cluster ARN"
-  type        = string
-}
-
-variable "rds_db_name" {
-  description = "RDS database name"
-  type        = string
-}
-
 variable "redis_url" {
   description = "Redis URL used by the ECS task"
-  type        = string
-}
-
-variable "sns_topic_alert_critical_arn" {
-  description = "SNS topic ARN that critical alerts are sent to"
-  type        = string
-}
-
-variable "sns_topic_alert_warning_arn" {
-  description = "SNS topic ARN that warning alerts are sent to"
-  type        = string
-}
-
-variable "sns_topic_alert_ok_arn" {
-  description = "SNS topic ARN that ok alerts are sent to"
-  type        = string
-}
-
-variable "sqs_reliability_queue_id" {
-  description = "SQS reliability queue URL"
-  type        = string
-}
-
-variable "sqs_reliability_queue_arn" {
-  description = "SQS reliability queue ARN"
   type        = string
 }
 
@@ -219,10 +174,6 @@ variable "sqs_reprocess_submission_queue_id" {
 }
 
 
-variable "sqs_reliability_dead_letter_queue_id" {
-  description = "SQS Reliability dead letter queue URL"
-  type        = string
-}
 
 variable "sqs_audit_log_queue_arn" {
   description = "SQS audit log queue ARN"
@@ -234,28 +185,8 @@ variable "sqs_audit_log_queue_id" {
   type        = string
 }
 
-variable "sqs_audit_log_deadletter_queue_arn" {
-  description = "Audit Log queues dead-letter queue ARN"
-  type        = string
-}
-
 variable "tracer_provider" {
   description = "Tracer provider, used by the ECS task"
-  type        = string
-}
-
-variable "dynamodb_vault_table_name" {
-  description = "Vault DynamodDB table name"
-  type        = string
-}
-
-variable "dynamodb_audit_logs_arn" {
-  description = "Audit Logs table ARN"
-  type        = string
-}
-
-variable "dynamodb_audit_logs_table_name" {
-  description = "Audit Logs table name"
   type        = string
 }
 

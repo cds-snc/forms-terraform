@@ -29,12 +29,12 @@ data "template_file" "form_viewer_task" {
     awslogs-stream-prefix           = "ecs-${var.ecs_form_viewer_name}"
     metric_provider                 = var.metric_provider
     tracer_provider                 = var.tracer_provider
-    notify_api_key                  = aws_secretsmanager_secret_version.notify_api_key.arn
-    freshdesk_api_key               = aws_secretsmanager_secret_version.freshdesk_api_key.arn
-    recaptcha_secret                = aws_secretsmanager_secret_version.recaptcha_secret.arn
+    notify_api_key                  = var.notify_api_key_secret
+    freshdesk_api_key               = var.freshdesk_api_key_secret
+    recaptcha_secret                = var.recaptcha_secret
     recaptcha_public                = var.recaptcha_public
-    gc_notify_callback_bearer_token = aws_secretsmanager_secret_version.gc_notify_callback_bearer_token.arn
-    token_secret                    = aws_secretsmanager_secret_version.token_secret.arn
+    gc_notify_callback_bearer_token = var.notify_callback_bearer_token_secret
+    token_secret                    = var.ecs_token_secret
     database_url                    = var.database_url_secret_arn
     redis_url                       = var.redis_url
     nextauth_url                    = "https://${var.domains[0]}"
