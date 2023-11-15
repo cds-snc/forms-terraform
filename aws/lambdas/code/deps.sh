@@ -17,6 +17,10 @@ for LAMBDA_DIR in "$SCRIPT_DIR"/*/; do
             rm -rf "$LAMBDA_DIR/node_modules"
         else
             yarn --cwd "$LAMBDA_DIR" install
+            if test -f "$LAMBDA_DIR/tsconfig.json"; then
+                echo "⚡ $LAMBDA_DIR Building TypeScript"
+                yarn --cwd "$LAMBDA_DIR" build      
+            fi      
         fi
     fi
 done

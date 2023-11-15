@@ -14,12 +14,11 @@ inputs = {
   cbs_satellite_bucket_name = "cbs-satellite-${local.account_id}"
 }
 
-
 generate "backend_remote_state" {
-disable = local.env == "local"
+disable     = local.env == "local"
   path      = "backend.tf"
   if_exists = "overwrite"
-  contents = <<EOF
+  contents  = <<EOF
 terraform {
   backend "s3" {
     encrypt          = true
@@ -40,7 +39,7 @@ disable = local.env != "local"
   contents = <<EOF
 terraform {
   backend "local" {
-    path = "${path_relative_to_include()}/terraform.tfstate"
+    path = "../../terraform.tfstate"
   }
 }
 EOF
