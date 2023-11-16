@@ -304,6 +304,8 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
   name  = "GCFormsMaintenanceMode"
   scope = "CLOUDFRONT"
 
+  provider = aws.us-east-1
+
   default_action {
     block {}
   }
