@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../cognito", "../secrets"]
+  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../cognito", "../secrets", "../lambdas", "../s3"]
 }
 
 dependency "dynamodb" {
@@ -12,8 +12,8 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_relability_queue_arn  = ""
-    dynamodb_vault_arn             = ""
+    dynamodb_relability_queue_arn = ""
+    dynamodb_vault_arn            = ""
   }
 }
 
@@ -63,7 +63,7 @@ dependency "rds" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-      database_url_secret_arn = ""
+    database_url_secret_arn = ""
   }
 }
 
@@ -81,10 +81,10 @@ dependency "sqs" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    sqs_reprocess_submission_queue_arn   = ""
-    sqs_audit_log_queue_arn              = ""
-    sqs_audit_log_queue_id               = ""
-    sqs_reprocess_submission_queue_id    = ""
+    sqs_reprocess_submission_queue_arn = ""
+    sqs_audit_log_queue_arn            = ""
+    sqs_audit_log_queue_id             = ""
+    sqs_reprocess_submission_queue_id  = ""
   }
 }
 
@@ -101,16 +101,28 @@ dependency "cognito" {
 }
 
 dependency "secrets" {
-  config_path = "../secrets"
+  config_path                             = "../secrets"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    notify_api_key_secret = ""
-    freskdesk_api_key_secret = ""
-    token_secret = ""
-    recaptcha_secret = ""
+    notify_api_key_secret               = ""
+    freshdesk_api_key_secret            = ""
+    token_secret                        = ""
+    recaptcha_secret                    = ""
     notify_callback_bearer_token_secret = ""
 
+  }
+}
+
+dependency "s3" {
+  config_path                             = "../s3"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs = {
+    vault_file_storage_id = ""
+    vault_file_sotarge_arn = ""
+    reliability_file_storage_id = ""
+    reliability_file_storage_arn = ""
   }
 }
 
@@ -129,8 +141,8 @@ inputs = {
   metric_provider                             = "stdout"
   tracer_provider                             = "stdout"
 
-  dynamodb_relability_queue_arn  = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
-  dynamodb_vault_arn             = dependency.dynamodb.outputs.dynamodb_vault_arn
+  dynamodb_relability_queue_arn = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
+  dynamodb_vault_arn            = dependency.dynamodb.outputs.dynamodb_vault_arn
 
   ecr_repository_url_form_viewer = dependency.ecr.outputs.ecr_repository_url_form_viewer
 
@@ -150,20 +162,25 @@ inputs = {
 
   database_url_secret_arn = dependency.rds.outputs.database_url_secret_arn
 
-  sqs_reprocess_submission_queue_arn   = dependency.sqs.outputs.sqs_reprocess_submission_queue_arn
-  sqs_audit_log_queue_arn              = dependency.sqs.outputs.sqs_audit_log_queue_arn
-  sqs_audit_log_queue_id               = dependency.sqs.outputs.sqs_audit_log_queue_id
-  sqs_reprocess_submission_queue_id    = dependency.sqs.outputs.sqs_reprocess_submission_queue_id
+  sqs_reprocess_submission_queue_arn = dependency.sqs.outputs.sqs_reprocess_submission_queue_arn
+  sqs_audit_log_queue_arn            = dependency.sqs.outputs.sqs_audit_log_queue_arn
+  sqs_audit_log_queue_id             = dependency.sqs.outputs.sqs_audit_log_queue_id
+  sqs_reprocess_submission_queue_id  = dependency.sqs.outputs.sqs_reprocess_submission_queue_id
 
   cognito_endpoint_url  = dependency.cognito.outputs.cognito_endpoint_url
   cognito_client_id     = dependency.cognito.outputs.cognito_client_id
   cognito_user_pool_arn = dependency.cognito.outputs.cognito_user_pool_arn
 
-  recaptcha_secret = dependency.secrets.outputs.recaptcha_secret
-  notify_api_key_secret = dependency.secrets.outputs.notify_api_key_secret
-  freskdesk_api_key_secret = dependency.secrets.outputs.freskdesk_api_key_secret
-  notify_callback_bearer_token_secret = dependency.secrets.outputs.notify_callback_bearer_token_secret  
-  ecs_token_secret = dependency.secrets.outputs.token_secret
+  recaptcha_secret                    = dependency.secrets.outputs.recaptcha_secret
+  notify_api_key_secret               = dependency.secrets.outputs.notify_api_key_secret
+  freshdesk_api_key_secret            = dependency.secrets.outputs.freshdesk_api_key_secret
+  notify_callback_bearer_token_secret = dependency.secrets.outputs.notify_callback_bearer_token_secret
+  ecs_token_secret                    = dependency.secrets.outputs.token_secret
+
+  vault_file_sotarge_arn = dependency.s3.outputs.vault_file_sotarge_arn
+  vault_file_storage_id = dependency.s3.outputs.vault_file_storage_id
+  reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
+  reliability_file_storage_id = dependency.s3.outputs.reliability_file_storage_id
 
 }
 

@@ -1,18 +1,3 @@
-output "reliability_file_storage_id" {
-  description = "S3 bucket ID for reliability file storage"
-  value       = aws_s3_bucket.reliability_file_storage.id
-}
-
-output "vault_file_storage_id" {
-  description = "S3 bucket ID for vault file storage"
-  value       = aws_s3_bucket.vault_file_storage.id
-}
-
-output "archive_storage_id" {
-  description = "S3 bucket ID for archive storage"
-  value       = aws_s3_bucket.archive_storage.id
-}
-
 output "lambda_reliability_log_group_name" {
   description = "Reliability Queues CloudWatch log group name"
   value       = aws_cloudwatch_log_group.reliability.name

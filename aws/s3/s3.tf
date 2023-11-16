@@ -133,7 +133,7 @@ resource "aws_s3_bucket" "lambda_code" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "submission_code" {
+resource "aws_s3_bucket_public_access_block" "lambda_code" {
   bucket                  = aws_s3_bucket.lambda_code.id
   block_public_acls       = true
   block_public_policy     = true
