@@ -102,6 +102,9 @@ jobs:
             redis:
               - 'aws/redis/**'
               - 'env/cloud/redis/**'
+            s3:
+              - 'aws/s3/**'
+              - 'env/cloud/s3/**'
             secrets:
               - 'aws/secrets/**'
               - 'env/cloud/secrets/**'
@@ -160,6 +163,15 @@ jobs:
           directory: "env/cloud/secrets"
           comment-delete: "true"
           comment-title: "Staging: secrets"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+      - name: Terragrunt plan s3
+        if: ${{ steps.filter.outputs.s3 == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/s3"
+          comment-delete: "true"
+          comment-title: "Staging: s3"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 

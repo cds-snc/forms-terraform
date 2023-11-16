@@ -79,6 +79,13 @@ jobs:
           comment: "false"
           terragrunt: "true"
 
+      - name: Terragrunt plan s3
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/s3"
+          comment: "false"
+          terragrunt: "true"
+
       # Depends on kms
       - name: Terragrunt plan sns
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7

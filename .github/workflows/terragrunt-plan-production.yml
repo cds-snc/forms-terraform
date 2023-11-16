@@ -91,6 +91,14 @@ jobs:
           comment-title: "Production: secrets"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
+      - name: Terragrunt plan s3
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/s3"
+          comment-delete: "true"
+          comment-title: "Production: s3"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
 
       # Depends on kms
       - name: Terragrunt plan sns

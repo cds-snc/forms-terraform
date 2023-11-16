@@ -102,6 +102,9 @@ jobs:
             redis:
               - 'aws/redis/**'
               - 'env/cloud/redis/**'
+            s3:
+              - 'aws/s3/**'
+              - 'env/cloud/s3/**'
             secrets:
               - 'aws/secrets/**'
               - 'env/cloud/secrets/**'
@@ -136,6 +139,11 @@ jobs:
       - name: Terragrunt apply secrets
         if: ${{ steps.filter.outputs.secrets == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/cloud/secrets
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply s3
+        if: ${{ steps.filter.outputs.s3 == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/cloud/s3
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on kms

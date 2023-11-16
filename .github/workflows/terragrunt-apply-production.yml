@@ -72,6 +72,10 @@ jobs:
         working-directory: env/cloud/secrets
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Terragrunt apply s3
+        working-directory: env/cloud/s3
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
       # Depends on kms
       - name: Terragrunt apply sns
         working-directory: env/cloud/sns
