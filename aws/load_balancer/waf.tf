@@ -293,7 +293,7 @@ resource "aws_wafv2_regex_pattern_set" "forms_base_url" {
   description = "Regex matching the root domain of GCForms"
   scope       = "REGIONAL"
   dynamic "regular_expression" {
-    for_each = concat(var.domains, [aws_lb.form_viewer.dns_name])
+    for_each = var.domains
     content {
       regex_string = "^${regular_expression.value}$"
     }
@@ -303,6 +303,8 @@ resource "aws_wafv2_regex_pattern_set" "forms_base_url" {
 resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
   name  = "GCFormsMaintenanceMode"
   scope = "CLOUDFRONT"
+
+  provider = aws.us-east-1
 
   default_action {
     block {}
