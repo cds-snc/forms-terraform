@@ -77,6 +77,8 @@ resource "aws_route53_health_check" "gc_forms_application" {
   failure_threshold = "2"
   request_interval  = "30"
 
+  disabled = true # Disabling health check until we finalize the implementation of maintenance mode
+
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
