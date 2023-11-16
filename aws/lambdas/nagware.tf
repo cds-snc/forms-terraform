@@ -9,7 +9,7 @@ data "archive_file" "nagware_code" {
 }
 
 resource "aws_s3_bucket_object" "nagware_code" {
-  bucket      = aws_s3_bucket.lambda_code.id
+  bucket      = var.lambda_code_id
   key         = "nagware_code"
   source      = data.archive_file.nagware_code.output_path
   source_hash = data.archive_file.nagware_code.output_base64sha256

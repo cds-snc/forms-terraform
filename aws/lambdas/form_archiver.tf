@@ -9,7 +9,7 @@ data "archive_file" "form_archiver_code" {
 }
 
 resource "aws_s3_bucket_object" "form_archiver_code" {
-  bucket      = aws_s3_bucket.lambda_code.id
+  bucket      = var.lambda_code_id
   key         = "form_archiver_code"
   source      = data.archive_file.form_archiver_code.output_path
   source_hash = data.archive_file.form_archiver_code.output_base64sha256

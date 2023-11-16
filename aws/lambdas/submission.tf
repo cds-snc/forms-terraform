@@ -8,7 +8,7 @@ data "archive_file" "submission_code" {
 }
 
 resource "aws_s3_bucket_object" "submission_code" {
-  bucket      = aws_s3_bucket.lambda_code.id
+  bucket      = var.lambda_code_id
   key         = "submission_code"
   source      = data.archive_file.submission_code.output_path
   source_hash = data.archive_file.submission_code.output_base64sha256

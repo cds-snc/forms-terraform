@@ -8,7 +8,7 @@ include {
 
 
 dependencies {
-  paths = ["../rds", "../sqs", "../sns", "../kms", "../dynamodb", "../secrets", "../app"]
+  paths = ["../rds", "../sqs", "../sns", "../kms", "../dynamodb", "../secrets", "../app", "../s3"]
 }
 
 locals {
@@ -97,6 +97,18 @@ dependency "secrets" {
   }
 }
 
+dependency "s3" {
+  config_path                             = "../s3"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    reliability_file_storage_arn = ""
+    vault_file_storage_arn       = ""
+    archive_storage_arn          = ""
+    lambda_code_arn              = ""
+  }
+}
+
 inputs = {
   dynamodb_relability_queue_arn = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
   dynamodb_vault_arn            = dependency.dynamodb.outputs.dynamodb_vault_arn
@@ -122,7 +134,14 @@ inputs = {
   notify_api_key_secret = dependency.secrets.outputs.notify_api_key_secret
   token_secret          = dependency.secrets.outputs.token_secret
 
+  reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
+  vault_file_storage_arn       = dependency.s3.outputs.vault_file_storage_arn
+  archive_storage_arn          = dependency.s3.outputs.archive_storage_arn
+  lambda_code_arn              = dependency.s3.outputs.lambda_code_arn
+
   ecs_iam_role_arn = local.env == "local" ? "arn:aws:iam:ca-central-1:000000000000:forms_iam" : dependency.app.outputs.ecs_iam_role_arn
+
+
 
   localstack_hosted = local.env == "local" ? true : false
 

@@ -9,7 +9,7 @@ data "archive_file" "audit_logs_code" {
 }
 
 resource "aws_s3_bucket_object" "audit_logs_code" {
-  bucket      = aws_s3_bucket.lambda_code.id
+  bucket      = var.lambda_code_id
   key         = "audit_logs_code"
   source      = data.archive_file.audit_logs_code.output_path
   source_hash = data.archive_file.audit_logs_code.output_base64sha256

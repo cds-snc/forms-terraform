@@ -10,7 +10,7 @@ data "archive_file" "reliability_dlq_consumer_code" {
 }
 
 resource "aws_s3_bucket_object" "reliability_dlq_consumer_code" {
-  bucket      = aws_s3_bucket.lambda_code.id
+  bucket      = var.lambda_code_id
   key         = "reliability_dlq_consumer_code"
   source      = data.archive_file.reliability_dlq_consumer_code.output_path
   source_hash = data.archive_file.reliability_dlq_consumer_code.output_base64sha256

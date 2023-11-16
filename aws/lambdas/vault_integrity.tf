@@ -10,7 +10,7 @@ data "archive_file" "vault_integrity_code" {
 
 resource "aws_s3_bucket_object" "vault_integrity_code" {
 
-  bucket      = aws_s3_bucket.lambda_code.id
+  bucket      = var.lambda_code_id
   key         = "vault_integrity_code"
   source      = data.archive_file.vault_integrity_code.output_path
   source_hash = data.archive_file.vault_integrity_code.output_base64sha256
