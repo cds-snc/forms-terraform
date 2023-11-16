@@ -108,25 +108,25 @@ variable "localstack_hosted" {
 
 variable "reliability_file_storage_arn" {
   description = "S3 bucket arn for reliability file storage"
-  type = string
+  type        = string
 }
 
 variable "vault_file_storage_arn" {
   description = "S3 bucket arn for vault file storage"
-  type = string
+  type        = string
 }
 
 variable "archive_storage_arn" {
   description = "S3 bucket arn for archive storage"
-  type = string
+  type        = string
 }
 
 variable "lambda_code_id" {
-    description = "S3 bucket id for lambda code"
-  type = string
+  description = "S3 bucket id for lambda code"
+  type        = string
 }
 
 variable "lambda_code_arn" {
-    description = "S3 bucket arn for lambda code"
-  type = string
-  }
+  description = "S3 bucket arn for lambda code"
+  type        = string
+}
