@@ -106,6 +106,7 @@ dependency "s3" {
     vault_file_storage_arn       = ""
     archive_storage_arn          = ""
     lambda_code_arn              = ""
+    lambda_code_id               = ""
   }
 }
 
@@ -138,6 +139,7 @@ inputs = {
   vault_file_storage_arn       = dependency.s3.outputs.vault_file_storage_arn
   archive_storage_arn          = dependency.s3.outputs.archive_storage_arn
   lambda_code_arn              = dependency.s3.outputs.lambda_code_arn
+  lambda_code_id               = dependency.s3.outputs.lambda_code_id
 
   ecs_iam_role_arn = local.env == "local" ? "arn:aws:iam:ca-central-1:000000000000:forms_iam" : dependency.app.outputs.ecs_iam_role_arn
 
