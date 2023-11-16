@@ -236,11 +236,10 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
 }
 
-
-
 #
 # WAF ACL association with ALB
 #
+
 resource "aws_wafv2_web_acl_association" "form_viewer_assocation" {
   resource_arn = aws_lb.form_viewer.arn
   web_acl_arn  = aws_wafv2_web_acl.forms_acl.arn
@@ -249,6 +248,7 @@ resource "aws_wafv2_web_acl_association" "form_viewer_assocation" {
 #
 # WAF ACL logging
 #
+
 resource "aws_wafv2_web_acl_logging_configuration" "firehose_waf_logs_forms" {
   log_destination_configs = [aws_kinesis_firehose_delivery_stream.firehose_waf_logs.arn]
   resource_arn            = aws_wafv2_web_acl.forms_acl.arn
@@ -259,7 +259,6 @@ resource "aws_wafv2_web_acl_logging_configuration" "firehose_waf_logs_forms" {
     }
   }
 }
-
 
 resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
   name        = "valid_app_uri_paths"
@@ -294,10 +293,81 @@ resource "aws_wafv2_regex_pattern_set" "forms_base_url" {
   description = "Regex matching the root domain of GCForms"
   scope       = "REGIONAL"
   dynamic "regular_expression" {
-    for_each = var.domains
+    for_each = concat(var.domains, [aws_lb.form_viewer.dns_name])
     content {
       regex_string = "^${regular_expression.value}$"
     }
   }
 }
 
+resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
+  name  = "GCFormsMaintenanceMode"
+  scope = "CLOUDFRONT"
+
+  default_action {
+    block {}
+  }
+
+  rule {
+    name     = "AllowGetRequestOnRootOnly"
+    priority = 0
+
+    action {
+      allow {}
+    }
+
+    statement {
+      and_statement {
+        statement {
+          byte_match_statement {
+            search_string         = "GET"
+            positional_constraint = "EXACTLY"
+
+            field_to_match {
+              method {}
+            }
+
+            text_transformation {
+              priority = 0
+              type     = "NONE"
+            }
+          }
+        }
+
+        statement {
+
+          byte_match_statement {
+            search_string         = "/"
+            positional_constraint = "EXACTLY"
+
+            field_to_match {
+              uri_path {}
+            }
+
+            text_transformation {
+              priority = 0
+              type     = "NONE"
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = false
+      metric_name                = "AllowGetRequestOnRootOnly"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = false
+    metric_name                = "forms_maintenance_mode_global_rule"
+    sampled_requests_enabled   = false
+  }
+
+  tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+  }
+}
