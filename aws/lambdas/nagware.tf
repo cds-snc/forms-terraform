@@ -13,10 +13,6 @@ resource "aws_s3_bucket_object" "nagware_code" {
   key         = "nagware_code"
   source      = data.archive_file.nagware_code.output_path
   source_hash = data.archive_file.nagware_code.output_base64sha256
-  depends_on = [
-    aws_s3_bucket.lambda_code,
-    data.archive_file.nagware_code
-  ]
 }
 
 

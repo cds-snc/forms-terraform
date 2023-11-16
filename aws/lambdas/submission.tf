@@ -12,10 +12,6 @@ resource "aws_s3_bucket_object" "submission_code" {
   key         = "submission_code"
   source      = data.archive_file.submission_code.output_path
   source_hash = data.archive_file.submission_code.output_base64sha256
-  depends_on = [
-    aws_s3_bucket.lambda_code,
-    data.archive_file.submission_code
-  ]
 }
 
 resource "aws_lambda_function" "submission" {

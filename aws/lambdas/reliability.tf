@@ -11,8 +11,8 @@ resource "aws_s3_bucket_object" "reliability_code" {
   key         = "reliability_code"
   source      = data.archive_file.reliability_code.output_path
   source_hash = data.archive_file.reliability_code.output_base64sha256
-
 }
+
 resource "aws_lambda_function" "reliability" {
   s3_bucket         = aws_s3_bucket_object.reliability_code.bucket
   s3_key            = aws_s3_bucket_object.reliability_code.key

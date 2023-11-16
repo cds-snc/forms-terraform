@@ -14,10 +14,6 @@ resource "aws_s3_bucket_object" "vault_integrity_code" {
   key         = "vault_integrity_code"
   source      = data.archive_file.vault_integrity_code.output_path
   source_hash = data.archive_file.vault_integrity_code.output_base64sha256
-  depends_on = [
-    aws_s3_bucket.lambda_code,
-    data.archive_file.vault_integrity_code
-  ]
 }
 
 resource "aws_lambda_function" "vault_integrity" {

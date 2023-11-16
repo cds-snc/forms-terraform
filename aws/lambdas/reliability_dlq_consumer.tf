@@ -14,10 +14,6 @@ resource "aws_s3_bucket_object" "reliability_dlq_consumer_code" {
   key         = "reliability_dlq_consumer_code"
   source      = data.archive_file.reliability_dlq_consumer_code.output_path
   source_hash = data.archive_file.reliability_dlq_consumer_code.output_base64sha256
-  depends_on = [
-    aws_s3_bucket.lambda_code,
-    data.archive_file.reliability_dlq_consumer_code
-  ]
 }
 
 

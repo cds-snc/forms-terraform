@@ -13,10 +13,6 @@ resource "aws_s3_bucket_object" "form_archiver_code" {
   key         = "form_archiver_code"
   source      = data.archive_file.form_archiver_code.output_path
   source_hash = data.archive_file.form_archiver_code.output_base64sha256
-  depends_on = [
-    aws_s3_bucket.lambda_code,
-    data.archive_file.form_archiver_code
-  ]
 }
 
 resource "aws_lambda_function" "form_archiver" {
