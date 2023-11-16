@@ -232,20 +232,20 @@ variable "submission_lambda_arn" {
 
 variable "reliability_file_storage_id" {
   description = "id of the reliability file storage bucket"
-  type = string
+  type        = string
 }
 
 variable "vault_file_storage_id" {
   description = "id of the vault file storage bucket"
-  type = string
+  type        = string
 }
 
 variable "reliability_file_storage_arn" {
   description = "arn of the reliability file storage bucket"
-  type = string
+  type        = string
 }
 
 variable "vault_file_storage_arn" {
   description = "arn of the vault file storage bucket"
-  type = string
+  type        = string
 }
