@@ -104,6 +104,7 @@ dependency "s3" {
   mock_outputs = {
     reliability_file_storage_arn = ""
     vault_file_storage_arn       = ""
+    vault_file_storage_id        = ""
     archive_storage_arn          = ""
     archive_storage_id           = ""
     lambda_code_arn              = ""
@@ -138,6 +139,7 @@ inputs = {
 
   reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
   vault_file_storage_arn       = dependency.s3.outputs.vault_file_storage_arn
+  vault_file_storage_id        = dependency.s3.outputs.vault_file_storage_id
   archive_storage_arn          = dependency.s3.outputs.archive_storage_arn
   archive_storage_id           = dependency.s3.outputs.archive_storage_id
   lambda_code_arn              = dependency.s3.outputs.lambda_code_arn
