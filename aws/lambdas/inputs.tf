@@ -116,8 +116,18 @@ variable "vault_file_storage_arn" {
   type        = string
 }
 
+variable "vault_file_storage_id" {
+  description = "S3 bucket idfor vault file storage"
+  type        = string
+}
+
 variable "archive_storage_arn" {
   description = "S3 bucket arn for archive storage"
+  type        = string
+}
+
+variable "archive_storage_id" {
+  description = "S3 bucket id for archive storage"
   type        = string
 }
 

@@ -31,8 +31,8 @@ resource "aws_lambda_function" "response_archiver" {
     variables = {
       REGION                       = var.region
       DYNAMODB_VAULT_TABLE_NAME    = var.dynamodb_vault_table_name
-      ARCHIVING_S3_BUCKET          = aws_s3_bucket.archive_storage.bucket
-      VAULT_FILE_STORAGE_S3_BUCKET = aws_s3_bucket.vault_file_storage.bucket
+      ARCHIVING_S3_BUCKET          = var.archive_storage_id
+      VAULT_FILE_STORAGE_S3_BUCKET = var.vault_file_storage_id
       LOCALSTACK                   = var.localstack_hosted
     }
   }
