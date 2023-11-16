@@ -46,6 +46,10 @@ printf "...Setting up local Secrets Manager\n"
 cd $basedir/env/cloud/secrets
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
+printf "...Setting up local S3\n"
+cd $basedir/env/cloud/s3
+terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
 printf "...Creating SQS queue\n"
 cd $basedir/env/cloud/sqs
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
