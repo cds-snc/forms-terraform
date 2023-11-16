@@ -46,7 +46,7 @@ resource "aws_route53_record" "form_viewer_maintenance" {
 # Certificate validation
 # 
 locals {
-  domain_name_to_zone_id = zipmap(concat(var.domains, [aws_lb.form_viewer.dns_name]), concat(var.hosted_zone_ids, [aws_lb.form_viewer.zone_id]))
+  domain_name_to_zone_id = zipmap(var.domains, var.hosted_zone_ids)
 }
 
 
@@ -71,8 +71,8 @@ resource "aws_route53_record" "form_viewer_certificate_validation" {
 
 resource "aws_route53_health_check" "gc_forms_application" {
   fqdn              = aws_lb.form_viewer.dns_name
-  port              = 443
-  type              = "HTTPS"
+  port              = 80
+  type              = "HTTP"
   resource_path     = "/form-builder/edit"
   failure_threshold = "2"
   request_interval  = "30"
