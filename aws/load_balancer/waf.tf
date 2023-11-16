@@ -293,7 +293,7 @@ resource "aws_wafv2_regex_pattern_set" "forms_base_url" {
   description = "Regex matching the root domain of GCForms"
   scope       = "REGIONAL"
   dynamic "regular_expression" {
-    for_each = concat(var.domains, [aws_lb.form_viewer.dns_name])
+    for_each = var.domains
     content {
       regex_string = "^${regular_expression.value}$"
     }
