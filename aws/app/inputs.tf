@@ -224,3 +224,28 @@ variable "email_address_support" {
   description = "Email address for Form Support"
   type        = string
 }
+
+variable "submission_lambda_arn" {
+  description = "Submission Lambda ARN"
+  type        = string
+}
+
+variable "reliability_file_storage_id" {
+  description = "id of the reliability file storage bucket"
+  type = string
+}
+
+variable "vault_file_storage_id" {
+  description = "id of the vault file storage bucket"
+  type = string
+}
+
+variable "reliability_file_storage_arn" {
+  description = "arn of the reliability file storage bucket"
+  type = string
+}
+
+variable "vault_file_storage_arn" {
+  description = "arn of the vault file storage bucket"
+  type = string
+}

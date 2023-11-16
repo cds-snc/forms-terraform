@@ -76,8 +76,8 @@ data "aws_iam_policy_document" "forms_s3" {
     ]
 
     resources = [
-      aws_s3_bucket.reliability_file_storage.arn,
-      "${aws_s3_bucket.reliability_file_storage.arn}/*"
+      var.reliability_file_storage_arn,
+      "${var.reliability_file_storage_arn}/*"
     ]
   }
 
@@ -93,8 +93,8 @@ data "aws_iam_policy_document" "forms_s3" {
     ]
 
     resources = [
-      aws_s3_bucket.vault_file_storage.arn,
-      "${aws_s3_bucket.vault_file_storage.arn}/*"
+      var.vault_file_storage_arn,
+      "${var.vault_file_storage_arn}/*"
     ]
   }
 }

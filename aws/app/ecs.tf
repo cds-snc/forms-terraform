@@ -38,9 +38,9 @@ data "template_file" "form_viewer_task" {
     database_url                    = var.database_url_secret_arn
     redis_url                       = var.redis_url
     nextauth_url                    = "https://${var.domains[0]}"
-    submission_api                  = aws_lambda_function.submission.arn
-    reliability_file_storage        = aws_s3_bucket.reliability_file_storage.id
-    vault_file_storage              = aws_s3_bucket.vault_file_storage.id
+    submission_api                  = var.submission_lambda_arn
+    reliability_file_storage        = var.reliability_file_storage_id
+    vault_file_storage              = var.vault_file_storage_id
     gc_temp_token_template_id       = var.gc_temp_token_template_id
     gc_template_id                  = var.gc_template_id
     cognito_endpoint_url            = var.cognito_endpoint_url
