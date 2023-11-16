@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../cognito", "../secrets", "../lambdas", "../s3"]
+  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../cognito", "../secrets", "../s3"]
 }
 
 dependency "dynamodb" {
@@ -120,7 +120,7 @@ dependency "s3" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     vault_file_storage_id = ""
-    vault_file_sotarge_arn = ""
+    vault_file_storage_arn = ""
     reliability_file_storage_id = ""
     reliability_file_storage_arn = ""
   }
@@ -177,7 +177,7 @@ inputs = {
   notify_callback_bearer_token_secret = dependency.secrets.outputs.notify_callback_bearer_token_secret
   ecs_token_secret                    = dependency.secrets.outputs.token_secret
 
-  vault_file_sotarge_arn = dependency.s3.outputs.vault_file_sotarge_arn
+  vault_file_storage_arn = dependency.s3.outputs.vault_file_storage_arn
   vault_file_storage_id = dependency.s3.outputs.vault_file_storage_id
   reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
   reliability_file_storage_id = dependency.s3.outputs.reliability_file_storage_id

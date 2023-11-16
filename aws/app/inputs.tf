@@ -225,11 +225,6 @@ variable "email_address_support" {
   type        = string
 }
 
-variable "submission_lambda_arn" {
-  description = "Submission Lambda ARN"
-  type        = string
-}
-
 variable "reliability_file_storage_id" {
   description = "id of the reliability file storage bucket"
   type        = string
