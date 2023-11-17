@@ -7,13 +7,13 @@ resource "aws_cloudfront_origin_access_identity" "maintenance_mode" {
 }
 
 resource "aws_cloudfront_distribution" "maintenance_mode" {
-  # checkov:skip=CKV_AWS_68: WAF ACL not required
   # checkov:skip=CKV_AWS_86: Access logging not required
   enabled             = true
   http_version        = "http2"
   default_root_object = "index.html"
   web_acl_id          = aws_wafv2_web_acl.forms_maintenance_mode_acl.arn
   price_class         = "PriceClass_100"
+  aliases             = var.domains
 
   origin {
     origin_id   = local.s3_origin_id
