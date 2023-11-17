@@ -26,6 +26,7 @@ resource "aws_s3_bucket_public_access_block" "maintenance_mode" {
 
 data "aws_iam_policy_document" "allow_cloudfront_to_access_static_website_in_s3" {
   statement {
+    effect    = "Allow"
     actions   = ["s3:GetObject"]
     resources = ["${aws_s3_bucket.maintenance_mode.arn}/*"]
 
