@@ -18,8 +18,7 @@ resource "aws_route53_record" "form_viewer" {
     type = "PRIMARY"
   }
 
-  set_identifier  = "form_viewer_${var.domains[count.index]}_primary"
-  health_check_id = aws_route53_health_check.gc_forms_application.id
+  set_identifier = "form_viewer_${var.domains[count.index]}_primary"
 }
 
 resource "aws_route53_record" "form_viewer_maintenance" {
@@ -66,21 +65,22 @@ resource "aws_route53_record" "form_viewer_certificate_validation" {
   ttl             = 60
   type            = each.value.type
   zone_id         = local.domain_name_to_zone_id[each.value.domain]
-
 }
 
-resource "aws_route53_health_check" "gc_forms_application" {
-  fqdn              = aws_lb.form_viewer.dns_name
-  port              = 80
-  type              = "HTTP"
-  resource_path     = "/form-builder/edit"
-  failure_threshold = "2"
-  request_interval  = "30"
-
-  disabled = true # Disabling health check until we finalize the implementation of maintenance mode
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
+resource "aws_route53_record" "form_viewer_maintenance_mode_certificate_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.form_viewer_maintenance_mode.domain_validation_options : dvo.domain_name => {
+      domain = dvo.domain_name
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
   }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = local.domain_name_to_zone_id[each.value.domain]
 }
