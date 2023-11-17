@@ -37,7 +37,7 @@ resource "aws_lb_target_group" "form_viewer_1" {
     interval            = 10
     path                = "/form-builder/edit"
     port                = 3000
-    matcher             = "301,200"
+    matcher             = "200"
     timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 2
@@ -63,7 +63,7 @@ resource "aws_lb_target_group" "form_viewer_2" {
     interval            = 10
     port                = 3000
     path                = "/form-builder/edit"
-    matcher             = "301,200"
+    matcher             = "200"
     timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 2

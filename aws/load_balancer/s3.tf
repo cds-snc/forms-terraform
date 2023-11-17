@@ -11,34 +11,34 @@ resource "aws_s3_bucket" "maintenance_mode" {
   }
 }
 
-resource "aws_s3_bucket_ownership_controls" "maintenance_mode" {
+resource "aws_s3_bucket_acl" "maintenance_mode" {
   bucket = aws_s3_bucket.maintenance_mode.id
-
-  rule {
-    object_ownership = "BucketOwnerPreferred"
-  }
+  acl    = "private"
 }
 
 resource "aws_s3_bucket_public_access_block" "maintenance_mode" {
-  # checkov:skip=CKV_AWS_53: Ensure S3 bucket has block public ACLS enabled (not required)
-  # checkov:skip=CKV_AWS_54: Ensure S3 bucket has block public policy enabled (not required)
-  # checkov:skip=CKV_AWS_55: Ensure S3 bucket has ignore public ACLs enabled (not required)
-  # checkov:skip=CKV_AWS_56: Ensure S3 bucket has 'restrict_public_bucket' enabled (not required)
   bucket                  = aws_s3_bucket.maintenance_mode.id
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_acl" "maintenance_mode" {
-  bucket = aws_s3_bucket.maintenance_mode.id
-  acl    = "public-read"
+data "aws_iam_policy_document" "allow_cloudfront_to_access_static_website_in_s3" {
+  statement {
+    actions   = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.maintenance_mode.arn}/*"]
 
-  depends_on = [
-    aws_s3_bucket_ownership_controls.maintenance_mode,
-    aws_s3_bucket_public_access_block.maintenance_mode,
-  ]
+    principals {
+      type        = "AWS"
+      identifiers = [aws_cloudfront_origin_access_identity.maintenance_mode.iam_arn]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "allow_cloudfront_to_access_static_website_in_s3" {
+  bucket = aws_s3_bucket.maintenance_mode.id
+  policy = data.aws_iam_policy_document.allow_cloudfront_to_access_static_website_in_s3.json
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "maintenance_mode" {
@@ -65,31 +65,4 @@ resource "aws_s3_bucket_object" "maintenance_static_page" {
   source       = "./static_website/index.html"
   content_type = "text/html"
   etag         = filemd5("./static_website/index.html")
-}
-
-data "aws_iam_policy_document" "allow_cloudfront_to_access_static_website_in_s3" {
-  statement {
-    principals {
-      type = "AWS"
-      identifiers = [
-        aws_cloudfront_origin_access_identity.maintenance_mode.iam_arn
-      ]
-    }
-
-    effect = "Allow"
-
-    actions = [
-      "s3:GetObject",
-    ]
-
-    resources = [
-      aws_s3_bucket.maintenance_mode.arn,
-      "${aws_s3_bucket.maintenance_mode.arn}/*",
-    ]
-  }
-}
-
-resource "aws_s3_bucket_policy" "allow_cloudfront_to_access_static_website_in_s3" {
-  bucket = aws_s3_bucket.maintenance_mode.id
-  policy = data.aws_iam_policy_document.allow_cloudfront_to_access_static_website_in_s3.json
 }
