@@ -52,7 +52,7 @@ resource "aws_cloudfront_distribution" "maintenance_mode" {
 
   viewer_certificate {
     acm_certificate_arn      = aws_acm_certificate.form_viewer_maintenance_mode.arn
-    minimum_protocol_version = "TLSv1.2_2021"
+    minimum_protocol_version = "TLSv1.2_2019"
     ssl_support_method       = "sni-only"
   }
 
