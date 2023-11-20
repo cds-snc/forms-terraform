@@ -7,13 +7,17 @@ export TF_VAR_email_address_contact_us=""
 export TF_VAR_email_address_support=""
 export APP_ENV="local"
 
+# Text colors
+color='\033[1;95m' 
+reset='\033[0m' # No Color
+
 # Set proper terraform and terragrunt versions
 
 tgswitch 0.53.2
-tfswitch 1.4.2
+tfswitch 1.6.4
 
 # Usage:
-# Without any args will reuse the existing cached packages saving some tiem and bandwidth
+# Without any args will reuse the existing cached packages saving some time and bandwidth
 # With the 'clean' argument will remove all cached packages for terraform and node modules for lambdas.
 
 basedir=$(pwd)
@@ -23,49 +27,49 @@ ACTION=$1
 printf "Configuring localstack components via terraform...\n"
 
 if [[ "${ACTION}" == "clean" ]]; then
-  printf "=> Cleaning up previous caches, terraform state, and lambda dependencies\n"
+  printf "${color}=> Cleaning up previous caches, terraform state, and lambda dependencies${reset}\n"
 
-  printf "...Purging stale terraform state files\n"
+  printf "${color}...Purging stale terraform state files${reset}\n"
   find $basedir/env -type f -name terraform.tfstate -prune -exec rm -fv {} \;
 
-  printf "...Purging stale localstack related files\n"
+  printf "${color}...Purging stale localstack related files${reset}\n"
   find $basedir/env -type d -name .terragrunt-cache -prune -exec rm -rf {} \;
 
-  printf "...Removing old lambda dependencies\n"
+  printf "${color}...Removing old lambda dependencies${reset}\n"
     cd $basedir/aws/lambdas/code
     ./deps.sh delete
 fi
 
-printf "=> Creating AWS services in Localstack\n"
+printf "${color}=> Creating AWS services in Localstack${reset}\n"
 
-printf "...Setting up local KMS\n"
+printf "${color}...Setting up KMS${reset}\n"
 cd $basedir/env/cloud/kms
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
-printf "...Setting up local Secrets Manager\n"
+printf "${color}...Setting up Secrets Manager${reset}\n"
 cd $basedir/env/cloud/secrets
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
-printf "...Setting up local S3\n"
+printf "${color}...Setting up S3${reset}\n"
 cd $basedir/env/cloud/s3
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
-printf "...Creating SQS queue\n"
+printf "${color}...Creating SQS queue${reset}\n"
 cd $basedir/env/cloud/sqs
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
-printf "...Creating SNS queue\n"
+printf "${color}...Creating SNS queue${reset}\n"
 cd $basedir/env/cloud/sns
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
-printf "...Creating the DynamoDB database\n"
+printf "${color}...Creating the DynamoDB database${reset}\n"
 cd $basedir/env/cloud/dynamodb
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
-printf "...Installing lambda dependencies\n"
+printf "${color}...Installing lambda dependencies${reset}\n"
 cd $basedir/aws/lambdas/code
 ./deps.sh install
 
-printf "...Creating lambdas\n"
+printf "${color}...Creating lambdas${reset}\n"
 cd $basedir/env/cloud/lambdas
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
