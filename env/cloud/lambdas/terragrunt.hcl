@@ -104,11 +104,11 @@ dependency "s3" {
   mock_outputs = {
     reliability_file_storage_arn = ""
     vault_file_storage_arn       = ""
-    vault_file_storage_id        = ""
+    vault_file_storage_id        = "placeholder"
     archive_storage_arn          = ""
-    archive_storage_id           = ""
+    archive_storage_id           = "placeholder"
     lambda_code_arn              = ""
-    lambda_code_id               = ""
+    lambda_code_id               = "placeholder"
   }
 }
 
