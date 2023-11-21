@@ -13,7 +13,7 @@ output "lambda_submission_log_group_name" {
   value       = aws_cloudwatch_log_group.submission.name
 }
 
-output "lambda_archiver_log_group_name" {
+output "lambda_response_archiver_log_group_name" {
   description = "Response Archiver Lambda CloudWatch log group name"
   value       = aws_cloudwatch_log_group.response_archiver.name
 }

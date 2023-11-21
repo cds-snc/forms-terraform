@@ -71,7 +71,7 @@ dependency "lambdas" {
   mock_outputs = {
     lambda_reliability_log_group_name                = ""
     lambda_submission_log_group_name                 = ""
-    lambda_archiver_log_group_name                   = ""
+    lambda_response_archiver_log_group_name          = ""
     lambda_dlq_consumer_log_group_name               = ""
     lambda_template_archiver_log_group_name          = ""
     lambda_audit_log_group_name                      = ""
@@ -116,7 +116,7 @@ inputs = {
   ecs_service_name                                 = dependency.app.outputs.ecs_service_name
   lambda_reliability_log_group_name                = dependency.lambdas.outputs.lambda_reliability_log_group_name
   lambda_submission_log_group_name                 = dependency.lambdas.outputs.lambda_submission_log_group_name
-  lambda_response_archiver_log_group_name                   = dependency.lambdas.outputs.lambda_response_archiver_log_group_name
+  lambda_response_archiver_log_group_name          = dependency.lambdas.outputs.lambda_response_archiver_log_group_name
   lambda_dlq_consumer_log_group_name               = dependency.lambdas.outputs.lambda_dlq_consumer_log_group_name
   lambda_template_archiver_log_group_name          = dependency.lambdas.outputs.lambda_template_archiver_log_group_name
   lambda_audit_log_group_name                      = dependency.lambdsa.outputs.lambda_audit_log_group_name
