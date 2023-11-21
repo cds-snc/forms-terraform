@@ -35,3 +35,10 @@ resource "aws_acm_certificate" "form_viewer_maintenance_mode" {
     Terraform             = true
   }
 }
+
+resource "aws_acm_certificate_validation" "form_viewer_maintenance_mode_cloudfront_certificate" {
+  certificate_arn         = aws_acm_certificate.form_viewer_maintenance_mode.arn
+  validation_record_fqdns = [for record in aws_route53_record.form_viewer_maintenance_mode_certificate_validation : record.fqdn]
+
+  provider = aws.us-east-1
+}
