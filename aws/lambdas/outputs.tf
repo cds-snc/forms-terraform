@@ -15,7 +15,7 @@ output "lambda_submission_log_group_name" {
 
 output "lambda_archiver_log_group_name" {
   description = "Response Archiver Lambda CloudWatch log group name"
-  value       = aws_cloudwatch_log_group.archiver.name
+  value       = aws_cloudwatch_log_group.response_archiver.name
 }
 
 output "lambda_dlq_consumer_log_group_name" {

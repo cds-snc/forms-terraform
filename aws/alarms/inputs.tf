@@ -18,7 +18,7 @@ variable "lambda_submission_log_group_name" {
   type        = string
 }
 
-variable "lambda_archiver_log_group_name" {
+variable "lambda_response_archiver_log_group_name" {
   description = "Response Archiver Lambda CloudWatch log group name"
   type        = string
 }
