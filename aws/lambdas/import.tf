@@ -1,6 +1,6 @@
 import {
   to = aws_cloudwatch_log_group.archive_form_templates
-  id = "aws/lambda/ArchiveFormTemplates"
+  id = "/aws/lambda/ArchiveFormTemplates"
 }
 
 import {
