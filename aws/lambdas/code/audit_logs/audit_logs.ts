@@ -1,5 +1,14 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
+import { Handler, SQSEvent } from "aws-lambda";
+
+type LogEvent = {
+  userID: string;
+  event: string;
+  timestamp: string;
+  subject: { type: string; id?: string };
+  description: string;
+};
 
 const warnOnEvents = [
   // Form Events
@@ -19,7 +28,7 @@ const warnOnEvents = [
   "DeleteSetting",
 ];
 
-const notifyOnEvent = async (logEvents) => {
+const notifyOnEvent = async (logEvents: Array<LogEvent>) => {
   const eventsToNotify = logEvents.filter((logEvent) => warnOnEvents.includes(logEvent.event));
   eventsToNotify.forEach((logEvent) =>
     console.warn(
@@ -33,21 +42,11 @@ const notifyOnEvent = async (logEvents) => {
   );
 };
 
-export async function handler(event) {
-  /* 
-  LogEvent contains:
-  {
-    userID,
-    event,
-    timestamp,
-    subject: {type, id?},
-    description,
-  }
-  */
+export const handler: Handler = async (event: SQSEvent) => {
   try {
     const logEvents = event.Records.map((record) => ({
       messageId: record.messageId,
-      logEvent: JSON.parse(record.body),
+      logEvent: JSON.parse(record.body) as LogEvent,
     }));
 
     // Warn on events that should be notified
@@ -123,9 +122,7 @@ export async function handler(event) {
       })
     );
 
-    const {
-      UnprocessedItems: { AuditLogs },
-    } = await dynamoDb.send(
+    const { UnprocessedItems: { AuditLogs = [], ...UnprocessedItems } = {} } = await dynamoDb.send(
       new BatchWriteCommand({
         RequestItems: {
           AuditLogs: uniquePutTransactionItems,
@@ -134,13 +131,13 @@ export async function handler(event) {
     );
 
     if (typeof AuditLogs !== "undefined") {
-      const unprocessedIDs = AuditLogs.map(({ PutItem: { UserID, Event, TimeStamp } }, index) => {
+      const unprocessedIDs = AuditLogs.map(({ PutRequest: { Item } = {} }, index) => {
         // Find the original LogEvent item that has the messageID
-        const [unprocessedItem] = logEvents.filter(
+        const unprocessedItem = logEvents.filter(
           ({ logEvent }) =>
-            logEvent.userID === UserID &&
-            logEvent.event === Event &&
-            logEvent.timestamp === TimeStamp
+            logEvent.userID === Item?.UserID &&
+            logEvent.event === Item?.Event &&
+            logEvent.timestamp === Item?.TimeStamp
         )[0];
 
         if (!unprocessedItem)
@@ -178,7 +175,7 @@ export async function handler(event) {
         level: "error",
         severity: 1,
         msg: "Failed to run Audit Logs Processor.",
-        error: error.message,
+        error: (error as Error).message,
       })
     );
 
@@ -186,4 +183,4 @@ export async function handler(event) {
       batchItemFailures: event.Records.map((record) => ({ itemIdentifier: record.messageId })),
     };
   }
-}
+};
