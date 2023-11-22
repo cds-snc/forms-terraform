@@ -1,6 +1,7 @@
 import { deleteFormTemplatesMarkedAsArchived } from "./lib/templates.js";
+import { Handler } from "aws-lambda";
 
-export async function handler(event) {
+export const handler: Handler = async () => {
   try {
     await deleteFormTemplatesMarkedAsArchived();
 
@@ -13,13 +14,13 @@ export async function handler(event) {
       JSON.stringify({
         level: "error",
         msg: "Failed to run Form Templates Archiver.",
-        error: error.message,
+        error: (error as Error).message,
       })
     );
 
     return {
       statusCode: "ERROR",
-      error: error.message,
+      error: (error as Error).message,
     };
   }
-}
+};

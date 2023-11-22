@@ -1,5 +1,5 @@
 import { RDSDataClient, ExecuteStatementCommand } from "@aws-sdk/client-rds-data";
-import { Client } from "pg";
+import pg from "pg";
 
 const REGION = process.env.REGION;
 
@@ -17,7 +17,7 @@ const deleteFormTemplatesMarkedAsArchived = async () => {
       JSON.stringify({
         level: "warn",
         msg: `Failed to delete form templates marked as archived.`,
-        error: error.message,
+        error: (error as Error).message,
       })
     );
   }
@@ -29,8 +29,8 @@ const deleteFormTemplatesMarkedAsArchived = async () => {
  * @param {string[]} parameters
  * @returns PG Client return value
  */
-const requestSAM = async (SQL, parameters) => {
-  const dbClient = new Client();
+const requestSAM = async (SQL: string, parameters: Array<string>) => {
+  const dbClient = new pg.Client();
 
   try {
     if (
@@ -48,7 +48,9 @@ const requestSAM = async (SQL, parameters) => {
 
     return parseConfig(data.rows);
   } catch (error) {
-    throw new Error(`Error issuing command to Local SAM AWS DB. Reason: ${error.message}.`);
+    throw new Error(
+      `Error issuing command to Local SAM AWS DB. Reason: ${(error as Error).message}.`
+    );
   } finally {
     dbClient.end();
   }
@@ -60,7 +62,10 @@ const requestSAM = async (SQL, parameters) => {
  * @param {{name: string, value: {stringValue: string}[]}} parameters
  * @returns RDS client return value
  */
-const requestRDS = async (SQL, parameters) => {
+const requestRDS = async (
+  SQL: string,
+  parameters: { name: string; value: { stringValue: string } }[]
+) => {
   try {
     const dbClient = new RDSDataClient({ region: REGION });
 
@@ -79,11 +84,11 @@ const requestRDS = async (SQL, parameters) => {
 
     return parseConfig(data.records);
   } catch (error) {
-    throw new Error(`Error issuing command to AWS RDS. Reason: ${error.message}.`);
+    throw new Error(`Error issuing command to AWS RDS. Reason: ${(error as Error).message}.`);
   }
 };
 
-const parseConfig = (records) => {
+const parseConfig = (records: any[] | undefined) => {
   if (records) {
     const parsedRecords = records.map((record) => {
       let formConfig;
@@ -103,6 +108,4 @@ const parseConfig = (records) => {
   return { records: [] };
 };
 
-export default {
-  deleteFormTemplatesMarkedAsArchived,
-};
+export { deleteFormTemplatesMarkedAsArchived };

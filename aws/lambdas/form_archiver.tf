@@ -4,7 +4,7 @@
 
 data "archive_file" "form_archiver_code" {
   type        = "zip"
-  source_file = "./code/form_archiver/archiver.js"
+  source_file = "./code/form_archiver/form_archiver.js"
   output_path = "/tmp/form_archiver_code.zip"
 }
 
@@ -21,7 +21,7 @@ resource "aws_lambda_function" "form_archiver" {
   s3_object_version = aws_s3_bucket_object.form_archiver_code.version_id
   function_name     = "Archive_Form_Templates"
   role              = aws_iam_role.lambda.arn
-  handler           = "archiver.handler"
+  handler           = "form_archiver.handler"
   timeout           = 300
 
   source_code_hash = data.archive_file.form_archiver_code.output_base64sha256

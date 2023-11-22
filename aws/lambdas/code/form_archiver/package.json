@@ -1,11 +1,23 @@
 {
-  "name": "reliability",
+  "name": "form_archiver",
   "version": "1.0.0",
-  "main": "reliability.js",
+  "main": "form_archiver.js",
   "type": "module",
   "license": "MIT",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "tsc --project tsconfig.json",
+    "build:dev": "tsc --project tsconfig.json --watch",
+    "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cp -r node_modules dist/node_modules"
+  },
   "dependencies": {
     "@aws-sdk/client-rds-data": "3.430.0",
     "pg": "^8.7.3"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.126",
+    "@types/node": "^20.9.0",
+    "@types/pg": "^8.10.9",
+    "typescript": "^5.2.2"
   }
 }
