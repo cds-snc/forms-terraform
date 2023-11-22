@@ -7,6 +7,7 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "tsc --project tsconfig.json",
+    "build:dev": "tsc --project tsconfig.json --watch",
     "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cp -r node_modules dist/node_modules"
   },
   "devDependencies": {
