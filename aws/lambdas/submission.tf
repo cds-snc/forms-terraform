@@ -15,12 +15,13 @@ resource "aws_s3_bucket_object" "submission_code" {
 }
 
 resource "aws_lambda_function" "submission" {
-  s3_bucket     = aws_s3_bucket_object.submission_code.bucket
-  s3_key        = aws_s3_bucket_object.submission_code.key
-  function_name = "Submission"
-  role          = aws_iam_role.lambda.arn
-  handler       = "submission.handler"
-  timeout       = 60
+  s3_bucket         = aws_s3_bucket_object.submission_code.bucket
+  s3_key            = aws_s3_bucket_object.submission_code.key
+  s3_object_version = aws_s3_bucket_object.submission_code.version_id
+  function_name     = "Submission"
+  role              = aws_iam_role.lambda.arn
+  handler           = "submission.handler"
+  timeout           = 60
 
   source_code_hash = data.archive_file.submission_code.output_base64sha256
 

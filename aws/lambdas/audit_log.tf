@@ -16,12 +16,13 @@ resource "aws_s3_bucket_object" "audit_logs_code" {
 }
 
 resource "aws_lambda_function" "audit_logs" {
-  s3_bucket     = aws_s3_bucket_object.audit_logs_code.bucket
-  s3_key        = aws_s3_bucket_object.audit_logs_code.key
-  function_name = "Audit_Logs"
-  role          = aws_iam_role.lambda.arn
-  handler       = "audit_logs.handler"
-  timeout       = 60
+  s3_bucket         = aws_s3_bucket_object.audit_logs_code.bucket
+  s3_key            = aws_s3_bucket_object.audit_logs_code.key
+  s3_object_version = aws_s3_bucket_object.audit_logs_code.version_id
+  function_name     = "Audit_Logs"
+  role              = aws_iam_role.lambda.arn
+  handler           = "audit_logs.handler"
+  timeout           = 60
 
   source_code_hash = data.archive_file.audit_logs_code.output_base64sha256
 

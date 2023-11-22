@@ -20,11 +20,12 @@ resource "aws_s3_bucket_object" "reliability_dlq_consumer_code" {
 
 
 resource "aws_lambda_function" "reliability_dlq_consumer" {
-  s3_bucket     = aws_s3_bucket_object.reliability_dlq_consumer_code.bucket
-  s3_key        = aws_s3_bucket_object.reliability_dlq_consumer_code.key
-  function_name = "Reliability_DLQ_Consumer"
-  role          = aws_iam_role.lambda.arn
-  handler       = "dead_letter_queue_consumer.handler"
+  s3_bucket         = aws_s3_bucket_object.reliability_dlq_consumer_code.bucket
+  s3_key            = aws_s3_bucket_object.reliability_dlq_consumer_code.key
+  s3_object_version = aws_s3_bucket_object.reliability_dlq_consumer_code.version_id
+  function_name     = "Reliability_DLQ_Consumer"
+  role              = aws_iam_role.lambda.arn
+  handler           = "dead_letter_queue_consumer.handler"
 
   source_code_hash = data.archive_file.reliability_dlq_consumer_code.output_base64sha256
   runtime          = "nodejs18.x"
