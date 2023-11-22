@@ -20,7 +20,7 @@ env:
   TERRAFORM_VERSION: 1.6.4
   TERRAGRUNT_VERSION: 0.53.2
   TF_INPUT: false
-  TF_VAR_ecs_secret_token_secret: ${{ secrets.STAGING_TOKEN_SECRET }}
+  TF_VAR_ecs_secret_token: ${{ secrets.STAGING_TOKEN_SECRET }}
   TF_VAR_recaptcha_secret: ${{secrets.STAGING_RECAPTCHA_SITE_SECRET}}
   TF_VAR_recaptcha_public: 6LfJDN4eAAAAAGvdRF7ZnQ7ciqdo1RQnQDFmh0VY
   TF_VAR_notify_api_key: ${{ secrets.STAGING_NOTIFY_API_KEY }}

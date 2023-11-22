@@ -21,11 +21,11 @@ env:
   TERRAFORM_VERSION: 1.6.4
   TERRAGRUNT_VERSION: 0.53.2
   TF_INPUT: false
-  ECS_SECRET_TOKEN: ${{ secrets.STAGING_TOKEN_SECRET }}
-  RECAPTCHA_SECRET: ${{secrets.STAGING_RECAPTCHA_SITE_SECRET}}
-  NOTIFY_CALLBACK_BEARER_TOKEN: ${{ secrets.STAGING_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
-  NOTIFY_API_KEY: ${{ secrets.STAGING_NOTIFY_API_KEY }}
-  FRESHDESK_API_KEY: ${{ secrets.STAGING_FRESHDESK_API_KEY }}
+  TF_VAR_ecs_secret_token: ${{ secrets.STAGING_TOKEN_SECRET }}
+  TF_VAR_recaptcha_secret: ${{secrets.STAGING_RECAPTCHA_SITE_SECRET}}
+  TF_VAR_notify_callback_bearer_token: ${{ secrets.STAGING_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
+  TF_VAR_notify_api_key: ${{ secrets.STAGING_NOTIFY_API_KEY }}
+  TF_VAR_freshdesk_api_key: ${{ secrets.STAGING_FRESHDESK_API_KEY }}
 
   TF_VAR_recaptcha_public: 6LfJDN4eAAAAAGvdRF7ZnQ7ciqdo1RQnQDFmh0VY
 
