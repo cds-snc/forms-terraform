@@ -1,17 +1,22 @@
-import { DynamoDBClient, QueryCommand, BatchWriteItemCommand } from "@aws-sdk/client-dynamodb";
+import {
+  DynamoDBClient,
+  QueryCommand,
+  BatchWriteItemCommand,
+  QueryCommandInput,
+} from "@aws-sdk/client-dynamodb";
 const dynamoDb = new DynamoDBClient({
   region: process.env.REGION,
   ...(process.env.LOCALSTACK && { endpoint: "http://host.docker.internal:4566" }),
 });
-const DYNAMODB_VAULT_TABLE_NAME = process.env.DYNAMODB_VAULT_TABLE_NAME;
+const DYNAMODB_VAULT_TABLE_NAME = process.env.DYNAMODB_VAULT_TABLE_NAME ?? "";
 
-async function retrieveFormResponsesOver28DaysOld(status) {
+export async function retrieveFormResponsesOver28DaysOld(status: string) {
   try {
-    let formResponses = [];
+    let formResponses: { formID: string; createdAt: string }[] = [];
     let lastEvaluatedKey = null;
 
     while (lastEvaluatedKey !== undefined) {
-      const queryCommandInput = {
+      const queryCommandInput: QueryCommandInput = {
         TableName: DYNAMODB_VAULT_TABLE_NAME,
         IndexName: "Nagware",
         ExclusiveStartKey: lastEvaluatedKey ?? undefined,
@@ -35,8 +40,8 @@ async function retrieveFormResponsesOver28DaysOld(status) {
       if (response.Items?.length) {
         formResponses = formResponses.concat(
           response.Items.map((item) => ({
-            formID: item.FormID.S,
-            createdAt: item.CreatedAt.N,
+            formID: item.FormID.S ?? "",
+            createdAt: item.CreatedAt.N ?? "",
           }))
         );
       }
@@ -46,16 +51,18 @@ async function retrieveFormResponsesOver28DaysOld(status) {
 
     return formResponses;
   } catch (error) {
-    throw new Error(`Failed to retrieve ${status} form responses. Reason: ${error.message}.`);
+    throw new Error(
+      `Failed to retrieve ${status} form responses. Reason: ${(error as Error).message}.`
+    );
   }
 }
 
-async function deleteOldTestResponses(formID) {
+export async function deleteOldTestResponses(formID: string) {
   try {
-    let accumulatedResponses = [];
+    let accumulatedResponses: string[] = [];
     let lastEvaluatedKey = null;
     while (lastEvaluatedKey !== undefined) {
-      const queryCommandInput = {
+      const queryCommandInput: QueryCommandInput = {
         TableName: DYNAMODB_VAULT_TABLE_NAME,
         ExclusiveStartKey: lastEvaluatedKey ?? undefined,
         KeyConditionExpression: "FormID = :formID",
@@ -70,7 +77,7 @@ async function deleteOldTestResponses(formID) {
 
       if (response.Items?.length) {
         accumulatedResponses = accumulatedResponses.concat(
-          response.Items.map((item) => item.NAME_OR_CONF.S)
+          response.Items.map((item) => item.NAME_OR_CONF.S ?? "")
         );
       }
       lastEvaluatedKey = response.LastEvaluatedKey;
@@ -85,12 +92,12 @@ async function deleteOldTestResponses(formID) {
 
     await deleteDraftFormResponsesFromDynamoDb(formID, accumulatedResponses);
   } catch (e) {
-    throw new Error(`Failed to retrieve form responses. Reason: ${e.message}.`);
+    throw new Error(`Failed to retrieve form responses. Reason: ${(e as Error).message}.`);
   }
 }
 
-async function deleteDraftFormResponsesFromDynamoDb(formID, formResponses) {
-  const chunks = (arr, size) =>
+async function deleteDraftFormResponsesFromDynamoDb(formID: string, formResponses: string[]) {
+  const chunks = (arr: any[], size: number) =>
     Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
       arr.slice(i * size, i * size + size)
     );
@@ -133,14 +140,11 @@ async function deleteDraftFormResponsesFromDynamoDb(formID, formResponses) {
       JSON.stringify({
         level: "error",
         msg: `Failed to delete overdue draft form responses from the Vault for form ${formID}.`,
-        error: error.message,
+        error: (error as Error).message,
       })
     );
-    throw new Error(`Failed to delete overdue draft form responses. Reason: ${error.message}.`);
+    throw new Error(
+      `Failed to delete overdue draft form responses. Reason: ${(error as Error).message}.`
+    );
   }
 }
-
-export default {
-  retrieveFormResponsesOver28DaysOld,
-  deleteOldTestResponses,
-};

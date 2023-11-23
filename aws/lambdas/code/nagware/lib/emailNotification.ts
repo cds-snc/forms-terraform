@@ -1,11 +1,16 @@
 import { NotifyClient } from "notifications-node-client";
+import { AxiosError } from "axios";
 
 const notifyClient = new NotifyClient(
   "https://api.notification.canada.ca",
   process.env.NOTIFY_API_KEY
 );
 
-async function notifyFormOwner(formID, formName, formOwnerEmailAddress) {
+export async function notifyFormOwner(
+  formID: string,
+  formName: string,
+  formOwnerEmailAddress: string
+) {
   try {
     const baseUrl = `http://${process.env.DOMAIN}`;
 
@@ -41,31 +46,29 @@ Si les réponses ne sont toujours pas confirmées après 45 jours, un processus 
       },
     });
   } catch (error) {
-    if (process.env.ENVIRONMENT === "staging") {
-      if (error.response?.data?.errors) {
-        if (
-          error.response.data.errors.find((e) =>
-            e.message.includes("Can’t send to this recipient using a team-only API key")
-          ) !== undefined
-        )
-          return;
+    if (error instanceof AxiosError) {
+      if (process.env.ENVIRONMENT === "staging") {
+        if (error.response?.data?.errors) {
+          if (
+            error.response.data.errors.find((e: Error) =>
+              e.message.includes("Can’t send to this recipient using a team-only API key")
+            ) !== undefined
+          )
+            return;
+        }
       }
+      // Error Message will be sent to slack
+      console.error(
+        JSON.stringify({
+          level: "error",
+          msg: `Failed to send nagware email to form owner: ${formOwnerEmailAddress} for form ID ${formID} .`,
+          error: error.response?.data?.errors
+            ? JSON.stringify(error.response.data.errors)
+            : error.message,
+        })
+      );
     }
-    // Error Message will be sent to slack
-    console.error(
-      JSON.stringify({
-        level: "error",
-        msg: `Failed to send nagware email to form owner: ${formOwnerEmailAddress} for form ID ${formID} .`,
-        error: error.response?.data?.errors
-          ? JSON.stringify(error.response.data.errors)
-          : error.message,
-      })
-    );
     // Continue to send nagware emails even if one fails
     return;
   }
 }
-
-export default {
-  notifyFormOwner,
-};

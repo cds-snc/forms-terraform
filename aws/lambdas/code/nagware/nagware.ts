@@ -1,7 +1,7 @@
 import {
   retrieveFormResponsesOver28DaysOld,
   deleteOldTestResponses,
-} from "./lib/dynamodbDataLayer";
+} from "./lib/dynamodbDataLayer.js";
 import { getTemplateInfo } from "./lib/templates.js";
 import { notifyFormOwner } from "./lib/emailNotification.js";
 
@@ -23,13 +23,13 @@ export async function handler() {
       JSON.stringify({
         level: "error",
         msg: "Failed to run Nagware.",
-        error: error.message,
+        error: (error as Error).message,
       })
     );
 
     return {
       statusCode: "ERROR",
-      error: error.message,
+      error: (error as Error).message,
     };
   }
 }
