@@ -105,11 +105,11 @@ dependency "secrets" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    notify_api_key_secret               = ""
-    freshdesk_api_key_secret            = ""
-    token_secret                        = ""
-    recaptcha_secret                    = ""
-    notify_callback_bearer_token_secret = ""
+    notify_api_key_secret_arn               = ""
+    freshdesk_api_key_secret_arn            = ""
+    token_secret_arn                        = ""
+    recaptcha_secret_arn                    = ""
+    notify_callback_bearer_token_secret_arn = ""
 
   }
 }
@@ -171,11 +171,11 @@ inputs = {
   cognito_client_id     = dependency.cognito.outputs.cognito_client_id
   cognito_user_pool_arn = dependency.cognito.outputs.cognito_user_pool_arn
 
-  recaptcha_secret                    = dependency.secrets.outputs.recaptcha_secret
-  notify_api_key_secret               = dependency.secrets.outputs.notify_api_key_secret
-  freshdesk_api_key_secret            = dependency.secrets.outputs.freshdesk_api_key_secret
-  notify_callback_bearer_token_secret = dependency.secrets.outputs.notify_callback_bearer_token_secret
-  ecs_token_secret                    = dependency.secrets.outputs.token_secret
+  recaptcha_secret_arn                    = dependency.secrets.outputs.recaptcha_secret_arn
+  notify_api_key_secret_arn               = dependency.secrets.outputs.notify_api_key_secret_arn
+  freshdesk_api_key_secret_arn            = dependency.secrets.outputs.freshdesk_api_key_secret_arn
+  notify_callback_bearer_token_secret_arn = dependency.secrets.outputs.notify_callback_bearer_token_secret_arn
+  ecs_token_secret_arn                    = dependency.secrets.outputs.token_secret_arn
 
   vault_file_storage_arn = dependency.s3.outputs.vault_file_storage_arn
   vault_file_storage_id = dependency.s3.outputs.vault_file_storage_id
