@@ -4,6 +4,7 @@ import { extractFileInputResponses, notifyProcessed } from "./dataLayer.js";
 import { retrieveFilesFromReliabilityStorage } from "./s3FileInput.js";
 import { FormSubmission } from "./types.js";
 import { ClientRequest } from "http";
+import { AxiosError } from "axios";
 
 type NetworkError = {
   request?: ClientRequest;
@@ -84,27 +85,27 @@ export default async (
   } catch (error) {
     let errorMessage = "";
 
-    if ((error as NetworkError)?.response) {
-      /*
-       * The request was made and the server responded with a
-       * status code that falls out of the range of 2xx
-       */
-      const notifyErrors = Array.isArray((error as NetworkError).response?.data.errors)
-        ? JSON.stringify((error as NetworkError).response?.data.errors)
-        : (error as NetworkError).response?.data.errors;
-      errorMessage = `GC Notify errored with status code ${
-        (error as NetworkError).response?.status
-      } and returned the following detailed errors ${notifyErrors}.`;
-    } else if ((error as NetworkError).request) {
-      /*
-       * The request was made but no response was received, `error.request`
-       * is an instance of XMLHttpRequest in the browser and an instance
-       * of http.ClientRequest in Node.js
-       */
-      errorMessage = `${(error as NetworkError).request}.`;
-    } else {
-      // Something else happened during processing
-      errorMessage = `${(error as Error).message}.`;
+    if (error instanceof AxiosError) {
+      if (error.response) {
+        /*
+         * The request was made and the server responded with a
+         * status code that falls out of the range of 2xx
+         */
+        const notifyErrors = Array.isArray(error.response.data.errors)
+          ? JSON.stringify(error.response.data.errors)
+          : error.response.data.errors;
+        errorMessage = `GC Notify errored with status code ${error.response.status} and returned the following detailed errors ${notifyErrors}.`;
+      } else if (error.request) {
+        /*
+         * The request was made but no response was received, `error.request`
+         * is an instance of XMLHttpRequest in the browser and an instance
+         * of http.ClientRequest in Node.js
+         */
+        errorMessage = `${error.request}.`;
+      }
+    }
+    if (error instanceof Error) {
+      errorMessage = `${error.message}.`;
     }
 
     console.error(
