@@ -1,5 +1,5 @@
 
-variable "notify_api_key_secret" {
+variable "notify_api_key_secret_arn" {
   description = "ARN of notify_api_key secret"
   type        = string
 }
@@ -9,7 +9,7 @@ variable "gc_template_id" {
   type        = string
 }
 
-variable "token_secret" {
+variable "token_secret_arn" {
   description = "Token secret used for app"
   type        = string
 }

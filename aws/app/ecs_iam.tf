@@ -44,11 +44,11 @@ data "aws_iam_policy_document" "forms_secrets_manager" {
 
     resources = [
       var.database_url_secret_arn,
-      var.recaptcha_secret,
-      var.notify_api_key_secret,
-      var.ecs_token_secret,
-      var.notify_callback_bearer_token_secret,
-      var.freshdesk_api_key_secret
+      var.recaptcha_secret_arn,
+      var.notify_api_key_secret_arn,
+      var.ecs_token_secret_arn,
+      var.notify_callback_bearer_token_secret_arn,
+      var.freshdesk_api_key_secret_arn
     ]
   }
 }

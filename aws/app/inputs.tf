@@ -78,7 +78,7 @@ variable "ecs_security_group_id" {
   type        = string
 }
 
-variable "ecs_token_secret" {
+variable "ecs_token_secret_arn" {
   description = "Forms ECS JSON Web Token (JWT) secret used by Templates lambda"
   type        = string
   sensitive   = true
@@ -89,7 +89,7 @@ variable "egress_security_group_id" {
   type        = string
 }
 
-variable "recaptcha_secret" {
+variable "recaptcha_secret_arn" {
   description = "Secret Site Key for reCAPTCHA arn"
   type        = string
   sensitive   = true
@@ -100,7 +100,7 @@ variable "recaptcha_public" {
   type        = string
 }
 
-variable "notify_callback_bearer_token_secret" {
+variable "notify_callback_bearer_token_secret_arn" {
   description = "GC Notify callback bearer token which will be used as an authentication factor in GC Forms"
   type        = string
   sensitive   = true
@@ -141,13 +141,13 @@ variable "metric_provider" {
   type        = string
 }
 
-variable "notify_api_key_secret" {
+variable "notify_api_key_secret_arn" {
   description = "The Notify API key secret used by the ECS task and Lambda arn"
   type        = string
   sensitive   = true
 }
 
-variable "freshdesk_api_key_secret" {
+variable "freshdesk_api_key_secret_arn" {
   description = "The FreshDesk API key secret used by the ECS task and Lambda"
   type        = string
   sensitive   = true
