@@ -8,11 +8,11 @@ include {
 
 
 dependencies {
-  paths = ["../lambdas"]
+  paths = ["../s3"]
 }
 
-dependency "lambdas" {
-  config_path                             = "../lambdas"
+dependency "s3" {
+  config_path                             = "../s3"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -21,6 +21,6 @@ dependency "lambdas" {
 }
 
 inputs = {
-  vault_file_storage_id = dependency.lambdas.outputs.vault_file_storage_id
+  vault_file_storage_id = dependency.s3.outputs.vault_file_storage_id
 }
 
