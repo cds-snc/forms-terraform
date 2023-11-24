@@ -12,7 +12,7 @@ const DYNAMODB_VAULT_TABLE_NAME = process.env.DYNAMODB_VAULT_TABLE_NAME ?? "";
 
 export async function retrieveFormResponsesOver28DaysOld(status: string) {
   try {
-    let formResponses: { formID: string; createdAt: string }[] = [];
+    let formResponses: { formID: string; createdAt: number }[] = [];
     let lastEvaluatedKey = null;
 
     while (lastEvaluatedKey !== undefined) {
@@ -41,7 +41,7 @@ export async function retrieveFormResponsesOver28DaysOld(status: string) {
         formResponses = formResponses.concat(
           response.Items.map((item) => ({
             formID: item.FormID.S ?? "",
-            createdAt: item.CreatedAt.N ?? "",
+            createdAt: item.CreatedAt.N ? Number(item.CreatedAt.N) : 0,
           }))
         );
       }
