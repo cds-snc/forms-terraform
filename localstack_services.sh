@@ -29,16 +29,18 @@ printf "Configuring localstack components via terraform...\n"
 if [[ "${ACTION}" == "clean" ]]; then
   printf "${color}=> Cleaning up previous caches, terraform state, and lambda dependencies${reset}\n"
 
+  printf "${color}...Purging stale localstack related files${reset}\n"
+  find $basedir/env -type d -name .terragrunt-cache -prune -print -exec rm -rf {} \;
+  
   printf "${color}...Purging stale terraform state files${reset}\n"
   find $basedir/env -type f -name terraform.tfstate -prune -exec rm -fv {} \;
 
-  printf "${color}...Purging stale localstack related files${reset}\n"
-  find $basedir/env -type d -name .terragrunt-cache -prune -exec rm -rf {} \;
 
   printf "${color}...Removing old lambda dependencies${reset}\n"
     cd $basedir/aws/lambdas/code
     ./deps.sh delete
-fi
+
+else
 
 printf "${color}=> Creating AWS services in Localstack${reset}\n"
 
@@ -73,3 +75,5 @@ cd $basedir/aws/lambdas/code
 printf "${color}...Creating lambdas${reset}\n"
 cd $basedir/env/cloud/lambdas
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
+fi
