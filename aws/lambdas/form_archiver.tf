@@ -4,7 +4,7 @@
 
 data "archive_file" "form_archiver_code" {
   type        = "zip"
-  source_dir = "./code/form_archiver/dist"
+  source_dir  = "./code/form_archiver/dist"
   output_path = "/tmp/form_archiver_code.zip"
 }
 
