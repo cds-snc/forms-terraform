@@ -3,7 +3,7 @@
 #
 data "archive_file" "submission_code" {
   type        = "zip"
-  source_dir  = "./code/submission/"
+  source_dir  = "./code/submission/dist"
   output_path = "/tmp/submission_code.zip"
 }
 
