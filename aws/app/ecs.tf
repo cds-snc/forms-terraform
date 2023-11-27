@@ -34,7 +34,7 @@ data "template_file" "form_viewer_task" {
     recaptcha_secret                = var.recaptcha_secret_arn
     recaptcha_public                = var.recaptcha_public
     gc_notify_callback_bearer_token = var.notify_callback_bearer_token_secret_arn
-    token_secret                    = var.ecs_token_secret_arn
+    token_secret                    = var.token_secret_arn
     database_url                    = var.database_url_secret_arn
     redis_url                       = var.redis_url
     nextauth_url                    = "https://${var.domains[0]}"

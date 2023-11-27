@@ -46,7 +46,7 @@ data "aws_iam_policy_document" "forms_secrets_manager" {
       var.database_url_secret_arn,
       var.recaptcha_secret_arn,
       var.notify_api_key_secret_arn,
-      var.ecs_token_secret_arn,
+      var.token_secret_arn,
       var.notify_callback_bearer_token_secret_arn,
       var.freshdesk_api_key_secret_arn
     ]

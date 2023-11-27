@@ -175,7 +175,7 @@ inputs = {
   notify_api_key_secret_arn               = dependency.secrets.outputs.notify_api_key_secret_arn
   freshdesk_api_key_secret_arn            = dependency.secrets.outputs.freshdesk_api_key_secret_arn
   notify_callback_bearer_token_secret_arn = dependency.secrets.outputs.notify_callback_bearer_token_secret_arn
-  ecs_token_secret_arn                    = dependency.secrets.outputs.token_secret_arn
+  token_secret_arn                        = dependency.secrets.outputs.token_secret_arn
 
   vault_file_storage_arn = dependency.s3.outputs.vault_file_storage_arn
   vault_file_storage_id = dependency.s3.outputs.vault_file_storage_id
