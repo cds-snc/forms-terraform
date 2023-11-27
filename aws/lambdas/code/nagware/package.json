@@ -8,7 +8,7 @@
     "prebuild": "rm -rf dist",
     "build": "tsc --project tsconfig.json",
     "build:dev": "tsc --project tsconfig.json --watch",
-    "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cp -r node_modules dist/node_modules"
+    "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cd ./dist && yarn install --production"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "3.430.0",

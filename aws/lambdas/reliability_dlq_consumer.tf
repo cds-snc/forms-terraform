@@ -5,7 +5,7 @@
 
 data "archive_file" "reliability_dlq_consumer_code" {
   type        = "zip"
-  source_dir  = "./code/reliability_dlq_consumer/"
+  source_dir  = "./code/reliability_dlq_consumer/dist"
   output_path = "/tmp/reliability_dlq_consumer_code.zip"
 }
 

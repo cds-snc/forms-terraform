@@ -28,6 +28,8 @@ export async function handler() {
       if (receiveMessageCommandOutput.Messages) {
         const message = receiveMessageCommandOutput.Messages[0];
 
+        if (!message.Body) throw new Error("Message body is empty.");
+
         const { submissionID } = JSON.parse(message.Body);
         const sendMessageCommandInput = {
           QueueUrl: SQS_SUBMISSION_PROCESSING_QUEUE_URL,
@@ -55,19 +57,24 @@ export async function handler() {
       statusCode: "SUCCESS",
     };
   } catch (err) {
-    // Report Errorr to Slack
-    console.error(
-      JSON.stringify({
-        level: "error",
-        severity: 2,
-        msg: "Reliability DLQ could not process waiting messages.",
-        error: err.message,
-      })
-    );
+    if (err instanceof Error) {
+      // Report Errorr to Slack
+      console.error(
+        JSON.stringify({
+          level: "error",
+          severity: 2,
+          msg: "Reliability DLQ could not process waiting messages.",
+          error: err.message,
+        })
+      );
 
-    return {
-      statusCode: "ERROR",
-      error: err.message,
-    };
+      return {
+        statusCode: "ERROR",
+        error: err.message,
+      };
+    } else {
+      // We don't know what type of error this is, so we throw it
+      throw err;
+    }
   }
 }
