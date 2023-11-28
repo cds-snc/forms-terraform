@@ -76,4 +76,5 @@ printf "${color}...Creating lambdas${reset}\n"
 cd $basedir/env/cloud/lambdas
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
+printf "${color}All infratructure initialized:  Ready for requests${reset}\n"
 fi
