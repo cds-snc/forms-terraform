@@ -75,7 +75,7 @@ ${diffDays} days since submission
   }
 }
 
-export const handler = async () => {
+export const handler: Handler = async () => {
   try {
     if (!ENABLED_IN_STAGING && process.env.ENVIRONMENT === "staging") return;
 
