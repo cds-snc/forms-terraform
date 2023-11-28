@@ -4,7 +4,7 @@
 #
 data "archive_file" "response_archiver_code" {
   type        = "zip"
-  source_dir  = "./code/response_archiver/"
+  source_dir  = "./code/response_archiver/dist"
   output_path = "/tmp/response_archiver_code.zip"
 }
 
