@@ -14,7 +14,7 @@ terraform {
 
 variable "localstack_host" {
   type    = string
-  default = "localhost"
+  default = "127.0.0.1"
 }
 
 provider "aws" {

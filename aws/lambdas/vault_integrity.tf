@@ -71,7 +71,7 @@ resource "aws_cloudwatch_log_group" "vault_integrity" {
 
 
 resource "aws_signer_signing_job" "vault_integrity" {
-  count        = var.env != "local" ? 1 : 0
+  count        = var.localstack_hosted ? 0 : 1
   profile_name = aws_signer_signing_profile.lambda_signing_profile[0].name
 
   source {

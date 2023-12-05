@@ -9,17 +9,16 @@ type AnyObject = {
   [key: string]: any;
 };
 
-const REGION = process.env.REGION;
+const awsProperties = {
+  region: process.env.REGION ?? "ca-central-1",
+  ...(process.env.LOCALSTACK && {
+    endpoint: "http://host.docker.internal:4566",
+  }),
+};
 
-const dynamodb = new DynamoDBClient({
-  region: REGION,
-  ...(process.env.LOCALSTACK && { endpoint: "http://host.docker.internal:4566" }),
-});
+const dynamodb = new DynamoDBClient(awsProperties);
 
-const sqs = new SQSClient({
-  region: REGION,
-  ...(process.env.LOCALSTACK && { endpoint: "http://host.docker.internal:4566" }),
-});
+const sqs = new SQSClient(awsProperties);
 
 /*
 Params:
@@ -61,20 +60,23 @@ export const handler: Handler = async (submission: AnyObject) => {
 
     return { status: false };
   }
-}
+};
 
 const enqueueReliabilityProcessingRequest = async (submissionId: string): Promise<string> => {
   try {
-    const sendMessageCommandOutput = await sqs.send(new SendMessageCommand({
-      MessageBody: JSON.stringify({
-        submissionID: submissionId,
-      }),
-      MessageDeduplicationId: submissionId,
-      MessageGroupId: "Group-" + submissionId,
-      QueueUrl: process.env.SQS_URL,
-    }));
+    const sendMessageCommandOutput = await sqs.send(
+      new SendMessageCommand({
+        MessageBody: JSON.stringify({
+          submissionID: submissionId,
+        }),
+        MessageDeduplicationId: submissionId,
+        MessageGroupId: "Group-" + submissionId,
+        QueueUrl: process.env.SQS_URL,
+      })
+    );
 
-    if (!sendMessageCommandOutput.MessageId) throw new Error("Received null SQS message identifier");
+    if (!sendMessageCommandOutput.MessageId)
+      throw new Error("Received null SQS message identifier");
 
     return sendMessageCommandOutput.MessageId;
   } catch (error) {
@@ -91,7 +93,7 @@ const saveSubmission = async (submissionId: string, formData: AnyObject): Promis
     const timeStamp = Date.now().toString();
 
     const alteredFormDataAsString = JSON.stringify(formData);
-    
+
     const formResponsesAsString = JSON.stringify(formData.responses);
     const formResponsesAsHash = createHash("md5").update(formResponsesAsString).digest("hex"); // We use MD5 here because it is faster to generate and it will only be used as a checksum.
 
@@ -102,37 +104,44 @@ const saveSubmission = async (submissionId: string, formData: AnyObject): Promis
       })
     );
 
-    await dynamodb.send(new PutCommand({
-      TableName: "ReliabilityQueue",
-      Item: {
-        SubmissionID: submissionId,
-        FormID: formData.formID,
-        SendReceipt: "unknown",
-        FormSubmissionLanguage: formData.language,
-        FormData: alteredFormDataAsString,
-        CreatedAt: Number(timeStamp),
-        SecurityAttribute: securityAttribute,
-        FormSubmissionHash: formResponsesAsHash,
-      },
-    }));
+    await dynamodb.send(
+      new PutCommand({
+        TableName: "ReliabilityQueue",
+        Item: {
+          SubmissionID: submissionId,
+          FormID: formData.formID,
+          SendReceipt: "unknown",
+          FormSubmissionLanguage: formData.language,
+          FormData: alteredFormDataAsString,
+          CreatedAt: Number(timeStamp),
+          SecurityAttribute: securityAttribute,
+          FormSubmissionHash: formResponsesAsHash,
+        },
+      })
+    );
   } catch (error) {
     console.error(JSON.stringify(error));
     throw new Error("Could not save submission to Reliability Temporary Storage");
   }
 };
 
-const updateReceiptIdForSubmission = async (submissionId: string, receiptId: string): Promise<void> => {
+const updateReceiptIdForSubmission = async (
+  submissionId: string,
+  receiptId: string
+): Promise<void> => {
   try {
-    await dynamodb.send(new UpdateCommand({
-      TableName: "ReliabilityQueue",
-      Key: {
-        SubmissionID: submissionId,
-      },
-      UpdateExpression: "SET SendReceipt = :receiptId",
-      ExpressionAttributeValues: {
-        ":receiptId": receiptId,
-      },
-    }));
+    await dynamodb.send(
+      new UpdateCommand({
+        TableName: "ReliabilityQueue",
+        Key: {
+          SubmissionID: submissionId,
+        },
+        UpdateExpression: "SET SendReceipt = :receiptId",
+        ExpressionAttributeValues: {
+          ":receiptId": receiptId,
+        },
+      })
+    );
   } catch (error) {
     console.warn(
       JSON.stringify({

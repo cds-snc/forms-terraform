@@ -6,12 +6,16 @@ import {
 } from "@aws-sdk/client-s3";
 import { NodeJsClient } from "@smithy/types";
 
-const s3Client = new S3Client({
-  region: process.env.REGION,
+const awsProperties = {
+  region: process.env.REGION ?? "ca-central-1",
   ...(process.env.LOCALSTACK && {
     endpoint: "http://host.docker.internal:4566",
-    forcePathStyle: true,
   }),
+};
+
+const s3Client = new S3Client({
+  ...awsProperties,
+  forcePathStyle: true,
 }) as NodeJsClient<S3Client>;
 
 const environment = process.env.ENVIRONMENT || (process.env.LOCALSTACK ? "local" : "staging");

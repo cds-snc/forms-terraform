@@ -101,11 +101,6 @@ variable "ecs_iam_role_arn" {
   type        = string
 }
 
-variable "localstack_hosted" {
-  description = "Whether or not the stack is hosted in localstack"
-  type        = bool
-}
-
 variable "reliability_file_storage_arn" {
   description = "S3 bucket arn for reliability file storage"
   type        = string
@@ -139,4 +134,9 @@ variable "lambda_code_id" {
 variable "lambda_code_arn" {
   description = "S3 bucket arn for lambda code"
   type        = string
+}
+
+variable "localstack_hosted" {
+  description = "Whether or not the stack is hosted in localstack"
+  type        = bool
 }

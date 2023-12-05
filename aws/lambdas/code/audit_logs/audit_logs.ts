@@ -10,6 +10,13 @@ type LogEvent = {
   description: string;
 };
 
+const awsProperties = {
+  region: process.env.REGION ?? "ca-central-1",
+  ...(process.env.LOCALSTACK && {
+    endpoint: "http://host.docker.internal:4566",
+  }),
+};
+
 const warnOnEvents = [
   // Form Events
   "GrantFormAccess",
@@ -115,12 +122,7 @@ export const handler: Handler = async (event: SQSEvent) => {
       );
     }
 
-    const dynamoDb = DynamoDBDocumentClient.from(
-      new DynamoDBClient({
-        region: process.env.REGION ?? "ca-central-1",
-        ...(process.env.LOCALSTACK && { endpoint: "http://host.docker.internal:4566" }),
-      })
-    );
+    const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient(awsProperties));
 
     const { UnprocessedItems: { AuditLogs = [], ...UnprocessedItems } = {} } = await dynamoDb.send(
       new BatchWriteCommand({
@@ -130,7 +132,8 @@ export const handler: Handler = async (event: SQSEvent) => {
       })
     );
 
-    if (typeof AuditLogs !== "undefined") {
+    if (AuditLogs.length > 0) {
+      console.log(AuditLogs);
       const unprocessedIDs = AuditLogs.map(({ PutRequest: { Item } = {} }, index) => {
         // Find the original LogEvent item that has the messageID
         const unprocessedItem = logEvents.filter(

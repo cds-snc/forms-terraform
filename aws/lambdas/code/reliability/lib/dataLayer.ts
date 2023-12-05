@@ -9,14 +9,14 @@ import {
 import { v4 } from "uuid";
 import { FormElement, FormSubmission, Responses, Response } from "./types.js";
 
-const REGION = process.env.REGION;
+const awsProperties = {
+  region: process.env.REGION ?? "ca-central-1",
+  ...(process.env.LOCALSTACK && {
+    endpoint: "http://host.docker.internal:4566",
+  }),
+};
 
-const db = DynamoDBDocumentClient.from(
-  new DynamoDBClient({
-    region: REGION,
-    ...(process.env.LOCALSTACK && { endpoint: "http://host.docker.internal:4566" }),
-  })
-);
+const db = DynamoDBDocumentClient.from(new DynamoDBClient(awsProperties));
 
 export async function getSubmission(message: Record<string, unknown>) {
   const DBParams = {
