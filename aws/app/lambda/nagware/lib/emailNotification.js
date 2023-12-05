@@ -17,13 +17,13 @@ async function notifyFormOwner(formID, formName, formOwnerEmailAddress) {
 
 Form name: ${formName}
 
-There are form responses over 28 days old. Form responses must be downloaded and confirmed within 5 days.
+There are form responses over 28 days old. Form responses must be downloaded and signed off for removal from GC Forms within 5 days.
 
-Downloading of responses will be restricted if unconfirmed responses are older than 35 days
+Downloading of responses will be restricted if responses are older than 35 days
 
-After 45 days, if responses remain unconfirmed, an incident process will kick-off.
+After 45 days, if responses remain overdue, an incident process will kick-off.
 
-[Download and confirm form responses now](${baseUrl}/form-builder/responses/${formID})
+[Download and sign off on the removal of form responses](${baseUrl}/form-builder/responses/${formID})
 
 ****
 
@@ -31,13 +31,13 @@ After 45 days, if responses remain unconfirmed, an incident process will kick-of
 
 Nom du formulaire: ${formName}
 
-De nouvelles réponses ont plus de 28 jours de retard. Les réponses au formulaire doivent être téléchargées et confirmées dans les 5 jours.
+De nouvelles réponses ont plus de 28 jours de retard. Les réponses au formulaire doivent être téléchargées et appouvées pour suppression de Formulaires GC dans les 5 jours.
 
-Le téléchargement des réponses sera limité si les réponses non confirmées datent de plus de 35 jours
+Le téléchargement des réponses sera limité si les réponses datent de plus de 35 jours
 
-Si les réponses ne sont toujours pas confirmées après 45 jours, un processus d'incident sera déclaré.
+Si les réponses ne sont toujours pas traitées après 45 jours, un processus d'incident sera déclaré.
 
-[Télécharger et confirmer les réponses au formulaire maintenant](${baseUrl}/fr/form-builder/responses/${formID})`,
+[Télécharger et approuver la suppression des réponses au formulaire](${baseUrl}/fr/form-builder/responses/${formID})`,
       },
     });
   } catch (error) {
