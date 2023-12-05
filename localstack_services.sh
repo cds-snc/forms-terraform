@@ -7,6 +7,9 @@ export TF_VAR_email_address_contact_us=""
 export TF_VAR_email_address_support=""
 export APP_ENV="local"
 
+# Exit on any error
+set -e
+
 # Text colors
 color='\033[1;95m' 
 reset='\033[0m' # No Color
@@ -22,11 +25,8 @@ tfswitch 1.6.4
 
 basedir=$(pwd)
 
-ACTION=$1
-
 printf "Configuring localstack components via terraform...\n"
 
-if [[ "${ACTION}" == "clean" ]]; then
   printf "${color}=> Cleaning up previous caches, terraform state, and lambda dependencies${reset}\n"
 
   printf "${color}...Purging stale localstack related files${reset}\n"
@@ -39,8 +39,6 @@ if [[ "${ACTION}" == "clean" ]]; then
   printf "${color}...Removing old lambda dependencies${reset}\n"
     cd $basedir/aws/lambdas/code
     ./deps.sh delete
-
-else
 
 printf "${color}=> Creating AWS services in Localstack${reset}\n"
 
@@ -72,9 +70,11 @@ printf "${color}...Installing lambda dependencies${reset}\n"
 cd $basedir/aws/lambdas/code
 ./deps.sh install
 
+printf "${color}...Clearing old archive files${reset}\n"
+rm -v /tmp/*.zip
+
 printf "${color}...Creating lambdas${reset}\n"
 cd $basedir/env/cloud/lambdas
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "${color}All infratructure initialized:  Ready for requests${reset}\n"
-fi
