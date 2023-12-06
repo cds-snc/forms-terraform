@@ -60,10 +60,38 @@ resource "aws_s3_bucket_website_configuration" "maintenance_mode" {
   }
 }
 
-resource "aws_s3_bucket_object" "maintenance_static_page" {
-  bucket       = aws_s3_bucket.maintenance_mode.bucket
-  key          = "index.html"
-  source       = "./static_website/index.html"
+resource "aws_s3_bucket_object" "maintenance_static_page_html_files" {
+  for_each     = fileset("./static_website/", "*.html")
   content_type = "text/html"
-  etag         = filemd5("./static_website/index.html")
+  bucket       = aws_s3_bucket.maintenance_mode.bucket
+  key          = each.value
+  source       = "./static_website/${each.value}"
+  etag         = filemd5("./static_website/${each.value}")
+}
+
+resource "aws_s3_bucket_object" "maintenance_static_page_css_files" {
+  for_each     = fileset("./static_website/", "*.css")
+  content_type = "text/css"
+  bucket       = aws_s3_bucket.maintenance_mode.bucket
+  key          = each.value
+  source       = "./static_website/${each.value}"
+  etag         = filemd5("./static_website/${each.value}")
+}
+
+resource "aws_s3_bucket_object" "maintenance_static_page_svg_files" {
+  for_each     = fileset("./static_website/", "*.svg")
+  content_type = "image/svg+xml"
+  bucket       = aws_s3_bucket.maintenance_mode.bucket
+  key          = each.value
+  source       = "./static_website/${each.value}"
+  etag         = filemd5("./static_website/${each.value}")
+}
+
+resource "aws_s3_bucket_object" "maintenance_static_page_ico_files" {
+  for_each     = fileset("./static_website/", "*.ico")
+  content_type = "image/png"
+  bucket       = aws_s3_bucket.maintenance_mode.bucket
+  key          = each.value
+  source       = "./static_website/${each.value}"
+  etag         = filemd5("./static_website/${each.value}")
 }

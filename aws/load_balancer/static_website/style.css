@@ -1,0 +1,40 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  margin: 20vh auto;
+  flex: 1;
+  min-width: 60%;
+}
+
+#card {
+  border: 1px solid #284162;
+  border-radius: 4px;
+  background-color: #f9fafb;
+  padding: 36px;
+  display: flex;
+}
+
+#card div.icon {
+  margin-right: 36px;
+}
+
+#card div.description {
+  font-family: "Lato";
+  line-height: 32px;
+}
+
+#card div h1 {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 2px 0 26px 0;
+}
+
+#card div p {
+  font-size: 18px;
+  font-weight: 400;
+  margin: 0;
+}
