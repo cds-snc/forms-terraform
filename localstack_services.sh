@@ -16,32 +16,25 @@ reset='\033[0m' # No Color
 
 # Set proper terraform and terragrunt versions
 
-tgswitch 0.53.2
-tfswitch 1.6.4
-
-# Usage:
-# Without any args will reuse the existing cached packages saving some time and bandwidth
-# With the 'clean' argument will remove all cached packages for terraform and node modules for lambdas.
+tgswitch 0.53.8
+tfswitch 1.6.5
 
 basedir=$(pwd)
 
-ACTION=$1
+printf "${color}=> Cleaning up previous caches, terraform state, and lambda dependencies${reset}\n"
 
-if [[ "${ACTION}" == "clean" ]]; then
+printf "${color}...Purging stale localstack related files${reset}\n"
+find $basedir/env/cloud -type d -name .terragrunt-cache -prune -print -exec rm -rf {} \;
 
-  printf "${color}=> Cleaning up previous caches, terraform state, and lambda dependencies${reset}\n"
+printf "${color}...Purging stale terraform state files${reset}\n"
+find $basedir/env -type f -name terraform.tfstate -prune -exec rm -fv {} \;
 
-  printf "${color}...Purging stale localstack related files${reset}\n"
-  find $basedir/env -type d -name .terragrunt-cache -prune -print -exec rm -rf {} \;
-  
-  printf "${color}...Purging stale terraform state files${reset}\n"
-  find $basedir/env -type f -name terraform.tfstate -prune -exec rm -fv {} \;
+printf "${color}...Clearing old lambda_code archive files${reset}\n"
+rm -v /tmp/*.zip || true
 
-  printf "${color}...Removing old lambda dependencies${reset}\n"
-  cd $basedir/aws/lambdas/code
-  ./deps.sh delete
-
-fi
+printf "${color}...Removing old lambda dependencies${reset}\n"
+cd $basedir/aws/lambdas/code
+./deps.sh delete
 
 printf "${color}=> Creating AWS services in Localstack${reset}\n"
 
@@ -72,9 +65,6 @@ terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-lev
 printf "${color}...Installing lambda dependencies${reset}\n"
 cd $basedir/aws/lambdas/code
 ./deps.sh install
-
-printf "${color}...Clearing old archive files${reset}\n"
-rm -v /tmp/*.zip || true
 
 printf "${color}...Creating lambdas${reset}\n"
 cd $basedir/env/cloud/lambdas
