@@ -13,6 +13,11 @@ output "ecs_service_name" {
   value       = aws_ecs_service.form_viewer.name
 }
 
+output "ecs_iam_role_arn" {
+  description = "ECS task's IAM role ARN"
+  value       = aws_iam_role.forms.arn
+}
+
 output "ecs_iam_forms_secrets_manager_policy_arn" {
   description = "IAM policy for access to Secrets Manager"
   value       = aws_iam_policy.forms_secrets_manager.arn
