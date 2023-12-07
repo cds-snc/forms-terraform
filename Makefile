@@ -11,11 +11,11 @@ fmt: 		## Format all .tf files
 	terraform fmt -recursive
 
 hclfmt: 	## Format all .hcl files
-	cd env/scratch &&\
+	cd env/ &&\
 	terragrunt run-all hclfmt
 
 validate: 	## Terragrunt validate all resources
-	cd env/scratch &&\
+	cd env/ &&\
 	terragrunt run-all validate
 
 terragrunt: ## Create localstack resources

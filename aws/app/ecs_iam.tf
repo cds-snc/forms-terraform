@@ -44,11 +44,11 @@ data "aws_iam_policy_document" "forms_secrets_manager" {
 
     resources = [
       var.database_url_secret_arn,
-      aws_secretsmanager_secret_version.recaptcha_secret.arn,
-      aws_secretsmanager_secret_version.notify_api_key.arn,
-      aws_secretsmanager_secret_version.token_secret.arn,
-      aws_secretsmanager_secret_version.gc_notify_callback_bearer_token.arn,
-      aws_secretsmanager_secret_version.freshdesk_api_key.arn
+      var.recaptcha_secret_arn,
+      var.notify_api_key_secret_arn,
+      var.token_secret_arn,
+      var.notify_callback_bearer_token_secret_arn,
+      var.freshdesk_api_key_secret_arn
     ]
   }
 }
@@ -76,8 +76,8 @@ data "aws_iam_policy_document" "forms_s3" {
     ]
 
     resources = [
-      aws_s3_bucket.reliability_file_storage.arn,
-      "${aws_s3_bucket.reliability_file_storage.arn}/*"
+      var.reliability_file_storage_arn,
+      "${var.reliability_file_storage_arn}/*"
     ]
   }
 
@@ -93,8 +93,8 @@ data "aws_iam_policy_document" "forms_s3" {
     ]
 
     resources = [
-      aws_s3_bucket.vault_file_storage.arn,
-      "${aws_s3_bucket.vault_file_storage.arn}/*"
+      var.vault_file_storage_arn,
+      "${var.vault_file_storage_arn}/*"
     ]
   }
 }

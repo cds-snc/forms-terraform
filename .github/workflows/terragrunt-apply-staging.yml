@@ -17,10 +17,10 @@ env:
   AWS_REGION: ca-central-1
   AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
-  TERRAFORM_VERSION: 1.4.2
-  TERRAGRUNT_VERSION: 0.46.3
+  TERRAFORM_VERSION: 1.6.5
+  TERRAGRUNT_VERSION: 0.53.8
   TF_INPUT: false
-  TF_VAR_ecs_secret_token_secret: ${{ secrets.STAGING_TOKEN_SECRET }}
+  TF_VAR_ecs_secret_token: ${{ secrets.STAGING_TOKEN_SECRET }}
   TF_VAR_recaptcha_secret: ${{secrets.STAGING_RECAPTCHA_SITE_SECRET}}
   TF_VAR_recaptcha_public: 6LfJDN4eAAAAAGvdRF7ZnQ7ciqdo1RQnQDFmh0VY
   TF_VAR_notify_api_key: ${{ secrets.STAGING_NOTIFY_API_KEY }}
@@ -84,6 +84,9 @@ jobs:
             kms:
               - 'aws/kms/**'
               - 'env/cloud/kms/**'
+            lambdas:
+              - 'aws/lambdas/**'
+              - 'env/cloud/lambdas/**'
             load_balancer:
               - 'aws/load_balancer/**'
               - 'env/cloud/load_balancer/**'
@@ -99,6 +102,12 @@ jobs:
             redis:
               - 'aws/redis/**'
               - 'env/cloud/redis/**'
+            s3:
+              - 'aws/s3/**'
+              - 'env/cloud/s3/**'
+            secrets:
+              - 'aws/secrets/**'
+              - 'env/cloud/secrets/**'
             sns:
               - 'aws/sns/**'
               - 'env/cloud/sns/**'
@@ -127,6 +136,17 @@ jobs:
         working-directory: env/cloud/sqs
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Terragrunt apply secrets
+        if: ${{ steps.filter.outputs.secrets == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/cloud/secrets
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply s3
+        if: ${{ steps.filter.outputs.s3 == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/cloud/s3
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      # Depends on kms
       - name: Terragrunt apply sns
         if: ${{ steps.filter.outputs.sns == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/cloud/sns
@@ -145,7 +165,6 @@ jobs:
         if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
         run: ./aws/cognito/lambda/deps.sh delete
 
-      # Depends on kms
       - name: Terragrunt apply network
         if: ${{ steps.filter.outputs.network == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/cloud/network
@@ -173,18 +192,23 @@ jobs:
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on everything
-      - name: Install Lambda deps
-        if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/app/lambda/deps.sh install
-
       - name: Terragrunt apply app
         if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/cloud/app
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Install Lambda deps
+        if: ${{ steps.filter.outputs.lambdas == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/lambdas/code/deps.sh install
+
+      - name: Terragrunt apply lambdas
+        if: ${{ steps.filter.outputs.lambdas == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/cloud/lambdas
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
       - name: Remove Lambda deps
-        if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/app/lambda/deps.sh delete
+        if: ${{ steps.filter.outputs.lambdas == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/lambdas/code/deps.sh delete
 
       - name: Terragrunt apply alarms
         if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}

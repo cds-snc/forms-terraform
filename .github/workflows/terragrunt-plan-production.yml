@@ -13,10 +13,10 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}
   CONFTEST_VERSION: 0.36.0
-  TERRAFORM_VERSION: 1.4.2
-  TERRAGRUNT_VERSION: 0.46.3
+  TERRAFORM_VERSION: 1.6.5
+  TERRAGRUNT_VERSION: 0.53.8
   TF_INPUT: false
-  TF_VAR_ecs_secret_token_secret: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
+  TF_VAR_ecs_secret_token: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
   TF_VAR_recaptcha_secret: ${{secrets.PRODUCTION_RECAPTCHA_SITE_SECRET}}
   TF_VAR_recaptcha_public: 6LfuLrQnAAAAAK9Df3gem4XLMRVY2Laq6t2fhZhZ
   TF_VAR_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
@@ -83,6 +83,24 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
+      - name: Terragrunt plan secrets
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/secrets"
+          comment-delete: "true"
+          comment-title: "Production: secrets"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+      - name: Terragrunt plan s3
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/s3"
+          comment-delete: "true"
+          comment-title: "Production: s3"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      # Depends on kms
       - name: Terragrunt plan sns
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
@@ -107,7 +125,6 @@ jobs:
       - name: Remove Cognito Lambda deps
         run: ./aws/cognito/lambda/deps.sh delete
 
-      # Depends on kms
       - name: Terragrunt plan network
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
@@ -155,8 +172,6 @@ jobs:
           terragrunt: "true"
 
       # Depends on everything
-      - name: Install Lambda deps
-        run: ./aws/app/lambda/deps.sh install
 
       - name: Terragrunt plan app
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
@@ -167,8 +182,20 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
+      - name: Install Lambda deps
+        run: ./aws/lambdas/code/deps.sh install
+
+      - name: Terragrunt plan lambdas
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/lambdas"
+          comment-delete: "true"
+          comment-title: "Staging: lambdas"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
       - name: Remove Lambda deps
-        run: ./aws/app/lambda/deps.sh delete
+        run: ./aws/lambdas/code/deps.sh delete
 
       - name: Terragrunt plan alarms
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7

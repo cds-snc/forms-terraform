@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../sns", "../cognito"]
+  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../cognito", "../secrets", "../s3"]
 }
 
 dependency "dynamodb" {
@@ -12,12 +12,8 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_relability_queue_arn  = ""
-    dynamodb_vault_arn             = ""
-    dynamodb_vault_table_name      = ""
-    dynamodb_vault_stream_arn      = ""
-    dynamodb_audit_logs_arn        = ""
-    dynamodb_audit_logs_table_name = ""
+    dynamodb_relability_queue_arn = ""
+    dynamodb_vault_arn            = ""
   }
 }
 
@@ -32,7 +28,7 @@ dependency "ecr" {
 }
 
 dependency "kms" {
-  config_path = "../kms"
+  config_path                             = "../kms"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -42,7 +38,7 @@ dependency "kms" {
 }
 
 dependency "load_balancer" {
-  config_path = "../load_balancer"
+  config_path                             = "../load_balancer"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -54,7 +50,7 @@ dependency "load_balancer" {
 }
 
 dependency "network" {
-  config_path = "../network"
+  config_path                             = "../network"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -63,19 +59,16 @@ dependency "network" {
 }
 
 dependency "rds" {
-  config_path = "../rds"
+  config_path                             = "../rds"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    rds_cluster_arn         = ""
-    rds_db_name             = ""
     database_url_secret_arn = ""
-    database_secret_arn     = ""
   }
 }
 
 dependency "redis" {
-  config_path = "../redis"
+  config_path                             = "../redis"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -84,30 +77,14 @@ dependency "redis" {
 }
 
 dependency "sqs" {
-  config_path = "../sqs"
+  config_path                             = "../sqs"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    sqs_reliability_queue_arn            = ""
-    sqs_reliability_queue_id             = ""
-    sqs_reprocess_submission_queue_arn   = ""
-    sqs_reliability_dead_letter_queue_id = ""
-    sqs_audit_log_queue_arn              = ""
-    sqs_audit_log_queue_id               = ""
-    sqs_audit_log_deadletter_queue_arn   = ""
-    sqs_reprocess_submission_queue_id    = ""
-  }
-}
-
-dependency "sns" {
-  config_path = "../sns"
-
-  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_strategy_with_state  = "shallow"
-  mock_outputs = {
-    sns_topic_alert_critical_arn = ""
-    sns_topic_alert_warning_arn  = ""
-    sns_topic_alert_ok_arn       = ""
+    sqs_reprocess_submission_queue_arn = ""
+    sqs_audit_log_queue_arn            = ""
+    sqs_audit_log_queue_id             = ""
+    sqs_reprocess_submission_queue_id  = ""
   }
 }
 
@@ -120,6 +97,32 @@ dependency "cognito" {
     cognito_endpoint_url  = ""
     cognito_client_id     = ""
     cognito_user_pool_arn = ""
+  }
+}
+
+dependency "secrets" {
+  config_path                             = "../secrets"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs = {
+    notify_api_key_secret_arn               = ""
+    freshdesk_api_key_secret_arn            = ""
+    token_secret_arn                        = ""
+    recaptcha_secret_arn                    = ""
+    notify_callback_bearer_token_secret_arn = ""
+
+  }
+}
+
+dependency "s3" {
+  config_path                             = "../s3"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs = {
+    vault_file_storage_id = ""
+    vault_file_storage_arn = ""
+    reliability_file_storage_id = ""
+    reliability_file_storage_arn = ""
   }
 }
 
@@ -138,12 +141,8 @@ inputs = {
   metric_provider                             = "stdout"
   tracer_provider                             = "stdout"
 
-  dynamodb_relability_queue_arn  = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
-  dynamodb_vault_arn             = dependency.dynamodb.outputs.dynamodb_vault_arn
-  dynamodb_vault_table_name      = dependency.dynamodb.outputs.dynamodb_vault_table_name
-  dynamodb_vault_stream_arn      = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
-  dynamodb_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
-  dynamodb_audit_logs_table_name = dependency.dynamodb.outputs.dynamodb_audit_logs_table_name
+  dynamodb_relability_queue_arn = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
+  dynamodb_vault_arn            = dependency.dynamodb.outputs.dynamodb_vault_arn
 
   ecr_repository_url_form_viewer = dependency.ecr.outputs.ecr_repository_url_form_viewer
 
@@ -161,27 +160,27 @@ inputs = {
 
   redis_url = dependency.redis.outputs.redis_url
 
-  rds_cluster_arn         = dependency.rds.outputs.rds_cluster_arn
-  rds_db_name             = dependency.rds.outputs.rds_db_name
-  database_secret_arn     = dependency.rds.outputs.database_secret_arn
   database_url_secret_arn = dependency.rds.outputs.database_url_secret_arn
 
-  sqs_reliability_queue_arn            = dependency.sqs.outputs.sqs_reliability_queue_arn
-  sqs_reliability_queue_id             = dependency.sqs.outputs.sqs_reliability_queue_id
-  sqs_reprocess_submission_queue_arn   = dependency.sqs.outputs.sqs_reprocess_submission_queue_arn
-  sqs_reliability_dead_letter_queue_id = dependency.sqs.outputs.sqs_reliability_dead_letter_queue_id
-  sqs_audit_log_queue_arn              = dependency.sqs.outputs.sqs_audit_log_queue_arn
-  sqs_audit_log_queue_id               = dependency.sqs.outputs.sqs_audit_log_queue_id
-  sqs_audit_log_deadletter_queue_arn   = dependency.sqs.outputs.sqs_audit_log_deadletter_queue_arn
-  sqs_reprocess_submission_queue_id    = dependency.sqs.outputs.sqs_reprocess_submission_queue_id
-
-  sns_topic_alert_critical_arn = dependency.sns.outputs.sns_topic_alert_critical_arn
-  sns_topic_alert_warning_arn  = dependency.sns.outputs.sns_topic_alert_warning_arn
-  sns_topic_alert_ok_arn       = dependency.sns.outputs.sns_topic_alert_ok_arn
+  sqs_reprocess_submission_queue_arn = dependency.sqs.outputs.sqs_reprocess_submission_queue_arn
+  sqs_audit_log_queue_arn            = dependency.sqs.outputs.sqs_audit_log_queue_arn
+  sqs_audit_log_queue_id             = dependency.sqs.outputs.sqs_audit_log_queue_id
+  sqs_reprocess_submission_queue_id  = dependency.sqs.outputs.sqs_reprocess_submission_queue_id
 
   cognito_endpoint_url  = dependency.cognito.outputs.cognito_endpoint_url
   cognito_client_id     = dependency.cognito.outputs.cognito_client_id
   cognito_user_pool_arn = dependency.cognito.outputs.cognito_user_pool_arn
+
+  recaptcha_secret_arn                    = dependency.secrets.outputs.recaptcha_secret_arn
+  notify_api_key_secret_arn               = dependency.secrets.outputs.notify_api_key_secret_arn
+  freshdesk_api_key_secret_arn            = dependency.secrets.outputs.freshdesk_api_key_secret_arn
+  notify_callback_bearer_token_secret_arn = dependency.secrets.outputs.notify_callback_bearer_token_secret_arn
+  token_secret_arn                        = dependency.secrets.outputs.token_secret_arn
+
+  vault_file_storage_arn = dependency.s3.outputs.vault_file_storage_arn
+  vault_file_storage_id = dependency.s3.outputs.vault_file_storage_id
+  reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
+  reliability_file_storage_id = dependency.s3.outputs.reliability_file_storage_id
 
 }
 

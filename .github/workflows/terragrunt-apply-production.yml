@@ -11,10 +11,10 @@ env:
   AWS_REGION: ca-central-1
   AWS_ACCESS_KEY_ID: ${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}
-  TERRAFORM_VERSION: 1.4.2
-  TERRAGRUNT_VERSION: 0.46.3
+  TERRAFORM_VERSION: 1.6.5
+  TERRAGRUNT_VERSION: 0.53.8
   TF_INPUT: false
-  TF_VAR_ecs_secret_token_secret: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
+  TF_VAR_ecs_secret_token: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
   TF_VAR_recaptcha_secret: ${{secrets.PRODUCTION_RECAPTCHA_SITE_SECRET}}
   TF_VAR_recaptcha_public: 6LfuLrQnAAAAAK9Df3gem4XLMRVY2Laq6t2fhZhZ
   TF_VAR_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
@@ -68,6 +68,15 @@ jobs:
         working-directory: env/cloud/sqs
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Terragrunt apply secrets
+        working-directory: env/cloud/secrets
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply s3
+        working-directory: env/cloud/s3
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      # Depends on kms
       - name: Terragrunt apply sns
         working-directory: env/cloud/sns
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
@@ -82,7 +91,6 @@ jobs:
       - name: Remove Cognito Lambda deps
         run: ./aws/cognito/lambda/deps.sh delete
 
-      # Depends on kms
       - name: Terragrunt apply network
         working-directory: env/cloud/network
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
@@ -105,15 +113,19 @@ jobs:
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on everything
-      - name: Install Lambda deps
-        run: ./aws/app/lambda/deps.sh install
-
       - name: Terragrunt apply app
         working-directory: env/cloud/app
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Install Lambda deps
+        run: ./aws/lambdas/code/deps.sh install
+
+      - name: Terragrunt apply lambdas
+        working-directory: env/cloud/lambdas
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
       - name: Remove Lambda deps
-        run: ./aws/app/lambda/deps.sh delete
+        run: ./aws/lambdas/code/deps.sh delete
 
       - name: Terragrunt apply alarms
         working-directory: env/cloud/alarms

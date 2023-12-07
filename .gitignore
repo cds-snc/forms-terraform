@@ -42,6 +42,9 @@ tf.plan
 # Ignore node modules folders for Lambda functions
 **/node_modules/
 
+# Ignore lambda builds
+**/code/**/dist/
+
 # Ignore Mac OS file types
 .DS_Store
 

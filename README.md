@@ -10,27 +10,22 @@ Pull Requests in this repository require all commits to be signed before they ca
 
 You will need to have the following installed on a macOS machine.
 
-Pre-requisites:
+### Prerequisites:
 
-- Docker Hub: https://docs.docker.com/desktop/mac/install/
+- [Docker Hub](https://docs.docker.com/desktop/mac/install/) or [Colima](https://github.com/abiosoft/colima)
 
 - Homebrew:
+
   ```bash
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   ```
 
-- LocalStack:
-
-  1. `brew install localstack`
-
-  Please note that the latest tested version of Localstack with your infrastructure code was `2.3.2`.
-
 - Terragrunt:
 
   1. `brew install warrensbox/tap/tfswitch`
-  1. `tfswitch 1.4.2`
+  1. `tfswitch 1.6.5`
   1. `brew install warrensbox/tap/tgswitch`
-  1. `tgswitch 0.46.3`
+  1. `tgswitch 0.53.8`
 
 - Yarn: `brew install yarn`
 
@@ -43,11 +38,40 @@ Pre-requisites:
 
   Please note that the latest tested version of AWS SAM CLI with your infrastructure code was `1.99.0`.
 
-- Postgres and PGAdmin
-  1. `brew install postgresql`
-  1. `brew install --cask pgadmin4`
+### If using Colima
+
+- Docker: `brew install docker docker-compose docker-credential-manager`
+
+Modify the docker config file to use mac os keychain as `credStore`
+
+```shell
+nano ~/.docker/config.json
+
+{
+    ...
+    "credsStore": "osxkeychain",
+    ...
+}
+```
+
+- Colima: `brew insteall colima`
+
+Ensure that apps like AWS SAM can connect to the correct docker.sock
+
+```shell
+# as /var/ is a protected directory, we will need sudo
+sudo ln ~/.colima/default/docker.sock /var/run
+
+# we can verify this has worked by running
+ls /var/run
+# and confirming that docker.sock is now in the directory
+```
+
+Colima can be set as a service to start on login: `brew services start colima`
 
 ### Starting LocalStack and E2E testing from devcontainers
+
+**# TODO Outdated #**
 
 For instructions on how to run without using dev containers please skip to the next section.
 
@@ -72,11 +96,13 @@ yarn dev
 
 ### Starting LocalStack and services without dev containers
 
-#### Spare me the details and give me the commands
+#### TLDR
 
-##### Only do once as part of setup
+**Spare me the details and give me the commands**
 
-- You will also have to supply the following environment variables and values to platform-forms-client to get everything working with the local lambdas and localstack.
+Only do once as part of setup:
+
+You will also have to supply the following environment variables and values to platform-forms-client to get everything working with the local lambdas and localstack.
 
 ```shell
 # localstack only simulates a us-east-1 region
@@ -84,14 +110,13 @@ AWS_ACCESS_KEY_ID=test
 AWS_SECRET_ACCESS_KEY=test
 AWS_REGION=ca-central-1
 RELIABILITY_FILE_STORAGE=forms-local-reliability-file-storage
-LOCAL_LAMBDA_ENDPOINT=http://127.0.0.1:3001
-LOCAL_AWS_ENDPOINT=http://localhost:4566
+LOCAL_AWS_ENDPOINT=http://127.0.0.1:4566
 ```
 
-##### Every time you want to run localstack and lambdas locally
+Everytime you want to run localstack and lambdas locally
 
-1. In one terminal run `localstack start`
-2. In a second terminal run `./localstack_services.sh` (If there have been infrastructure changes you'll want to run `./localstack_services.sh clean`)
+1. In one terminal run `docker-compose up`
+2. In a second terminal run `./localstack_services.sh`
 3. In a third terminal in the `platform-forms-client` repo run `yarn dev`
 
 #### It didn't work...I need the details
@@ -99,116 +124,59 @@ LOCAL_AWS_ENDPOINT=http://localhost:4566
 Once you have localstack installed you should be able to start the localstack container and services using the following command.
 
 ```shell
-$ localstack start
+$ docker-compose up
 ```
 
 You should see the following output if localstack has successfully started
 
 ```shell
-
-     __                     _______ __             __
-    / /   ____  _________ _/ / ___// /_____ ______/ /__
-   / /   / __ \/ ___/ __ `/ /\__ \/ __/ __ `/ ___/ //_/
-  / /___/ /_/ / /__/ /_/ / /___/ / /_/ /_/ / /__/ ,<
- /_____/\____/\___/\__,_/_//____/\__/\__,_/\___/_/|_|
-
- 💻 LocalStack CLI 0.13.3
-
-[19:49:57] starting LocalStack in Docker mode 🐳                                                                                     localstack.py:115
-2022-01-17T19:49:58.192:INFO:bootstrap.py: Execution of "prepare_host" took 741.40ms
-─────────────────────────────────────────────────── LocalStack Runtime Log (press CTRL-C to quit) ─────────────
-```
-
-If you have installed localstack via pip (python's package manager) and are receiving command not found errors. Please ensure that your python's bin is directly in the `$PATH`. If you are using pyenv with shims... this will not work. You need to reference the bin of the python version you are using directly in the path.
-
-If you want to additionally verify what localstack services are running you can issue the following command
-
-```shell
-$ localstack status services
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┓
-┃ Service                  ┃ Status    ┃
-┡━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━┩
-│ acm                      │ ✔ running │
-│ apigateway               │ ✔ running │
-│ cloudformation           │ ✔ running │
-│ cloudwatch               │ ✔ running │
-│ config                   │ ✔ running │
-│ dynamodb                 │ ✔ running │
-│ dynamodbstreams          │ ✔ running │
-│ ec2                      │ ✔ running │
-│ es                       │ ✔ running │
-│ events                   │ ✔ running │
-│ firehose                 │ ✔ running │
-│ iam                      │ ✔ running │
-│ kinesis                  │ ✔ running │
-│ kms                      │ ✔ running │
-│ lambda                   │ ✔ running │
-│ logs                     │ ✔ running │
-│ redshift                 │ ✔ running │
-│ resource-groups          │ ✔ running │
-│ resourcegroupstaggingapi │ ✔ running │
-│ route53                  │ ✔ running │
-│ s3                       │ ✔ running │
-│ secretsmanager           │ ✔ running │
-│ ses                      │ ✔ running │
-│ sns                      │ ✔ running │
-│ sqs                      │ ✔ running │
-│ ssm                      │ ✔ running │
-│ stepfunctions            │ ✔ running │
-│ sts                      │ ✔ running │
-│ support                  │ ✔ running │
-│ swf                      │ ✔ running │
-└──────────────────────────┴───────────┘
+❯ docker-compose up                                                                                                                                                                 ─╯
+[+] Running 3/0
+ ✔ Container GCForms_Redis       Created
+ ✔ Container GCForms_DB          Created
+ ✔ Container GCForms_LocalStack  Created
+Attaching to GCForms_DB, GCForms_LocalStack, GCForms_Redis
+GCForms_DB          |
+GCForms_DB          |
+GCForms_DB          | 2023-12-07 14:22:54.172 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+GCForms_DB          | 2023-12-07 14:22:54.173 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+GCForms_DB          | 2023-12-07 14:22:54.177 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+GCForms_DB          | 2023-12-07 14:22:54.198 UTC [26] LOG:  database system was shut down at 2023-12-07 14:13:14 UTC
+GCForms_DB          | 2023-12-07 14:22:54.204 UTC [1] LOG:  database system is ready to accept connections
+GCForms_Redis       | 1:C 07 Dec 2023 14:22:54.239 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+GCForms_Redis       | 1:C 07 Dec 2023 14:22:54.239 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+GCForms_Redis       | 1:C 07 Dec 2023 14:22:54.239 * Redis version=7.2.3, bits=64, commit=00000000, modified=0, pid=1, just started
+GCForms_Redis       | 1:C 07 Dec 2023 14:22:54.239 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+GCForms_Redis       | 1:M 07 Dec 2023 14:22:54.239 * monotonic clock: POSIX clock_gettime
+GCForms_Redis       | 1:M 07 Dec 2023 14:22:54.240 * Running mode=standalone, port=6379.
+GCForms_Redis       | 1:M 07 Dec 2023 14:22:54.240 * Server initialized
+GCForms_Redis       | 1:M 07 Dec 2023 14:22:54.240 * Loading RDB produced by version 7.2.3
+GCForms_Redis       | 1:M 07 Dec 2023 14:22:54.240 * RDB age 579 seconds
+GCForms_Redis       | 1:M 07 Dec 2023 14:22:54.240 * RDB memory usage when created 0.83 Mb
+GCForms_Redis       | 1:M 07 Dec 2023 14:22:54.240 * Done loading RDB, keys loaded: 6, keys expired: 0.
+GCForms_Redis       | 1:M 07 Dec 2023 14:22:54.241 * DB loaded from disk: 0.000 seconds
+GCForms_Redis       | 1:M 07 Dec 2023 14:22:54.241 * Ready to accept connections tcp
+GCForms_LocalStack  |
+GCForms_LocalStack  | LocalStack version: 3.0.3.dev
+GCForms_LocalStack  | LocalStack Docker container id: 0211f3486795
+GCForms_LocalStack  | LocalStack build date: 2023-12-05
+GCForms_LocalStack  | LocalStack build git hash: c1dcbc50
+GCForms_LocalStack  |
+GCForms_LocalStack  | 2023-12-07T14:22:56.069  INFO --- [-functhread4] hypercorn.error            : Running on https://0.0.0.0:4566 (CTRL + C to quit)
+GCForms_LocalStack  | 2023-12-07T14:22:56.069  INFO --- [-functhread4] hypercorn.error            : Running on https://0.0.0.0:4566 (CTRL + C to quit)
+GCForms_LocalStack  | Ready.
 ```
 
 ### Setting up local infrastructure
 
-Now that we have localstack up and running it's time to configure our local AWS services with what the lambdas would expect as if running in an AWS environment.
+Now that we have localstack up and running it's time to configure our local AWS services to mimic our cloud environments
 
 **Please note if you stop localstack you will need to run this script again**
 **Localstack does not persist states between restarts of the service**
 
 run `./localstack_services.sh`
 
-You will be asked at one point to enter the following values:
-
-```
-var.cognito_client_id
-  User Pool Client ID for Forms Client
-
-  Enter a value:
-
-var.cognito_endpoint_url
-  Cognito endpoint url
-
-  Enter a value:
-
-var.cognito_user_pool_arn
-  User Pool ARN for the Forms Client
-
-  Enter a value:
-
-var.email_address_contact_us
-  Email address for Form Contact Us
-
-  Enter a value:
-
-var.email_address_support
-  Email address for Form Support
-
-  Enter a value:
-
-```
-
-It is safe to leave them blank for now.
-
 Congratulations! You should now have all the necessary infrastructure configured on localstack to run lambda functions completely locally without needing an AWS account.
-
-### Configuring the environment
-
-In the directory:
-`./aws/app/lambda/local-development/`
-`template.yml` defines the local environment / project we will be running. Functions and environment variables can be defined here.
 
 ### Dynamo Database Table Schemas
 
@@ -235,6 +203,10 @@ This Index supports the Nagware feature. It gives the ability to retrieve form s
 
 ### Invoking Lambdas manually
 
+**# TODO Update #**
+
+**Lambda's are now invoked automatically similar to the cloud environment**
+
 If you want to invoke a lambda specifically, here’s the example command:
 `aws lambda invoke --function-name "Submission" --endpoint-url "http://127.0.0.1:3001" --no-verify-ssl --payload fileb://./file.json out.txt`
 **NOTE:** _`fileb://` allows a JSON file that uses UTF-8 encoding for the payload._
@@ -244,7 +216,7 @@ db host env var: runs in docker - need to get localhost for host machine
 if you get connection errors: postgresql.conf listen address “\*”
 
 Notes:
-When running locally using AWS SAM, the env var `AWS_SAM_LOCAL = true` is set automatically - so I hook into this for local testing
+When running locally using AWS SAM, the env var `LOCALSTACK = true` is set automatically - so I hook into this for local testing
 
 #### Running the reliability lambda
 

@@ -14,20 +14,35 @@ inputs = {
   cbs_satellite_bucket_name = "cbs-satellite-${local.account_id}"
 }
 
+generate "backend_remote_state" {
+disable     = local.env == "local"
+  path      = "backend.tf"
+  if_exists = "overwrite"
+  contents  = <<EOF
+terraform {
+  backend "s3" {
+    encrypt          = true
+    force_path_style = true
+    bucket           = "forms-${local.env}-tfstate"
+    dynamodb_table   = "tfstate-lock"
+    region           = "ca-central-1"
+    key              = "${path_relative_to_include()}/terraform.tfstate"
+  }
+}
+EOF
+}
 
-remote_state {
-  backend = "s3"
-  generate = {
-    path      = "backend.tf"
-    if_exists = "overwrite_terragrunt"
+generate "backend_local_state" {
+disable = local.env != "local"
+  path      = "backend.tf"
+  if_exists = "overwrite"
+  contents = <<EOF
+terraform {
+  backend "local" {
+    path = "${get_parent_terragrunt_dir()}/${path_relative_to_include()}/terraform.tfstate"
   }
-  config = {
-    encrypt        = true
-    bucket         = "forms-${local.env}-tfstate"
-    dynamodb_table = "tfstate-lock"
-    region         = "ca-central-1"
-    key            = "${path_relative_to_include()}/terraform.tfstate"
-  }
+}
+EOF
 }
 
 generate "provider" {
