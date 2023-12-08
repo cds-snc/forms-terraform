@@ -4,7 +4,7 @@ import { Client } from "pg";
 export async function getTemplateInfo(formID: string) {
   try {
     const { SQL, parameters } = createSQLString(formID);
-    const requestResult = process.env.LOCALSTACK ? requestSAM : requestRDS;
+    const requestResult = process.env.LOCALSTACK === "true" ? requestSAM : requestRDS;
     const result = await requestResult(SQL, parameters as any);
 
     if (result) {
@@ -26,7 +26,7 @@ const createSQLString = (formID: string) => {
   JOIN "_TemplateToUser" ttu ON usr."id" = ttu."B" 
   JOIN "Template" tem ON tem."id" = ttu."A"
   `;
-  if (!process.env.LOCALSTACK) {
+  if (!(process.env.LOCALSTACK === "true")) {
     return {
       SQL: `${selectSQL} WHERE ttu."A" = :formID`,
       parameters: [
@@ -54,7 +54,7 @@ const parseQueryResponse = (records: any[]) => {
   const firstRecord = records[0];
   let isPublished = false;
 
-  if (!process.env.LOCALSTACK) {
+  if (!(process.env.LOCALSTACK === "true")) {
     const jsonConfig = JSON.parse(firstRecord[3].stringValue.trim(1, -1)) || undefined;
     formName =
       firstRecord[2].stringValue !== ""
@@ -70,7 +70,7 @@ const parseQueryResponse = (records: any[]) => {
   }
 
   const owners = records.map((record) => {
-    if (!process.env.LOCALSTACK) {
+    if (!(process.env.LOCALSTACK === "true")) {
       return { name: record[0].stringValue, email: record[1].stringValue };
     } else {
       return { name: record.name, email: record.email };

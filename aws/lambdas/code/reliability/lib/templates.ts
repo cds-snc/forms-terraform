@@ -22,7 +22,7 @@ export const getTemplateFormConfig = async (formID: string) => {
 
     const { SQL, parameters } = createSQLString(formID);
 
-    const getTemplateData = process.env.LOCALSTACK ? requestSAM : requestRDS;
+    const getTemplateData = process.env.LOCALSTACK === "true" ? requestSAM : requestRDS;
 
     // I know it's cheating to use 'any' but we'll refactor later
     const data = await getTemplateData(SQL, parameters as any);
@@ -139,7 +139,7 @@ const createSQLString = (formID: string) => {
   const selectSQL = `SELECT  t."jsonConfig", deli."emailAddress", deli."emailSubjectEn", deli."emailSubjectFr"
                     FROM "Template" t
                     LEFT JOIN "DeliveryOption" deli ON t.id = deli."templateId"`;
-  if (!process.env.LOCALSTACK) {
+  if (!(process.env.LOCALSTACK === "true")) {
     return {
       SQL: `${selectSQL} WHERE t.id = :formID`,
       parameters: [
@@ -164,7 +164,7 @@ const parseConfig = (records: any[] | undefined) => {
     const parsedRecords = records.map((record) => {
       let formConfig;
       let deliveryOption;
-      if (!process.env.LOCALSTACK) {
+      if (!(process.env.LOCALSTACK === "true")) {
         formConfig = JSON.parse(record[0].stringValue.trim(1, -1)) || undefined;
         deliveryOption = record[1].stringValue
           ? {

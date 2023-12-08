@@ -8,7 +8,7 @@ import { NodeJsClient } from "@smithy/types";
 
 const awsProperties = {
   region: process.env.REGION ?? "ca-central-1",
-  ...(process.env.LOCALSTACK && {
+  ...(process.env.LOCALSTACK === "true" && {
     endpoint: "http://host.docker.internal:4566",
   }),
 };
@@ -18,7 +18,8 @@ const s3Client = new S3Client({
   forcePathStyle: true,
 }) as NodeJsClient<S3Client>;
 
-const environment = process.env.ENVIRONMENT || (process.env.LOCALSTACK ? "local" : "staging");
+const environment =
+  process.env.ENVIRONMENT || (process.env.LOCALSTACK === "true" ? "local" : "staging");
 const reliabilityBucketName = `forms-${environment}-reliability-file-storage`;
 const vaultBucketName = `forms-${environment}-vault-file-storage`;
 
