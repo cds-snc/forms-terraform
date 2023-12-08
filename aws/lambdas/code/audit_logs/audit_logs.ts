@@ -12,7 +12,7 @@ type LogEvent = {
 
 const awsProperties = {
   region: process.env.REGION ?? "ca-central-1",
-  ...(process.env.LOCALSTACK && {
+  ...(process.env.LOCALSTACK === "true" && {
     endpoint: "http://host.docker.internal:4566",
   }),
 };

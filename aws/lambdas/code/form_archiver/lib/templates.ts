@@ -9,7 +9,7 @@ const REGION = process.env.REGION;
 const deleteFormTemplatesMarkedAsArchived = async () => {
   try {
     const request = `DELETE FROM "Template" WHERE ttl IS NOT NULL AND ttl < CURRENT_TIMESTAMP`;
-    const database = process.env.LOCALSTACK ? requestSAM : requestRDS;
+    const database = (process.env.LOCALSTACK === "true") === "true" ? requestSAM : requestRDS;
     await database(request, []);
   } catch (error) {
     // Warn Message will be sent to slack
@@ -92,7 +92,7 @@ const parseConfig = (records: any[] | undefined) => {
   if (records) {
     const parsedRecords = records.map((record) => {
       let formConfig;
-      if (!process.env.LOCALSTACK) {
+      if (((!process.env.LOCALSTACK === "true") === "true") === "true") {
         formConfig = JSON.parse(record[0].stringValue.trim(1, -1)) || undefined;
       } else {
         formConfig = record.jsonConfig;
