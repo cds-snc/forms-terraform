@@ -204,7 +204,6 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       block {}
     }
 
-
     statement {
       not_statement {
         statement {
@@ -232,8 +231,6 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       sampled_requests_enabled   = false
     }
   }
-
-
 }
 
 #
@@ -329,7 +326,7 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
             }
 
             text_transformation {
-              priority = 0
+              priority = 1
               type     = "NONE"
             }
           }
@@ -344,12 +341,12 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
             }
 
             text_transformation {
-              priority = 0
+              priority = 1
               type     = "COMPRESS_WHITE_SPACE"
             }
 
             text_transformation {
-              priority = 1
+              priority = 2
               type     = "LOWERCASE"
             }
           }
@@ -378,7 +375,7 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
 
 resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {
   name        = "valid_maintenance_page_uri_paths"
-  scope       = "REGIONAL"
+  scope       = "CLOUDFRONT"
   description = "Regex to match the maintenance page valid URIs"
 
   regular_expression {
