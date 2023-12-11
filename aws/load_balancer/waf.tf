@@ -288,7 +288,6 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
 }
 
 resource "aws_wafv2_regex_pattern_set" "forms_base_url" {
-
   name        = "forms_base_url"
   description = "Regex matching the root domain of GCForms"
   scope       = "REGIONAL"
@@ -311,7 +310,7 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
   }
 
   rule {
-    name     = "AllowGetRequestOnRootOnly"
+    name     = "AllowGetOnMaintenancePageHTMLResources"
     priority = 0
 
     action {
@@ -337,10 +336,8 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
         }
 
         statement {
-
-          byte_match_statement {
-            search_string         = "/"
-            positional_constraint = "EXACTLY"
+          regex_pattern_set_reference_statement {
+            arn = aws_wafv2_regex_pattern_set.valid_maintenance_mode_uri_paths.arn
 
             field_to_match {
               uri_path {}
@@ -348,7 +345,12 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
 
             text_transformation {
               priority = 0
-              type     = "NONE"
+              type     = "COMPRESS_WHITE_SPACE"
+            }
+
+            text_transformation {
+              priority = 1
+              type     = "LOWERCASE"
             }
           }
         }
@@ -357,7 +359,7 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
 
     visibility_config {
       cloudwatch_metrics_enabled = false
-      metric_name                = "AllowGetRequestOnRootOnly"
+      metric_name                = "AllowGetOnMaintenancePageHTMLResources"
       sampled_requests_enabled   = false
     }
   }
@@ -371,5 +373,15 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
+  }
+}
+
+resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {
+  name        = "valid_maintenance_page_uri_paths"
+  scope       = "REGIONAL"
+  description = "Regex to match the maintenance page valid URIs"
+
+  regular_expression {
+    regex_string = "^\\/(index.html|index-fr.html|style.css|site-unavailable.svg|favicon.ico)?$"
   }
 }
