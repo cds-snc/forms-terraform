@@ -25,7 +25,8 @@ resource "aws_lambda_function" "vault_integrity" {
   handler           = "vault_data_integrity_check.handler"
   timeout           = 60
 
-  source_code_hash = data.archive_file.vault_integrity_code.output_base64sha256
+  source_code_hash        = data.archive_file.vault_integrity_code.output_base64sha256
+  code_signing_config_arn = var.env != "local" ? aws_lambda_code_signing_config.lambda_code_signing_config[0].arn : null
 
   runtime = "nodejs18.x"
 
