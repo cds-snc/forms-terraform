@@ -378,6 +378,8 @@ resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {
   scope       = "CLOUDFRONT"
   description = "Regex to match the maintenance page valid URIs"
 
+  provider = aws.us-east-1
+
   regular_expression {
     regex_string = "^\\/(index.html|index-fr.html|style.css|site-unavailable.svg|favicon.ico)?$"
   }
