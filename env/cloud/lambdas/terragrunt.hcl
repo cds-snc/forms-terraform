@@ -90,6 +90,7 @@ dependency "secrets" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
     notify_api_key_secret_arn               = ""
+    notify_api_key_secret_value             = ""
     freshdesk_api_key_secret_arn            = ""
     token_secret_arn                        = ""
     recaptcha_secret_arn                    = ""
@@ -134,8 +135,7 @@ inputs = {
 
   sns_topic_alert_critical_arn = dependency.sns.outputs.sns_topic_alert_critical_arn
 
-  notify_api_key_secret_arn = dependency.secrets.outputs.notify_api_key_secret_arn
-  token_secret_arn          = dependency.secrets.outputs.token_secret_arn
+  notify_api_key_secret_value = dependency.secrets.outputs.notify_api_key_secret_value
 
   reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
   vault_file_storage_arn       = dependency.s3.outputs.vault_file_storage_arn
