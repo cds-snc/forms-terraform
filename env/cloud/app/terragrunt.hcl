@@ -106,6 +106,7 @@ dependency "secrets" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     notify_api_key_secret_arn               = ""
+    notify_api_key_secret_value             = ""
     freshdesk_api_key_secret_arn            = ""
     token_secret_arn                        = ""
     recaptcha_secret_arn                    = ""

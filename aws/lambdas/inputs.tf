@@ -1,16 +1,11 @@
-
-variable "notify_api_key_secret_arn" {
-  description = "ARN of notify_api_key secret"
+variable "notify_api_key_secret_value" {
+  description = "Value of notify_api_key secret"
   type        = string
+  sensitive   = true
 }
 
 variable "gc_template_id" {
   description = "GC Notify send a notification templateID"
-  type        = string
-}
-
-variable "token_secret_arn" {
-  description = "Token secret used for app"
   type        = string
 }
 
