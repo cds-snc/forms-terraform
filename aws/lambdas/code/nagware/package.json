@@ -15,7 +15,7 @@
     "@aws-sdk/client-rds-data": "3.430.0",
     "axios": "^1.6.2",
     "notifications-node-client": "5.2.3",
-    "pg": "8.10.0"
+    "pg": "^8.7.3"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.128",

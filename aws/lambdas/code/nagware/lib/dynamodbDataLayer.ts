@@ -4,10 +4,12 @@ import {
   BatchWriteItemCommand,
   QueryCommandInput,
 } from "@aws-sdk/client-dynamodb";
+
 const dynamoDb = new DynamoDBClient({
   region: process.env.REGION,
   ...(process.env.LOCALSTACK === "true" && { endpoint: "http://host.docker.internal:4566" }),
 });
+
 const DYNAMODB_VAULT_TABLE_NAME = process.env.DYNAMODB_VAULT_TABLE_NAME ?? "";
 
 export async function retrieveFormResponsesOver28DaysOld(status: string) {
