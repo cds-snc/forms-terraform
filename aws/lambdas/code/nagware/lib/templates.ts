@@ -1,5 +1,5 @@
 import { RDSDataClient, ExecuteStatementCommand } from "@aws-sdk/client-rds-data";
-import { Client } from "pg";
+import pg from "pg";
 
 export async function getTemplateInfo(formID: string) {
   try {
@@ -88,7 +88,7 @@ const parseQueryResponse = (records: any[]) => {
  */
 const requestSAM = async (SQL: string, parameters: string[]) => {
   // Placed outside of try block to be referenced in finally
-  const dbClient = new Client();
+  const dbClient = new pg.Client();
   try {
     if (
       process.env.PGHOST &&
