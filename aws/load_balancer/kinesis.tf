@@ -23,46 +23,6 @@ resource "aws_kinesis_firehose_delivery_stream" "firehose_waf_logs" {
 }
 
 #
-# Log bucket
-# This is no longer being used and can be removed in 90 days from the 
-# terraform apply date (expiration lifecycle_rule will have deleted all objects by then).
-#
-resource "aws_s3_bucket" "firehose_waf_logs" {
-  # checkov:skip=CKV_AWS_18: Versioning not required
-  # checkov:skip=CKV_AWS_21: Access logging not required  
-  bucket = var.env == "production" ? "forms-waf-logs" : "forms-${var.env}-terraform-waf-logs"
-  acl    = "private"
-
-  lifecycle_rule {
-    enabled = true
-    expiration {
-      days = 90
-    }
-  }
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
-}
-
-resource "aws_s3_bucket_public_access_block" "firehose_waf_logs" {
-  bucket                  = aws_s3_bucket.firehose_waf_logs.id
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
-#
 # IAM role
 #
 resource "aws_iam_role" "firehose_waf_logs" {
