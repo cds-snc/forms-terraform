@@ -3,11 +3,11 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "3.76.1"
+      version = "4.67.0"
     }
     random = {
       source  = "hashicorp/random"
-      version = "=3.4.3"
+      version = "=3.6.0"
     }
   }
 }
@@ -21,7 +21,7 @@ provider "aws" {
   access_key                  = "test"
   secret_key                  = "test"
   region                      = "ca-central-1"
-  s3_force_path_style         = true
+  s3_use_path_style         = true
   skip_credentials_validation = true
   skip_metadata_api_check     = true
   skip_requesting_account_id  = true
@@ -60,7 +60,7 @@ provider "aws" {
   access_key                  = "test"
   secret_key                  = "test"
   region                      = "us-east-1"
-  s3_force_path_style         = true
+  s3_use_path_style         = true
   skip_credentials_validation = true
   skip_metadata_api_check     = true
   skip_requesting_account_id  = true
@@ -97,7 +97,7 @@ provider "aws" {
   access_key                  = "test"
   secret_key                  = "test"
   region                      = "ca-central-1"
-  s3_force_path_style         = true
+  s3_use_path_style         = true
   skip_credentials_validation = true
   skip_metadata_api_check     = true
   skip_requesting_account_id  = true
