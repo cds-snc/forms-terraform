@@ -17,9 +17,9 @@ resource "aws_s3_object" "nagware_code" {
 
 
 resource "aws_lambda_function" "nagware" {
-  s3_bucket         = aws_s3_bucket_object.nagware_code.bucket
-  s3_key            = aws_s3_bucket_object.nagware_code.key
-  s3_object_version = aws_s3_bucket_object.nagware_code.version_id
+  s3_bucket         = aws_s3_object.nagware_code.bucket
+  s3_key            = aws_s3_object.nagware_code.key
+  s3_object_version = aws_s3_object.nagware_code.version_id
   function_name     = "Nagware"
   role              = aws_iam_role.lambda.arn
   handler           = "nagware.handler"

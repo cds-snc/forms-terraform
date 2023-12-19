@@ -17,9 +17,9 @@ resource "aws_s3_object" "vault_integrity_code" {
 }
 
 resource "aws_lambda_function" "vault_integrity" {
-  s3_bucket         = var.env != "local" ? aws_signer_signing_job.vault_integrity[0].signed_object[0].s3[0].bucket : aws_s3_bucket_object.vault_integrity_code.bucket
-  s3_key            = var.env != "local" ? aws_signer_signing_job.vault_integrity[0].signed_object[0].s3[0].key : aws_s3_bucket_object.vault_integrity_code.key
-  s3_object_version = var.env != "local" ? null : aws_s3_bucket_object.vault_integrity_code.version_id
+  s3_bucket         = var.env != "local" ? aws_signer_signing_job.vault_integrity[0].signed_object[0].s3[0].bucket : aws_s3_object.vault_integrity_code.bucket
+  s3_key            = var.env != "local" ? aws_signer_signing_job.vault_integrity[0].signed_object[0].s3[0].key : aws_s3_object.vault_integrity_code.key
+  s3_object_version = var.env != "local" ? null : aws_s3_object.vault_integrity_code.version_id
   function_name     = "Vault_Data_Integrity_Check"
   role              = aws_iam_role.lambda.arn
   handler           = "vault_data_integrity_check.handler"
@@ -77,15 +77,15 @@ resource "aws_signer_signing_job" "vault_integrity" {
 
   source {
     s3 {
-      bucket  = aws_s3_bucket_object.vault_integrity_code.bucket
-      key     = aws_s3_bucket_object.vault_integrity_code.key
-      version = aws_s3_bucket_object.vault_integrity_code.version_id
+      bucket  = aws_s3_object.vault_integrity_code.bucket
+      key     = aws_s3_object.vault_integrity_code.key
+      version = aws_s3_object.vault_integrity_code.version_id
     }
   }
 
   destination {
     s3 {
-      bucket = aws_s3_bucket_object.vault_integrity_code.bucket
+      bucket = aws_s3_object.vault_integrity_code.bucket
       prefix = "signed/"
     }
   }

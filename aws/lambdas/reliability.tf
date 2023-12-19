@@ -14,9 +14,9 @@ resource "aws_s3_object" "reliability_code" {
 }
 
 resource "aws_lambda_function" "reliability" {
-  s3_bucket         = aws_s3_bucket_object.reliability_code.bucket
-  s3_key            = aws_s3_bucket_object.reliability_code.key
-  s3_object_version = aws_s3_bucket_object.reliability_code.version_id
+  s3_bucket         = aws_s3_object.reliability_code.bucket
+  s3_key            = aws_s3_object.reliability_code.key
+  s3_object_version = aws_s3_object.reliability_code.version_id
   function_name     = "Reliability"
   role              = aws_iam_role.lambda.arn
   handler           = "reliability.handler"

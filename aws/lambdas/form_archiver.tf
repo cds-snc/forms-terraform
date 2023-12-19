@@ -16,9 +16,9 @@ resource "aws_s3_object" "form_archiver_code" {
 }
 
 resource "aws_lambda_function" "form_archiver" {
-  s3_bucket         = aws_s3_bucket_object.form_archiver_code.bucket
-  s3_key            = aws_s3_bucket_object.form_archiver_code.key
-  s3_object_version = aws_s3_bucket_object.form_archiver_code.version_id
+  s3_bucket         = aws_s3_object.form_archiver_code.bucket
+  s3_key            = aws_s3_object.form_archiver_code.key
+  s3_object_version = aws_s3_object.form_archiver_code.version_id
   function_name     = "Archive_Form_Templates"
   role              = aws_iam_role.lambda.arn
   handler           = "form_archiver.handler"
