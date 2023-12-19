@@ -27,7 +27,7 @@ resource "aws_vpc_endpoint" "lambda" {
   security_group_ids = [
     aws_security_group.privatelink.id,
   ]
-  subnet_ids = data.aws_subnet_ids.lambda_endpoint_available.ids
+  subnet_ids = data.aws_subnets.lambda_endpoint_available.ids
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
@@ -43,7 +43,7 @@ resource "aws_vpc_endpoint" "ecr-dkr" {
   security_group_ids = [
     aws_security_group.privatelink.id,
   ]
-  subnet_ids = data.aws_subnet_ids.ecr_endpoint_available.ids
+  subnet_ids = data.aws_subnets.ecr_endpoint_available.ids
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
@@ -59,7 +59,7 @@ resource "aws_vpc_endpoint" "ecr-api" {
   security_group_ids = [
     aws_security_group.privatelink.id,
   ]
-  subnet_ids = data.aws_subnet_ids.ecr_endpoint_available.ids
+  subnet_ids = data.aws_subnets.ecr_endpoint_available.ids
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
