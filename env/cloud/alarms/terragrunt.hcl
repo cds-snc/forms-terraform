@@ -25,8 +25,8 @@ dependency "kms" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    kms_key_cloudwatch_arn         = ""
-    kms_key_cloudwatch_us_east_arn = ""
+    kms_key_cloudwatch_arn         = null
+    kms_key_cloudwatch_us_east_arn = null
   }
 }
 
@@ -36,8 +36,8 @@ dependency "load_balancer" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    lb_arn        = ""
-    lb_arn_suffix = ""
+    lb_arn        = null
+    lb_arn_suffix = null
   }
 }
 
@@ -47,8 +47,8 @@ dependency "sqs" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    sqs_reliability_deadletter_queue_arn = ""
-    sqs_audit_log_deadletter_queue_arn   = ""
+    sqs_reliability_deadletter_queue_arn = null
+    sqs_audit_log_deadletter_queue_arn   = null
   }
 }
 
@@ -58,9 +58,9 @@ dependency "app" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    ecs_cloudwatch_log_group_name = ""
-    ecs_cluster_name              = ""
-    ecs_service_name              = ""
+    ecs_cloudwatch_log_group_name = null
+    ecs_cluster_name              = null
+    ecs_service_name              = null
   }
 }
 
@@ -69,15 +69,15 @@ dependency "lambdas" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    lambda_reliability_log_group_name                = ""
-    lambda_submission_log_group_name                 = ""
-    lambda_response_archiver_log_group_name          = ""
-    lambda_dlq_consumer_log_group_name               = ""
-    lambda_template_archiver_log_group_name          = ""
-    lambda_audit_log_group_name                      = ""
-    lambda_nagware_log_group_name                    = ""
-    lambda_vault_data_integrity_check_log_group_name = ""
-    lambda_vault_data_integrity_check_function_name  = ""
+    lambda_reliability_log_group_name                = null
+    lambda_submission_log_group_name                 = null
+    lambda_response_archiver_log_group_name          = null
+    lambda_dlq_consumer_log_group_name               = null
+    lambda_template_archiver_log_group_name          = null
+    lambda_audit_log_group_name                      = null
+    lambda_nagware_log_group_name                    = null
+    lambda_vault_data_integrity_check_log_group_name = null
+    lambda_vault_data_integrity_check_function_name  = null
   }
 }
 
@@ -87,11 +87,11 @@ dependency "sns" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    sns_topic_alert_critical_arn        = ""
-    sns_topic_alert_warning_arn         = ""
-    sns_topic_alert_ok_arn              = ""
-    sns_topic_alert_warning_us_east_arn = ""
-    sns_topic_alert_ok_us_east_arn      = ""
+    sns_topic_alert_critical_arn        = null
+    sns_topic_alert_warning_arn         = null
+    sns_topic_alert_ok_arn              = null
+    sns_topic_alert_warning_us_east_arn = null
+    sns_topic_alert_ok_us_east_arn      = null
   }
 }
 

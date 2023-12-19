@@ -12,7 +12,7 @@ dependency "network" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
     private_subnet_ids    = [""]
-    rds_security_group_id = ""
+    rds_security_group_id = null
   }
 }
 

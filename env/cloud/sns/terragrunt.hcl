@@ -12,8 +12,8 @@ dependency "kms" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    kms_key_cloudwatch_arn         = ""
-    kms_key_cloudwatch_us_east_arn = ""
+    kms_key_cloudwatch_arn         = null
+    kms_key_cloudwatch_us_east_arn = null
   }
 }
 
