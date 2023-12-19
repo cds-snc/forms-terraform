@@ -18,9 +18,9 @@ resource "aws_s3_bucket_ownership_controls" "maintenance_mode" {
 }
 
 resource "aws_s3_bucket_acl" "maintenance_mode" {
-  depends_on = [ aws_s3_bucket_ownership_controls.maintenance_mode ]
-  bucket = aws_s3_bucket.maintenance_mode.id
-  acl    = "private"
+  depends_on = [aws_s3_bucket_ownership_controls.maintenance_mode]
+  bucket     = aws_s3_bucket.maintenance_mode.id
+  acl        = "private"
 }
 
 resource "aws_s3_bucket_public_access_block" "maintenance_mode" {

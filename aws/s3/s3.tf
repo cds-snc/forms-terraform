@@ -21,17 +21,17 @@ resource "aws_s3_bucket_ownership_controls" "reliability_file_storage" {
 }
 
 resource "aws_s3_bucket_acl" "reliability_file_storage" {
-  depends_on = [ aws_s3_bucket_ownership_controls.reliability_file_storage ]
-  bucket = aws_s3_bucket.reliability_file_storage.id
+  depends_on = [aws_s3_bucket_ownership_controls.reliability_file_storage]
+  bucket     = aws_s3_bucket.reliability_file_storage.id
 
   acl = "private"
 }
 
-resource "aws_s3_bucket_lifecycle_configuration" "reliability_file_storage"{
+resource "aws_s3_bucket_lifecycle_configuration" "reliability_file_storage" {
   bucket = aws_s3_bucket.reliability_file_storage.id
 
   rule {
-    id      = "Clear Reliability Queue after 30 days"
+    id     = "Clear Reliability Queue after 30 days"
     status = "Enabled"
 
     expiration {
@@ -82,8 +82,8 @@ resource "aws_s3_bucket_ownership_controls" "vault_file_storage" {
 }
 
 resource "aws_s3_bucket_acl" "vault_file_storage" {
-  depends_on = [ aws_s3_bucket_ownership_controls.vault_file_storage ]
-  bucket = aws_s3_bucket.vault_file_storage.id
+  depends_on = [aws_s3_bucket_ownership_controls.vault_file_storage]
+  bucket     = aws_s3_bucket.vault_file_storage.id
 
   acl = "private"
 }
@@ -130,8 +130,8 @@ resource "aws_s3_bucket_ownership_controls" "archive_storage" {
 }
 
 resource "aws_s3_bucket_acl" "archive_storage" {
-  depends_on = [ aws_s3_bucket_ownership_controls.archive_storage ]
-  bucket = aws_s3_bucket.archive_storage.id
+  depends_on = [aws_s3_bucket_ownership_controls.archive_storage]
+  bucket     = aws_s3_bucket.archive_storage.id
 
   acl = "private"
 }
@@ -146,11 +146,11 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "archive_storage" 
   }
 }
 
-resource "aws_s3_bucket_lifecycle_configuration" "archive_storage"{
+resource "aws_s3_bucket_lifecycle_configuration" "archive_storage" {
   bucket = aws_s3_bucket.archive_storage.id
 
   rule {
-    id      = "Clear Archive Storage after 30 days"
+    id     = "Clear Archive Storage after 30 days"
     status = "Enabled"
 
     expiration {
@@ -188,8 +188,8 @@ resource "aws_s3_bucket_ownership_controls" "lambda_code" {
 }
 
 resource "aws_s3_bucket_acl" "lambda_code" {
-  depends_on = [ aws_s3_bucket_ownership_controls.lambda_code ]
-  bucket = aws_s3_bucket.lambda_code.id
+  depends_on = [aws_s3_bucket_ownership_controls.lambda_code]
+  bucket     = aws_s3_bucket.lambda_code.id
 
   acl = "private"
 }
