@@ -65,8 +65,11 @@ resource "aws_subnet" "forms_public" {
   }
 }
 
-data "aws_subnet_ids" "ecr_endpoint_available" {
-  vpc_id = aws_vpc.forms.id
+data "aws_subnets" "ecr_endpoint_available" {
+  filter {
+    name   = "vpc-id"
+    values = [aws_vpc.forms.id]
+  }
   filter {
     name   = "tag:Access"
     values = ["private"]
@@ -78,8 +81,11 @@ data "aws_subnet_ids" "ecr_endpoint_available" {
   depends_on = [aws_subnet.forms_private]
 }
 
-data "aws_subnet_ids" "lambda_endpoint_available" {
-  vpc_id = aws_vpc.forms.id
+data "aws_subnets" "lambda_endpoint_available" {
+  filter {
+    name   = "vpc-id"
+    values = [aws_vpc.forms.id]
+  }
   filter {
     name   = "tag:Access"
     values = ["private"]
