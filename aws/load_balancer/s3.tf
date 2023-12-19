@@ -1,9 +1,7 @@
 resource "aws_s3_bucket" "maintenance_mode" {
-  # checkov:skip=CKV2_AWS_6: Public access block is define in a different resource
   # checkov:skip=CKV_AWS_18: Versioning not required
-  # checkov:skip=CKV_AWS_19: False-positive, server side encryption is enabled but probably not detected because defined in a different Terraform resource
   # checkov:skip=CKV_AWS_21: Access logging not required
-  bucket = "gc-forms-application-maintenance-page"
+  bucket = "gc-forms-${var.env}-application-maintenance-page"
 
   tags = {
     (var.billing_tag_key) = var.billing_tag_value
@@ -11,7 +9,16 @@ resource "aws_s3_bucket" "maintenance_mode" {
   }
 }
 
+resource "aws_s3_bucket_ownership_controls" "maintenance_mode" {
+  bucket = aws_s3_bucket.maintenance_mode.id
+
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "maintenance_mode" {
+  depends_on = [ aws_s3_bucket_ownership_controls.maintenance_mode ]
   bucket = aws_s3_bucket.maintenance_mode.id
   acl    = "private"
 }
