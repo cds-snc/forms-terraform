@@ -8,7 +8,7 @@ data "archive_file" "form_archiver_code" {
   output_path = "/tmp/form_archiver_code.zip"
 }
 
-resource "aws_s3_bucket_object" "form_archiver_code" {
+resource "aws_s3_object" "form_archiver_code" {
   bucket      = var.lambda_code_id
   key         = "form_archiver_code"
   source      = data.archive_file.form_archiver_code.output_path

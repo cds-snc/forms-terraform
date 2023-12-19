@@ -7,7 +7,7 @@ data "archive_file" "submission_code" {
   output_path = "/tmp/submission_code.zip"
 }
 
-resource "aws_s3_bucket_object" "submission_code" {
+resource "aws_s3_object" "submission_code" {
   bucket      = var.lambda_code_id
   key         = "submission_code"
   source      = data.archive_file.submission_code.output_path

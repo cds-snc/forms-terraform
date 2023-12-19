@@ -8,7 +8,7 @@ data "archive_file" "vault_integrity_code" {
   output_path = "/tmp/vault_integrity_code.zip"
 }
 
-resource "aws_s3_bucket_object" "vault_integrity_code" {
+resource "aws_s3_object" "vault_integrity_code" {
 
   bucket      = var.lambda_code_id
   key         = "vault_integrity_code"

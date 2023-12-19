@@ -9,7 +9,7 @@ data "archive_file" "reliability_dlq_consumer_code" {
   output_path = "/tmp/reliability_dlq_consumer_code.zip"
 }
 
-resource "aws_s3_bucket_object" "reliability_dlq_consumer_code" {
+resource "aws_s3_object" "reliability_dlq_consumer_code" {
   bucket      = var.lambda_code_id
   key         = "reliability_dlq_consumer_code"
   source      = data.archive_file.reliability_dlq_consumer_code.output_path

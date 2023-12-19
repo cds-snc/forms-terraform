@@ -67,37 +67,37 @@ resource "aws_s3_bucket_website_configuration" "maintenance_mode" {
   }
 }
 
-resource "aws_s3_bucket_object" "maintenance_static_page_html_files" {
+resource "aws_s3_object" "maintenance_static_page_html_files" {
   for_each     = fileset("./static_website/", "*.html")
   content_type = "text/html"
-  bucket       = aws_s3_bucket.maintenance_mode.bucket
+  bucket       = aws_s3_bucket.maintenance_mode.id
   key          = each.value
   source       = "./static_website/${each.value}"
   etag         = filemd5("./static_website/${each.value}")
 }
 
-resource "aws_s3_bucket_object" "maintenance_static_page_css_files" {
+resource "aws_s3_object" "maintenance_static_page_css_files" {
   for_each     = fileset("./static_website/", "*.css")
   content_type = "text/css"
-  bucket       = aws_s3_bucket.maintenance_mode.bucket
+  bucket       = aws_s3_bucket.maintenance_mode.id
   key          = each.value
   source       = "./static_website/${each.value}"
   etag         = filemd5("./static_website/${each.value}")
 }
 
-resource "aws_s3_bucket_object" "maintenance_static_page_svg_files" {
+resource "aws_s3_object" "maintenance_static_page_svg_files" {
   for_each     = fileset("./static_website/", "*.svg")
   content_type = "image/svg+xml"
-  bucket       = aws_s3_bucket.maintenance_mode.bucket
+  bucket       = aws_s3_bucket.maintenance_mode.id
   key          = each.value
   source       = "./static_website/${each.value}"
   etag         = filemd5("./static_website/${each.value}")
 }
 
-resource "aws_s3_bucket_object" "maintenance_static_page_ico_files" {
+resource "aws_s3_object" "maintenance_static_page_ico_files" {
   for_each     = fileset("./static_website/", "*.ico")
   content_type = "image/png"
-  bucket       = aws_s3_bucket.maintenance_mode.bucket
+  bucket       = aws_s3_bucket.maintenance_mode.id
   key          = each.value
   source       = "./static_website/${each.value}"
   etag         = filemd5("./static_website/${each.value}")

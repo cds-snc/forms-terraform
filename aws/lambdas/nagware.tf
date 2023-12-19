@@ -8,7 +8,7 @@ data "archive_file" "nagware_code" {
   output_path = "/tmp/nagware_code.zip"
 }
 
-resource "aws_s3_bucket_object" "nagware_code" {
+resource "aws_s3_object" "nagware_code" {
   bucket      = var.lambda_code_id
   key         = "nagware_code"
   source      = data.archive_file.nagware_code.output_path
