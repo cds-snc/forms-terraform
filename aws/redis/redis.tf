@@ -5,9 +5,9 @@
 resource "aws_elasticache_replication_group" "redis" {
   automatic_failover_enabled    = true
   replication_group_id          = "gcforms-redis-rep-group"
-  replication_group_description = "Redis cluster for GCForms"
+  description                   = "Redis cluster for GCForms"
   node_type                     = "cache.t2.micro"
-  number_cache_clusters         = 2
+  num_cache_clusters            = 2
   engine_version                = "6.x"
   parameter_group_name          = "default.redis6.x"
   port                          = 6379
