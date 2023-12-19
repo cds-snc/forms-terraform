@@ -22,7 +22,7 @@ disable     = local.env == "local"
 terraform {
   backend "s3" {
     encrypt          = true
-    use_path_style = true
+    use_path_style   = true
     bucket           = "forms-${local.env}-tfstate"
     dynamodb_table   = "tfstate-lock"
     region           = "ca-central-1"
