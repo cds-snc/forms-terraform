@@ -117,7 +117,7 @@ resource "aws_nat_gateway" "forms" {
 }
 
 resource "aws_eip" "forms_natgw" {
-  count = 3
+  count  = 3
   domain = "vpc"
 
   tags = {
