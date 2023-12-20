@@ -118,7 +118,7 @@ resource "aws_nat_gateway" "forms" {
 
 resource "aws_eip" "forms_natgw" {
   count = 3
-  vpc   = true
+  domain = "vpc"
 
   tags = {
     Name                  = "${var.vpc_name} NAT GW ${count.index}"
