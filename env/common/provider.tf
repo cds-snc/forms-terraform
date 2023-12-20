@@ -14,8 +14,18 @@ terraform {
 }
 
 provider "aws" {
+ default_tags {
+   tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+   }
+ }
+}
+
+provider "aws" {
   region              = var.region
   allowed_account_ids = [var.account_id]
+  
 }
 
 provider "aws" {

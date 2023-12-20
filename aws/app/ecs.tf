@@ -10,10 +10,7 @@ resource "aws_ecs_cluster" "forms" {
     value = "enabled"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 #
@@ -62,10 +59,7 @@ resource "aws_ecs_task_definition" "form_viewer" {
   task_role_arn            = aws_iam_role.forms.arn
   container_definitions    = data.template_file.form_viewer_task.rendered
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 #
@@ -109,10 +103,7 @@ resource "aws_ecs_service" "form_viewer" {
     ]
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 #
@@ -171,8 +162,5 @@ resource "aws_cloudwatch_log_group" "forms" {
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 90
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }

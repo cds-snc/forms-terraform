@@ -13,10 +13,7 @@ resource "aws_vpc_endpoint" "sqs" {
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_vpc_endpoint" "lambda" {
@@ -29,10 +26,7 @@ resource "aws_vpc_endpoint" "lambda" {
   ]
   subnet_ids = data.aws_subnets.lambda_endpoint_available.ids
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_vpc_endpoint" "ecr-dkr" {
@@ -45,10 +39,7 @@ resource "aws_vpc_endpoint" "ecr-dkr" {
   ]
   subnet_ids = data.aws_subnets.ecr_endpoint_available.ids
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_vpc_endpoint" "ecr-api" {
@@ -61,10 +52,7 @@ resource "aws_vpc_endpoint" "ecr-api" {
   ]
   subnet_ids = data.aws_subnets.ecr_endpoint_available.ids
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_vpc_endpoint" "kms" {
@@ -77,10 +65,7 @@ resource "aws_vpc_endpoint" "kms" {
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_vpc_endpoint" "secretsmanager" {
@@ -93,10 +78,7 @@ resource "aws_vpc_endpoint" "secretsmanager" {
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_vpc_endpoint" "logs" {
@@ -109,10 +91,7 @@ resource "aws_vpc_endpoint" "logs" {
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_vpc_endpoint" "monitoring" {
@@ -125,10 +104,7 @@ resource "aws_vpc_endpoint" "monitoring" {
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 resource "aws_vpc_endpoint" "rds" {
   vpc_id              = aws_vpc.forms.id
@@ -140,10 +116,7 @@ resource "aws_vpc_endpoint" "rds" {
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_vpc_endpoint" "dynamodb" {
@@ -152,10 +125,7 @@ resource "aws_vpc_endpoint" "dynamodb" {
   service_name      = "com.amazonaws.${var.region}.dynamodb"
   route_table_ids   = [aws_vpc.forms.main_route_table_id]
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_vpc_endpoint" "s3" {
@@ -164,8 +134,5 @@ resource "aws_vpc_endpoint" "s3" {
   service_name      = "com.amazonaws.${var.region}.s3"
   route_table_ids   = [aws_vpc.forms.main_route_table_id]
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }

@@ -5,10 +5,7 @@ resource "aws_iam_role" "forms" {
   name               = var.ecs_form_viewer_name
   assume_role_policy = data.aws_iam_policy_document.forms.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "forms" {
@@ -28,10 +25,7 @@ resource "aws_iam_policy" "forms_secrets_manager" {
   path   = "/"
   policy = data.aws_iam_policy_document.forms_secrets_manager.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "forms_secrets_manager" {
@@ -58,10 +52,7 @@ resource "aws_iam_policy" "forms_s3" {
   path   = "/"
   policy = data.aws_iam_policy_document.forms_s3.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "forms_s3" {
@@ -144,10 +135,7 @@ resource "aws_iam_policy" "forms_sqs" {
   description = "IAM policy to allow access to SQS for Forms ECS task"
   policy      = data.aws_iam_policy_document.forms_sqs.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "forms_sqs" {
@@ -175,10 +163,7 @@ resource "aws_iam_policy" "forms_kms" {
   description = "IAM policy for storing encrypting and decrypting data"
   policy      = data.aws_iam_policy_document.forms_kms.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "forms_kms" {
@@ -207,10 +192,7 @@ resource "aws_iam_policy" "forms_dynamodb" {
   description = "IAM policy for allowing access for Forms ECS task to read and write to the vault"
   policy      = data.aws_iam_policy_document.forms_dynamodb.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "forms_dynamodb" {
@@ -242,10 +224,7 @@ resource "aws_iam_role" "codedeploy" {
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy_codedeploy.json
   path               = "/"
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "assume_role_policy_codedeploy" {
@@ -273,10 +252,7 @@ resource "aws_iam_policy" "cognito" {
   path        = "/"
   description = "IAM policy for allowing ECS access to cognito"
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
   policy = data.aws_iam_policy_document.assume_role_policy_cognito.json
 }
 

@@ -12,8 +12,6 @@ resource "aws_vpc" "forms" {
 
   tags = {
     Name                  = var.vpc_name
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
   }
 }
 
@@ -26,8 +24,6 @@ resource "aws_internet_gateway" "forms" {
 
   tags = {
     Name                  = var.vpc_name
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
   }
 }
 
@@ -44,9 +40,7 @@ resource "aws_subnet" "forms_private" {
 
   tags = {
     Name                  = "Private Subnet 0${count.index + 1}"
-    (var.billing_tag_key) = var.billing_tag_value
     Access                = "private"
-    Terraform             = true
   }
 }
 
@@ -59,9 +53,7 @@ resource "aws_subnet" "forms_public" {
 
   tags = {
     Name                  = "Public Subnet 0${count.index + 1}"
-    (var.billing_tag_key) = var.billing_tag_value
     Access                = "public"
-    Terraform             = true
   }
 }
 
@@ -109,8 +101,6 @@ resource "aws_nat_gateway" "forms" {
 
   tags = {
     Name                  = "${var.vpc_name} NAT GW"
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
   }
 
   depends_on = [aws_internet_gateway.forms]
@@ -122,8 +112,6 @@ resource "aws_eip" "forms_natgw" {
 
   tags = {
     Name                  = "${var.vpc_name} NAT GW ${count.index}"
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
   }
 }
 
@@ -140,8 +128,6 @@ resource "aws_route_table" "forms_public_subnet" {
 
   tags = {
     Name                  = "Public Subnet Route Table"
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
   }
 }
 
@@ -164,8 +150,6 @@ resource "aws_route_table" "forms_private_subnet" {
 
   tags = {
     Name                  = "Private Subnet Route Table ${count.index}"
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
   }
 }
 

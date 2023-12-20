@@ -9,10 +9,7 @@ resource "aws_flow_log" "vpc_flow_logs" {
   vpc_id               = aws_vpc.forms.id
   log_format           = "$${vpc-id} $${version} $${account-id} $${interface-id} $${srcaddr} $${dstaddr} $${srcport} $${dstport} $${protocol} $${packets} $${bytes} $${start} $${end} $${action} $${log-status} $${subnet-id} $${instance-id}"
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 #
@@ -24,8 +21,5 @@ resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 30
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }

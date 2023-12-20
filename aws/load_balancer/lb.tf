@@ -19,8 +19,6 @@ resource "aws_lb" "form_viewer" {
 
   tags = {
     Name                  = "form_viewer"
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
   }
 }
 
@@ -45,8 +43,6 @@ resource "aws_lb_target_group" "form_viewer_1" {
 
   tags = {
     Name                  = "form_viewer_1"
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
   }
 }
 
@@ -71,8 +67,6 @@ resource "aws_lb_target_group" "form_viewer_2" {
 
   tags = {
     Name                  = "form_viewer_2"
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
   }
 }
 
@@ -98,10 +92,7 @@ resource "aws_lb_listener" "form_viewer_https" {
     ]
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_lb_listener" "form_viewer_http" {
@@ -125,8 +116,5 @@ resource "aws_lb_listener" "form_viewer_http" {
     ]
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }

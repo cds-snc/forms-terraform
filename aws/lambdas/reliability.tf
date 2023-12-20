@@ -48,10 +48,7 @@ resource "aws_lambda_function" "reliability" {
     mode = "PassThrough"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_lambda_event_source_mapping" "reliability" {

@@ -43,8 +43,6 @@ resource "aws_rds_cluster" "forms" {
 
   tags = {
     Name                  = "${var.rds_name}-cluster"
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
   }
 
   lifecycle {

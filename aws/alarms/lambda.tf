@@ -29,10 +29,7 @@ resource "aws_lambda_function" "notify_slack" {
     mode = "PassThrough"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 #
@@ -85,10 +82,7 @@ resource "aws_iam_role" "notify_slack_lambda" {
   name               = "NotifySlackLambda"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "lambda_assume_policy" {

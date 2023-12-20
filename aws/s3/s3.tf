@@ -6,10 +6,7 @@ resource "aws_s3_bucket" "reliability_file_storage" {
   # checkov:skip=CKV_AWS_21: Access logging not required  
   bucket = "forms-${var.env}-reliability-file-storage"
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_s3_bucket_ownership_controls" "reliability_file_storage" {
@@ -67,10 +64,7 @@ resource "aws_s3_bucket" "vault_file_storage" {
   # checkov:skip=CKV_AWS_21: Access logging not required  
   bucket = "forms-${var.env}-vault-file-storage"
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_s3_bucket_ownership_controls" "vault_file_storage" {
@@ -115,10 +109,7 @@ resource "aws_s3_bucket" "archive_storage" {
   # checkov:skip=CKV_AWS_21: Access logging not required
   bucket = "forms-${var.env}-archive-storage"
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_s3_bucket_ownership_controls" "archive_storage" {
@@ -173,10 +164,7 @@ resource "aws_s3_bucket" "lambda_code" {
   # checkov:skip=CKV_AWS_21: Access logging not required
   bucket = "forms-${var.env}-lambda-code"
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_s3_bucket_ownership_controls" "lambda_code" {

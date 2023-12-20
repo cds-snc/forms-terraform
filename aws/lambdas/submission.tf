@@ -39,10 +39,7 @@ resource "aws_lambda_function" "submission" {
     mode = "PassThrough"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 
 }
 

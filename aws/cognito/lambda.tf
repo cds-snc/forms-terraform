@@ -40,10 +40,7 @@ resource "aws_lambda_function" "cognito_email_sender" {
     mode = "PassThrough"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_cloudwatch_log_group" "cognito_email_sender" {
@@ -85,10 +82,7 @@ resource "aws_lambda_function" "cognito_pre_sign_up" {
   }
 
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 resource "aws_cloudwatch_log_group" "cognito_pre_sign_up" {
   name              = "/aws/lambda/${aws_lambda_function.cognito_pre_sign_up.function_name}"

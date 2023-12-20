@@ -40,10 +40,7 @@ resource "aws_lambda_function" "vault_integrity" {
     mode = "PassThrough"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_lambda_event_source_mapping" "vault_updated_item_stream" {

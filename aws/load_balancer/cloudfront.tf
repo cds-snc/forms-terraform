@@ -56,10 +56,7 @@ resource "aws_cloudfront_distribution" "maintenance_mode" {
     ssl_support_method       = "sni-only"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 
   depends_on = [
     aws_s3_bucket.maintenance_mode

@@ -4,10 +4,7 @@
 resource "aws_default_security_group" "default" {
   vpc_id = aws_vpc.forms.id
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_security_group" "forms" {
@@ -15,10 +12,7 @@ resource "aws_security_group" "forms" {
   description = "Ingress - Forms"
   vpc_id      = aws_vpc.forms.id
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_security_group_rule" "forms_ingress_alb" {
@@ -87,10 +81,7 @@ resource "aws_security_group" "forms_load_balancer" {
     cidr_blocks = [var.vpc_cidr_block]
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_security_group" "forms_egress" {
@@ -98,10 +89,7 @@ resource "aws_security_group" "forms_egress" {
   description = "Egress - Forms External Services"
   vpc_id      = aws_vpc.forms.id
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_security_group_rule" "forms_external_auth" {
@@ -119,10 +107,7 @@ resource "aws_security_group" "privatelink" {
   description = "privatelink endpoints"
   vpc_id      = aws_vpc.forms.id
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_security_group_rule" "privatelink_forms_ingress" {
@@ -142,10 +127,7 @@ resource "aws_security_group" "forms_database" {
   description = "Ingress - Forms Database"
   vpc_id      = aws_vpc.forms.id
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_security_group_rule" "forms_database_ingress" {
@@ -167,10 +149,7 @@ resource "aws_security_group" "forms_redis" {
 
 
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_security_group_rule" "forms_redis_ingress" {
@@ -231,8 +210,5 @@ resource "aws_default_network_acl" "forms" {
     ignore_changes = [subnet_ids]
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }

@@ -50,10 +50,7 @@ resource "aws_lambda_function" "nagware" {
     mode = "PassThrough"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_nagware_lambda" {

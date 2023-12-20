@@ -12,10 +12,7 @@ resource "aws_acm_certificate" "form_viewer" {
     create_before_destroy = true
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_acm_certificate" "form_viewer_maintenance_mode" {
@@ -30,10 +27,7 @@ resource "aws_acm_certificate" "form_viewer_maintenance_mode" {
     create_before_destroy = true
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_acm_certificate_validation" "form_viewer_maintenance_mode_cloudfront_certificate" {

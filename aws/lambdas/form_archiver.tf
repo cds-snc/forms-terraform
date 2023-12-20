@@ -43,10 +43,7 @@ resource "aws_lambda_function" "form_archiver" {
     mode = "PassThrough"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 

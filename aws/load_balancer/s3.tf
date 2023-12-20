@@ -3,10 +3,7 @@ resource "aws_s3_bucket" "maintenance_mode" {
   # checkov:skip=CKV_AWS_21: Access logging not required
   bucket = "gc-forms-${var.env}-application-maintenance-page"
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_s3_bucket_ownership_controls" "maintenance_mode" {

@@ -27,10 +27,7 @@ resource "aws_lambda_function" "load_testing" {
     mode = "PassThrough"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 #
@@ -40,10 +37,7 @@ resource "aws_iam_role" "load_test_lambda" {
   name               = "LoadTestLambda"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "lambda_assume_policy" {

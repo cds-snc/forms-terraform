@@ -192,10 +192,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     sampled_requests_enabled   = false
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 
 
 
@@ -370,10 +367,7 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
     sampled_requests_enabled   = false
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {

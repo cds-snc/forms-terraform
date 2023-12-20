@@ -10,10 +10,7 @@ resource "aws_ecr_repository" "pr_review_repository" {
     scan_on_push = true
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_ecr_lifecycle_policy" "pr_review_policy" {

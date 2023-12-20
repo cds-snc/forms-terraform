@@ -7,10 +7,7 @@ resource "aws_kms_key" "cloudwatch" {
   enable_key_rotation = true
   policy              = data.aws_iam_policy_document.kms_cloudwatch.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_kms_key" "cloudwatch_us_east" {
@@ -20,10 +17,7 @@ resource "aws_kms_key" "cloudwatch_us_east" {
   enable_key_rotation = true
   policy              = data.aws_iam_policy_document.kms_cloudwatch.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "kms_cloudwatch" {
@@ -98,10 +92,7 @@ resource "aws_kms_key" "dynamo_db" {
   enable_key_rotation = true
   policy              = data.aws_iam_policy_document.kms_dynamo_db.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "kms_dynamo_db" {
