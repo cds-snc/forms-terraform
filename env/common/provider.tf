@@ -16,8 +16,7 @@ terraform {
 provider "aws" {
   region              = var.region
   allowed_account_ids = [var.account_id]
-
-   default_tags {
+  default_tags {
    tags = {
     (var.billing_tag_key) = var.billing_tag_value
     Terraform             = true
@@ -30,4 +29,9 @@ provider "aws" {
   alias               = "us-east-1"
   region              = "us-east-1"
   allowed_account_ids = [var.account_id]
+  default_tags {
+   tags = {
+    (var.billing_tag_key) = var.billing_tag_value
+    Terraform             = true
+   }
 }
