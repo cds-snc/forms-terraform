@@ -23,6 +23,7 @@ resource "aws_kms_key" "cloudwatch_us_east" {
 data "aws_iam_policy_document" "kms_cloudwatch" {
   # checkov:skip=CKV_AWS_109: `resources = ["*"]` identifies the KMS key to which the key policy is attached
   # checkov:skip=CKV_AWS_111: `resources = ["*"]` identifies the KMS key to which the key policy is attached
+  # checkov:skip=CKV_AWS_356: `resources = ["*"]` identifies the KMS key to which the key policy is attached
   statement {
     sid       = "Enable IAM User Permissions"
     effect    = "Allow"
@@ -97,7 +98,8 @@ resource "aws_kms_key" "dynamo_db" {
 
 data "aws_iam_policy_document" "kms_dynamo_db" {
   # checkov:skip=CKV_AWS_109: `resources = ["*"]` identifies the KMS key to which the key policy is attached
-  # checkov:skip=CKV_AWS_111: `resources = ["*"]` identifies the KMS key to which the key policy is attached
+  # checkov:skip=CKV_AWS_111: `resources = ["*"]` identifies the KMS key to which the key policy is attached\
+  # checkov:skip=CKV_AWS_356: `resources = ["*"]` identifies the KMS key to which the key policy is attached
   statement {
     sid       = "Enable IAM User Permissions"
     effect    = "Allow"

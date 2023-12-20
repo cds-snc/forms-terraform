@@ -14,6 +14,7 @@ resource "aws_kms_alias" "cognito_encryption_alias" {
 data "aws_iam_policy_document" "kms_cognito_encryption" {
   # checkov:skip=CKV_AWS_109: `resources = ["*"]` identifies the KMS key to which the key policy is attached
   # checkov:skip=CKV_AWS_111: `resources = ["*"]` identifies the KMS key to which the key policy is attached
+  # checkov:skip=CKV_AWS_356: `resources = ["*"]` identifies the KMS key to which the key policy is attached
 
   statement {
     sid       = "Enable IAM User Permissions"
