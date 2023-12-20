@@ -160,7 +160,7 @@ resource "aws_appautoscaling_policy" "forms_memory" {
 resource "aws_cloudwatch_log_group" "forms" {
   name              = var.ecs_name
   kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 90
+  retention_in_days = 730
 
 
 }

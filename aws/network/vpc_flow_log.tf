@@ -11,15 +11,3 @@ resource "aws_flow_log" "vpc_flow_logs" {
 
 
 }
-
-#
-# Log group can be deleted 30 days after `terraform apply` as
-# the retention period will have expired.
-#
-resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
-  name              = "vpc_flow_logs"
-  kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 30
-
-
-}

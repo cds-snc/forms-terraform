@@ -55,5 +55,5 @@ resource "aws_lambda_permission" "submission" {
 resource "aws_cloudwatch_log_group" "submission" {
   name              = "/aws/lambda/${aws_lambda_function.submission.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 90
+  retention_in_days = 730
 }

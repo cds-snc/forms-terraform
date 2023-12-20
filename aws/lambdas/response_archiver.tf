@@ -57,5 +57,5 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_responses
 resource "aws_cloudwatch_log_group" "response_archiver" {
   name              = "/aws/lambda/${aws_lambda_function.response_archiver.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 90
+  retention_in_days = 730
 }

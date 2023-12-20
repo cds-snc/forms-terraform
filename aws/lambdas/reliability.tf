@@ -68,6 +68,6 @@ resource "aws_lambda_event_source_mapping" "reprocess_submission" {
 resource "aws_cloudwatch_log_group" "reliability" {
   name              = "/aws/lambda/${aws_lambda_function.reliability.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 90
+  retention_in_days = 730
 }
 
