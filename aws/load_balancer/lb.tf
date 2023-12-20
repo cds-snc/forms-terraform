@@ -18,7 +18,7 @@ resource "aws_lb" "form_viewer" {
   }
 
   tags = {
-    Name                  = "form_viewer"
+    Name = "form_viewer"
   }
 }
 
@@ -42,7 +42,7 @@ resource "aws_lb_target_group" "form_viewer_1" {
   }
 
   tags = {
-    Name                  = "form_viewer_1"
+    Name = "form_viewer_1"
   }
 }
 
@@ -66,7 +66,7 @@ resource "aws_lb_target_group" "form_viewer_2" {
   }
 
   tags = {
-    Name                  = "form_viewer_2"
+    Name = "form_viewer_2"
   }
 }
 

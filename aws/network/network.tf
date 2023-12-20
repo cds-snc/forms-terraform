@@ -11,7 +11,7 @@ resource "aws_vpc" "forms" {
   enable_dns_hostnames = true
 
   tags = {
-    Name                  = var.vpc_name
+    Name = var.vpc_name
   }
 }
 
@@ -23,7 +23,7 @@ resource "aws_internet_gateway" "forms" {
   vpc_id = aws_vpc.forms.id
 
   tags = {
-    Name                  = var.vpc_name
+    Name = var.vpc_name
   }
 }
 
@@ -39,8 +39,8 @@ resource "aws_subnet" "forms_private" {
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
 
   tags = {
-    Name                  = "Private Subnet 0${count.index + 1}"
-    Access                = "private"
+    Name   = "Private Subnet 0${count.index + 1}"
+    Access = "private"
   }
 }
 
@@ -52,8 +52,8 @@ resource "aws_subnet" "forms_public" {
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
 
   tags = {
-    Name                  = "Public Subnet 0${count.index + 1}"
-    Access                = "public"
+    Name   = "Public Subnet 0${count.index + 1}"
+    Access = "public"
   }
 }
 
@@ -100,7 +100,7 @@ resource "aws_nat_gateway" "forms" {
   subnet_id     = aws_subnet.forms_public.*.id[count.index]
 
   tags = {
-    Name                  = "${var.vpc_name} NAT GW"
+    Name = "${var.vpc_name} NAT GW"
   }
 
   depends_on = [aws_internet_gateway.forms]
@@ -111,7 +111,7 @@ resource "aws_eip" "forms_natgw" {
   domain = "vpc"
 
   tags = {
-    Name                  = "${var.vpc_name} NAT GW ${count.index}"
+    Name = "${var.vpc_name} NAT GW ${count.index}"
   }
 }
 
@@ -127,7 +127,7 @@ resource "aws_route_table" "forms_public_subnet" {
   }
 
   tags = {
-    Name                  = "Public Subnet Route Table"
+    Name = "Public Subnet Route Table"
   }
 }
 
@@ -149,7 +149,7 @@ resource "aws_route_table" "forms_private_subnet" {
   }
 
   tags = {
-    Name                  = "Private Subnet Route Table ${count.index}"
+    Name = "Private Subnet Route Table ${count.index}"
   }
 }
 

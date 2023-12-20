@@ -42,7 +42,7 @@ resource "aws_rds_cluster" "forms" {
   vpc_security_group_ids = [var.rds_security_group_id]
 
   tags = {
-    Name                  = "${var.rds_name}-cluster"
+    Name = "${var.rds_name}-cluster"
   }
 
   lifecycle {
