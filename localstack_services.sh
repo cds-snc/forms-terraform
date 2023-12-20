@@ -16,7 +16,7 @@ reset='\033[0m' # No Color
 
 # Set proper terraform and terragrunt versions
 
-tgswitch 0.53.8
+tgswitch 0.54.8
 tfswitch 1.6.6
 
 basedir=$(pwd)
