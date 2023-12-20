@@ -55,5 +55,5 @@ resource "aws_lambda_event_source_mapping" "audit_logs" {
 resource "aws_cloudwatch_log_group" "audit_logs" {
   name              = "/aws/lambda/${aws_lambda_function.audit_logs.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 730
+  retention_in_days = 731
 }

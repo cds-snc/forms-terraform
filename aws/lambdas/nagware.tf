@@ -64,5 +64,5 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_nagware_lambda" {
 resource "aws_cloudwatch_log_group" "nagware" {
   name              = "/aws/lambda/${aws_lambda_function.nagware.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 730
+  retention_in_days = 731
 }

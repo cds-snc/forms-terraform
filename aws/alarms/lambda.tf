@@ -106,5 +106,5 @@ resource "aws_iam_role_policy_attachment" "notify_slack_lambda_basic_access" {
 resource "aws_cloudwatch_log_group" "notify_slack" {
   name              = "/aws/lambda/${aws_lambda_function.notify_slack.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 730
+  retention_in_days = 731
 }

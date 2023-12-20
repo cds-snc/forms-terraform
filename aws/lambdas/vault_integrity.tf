@@ -62,7 +62,7 @@ resource "aws_lambda_event_source_mapping" "vault_updated_item_stream" {
 resource "aws_cloudwatch_log_group" "vault_integrity" {
   name              = "/aws/lambda/${aws_lambda_function.vault_integrity.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 730
+  retention_in_days = 731
 }
 
 # Signer configuration
