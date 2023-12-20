@@ -17,12 +17,11 @@ provider "aws" {
   region              = var.region
   allowed_account_ids = [var.account_id]
   default_tags {
-   tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-   }
- }
-  
+    tags = {
+      (var.billing_tag_key) = var.billing_tag_value
+      Terraform             = true
+    }
+  }
 }
 
 provider "aws" {
@@ -30,9 +29,9 @@ provider "aws" {
   region              = "us-east-1"
   allowed_account_ids = [var.account_id]
   default_tags {
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-   }
+    tags = {
+      (var.billing_tag_key) = var.billing_tag_value
+      Terraform             = true
+    } 
   }
 }
