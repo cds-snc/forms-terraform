@@ -128,8 +128,8 @@ resource "aws_wafv2_web_acl" "forms_acl" {
           content {
             name = rule_action_override.value
             action_to_use {
-            count {}
-              }
+              count {}
+            }
           }
         }
       }
