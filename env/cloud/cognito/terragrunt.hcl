@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  source = ["../kms", "../secrets"]
+  paths = ["../kms", "../secrets"]
 }
 
 
