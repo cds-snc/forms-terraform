@@ -107,6 +107,7 @@ resource "aws_nat_gateway" "forms" {
 }
 
 resource "aws_eip" "forms_natgw" {
+  # checkov:skip=CKV2_AWS_19: False positive.  All EIP's are associated to Nat Gateways
   count  = 3
   domain = "vpc"
 
