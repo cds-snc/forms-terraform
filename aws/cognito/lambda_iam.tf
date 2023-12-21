@@ -87,7 +87,7 @@ data "aws_iam_policy_document" "cognito_lambda_secrets" {
     ]
 
     resources = [
-      aws_secretsmanager_secret_version.cognito_notify_api_key.arn
+      var.notify_api_key_secret_arn
     ]
   }
 }
