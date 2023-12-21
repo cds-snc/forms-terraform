@@ -74,8 +74,6 @@ data "aws_iam_policy_document" "lambda_rds" {
       "rds-data:CommitTransaction",
       "rds-data:RollbackTransaction",
       "secretsmanager:CreateSecret",
-      "secretsmanager:ListSecrets",
-      "secretsmanager:GetRandomPassword",
       "tag:GetResources"
     ]
 
@@ -195,7 +193,8 @@ data "aws_iam_policy_document" "lambda_secrets" {
     ]
 
     resources = [
-      var.database_secret_arn
+      var.database_secret_arn,
+      var.notify_api_key_secret_arn
     ]
   }
 }

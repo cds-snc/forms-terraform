@@ -1,21 +1,25 @@
 const encryptionSDK = require("@aws-crypto/client-node");
-const {NotifyClient} = require("notifications-node-client");
+const { NotifyClient } = require("notifications-node-client");
+const { SecretsManagerClient, GetSecretValueCommand } = require("@aws-sdk/client-secrets-manager");
 
 const KEY_ARN = process.env.KEY_ARN;
 const KEY_ALIAS = process.env.KEY_ALIAS;
 const TEMPLATE_ID = process.env.TEMPLATE_ID;
-const NOTIFY_API_KEY = process.env.NOTIFY_API_KEY;
 
+const client = new SecretsManagerClient();
+const command = new GetSecretValueCommand({ SecretId: process.env.NOTIFY_API_KEY });
+console.log("Retrieving Notify API Key from Secrets Manager");
+const notifyApiKey = await client.send(command);
+const notifyClient = new NotifyClient("https://api.notification.canada.ca", notifyApiKey);
 
 exports.handler = async (event) => {
   // setup the encryptionSDK's key ring
-  const {decrypt} = encryptionSDK.buildDecrypt(encryptionSDK.CommitmentPolicy.FORBID_ENCRYPT_ALLOW_DECRYPT);
+  const { decrypt } = encryptionSDK.buildDecrypt(
+    encryptionSDK.CommitmentPolicy.FORBID_ENCRYPT_ALLOW_DECRYPT
+  );
   const generatorKeyId = KEY_ALIAS;
   const keyIds = [KEY_ARN];
-  const keyring = new encryptionSDK.KmsKeyringNode({generatorKeyId, keyIds});
-
-  // setup the notify client
-  const notify = new NotifyClient("https://api.notification.canada.ca", NOTIFY_API_KEY);
+  const keyring = new encryptionSDK.KmsKeyringNode({ generatorKeyId, keyIds });
 
   // decrypt the code to plain text if it exists
   let plainTextCode;
@@ -24,7 +28,7 @@ exports.handler = async (event) => {
       // create Buffer from base64 text
       const codeBuffer = Buffer.from(event.request.code, "base64");
       // decrypt the code into plaintext using the sdk and keyring
-      const {plaintext} = await decrypt(keyring, Uint8Array.from(codeBuffer));
+      const { plaintext } = await decrypt(keyring, Uint8Array.from(codeBuffer));
       plainTextCode = plaintext.toString();
     } catch (err) {
       console.error(
@@ -39,25 +43,23 @@ exports.handler = async (event) => {
   }
 
   const userEmail = event.request.userAttributes.email;
-  if(
-    plainTextCode
-    && userEmail
-    && [
-      "CustomEmailSender_ForgotPassword"
-    ].includes(event.triggerSource)
-  ){
+  if (
+    plainTextCode &&
+    userEmail &&
+    ["CustomEmailSender_ForgotPassword"].includes(event.triggerSource)
+  ) {
     // attempt to send the code to the user through Notify
     try {
-      await notify.sendEmail(TEMPLATE_ID, userEmail, {
+      await notifyClient.sendEmail(TEMPLATE_ID, userEmail, {
         personalisation: {
           passwordReset: event.triggerSource === "CustomEmailSender_ForgotPassword",
           // Keeping `accountVerification` and `resendCode` variables in case we need them in the future. They were removed when we implemented 2FA.
           accountVerification: false,
           resendCode: false,
-          code: plainTextCode
-        }
+          code: plainTextCode,
+        },
       });
-    }catch (err){
+    } catch (err) {
       console.error(
         JSON.stringify({
           status: "failed",
@@ -65,7 +67,7 @@ exports.handler = async (event) => {
           error: err.message,
         })
       );
-      throw new Error("Notify failed to send the code")
+      throw new Error("Notify failed to send the code");
     }
   }
-}
+};

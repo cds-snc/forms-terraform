@@ -1,5 +1,5 @@
-variable "notify_api_key_secret_value" {
-  description = "Value of notify_api_key secret"
+variable "notify_api_key_secret_arn" {
+  description = "GC Notify API key arn"
   type        = string
   sensitive   = true
 }

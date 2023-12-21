@@ -29,7 +29,7 @@ resource "aws_lambda_function" "cognito_email_sender" {
 
   environment {
     variables = {
-      NOTIFY_API_KEY = aws_secretsmanager_secret_version.cognito_notify_api_key.secret_string
+      NOTIFY_API_KEY = var.notify_api_key_secret_arn
       TEMPLATE_ID    = var.cognito_code_template_id
       KEY_ARN        = aws_kms_key.cognito_encryption.arn
       KEY_ALIAS      = aws_kms_alias.cognito_encryption_alias.arn

@@ -39,7 +39,7 @@ resource "aws_lambda_function" "nagware" {
       DB_ARN                    = var.rds_cluster_arn
       DB_SECRET                 = var.database_secret_arn
       DB_NAME                   = var.rds_db_name
-      NOTIFY_API_KEY            = var.notify_api_key_secret_value
+      NOTIFY_API_KEY            = var.notify_api_key_secret_arn
       TEMPLATE_ID               = var.gc_template_id
       SNS_ERROR_TOPIC_ARN       = var.sns_topic_alert_critical_arn
       LOCALSTACK                = var.localstack_hosted

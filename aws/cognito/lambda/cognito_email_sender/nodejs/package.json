@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "@aws-crypto/client-node": "4.0.0",
+    "@aws-sdk/client-secrets-manager": "^3.478.0",
     "notifications-node-client": "^5.1.0"
   }
 }
