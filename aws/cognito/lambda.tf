@@ -19,15 +19,14 @@ resource "aws_lambda_function" "cognito_email_sender" {
   s3_bucket         = aws_s3_object.cognito_email_sender_code.bucket
   s3_key            = aws_s3_object.cognito_email_sender_code.key
   s3_object_version = aws_s3_object.cognito_email_sender_code.version_id
-  function_name = "Cognito_Email_Sender"
-  role          = aws_iam_role.cognito_lambda.arn
-  handler       = "cognito_email_sender.handler"
-  timeout       = 300
+  function_name     = "Cognito_Email_Sender"
+  role              = aws_iam_role.cognito_lambda.arn
+  handler           = "cognito_email_sender.handler"
+  timeout           = 300
 
   source_code_hash = data.archive_file.cognito_email_sender_code.output_base64sha256
 
   runtime = "nodejs18.x"
-  layers  = [aws_lambda_layer_version.cognito_email_sender_nodejs.arn]
 
   environment {
     variables = {
