@@ -5,7 +5,8 @@
 
 locals {
   # AWSManagedRulesCommonRuleSet to exclude.
-  excluded_rules_common = ["GenericRFI_QUERYARGUMENTS", "GenericRFI_BODY", "SizeRestrictions_BODY"]
+  excluded_rules_common                  = ["GenericRFI_QUERYARGUMENTS", "GenericRFI_BODY", "SizeRestrictions_BODY"]
+  cognito_login_outside_canada_rule_name = "AWSCognitoLoginOutsideCanada"
 }
 
 resource "aws_wafv2_web_acl" "forms_acl" {
@@ -230,6 +231,63 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       metric_name                = "AllowOnlyAppUrls"
       sampled_requests_enabled   = false
     }
+  }
+
+  rule {
+    name     = local.cognito_login_outside_canada_rule_name
+    priority = 5
+
+    action {
+      count {}
+    }
+
+    statement {
+
+      and_statement {
+        statement {
+          not_statement {
+            statement {
+              geo_match_statement {
+                country_codes = ["CA"]
+              }
+            }
+          }
+        }
+
+        statement {
+          regex_pattern_set_reference_statement {
+            arn = aws_wafv2_regex_pattern_set.cognito_login_paths.arn
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 1
+              type     = "COMPRESS_WHITE_SPACE"
+            }
+            text_transformation {
+              priority = 2
+              type     = "LOWERCASE"
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      metric_name                = local.cognito_login_outside_canada_rule_name
+      cloudwatch_metrics_enabled = true
+      sampled_requests_enabled   = false
+    }
+  }
+}
+
+// Matches the login paths for cognito /api/auth/signin/cognito OR /api/auth/callback/cognito
+resource "aws_wafv2_regex_pattern_set" "cognito_login_paths" {
+  name        = "cognito_login_paths"
+  description = "Regex to match the login URIs"
+  scope       = "REGIONAL"
+  regular_expression {
+    regex_string = "^\\/(api\\/auth\\/(signin|callback)\\/cognito)$"
   }
 }
 
