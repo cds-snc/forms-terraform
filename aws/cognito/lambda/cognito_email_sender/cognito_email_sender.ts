@@ -1,10 +1,19 @@
-const encryptionSDK = require("@aws-crypto/client-node");
-const { NotifyClient } = require("notifications-node-client");
-const { SecretsManagerClient, GetSecretValueCommand } = require("@aws-sdk/client-secrets-manager");
+import encryptionSDK from "@aws-crypto/client-node";
+import { Handler } from "aws-lambda";
+import { NotifyClient } from "notifications-node-client";
+import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 
 const KEY_ARN = process.env.KEY_ARN;
 const KEY_ALIAS = process.env.KEY_ALIAS;
 const TEMPLATE_ID = process.env.TEMPLATE_ID;
+
+if (!KEY_ARN || !KEY_ALIAS || !TEMPLATE_ID) {
+  throw new Error(
+    `Missing Environment Variables: ${KEY_ARN ? "" : "Key ARN"} ${KEY_ALIAS ? "" : "Key Alias"} ${
+      TEMPLATE_ID ? "" : "Template ID"
+    }`
+  );
+}
 
 const client = new SecretsManagerClient();
 const command = new GetSecretValueCommand({ SecretId: process.env.NOTIFY_API_KEY });
@@ -12,7 +21,7 @@ console.log("Retrieving Notify API Key from Secrets Manager");
 const notifyApiKey = await client.send(command);
 const notifyClient = new NotifyClient("https://api.notification.canada.ca", notifyApiKey);
 
-exports.handler = async (event) => {
+export const handler: Handler = async (event) => {
   // setup the encryptionSDK's key ring
   const { decrypt } = encryptionSDK.buildDecrypt(
     encryptionSDK.CommitmentPolicy.FORBID_ENCRYPT_ALLOW_DECRYPT
@@ -35,7 +44,7 @@ exports.handler = async (event) => {
         JSON.stringify({
           status: "failed",
           message: "Failed to Decrypt Cognito Code.",
-          error: err.message,
+          error: (err as Error).message,
         })
       );
       throw new Error("Could not decrypt Cognito Code");
@@ -64,7 +73,7 @@ exports.handler = async (event) => {
         JSON.stringify({
           status: "failed",
           message: "Notify Failed To Send the Code.",
-          error: err.message,
+          error: (err as Error).message,
         })
       );
       throw new Error("Notify failed to send the code");

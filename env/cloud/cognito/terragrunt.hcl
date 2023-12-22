@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms", "../secrets"]
+  paths = ["../kms", "../secrets", "../s3"]
 }
 
 
@@ -26,10 +26,22 @@ dependency "secrets" {
   }
 }
 
+dependency "s3" {
+  config_path                             = "../s3"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    lambda_code_arn              = null
+    lambda_code_id               = "placeholder"
+  }
+}
+
 
 inputs = {
   kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
   notify_api_key_secret_arn = dependency.secrets.outputs.notify_api_key_secret_arn
+  lambda_code_arn              = dependency.s3.outputs.lambda_code_arn
+  lambda_code_id               = dependency.s3.outputs.lambda_code_id
 }
 
 include {

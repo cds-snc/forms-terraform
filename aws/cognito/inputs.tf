@@ -13,3 +13,13 @@ variable "notify_api_key_secret_arn" {
   type        = string
   sensitive   = true
 }
+
+variable "lambda_code_arn" {
+  description = "S3 bucket arn for lambda code"
+  type        = string
+}
+
+variable "lambda_code_id" {
+  description = "S3 bucket id for lambda code"
+  type        = string
+}

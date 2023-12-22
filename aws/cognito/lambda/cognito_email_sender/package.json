@@ -1,0 +1,23 @@
+{
+  "name": "audit_logs",
+  "version": "1.0.0",
+  "main": "audit_logs.js",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "tsc --project tsconfig.json",
+    "build:dev": "tsc --project tsconfig.json --watch",
+    "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cd ./dist && yarn install --production"
+  },
+  "dependencies": {
+    "@aws-crypto/client-node": "4.0.0",
+    "@aws-sdk/client-secrets-manager": "^3.478.0",
+    "notifications-node-client": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.126",
+    "@types/node": "^20.9.0",
+    "typescript": "^5.2.2"
+  }
+}

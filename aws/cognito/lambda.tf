@@ -2,21 +2,23 @@
 # COGNITO EMAIL SENDER
 ########################
 
-data "archive_file" "cognito_email_sender_main" {
+data "archive_file" "cognito_email_sender_code" {
   type        = "zip"
-  source_file = "lambda/cognito_email_sender/cognito_email_sender.js"
-  output_path = "/tmp/cognito_email_sender_main.zip"
+  source_dir  = "lambda/cognito_email_sender/dist"
+  output_path = "/tmp/cognito_email_sender.zip"
 }
 
-data "archive_file" "cognito_email_sender_nodejs" {
-  type        = "zip"
-  source_dir  = "lambda/cognito_email_sender"
-  excludes    = ["cognito_email_sender.js"]
-  output_path = "/tmp/cognito_email_sender_nodejs.zip"
+resource "aws_s3_object" "cognito_email_sender_code" {
+  bucket      = var.lambda_code_id
+  key         = "cognito_email_sender_code"
+  source      = data.archive_file.cognito_email_sender_code.output_path
+  source_hash = data.archive_file.cognito_email_sender_code.output_base64sha256
 }
 
 resource "aws_lambda_function" "cognito_email_sender" {
-  filename      = "/tmp/cognito_email_sender_main.zip"
+  s3_bucket         = aws_s3_object.cognito_email_sender_code.bucket
+  s3_key            = aws_s3_object.cognito_email_sender_code.key
+  s3_object_version = aws_s3_object.cognito_email_sender_code.version_id
   function_name = "Cognito_Email_Sender"
   role          = aws_iam_role.cognito_lambda.arn
   handler       = "cognito_email_sender.handler"
@@ -47,13 +49,6 @@ resource "aws_cloudwatch_log_group" "cognito_email_sender" {
   name              = "/aws/lambda/${aws_lambda_function.cognito_email_sender.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
-}
-
-resource "aws_lambda_layer_version" "cognito_email_sender_nodejs" {
-  filename            = "/tmp/cognito_email_sender_nodejs.zip"
-  layer_name          = "cognito_email_sender_node_packages"
-  source_code_hash    = data.archive_file.cognito_email_sender_nodejs.output_base64sha256
-  compatible_runtimes = ["nodejs18.x"]
 }
 
 ########################
