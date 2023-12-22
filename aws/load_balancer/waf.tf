@@ -235,14 +235,13 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = local.cognito_login_outside_canada_rule_name
-    priority = 5
+    priority = 8
 
     action {
       count {}
     }
 
     statement {
-
       and_statement {
         statement {
           not_statement {
