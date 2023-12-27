@@ -1,10 +1,5 @@
 #!/bin/bash
 
-export TF_VAR_cognito_client_id=""
-export TF_VAR_cognito_endpoint_url=""
-export TF_VAR_cognito_user_pool_arn=""
-export TF_VAR_email_address_contact_us=""
-export TF_VAR_email_address_support=""
 export APP_ENV="local"
 
 # Exit on any error
