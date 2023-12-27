@@ -525,3 +525,25 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_lambda" {
   principal     = "logs.amazonaws.com"
   source_arn    = "arn:aws:logs:ca-central-1:${var.account_id}:log-group:*:*"
 }
+
+// Monitor for Cognito sign-ins from outside of Canada within a 1 minute period
+resource "aws_cloudwatch_metric_alarm" "cognito_login_outside_canada_warn" {
+  alarm_name          = "AWSCognitoLoginOutsideCanadaAlarm"
+  namespace           = "AWS/WAFV2"
+  metric_name         = "CountedRequests"
+  statistic           = "SampleCount"
+  period              = "60" // 1 minute
+  comparison_operator = "GreaterThanThreshold"
+  threshold           = "0"
+  evaluation_periods  = "1"            // number of datapoints to evaluate
+  treat_missing_data  = "notBreaching" // don't alarm if there's no data
+
+  alarm_actions = [var.sns_topic_alert_warning_arn]
+
+  dimensions = {
+    Rule   = "AWSCognitoLoginOutsideCanada"
+    WebACL = "GCForms"
+  }
+
+  alarm_description = "Forms: A sign-in by a forms owner has been detected from outside of Canada."
+}
