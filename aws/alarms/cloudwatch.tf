@@ -543,6 +543,7 @@ resource "aws_cloudwatch_metric_alarm" "cognito_login_outside_canada_warn" {
   dimensions = {
     Rule   = "AWSCognitoLoginOutsideCanada"
     WebACL = "GCForms"
+    Region = "ca-central-1"
   }
 
   alarm_description = "Forms: A sign-in by a forms owner has been detected from outside of Canada."
