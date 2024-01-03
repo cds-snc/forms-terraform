@@ -2,6 +2,7 @@
 # Database secrets
 #
 resource "aws_secretsmanager_secret" "database_url" {
+  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
   name                    = "server-database-url"
   recovery_window_in_days = 0
 }
@@ -12,6 +13,7 @@ resource "aws_secretsmanager_secret_version" "database_url" {
 }
 
 resource "aws_secretsmanager_secret" "database_secret" {
+  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
   name                    = "database-secret"
   recovery_window_in_days = 0
 }

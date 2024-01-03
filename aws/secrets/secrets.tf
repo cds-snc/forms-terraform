@@ -2,10 +2,9 @@
 # ECS and Lambda app secrets
 #
 resource "aws_secretsmanager_secret" "notify_api_key" {
+  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
   name                    = "notify_api_key"
   recovery_window_in_days = 0
-
-
 }
 
 resource "aws_secretsmanager_secret_version" "notify_api_key" {
@@ -14,10 +13,9 @@ resource "aws_secretsmanager_secret_version" "notify_api_key" {
 }
 
 resource "aws_secretsmanager_secret" "freshdesk_api_key" {
+  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
   name                    = "freshdesk_api_key"
   recovery_window_in_days = 0
-
-
 }
 
 resource "aws_secretsmanager_secret_version" "freshdesk_api_key" {
@@ -26,10 +24,9 @@ resource "aws_secretsmanager_secret_version" "freshdesk_api_key" {
 }
 
 resource "aws_secretsmanager_secret" "token_secret" {
+  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
   name                    = "token_secret"
   recovery_window_in_days = 0
-
-
 }
 
 resource "aws_secretsmanager_secret_version" "token_secret" {
@@ -38,10 +35,9 @@ resource "aws_secretsmanager_secret_version" "token_secret" {
 }
 
 resource "aws_secretsmanager_secret" "recaptcha_secret" {
+  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
   name                    = "recaptcha_secret"
   recovery_window_in_days = 0
-
-
 }
 
 resource "aws_secretsmanager_secret_version" "recaptcha_secret" {
@@ -50,10 +46,9 @@ resource "aws_secretsmanager_secret_version" "recaptcha_secret" {
 }
 
 resource "aws_secretsmanager_secret" "notify_callback_bearer_token" {
+  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
   name                    = "notify_callback_bearer_token"
   recovery_window_in_days = 0
-
-
 }
 
 resource "aws_secretsmanager_secret_version" "notify_callback_bearer_token" {
