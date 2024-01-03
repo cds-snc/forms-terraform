@@ -16,6 +16,7 @@ resource "aws_db_subnet_group" "forms" {
 }
 
 resource "aws_rds_cluster" "forms" {
+  # checkov:skip=CKV_AWS_324: RDS Cluster log capture not required
   cluster_identifier          = "${var.rds_name}-cluster"
   engine                      = "aurora-postgresql"
   engine_mode                 = "serverless"
