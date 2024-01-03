@@ -25,6 +25,7 @@ resource "aws_s3_bucket_acl" "reliability_file_storage" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "reliability_file_storage" {
+  # checkov:skip=CKV_AWS_300: Lifecycle configuration for aborting failed (multipart) upload not required
   bucket = aws_s3_bucket.reliability_file_storage.id
 
   rule {
@@ -35,7 +36,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "reliability_file_storage" {
       days = 30
     }
   }
-
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "reliability_file_storage" {
@@ -139,6 +139,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "archive_storage" 
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "archive_storage" {
+  # checkov:skip=CKV_AWS_300: Lifecycle configuration for aborting failed (multipart) upload not required
   bucket = aws_s3_bucket.archive_storage.id
 
   rule {
@@ -149,7 +150,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "archive_storage" {
       days = 30
     }
   }
-
 }
 
 resource "aws_s3_bucket_public_access_block" "archive_storage" {
