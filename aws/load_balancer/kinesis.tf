@@ -2,6 +2,7 @@
 # Kinesis Firehose
 #
 resource "aws_kinesis_firehose_delivery_stream" "firehose_waf_logs" {
+  # checkov:skip=CKV_AWS_241: Encryption using CMK not required
   name        = "aws-waf-logs-forms"
   destination = "extended_s3"
 
@@ -15,8 +16,6 @@ resource "aws_kinesis_firehose_delivery_stream" "firehose_waf_logs" {
     bucket_arn         = local.cbs_satellite_bucket_arn
     compression_format = "GZIP"
   }
-
-
 }
 
 #
@@ -25,8 +24,6 @@ resource "aws_kinesis_firehose_delivery_stream" "firehose_waf_logs" {
 resource "aws_iam_role" "firehose_waf_logs" {
   name               = "firehose_waf_logs"
   assume_role_policy = data.aws_iam_policy_document.firehose_waf_assume.json
-
-
 }
 
 resource "aws_iam_role_policy" "firehose_waf_logs" {
