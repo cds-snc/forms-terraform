@@ -307,8 +307,52 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
   }
 
   rule {
+    name     = "AWSManagedRulesAnonymousIpList"
+    priority = 1
+    
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesAnonymousIpList"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesAnonymousIpList"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWSManagedRulesKnownBadInputsRuleSet"
+    priority = 2
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesKnownBadInputsRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesKnownBadInputsRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
     name     = "AllowGetOnMaintenancePageHTMLResources"
-    priority = 0
+    priority = 3
 
     action {
       allow {}
@@ -366,8 +410,6 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
     metric_name                = "forms_maintenance_mode_global_rule"
     sampled_requests_enabled   = false
   }
-
-
 }
 
 resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {
