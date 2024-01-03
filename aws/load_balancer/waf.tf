@@ -310,7 +310,7 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
   rule {
     name     = "AWSManagedRulesAnonymousIpList"
     priority = 1
-    
+
     override_action {
       none {}
     }
