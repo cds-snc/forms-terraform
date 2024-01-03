@@ -3,8 +3,8 @@
 #
 
 resource "aws_s3_bucket" "reliability_file_storage" {
-  # checkov:skip=CKV_AWS_18: Versioning not required
-  # checkov:skip=CKV_AWS_21: Access logging not required
+  # checkov:skip=CKV_AWS_18: Access logging not required
+  # checkov:skip=CKV_AWS_21: Versioning not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
   bucket = "forms-${var.env}-reliability-file-storage"
 }
@@ -61,8 +61,8 @@ resource "aws_s3_bucket_public_access_block" "reliability_file_storage" {
 #
 
 resource "aws_s3_bucket" "vault_file_storage" {
-  # checkov:skip=CKV_AWS_18: Versioning not required
-  # checkov:skip=CKV_AWS_21: Access logging not required
+  # checkov:skip=CKV_AWS_18: Access logging not required
+  # checkov:skip=CKV_AWS_21: Versioning not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
   bucket = "forms-${var.env}-vault-file-storage"
 }
@@ -106,8 +106,8 @@ resource "aws_s3_bucket_public_access_block" "vault_file_storage" {
 #
 
 resource "aws_s3_bucket" "archive_storage" {
-  # checkov:skip=CKV_AWS_18: Versioning not required
-  # checkov:skip=CKV_AWS_21: Access logging not required
+  # checkov:skip=CKV_AWS_18: Access logging not required
+  # checkov:skip=CKV_AWS_21: Versioning not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
   bucket = "forms-${var.env}-archive-storage"
 }
@@ -161,7 +161,8 @@ resource "aws_s3_bucket_public_access_block" "archive_storage" {
 
 
 resource "aws_s3_bucket" "lambda_code" {
-  # checkov:skip=CKV_AWS_21: Access logging not required
+  # checkov:skip=CKV_AWS_18: Access logging not required
+  # checkov:skip=CKV_AWS_21: Versioning not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
   bucket = "forms-${var.env}-lambda-code"
 }
