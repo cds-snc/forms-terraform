@@ -9,8 +9,6 @@ resource "aws_ecs_cluster" "forms" {
     name  = "containerInsights"
     value = "enabled"
   }
-
-
 }
 
 #
@@ -49,6 +47,7 @@ data "template_file" "form_viewer_task" {
 }
 
 resource "aws_ecs_task_definition" "form_viewer" {
+  # checkov:skip=CKV_AWS_249: Different execution role ARN and task role ARN not required
   family       = var.ecs_form_viewer_name
   cpu          = 2048
   memory       = "4096"
@@ -58,8 +57,6 @@ resource "aws_ecs_task_definition" "form_viewer" {
   execution_role_arn       = aws_iam_role.forms.arn
   task_role_arn            = aws_iam_role.forms.arn
   container_definitions    = data.template_file.form_viewer_task.rendered
-
-
 }
 
 #
@@ -102,8 +99,6 @@ resource "aws_ecs_service" "form_viewer" {
       load_balancer    # updated by codedeploy
     ]
   }
-
-
 }
 
 #
@@ -161,6 +156,4 @@ resource "aws_cloudwatch_log_group" "forms" {
   name              = var.ecs_name
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
-
-
 }
