@@ -47,12 +47,12 @@ resource "aws_iam_policy" "lambda_rds" {
   path        = "/"
   description = "IAM policy for allowing acces to DB"
   policy      = data.aws_iam_policy_document.lambda_rds.json
-
-
 }
 
 data "aws_iam_policy_document" "lambda_rds" {
-  # checkov:skip=CKV_AWS_111: TODO: refactor to remove `resources = ["*"]`
+  # checkov:skip=CKV_AWS_356: Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions
+  // TODO: refactor to remove `resources = ["*"]` (then we can remove checkov:skip=CKV_AWS_356)
+  
   statement {
     sid    = "RDSDataServiceAccess"
     effect = "Allow"
