@@ -9,7 +9,7 @@ resource "aws_s3_bucket_ownership_controls" "maintenance_mode" {
   bucket = aws_s3_bucket.maintenance_mode.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 

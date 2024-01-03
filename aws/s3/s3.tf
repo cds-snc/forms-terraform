@@ -13,7 +13,7 @@ resource "aws_s3_bucket_ownership_controls" "reliability_file_storage" {
   bucket = aws_s3_bucket.reliability_file_storage.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 
@@ -71,7 +71,7 @@ resource "aws_s3_bucket_ownership_controls" "vault_file_storage" {
   bucket = aws_s3_bucket.vault_file_storage.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 
@@ -116,7 +116,7 @@ resource "aws_s3_bucket_ownership_controls" "archive_storage" {
   bucket = aws_s3_bucket.archive_storage.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 
@@ -170,7 +170,7 @@ resource "aws_s3_bucket_ownership_controls" "lambda_code" {
   bucket = aws_s3_bucket.lambda_code.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 
