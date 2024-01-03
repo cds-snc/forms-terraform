@@ -297,6 +297,7 @@ resource "aws_wafv2_regex_pattern_set" "forms_base_url" {
 }
 
 resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
+  # checkov:skip=CKV2_AWS_31: Logging configuration not required
   name  = "GCFormsMaintenanceMode"
   scope = "CLOUDFRONT"
 
