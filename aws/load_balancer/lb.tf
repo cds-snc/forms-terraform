@@ -1,6 +1,7 @@
 #
 # Load balancer
 #
+
 resource "aws_lb" "form_viewer" {
   name               = "form-viewer"
   internal           = false
@@ -91,8 +92,6 @@ resource "aws_lb_listener" "form_viewer_https" {
       default_action # updated by codedeploy
     ]
   }
-
-
 }
 
 resource "aws_lb_listener" "form_viewer_http" {
@@ -115,6 +114,4 @@ resource "aws_lb_listener" "form_viewer_http" {
       default_action # updated by codedeploy
     ]
   }
-
-
 }
