@@ -17,6 +17,7 @@ resource "aws_db_subnet_group" "forms" {
 
 resource "aws_rds_cluster" "forms" {
   # checkov:skip=CKV_AWS_324: RDS Cluster log capture not required
+  # checkov:skip=CKV_AWS_327: Encryption using KMS CMKs not required
   cluster_identifier          = "${var.rds_name}-cluster"
   engine                      = "aurora-postgresql"
   engine_mode                 = "serverless"
@@ -32,6 +33,7 @@ resource "aws_rds_cluster" "forms" {
   db_subnet_group_name        = aws_db_subnet_group.forms.name
   storage_encrypted           = true
   allow_major_version_upgrade = true
+  copy_tags_to_snapshot       = true
 
 
   scaling_configuration {
