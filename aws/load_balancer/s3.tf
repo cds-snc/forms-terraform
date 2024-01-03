@@ -1,9 +1,8 @@
 resource "aws_s3_bucket" "maintenance_mode" {
   # checkov:skip=CKV_AWS_18: Versioning not required
   # checkov:skip=CKV_AWS_21: Access logging not required
+  # checkov:skip=CKV2_AWS_62: Event notifications not required
   bucket = "gc-forms-${var.env}-application-maintenance-page"
-
-
 }
 
 resource "aws_s3_bucket_ownership_controls" "maintenance_mode" {
