@@ -7,6 +7,7 @@ resource "aws_cloudfront_origin_access_identity" "maintenance_mode" {
 }
 
 resource "aws_cloudfront_distribution" "maintenance_mode" {
+  # checkov:skip=CKV2_AWS_32: Access logging not required
   # checkov:skip=CKV_AWS_86: Access logging not required
   enabled             = true
   http_version        = "http2"
