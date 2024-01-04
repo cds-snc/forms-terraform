@@ -23,7 +23,7 @@ function getMessage(message) {
 
 function getSNSMessageSeverity(message) {
   const errorMessages = ["Error", "Critical"];
-  const warningMessages = ["Warning", "FAILURE"];
+  const warningMessages = ["Warning", "warning", "FAILURE"];
   var severity = "info";
   var keepProcessing = true;
 
@@ -76,7 +76,7 @@ function sendToSlack(logGroup, logMessage, logLevel, context) {
         return { emoji: ":loudspeaker:", color: "good" };
     }
   };
-  
+
   const logLevelThemeForSlack = logLevelAsEmojiAndColor(logLevel);
 
   var postData = {
@@ -98,16 +98,16 @@ function sendToSlack(logGroup, logMessage, logLevel, context) {
     path: process.env.SLACK_WEBHOOK,
   };
 
-  var req = https.request(options, function(res) {
+  var req = https.request(options, function (res) {
     res.setEncoding("utf8");
-    res.on("data", function() {
+    res.on("data", function () {
       context.succeed(
         `Message successfully sent to Slack... log level: ${logLevel}, log message: ${logMessage}`
       );
     });
   });
 
-  req.on("error", function(e) {
+  req.on("error", function (e) {
     console.log(
       JSON.stringify({
         msg: `problem with request: ${e.message}`,
@@ -120,16 +120,16 @@ function sendToSlack(logGroup, logMessage, logLevel, context) {
   req.end();
 }
 
-exports.handler = function(input, context) {
+exports.handler = function (input, context) {
   if (input.awslogs) {
     // This is a CloudWatch log event
     var payload = Buffer.from(input.awslogs.data, "base64");
-    zlib.gunzip(payload, function(e, result) {
+    zlib.gunzip(payload, function (e, result) {
       if (e) {
         context.fail(e);
       } else {
         const parsedResult = JSON.parse(result.toString());
-          
+
         // We can get events with a `CONTROL_MESSAGE` type. It happens when CloudWatch checks if the Lambda is reachable.
         if (parsedResult.messageType !== "DATA_MESSAGE") return;
 
@@ -175,7 +175,7 @@ exports.handler = function(input, context) {
         msg: `Event Data for Alarms: ${input.Records[0].Sns.Message}`,
       })
     );
-    
+
     sendToSlack("Alarm Event", message, severity, context);
   }
 };
