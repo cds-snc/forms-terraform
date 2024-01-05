@@ -275,7 +275,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     visibility_config {
       metric_name                = local.cognito_login_outside_canada_rule_name
       cloudwatch_metrics_enabled = true
-      sampled_requests_enabled   = false
+      sampled_requests_enabled   = true
     }
   }
 }
