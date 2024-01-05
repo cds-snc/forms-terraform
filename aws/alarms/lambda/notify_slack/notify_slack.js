@@ -22,7 +22,7 @@ function getMessage(message) {
 }
 
 /**
- * @returns the severity level: [error, warning, info] based on the message
+ * @returns the severity level: [error, warning, info, alarm_reset] based on the message
  */
 function getSNSMessageSeverity(message) {
   const errorMessages = ["error", "critical"];
