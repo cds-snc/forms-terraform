@@ -21,44 +21,38 @@ function getMessage(message) {
   }
 }
 
+/**
+ * @returns the severity level: [error, warning, info] based on the message
+ */
 function getSNSMessageSeverity(message) {
-  const errorMessages = ["Error", "Critical"];
-  const warningMessages = ["Warning", "warning", "FAILURE"];
-  var severity = "info";
-  var keepProcessing = true;
+  const errorMessages = ["error", "critical"];
+  const warningMessages = ["warning", "failure"];
+  const alarm_ok_status = '"NewStateValue":"OK"'; // This is the string that is returned when the alarm is reset
 
+  message = message.toLowerCase();
   for (var errorMessagesItem in errorMessages) {
     if (
       message.indexOf(errorMessages[errorMessagesItem]) != -1 &&
-      // Does not inform about OK status
-      message.indexOf('"NewStateValue":"OK"') == -1
+      message.indexOf(alarm_ok_status) == -1 // is not an OK status
     ) {
-      severity = "error";
-      keepProcessing = false;
-    } else if (message.indexOf('"NewStateValue":"OK"') != -1) {
-      severity = "alarm_reset";
-      keepProcessing = false;
+      return "error";
+    } else if (message.indexOf(alarm_ok_status) != -1) {
+      return "alarm_reset";
     }
-  }
-
-  // Don't bother processing if we've already found an error
-  if (!keepProcessing) {
-    return severity;
   }
 
   for (var warningMessagesItem in warningMessages) {
     if (
       message.indexOf(warningMessages[warningMessagesItem]) != -1 &&
-      // Does not inform about OK status
-      message.indexOf('"NewStateValue":"OK"') == -1
+      message.indexOf(alarm_ok_status) == -1 // is not an OK status
     ) {
-      severity = "warning";
-    } else if (message.indexOf('"NewStateValue":"OK"') != -1) {
-      severity = "alarm_reset";
+      return "warning";
+    } else if (message.indexOf(alarm_ok_status) != -1) {
+      return "alarm_reset";
     }
   }
 
-  return severity;
+  return "info";
 }
 
 function sendToSlack(logGroup, logMessage, logLevel, context) {
