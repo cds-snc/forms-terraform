@@ -48,6 +48,8 @@ data "template_file" "form_viewer_task" {
 
 resource "aws_ecs_task_definition" "form_viewer" {
   # checkov:skip=CKV_AWS_249: Different execution role ARN and task role ARN not required
+  // TODO: Split roles for execution and task
+ 
   family       = var.ecs_form_viewer_name
   cpu          = 2048
   memory       = "4096"

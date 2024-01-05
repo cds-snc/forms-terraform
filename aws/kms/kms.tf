@@ -24,6 +24,9 @@ data "aws_iam_policy_document" "kms_cloudwatch" {
   # checkov:skip=CKV_AWS_109: `resources = ["*"]` identifies the KMS key to which the key policy is attached
   # checkov:skip=CKV_AWS_111: `resources = ["*"]` identifies the KMS key to which the key policy is attached
   # checkov:skip=CKV_AWS_356: `resources = ["*"]` identifies the KMS key to which the key policy is attached
+  // TODO: refactor write access (then we can remove checkov:skip=CKV_AWS_111)
+  // TODO: refactor to remove `resources = ["*"]` (then we can remove checkov:skip=CKV_AWS_356)
+
   statement {
     sid       = "Enable IAM User Permissions"
     effect    = "Allow"
@@ -98,8 +101,11 @@ resource "aws_kms_key" "dynamo_db" {
 
 data "aws_iam_policy_document" "kms_dynamo_db" {
   # checkov:skip=CKV_AWS_109: `resources = ["*"]` identifies the KMS key to which the key policy is attached
-  # checkov:skip=CKV_AWS_111: `resources = ["*"]` identifies the KMS key to which the key policy is attached\
+  # checkov:skip=CKV_AWS_111: `resources = ["*"]` identifies the KMS key to which the key policy is attached
   # checkov:skip=CKV_AWS_356: `resources = ["*"]` identifies the KMS key to which the key policy is attached
+  // TODO: refactor write access (then we can remove checkov:skip=CKV_AWS_111)
+  // TODO: refactor to remove `resources = ["*"]` (then we can remove checkov:skip=CKV_AWS_356)
+
   statement {
     sid       = "Enable IAM User Permissions"
     effect    = "Allow"

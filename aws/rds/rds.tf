@@ -18,6 +18,8 @@ resource "aws_db_subnet_group" "forms" {
 resource "aws_rds_cluster" "forms" {
   # checkov:skip=CKV_AWS_324: RDS Cluster log capture not required
   # checkov:skip=CKV_AWS_327: Encryption using KMS CMKs not required
+  // TODO: Implement Encryption using KMS CMKs
+
   cluster_identifier          = "${var.rds_name}-cluster"
   engine                      = "aurora-postgresql"
   engine_mode                 = "serverless"

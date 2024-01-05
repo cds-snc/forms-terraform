@@ -52,6 +52,7 @@ resource "aws_iam_policy" "lambda_rds" {
 data "aws_iam_policy_document" "lambda_rds" {
   # checkov:skip=CKV_AWS_111: Write access without constraints is allowed
   # checkov:skip=CKV_AWS_356: Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions
+  // TODO: refactor write access (then we can remove checkov:skip=CKV_AWS_111)
   // TODO: refactor to remove `resources = ["*"]` (then we can remove checkov:skip=CKV_AWS_356)
 
   statement {

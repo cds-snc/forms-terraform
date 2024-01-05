@@ -57,6 +57,9 @@ data "aws_iam_policy_document" "cloudwatch_events_sns_topic_policy" {
   statement {
     # checkov:skip=CKV_AWS_111: False-positive, `resources = ["*"]` refers to the SNS topic the policy applies to 
     # checkov:skip=CKV_AWS_356: False-positive, `resources = ["*"]` refers to the SNS topic the policy applies to 
+    // TODO: refactor write access (then we can remove checkov:skip=CKV_AWS_111)
+    // TODO: refactor to remove `resources = ["*"]` (then we can remove checkov:skip=CKV_AWS_356)
+
     sid    = "SNS_Default_Policy"
     effect = "Allow"
     actions = [
