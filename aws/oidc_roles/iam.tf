@@ -1,7 +1,7 @@
 locals {
   forms_terraform_apply_release           = "forms-terraform-apply-release"
   forms_terraform_apply_workflow_dispatch = "forms-terraform-apply-workflow-dispatch"
-  forms_terraform_plan_worfklow_dispatch  = "forms-terraform-plan-workflow-dispatch"
+  forms_terraform_plan_workflow_dispatch  = "forms-terraform-plan-workflow-dispatch"
 }
 
 # 
@@ -43,7 +43,7 @@ module "github_workflow_roles" {
       claim     = "workflow_dispatch"
     },
     {
-      name      = local.forms_terraform_plan_worfklow_dispatch
+      name      = local.forms_terraform_plan_workflow_dispatch
       repo_name = "forms-terraform"
       claim     = "workflow_dispatch"
     }
@@ -63,7 +63,7 @@ resource "aws_iam_role_policy_attachment" "forms_terraform_apply_release_admin" 
   ]
 }
 
-resource "aws_iam_role_policy_attachment" "forms_terraform_apply_worfklow_dispatch_admin" {
+resource "aws_iam_role_policy_attachment" "forms_terraform_apply_workflow_dispatch_admin" {
   count      = var.env == "staging" ? 1 : 0
   role       = local.forms_terraform_apply_workflow_dispatch
   policy_arn = data.aws_iam_policy.admin.arn
@@ -72,18 +72,18 @@ resource "aws_iam_role_policy_attachment" "forms_terraform_apply_worfklow_dispat
   ]
 }
 
-resource "aws_iam_role_policy_attachment" "forms_terraform_plan_worfklow_dispatch_terraform_plan" {
+resource "aws_iam_role_policy_attachment" "forms_terraform_plan_workflow_dispatch_terraform_plan" {
   count      = var.env == "staging" ? 1 : 0
-  role       = local.forms_terraform_plan_worfklow_dispatch
+  role       = local.forms_terraform_plan_workflow_dispatch
   policy_arn = data.aws_iam_policy.terraform_plan.arn
   depends_on = [
     module.github_workflow_roles
   ]
 }
 
-resource "aws_iam_role_policy_attachment" "forms_terraform_plan_worfklow_dispatch_readonly" {
+resource "aws_iam_role_policy_attachment" "forms_terraform_plan_workflow_dispatch_readonly" {
   count      = var.env == "staging" ? 1 : 0
-  role       = local.forms_terraform_plan_worfklow_dispatch
+  role       = local.forms_terraform_plan_workflow_dispatch
   policy_arn = data.aws_iam_policy.readonly.arn
   depends_on = [
     module.github_workflow_roles

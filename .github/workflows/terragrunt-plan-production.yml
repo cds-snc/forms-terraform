@@ -113,7 +113,7 @@ jobs:
           comment-delete: "true"
           comment-title: "Production: s3"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"         
+          terragrunt: "true"
 
       # Depends on kms
       - name: Terragrunt plan sns
