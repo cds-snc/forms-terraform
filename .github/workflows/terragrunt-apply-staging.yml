@@ -10,13 +10,15 @@ on:
       - "env/cloud/**"
       - ".github/workflows/terragrunt-apply-staging.yml"
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   APP_ENV: "staging"
   APP_DOMAINS: ${{ vars.STAGING_APP_DOMAINS }}
   AWS_ACCOUNT_ID: ${{ vars.STAGING_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
-  AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
   TERRAFORM_VERSION: 1.6.6
   TERRAGRUNT_VERSION: 0.54.8
   TF_INPUT: false
@@ -41,18 +43,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@ed3a0531877aca392eb870f440d9ae7aba83a6bd # v1.4.0
-        with:
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-          terraform_wrapper: false
+      - name: Setup terraform tools
+        uses: cds-snc/terraform-tools-setup@v1
 
-      - name: Setup Terragrunt
-        run: |
-          mkdir bin
-          wget -O bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v$TERRAGRUNT_VERSION/terragrunt_linux_amd64
-          chmod +x bin/*
-          echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        env:
+          ROLE_NAME: ${{ github.event_name == 'workflow_dispatch' && 'forms-terraform-apply-workflow-dispatch' || 'forms-terraform-apply' }}
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.ROLE_NAME }}
+          role-session-name: TFApply
+          aws-region: ${{ env.AWS_REGION }}
 
       - uses: cds-snc/paths-filter@b316143212d841aed668b7b29240c719d603a9b9 # tag=v2.10.4
         id: filter
@@ -95,6 +96,9 @@ jobs:
             network:
               - 'aws/network/**'
               - 'env/cloud/network/**'
+            oidc_roles:
+              - 'aws/oidc_roles/**'
+              - 'env/cloud/oidc_roles/**'              
             rds:
               - 'aws/rds/**'
               - 'env/cloud/rds/**'
@@ -128,6 +132,11 @@ jobs:
       - name: Terragrunt apply kms
         if: ${{ steps.filter.outputs.kms == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/cloud/kms
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply oidc_roles
+        if: ${{ steps.filter.outputs.oidc_roles == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/cloud/oidc_roles
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply sqs
@@ -220,15 +229,6 @@ jobs:
         working-directory: aws/load_testing/lambda
         run: docker build -t load_testing_lambda:latest .
 
-      - name: Configure Staging AWS credentials
-        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        id: aws-form-viewer
-        uses: aws-actions/configure-aws-credentials@0d2b0aeb3e8080c1fd45b7c462784899ded2fd85
-        with:
-          aws-access-key-id: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ca-central-1
-
       - name: Login to Staging Amazon ECR
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
         id: login-ecr-staging
@@ -249,6 +249,7 @@ jobs:
           ECR_REPOSITORY: load_test
         run: |
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
       - name: Logout of Staging Amazon ECR
         if: always()
         run: docker logout ${{ steps.login-ecr-staging.outputs.registry }}
