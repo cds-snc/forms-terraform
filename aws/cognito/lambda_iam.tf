@@ -94,7 +94,7 @@ data "aws_iam_policy_document" "cognito_lambda_secrets" {
 # Allow lambda to access S3 buckets
 
 resource "aws_iam_policy" "lambda_s3" {
-  name        = "lambda_s3"
+  name        = "cognito_lambda_s3"
   path        = "/"
   description = "IAM policy for storing files in S3"
   policy      = data.aws_iam_policy_document.lambda_s3.json
