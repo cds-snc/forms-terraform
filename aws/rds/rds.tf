@@ -23,7 +23,7 @@ resource "aws_rds_cluster" "forms" {
   cluster_identifier          = "${var.rds_name}-cluster"
   engine                      = "aurora-postgresql"
   engine_mode                 = "serverless"
-  engine_version              = "13.12"
+  engine_version              = "13.9"
   enable_http_endpoint        = true
   database_name               = var.rds_db_name
   deletion_protection         = true
