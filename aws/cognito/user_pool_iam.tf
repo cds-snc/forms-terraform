@@ -2,10 +2,7 @@ resource "aws_iam_role" "cognito_userpool_import" {
   name               = "role_for_cognito_user_pool_import"
   assume_role_policy = data.aws_iam_policy_document.cognito_userpool_import_assume.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "cognito_userpool_import_assume" {
@@ -26,10 +23,7 @@ resource "aws_iam_policy" "cognito_userpool_import_logging" {
   description = "IAM policy for logging from a cognito userpool import"
   policy      = data.aws_iam_policy_document.cognito_userpool_import_logging.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_iam_role_policy_attachment" "cognito_userpool_import_logs" {

@@ -8,7 +8,7 @@ data "archive_file" "response_archiver_code" {
   output_path = "/tmp/response_archiver_code.zip"
 }
 
-resource "aws_s3_bucket_object" "response_archiver_code" {
+resource "aws_s3_object" "response_archiver_code" {
   bucket      = var.lambda_code_id
   key         = "response_archiver_code"
   source      = data.archive_file.response_archiver_code.output_path
@@ -17,9 +17,9 @@ resource "aws_s3_bucket_object" "response_archiver_code" {
 
 
 resource "aws_lambda_function" "response_archiver" {
-  s3_bucket         = aws_s3_bucket_object.response_archiver_code.bucket
-  s3_key            = aws_s3_bucket_object.response_archiver_code.key
-  s3_object_version = aws_s3_bucket_object.response_archiver_code.version_id
+  s3_bucket         = aws_s3_object.response_archiver_code.bucket
+  s3_key            = aws_s3_object.response_archiver_code.key
+  s3_object_version = aws_s3_object.response_archiver_code.version_id
   function_name     = "Response_Archiver"
   role              = aws_iam_role.lambda.arn
   handler           = "archiver.handler"
@@ -42,10 +42,7 @@ resource "aws_lambda_function" "response_archiver" {
     mode = "PassThrough"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 
@@ -60,5 +57,5 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_responses
 resource "aws_cloudwatch_log_group" "response_archiver" {
   name              = "/aws/lambda/${aws_lambda_function.response_archiver.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 90
+  retention_in_days = 731
 }

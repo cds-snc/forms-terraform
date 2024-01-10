@@ -9,10 +9,7 @@ resource "aws_ecr_repository" "viewer_repository" {
     scan_on_push = true
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_ecr_lifecycle_policy" "form_viewer_policy" {
@@ -49,10 +46,7 @@ resource "aws_ecr_repository" "load_test_repository" {
     scan_on_push = true
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_ecr_lifecycle_policy" "load_test_policy" {

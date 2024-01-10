@@ -8,7 +8,7 @@ data "archive_file" "vault_integrity_code" {
   output_path = "/tmp/vault_integrity_code.zip"
 }
 
-resource "aws_s3_bucket_object" "vault_integrity_code" {
+resource "aws_s3_object" "vault_integrity_code" {
 
   bucket      = var.lambda_code_id
   key         = "vault_integrity_code"
@@ -17,9 +17,9 @@ resource "aws_s3_bucket_object" "vault_integrity_code" {
 }
 
 resource "aws_lambda_function" "vault_integrity" {
-  s3_bucket         = var.env != "local" ? aws_signer_signing_job.vault_integrity[0].signed_object[0].s3[0].bucket : aws_s3_bucket_object.vault_integrity_code.bucket
-  s3_key            = var.env != "local" ? aws_signer_signing_job.vault_integrity[0].signed_object[0].s3[0].key : aws_s3_bucket_object.vault_integrity_code.key
-  s3_object_version = var.env != "local" ? null : aws_s3_bucket_object.vault_integrity_code.version_id
+  s3_bucket         = var.env != "local" ? aws_signer_signing_job.vault_integrity[0].signed_object[0].s3[0].bucket : aws_s3_object.vault_integrity_code.bucket
+  s3_key            = var.env != "local" ? aws_signer_signing_job.vault_integrity[0].signed_object[0].s3[0].key : aws_s3_object.vault_integrity_code.key
+  s3_object_version = var.env != "local" ? null : aws_s3_object.vault_integrity_code.version_id
   function_name     = "Vault_Data_Integrity_Check"
   role              = aws_iam_role.lambda.arn
   handler           = "vault_data_integrity_check.handler"
@@ -40,10 +40,7 @@ resource "aws_lambda_function" "vault_integrity" {
     mode = "PassThrough"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_lambda_event_source_mapping" "vault_updated_item_stream" {
@@ -65,7 +62,7 @@ resource "aws_lambda_event_source_mapping" "vault_updated_item_stream" {
 resource "aws_cloudwatch_log_group" "vault_integrity" {
   name              = "/aws/lambda/${aws_lambda_function.vault_integrity.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 90
+  retention_in_days = 731
 }
 
 # Signer configuration
@@ -77,15 +74,15 @@ resource "aws_signer_signing_job" "vault_integrity" {
 
   source {
     s3 {
-      bucket  = aws_s3_bucket_object.vault_integrity_code.bucket
-      key     = aws_s3_bucket_object.vault_integrity_code.key
-      version = aws_s3_bucket_object.vault_integrity_code.version_id
+      bucket  = aws_s3_object.vault_integrity_code.bucket
+      key     = aws_s3_object.vault_integrity_code.key
+      version = aws_s3_object.vault_integrity_code.version_id
     }
   }
 
   destination {
     s3 {
-      bucket = aws_s3_bucket_object.vault_integrity_code.bucket
+      bucket = aws_s3_object.vault_integrity_code.bucket
       prefix = "signed/"
     }
   }

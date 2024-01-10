@@ -8,7 +8,7 @@ data "archive_file" "form_archiver_code" {
   output_path = "/tmp/form_archiver_code.zip"
 }
 
-resource "aws_s3_bucket_object" "form_archiver_code" {
+resource "aws_s3_object" "form_archiver_code" {
   bucket      = var.lambda_code_id
   key         = "form_archiver_code"
   source      = data.archive_file.form_archiver_code.output_path
@@ -16,9 +16,9 @@ resource "aws_s3_bucket_object" "form_archiver_code" {
 }
 
 resource "aws_lambda_function" "form_archiver" {
-  s3_bucket         = aws_s3_bucket_object.form_archiver_code.bucket
-  s3_key            = aws_s3_bucket_object.form_archiver_code.key
-  s3_object_version = aws_s3_bucket_object.form_archiver_code.version_id
+  s3_bucket         = aws_s3_object.form_archiver_code.bucket
+  s3_key            = aws_s3_object.form_archiver_code.key
+  s3_object_version = aws_s3_object.form_archiver_code.version_id
   function_name     = "Archive_Form_Templates"
   role              = aws_iam_role.lambda.arn
   handler           = "form_archiver.handler"
@@ -43,10 +43,7 @@ resource "aws_lambda_function" "form_archiver" {
     mode = "PassThrough"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 
@@ -61,5 +58,5 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_form_archiver_lambda" 
 resource "aws_cloudwatch_log_group" "archive_form_templates" {
   name              = "/aws/lambda/${aws_lambda_function.form_archiver.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 90
+  retention_in_days = 731
 }

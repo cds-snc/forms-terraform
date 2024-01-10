@@ -23,12 +23,12 @@ dependency "app" {
   mock_outputs_merge_with_state           = true
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    ecs_iam_forms_secrets_manager_policy_arn = ""
-    ecs_iam_forms_kms_policy_arn             = ""
-    ecs_iam_forms_s3_policy_arn              = ""
-    ecs_iam_forms_dynamodb_policy_arn        = ""
-    ecs_iam_forms_sqs_policy_arn             = ""
-    ecs_iam_forms_cognito_policy_arn         = ""
+    ecs_iam_forms_secrets_manager_policy_arn = null
+    ecs_iam_forms_kms_policy_arn             = null
+    ecs_iam_forms_s3_policy_arn              = null
+    ecs_iam_forms_dynamodb_policy_arn        = null
+    ecs_iam_forms_sqs_policy_arn             = null
+    ecs_iam_forms_cognito_policy_arn         = null
   }
 }
 
@@ -39,10 +39,10 @@ dependency "network" {
   mock_outputs_merge_with_state           = true
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    vpc_id                           = ""
-    privatelink_security_group_id    = ""
-    forms_database_security_group_id = ""
-    forms_redis_security_group_id    = ""
+    vpc_id                           = null
+    privatelink_security_group_id    = null
+    forms_database_security_group_id = null
+    forms_redis_security_group_id    = null
   }
 }
 

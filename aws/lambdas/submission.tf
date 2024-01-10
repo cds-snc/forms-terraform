@@ -7,7 +7,7 @@ data "archive_file" "submission_code" {
   output_path = "/tmp/submission_code.zip"
 }
 
-resource "aws_s3_bucket_object" "submission_code" {
+resource "aws_s3_object" "submission_code" {
   bucket      = var.lambda_code_id
   key         = "submission_code"
   source      = data.archive_file.submission_code.output_path
@@ -15,9 +15,9 @@ resource "aws_s3_bucket_object" "submission_code" {
 }
 
 resource "aws_lambda_function" "submission" {
-  s3_bucket         = aws_s3_bucket_object.submission_code.bucket
-  s3_key            = aws_s3_bucket_object.submission_code.key
-  s3_object_version = aws_s3_bucket_object.submission_code.version_id
+  s3_bucket         = aws_s3_object.submission_code.bucket
+  s3_key            = aws_s3_object.submission_code.key
+  s3_object_version = aws_s3_object.submission_code.version_id
   function_name     = "Submission"
   role              = aws_iam_role.lambda.arn
   handler           = "submission.handler"
@@ -39,10 +39,7 @@ resource "aws_lambda_function" "submission" {
     mode = "PassThrough"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 
 }
 
@@ -58,5 +55,5 @@ resource "aws_lambda_permission" "submission" {
 resource "aws_cloudwatch_log_group" "submission" {
   name              = "/aws/lambda/${aws_lambda_function.submission.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 90
+  retention_in_days = 731
 }

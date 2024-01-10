@@ -21,7 +21,7 @@ dependency "app" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    ecs_iam_role_arn = ""
+    ecs_iam_role_arn = null
   }
 }
 
@@ -31,9 +31,9 @@ dependency "rds" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    rds_cluster_arn     = ""
-    rds_db_name         = ""
-    database_secret_arn = ""
+    rds_cluster_arn     = null
+    rds_db_name         = null
+    database_secret_arn = null
   }
 }
 
@@ -42,11 +42,11 @@ dependency "sqs" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    sqs_reliability_queue_arn            = ""
-    sqs_reliability_queue_id             = ""
-    sqs_reprocess_submission_queue_arn   = ""
-    sqs_reliability_dead_letter_queue_id = ""
-    sqs_audit_log_queue_arn              = ""
+    sqs_reliability_queue_arn            = null
+    sqs_reliability_queue_id             = null
+    sqs_reprocess_submission_queue_arn   = null
+    sqs_reliability_dead_letter_queue_id = null
+    sqs_audit_log_queue_arn              = null
   }
 }
 
@@ -56,7 +56,7 @@ dependency "sns" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    sns_topic_alert_critical_arn = ""
+    sns_topic_alert_critical_arn = null
   }
 }
 
@@ -65,8 +65,8 @@ dependency "kms" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    kms_key_cloudwatch_arn = ""
-    kms_key_dynamodb_arn   = ""
+    kms_key_cloudwatch_arn = null
+    kms_key_dynamodb_arn   = null
   }
 }
 
@@ -76,11 +76,11 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_relability_queue_arn = ""
-    dynamodb_vault_arn            = ""
-    dynamodb_vault_table_name     = ""
-    dynamodb_vault_stream_arn     = ""
-    dynamodb_audit_logs_arn       = ""
+    dynamodb_relability_queue_arn = null
+    dynamodb_vault_arn            = null
+    dynamodb_vault_table_name     = null
+    dynamodb_vault_stream_arn     = null
+    dynamodb_audit_logs_arn       = null
   }
 }
 
@@ -89,12 +89,11 @@ dependency "secrets" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    notify_api_key_secret_arn               = ""
-    notify_api_key_secret_value             = ""
-    freshdesk_api_key_secret_arn            = ""
-    token_secret_arn                        = ""
-    recaptcha_secret_arn                    = ""
-    notify_callback_bearer_token_secret_arn = ""
+    notify_api_key_secret_arn               = null
+    freshdesk_api_key_secret_arn            = null
+    token_secret_arn                        = null
+    recaptcha_secret_arn                    = null
+    notify_callback_bearer_token_secret_arn = null
   }
 }
 
@@ -103,12 +102,12 @@ dependency "s3" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    reliability_file_storage_arn = ""
-    vault_file_storage_arn       = ""
+    reliability_file_storage_arn = null
+    vault_file_storage_arn       = null
     vault_file_storage_id        = "placeholder"
-    archive_storage_arn          = ""
+    archive_storage_arn          = null
     archive_storage_id           = "placeholder"
-    lambda_code_arn              = ""
+    lambda_code_arn              = null
     lambda_code_id               = "placeholder"
   }
 }
@@ -135,7 +134,7 @@ inputs = {
 
   sns_topic_alert_critical_arn = dependency.sns.outputs.sns_topic_alert_critical_arn
 
-  notify_api_key_secret_value = dependency.secrets.outputs.notify_api_key_secret_value
+  notify_api_key_secret_arn = dependency.secrets.outputs.notify_api_key_secret_arn
 
   reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
   vault_file_storage_arn       = dependency.s3.outputs.vault_file_storage_arn

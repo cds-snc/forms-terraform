@@ -7,7 +7,9 @@ resource "aws_cloudfront_origin_access_identity" "maintenance_mode" {
 }
 
 resource "aws_cloudfront_distribution" "maintenance_mode" {
+  # checkov:skip=CKV2_AWS_32: Access logging not required
   # checkov:skip=CKV_AWS_86: Access logging not required
+  # checkov:skip=CKV_AWS_310: Origin failover configuration not required
   enabled             = true
   http_version        = "http2"
   default_root_object = "index.html"
@@ -56,10 +58,7 @@ resource "aws_cloudfront_distribution" "maintenance_mode" {
     ssl_support_method       = "sni-only"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 
   depends_on = [
     aws_s3_bucket.maintenance_mode

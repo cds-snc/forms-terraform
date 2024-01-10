@@ -1,10 +1,12 @@
 import { NotifyClient } from "notifications-node-client";
 import { AxiosError } from "axios";
+import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 
-const notifyClient = new NotifyClient(
-  "https://api.notification.canada.ca",
-  process.env.NOTIFY_API_KEY
-);
+const client = new SecretsManagerClient();
+const command = new GetSecretValueCommand({ SecretId: process.env.NOTIFY_API_KEY });
+console.log("Retrieving Notify API Key from Secrets Manager");
+const notifyApiKey = await client.send(command);
+const notifyClient = new NotifyClient("https://api.notification.canada.ca", notifyApiKey);
 
 export async function notifyFormOwner(
   formID: string,

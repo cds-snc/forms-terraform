@@ -13,15 +13,14 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}
   CONFTEST_VERSION: 0.36.0
-  TERRAFORM_VERSION: 1.6.5
-  TERRAGRUNT_VERSION: 0.53.8
+  TERRAFORM_VERSION: 1.6.6
+  TERRAGRUNT_VERSION: 0.54.8
   TF_INPUT: false
   TF_VAR_ecs_secret_token: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
   TF_VAR_recaptcha_secret: ${{secrets.PRODUCTION_RECAPTCHA_SITE_SECRET}}
   TF_VAR_recaptcha_public: 6LfuLrQnAAAAAK9Df3gem4XLMRVY2Laq6t2fhZhZ
   TF_VAR_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
   TF_VAR_freshdesk_api_key: ${{ secrets.PRODUCTION_FRESHDESK_API_KEY }}
-  TF_VAR_cognito_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
   TF_VAR_rds_db_password: ${{ secrets.PRODUCTION_DB_PASSWORD }}
   TF_VAR_slack_webhook: ${{ secrets.PRODUCTION_SLACK_WEBHOOK }}
   TF_VAR_gc_notify_callback_bearer_token: ${{ secrets.PRODUCTION_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}

@@ -6,7 +6,7 @@ data "archive_file" "reliability_code" {
 
 }
 
-resource "aws_s3_bucket_object" "reliability_code" {
+resource "aws_s3_object" "reliability_code" {
   bucket      = var.lambda_code_id
   key         = "reliability_code"
   source      = data.archive_file.reliability_code.output_path
@@ -14,9 +14,9 @@ resource "aws_s3_bucket_object" "reliability_code" {
 }
 
 resource "aws_lambda_function" "reliability" {
-  s3_bucket         = aws_s3_bucket_object.reliability_code.bucket
-  s3_key            = aws_s3_bucket_object.reliability_code.key
-  s3_object_version = aws_s3_bucket_object.reliability_code.version_id
+  s3_bucket         = aws_s3_object.reliability_code.bucket
+  s3_key            = aws_s3_object.reliability_code.key
+  s3_object_version = aws_s3_object.reliability_code.version_id
   function_name     = "Reliability"
   role              = aws_iam_role.lambda.arn
   handler           = "reliability.handler"
@@ -30,7 +30,7 @@ resource "aws_lambda_function" "reliability" {
     variables = {
       ENVIRONMENT    = var.env
       REGION         = var.region
-      NOTIFY_API_KEY = var.notify_api_key_secret_value
+      NOTIFY_API_KEY = var.notify_api_key_secret_arn
       TEMPLATE_ID    = var.gc_template_id
       DB_ARN         = var.rds_cluster_arn
       DB_SECRET      = var.database_secret_arn
@@ -48,10 +48,7 @@ resource "aws_lambda_function" "reliability" {
     mode = "PassThrough"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_lambda_event_source_mapping" "reliability" {
@@ -71,6 +68,6 @@ resource "aws_lambda_event_source_mapping" "reprocess_submission" {
 resource "aws_cloudwatch_log_group" "reliability" {
   name              = "/aws/lambda/${aws_lambda_function.reliability.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 90
+  retention_in_days = 731
 }
 

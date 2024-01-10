@@ -29,10 +29,7 @@ resource "aws_lambda_function" "notify_slack" {
     mode = "PassThrough"
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 #
@@ -85,10 +82,7 @@ resource "aws_iam_role" "notify_slack_lambda" {
   name               = "NotifySlackLambda"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "lambda_assume_policy" {
@@ -112,5 +106,5 @@ resource "aws_iam_role_policy_attachment" "notify_slack_lambda_basic_access" {
 resource "aws_cloudwatch_log_group" "notify_slack" {
   name              = "/aws/lambda/${aws_lambda_function.notify_slack.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 90
+  retention_in_days = 731
 }

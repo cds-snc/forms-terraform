@@ -2,10 +2,7 @@ resource "aws_iam_role" "cognito_lambda" {
   name               = "iam_for_cognito_lambda"
   assume_role_policy = data.aws_iam_policy_document.cognito_lambda_assume.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "cognito_lambda_assume" {
@@ -26,10 +23,7 @@ resource "aws_iam_policy" "cognito_lambda_logging" {
   description = "IAM policy for logging from a cognito lambda"
   policy      = data.aws_iam_policy_document.cognito_lambda_logging.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "cognito_lambda_logging" {
@@ -55,10 +49,7 @@ resource "aws_iam_policy" "cognito_lambda_kms" {
   description = "IAM policy for storing encrypting and decrypting data"
   policy      = data.aws_iam_policy_document.cognito_lambda_kms.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "cognito_lambda_kms" {
@@ -84,10 +75,7 @@ resource "aws_iam_policy" "cognito_lambda_secrets" {
   description = "IAM policy for accessing secret manager"
   policy      = data.aws_iam_policy_document.cognito_lambda_secrets.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "cognito_lambda_secrets" {
@@ -99,7 +87,35 @@ data "aws_iam_policy_document" "cognito_lambda_secrets" {
     ]
 
     resources = [
-      aws_secretsmanager_secret_version.cognito_notify_api_key.arn
+      var.notify_api_key_secret_arn
+    ]
+  }
+}
+# Allow lambda to access S3 buckets
+
+resource "aws_iam_policy" "lambda_s3" {
+  name        = "lambda_s3"
+  path        = "/"
+  description = "IAM policy for storing files in S3"
+  policy      = data.aws_iam_policy_document.lambda_s3.json
+
+
+}
+
+data "aws_iam_policy_document" "lambda_s3" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:ListBucket"
+    ]
+
+    resources = [
+      var.lambda_code_arn,
+      "${var.lambda_code_arn}/*"
     ]
   }
 }

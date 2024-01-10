@@ -21,12 +21,12 @@ disable     = local.env == "local"
   contents  = <<EOF
 terraform {
   backend "s3" {
-    encrypt          = true
-    force_path_style = true
-    bucket           = "forms-${local.env}-tfstate"
-    dynamodb_table   = "tfstate-lock"
-    region           = "ca-central-1"
-    key              = "${path_relative_to_include()}/terraform.tfstate"
+    encrypt        = true
+    use_path_style = true
+    bucket         = "forms-${local.env}-tfstate"
+    dynamodb_table = "tfstate-lock"
+    region         = "ca-central-1"
+    key            = "${path_relative_to_include()}/terraform.tfstate"
   }
 }
 EOF

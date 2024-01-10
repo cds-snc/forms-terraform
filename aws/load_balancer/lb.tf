@@ -1,6 +1,7 @@
 #
 # Load balancer
 #
+
 resource "aws_lb" "form_viewer" {
   name               = "form-viewer"
   internal           = false
@@ -18,9 +19,7 @@ resource "aws_lb" "form_viewer" {
   }
 
   tags = {
-    Name                  = "form_viewer"
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
+    Name = "form_viewer"
   }
 }
 
@@ -44,9 +43,7 @@ resource "aws_lb_target_group" "form_viewer_1" {
   }
 
   tags = {
-    Name                  = "form_viewer_1"
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
+    Name = "form_viewer_1"
   }
 }
 
@@ -70,9 +67,7 @@ resource "aws_lb_target_group" "form_viewer_2" {
   }
 
   tags = {
-    Name                  = "form_viewer_2"
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
+    Name = "form_viewer_2"
   }
 }
 
@@ -97,11 +92,6 @@ resource "aws_lb_listener" "form_viewer_https" {
       default_action # updated by codedeploy
     ]
   }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
 }
 
 resource "aws_lb_listener" "form_viewer_http" {
@@ -123,10 +113,5 @@ resource "aws_lb_listener" "form_viewer_http" {
     ignore_changes = [
       default_action # updated by codedeploy
     ]
-  }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
   }
 }

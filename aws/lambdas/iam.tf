@@ -2,10 +2,7 @@ resource "aws_iam_role" "lambda" {
   name               = "iam_for_lambda"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "lambda_assume" {
@@ -26,10 +23,7 @@ resource "aws_iam_policy" "lambda_logging" {
   description = "IAM policy for logging from a lambda"
   policy      = data.aws_iam_policy_document.lambda_logging.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "lambda_logging" {
@@ -53,15 +47,14 @@ resource "aws_iam_policy" "lambda_rds" {
   path        = "/"
   description = "IAM policy for allowing acces to DB"
   policy      = data.aws_iam_policy_document.lambda_rds.json
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
 }
 
 data "aws_iam_policy_document" "lambda_rds" {
-  # checkov:skip=CKV_AWS_111: TODO: refactor to remove `resources = ["*"]`
+  # checkov:skip=CKV_AWS_111: Write access without constraints is allowed
+  # checkov:skip=CKV_AWS_356: Ensure no IAM policies documents allow "*" as a statement's resource for restrictable actions
+  // TODO: refactor write access (then we can remove checkov:skip=CKV_AWS_111)
+  // TODO: refactor to remove `resources = ["*"]` (then we can remove checkov:skip=CKV_AWS_356)
+
   statement {
     sid    = "RDSDataServiceAccess"
     effect = "Allow"
@@ -83,8 +76,6 @@ data "aws_iam_policy_document" "lambda_rds" {
       "rds-data:CommitTransaction",
       "rds-data:RollbackTransaction",
       "secretsmanager:CreateSecret",
-      "secretsmanager:ListSecrets",
-      "secretsmanager:GetRandomPassword",
       "tag:GetResources"
     ]
 
@@ -99,10 +90,7 @@ resource "aws_iam_policy" "lambda_sqs" {
   description = "IAM policy for sending messages through SQS"
   policy      = data.aws_iam_policy_document.lambda_sqs.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "lambda_sqs" {
@@ -129,10 +117,7 @@ resource "aws_iam_policy" "lambda_dynamodb" {
   description = "IAM policy for storing Form responses in DynamoDB"
   policy      = data.aws_iam_policy_document.lambda_dynamodb.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "lambda_dynamodb" {
@@ -171,10 +156,7 @@ resource "aws_iam_policy" "lambda_kms" {
   description = "IAM policy for storing encrypting and decrypting data"
   policy      = data.aws_iam_policy_document.lambda_kms.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "lambda_kms" {
@@ -201,10 +183,7 @@ resource "aws_iam_policy" "lambda_secrets" {
   description = "IAM policy for accessing secret manager"
   policy      = data.aws_iam_policy_document.lambda_secrets.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "lambda_secrets" {
@@ -216,7 +195,8 @@ data "aws_iam_policy_document" "lambda_secrets" {
     ]
 
     resources = [
-      var.database_secret_arn
+      var.database_secret_arn,
+      var.notify_api_key_secret_arn
     ]
   }
 }
@@ -229,10 +209,7 @@ resource "aws_iam_policy" "lambda_s3" {
   description = "IAM policy for storing files in S3"
   policy      = data.aws_iam_policy_document.lambda_s3.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "lambda_s3" {
@@ -266,10 +243,7 @@ resource "aws_iam_policy" "lambda_sns" {
   description = "IAM policy for allowing lambda to publish message in SNS for Slack notification"
   policy      = data.aws_iam_policy_document.lambda_sns.json
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 data "aws_iam_policy_document" "lambda_sns" {

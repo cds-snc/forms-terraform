@@ -1,24 +1,15 @@
 #
 # Security Groups
 #
+
 resource "aws_default_security_group" "default" {
   vpc_id = aws_vpc.forms.id
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
 }
 
 resource "aws_security_group" "forms" {
   name        = "forms"
   description = "Ingress - Forms"
   vpc_id      = aws_vpc.forms.id
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
 }
 
 resource "aws_security_group_rule" "forms_ingress_alb" {
@@ -62,6 +53,7 @@ resource "aws_security_group_rule" "forms_egress_redis" {
 }
 
 resource "aws_security_group" "forms_load_balancer" {
+  # checkov:skip=CKV_AWS_260: Ingress from 0.0.0.0:0 to port 80 is required by the load balancer to redirect users from HTTP to HTTPS
   name        = "forms-load-balancer"
   description = "Ingress - forms Load Balancer"
   vpc_id      = aws_vpc.forms.id
@@ -86,22 +78,12 @@ resource "aws_security_group" "forms_load_balancer" {
     to_port     = 3000
     cidr_blocks = [var.vpc_cidr_block]
   }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
 }
 
 resource "aws_security_group" "forms_egress" {
   name        = "egress-anywhere"
   description = "Egress - Forms External Services"
   vpc_id      = aws_vpc.forms.id
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
 }
 
 resource "aws_security_group_rule" "forms_external_auth" {
@@ -118,11 +100,6 @@ resource "aws_security_group" "privatelink" {
   name        = "privatelink"
   description = "privatelink endpoints"
   vpc_id      = aws_vpc.forms.id
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
 }
 
 resource "aws_security_group_rule" "privatelink_forms_ingress" {
@@ -141,11 +118,6 @@ resource "aws_security_group" "forms_database" {
   name        = "forms-database"
   description = "Ingress - Forms Database"
   vpc_id      = aws_vpc.forms.id
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
 }
 
 resource "aws_security_group_rule" "forms_database_ingress" {
@@ -164,13 +136,6 @@ resource "aws_security_group" "forms_redis" {
   name        = "forms-redis"
   description = "Ingress - Forms Redis"
   vpc_id      = aws_vpc.forms.id
-
-
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
 }
 
 resource "aws_security_group_rule" "forms_redis_ingress" {
@@ -229,10 +194,5 @@ resource "aws_default_network_acl" "forms" {
   // https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/default_network_acl#managing-subnets-in-a-default-network-acl
   lifecycle {
     ignore_changes = [subnet_ids]
-  }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
   }
 }

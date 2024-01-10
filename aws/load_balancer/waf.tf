@@ -124,10 +124,13 @@ resource "aws_wafv2_web_acl" "forms_acl" {
         name        = "AWSManagedRulesCommonRuleSet"
         vendor_name = "AWS"
 
-        dynamic "excluded_rule" {
+        dynamic "rule_action_override" {
           for_each = local.excluded_rules_common
           content {
-            name = excluded_rule.value
+            name = rule_action_override.value
+            action_to_use {
+              count {}
+            }
           }
         }
       }
@@ -190,10 +193,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     sampled_requests_enabled   = false
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 
 
 
@@ -354,6 +354,7 @@ resource "aws_wafv2_regex_pattern_set" "forms_base_url" {
 }
 
 resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
+  # checkov:skip=CKV2_AWS_31: Logging configuration not required
   name  = "GCFormsMaintenanceMode"
   scope = "CLOUDFRONT"
 
@@ -364,8 +365,52 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
   }
 
   rule {
+    name     = "AWSManagedRulesAnonymousIpList"
+    priority = 1
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesAnonymousIpList"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesAnonymousIpList"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWSManagedRulesKnownBadInputsRuleSet"
+    priority = 2
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesKnownBadInputsRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesKnownBadInputsRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
     name     = "AllowGetOnMaintenancePageHTMLResources"
-    priority = 0
+    priority = 3
 
     action {
       allow {}
@@ -422,11 +467,6 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
     cloudwatch_metrics_enabled = false
     metric_name                = "forms_maintenance_mode_global_rule"
     sampled_requests_enabled   = false
-  }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
   }
 }
 

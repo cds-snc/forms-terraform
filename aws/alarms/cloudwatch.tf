@@ -18,11 +18,6 @@ resource "aws_cloudwatch_metric_alarm" "forms_cpu_utilization_high_warn" {
     ClusterName = var.ecs_cluster_name
     ServiceName = var.ecs_service_name
   }
-
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "forms_memory_utilization_high_warn" {
@@ -44,10 +39,7 @@ resource "aws_cloudwatch_metric_alarm" "forms_memory_utilization_high_warn" {
     ServiceName = var.ecs_service_name
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 #
@@ -66,10 +58,7 @@ resource "aws_cloudwatch_metric_alarm" "ELB_5xx_error_warn" {
   threshold           = "1"
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_topic_alert_warning_arn]
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 #
@@ -122,10 +111,7 @@ resource "aws_cloudwatch_metric_alarm" "reliability_dead_letter_queue_warn" {
     }
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 #
@@ -177,10 +163,7 @@ resource "aws_cloudwatch_metric_alarm" "audit_log_dead_letter_queue_warn" {
       }
     }
   }
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 
@@ -215,10 +198,7 @@ resource "aws_cloudwatch_metric_alarm" "response_time_warn" {
     }
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 #
@@ -241,10 +221,7 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_forms_warn" {
     ResourceArn = var.lb_arn
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_cloudwatch_metric_alarm" "ddos_detected_route53_warn" {
@@ -266,10 +243,7 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_route53_warn" {
     ResourceArn = var.hosted_zone_ids[count.index]
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 #
@@ -304,10 +278,7 @@ resource "aws_cloudwatch_event_rule" "codedeploy_sns" {
     }
   })
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 #
@@ -387,10 +358,7 @@ resource "aws_cloudwatch_metric_alarm" "cognito_signin_exceeded" {
 
   alarm_actions = [var.sns_topic_alert_warning_arn]
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_cloudwatch_log_metric_filter" "twoFa_verification_exceeded" {
@@ -420,10 +388,7 @@ resource "aws_cloudwatch_metric_alarm" "twoFa_verification_exceeded" {
 
   alarm_actions = [var.sns_topic_alert_warning_arn]
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_cloudwatch_metric_alarm" "vault_data_integrity_check_lambda_iterator_age" {

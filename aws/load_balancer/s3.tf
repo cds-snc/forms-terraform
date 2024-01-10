@@ -1,19 +1,23 @@
 resource "aws_s3_bucket" "maintenance_mode" {
-  # checkov:skip=CKV2_AWS_6: Public access block is define in a different resource
-  # checkov:skip=CKV_AWS_18: Versioning not required
-  # checkov:skip=CKV_AWS_19: False-positive, server side encryption is enabled but probably not detected because defined in a different Terraform resource
-  # checkov:skip=CKV_AWS_21: Access logging not required
-  bucket = "gc-forms-application-maintenance-page"
+  # checkov:skip=CKV_AWS_18: Access logging not required
+  # checkov:skip=CKV_AWS_21: Versioning not required
+  # checkov:skip=CKV2_AWS_61: Lifecycle configuration not required
+  # checkov:skip=CKV2_AWS_62: Event notifications not required
+  bucket = "gc-forms-${var.env}-application-maintenance-page"
+}
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
+resource "aws_s3_bucket_ownership_controls" "maintenance_mode" {
+  bucket = aws_s3_bucket.maintenance_mode.id
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 
 resource "aws_s3_bucket_acl" "maintenance_mode" {
-  bucket = aws_s3_bucket.maintenance_mode.id
-  acl    = "private"
+  depends_on = [aws_s3_bucket_ownership_controls.maintenance_mode]
+  bucket     = aws_s3_bucket.maintenance_mode.id
+  acl        = "private"
 }
 
 resource "aws_s3_bucket_public_access_block" "maintenance_mode" {
@@ -60,37 +64,37 @@ resource "aws_s3_bucket_website_configuration" "maintenance_mode" {
   }
 }
 
-resource "aws_s3_bucket_object" "maintenance_static_page_html_files" {
+resource "aws_s3_object" "maintenance_static_page_html_files" {
   for_each     = fileset("./static_website/", "*.html")
   content_type = "text/html"
-  bucket       = aws_s3_bucket.maintenance_mode.bucket
+  bucket       = aws_s3_bucket.maintenance_mode.id
   key          = each.value
   source       = "./static_website/${each.value}"
   etag         = filemd5("./static_website/${each.value}")
 }
 
-resource "aws_s3_bucket_object" "maintenance_static_page_css_files" {
+resource "aws_s3_object" "maintenance_static_page_css_files" {
   for_each     = fileset("./static_website/", "*.css")
   content_type = "text/css"
-  bucket       = aws_s3_bucket.maintenance_mode.bucket
+  bucket       = aws_s3_bucket.maintenance_mode.id
   key          = each.value
   source       = "./static_website/${each.value}"
   etag         = filemd5("./static_website/${each.value}")
 }
 
-resource "aws_s3_bucket_object" "maintenance_static_page_svg_files" {
+resource "aws_s3_object" "maintenance_static_page_svg_files" {
   for_each     = fileset("./static_website/", "*.svg")
   content_type = "image/svg+xml"
-  bucket       = aws_s3_bucket.maintenance_mode.bucket
+  bucket       = aws_s3_bucket.maintenance_mode.id
   key          = each.value
   source       = "./static_website/${each.value}"
   etag         = filemd5("./static_website/${each.value}")
 }
 
-resource "aws_s3_bucket_object" "maintenance_static_page_ico_files" {
+resource "aws_s3_object" "maintenance_static_page_ico_files" {
   for_each     = fileset("./static_website/", "*.ico")
   content_type = "image/png"
-  bucket       = aws_s3_bucket.maintenance_mode.bucket
+  bucket       = aws_s3_bucket.maintenance_mode.id
   key          = each.value
   source       = "./static_website/${each.value}"
   etag         = filemd5("./static_website/${each.value}")

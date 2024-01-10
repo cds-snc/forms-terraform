@@ -12,8 +12,8 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_relability_queue_arn = ""
-    dynamodb_vault_arn            = ""
+    dynamodb_relability_queue_arn = null
+    dynamodb_vault_arn            = null
   }
 }
 
@@ -23,7 +23,7 @@ dependency "ecr" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    ecr_repository_url_form_viewer = ""
+    ecr_repository_url_form_viewer = null
   }
 }
 
@@ -32,8 +32,8 @@ dependency "kms" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    kms_key_cloudwatch_arn = ""
-    kms_key_dynamodb_arn   = ""
+    kms_key_cloudwatch_arn = null
+    kms_key_dynamodb_arn   = null
   }
 }
 
@@ -42,10 +42,10 @@ dependency "load_balancer" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    lb_https_listener_arn  = ""
-    lb_target_group_1_arn  = ""
-    lb_target_group_1_name = ""
-    lb_target_group_2_name = ""
+    lb_https_listener_arn  = null
+    lb_target_group_1_arn  = null
+    lb_target_group_1_name = null
+    lb_target_group_2_name = null
   }
 }
 
@@ -63,7 +63,7 @@ dependency "rds" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    database_url_secret_arn = ""
+    database_url_secret_arn = null
   }
 }
 
@@ -72,7 +72,7 @@ dependency "redis" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    redis_url = ""
+    redis_url = null
   }
 }
 
@@ -81,10 +81,10 @@ dependency "sqs" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    sqs_reprocess_submission_queue_arn = ""
-    sqs_audit_log_queue_arn            = ""
-    sqs_audit_log_queue_id             = ""
-    sqs_reprocess_submission_queue_id  = ""
+    sqs_reprocess_submission_queue_arn = null
+    sqs_audit_log_queue_arn            = null
+    sqs_audit_log_queue_id             = null
+    sqs_reprocess_submission_queue_id  = null
   }
 }
 
@@ -94,9 +94,9 @@ dependency "cognito" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    cognito_endpoint_url  = ""
-    cognito_client_id     = ""
-    cognito_user_pool_arn = ""
+    cognito_endpoint_url  = null
+    cognito_client_id     = null
+    cognito_user_pool_arn = null
   }
 }
 
@@ -105,12 +105,12 @@ dependency "secrets" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    notify_api_key_secret_arn               = ""
-    notify_api_key_secret_value             = ""
-    freshdesk_api_key_secret_arn            = ""
-    token_secret_arn                        = ""
-    recaptcha_secret_arn                    = ""
-    notify_callback_bearer_token_secret_arn = ""
+    notify_api_key_secret_arn               = null
+    notify_api_key_secret_value             = null
+    freshdesk_api_key_secret_arn            = null
+    token_secret_arn                        = null
+    recaptcha_secret_arn                    = null
+    notify_callback_bearer_token_secret_arn = null
 
   }
 }
@@ -120,10 +120,10 @@ dependency "s3" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    vault_file_storage_id = ""
-    vault_file_storage_arn = ""
-    reliability_file_storage_id = ""
-    reliability_file_storage_arn = ""
+    vault_file_storage_id = null
+    vault_file_storage_arn = null
+    reliability_file_storage_id = null
+    reliability_file_storage_arn = null
   }
 }
 

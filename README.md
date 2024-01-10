@@ -23,9 +23,9 @@ You will need to have the following installed on a macOS machine.
 - Terragrunt:
 
   1. `brew install warrensbox/tap/tfswitch`
-  1. `tfswitch 1.6.5`
+  1. `tfswitch 1.6.6`
   1. `brew install warrensbox/tap/tgswitch`
-  1. `tgswitch 0.53.8`
+  1. `tgswitch 0.54.8`
 
 - Yarn: `brew install yarn`
 

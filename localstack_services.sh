@@ -1,10 +1,5 @@
 #!/bin/bash
 
-export TF_VAR_cognito_client_id=""
-export TF_VAR_cognito_endpoint_url=""
-export TF_VAR_cognito_user_pool_arn=""
-export TF_VAR_email_address_contact_us=""
-export TF_VAR_email_address_support=""
 export APP_ENV="local"
 
 # Exit on any error
@@ -16,8 +11,8 @@ reset='\033[0m' # No Color
 
 # Set proper terraform and terragrunt versions
 
-tgswitch 0.53.8
-tfswitch 1.6.5
+tgswitch 0.54.8
+tfswitch 1.6.6
 
 basedir=$(pwd)
 

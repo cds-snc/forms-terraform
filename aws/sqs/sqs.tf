@@ -23,10 +23,7 @@ resource "aws_sqs_queue" "reliability_queue" {
     maxReceiveCount     = 5
   })
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_sqs_queue" "reliability_deadletter_queue" {
@@ -41,10 +38,7 @@ resource "aws_sqs_queue" "reliability_deadletter_queue" {
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_sqs_queue" "reprocess_submission_queue" {
@@ -68,10 +62,7 @@ resource "aws_sqs_queue" "reprocess_submission_queue" {
     maxReceiveCount     = 5
   })
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 # Audit Log Queue
@@ -99,10 +90,7 @@ resource "aws_sqs_queue" "audit_log_queue" {
     sourceQueueArns   = [aws_sqs_queue.audit_log_deadletter_queue.arn]
   })
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_sqs_queue" "audit_log_deadletter_queue" {
@@ -115,8 +103,5 @@ resource "aws_sqs_queue" "audit_log_deadletter_queue" {
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }

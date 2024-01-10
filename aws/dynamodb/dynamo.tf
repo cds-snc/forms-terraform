@@ -22,10 +22,7 @@ resource "aws_dynamodb_table" "reliability_queue" {
     enabled = var.env == "local" ? false : true
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_dynamodb_table" "vault" {
@@ -91,10 +88,7 @@ resource "aws_dynamodb_table" "vault" {
     enabled = var.env == "local" ? false : true
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }
 
 resource "aws_dynamodb_table" "audit_logs" {
@@ -142,8 +136,5 @@ resource "aws_dynamodb_table" "audit_logs" {
     enabled = var.env == "local" ? false : true
   }
 
-  tags = {
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
-  }
+
 }

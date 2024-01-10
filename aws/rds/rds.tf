@@ -16,10 +16,14 @@ resource "aws_db_subnet_group" "forms" {
 }
 
 resource "aws_rds_cluster" "forms" {
+  # checkov:skip=CKV_AWS_324: RDS Cluster log capture not required
+  # checkov:skip=CKV_AWS_327: Encryption using KMS CMKs not required
+  // TODO: Implement Encryption using KMS CMKs
+
   cluster_identifier          = "${var.rds_name}-cluster"
   engine                      = "aurora-postgresql"
   engine_mode                 = "serverless"
-  engine_version              = "13.9"
+  engine_version              = "13.12"
   enable_http_endpoint        = true
   database_name               = var.rds_db_name
   deletion_protection         = true
@@ -31,6 +35,7 @@ resource "aws_rds_cluster" "forms" {
   db_subnet_group_name        = aws_db_subnet_group.forms.name
   storage_encrypted           = true
   allow_major_version_upgrade = true
+  copy_tags_to_snapshot       = true
 
 
   scaling_configuration {
@@ -42,9 +47,7 @@ resource "aws_rds_cluster" "forms" {
   vpc_security_group_ids = [var.rds_security_group_id]
 
   tags = {
-    Name                  = "${var.rds_name}-cluster"
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
+    Name = "${var.rds_name}-cluster"
   }
 
   lifecycle {
