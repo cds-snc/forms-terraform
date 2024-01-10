@@ -21,44 +21,38 @@ function getMessage(message) {
   }
 }
 
+/**
+ * @returns the severity level: [error, warning, info, alarm_reset] based on the message
+ */
 function getSNSMessageSeverity(message) {
-  const errorMessages = ["Error", "Critical"];
-  const warningMessages = ["Warning", "FAILURE"];
-  var severity = "info";
-  var keepProcessing = true;
+  const errorMessages = ["error", "critical"];
+  const warningMessages = ["warning", "failure"];
+  const alarm_ok_status = '"NewStateValue":"OK"'; // This is the string that is returned when the alarm is reset
 
+  message = message.toLowerCase();
   for (var errorMessagesItem in errorMessages) {
     if (
       message.indexOf(errorMessages[errorMessagesItem]) != -1 &&
-      // Does not inform about OK status
-      message.indexOf('"NewStateValue":"OK"') == -1
+      message.indexOf(alarm_ok_status) == -1 // is not an OK status
     ) {
-      severity = "error";
-      keepProcessing = false;
-    } else if (message.indexOf('"NewStateValue":"OK"') != -1) {
-      severity = "alarm_reset";
-      keepProcessing = false;
+      return "error";
+    } else if (message.indexOf(alarm_ok_status) != -1) {
+      return "alarm_reset";
     }
-  }
-
-  // Don't bother processing if we've already found an error
-  if (!keepProcessing) {
-    return severity;
   }
 
   for (var warningMessagesItem in warningMessages) {
     if (
       message.indexOf(warningMessages[warningMessagesItem]) != -1 &&
-      // Does not inform about OK status
-      message.indexOf('"NewStateValue":"OK"') == -1
+      message.indexOf(alarm_ok_status) == -1 // is not an OK status
     ) {
-      severity = "warning";
-    } else if (message.indexOf('"NewStateValue":"OK"') != -1) {
-      severity = "alarm_reset";
+      return "warning";
+    } else if (message.indexOf(alarm_ok_status) != -1) {
+      return "alarm_reset";
     }
   }
 
-  return severity;
+  return "info";
 }
 
 function sendToSlack(logGroup, logMessage, logLevel, context) {
@@ -76,7 +70,7 @@ function sendToSlack(logGroup, logMessage, logLevel, context) {
         return { emoji: ":loudspeaker:", color: "good" };
     }
   };
-  
+
   const logLevelThemeForSlack = logLevelAsEmojiAndColor(logLevel);
 
   var postData = {
@@ -98,16 +92,16 @@ function sendToSlack(logGroup, logMessage, logLevel, context) {
     path: process.env.SLACK_WEBHOOK,
   };
 
-  var req = https.request(options, function(res) {
+  var req = https.request(options, function (res) {
     res.setEncoding("utf8");
-    res.on("data", function() {
+    res.on("data", function () {
       context.succeed(
         `Message successfully sent to Slack... log level: ${logLevel}, log message: ${logMessage}`
       );
     });
   });
 
-  req.on("error", function(e) {
+  req.on("error", function (e) {
     console.log(
       JSON.stringify({
         msg: `problem with request: ${e.message}`,
@@ -120,16 +114,16 @@ function sendToSlack(logGroup, logMessage, logLevel, context) {
   req.end();
 }
 
-exports.handler = function(input, context) {
+exports.handler = function (input, context) {
   if (input.awslogs) {
     // This is a CloudWatch log event
     var payload = Buffer.from(input.awslogs.data, "base64");
-    zlib.gunzip(payload, function(e, result) {
+    zlib.gunzip(payload, function (e, result) {
       if (e) {
         context.fail(e);
       } else {
         const parsedResult = JSON.parse(result.toString());
-          
+
         // We can get events with a `CONTROL_MESSAGE` type. It happens when CloudWatch checks if the Lambda is reachable.
         if (parsedResult.messageType !== "DATA_MESSAGE") return;
 
@@ -175,7 +169,7 @@ exports.handler = function(input, context) {
         msg: `Event Data for Alarms: ${input.Records[0].Sns.Message}`,
       })
     );
-    
+
     sendToSlack("Alarm Event", message, severity, context);
   }
 };
