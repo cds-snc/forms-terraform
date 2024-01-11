@@ -65,6 +65,7 @@ resource "aws_ecs_task_definition" "form_viewer" {
 # Service
 #
 resource "aws_ecs_service" "form_viewer" {
+  # checkov:skip=CKV_AWS_332: 1.4.0 is the latest version
   name                 = var.ecs_form_viewer_name
   cluster              = aws_ecs_cluster.forms.id
   task_definition      = aws_ecs_task_definition.form_viewer.arn
