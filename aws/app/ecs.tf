@@ -65,12 +65,13 @@ resource "aws_ecs_task_definition" "form_viewer" {
 # Service
 #
 resource "aws_ecs_service" "form_viewer" {
-  name             = var.ecs_form_viewer_name
-  cluster          = aws_ecs_cluster.forms.id
-  task_definition  = aws_ecs_task_definition.form_viewer.arn
-  launch_type      = "FARGATE"
-  platform_version = "LATEST"
-  propagate_tags   = "SERVICE"
+  name                 = var.ecs_form_viewer_name
+  cluster              = aws_ecs_cluster.forms.id
+  task_definition      = aws_ecs_task_definition.form_viewer.arn
+  launch_type          = "FARGATE"
+  platform_version     = "LATEST"
+  propagate_tags       = "SERVICE"
+  force_new_deployment = true
 
   desired_count                     = 1
   health_check_grace_period_seconds = 60
