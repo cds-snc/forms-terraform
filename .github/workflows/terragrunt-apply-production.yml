@@ -63,6 +63,10 @@ jobs:
         working-directory: env/cloud/kms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Terragrunt apply oidc_roles
+        working-directory: env/cloud/oidc_roles
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
       - name: Terragrunt apply sqs
         working-directory: env/cloud/sqs
         run: terragrunt apply --terragrunt-non-interactive -auto-approve

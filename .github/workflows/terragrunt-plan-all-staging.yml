@@ -3,13 +3,15 @@ name: "Terragrunt plan all modules STAGING"
 on:
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   APP_ENV: staging
   APP_DOMAINS: ${{ vars.STAGING_APP_DOMAINS }}
   AWS_ACCOUNT_ID: ${{ vars.STAGING_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
-  AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
   CONFTEST_VERSION: 0.36.0
   TERRAFORM_VERSION: 1.6.6
   TERRAGRUNT_VERSION: 0.54.8
@@ -37,10 +39,13 @@ jobs:
       # Setup Terraform, Terragrunt, and Conftest
       - name: Setup terraform tools
         uses: cds-snc/terraform-tools-setup@v1
-        env:
-          CONFTEST_VERSION: ${{env.CONFTEST_VERSION}}
-          TERRAFORM_VERSION: ${{env.TERRAFORM_VERSION}}
-          TERRAGRUNT_VERSION: ${{env.TERRAGRUNT_VERSION}}
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-plan-workflow-dispatch
+          role-session-name: TFPlan
+          aws-region: ${{ env.AWS_REGION }}
 
       # No dependencies
       - name: Terragrunt plan ecr
@@ -61,6 +66,13 @@ jobs:
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/kms"
+          comment: "false"
+          terragrunt: "true"
+
+      - name: Terragrunt plan oidc_roles
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/oidc_roles"
           comment: "false"
           terragrunt: "true"
 

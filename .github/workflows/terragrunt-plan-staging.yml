@@ -10,13 +10,16 @@ on:
       - "env/cloud/**"
       - ".github/workflows/terragrunt-plan-staging.yml"
 
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
 env:
   APP_ENV: staging
   APP_DOMAINS: ${{ vars.STAGING_APP_DOMAINS }}
   AWS_ACCOUNT_ID: ${{ vars.STAGING_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
-  AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
   CONFTEST_VERSION: 0.46.0
   TERRAFORM_VERSION: 1.6.6
   TERRAGRUNT_VERSION: 0.54.8
@@ -48,10 +51,13 @@ jobs:
       # Setup Terraform, Terragrunt, and Conftest
       - name: Setup terraform tools
         uses: cds-snc/terraform-tools-setup@v1
-        env:
-          CONFTEST_VERSION: ${{env.CONFTEST_VERSION}}
-          TERRAFORM_VERSION: ${{env.TERRAFORM_VERSION}}
-          TERRAGRUNT_VERSION: ${{env.TERRAGRUNT_VERSION}}
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-plan
+          role-session-name: TFPlan
+          aws-region: ${{ env.AWS_REGION }}
 
       - uses: cds-snc/paths-filter@b316143212d841aed668b7b29240c719d603a9b9 # tag=v2.10.4
         id: filter
@@ -94,6 +100,9 @@ jobs:
             network:
               - 'aws/network/**'
               - 'env/cloud/network/**'
+            oidc_roles:
+              - 'aws/oidc_roles/**'
+              - 'env/cloud/oidc_roles/**'              
             rds:
               - 'aws/rds/**'
               - 'env/cloud/rds/**'
@@ -144,6 +153,16 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
+      - name: Terragrunt plan oidc_roles
+        if: ${{ steps.filter.outputs.oidc_roles == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/oidc_roles"
+          comment-delete: "true"
+          comment-title: "Staging: oidc_roles"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
       - name: Terragrunt plan sqs
         if: ${{ steps.filter.outputs.sqs == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
@@ -163,6 +182,7 @@ jobs:
           comment-title: "Staging: secrets"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
+
       - name: Terragrunt plan s3
         if: ${{ steps.filter.outputs.s3 == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
