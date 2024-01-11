@@ -1,15 +1,15 @@
 locals {
-  forms_terraform_apply_release           = "forms-terraform-apply-release"
-  forms_terraform_apply_workflow_dispatch = "forms-terraform-apply-workflow-dispatch"
-  forms_terraform_plan_workflow_dispatch  = "forms-terraform-plan-workflow-dispatch"
-  platform_forms_client_pr_review_env     = "platform-forms-client-pr-review-env"
-  platform_forms_client_release           = "platform-forms-client-release"
+  forms_terraform_apply_release          = "forms-terraform-apply-release"
+  forms_terraform_plan_workflow_dispatch = "forms-terraform-plan-workflow-dispatch"
+  platform_forms_client_pr_review_env    = "platform-forms-client-pr-review-env"
+  platform_forms_client_release          = "platform-forms-client-release"
 }
 
 # 
 # Built-in AWS polices attached to the roles
 #
 data "aws_iam_policy" "admin" {
+  # checkov:skip=CKV_AWS_275:This policy is required for the Terraform apply
   name = "AdministratorAccess"
 }
 
@@ -31,18 +31,13 @@ data "aws_iam_policy" "terraform_plan" {
 # attribute of each role, which corresponds to the GitHub workflow's event_name.
 # 
 module "github_workflow_roles" {
-  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v9.0.0"
+  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=dca686fdd6670f0b3625bc17a5661bec3ea5aa62" #v9.0.3
   billing_tag_value = var.billing_tag_value
   roles = [
     {
       name      = local.forms_terraform_apply_release
       repo_name = "forms-terraform"
       claim     = "release"
-    },
-    {
-      name      = local.forms_terraform_apply_workflow_dispatch
-      repo_name = "forms-terraform"
-      claim     = "workflow_dispatch"
     },
     {
       name      = local.forms_terraform_plan_workflow_dispatch
@@ -69,15 +64,6 @@ module "github_workflow_roles" {
 resource "aws_iam_role_policy_attachment" "forms_terraform_apply_release_admin" {
   count      = var.env == "production" ? 1 : 0
   role       = local.forms_terraform_apply_release
-  policy_arn = data.aws_iam_policy.admin.arn
-  depends_on = [
-    module.github_workflow_roles
-  ]
-}
-
-resource "aws_iam_role_policy_attachment" "forms_terraform_apply_workflow_dispatch_admin" {
-  count      = var.env == "staging" ? 1 : 0
-  role       = local.forms_terraform_apply_workflow_dispatch
   policy_arn = data.aws_iam_policy.admin.arn
   depends_on = [
     module.github_workflow_roles
