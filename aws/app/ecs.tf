@@ -69,7 +69,7 @@ resource "aws_ecs_service" "form_viewer" {
   cluster              = aws_ecs_cluster.forms.id
   task_definition      = aws_ecs_task_definition.form_viewer.arn
   launch_type          = "FARGATE"
-  platform_version     = "LATEST"
+  platform_version     = "1.4.0"
   propagate_tags       = "SERVICE"
   force_new_deployment = true
 
