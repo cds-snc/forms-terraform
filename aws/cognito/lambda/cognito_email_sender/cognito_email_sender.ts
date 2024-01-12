@@ -9,8 +9,7 @@ const TEMPLATE_ID = process.env.TEMPLATE_ID;
 
 if (!KEY_ARN || !KEY_ALIAS || !TEMPLATE_ID) {
   throw new Error(
-    `Missing Environment Variables: ${KEY_ARN ? "" : "Key ARN"} ${KEY_ALIAS ? "" : "Key Alias"} ${
-      TEMPLATE_ID ? "" : "Template ID"
+    `Missing Environment Variables: ${KEY_ARN ? "" : "Key ARN"} ${KEY_ALIAS ? "" : "Key Alias"} ${TEMPLATE_ID ? "" : "Template ID"
     }`
   );
 }
@@ -19,7 +18,7 @@ const client = new SecretsManagerClient();
 const command = new GetSecretValueCommand({ SecretId: process.env.NOTIFY_API_KEY });
 console.log("Retrieving Notify API Key from Secrets Manager");
 const notifyApiKey = await client.send(command);
-const notifyClient = new NotifyClient("https://api.notification.canada.ca", notifyApiKey);
+const notifyClient = new NotifyClient("https://api.notification.canada.ca", notifyApiKey.SecretString);
 
 export const handler: Handler = async (event) => {
   // setup the encryptionSDK's key ring
