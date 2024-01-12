@@ -3,7 +3,6 @@ import convertMessage from "./markdown.js";
 import { extractFileInputResponses, notifyProcessed } from "./dataLayer.js";
 import { retrieveFilesFromReliabilityStorage } from "./s3FileInput.js";
 import { FormSubmission } from "./types.js";
-import { ClientRequest } from "http";
 import { AxiosError } from "axios";
 import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 
@@ -11,17 +10,7 @@ const client = new SecretsManagerClient();
 const command = new GetSecretValueCommand({ SecretId: process.env.NOTIFY_API_KEY });
 console.log("Retrieving Notify API Key from Secrets Manager");
 const notifyApiKey = await client.send(command);
-const notifyClient = new NotifyClient("https://api.notification.canada.ca", notifyApiKey);
-
-type NetworkError = {
-  request?: ClientRequest;
-  response?: {
-    data: {
-      errors?: unknown[];
-    };
-    status: string;
-  };
-};
+const notifyClient = new NotifyClient("https://api.notification.canada.ca", notifyApiKey.SecretString);
 
 export default async (
   submissionID: string,
@@ -61,8 +50,8 @@ export default async (
           ? formSubmission.deliveryOption.emailSubjectFr
           : formSubmission.form.titleFr
         : formSubmission.deliveryOption.emailSubjectEn
-        ? formSubmission.deliveryOption.emailSubjectEn
-        : formSubmission.form.titleEn;
+          ? formSubmission.deliveryOption.emailSubjectEn
+          : formSubmission.form.titleEn;
 
     await notifyClient.sendEmail(templateID, formSubmission.deliveryOption.emailAddress, {
       personalisation: {
