@@ -99,6 +99,16 @@ data "aws_iam_policy_document" "platform_forms_client_pr_review_env" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeVpcs"
+    ]
+    resources = ["*"]
+  }
 }
 
 #
