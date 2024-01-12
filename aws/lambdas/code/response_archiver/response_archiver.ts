@@ -1,0 +1,307 @@
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { BatchWriteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import {
+  S3Client,
+  PutObjectCommand,
+  CopyObjectCommand,
+  DeleteObjectsCommand,
+} from "@aws-sdk/client-s3";
+import { Handler } from "aws-lambda";
+import { FileAttachement, getFileAttachments } from "./lib/fileAttachments.js";
+
+const DYNAMODB_VAULT_TABLE_NAME = process.env.DYNAMODB_VAULT_TABLE_NAME ?? "";
+const ARCHIVING_S3_BUCKET = process.env.ARCHIVING_S3_BUCKET;
+const VAULT_FILE_STORAGE_S3_BUCKET = process.env.VAULT_FILE_STORAGE_S3_BUCKET;
+
+const PROCESSING_CHUNK_SIZE = 100;
+
+interface FormResponse {
+  formId: string;
+  name: string;
+  submissionId: string;
+  responsesAsJson: string;
+  createdAt: number;
+  confirmationCode: string;
+}
+
+export const handler: Handler = async () => {
+  try {
+    const dynamodbClient = new DynamoDBClient({
+      region: process.env.REGION ?? "ca-central-1",
+      ...(process.env.LOCALSTACK === "true" && {
+        endpoint: "http://host.docker.internal:4566",
+      }),
+    });
+
+    const s3Client = new S3Client({
+      region: process.env.REGION ?? "ca-central-1",
+      ...(process.env.LOCALSTACK === "true" && {
+        endpoint: "http://host.docker.internal:4566",
+        forcePathStyle: true,
+      }),
+    });
+
+    await archiveResponses(dynamodbClient, s3Client);
+
+    return {
+      statusCode: "SUCCESS",
+    };
+  } catch (error) {
+    // Error Message will be sent to slack
+    console.error(
+      JSON.stringify({
+        level: "error",
+        msg: "Failed to run Form Responses Archiver.",
+        error: (error as Error).message,
+      })
+    );
+
+    return {
+      statusCode: "ERROR",
+      error: (error as Error).message,
+    };
+  }
+};
+
+async function archiveResponses(dynamodbClient: DynamoDBClient, s3Client: S3Client): Promise<void> {
+  let lastEvaluatedKey = null;
+
+  while (lastEvaluatedKey !== undefined) {
+    const archivableResponses = await retrieveArchivableResponses(dynamodbClient, lastEvaluatedKey ?? undefined);
+
+    let fileAttachmentsToDelete: FileAttachement[] = [];
+
+    for (const response of archivableResponses.responses) {
+      try {
+        const fileAttachments = getFileAttachments(response.responsesAsJson);
+
+        await archiveFileAttachments(
+          s3Client,
+          response.formId,
+          response.submissionId,
+          fileAttachments
+        );
+
+        await archiveResponsesAsJson(
+          s3Client,
+          response.formId,
+          response.submissionId,
+          response.responsesAsJson
+        );
+
+        fileAttachmentsToDelete = fileAttachmentsToDelete.concat(fileAttachments);
+      } catch (error) {
+        // Warn Message will be sent to slack
+        console.warn(
+          JSON.stringify({
+            level: "warn",
+            msg: `Failed to archive response ${response.submissionId}. (Form ID: ${response.formId})`,
+            error: (error as Error).message,
+          })
+        );
+
+        // Continue to attempt to archive form responses even if one fails
+      }
+    }
+
+    await deleteFileAttachments(s3Client, fileAttachmentsToDelete);
+    await deleteResponses(dynamodbClient, archivableResponses.responses);
+
+    lastEvaluatedKey = archivableResponses.lastEvaluatedKey;
+  }
+}
+
+async function retrieveArchivableResponses(
+  dynamodbClient: DynamoDBClient,
+  lastEvaluatedKey?: Record<string, any>
+): Promise<{ responses: FormResponse[], lastEvaluatedKey?: Record<string, any> }> {
+  try {
+    const queryCommandResponse = await dynamodbClient.send(
+      new QueryCommand({
+        TableName: DYNAMODB_VAULT_TABLE_NAME,
+        IndexName: "Archive",
+        Limit: PROCESSING_CHUNK_SIZE,
+        ExclusiveStartKey: lastEvaluatedKey,
+        KeyConditionExpression: "#status = :status AND RemovalDate <= :removalDate",
+        ExpressionAttributeNames: {
+          "#status": "Status",
+          "#name": "Name",
+        },
+        ExpressionAttributeValues: {
+          ":status": "Confirmed",
+          ":removalDate": Date.now(),
+        },
+        ProjectionExpression:
+          "FormID,#name,SubmissionID,FormSubmission,CreatedAt,ConfirmationCode",
+      })
+    );
+
+    return {
+      responses: queryCommandResponse.Items?.map((item) => ({
+        formId: item.FormID,
+        name: item.Name,
+        submissionId: item.SubmissionID,
+        responsesAsJson: item.FormSubmission,
+        createdAt: item.CreatedAt,
+        confirmationCode: item.ConfirmationCode,
+      })) ?? [],
+      lastEvaluatedKey: queryCommandResponse.LastEvaluatedKey
+    };
+  } catch (error) {
+    throw new Error(
+      `Failed to retrieve archivable responses. Reason: ${(error as Error).message}.`
+    );
+  }
+}
+
+async function archiveFileAttachments(
+  s3Client: S3Client,
+  formId: string,
+  submissionId: string,
+  fileAttachments: FileAttachement[]
+): Promise<void> {
+  try {
+    const copyObjectRequests = fileAttachments.map((attachment) => {
+      const fromUri = `${attachment.path}`;
+      const toUri = `form_attachments/${new Date().toISOString().slice(0, 10)}/${formId}/${submissionId}/${attachment.name}`;
+
+      return s3Client.send(
+        new CopyObjectCommand({
+          Bucket: ARCHIVING_S3_BUCKET,
+          CopySource: encodeURI(`${VAULT_FILE_STORAGE_S3_BUCKET}/${fromUri}`),
+          Key: toUri,
+        })
+      );
+    });
+
+    await Promise.all(copyObjectRequests);
+  } catch (error) {
+    throw new Error(
+      `Failed to copy file attachments from Vault to Archiving S3 bucket. Reason: ${(error as Error).message
+      }.`
+    );
+  }
+}
+
+async function archiveResponsesAsJson(
+  s3Client: S3Client,
+  formId: string,
+  submissionId: string,
+  responsesAsJson: string
+) {
+  try {
+    await s3Client.send(
+      new PutObjectCommand({
+        Bucket: ARCHIVING_S3_BUCKET,
+        Body: responsesAsJson,
+        Key: `${new Date().toISOString().slice(0, 10)}/${formId}/${submissionId}.json`,
+      })
+    );
+  } catch (error) {
+    throw new Error(
+      `Failed to save responses as JSON in Archiving S3 bucket. Reason: ${(error as Error).message}.`
+    );
+  }
+}
+
+async function deleteFileAttachments(
+  s3Client: S3Client,
+  fileAttachments: FileAttachement[]
+) {
+  if (fileAttachments.length === 0) return;
+
+  try {
+    await s3Client.send(
+      new DeleteObjectsCommand({
+        Bucket: VAULT_FILE_STORAGE_S3_BUCKET,
+        Delete: {
+          Objects: fileAttachments.map(f => ({ Key: f.path })),
+        },
+      })
+    );
+  } catch (error) {
+    console.warn(
+      JSON.stringify({
+        level: "warn",
+        msg: `Failed to delete file attachments from Vault S3 bucket. Files: ${fileAttachments
+          .map((f) => `${f.path}`)
+          .join(",")}.`,
+        error: (error as Error).message,
+      })
+    );
+  }
+}
+
+async function deleteResponses(
+  dynamodbClient: DynamoDBClient,
+  responses: FormResponse[]
+) {
+  if (responses.length === 0) return;
+
+  /**
+   * The `BatchWriteCommand` can only take up to 25 `DeleteRequest` at a time.
+   * We have to delete 2 items from DynamoDB for each form response (12*2=24).
+   */
+  const chunkedDeleteRequests = chunkArray(responses, 12).map((responseChunk) => {
+    return async () => {
+      try {
+        await dynamodbClient.send(
+          new BatchWriteCommand({
+            RequestItems: {
+              [DYNAMODB_VAULT_TABLE_NAME]: responseChunk.flatMap((r) => {
+                return [
+                  {
+                    DeleteRequest: {
+                      Key: {
+                        FormID: r.formId,
+                        NAME_OR_CONF: `NAME#${r.name}`,
+                      },
+                    },
+                  },
+                  {
+                    DeleteRequest: {
+                      Key: {
+                        FormID: r.formId,
+                        NAME_OR_CONF: `CONF#${r.confirmationCode}`,
+                      },
+                    },
+                  },
+                ];
+              }),
+            },
+          })
+        );
+      } catch (error) {
+        console.warn(
+          JSON.stringify({
+            level: "warn",
+            msg: `Failed to delete responses from Vault DynamoDB table. Responses: ${responses
+              .map((r) => `${r.submissionId}`)
+              .join(",")}.`,
+            error: (error as Error).message,
+          })
+        );
+      }
+    }
+  });
+
+  await runPromisesSynchronously(chunkedDeleteRequests);
+}
+
+function chunkArray<T>(arr: T[], size: number): T[][] {
+  return Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
+    arr.slice(i * size, i * size + size)
+  );
+}
+
+async function runPromisesSynchronously<T>(
+  promisesToBeExecuted: (() => Promise<T>)[]
+): Promise<T[]> {
+  const accumulator: T[] = [];
+
+  for (const p of promisesToBeExecuted) {
+    accumulator.push(await p());
+  }
+
+  return accumulator;
+}
