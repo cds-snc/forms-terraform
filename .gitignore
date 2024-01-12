@@ -6,7 +6,7 @@
 *.tfstate.*
 
 # Terraform lock file
-.terraform.lock.hcl
+.bootstrap/.terraform.lock.hcl
 
 # Terragrunt
 .terragrunt-cache

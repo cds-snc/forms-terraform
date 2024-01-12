@@ -163,7 +163,7 @@ async function archiveFileAttachments(
   try {
     const copyObjectRequests = fileAttachments.map((attachment) => {
       const fromUri = `${attachment.path}`;
-      const toUri = `form_attachments/${new Date().toISOString().slice(0, 10)}/${formId}/${submissionId}/${attachment.name}`;
+      const toUri = `${new Date().toISOString().slice(0, 10)}/${formId}/${submissionId}/${submissionId}_${attachment.name}`;
 
       return s3Client.send(
         new CopyObjectCommand({
@@ -194,7 +194,7 @@ async function archiveResponsesAsJson(
       new PutObjectCommand({
         Bucket: ARCHIVING_S3_BUCKET,
         Body: responsesAsJson,
-        Key: `${new Date().toISOString().slice(0, 10)}/${formId}/${submissionId}.json`,
+        Key: `${new Date().toISOString().slice(0, 10)}/${formId}/${submissionId}/${submissionId}.json`,
       })
     );
   } catch (error) {
