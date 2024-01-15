@@ -1,7 +1,8 @@
 resource "aws_dynamodb_table" "reliability_queue" {
-  name         = "ReliabilityQueue"
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "SubmissionID"
+  name                        = "ReliabilityQueue"
+  billing_mode                = "PAY_PER_REQUEST"
+  hash_key                    = "SubmissionID"
+  deletion_protection_enabled = true
 
   attribute {
     name = "SubmissionID"
@@ -21,17 +22,16 @@ resource "aws_dynamodb_table" "reliability_queue" {
   point_in_time_recovery {
     enabled = var.env == "local" ? false : true
   }
-
-
 }
 
 resource "aws_dynamodb_table" "vault" {
-  name             = "Vault"
-  billing_mode     = "PAY_PER_REQUEST"
-  hash_key         = "FormID"
-  range_key        = "NAME_OR_CONF"
-  stream_enabled   = true
-  stream_view_type = "NEW_AND_OLD_IMAGES"
+  name                        = "Vault"
+  billing_mode                = "PAY_PER_REQUEST"
+  hash_key                    = "FormID"
+  range_key                   = "NAME_OR_CONF"
+  stream_enabled              = true
+  stream_view_type            = "NEW_AND_OLD_IMAGES"
+  deletion_protection_enabled = true
 
   attribute {
     name = "FormID"
@@ -87,17 +87,16 @@ resource "aws_dynamodb_table" "vault" {
   point_in_time_recovery {
     enabled = var.env == "local" ? false : true
   }
-
-
 }
 
 resource "aws_dynamodb_table" "audit_logs" {
-  name             = "AuditLogs"
-  billing_mode     = "PAY_PER_REQUEST"
-  hash_key         = "UserID"
-  range_key        = "Event#SubjectID#TimeStamp"
-  stream_enabled   = true
-  stream_view_type = "NEW_AND_OLD_IMAGES"
+  name                        = "AuditLogs"
+  billing_mode                = "PAY_PER_REQUEST"
+  hash_key                    = "UserID"
+  range_key                   = "Event#SubjectID#TimeStamp"
+  stream_enabled              = true
+  stream_view_type            = "NEW_AND_OLD_IMAGES"
+  deletion_protection_enabled = true
 
   attribute {
     name = "UserID"
@@ -126,7 +125,6 @@ resource "aws_dynamodb_table" "audit_logs" {
     attribute_name = "ArchiveDate"
   }
 
-
   server_side_encryption {
     enabled     = true
     kms_key_arn = var.kms_key_dynamodb_arn
@@ -135,6 +133,4 @@ resource "aws_dynamodb_table" "audit_logs" {
   point_in_time_recovery {
     enabled = var.env == "local" ? false : true
   }
-
-
 }
