@@ -38,8 +38,6 @@ resource "aws_cloudwatch_metric_alarm" "forms_memory_utilization_high_warn" {
     ClusterName = var.ecs_cluster_name
     ServiceName = var.ecs_service_name
   }
-
-
 }
 
 #
@@ -58,7 +56,6 @@ resource "aws_cloudwatch_metric_alarm" "ELB_5xx_error_warn" {
   threshold           = "1"
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_topic_alert_warning_arn]
-
 }
 
 #
@@ -110,8 +107,6 @@ resource "aws_cloudwatch_metric_alarm" "reliability_dead_letter_queue_warn" {
       }
     }
   }
-
-
 }
 
 #
@@ -163,11 +158,7 @@ resource "aws_cloudwatch_metric_alarm" "audit_log_dead_letter_queue_warn" {
       }
     }
   }
-
 }
-
-
-
 
 #
 # Service down alarm
@@ -183,7 +174,6 @@ resource "aws_cloudwatch_metric_alarm" "response_time_warn" {
   alarm_actions       = [var.sns_topic_alert_warning_arn]
   ok_actions          = [var.sns_topic_alert_ok_arn]
 
-
   metric_query {
     id          = "m1"
     return_data = "true"
@@ -197,8 +187,6 @@ resource "aws_cloudwatch_metric_alarm" "response_time_warn" {
       }
     }
   }
-
-
 }
 
 #
@@ -220,8 +208,6 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_forms_warn" {
   dimensions = {
     ResourceArn = var.lb_arn
   }
-
-
 }
 
 resource "aws_cloudwatch_metric_alarm" "ddos_detected_route53_warn" {
@@ -242,8 +228,6 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_route53_warn" {
   dimensions = {
     ResourceArn = var.hosted_zone_ids[count.index]
   }
-
-
 }
 
 #
@@ -277,8 +261,6 @@ resource "aws_cloudwatch_event_rule" "codedeploy_sns" {
       ]
     }
   })
-
-
 }
 
 #
@@ -357,8 +339,6 @@ resource "aws_cloudwatch_metric_alarm" "cognito_signin_exceeded" {
   alarm_description   = "Cognito - multiple failed sign-in attempts detected."
 
   alarm_actions = [var.sns_topic_alert_warning_arn]
-
-
 }
 
 resource "aws_cloudwatch_log_metric_filter" "twoFa_verification_exceeded" {
@@ -387,8 +367,6 @@ resource "aws_cloudwatch_metric_alarm" "twoFa_verification_exceeded" {
   alarm_description   = "2FA - multiple failed verification attempts detected. User has been locked out (see audit logs)."
 
   alarm_actions = [var.sns_topic_alert_warning_arn]
-
-
 }
 
 resource "aws_cloudwatch_metric_alarm" "vault_data_integrity_check_lambda_iterator_age" {
@@ -412,7 +390,25 @@ resource "aws_cloudwatch_metric_alarm" "vault_data_integrity_check_lambda_iterat
   }
 }
 
-// Dynamic Stream to Lambda
+// Cloudwatch log subscription filters
+
+locals {
+  map_of_lambda_log_group = {
+    reliability                = var.lambda_reliability_log_group_name,
+    submission                 = var.lambda_submission_log_group_name,
+    response_archiver          = var.lambda_response_archiver_log_group_name,
+    template_archiver          = var.lambda_template_archiver_log_group_name,
+    dlq_consumer               = var.lambda_dlq_consumer_log_group_name,
+    audit_log                  = var.lambda_audit_log_group_name,
+    nagware                    = var.lambda_nagware_log_group_name,
+    vault_data_integrity_check = var.lambda_vault_data_integrity_check_log_group_name
+  }
+}
+
+/*
+ * Dynamic Stream to Lambda
+ * (see comment in the Lambda timeout detection section)
+ */
 
 resource "aws_cloudwatch_log_subscription_filter" "forms_unhandled_error_steam" {
   depends_on      = [aws_lambda_permission.allow_cloudwatch_to_run_lambda]
@@ -429,55 +425,25 @@ resource "aws_cloudwatch_log_subscription_filter" "forms_app_log_stream" {
   destination_arn = aws_lambda_function.notify_slack.arn
 }
 
-resource "aws_cloudwatch_log_subscription_filter" "reliability_log_stream" {
-  name            = "reliability_log_stream"
-  log_group_name  = var.lambda_reliability_log_group_name
+resource "aws_cloudwatch_log_subscription_filter" "lambda_error_detection" {
+  for_each        = local.map_of_lambda_log_group
+  name            = "error_detection_in_${each.key}_lambda_logs"
+  log_group_name  = each.value
   filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
   destination_arn = aws_lambda_function.notify_slack.arn
 }
 
-resource "aws_cloudwatch_log_subscription_filter" "submission_log_stream" {
-  name            = "submission_log_stream"
-  log_group_name  = var.lambda_submission_log_group_name
-  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
-  destination_arn = aws_lambda_function.notify_slack.arn
-}
+/*
+ * Lambda timeout detection
+ * Note: We used the second and final lambda subscription filter to detect function time out.
+ * If we ever need to create a new subscription filter we will have to rework the way we parse logs to extract errors and time out logs.
+ */
 
-resource "aws_cloudwatch_log_subscription_filter" "archiver_log_stream" {
-  name            = "archiver_log_stream"
-  log_group_name  = var.lambda_response_archiver_log_group_name
-  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
-  destination_arn = aws_lambda_function.notify_slack.arn
-}
-resource "aws_cloudwatch_log_subscription_filter" "dlq_consumer_log_stream" {
-  name            = "dql_consumer_log_stream"
-  log_group_name  = var.lambda_dlq_consumer_log_group_name
-  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
-  destination_arn = aws_lambda_function.notify_slack.arn
-}
-resource "aws_cloudwatch_log_subscription_filter" "template_archiver_log_stream" {
-  name            = "template_archiver_log_stream"
-  log_group_name  = var.lambda_template_archiver_log_group_name
-  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
-  destination_arn = aws_lambda_function.notify_slack.arn
-}
-resource "aws_cloudwatch_log_subscription_filter" "audit_log_stream" {
-  name            = "audit_log_stream"
-  log_group_name  = var.lambda_audit_log_group_name
-  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
-  destination_arn = aws_lambda_function.notify_slack.arn
-}
-resource "aws_cloudwatch_log_subscription_filter" "nagware_log_stream" {
-  name            = "nagware_log_stream"
-  log_group_name  = var.lambda_nagware_log_group_name
-  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
-  destination_arn = aws_lambda_function.notify_slack.arn
-}
-
-resource "aws_cloudwatch_log_subscription_filter" "vault_data_integrity_check_log_stream" {
-  name            = "vault_data_integrity_check_log_stream"
-  log_group_name  = var.lambda_vault_data_integrity_check_log_group_name
-  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
+resource "aws_cloudwatch_log_subscription_filter" "lambda_timeout_detection" {
+  for_each        = local.map_of_lambda_log_group
+  name            = "timeout_detection_in_${each.key}_lambda_logs"
+  log_group_name  = each.value
+  filter_pattern  = "Task timed out"
   destination_arn = aws_lambda_function.notify_slack.arn
 }
 
