@@ -69,15 +69,15 @@ dependency "lambdas" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    lambda_reliability_log_group_name                = null
-    lambda_submission_log_group_name                 = null
-    lambda_response_archiver_log_group_name          = null
-    lambda_dlq_consumer_log_group_name               = null
-    lambda_template_archiver_log_group_name          = null
-    lambda_audit_log_group_name                      = null
-    lambda_nagware_log_group_name                    = null
-    lambda_vault_data_integrity_check_log_group_name = null
-    lambda_vault_data_integrity_check_function_name  = null
+    lambda_reliability_log_group_name                = "/aws/lambda/Reliability"
+    lambda_submission_log_group_name                 = "/aws/lambda/Submission"
+    lambda_response_archiver_log_group_name          = "/aws/lambda/Response_Archiver"
+    lambda_dlq_consumer_log_group_name               = "/aws/lambda/DeadLetterQueueConsumer"
+    lambda_template_archiver_log_group_name          = "/aws/lambda/Archive_Form_Templates"
+    lambda_audit_log_group_name                      = "/aws/lambda/AuditLogs"
+    lambda_nagware_log_group_name                    = "/aws/lambda/Nagware"
+    lambda_vault_data_integrity_check_log_group_name = "/aws/lambda/Vault_Data_Integrity_Check"
+    lambda_vault_data_integrity_check_function_name  = "Vault_Data_Integrity_Check"
   }
 }
 

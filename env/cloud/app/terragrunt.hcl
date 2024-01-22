@@ -105,12 +105,11 @@ dependency "secrets" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    notify_api_key_secret_arn               = null
-    notify_api_key_secret_value             = null
-    freshdesk_api_key_secret_arn            = null
-    token_secret_arn                        = null
-    recaptcha_secret_arn                    = null
-    notify_callback_bearer_token_secret_arn = null
+    notify_api_key_secret_arn               = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_api_key"
+    freshdesk_api_key_secret_arn            = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:freshdesk_api_key_secret"
+    token_secret_arn                        = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:token_secret"
+    recaptcha_secret_arn                    = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:recaptcha_secret"
+    notify_callback_bearer_token_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_callback_bearer_token_secret"
 
   }
 }
@@ -120,10 +119,10 @@ dependency "s3" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    vault_file_storage_id = null
-    vault_file_storage_arn = null
-    reliability_file_storage_id = null
-    reliability_file_storage_arn = null
+    vault_file_storage_id        = "forms-staging-vault-file-storage"
+    vault_file_storage_arn       = "arn:aws:s3:::forms-staging-vault-file-storage"
+    reliability_file_storage_id  = "forms-staging-reliability-file-storage"
+    reliability_file_storage_arn = "arn:aws:s3:::forms-staging-reliability-file-storage"
   }
 }
 

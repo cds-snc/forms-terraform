@@ -21,7 +21,7 @@ dependency "app" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    ecs_iam_role_arn = null
+    ecs_iam_role_arn = "arn:aws:iam::123456789012:role/form-viewer"
   }
 }
 
@@ -76,11 +76,11 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_relability_queue_arn = null
-    dynamodb_vault_arn            = null
-    dynamodb_vault_table_name     = null
-    dynamodb_vault_stream_arn     = null
-    dynamodb_audit_logs_arn       = null
+    dynamodb_relability_queue_arn  = "arn:aws:dynamodb:ca-central-1:123456789012:table/ReliabilityQueue"
+    dynamodb_vault_arn             = "arn:aws:dynamodb:ca-central-1:123456789012:table/Vault"
+    dynamodb_vault_table_name      = "Vault"
+    dynamodb_vault_stream_arn      = "arn:aws:dynamodb:ca-central-1:123456789012:table/Vault/stream/2023-03-14T15:54:31.086"
+    dynamodb_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:123456789012:table/AuditLogs"
   }
 }
 
@@ -89,11 +89,11 @@ dependency "secrets" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    notify_api_key_secret_arn               = null
-    freshdesk_api_key_secret_arn            = null
-    token_secret_arn                        = null
-    recaptcha_secret_arn                    = null
-    notify_callback_bearer_token_secret_arn = null
+    notify_api_key_secret_arn               = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_api_key"
+    freshdesk_api_key_secret_arn            = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:freshdesk_api_key_secret"
+    token_secret_arn                        = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:token_secret"
+    recaptcha_secret_arn                    = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:recaptcha_secret"
+    notify_callback_bearer_token_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_callback_bearer_token_secret"
   }
 }
 
@@ -102,13 +102,13 @@ dependency "s3" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    reliability_file_storage_arn = null
-    vault_file_storage_arn       = null
-    vault_file_storage_id        = "placeholder"
-    archive_storage_arn          = null
-    archive_storage_id           = "placeholder"
-    lambda_code_arn              = null
-    lambda_code_id               = "placeholder"
+    reliability_file_storage_arn = "arn:aws:s3:::forms-staging-reliability-file-storage"
+    vault_file_storage_arn       = "arn:aws:s3:::forms-staging-vault-file-storage"
+    vault_file_storage_id        = "forms-staging-vault-file-storage"
+    archive_storage_arn          = "arn:aws:s3:::forms-staging-archive-storage"
+    archive_storage_id           = "forms-staging-archive-storage"
+    lambda_code_arn              = "arn:aws:s3:::forms-staging-lambda-code"
+    lambda_code_id               = "forms-staging-lambda-code"
   }
 }
 
@@ -152,51 +152,4 @@ inputs = {
 
   # Overwritten in GitHub Actions by TFVARS
   gc_template_id = "8d597a1b-a1d6-4e3c-8421-042a2b4158b7" # GC Notify template ID used for local setup
-}
-
-generate "import_existing_cloudwatch_logs" {
-  disable     = local.env == "local"
-  path      = "import.tf"
-  if_exists = "overwrite"
-  contents  = <<EOF
-import {
-  to = aws_cloudwatch_log_group.archive_form_templates
-  id = "/aws/lambda/ArchiveFormTemplates"
-}
-
-import {
-  to = aws_cloudwatch_log_group.audit_logs
-  id = "/aws/lambda/AuditLogs"
-}
-
-import {
-  to = aws_cloudwatch_log_group.dead_letter_queue_consumer
-  id = "/aws/lambda/DeadLetterQueueConsumer"
-}
-
-import {
-  to = aws_cloudwatch_log_group.nagware
-  id = "/aws/lambda/Nagware"
-}
-
-import {
-  to = aws_cloudwatch_log_group.reliability
-  id = "/aws/lambda/Reliability"
-}
-
-import {
-  to = aws_cloudwatch_log_group.submission
-  id = "/aws/lambda/Submission"
-}
-
-import {
-  to = aws_cloudwatch_log_group.vault_integrity
-  id = "/aws/lambda/VaultDataIntegrityCheck"
-}
-
-import {
-  to = aws_cloudwatch_log_group.response_archiver
-  id = "/aws/lambda/Archiver"
-}
-EOF
 }

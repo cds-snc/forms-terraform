@@ -43,7 +43,7 @@ tf.plan
 **/node_modules/
 
 # Ignore lambda builds
-**/code/**/dist/
+**/dist
 
 # Ignore Mac OS file types
 .DS_Store

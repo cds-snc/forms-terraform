@@ -22,7 +22,7 @@ dependency "secrets" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    notify_api_key_secret_arn               = null
+    notify_api_key_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_api_key"
   }
 }
 
@@ -31,8 +31,8 @@ dependency "s3" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    lambda_code_arn              = null
-    lambda_code_id               = "placeholder"
+    lambda_code_arn = "arn:aws:s3:::forms-staging-lambda-code"
+    lambda_code_id  = "forms-staging-lambda-code"
   }
 }
 
