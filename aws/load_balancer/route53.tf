@@ -45,7 +45,12 @@ resource "aws_route53_record" "form_viewer_maintenance" {
 # Certificate validation
 # 
 locals {
-  domain_name_to_zone_id = zipmap(var.domains, var.hosted_zone_ids)
+  # Temporary workaround for the removal of the `forms-formulaires.canada.ca` hosted zone.
+  # This will allow the module to plan correctly before the `/aws/hosted_zone` module
+  # has been applied.
+  domain_name_to_zone_id = {
+    (var.domains[0]) = var.hosted_zone_ids[0]
+  }
 }
 
 

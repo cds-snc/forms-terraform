@@ -15,6 +15,7 @@ for LAMBDA_DIR in "$SCRIPT_DIR"/*/; do
         echo "⚡ $LAMBDA_DIR $ACTION"
         if [ "$ACTION" = "delete" ]; then
             rm -rf "$LAMBDA_DIR/node_modules"
+            rm -rf "$LAMBDA_DIR/dist" || true
         else
             yarn --cwd "$LAMBDA_DIR" install
             if test -f "$LAMBDA_DIR/tsconfig.json"; then
