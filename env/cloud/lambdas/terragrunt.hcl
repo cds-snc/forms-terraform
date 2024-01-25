@@ -153,3 +153,170 @@ inputs = {
   # Overwritten in GitHub Actions by TFVARS
   gc_template_id = "8d597a1b-a1d6-4e3c-8421-042a2b4158b7" # GC Notify template ID used for local setup
 }
+
+generate "import_existing_resources" {
+  disable     = local.env != "production"
+  path      = "import.tf"
+  if_exists = "overwrite"
+  contents  = <<EOF
+import {
+  id = "iam_for_lambda"
+  to = aws_iam_role.lambda
+}
+
+import {
+  id = "arn:aws:iam::${local.account_id}:policy/lambda_logging"
+  to = aws_iam_policy.lambda_logging
+}
+
+import {
+  id = "arn:aws:iam::${local.account_id}:policy/lambda_kms"
+  to = aws_iam_policy.lambda_kms
+}
+
+import {
+  id = "arn:aws:iam::${local.account_id}:policy/lambda_rds"
+  to = aws_iam_policy.lambda_rds
+}
+
+import {
+  id = "arn:aws:iam::${local.account_id}:policy/lambda_sqs"
+  to = aws_iam_policy.lambda_sqs
+}
+
+import {
+  id = "arn:aws:iam::${local.account_id}:policy/lambda_dynamobdb"
+  to = aws_iam_policy.lambda_dynamodb
+}
+
+import {
+  id = "arn:aws:iam::${local.account_id}:policy/lambda_secrets"
+  to = aws_iam_policy.lambda_secrets
+}
+
+import {
+  id = "arn:aws:iam::${local.account_id}:policy/lambda_s3"
+  to = aws_iam_policy.lambda_s3
+}
+
+import {
+  id = "arn:aws:iam::${local.account_id}:policy/lambda_sns"
+  to = aws_iam_policy.lambda_sns
+}
+
+import {
+  id = "iam_for_lambda/arn:aws:iam::${local.account_id}:policy/lambda_secrets"
+  to = aws_iam_role_policy_attachment.lambda_secrets
+}
+
+import {
+  id = "iam_for_lambda/arn:aws:iam::${local.account_id}:policy/lambda_logging"
+  to = aws_iam_role_policy_attachment.lambda_logs
+}
+
+import {
+  id = "iam_for_lambda/arn:aws:iam::${local.account_id}:policy/lambda_sqs"
+  to = aws_iam_role_policy_attachment.lambda_sqs
+}
+
+import {
+  id = "iam_for_lambda/arn:aws:iam::${local.account_id}:policy/lambda_dynamobdb"
+  to = aws_iam_role_policy_attachment.lambda_dynamodb
+}
+
+import {
+  id = "iam_for_lambda/arn:aws:iam::${local.account_id}:policy/lambda_kms"
+  to = aws_iam_role_policy_attachment.lambda_kms
+}
+
+import {
+  id = "iam_for_lambda/arn:aws:iam::${local.account_id}:policy/lambda_rds"
+  to = aws_iam_role_policy_attachment.lambda_rds
+}
+
+import {
+  id = "iam_for_lambda/arn:aws:iam::${local.account_id}:policy/lambda_s3"
+  to = aws_iam_role_policy_attachment.lambda_s3
+}
+
+import {
+  id = "iam_for_lambda/arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+  to = aws_iam_role_policy_attachment.AWSLambdaVPCAccessExecutionRole
+}
+
+import {
+  id = "iam_for_lambda/arn:aws:iam::${local.account_id}:policy/lambda_sns"
+  to = aws_iam_role_policy_attachment.lambda_sns
+}
+
+import {
+  id = "Nagware"
+  to = aws_lambda_function.nagware
+}
+
+import {
+  id = "Nagware/AllowExecutionFromCloudWatch"
+  to = aws_lambda_permission.allow_cloudwatch_to_run_nagware_lambda
+}
+
+import {
+  id = "/aws/lambda/Nagware"
+  to = aws_cloudwatch_log_group.nagware
+}
+
+import {
+  id = "Reliability"
+  to = aws_lambda_function.reliability
+}
+
+import {
+  id = "2f994c5c-aeea-4d98-a56a-cd857e06ac89"
+  to = aws_lambda_event_source_mapping.reliability
+}
+
+import {
+  id = "da835a8c-6843-42f8-8509-6955dab673f1"
+  to = aws_lambda_event_source_mapping.reprocess_submission
+}
+
+import {
+  id = "/aws/lambda/Reliability"
+  to = aws_cloudwatch_log_group.reliability
+}
+
+import {
+  id = "Submission"
+  to = aws_lambda_function.submission
+}
+
+import {
+  id = "Submission/AllowInvokeECS"
+  to = aws_lambda_permission.submission
+}
+
+import {
+  id = "/aws/lambda/Submission"
+  to = aws_cloudwatch_log_group.submission
+}
+
+import {
+  id = "every-day-at-2am"
+  to = aws_cloudwatch_event_rule.cron_2am_every_day
+}
+
+import {
+  id = "every-day-at-3am"
+  to = aws_cloudwatch_event_rule.cron_3am_every_day
+}
+
+import {
+  id = "every-day-at-4am"
+  to = aws_cloudwatch_event_rule.cron_4am_every_day
+}
+
+import {
+  id = "every-business-day-at-5am"
+  to = aws_cloudwatch_event_rule.cron_5am_every_business_day
+}
+EOF
+}
