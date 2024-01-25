@@ -111,7 +111,7 @@ resource "aws_appautoscaling_target" "forms" {
   count = var.ecs_autoscale_enabled ? 1 : 0
 
   service_namespace  = "ecs"
-  resource_id        = "service/${aws_ecs_cluster.form_viewer.name}/${aws_ecs_service.form_viewer.name}"
+  resource_id        = "service/${aws_ecs_cluster.forms.name}/${aws_ecs_service.form_viewer.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   min_capacity       = var.ecs_min_tasks
   max_capacity       = var.ecs_max_tasks
