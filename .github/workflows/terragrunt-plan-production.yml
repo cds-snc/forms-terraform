@@ -205,7 +205,7 @@ jobs:
         with:
           directory: "env/cloud/lambdas"
           comment-delete: "true"
-          comment-title: "Staging: lambdas"
+          comment-title: "Production: lambdas"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 

@@ -108,21 +108,23 @@ resource "aws_ecs_service" "form_viewer" {
 # Service autoscaling config
 #
 resource "aws_appautoscaling_target" "forms" {
-  count              = var.ecs_autoscale_enabled ? 1 : 0
+  count = var.ecs_autoscale_enabled ? 1 : 0
+
   service_namespace  = "ecs"
-  resource_id        = "service/${aws_ecs_service.form_viewer.cluster}/${aws_ecs_service.form_viewer.name}"
+  resource_id        = "service/${aws_ecs_cluster.form_viewer.name}/${aws_ecs_service.form_viewer.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   min_capacity       = var.ecs_min_tasks
   max_capacity       = var.ecs_max_tasks
 }
 
 resource "aws_appautoscaling_policy" "forms_cpu" {
-  count              = var.ecs_autoscale_enabled ? 1 : 0
+  count = var.ecs_autoscale_enabled ? 1 : 0
+
   name               = "forms_cpu"
   policy_type        = "TargetTrackingScaling"
-  service_namespace  = "ecs"
-  resource_id        = "service/${aws_ecs_service.form_viewer.cluster}/${aws_ecs_service.form_viewer.name}"
-  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = aws_appautoscaling_target.forms.service_namespace
+  resource_id        = aws_appautoscaling_target.forms.resource_id
+  scalable_dimension = aws_appautoscaling_target.forms.scalable_dimension
 
   target_tracking_scaling_policy_configuration {
     scale_in_cooldown  = var.ecs_scale_in_cooldown
@@ -135,12 +137,13 @@ resource "aws_appautoscaling_policy" "forms_cpu" {
 }
 
 resource "aws_appautoscaling_policy" "forms_memory" {
-  count              = var.ecs_autoscale_enabled ? 1 : 0
+  count = var.ecs_autoscale_enabled ? 1 : 0
+
   name               = "forms_memory"
   policy_type        = "TargetTrackingScaling"
-  service_namespace  = "ecs"
-  resource_id        = "service/${aws_ecs_service.form_viewer.cluster}/${aws_ecs_service.form_viewer.name}"
-  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = aws_appautoscaling_target.forms.service_namespace
+  resource_id        = aws_appautoscaling_target.forms.resource_id
+  scalable_dimension = aws_appautoscaling_target.forms.scalable_dimension
 
   target_tracking_scaling_policy_configuration {
     scale_in_cooldown  = var.ecs_scale_in_cooldown
