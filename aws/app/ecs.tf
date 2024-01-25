@@ -122,9 +122,9 @@ resource "aws_appautoscaling_policy" "forms_cpu" {
 
   name               = "forms_cpu"
   policy_type        = "TargetTrackingScaling"
-  service_namespace  = aws_appautoscaling_target.forms.service_namespace
-  resource_id        = aws_appautoscaling_target.forms.resource_id
-  scalable_dimension = aws_appautoscaling_target.forms.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.forms[0].service_namespace
+  resource_id        = aws_appautoscaling_target.forms[0].resource_id
+  scalable_dimension = aws_appautoscaling_target.forms[0].scalable_dimension
 
   target_tracking_scaling_policy_configuration {
     scale_in_cooldown  = var.ecs_scale_in_cooldown
@@ -141,9 +141,9 @@ resource "aws_appautoscaling_policy" "forms_memory" {
 
   name               = "forms_memory"
   policy_type        = "TargetTrackingScaling"
-  service_namespace  = aws_appautoscaling_target.forms.service_namespace
-  resource_id        = aws_appautoscaling_target.forms.resource_id
-  scalable_dimension = aws_appautoscaling_target.forms.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.forms[0].service_namespace
+  resource_id        = aws_appautoscaling_target.forms[0].resource_id
+  scalable_dimension = aws_appautoscaling_target.forms[0].scalable_dimension
 
   target_tracking_scaling_policy_configuration {
     scale_in_cooldown  = var.ecs_scale_in_cooldown
