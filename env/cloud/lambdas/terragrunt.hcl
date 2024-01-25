@@ -12,7 +12,8 @@ dependencies {
 }
 
 locals {
-  env = get_env("APP_ENV", "local")
+  env        = get_env("APP_ENV", "local")
+  account_id = get_env("AWS_ACCOUNT_ID", "000000000000")
 }
 
 dependency "app" {
