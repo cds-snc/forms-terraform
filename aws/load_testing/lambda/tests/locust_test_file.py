@@ -45,9 +45,7 @@ class FormUser(HttpUser):
   formDataSubmissions = {"success":[], "failed":[]}
 
   # Test 1: High hit count
-  # Hit landing page
-  # Choose one of the performance testing forms
-  # Submit Form response based on form ID
+  # Hit form builder pages and load a test form
 
   @classmethod
   def on_test_stop(self):
@@ -58,34 +56,38 @@ class FormUser(HttpUser):
   @task
   def formFill(self):
     lang = random.choice(["en", "fr"])
-    # Get to welcome page
-    self.client.get(f"/{lang}/welcome-bienvenue")
+    # Browser form builder pages
+    self.client.get(f"/{lang}/form-builder")
+    self.client.get(f"/{lang}/form-builder/edit")
+    self.client.get(f"/{lang}/form-builder/preview")
+    self.client.get(f"/{lang}/form-builder/settings")
     
-    # Go to a form page after 
+    # Load one of the test forms
     formID = random.choice(formIDs)
     self.client.get(f"/{lang}/id/{formID}")
 
-    uniqueFormData = formSubmissions[formID]
-    uniqueFormData["2"] = uuid.uuid4().hex
+    # TODO: determine if automated load test form submission can work around the CSRF token and recaptcha verification
+    # uniqueFormData = formSubmissions[formID]
+    # uniqueFormData["2"] = uuid.uuid4().hex
 
-    # Submit the form
-    with self.client.post("/api/submit", json=uniqueFormData, name=f"/api/submit?{formID}", catch_response=True) as response:
-      try:
+    # # Submit the form
+    # with self.client.post("/api/submit", json=uniqueFormData, name=f"/api/submit?{formID}", catch_response=True) as response:
+    #   try:
         
-        if response.json()["received"] != True :
-          self.formDataSubmissions["failed"].append(uniqueFormData["2"])
-          response.failure(f"Submission failed for formID {formID}")
-        else:
-          self.formDataSubmissions["success"].append(uniqueFormData["2"])
-      except JSONDecodeError:
-        self.formDataSubmissions["failed"].append(uniqueFormData["2"])
-        response.failure("Response could not be decoded as JSON")
-      except KeyError:
-        self.formDataSubmissions["failed"].append(uniqueFormData["2"])
-        response.failure("Response did not have the expected receive key")
+    #     if response.json()["received"] != True :
+    #       self.formDataSubmissions["failed"].append(uniqueFormData["2"])
+    #       response.failure(f"Submission failed for formID {formID}")
+    #     else:
+    #       self.formDataSubmissions["success"].append(uniqueFormData["2"])
+    #   except JSONDecodeError:
+    #     self.formDataSubmissions["failed"].append(uniqueFormData["2"])
+    #     response.failure("Response could not be decoded as JSON")
+    #   except KeyError:
+    #     self.formDataSubmissions["failed"].append(uniqueFormData["2"])
+    #     response.failure(f"Response did not have the expected receive key")
 
-    # Go to confirmation page
-    self.client.get(f"/{lang}/id/{formID}/confirmation")
+    # # Go to confirmation page
+    # self.client.get(f"/{lang}/id/{formID}/confirmation")
 
 
 

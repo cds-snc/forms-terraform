@@ -15,11 +15,11 @@ resource "aws_lambda_function" "load_testing" {
 
   environment {
     variables = {
-      LOCUST_RUN_TIME    = "3m"
-      LOCUST_LOCUSTFILE  = "locust_test_file.py"
-      LOCUST_HOST        = "https://${var.domains[0]}"
-      LOCUST_HATCH_RATE  = "1"
-      LOCUST_NUM_CLIENTS = "1"
+      LOCUST_RUN_TIME   = "3m"
+      LOCUST_LOCUSTFILE = "./tests/locust_test_file.py"
+      LOCUST_HOST       = "https://${var.domains[0]}"
+      LOCUST_SPAWN_RATE = "1"
+      LOCUST_NUM_USERS  = "1"
     }
   }
 
