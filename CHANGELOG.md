@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.5.1](https://github.com/cds-snc/forms-terraform/compare/v3.5.0...v3.5.1) (2024-01-29)
+
+
+### Bug Fixes
+
+* ECS service autoscaling target ([#587](https://github.com/cds-snc/forms-terraform/issues/587)) ([fb3d104](https://github.com/cds-snc/forms-terraform/commit/fb3d104d08f7d39e1267b81c37781938e3b3979d))
+* load test env vars and test file ([#588](https://github.com/cds-snc/forms-terraform/issues/588)) ([9748d19](https://github.com/cds-snc/forms-terraform/commit/9748d19a52527a8ea1bb605c1ec3c23f0a8d70d4))
+
+
+### Miscellaneous Chores
+
+* disable TTL for Audit logs DynamoDB table ([#589](https://github.com/cds-snc/forms-terraform/issues/589)) ([04ecac3](https://github.com/cds-snc/forms-terraform/commit/04ecac3f69a0f4231d3c60faea6fdc6004a6c9b9))
+* remove production imports ([#585](https://github.com/cds-snc/forms-terraform/issues/585)) ([91b9278](https://github.com/cds-snc/forms-terraform/commit/91b9278bd1dd28adf4732c89933bdc215852563a))
+
 ## [3.5.0](https://github.com/cds-snc/forms-terraform/compare/v3.4.0...v3.5.0) (2024-01-25)
 
 
