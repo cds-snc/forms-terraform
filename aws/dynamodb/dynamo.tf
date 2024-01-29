@@ -121,7 +121,7 @@ resource "aws_dynamodb_table" "audit_logs" {
   }
 
   ttl {
-    enabled        = true
+    enabled        = false
     attribute_name = "ArchiveDate"
   }
 
