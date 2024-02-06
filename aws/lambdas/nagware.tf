@@ -26,7 +26,7 @@ resource "aws_lambda_function" "nagware" {
   source_code_hash = data.archive_file.nagware_code.output_base64sha256
 
   runtime = "nodejs18.x"
-  
+
   environment {
     variables = {
       ENVIRONMENT               = var.env
@@ -38,7 +38,6 @@ resource "aws_lambda_function" "nagware" {
       DB_NAME                   = var.rds_db_name
       NOTIFY_API_KEY            = var.notify_api_key_secret_arn
       TEMPLATE_ID               = var.gc_template_id
-      SNS_ERROR_TOPIC_ARN       = var.sns_topic_alert_critical_arn
       LOCALSTACK                = var.localstack_hosted
     }
   }

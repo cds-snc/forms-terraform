@@ -6,7 +6,45 @@ import { getTemplateInfo } from "./lib/templates.js";
 import { notifyFormOwner } from "./lib/emailNotification.js";
 import { Handler } from "aws-lambda";
 
-const ENABLED_IN_STAGING = true;
+type NotificationSettings = {
+  shouldSendEmail: boolean;
+  shouldSendSlackNotification: boolean;
+};
+
+type NagwareDetection = {
+  formTimestamp: number;
+  formId: string;
+  formName: string;
+  owners: { name: string; email: string; }[]
+};
+
+export const handler: Handler = async () => {
+  try {
+    const oldestFormResponseByFormID = await findOldestFormResponseByFormID();
+
+    const isSunday = new Date().getDay() == 0; // 0 is Sunday
+
+    await nagOrDelete(oldestFormResponseByFormID, { shouldSendEmail: isSunday == false, shouldSendSlackNotification: isSunday });
+
+    return {
+      statusCode: "SUCCESS",
+    };
+  } catch (error) {
+    // Error Message will be sent to slack
+    console.error(
+      JSON.stringify({
+        level: "error",
+        msg: "Failed to run Nagware.",
+        error: (error as Error).message,
+      })
+    );
+
+    return {
+      statusCode: "ERROR",
+      error: (error as Error).message,
+    };
+  }
+};
 
 async function findOldestFormResponseByFormID() {
   const unsavedFormResponses = await retrieveFormResponsesOver28DaysOld("New");
@@ -28,35 +66,24 @@ async function findOldestFormResponseByFormID() {
   return Object.values(reduceResult);
 }
 
-async function nagOrDelete(oldestFormResponseByFormID: { formID: string; createdAt: number }[]) {
+async function nagOrDelete(oldestFormResponseByFormID: { formID: string; createdAt: number }[], notificationSettings: NotificationSettings) {
   for (const formResponse of oldestFormResponseByFormID) {
-    const diffMs = Math.abs(Date.now() - formResponse.createdAt);
-    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-
     try {
       const templateInfo = await getTemplateInfo(formResponse.formID);
 
       if (templateInfo.isPublished) {
-        if (diffDays > 45) {
-          console.warn(
-            JSON.stringify({
-              level: "warn",
-              msg: `
-*Form*\n
-Identifier: ${formResponse.formID}\n
-Name: ${templateInfo.formName}
-\n*Owner(s)*\n
-${templateInfo.owners.map((owner) => `${owner.name} (${owner.email})`).join("\n")}
-\n*Oldest response*\n
-${diffDays} days since submission
-`,
-            })
-          );
-        } else {
+        if (notificationSettings.shouldSendEmail) {
           for (const owner of templateInfo.owners) {
             await notifyFormOwner(formResponse.formID, templateInfo.formName, owner.email);
           }
         }
+
+        logNagwareDetection({ 
+          formTimestamp: formResponse.createdAt, 
+          formId: formResponse.formID, 
+          formName: templateInfo.formName, 
+          owners: templateInfo.owners,
+        }, notificationSettings.shouldSendSlackNotification);
       } else {
         // Delete form response if form is not published and older than 28 days
         await deleteOldTestResponses(formResponse.formID);
@@ -75,29 +102,24 @@ ${diffDays} days since submission
   }
 }
 
-export const handler: Handler = async () => {
-  try {
-    if (!ENABLED_IN_STAGING && process.env.ENVIRONMENT === "staging") return;
+function logNagwareDetection(nagwareDetection: NagwareDetection, shouldSendSlackNotification: boolean) {
+  const diffMs = Math.abs(Date.now() - nagwareDetection.formTimestamp);
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
-    const oldestFormResponseByFormID = await findOldestFormResponseByFormID();
-    await nagOrDelete(oldestFormResponseByFormID);
-
-    return {
-      statusCode: "SUCCESS",
-    };
-  } catch (error) {
-    // Error Message will be sent to slack
-    console.error(
+  if (diffDays > 45) {
+    console.warn(
       JSON.stringify({
-        level: "error",
-        msg: "Failed to run Nagware.",
-        error: (error as Error).message,
+        level: shouldSendSlackNotification ? "warn" : "info",
+        msg: `
+*Form*\n
+Identifier: ${nagwareDetection.formId}\n
+Name: ${nagwareDetection.formName}
+\n*Owner(s)*\n
+${nagwareDetection.owners.map((owner) => `${owner.name} (${owner.email})`).join("\n")}
+\n*Oldest response*\n
+${diffDays} days since submission
+`,
       })
     );
-
-    return {
-      statusCode: "ERROR",
-      error: (error as Error).message,
-    };
   }
-};
+}
