@@ -1,7 +1,6 @@
 #
 # Nagware
 #
-
 data "archive_file" "nagware_code" {
   type        = "zip"
   source_dir  = "./code/nagware/dist"
@@ -15,7 +14,6 @@ resource "aws_s3_object" "nagware_code" {
   source_hash = data.archive_file.nagware_code.output_base64sha256
 }
 
-
 resource "aws_lambda_function" "nagware" {
   s3_bucket         = aws_s3_object.nagware_code.bucket
   s3_key            = aws_s3_object.nagware_code.key
@@ -28,8 +26,7 @@ resource "aws_lambda_function" "nagware" {
   source_code_hash = data.archive_file.nagware_code.output_base64sha256
 
   runtime = "nodejs18.x"
-
-
+  
   environment {
     variables = {
       ENVIRONMENT               = var.env
@@ -49,8 +46,6 @@ resource "aws_lambda_function" "nagware" {
   tracing_config {
     mode = "PassThrough"
   }
-
-
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_nagware_lambda" {
@@ -58,7 +53,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_nagware_lambda" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.nagware.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.cron_5am_every_business_day.arn
+  source_arn    = aws_cloudwatch_event_rule.nagware_lambda_trigger.arn
 }
 
 resource "aws_cloudwatch_log_group" "nagware" {

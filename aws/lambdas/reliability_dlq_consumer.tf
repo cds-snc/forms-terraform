@@ -2,7 +2,6 @@
 #
 # Dead letter queue consumer
 #
-
 data "archive_file" "reliability_dlq_consumer_code" {
   type        = "zip"
   source_dir  = "./code/reliability_dlq_consumer/dist"
@@ -15,9 +14,6 @@ resource "aws_s3_object" "reliability_dlq_consumer_code" {
   source      = data.archive_file.reliability_dlq_consumer_code.output_path
   source_hash = data.archive_file.reliability_dlq_consumer_code.output_base64sha256
 }
-
-
-
 
 resource "aws_lambda_function" "reliability_dlq_consumer" {
   s3_bucket         = aws_s3_object.reliability_dlq_consumer_code.bucket
@@ -44,8 +40,6 @@ resource "aws_lambda_function" "reliability_dlq_consumer" {
   tracing_config {
     mode = "PassThrough"
   }
-
-
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_dead_letter_queue_consumer_lambda" {
@@ -53,7 +47,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_dead_letter_queue_cons
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.reliability_dlq_consumer.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.cron_2am_every_day.arn
+  source_arn    = aws_cloudwatch_event_rule.reliability_dlq_lambda_trigger.arn
 }
 
 resource "aws_cloudwatch_log_group" "dead_letter_queue_consumer" {
