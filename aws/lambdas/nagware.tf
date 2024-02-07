@@ -39,6 +39,10 @@ resource "aws_lambda_function" "nagware" {
       NOTIFY_API_KEY            = var.notify_api_key_secret_arn
       TEMPLATE_ID               = var.gc_template_id
       LOCALSTACK                = var.localstack_hosted
+      PGHOST                    = var.localstack_hosted ? "host.docker.internal" : null
+      PGUSER                    = var.localstack_hosted ? "postgres" : null
+      PGDATABASE                = var.localstack_hosted ? "formsDB" : null
+      PGPASSWORD                = var.localstack_hosted ? "chummy" : null
     }
   }
 
