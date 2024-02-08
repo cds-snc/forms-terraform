@@ -1,7 +1,6 @@
 #
 # Nagware
 #
-
 data "archive_file" "nagware_code" {
   type        = "zip"
   source_dir  = "./code/nagware/dist"
@@ -14,7 +13,6 @@ resource "aws_s3_object" "nagware_code" {
   source      = data.archive_file.nagware_code.output_path
   source_hash = data.archive_file.nagware_code.output_base64sha256
 }
-
 
 resource "aws_lambda_function" "nagware" {
   s3_bucket         = aws_s3_object.nagware_code.bucket
@@ -29,7 +27,6 @@ resource "aws_lambda_function" "nagware" {
 
   runtime = "nodejs18.x"
 
-
   environment {
     variables = {
       ENVIRONMENT               = var.env
@@ -41,16 +38,17 @@ resource "aws_lambda_function" "nagware" {
       DB_NAME                   = var.rds_db_name
       NOTIFY_API_KEY            = var.notify_api_key_secret_arn
       TEMPLATE_ID               = var.gc_template_id
-      SNS_ERROR_TOPIC_ARN       = var.sns_topic_alert_critical_arn
       LOCALSTACK                = var.localstack_hosted
+      PGHOST                    = var.localstack_hosted ? "host.docker.internal" : null
+      PGUSER                    = var.localstack_hosted ? "postgres" : null
+      PGDATABASE                = var.localstack_hosted ? "formsDB" : null
+      PGPASSWORD                = var.localstack_hosted ? "chummy" : null
     }
   }
 
   tracing_config {
     mode = "PassThrough"
   }
-
-
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_nagware_lambda" {
@@ -58,7 +56,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_nagware_lambda" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.nagware.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.cron_5am_every_business_day.arn
+  source_arn    = aws_cloudwatch_event_rule.nagware_lambda_trigger.arn
 }
 
 resource "aws_cloudwatch_log_group" "nagware" {

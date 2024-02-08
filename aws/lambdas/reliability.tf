@@ -1,9 +1,7 @@
-
 data "archive_file" "reliability_code" {
   type        = "zip"
   source_dir  = "./code/reliability/dist/"
   output_path = "/tmp/reliability_code.zip"
-
 }
 
 resource "aws_s3_object" "reliability_code" {
@@ -40,15 +38,12 @@ resource "aws_lambda_function" "reliability" {
       PGUSER         = var.localstack_hosted ? "postgres" : null
       PGDATABASE     = var.localstack_hosted ? "formsDB" : null
       PGPASSWORD     = var.localstack_hosted ? "chummy" : null
-
     }
   }
 
   tracing_config {
     mode = "PassThrough"
   }
-
-
 }
 
 resource "aws_lambda_event_source_mapping" "reliability" {
@@ -70,4 +65,3 @@ resource "aws_cloudwatch_log_group" "reliability" {
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }
-

@@ -15,7 +15,6 @@ resource "aws_s3_object" "response_archiver_code" {
   source_hash = data.archive_file.response_archiver_code.output_base64sha256
 }
 
-
 resource "aws_lambda_function" "response_archiver" {
   s3_bucket         = aws_s3_object.response_archiver_code.bucket
   s3_key            = aws_s3_object.response_archiver_code.key
@@ -41,17 +40,14 @@ resource "aws_lambda_function" "response_archiver" {
   tracing_config {
     mode = "PassThrough"
   }
-
-
 }
-
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_archive_form_responses_lambda" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.response_archiver.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.cron_3am_every_day.arn
+  source_arn    = aws_cloudwatch_event_rule.response_archiver_lambda_trigger.arn
 }
 
 resource "aws_cloudwatch_log_group" "response_archiver" {
