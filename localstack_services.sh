@@ -1,13 +1,22 @@
 #!/bin/bash
 
-export APP_ENV="local"
-
-# Exit on any error
-set -e
-
 # Text colors
 color='\033[1;95m' 
 reset='\033[0m' # No Color
+
+if test -f .env
+then
+  set -o allexport
+  source .env
+  set +o allexport
+  printf "${color}=> Environment variables loaded from .env${reset}\n"
+else
+  # In case developers have not set up their .env file (can be removed in the future)
+  export APP_ENV="local"
+fi
+
+# Exit on any error
+set -e
 
 # Set proper terraform and terragrunt versions
 

@@ -113,6 +113,12 @@ RELIABILITY_FILE_STORAGE=forms-local-reliability-file-storage
 LOCAL_AWS_ENDPOINT=http://127.0.0.1:4566
 ```
 
+#### Set your environment variables (optional)
+
+Copy the `.env.example` file and rename it to `.env`. Some of the variables require values that can be found in the 1Password shared secrets note.
+
+#### Launch the infrastructure and the application
+
 Everytime you want to run localstack and lambdas locally
 
 1. In one terminal run `docker-compose up`
