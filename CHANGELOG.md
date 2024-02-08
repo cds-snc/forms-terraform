@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.5.2](https://github.com/cds-snc/forms-terraform/compare/v3.5.1...v3.5.2) (2024-02-08)
+
+
+### Bug Fixes
+
+* deployment issue due to audit logs TTL resource block that is not needed anymore ([#594](https://github.com/cds-snc/forms-terraform/issues/594)) ([9cd9098](https://github.com/cds-snc/forms-terraform/commit/9cd90985919521cd71ef3d4ef5c8bb4786ffeb21))
+* nagware lambda trigger CRON definition is incorrect ([#595](https://github.com/cds-snc/forms-terraform/issues/595)) ([c7513ff](https://github.com/cds-snc/forms-terraform/commit/c7513ff45b58cb320bc51bdb8ce519fd4fe1dc2b))
+
+
+### Miscellaneous Chores
+
+* create env file that gets automatically loaded when we start the infra in Localstack ([#592](https://github.com/cds-snc/forms-terraform/issues/592)) ([b28c633](https://github.com/cds-snc/forms-terraform/commit/b28c63390802eeeaa92653a87842bde8010dbbb0))
+* reduce number of Nagware emails and Slack notifications ([#591](https://github.com/cds-snc/forms-terraform/issues/591)) ([655061a](https://github.com/cds-snc/forms-terraform/commit/655061a1ef52b5708556a4a057162af605cb7071))
+
 ## [3.5.1](https://github.com/cds-snc/forms-terraform/compare/v3.5.0...v3.5.1) (2024-01-29)
 
 
