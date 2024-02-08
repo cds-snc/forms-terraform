@@ -120,11 +120,6 @@ resource "aws_dynamodb_table" "audit_logs" {
     projection_type = "KEYS_ONLY"
   }
 
-  ttl {
-    enabled        = false
-    attribute_name = "ArchiveDate"
-  }
-
   server_side_encryption {
     enabled     = true
     kms_key_arn = var.kms_key_dynamodb_arn
