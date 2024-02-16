@@ -178,3 +178,54 @@ resource "aws_s3_bucket_public_access_block" "lambda_code" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
+
+#
+# Audit Logs archive storage
+#
+
+resource "aws_s3_bucket" "audit_logs_archive_storage" {
+  # checkov:skip=CKV_AWS_18: Access logging not required
+  # checkov:skip=CKV_AWS_21: Versioning not required
+  # checkov:skip=CKV2_AWS_62: Event notifications not required
+  bucket = "forms-${var.env}-audit-logs-archive-storage"
+}
+
+resource "aws_s3_bucket_ownership_controls" "audit_logs_archive_storage" {
+  bucket = aws_s3_bucket.audit_logs_archive_storage.id
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "audit_logs_archive_storage" {
+  bucket = aws_s3_bucket.audit_logs_archive_storage.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "audit_logs_archive_storage" {
+  bucket                  = aws_s3_bucket.audit_logs_archive_storage.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "audit_logs_archive_storage" {
+  # checkov:skip=CKV_AWS_300: Lifecycle configuration for aborting failed (multipart) upload not required
+  bucket = aws_s3_bucket.audit_logs_archive_storage.id
+
+  rule {
+    id     = "Clear Audit Logs Archive Storage after 1 year and 11 months"
+    status = "Enabled"
+
+    expiration {
+      days = 700
+    }
+  }
+}
