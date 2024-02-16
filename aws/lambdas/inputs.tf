@@ -59,7 +59,6 @@ variable "kms_key_dynamodb_arn" {
   type        = string
 }
 
-
 variable "dynamodb_vault_arn" {
   description = "Vault DynamodDB table ARN"
   type        = string
@@ -90,7 +89,6 @@ variable "sns_topic_alert_critical_arn" {
   type        = string
 }
 
-
 variable "ecs_iam_role_arn" {
   description = "ECS IAM role ARN"
   type        = string
@@ -107,7 +105,7 @@ variable "vault_file_storage_arn" {
 }
 
 variable "vault_file_storage_id" {
-  description = "S3 bucket idfor vault file storage"
+  description = "S3 bucket id for vault file storage"
   type        = string
 }
 

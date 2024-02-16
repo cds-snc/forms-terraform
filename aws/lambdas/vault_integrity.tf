@@ -39,8 +39,6 @@ resource "aws_lambda_function" "vault_integrity" {
   tracing_config {
     mode = "PassThrough"
   }
-
-
 }
 
 resource "aws_lambda_event_source_mapping" "vault_updated_item_stream" {
@@ -66,7 +64,6 @@ resource "aws_cloudwatch_log_group" "vault_integrity" {
 }
 
 # Signer configuration
-
 
 resource "aws_signer_signing_job" "vault_integrity" {
   count        = var.localstack_hosted ? 0 : 1

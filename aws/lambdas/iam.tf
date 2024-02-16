@@ -1,8 +1,6 @@
 resource "aws_iam_role" "lambda" {
   name               = "iam_for_lambda"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
-
-
 }
 
 data "aws_iam_policy_document" "lambda_assume" {
@@ -22,8 +20,6 @@ resource "aws_iam_policy" "lambda_logging" {
   path        = "/"
   description = "IAM policy for logging from a lambda"
   policy      = data.aws_iam_policy_document.lambda_logging.json
-
-
 }
 
 data "aws_iam_policy_document" "lambda_logging" {
@@ -89,8 +85,6 @@ resource "aws_iam_policy" "lambda_sqs" {
   path        = "/"
   description = "IAM policy for sending messages through SQS"
   policy      = data.aws_iam_policy_document.lambda_sqs.json
-
-
 }
 
 data "aws_iam_policy_document" "lambda_sqs" {
@@ -116,8 +110,6 @@ resource "aws_iam_policy" "lambda_dynamodb" {
   path        = "/"
   description = "IAM policy for storing Form responses in DynamoDB"
   policy      = data.aws_iam_policy_document.lambda_dynamodb.json
-
-
 }
 
 data "aws_iam_policy_document" "lambda_dynamodb" {
@@ -155,8 +147,6 @@ resource "aws_iam_policy" "lambda_kms" {
   path        = "/"
   description = "IAM policy for storing encrypting and decrypting data"
   policy      = data.aws_iam_policy_document.lambda_kms.json
-
-
 }
 
 data "aws_iam_policy_document" "lambda_kms" {
@@ -182,8 +172,6 @@ resource "aws_iam_policy" "lambda_secrets" {
   path        = "/"
   description = "IAM policy for accessing secret manager"
   policy      = data.aws_iam_policy_document.lambda_secrets.json
-
-
 }
 
 data "aws_iam_policy_document" "lambda_secrets" {
@@ -208,8 +196,6 @@ resource "aws_iam_policy" "lambda_s3" {
   path        = "/"
   description = "IAM policy for storing files in S3"
   policy      = data.aws_iam_policy_document.lambda_s3.json
-
-
 }
 
 data "aws_iam_policy_document" "lambda_s3" {
@@ -242,8 +228,6 @@ resource "aws_iam_policy" "lambda_sns" {
   path        = "/"
   description = "IAM policy for allowing lambda to publish message in SNS for Slack notification"
   policy      = data.aws_iam_policy_document.lambda_sns.json
-
-
 }
 
 data "aws_iam_policy_document" "lambda_sns" {

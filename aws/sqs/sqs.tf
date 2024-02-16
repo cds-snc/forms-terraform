@@ -22,8 +22,6 @@ resource "aws_sqs_queue" "reliability_queue" {
     deadLetterTargetArn = aws_sqs_queue.reliability_deadletter_queue.arn
     maxReceiveCount     = 5
   })
-
-
 }
 
 resource "aws_sqs_queue" "reliability_deadletter_queue" {
@@ -37,8 +35,6 @@ resource "aws_sqs_queue" "reliability_deadletter_queue" {
 
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
-
-
 }
 
 resource "aws_sqs_queue" "reprocess_submission_queue" {
@@ -61,8 +57,6 @@ resource "aws_sqs_queue" "reprocess_submission_queue" {
     deadLetterTargetArn = aws_sqs_queue.reliability_deadletter_queue.arn
     maxReceiveCount     = 5
   })
-
-
 }
 
 # Audit Log Queue
@@ -89,8 +83,6 @@ resource "aws_sqs_queue" "audit_log_queue" {
     redrivePermission = "byQueue",
     sourceQueueArns   = [aws_sqs_queue.audit_log_deadletter_queue.arn]
   })
-
-
 }
 
 resource "aws_sqs_queue" "audit_log_deadletter_queue" {
@@ -102,6 +94,4 @@ resource "aws_sqs_queue" "audit_log_deadletter_queue" {
 
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
-
-
 }

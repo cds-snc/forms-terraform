@@ -138,7 +138,6 @@ resource "aws_s3_bucket_public_access_block" "archive_storage" {
   restrict_public_buckets = true
 }
 
-
 resource "aws_s3_bucket" "lambda_code" {
   # checkov:skip=CKV_AWS_18: Access logging not required
   # checkov:skip=CKV_AWS_21: Versioning not required
