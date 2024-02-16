@@ -112,11 +112,23 @@ resource "aws_dynamodb_table" "audit_logs" {
     type = "N"
   }
 
+  attribute {
+    name = "Status"
+    type = "S"
+  }
+
   global_secondary_index {
     name            = "UserByTime"
     hash_key        = "UserID"
     range_key       = "TimeStamp"
     projection_type = "KEYS_ONLY"
+  }
+
+  global_secondary_index {
+    name            = "StatusByTimestamp"
+    hash_key        = "Status"
+    range_key       = "TimeStamp"
+    projection_type = "ALL"
   }
 
   server_side_encryption {
