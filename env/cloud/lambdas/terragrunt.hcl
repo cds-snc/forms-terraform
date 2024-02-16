@@ -80,6 +80,7 @@ dependency "dynamodb" {
     dynamodb_vault_arn             = "arn:aws:dynamodb:ca-central-1:123456789012:table/Vault"
     dynamodb_vault_table_name      = "Vault"
     dynamodb_vault_stream_arn      = "arn:aws:dynamodb:ca-central-1:123456789012:table/Vault/stream/2023-03-14T15:54:31.086"
+    dynamodb_audit_logs_table_name = "AuditLogs"
     dynamodb_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:123456789012:table/AuditLogs"
   }
 }
@@ -102,22 +103,25 @@ dependency "s3" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    reliability_file_storage_arn = "arn:aws:s3:::forms-staging-reliability-file-storage"
-    vault_file_storage_arn       = "arn:aws:s3:::forms-staging-vault-file-storage"
-    vault_file_storage_id        = "forms-staging-vault-file-storage"
-    archive_storage_arn          = "arn:aws:s3:::forms-staging-archive-storage"
-    archive_storage_id           = "forms-staging-archive-storage"
-    lambda_code_arn              = "arn:aws:s3:::forms-staging-lambda-code"
-    lambda_code_id               = "forms-staging-lambda-code"
+    reliability_file_storage_arn   = "arn:aws:s3:::forms-staging-reliability-file-storage"
+    vault_file_storage_arn         = "arn:aws:s3:::forms-staging-vault-file-storage"
+    vault_file_storage_id          = "forms-staging-vault-file-storage"
+    archive_storage_arn            = "arn:aws:s3:::forms-staging-archive-storage"
+    archive_storage_id             = "forms-staging-archive-storage"
+    lambda_code_arn                = "arn:aws:s3:::forms-staging-lambda-code"
+    lambda_code_id                 = "forms-staging-lambda-code"
+    audit_logs_archive_storage_id  = "forms-staging-audit-logs-archive-storage"
+    audit_logs_archive_storage_arn = "arn:aws:s3:::forms-staging-audit-logs-archive-storage"
   }
 }
 
 inputs = {
-  dynamodb_relability_queue_arn = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
-  dynamodb_vault_arn            = dependency.dynamodb.outputs.dynamodb_vault_arn
-  dynamodb_vault_table_name     = dependency.dynamodb.outputs.dynamodb_vault_table_name
-  dynamodb_vault_stream_arn     = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
-  dynamodb_audit_logs_arn       = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
+  dynamodb_relability_queue_arn  = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
+  dynamodb_vault_arn             = dependency.dynamodb.outputs.dynamodb_vault_arn
+  dynamodb_vault_table_name      = dependency.dynamodb.outputs.dynamodb_vault_table_name
+  dynamodb_vault_stream_arn      = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
+  dynamodb_audit_logs_table_name = dependency.dynamodb.outputs.dynamodb_audit_logs_table_name
+  dynamodb_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
 
   kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
   kms_key_dynamodb_arn   = dependency.kms.outputs.kms_key_dynamodb_arn
@@ -136,17 +140,17 @@ inputs = {
 
   notify_api_key_secret_arn = dependency.secrets.outputs.notify_api_key_secret_arn
 
-  reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
-  vault_file_storage_arn       = dependency.s3.outputs.vault_file_storage_arn
-  vault_file_storage_id        = dependency.s3.outputs.vault_file_storage_id
-  archive_storage_arn          = dependency.s3.outputs.archive_storage_arn
-  archive_storage_id           = dependency.s3.outputs.archive_storage_id
-  lambda_code_arn              = dependency.s3.outputs.lambda_code_arn
-  lambda_code_id               = dependency.s3.outputs.lambda_code_id
+  reliability_file_storage_arn   = dependency.s3.outputs.reliability_file_storage_arn
+  vault_file_storage_arn         = dependency.s3.outputs.vault_file_storage_arn
+  vault_file_storage_id          = dependency.s3.outputs.vault_file_storage_id
+  archive_storage_arn            = dependency.s3.outputs.archive_storage_arn
+  archive_storage_id             = dependency.s3.outputs.archive_storage_id
+  lambda_code_arn                = dependency.s3.outputs.lambda_code_arn
+  lambda_code_id                 = dependency.s3.outputs.lambda_code_id
+  audit_logs_archive_storage_id  = dependency.s3.outputs.audit_logs_archive_storage_id
+  audit_logs_archive_storage_arn = dependency.s3.outputs.audit_logs_archive_storage_arn
 
   ecs_iam_role_arn = local.env == "local" ? "arn:aws:iam:ca-central-1:000000000000:forms_iam" : dependency.app.outputs.ecs_iam_role_arn
-
-
 
   localstack_hosted = local.env == "local" ? true : false
 
