@@ -313,4 +313,5 @@ notify_api_key          # Notify API key to send messages
 freshdesk_api_key       # FreshDesk API key to send messages
 rds_db_password         # Database password
 slack_webhook           # Slack webhook to send CloudWatch notifications
+opsgenie_api_key        # OpsGenie API key to create alert
 ```
