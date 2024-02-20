@@ -30,6 +30,9 @@ function getSNSMessageSeverity(message) {
   const alarm_ok_status = '"NewStateValue":"OK"'; // This is the string that is returned when the alarm is reset
 
   message = message.toLowerCase();
+
+  if (message.indexOf("SEV1") != -1) return "SEV1";
+
   for (var errorMessagesItem in errorMessages) {
     if (
       message.indexOf(errorMessages[errorMessagesItem]) != -1 &&
@@ -55,20 +58,9 @@ function getSNSMessageSeverity(message) {
   return "info";
 }
 
-function sendToOpsGenie(logGroup, logMessage, logLevel, context) {
+function sendToOpsGenie(logGroup, logMessage, logSeverity, context) {
 
-  const weShouldPageOnCall = (logLevel) => {
-    switch (logLevel) {
-      case "danger":
-      case "critical":
-      case "error":
-        return true;
-      default:
-        return false;
-    }
-  };
-
-  if (!weShouldPageOnCall(logLevel)) {
+  if (logSeverity !== 1 && logSeverity !== "SEV1") {
     return; // skip sending to OpsGenie
   }
 
@@ -120,6 +112,7 @@ function sendToSlack(logGroup, logMessage, logLevel, context) {
     switch (logLevel) {
       case "danger":
       case "error":
+      case "SEV1":
         return { emoji: ":rotating_light:", color: "danger" };
       case "warning":
       case "warn":
@@ -195,7 +188,7 @@ exports.handler = function (input, context) {
             ${logMessage.severity ? "\n\nSeverity level: ".concat(logMessage.severity) : ""}
             `;
             sendToSlack(parsedResult.logGroup, message, logMessage.level, context);
-            sendToOpsGenie(parsedResult.logGroup, message, logMessage.level, context);
+            sendToOpsGenie(parsedResult.logGroup, message, logMessage.severity, context);
             console.log(
               JSON.stringify({
                 msg: `Event Data for ${parsedResult.logGroup}: ${JSON.stringify(logMessage, null, 2)}`,

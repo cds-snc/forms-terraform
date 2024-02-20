@@ -20,8 +20,8 @@ resource "aws_lambda_function" "notify_slack" {
 
   environment {
     variables = {
-      ENVIRONMENT   = title(var.env)
-      SLACK_WEBHOOK = var.slack_webhook
+      ENVIRONMENT      = title(var.env)
+      SLACK_WEBHOOK    = var.slack_webhook
       OPSGENIE_API_KEY = var.opsgenie_api_key
     }
   }
