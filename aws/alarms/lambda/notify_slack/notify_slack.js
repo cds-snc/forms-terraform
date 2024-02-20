@@ -204,7 +204,7 @@ exports.handler = function (input, context) {
           } else {
             // These are unhandled errors from the GCForms app only
             sendToSlack(parsedResult.logGroup, log.message, "error", context);
-            sendToOpsGenie(parsedResult.logGroup, log.message, "error", context);
+
             console.log(
               JSON.stringify({
                 msg: `Event Data for ${parsedResult.logGroup}: ${log.message}`,

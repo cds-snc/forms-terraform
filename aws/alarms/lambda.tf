@@ -1,5 +1,5 @@
 #
-# Lambda - Notify Slack
+# Lambda - Notify Slack and OpsGenie
 #
 data "archive_file" "notify_slack" {
   type        = "zip"
