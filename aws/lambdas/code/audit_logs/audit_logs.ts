@@ -59,9 +59,6 @@ export const handler: Handler = async (event: SQSEvent) => {
     // Warn on events that should be notified
     await notifyOnEvent(logEvents.map((event) => event.logEvent));
 
-    // Archive after 1 year
-    const archiveDate = ((d) => Math.floor(d.setFullYear(d.getFullYear() + 1) / 1000))(new Date());
-
     const putTransactionItems = logEvents.map(({ logEvent }) => ({
       PutRequest: {
         Item: {
@@ -75,7 +72,7 @@ export const handler: Handler = async (event: SQSEvent) => {
           }`,
           TimeStamp: logEvent.timestamp,
           ...(logEvent.description && { Description: logEvent.description }),
-          ArchiveDate: archiveDate,
+          Status: "Archivable"
         },
       },
     }));

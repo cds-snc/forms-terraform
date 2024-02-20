@@ -59,7 +59,6 @@ variable "kms_key_dynamodb_arn" {
   type        = string
 }
 
-
 variable "dynamodb_vault_arn" {
   description = "Vault DynamodDB table ARN"
   type        = string
@@ -85,11 +84,15 @@ variable "dynamodb_audit_logs_arn" {
   type        = string
 }
 
+variable "dynamodb_audit_logs_table_name" {
+  description = "Audit Logs DynamodDB table name"
+  type        = string
+}
+
 variable "sns_topic_alert_critical_arn" {
   description = "SNS topic ARN that critical alerts are sent to"
   type        = string
 }
-
 
 variable "ecs_iam_role_arn" {
   description = "ECS IAM role ARN"
@@ -107,7 +110,7 @@ variable "vault_file_storage_arn" {
 }
 
 variable "vault_file_storage_id" {
-  description = "S3 bucket idfor vault file storage"
+  description = "S3 bucket id for vault file storage"
   type        = string
 }
 
@@ -134,4 +137,14 @@ variable "lambda_code_arn" {
 variable "localstack_hosted" {
   description = "Whether or not the stack is hosted in localstack"
   type        = bool
+}
+
+variable "audit_logs_archive_storage_id" {
+  description = "S3 bucket ID for audit logs archive storage"
+  type        = string
+}
+
+variable "audit_logs_archive_storage_arn" {
+  description = "S3 bucket ARN for audit logs archive storage"
+  type        = string
 }

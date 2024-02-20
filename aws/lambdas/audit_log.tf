@@ -38,9 +38,6 @@ resource "aws_lambda_function" "audit_logs" {
   tracing_config {
     mode = "PassThrough"
   }
-
-
-
 }
 
 resource "aws_lambda_event_source_mapping" "audit_logs" {

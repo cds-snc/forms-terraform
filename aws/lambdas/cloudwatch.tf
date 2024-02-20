@@ -2,6 +2,12 @@
 # Lambda triggers
 #
 
+resource "aws_cloudwatch_event_rule" "audit_logs_archiver_lambda_trigger" {
+  name                = "audit-logs-archiver-lambda-trigger"
+  description         = "Fires every day at 1am EST"
+  schedule_expression = "cron(0 6 * * ? *)" # 1 AM EST = 6 AM UTC
+}
+
 resource "aws_cloudwatch_event_rule" "reliability_dlq_lambda_trigger" {
   name                = "reliability-dlq-lambda-trigger"
   description         = "Fires every day at 2am EST"
@@ -24,6 +30,11 @@ resource "aws_cloudwatch_event_rule" "nagware_lambda_trigger" {
   name                = "nagware-lambda-trigger"
   description         = "Fires every Tuesday, Thursday and Sunday at 5am EST"
   schedule_expression = "cron(0 10 ? * TUE,THU,SUN *)" # 5 AM EST = 10 AM UTC ; every Tuesday, Thursday and Sunday
+}
+
+resource "aws_cloudwatch_event_target" "audit_logs_archiver_lambda_trigger" {
+  rule = aws_cloudwatch_event_rule.audit_logs_archiver_lambda_trigger.name
+  arn  = aws_lambda_function.audit_logs_archiver.arn
 }
 
 resource "aws_cloudwatch_event_target" "reliability_dlq_lambda_trigger" {
