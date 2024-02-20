@@ -78,6 +78,7 @@ dependency "lambdas" {
     lambda_nagware_log_group_name                    = "/aws/lambda/Nagware"
     lambda_vault_data_integrity_check_log_group_name = "/aws/lambda/Vault_Data_Integrity_Check"
     lambda_vault_data_integrity_check_function_name  = "Vault_Data_Integrity_Check"
+    lambda_audit_logs_archiver_group_name            = "/aws/lambda/Audit_Logs_Archiver"
   }
 }
 
@@ -123,6 +124,7 @@ inputs = {
   lambda_nagware_log_group_name                    = dependency.lambdas.outputs.lambda_nagware_log_group_name
   lambda_vault_data_integrity_check_log_group_name = dependency.lambdas.outputs.lambda_vault_data_integrity_check_log_group_name
   lambda_vault_data_integrity_check_function_name  = dependency.lambdas.outputs.lambda_vault_data_integrity_check_function_name
+  lambda_audit_logs_archiver_group_name            = dependency.lambdas.outputs.lambda_audit_logs_archiver_group_name
 
   sns_topic_alert_critical_arn        = dependency.sns.outputs.sns_topic_alert_critical_arn
   sns_topic_alert_warning_arn         = dependency.sns.outputs.sns_topic_alert_warning_arn
