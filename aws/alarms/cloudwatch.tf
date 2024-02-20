@@ -401,7 +401,8 @@ locals {
     dlq_consumer               = var.lambda_dlq_consumer_log_group_name,
     audit_log                  = var.lambda_audit_log_group_name,
     nagware                    = var.lambda_nagware_log_group_name,
-    vault_data_integrity_check = var.lambda_vault_data_integrity_check_log_group_name
+    vault_data_integrity_check = var.lambda_vault_data_integrity_check_log_group_name,
+    audit_logs_archiver        = var.lambda_audit_logs_archiver_group_name
   }
 }
 

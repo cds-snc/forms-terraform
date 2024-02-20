@@ -47,3 +47,8 @@ output "lambda_vault_data_integrity_check_log_group_name" {
   description = "Vault data integrity check Lambda CloudWatch log group name"
   value       = aws_cloudwatch_log_group.vault_integrity.name
 }
+
+output "lambda_audit_logs_archiver_group_name" {
+  description = "Audit logs archiver Lambda CloudWatch log group name"
+  value       = aws_cloudwatch_log_group.audit_logs_archiver.name
+}
