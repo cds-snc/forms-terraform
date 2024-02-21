@@ -1,0 +1,15 @@
+{
+  "name": "notify_slack",
+  "version": "1.0.0",
+  "description": "Lambda that notifies multiple channels",
+  "main": "notify_slack.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "lambda-local": "^2.1.2"
+  }
+}

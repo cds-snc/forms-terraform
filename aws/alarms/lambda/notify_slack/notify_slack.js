@@ -27,11 +27,11 @@ function getMessage(message) {
 function getSNSMessageSeverity(message) {
   const errorMessages = ["error", "critical"];
   const warningMessages = ["warning", "failure"];
-  const alarm_ok_status = '"NewStateValue":"OK"'; // This is the string that is returned when the alarm is reset
+  const alarm_ok_status = '"newstatevalue":"ok"'; // This is the string that is returned when the alarm is reset
 
   message = message.toLowerCase();
 
-  if (message.indexOf("SEV1") != -1) return "SEV1";
+  if (message.indexOf("sev1") != -1) return "SEV1";
 
   for (var errorMessagesItem in errorMessages) {
     if (
@@ -61,6 +61,7 @@ function getSNSMessageSeverity(message) {
 function sendToOpsGenie(logGroup, logMessage, logSeverity, context) {
 
   if (logSeverity !== 1 && logSeverity !== "SEV1") {
+    console.log(`Skipping sending to OpsGenie because logSeverity is not SEV1: ${logSeverity}`);
     return; // skip sending to OpsGenie
   }
 
@@ -80,6 +81,8 @@ function sendToOpsGenie(logGroup, logMessage, logSeverity, context) {
       "Authorization": `GenieKey ${process.env.OPSGENIE_API_KEY}`,
     },
   };
+
+  console.log(`Sending to OpsGenie with message: ${postData} and options: ${options}`);
 
   var req = https.request(options, function (res) {
     res.setEncoding("utf8");
