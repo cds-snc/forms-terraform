@@ -55,6 +55,7 @@ export const handler: Handler = async (submission: AnyObject) => {
         status: "failed",
         submissionId: submissionId,
         msg: (error as Error).message,
+        details: JSON.stringify(error),
       })
     );
 
