@@ -51,10 +51,11 @@ export const handler: Handler = async (submission: AnyObject) => {
     console.error(
       JSON.stringify({
         level: "error",
-        severity: 1,
+        severity: 1, // this will trigger an alert to on-call team
         status: "failed",
         submissionId: submissionId,
         msg: (error as Error).message,
+        details: JSON.stringify(error),
       })
     );
 
@@ -80,7 +81,6 @@ const enqueueReliabilityProcessingRequest = async (submissionId: string): Promis
 
     return sendMessageCommandOutput.MessageId;
   } catch (error) {
-    console.error(JSON.stringify(error));
     throw new Error("Could not enqueue reliability processing request");
   }
 };
@@ -120,7 +120,6 @@ const saveSubmission = async (submissionId: string, formData: AnyObject): Promis
       })
     );
   } catch (error) {
-    console.error(JSON.stringify(error));
     throw new Error("Could not save submission to Reliability Temporary Storage");
   }
 };

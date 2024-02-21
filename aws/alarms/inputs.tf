@@ -89,6 +89,12 @@ variable "slack_webhook" {
   sensitive   = true
 }
 
+variable "opsgenie_api_key" {
+  description = "The OpsGenie api key to be used when calling https://api.opsgenie.com/v2/alerts"
+  type        = string
+  sensitive   = true
+}
+
 variable "sqs_reliability_deadletter_queue_arn" {
   description = "ARN of the Reliability queue's SQS Dead Letter Queue"
   type        = string

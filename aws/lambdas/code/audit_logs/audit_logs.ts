@@ -150,9 +150,9 @@ export const handler: Handler = async (event: SQSEvent) => {
         return unprocessedItem.messageId;
       });
 
-      console.warn(
+      console.error(
         JSON.stringify({
-          level: "warn",
+          level: "error",
           severity: 1,
           msg: `Failed to process ${
             unprocessedIDs.length

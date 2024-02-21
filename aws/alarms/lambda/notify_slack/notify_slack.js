@@ -30,6 +30,9 @@ function getSNSMessageSeverity(message) {
   const alarm_ok_status = '"NewStateValue":"OK"'; // This is the string that is returned when the alarm is reset
 
   message = message.toLowerCase();
+
+  if (message.indexOf("SEV1") != -1) return "SEV1";
+
   for (var errorMessagesItem in errorMessages) {
     if (
       message.indexOf(errorMessages[errorMessagesItem]) != -1 &&
@@ -55,6 +58,53 @@ function getSNSMessageSeverity(message) {
   return "info";
 }
 
+function sendToOpsGenie(logGroup, logMessage, logSeverity, context) {
+
+  if (logSeverity !== 1 && logSeverity !== "SEV1") {
+    return; // skip sending to OpsGenie
+  }
+
+  var postData = {
+    message: logMessage,
+    entity: `*${logGroup}*`,
+    priority: "P1",
+  };
+
+  var options = {
+    method: "POST",
+    hostname: "api.opsgenie.com",
+    port: 443,
+    path: "/v2/alerts",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `GenieKey ${process.env.OPSGENIE_API_KEY}`,
+    },
+  };
+
+  var req = https.request(options, function (res) {
+    res.setEncoding("utf8");
+    res.on("data", function () {
+      console.log(
+        JSON.stringify({
+          msg: `Message successfully sent to OpsGenie... log level: ${logLevel}, log message: ${logMessage}`,
+        })
+      );
+    });
+  });
+
+  req.on("error", function (e) {
+    console.log(
+      JSON.stringify({
+        msg: `problem with request: ${e.message}`,
+      })
+    );
+  });
+
+  req.write(util.format("%j", postData));
+  req.end();
+
+}
+
 function sendToSlack(logGroup, logMessage, logLevel, context) {
   var environment = process.env.ENVIRONMENT || "Staging";
 
@@ -62,6 +112,7 @@ function sendToSlack(logGroup, logMessage, logLevel, context) {
     switch (logLevel) {
       case "danger":
       case "error":
+      case "SEV1":
         return { emoji: ":rotating_light:", color: "danger" };
       case "warning":
       case "warn":
@@ -137,6 +188,7 @@ exports.handler = function (input, context) {
             ${logMessage.severity ? "\n\nSeverity level: ".concat(logMessage.severity) : ""}
             `;
             sendToSlack(parsedResult.logGroup, message, logMessage.level, context);
+            sendToOpsGenie(parsedResult.logGroup, message, logMessage.severity, context);
             console.log(
               JSON.stringify({
                 msg: `Event Data for ${parsedResult.logGroup}: ${JSON.stringify(logMessage, null, 2)}`,
@@ -145,6 +197,7 @@ exports.handler = function (input, context) {
           } else {
             // These are unhandled errors from the GCForms app only
             sendToSlack(parsedResult.logGroup, log.message, "error", context);
+
             console.log(
               JSON.stringify({
                 msg: `Event Data for ${parsedResult.logGroup}: ${log.message}`,
@@ -170,6 +223,7 @@ exports.handler = function (input, context) {
       })
     );
 
-    sendToSlack("Alarm Event", message, severity, context);
+    sendToSlack("CloudWatch Alarm Event", message, severity, context);
+    sendToOpsGenie("CloudWatch Alarm Event", message, severity, context);
   }
 };
