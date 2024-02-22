@@ -217,7 +217,9 @@ data "aws_iam_policy_document" "lambda_s3" {
       var.archive_storage_arn,
       "${var.archive_storage_arn}/*",
       var.lambda_code_arn,
-      "${var.lambda_code_arn}/*"
+      "${var.lambda_code_arn}/*",
+      var.audit_logs_archive_storage_arn,
+      "${var.audit_logs_archive_storage_arn}/*"
     ]
   }
 }
