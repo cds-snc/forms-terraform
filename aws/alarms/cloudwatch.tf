@@ -65,9 +65,9 @@ resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount" {
   evaluation_periods  = "1" # Evaluate once
   metric_name         = "HTTPCode_ELB_5XX_Count"
   namespace           = "AWS/ApplicationELB"
-  period              = "60" # Every minute
-  statistic           = "SampleCount" # use the number of data points during the period
-  threshold           = "1" # If there is at least one unhealthy host
+  period              = "60"           # Every minute
+  statistic           = "SampleCount"  # use the number of data points during the period
+  threshold           = "1"            # If there is at least one unhealthy host
   treat_missing_data  = "notBreaching" # don't alarm if there's no data
   alarm_actions       = [var.sns_topic_alert_critical_arn]
 }
