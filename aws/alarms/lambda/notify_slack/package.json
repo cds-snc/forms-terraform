@@ -1,8 +1,8 @@
 {
-  "name": "notify_channels",
+  "name": "notify_slack",
   "version": "1.0.0",
-  "description": "Lambda that notifies multiple channels",
-  "main": "notify_channels.js",
+  "description": "Lambda that notifies a Slack channel and triggers Opsgenie alert",
+  "main": "notify_slack.js",
   "type": "module",
   "scripts": {
     "prebuild": "rm -rf dist",

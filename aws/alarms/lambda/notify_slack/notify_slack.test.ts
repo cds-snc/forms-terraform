@@ -1,7 +1,7 @@
 import lambdaLocal from "lambda-local";
 import zlib from "zlib";
 
-import { safeParseLogIncludingJSON } from "./notify_channels.ts";
+import { safeParseLogIncludingJSON } from "./notify_slack.ts";
 
 describe("function safeParseLogIncludingJSON", () => {
   it("should return expected JSON value", () => {
