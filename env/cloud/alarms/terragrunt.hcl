@@ -36,8 +36,10 @@ dependency "load_balancer" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    lb_arn        = null
-    lb_arn_suffix = null
+    lb_arn                = null
+    lb_arn_suffix         = null
+    lb_target_group_1_arn = null
+    lb_target_group_2_arn = null
   }
 }
 
