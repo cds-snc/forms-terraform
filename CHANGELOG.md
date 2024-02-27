@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.6.0](https://github.com/cds-snc/forms-terraform/compare/v3.5.2...v3.6.0) (2024-02-27)
+
+
+### Features
+
+* Audit Log Archiver ([e06658f](https://github.com/cds-snc/forms-terraform/commit/e06658fa580a6fd28768c0bf010a1c2447bf78b4))
+* send critical/error events to OpsGenie ([#596](https://github.com/cds-snc/forms-terraform/issues/596)) ([1281b1c](https://github.com/cds-snc/forms-terraform/commit/1281b1c9c602150862ab64a8ccbd0720346039c9))
+
+
+### Bug Fixes
+
+* add a way of unit testing lambda quickly and fix the lowercase logical error ([#600](https://github.com/cds-snc/forms-terraform/issues/600)) ([4b733d7](https://github.com/cds-snc/forms-terraform/commit/4b733d79905dc103b1cd8cc3a6b7d0ad6bd45ad9))
+* add missing subscription filter to audit logs archiver lambda logs ([#597](https://github.com/cds-snc/forms-terraform/issues/597)) ([0def180](https://github.com/cds-snc/forms-terraform/commit/0def180c743fc911db9f1b4ed64ee6051961c0dd))
+* missing permissions for the audit logs archiver lambda to access S3 bucket ([#601](https://github.com/cds-snc/forms-terraform/issues/601)) ([05ce856](https://github.com/cds-snc/forms-terraform/commit/05ce8562238d9cf5052041154a03bff35f5c1e25))
+
 ## [3.5.2](https://github.com/cds-snc/forms-terraform/compare/v3.5.1...v3.5.2) (2024-02-08)
 
 
