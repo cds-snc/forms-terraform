@@ -1,3 +1,4 @@
+const { log } = require("console");
 var https = require("https");
 var util = require("util");
 var zlib = require("zlib");
@@ -66,10 +67,11 @@ function sendToOpsGenie(logGroup, logMessage, logSeverity, context) {
   }
 
   var postData = {
-    message: logMessage,
-    entity: `*${logGroup}*`,
+    message: logMessage.substring(0, 130), // Truncate the message to 130 characters
+    entity: logGroup,
     responders: [{ "id": "dbe73fd1-8bfc-4345-bc0a-36987a684d26", "type": "team" }], // Forms Team
     priority: "P1",
+    description: logMessage
   };
 
   var options = {
@@ -84,8 +86,6 @@ function sendToOpsGenie(logGroup, logMessage, logSeverity, context) {
   };
 
   console.log("Sending to OpsGenie...");
-  console.log(JSON.stringify(postData));
-  console.log(JSON.stringify(options));
 
   var req = https.request(options, function (res) {
     res.setEncoding("utf8");
