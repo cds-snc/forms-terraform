@@ -1,15 +1,21 @@
 {
   "name": "notify_slack",
   "version": "1.0.0",
-  "description": "Lambda that notifies multiple channels",
+  "description": "Lambda that notifies Slack and triggers Opsgenie alert",
   "main": "notify_slack.js",
+  "type": "module",
   "scripts": {
-    "test": "jest"
+    "prebuild": "rm -rf dist",
+    "build": "tsc --project tsconfig.json",
+    "build:dev": "tsc --project tsconfig.json --watch",
+    "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cd ./dist && yarn install --production",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.126",
     "jest": "^29.7.0",
-    "lambda-local": "^2.1.2"
+    "lambda-local": "^2.1.2",
+    "typescript": "^5.2.2"
   }
 }

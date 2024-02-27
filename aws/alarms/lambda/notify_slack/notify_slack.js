@@ -1,30 +1,36 @@
-var https = require("https");
-var util = require("util");
-var zlib = require("zlib");
+import { Context, Handler } from "aws-lambda";
+import https from "https";
+import util from "util";
+import zlib from "zlib";
 
-function safeParseLogIncludingJSON(message) {
+/**
+ * Some log contains metadata information like `2023-07-13T13:48:30.151Z  535741e0-25a9-4c8b-a0a1-25d2b24bf1b4  INFO`
+ * which we want to ignore.
+ *
+ * @returns JSON object or false if the message is not JSON
+ */
+export const safeParseLogIncludingJSON = (message: string) => {
   try {
-    // When we get a log it contains more than just the message we want. It also contains information like `2023-07-13T13:48:30.151Z	535741e0-25a9-4c8b-a0a1-25d2b24bf1b4	INFO`.
-    const jsonPartOfLogMessage = message.slice(message.indexOf('{'));
+    const jsonPartOfLogMessage = message.slice(message.indexOf("{"));
     return JSON.parse(jsonPartOfLogMessage);
   } catch (e) {
     return false;
   }
-}
+};
 
-function getMessage(message) {
+export const getAlarmDescription = (message: string) => {
   try {
     const parsedMessage = JSON.parse(message);
     return parsedMessage.AlarmDescription ? parsedMessage.AlarmDescription : parsedMessage;
   } catch (err) {
     return message;
   }
-}
+};
 
 /**
  * @returns the severity level: [error, warning, info, alarm_reset] based on the message
  */
-function getSNSMessageSeverity(message) {
+export const getSNSMessageSeverity = (message: string) => {
   const errorMessages = ["error", "critical"];
   const warningMessages = ["warning", "failure"];
   const alarm_ok_status = '"newstatevalue":"ok"'; // This is the string that is returned when the alarm is reset
@@ -56,21 +62,20 @@ function getSNSMessageSeverity(message) {
   }
 
   return "info";
-}
+};
 
-function sendToOpsGenie(logGroup, logMessage, logSeverity, context) {
-
-  if (logSeverity !== 1 && logSeverity !== "SEV1") {
+export const sendToOpsGenie = (logGroup: string, logMessage: string, logSeverity: string) => {
+  if (logSeverity !== "1" && logSeverity !== "SEV1") {
     console.log(`Skipping sending to OpsGenie because logSeverity is not SEV1: ${logSeverity}`);
     return; // skip sending to OpsGenie
   }
 
   var postData = {
-    message: logMessage.substring(0, 130), // Truncate the message to 130 characters
-    entity: logGroup,
-    responders: [{ "id": "dbe73fd1-8bfc-4345-bc0a-36987a684d26", "type": "team" }], // Forms Team
+    message: logMessage.substring(0, 130) + "...", // Truncate the message to 130 characters as per OpsGenie's requirements
+    entity: `${logGroup}`,
+    responders: [{ id: "dbe73fd1-8bfc-4345-bc0a-36987a684d26", type: "team" }], // Forms Team
     priority: "P1",
-    description: logMessage
+    description: `Log Message: ${logMessage}`, // This is the full log message
   };
 
   var options = {
@@ -80,7 +85,7 @@ function sendToOpsGenie(logGroup, logMessage, logSeverity, context) {
     path: "/v2/alerts",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `GenieKey ${process.env.OPSGENIE_API_KEY}`,
+      Authorization: `GenieKey ${process.env.OPSGENIE_API_KEY}`,
     },
   };
 
@@ -91,7 +96,7 @@ function sendToOpsGenie(logGroup, logMessage, logSeverity, context) {
     res.on("data", function () {
       console.log(
         JSON.stringify({
-          msg: `Message successfully sent to OpsGenie... log level: ${logLevel}, log message: ${logMessage}`,
+          msg: `Message successfully sent to OpsGenie with log message: ${logMessage}`,
         })
       );
     });
@@ -107,14 +112,18 @@ function sendToOpsGenie(logGroup, logMessage, logSeverity, context) {
 
   req.write(util.format("%j", postData));
   req.end();
+};
 
-}
-
-function sendToSlack(logGroup, logMessage, logLevel, context) {
+export const sendToSlack = (
+  logGroup: string,
+  logMessage: string,
+  logLevel: string,
+  context: any
+) => {
   var environment = process.env.ENVIRONMENT || "Staging";
 
-  const logLevelAsEmojiAndColor = (logLevel) => {
-    switch (logLevel) {
+  const logLevelAsEmojiAndColor = (emojiLevel: string) => {
+    switch (emojiLevel) {
       case "danger":
       case "error":
       case "SEV1":
@@ -134,12 +143,13 @@ function sendToSlack(logGroup, logMessage, logLevel, context) {
     username: "Forms Notifier",
     text: `*${logGroup}*`,
     icon_emoji: logLevelThemeForSlack.emoji,
+    attachments: [
+      {
+        color: logLevelThemeForSlack.color,
+        text: logMessage,
+      },
+    ],
   };
-
-  postData.attachments = [{
-    color: logLevelThemeForSlack.color,
-    text: logMessage,
-  }];
 
   var options = {
     method: "POST",
@@ -168,12 +178,12 @@ function sendToSlack(logGroup, logMessage, logLevel, context) {
 
   req.write(util.format("%j", postData));
   req.end();
-}
+};
 
-exports.handler = function (input, context) {
-  if (input.awslogs) {
+export const handler: Handler = async (event: any, context: Context) => {
+  if (event.awslogs) {
     // This is a CloudWatch log event
-    var payload = Buffer.from(input.awslogs.data, "base64");
+    var payload = Buffer.from(event.awslogs.data, "base64");
     zlib.gunzip(payload, function (e, result) {
       if (e) {
         context.fail(e);
@@ -193,10 +203,14 @@ exports.handler = function (input, context) {
             ${logMessage.severity ? "\n\nSeverity level: ".concat(logMessage.severity) : ""}
             `;
             sendToSlack(parsedResult.logGroup, message, logMessage.level, context);
-            sendToOpsGenie(parsedResult.logGroup, message, logMessage.severity, context);
+            sendToOpsGenie(parsedResult.logGroup, message, logMessage.severity);
             console.log(
               JSON.stringify({
-                msg: `Event Data for ${parsedResult.logGroup}: ${JSON.stringify(logMessage, null, 2)}`,
+                msg: `Event Data for ${parsedResult.logGroup}: ${JSON.stringify(
+                  logMessage,
+                  null,
+                  2
+                )}`,
               })
             );
           } else {
@@ -214,21 +228,23 @@ exports.handler = function (input, context) {
     });
   } else {
     // This is an SNS message triggered by an AWS CloudWatch alarm
-    var message = input.Records[0].Sns.Message;
+    var message = event.Records[0].Sns.Message;
 
     const severity = getSNSMessageSeverity(message);
 
     if (severity === "alarm_reset") {
-      message = "Alarm Status now OK - " + getMessage(message);
+      message = "Alarm Status now OK - " + getAlarmDescription(message);
+    } else {
+      message = getAlarmDescription(message);
     }
 
     console.log(
       JSON.stringify({
-        msg: `Event Data for Alarms: ${input.Records[0].Sns.Message}`,
+        msg: `Event Data for Alarms: ${event.Records[0].Sns.Message}`,
       })
     );
 
     sendToSlack("CloudWatch Alarm Event", message, severity, context);
-    sendToOpsGenie("CloudWatch Alarm Event", message, severity, context);
+    sendToOpsGenie("CloudWatch Alarm Event", message, severity);
   }
 };
