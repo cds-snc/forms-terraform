@@ -1,4 +1,3 @@
-const { log } = require("console");
 var https = require("https");
 var util = require("util");
 var zlib = require("zlib");
