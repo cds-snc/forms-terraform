@@ -30,8 +30,8 @@
         "value": "${tracer_provider}"
       },
       {
-        "name": "NEXTAUTH_URL",
-        "value": "${nextauth_url}"
+        "name": "HOST_URL",
+        "value": "${host_url}"
       },
       {
         "name": "REDIS_URL",
