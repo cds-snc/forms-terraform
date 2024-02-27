@@ -109,6 +109,7 @@ inputs = {
   lb_arn                = dependency.load_balancer.outputs.lb_arn
   lb_arn_suffix         = dependency.load_balancer.outputs.lb_arn_suffix
   lb_target_group_1_arn = dependency.load_balancer.outputs.lb_target_group_1_arn
+  lb_target_group_2_arn = dependency.load_balancer.outputs.lb_target_group_2_arn
 
   sqs_reliability_deadletter_queue_arn = dependency.sqs.outputs.sqs_reliability_deadletter_queue_arn
   sqs_audit_log_deadletter_queue_arn   = dependency.sqs.outputs.sqs_audit_log_deadletter_queue_arn
