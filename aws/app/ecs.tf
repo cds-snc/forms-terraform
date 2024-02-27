@@ -32,7 +32,7 @@ data "template_file" "form_viewer_task" {
     token_secret                    = var.token_secret_arn
     database_url                    = var.database_url_secret_arn
     redis_url                       = var.redis_url
-    nextauth_url                    = "https://${var.domains[0]}"
+    host_url                        = "https://${var.domains[0]}"
     reliability_file_storage        = var.reliability_file_storage_id
     vault_file_storage              = var.vault_file_storage_id
     gc_temp_token_template_id       = var.gc_temp_token_template_id
