@@ -61,19 +61,15 @@ resource "aws_cloudwatch_metric_alarm" "ELB_5xx_error_warn" {
 resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount" {
   alarm_name          = "UnHealthyHostCount-SEV1" # SEV1 will prompt the on-call team to respond.
   alarm_description   = "ELB Health Check - UnHealthyHostCount exceed threshold."
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  threshold           = "1" # If there is at least one unhealthy host
+  comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1" # Evaluate once
-  metric_name         = "UnHealthyHostCount"
+  metric_name         = "HTTPCode_ELB_5XX_Count"
   namespace           = "AWS/ApplicationELB"
   period              = "60"           # Every minute
   statistic           = "SampleCount"  # use the number of data points during the period
+  threshold           = "1"            # If there is at least one unhealthy host
   treat_missing_data  = "notBreaching" # don't alarm if there's no data
   alarm_actions       = [var.sns_topic_alert_critical_arn]
-  dimensions = {
-    LoadBalancer = var.lb_arn_suffix
-    TargetGroup  = var.lb_target_group_1_arn
-  }
 }
 
 #
