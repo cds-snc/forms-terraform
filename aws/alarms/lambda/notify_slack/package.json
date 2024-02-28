@@ -6,10 +6,10 @@
   "type": "module",
   "scripts": {
     "prebuild": "rm -rf dist",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "build": "tsc --project tsconfig.json",
     "build:dev": "tsc --project tsconfig.json --watch",
-    "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cd ./dist && yarn install --production",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cd ./dist && yarn install --production"
   },
   "license": "MIT",
   "devDependencies": {
