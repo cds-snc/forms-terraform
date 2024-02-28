@@ -3,6 +3,29 @@ import https from "https";
 import util from "util";
 import zlib from "zlib";
 
+export const handler: Handler = async (event: any, context: Context) => {
+  console.log(JSON.stringify(event));
+  try {
+    if (event.awslogs) {
+      handleCloudWatchLogEvent(event, context);
+    } else if (event?.Records?.[0]?.Sns?.Message) {
+      handleSnsEventFromCloudWatchAlarm(event, context);
+    } else {
+      console.log("No supported event type found.");
+      sendToSlack("Unknown Event", JSON.stringify(event, null, 2), "info", context);
+    }
+
+    return {
+      statusCode: "SUCCESS",
+    };
+  } catch (error) {
+    return {
+      statusCode: "ERROR",
+      error: (error as Error).message,
+    };
+  }
+};
+
 /**
  * Some log contains metadata information like `2023-07-13T13:48:30.151Z  535741e0-25a9-4c8b-a0a1-25d2b24bf1b4  INFO`
  * which we want to ignore.
@@ -18,7 +41,7 @@ export const safeParseLogIncludingJSON = (message: string) => {
   }
 };
 
-export const getAlarmDescription = (message: string) => {
+export const getAlarmDescription = (message: string): string => {
   try {
     const parsedMessage = JSON.parse(message);
     return parsedMessage.AlarmDescription ? parsedMessage.AlarmDescription : parsedMessage;
@@ -30,7 +53,7 @@ export const getAlarmDescription = (message: string) => {
 /**
  * @returns the severity level: [error, warning, info, alarm_reset] based on the message
  */
-export const getSNSMessageSeverity = (message: string) => {
+export const getSNSMessageSeverity = (message: string): string => {
   const errorMessages = ["error", "critical"];
   const warningMessages = ["warning", "failure"];
   const alarm_ok_status = '"newstatevalue":"ok"'; // This is the string that is returned when the alarm is reset
@@ -65,9 +88,11 @@ export const getSNSMessageSeverity = (message: string) => {
 };
 
 export const sendToOpsGenie = (logGroup: string, logMessage: string, logSeverity: string) => {
-  if (logSeverity !== "1" && logSeverity !== "SEV1") {
-    console.log(`Skipping sending to OpsGenie because logSeverity is not SEV1: ${logSeverity}`);
-    return; // skip sending to OpsGenie
+  if (logSeverity != "1" && logSeverity !== "SEV1") {
+    console.log(
+      `Skipping sending to OpsGenie because logSeverity is not SEV1 or 1: ${logSeverity}`
+    );
+    return;
   }
 
   var postData = {
@@ -180,71 +205,69 @@ export const sendToSlack = (
   req.end();
 };
 
-export const handler = async (event, context) => {
-  if (event.awslogs) {
-    // This is a CloudWatch log event
-    var payload = Buffer.from(event.awslogs.data, "base64");
-    zlib.gunzip(payload, function (e, result) {
-      if (e) {
-        context.fail(e);
-      } else {
-        const parsedResult = JSON.parse(result.toString());
+export const handleCloudWatchLogEvent = (event: any, context: Context) => {
+  var payload = Buffer.from(event.awslogs.data, "base64");
+  zlib.gunzip(payload, function (error, result) {
+    if (error) {
+      throw error;
+    } else {
+      const parsedResult = JSON.parse(result.toString());
 
-        // We can get events with a `CONTROL_MESSAGE` type. It happens when CloudWatch checks if the Lambda is reachable.
-        if (parsedResult.messageType !== "DATA_MESSAGE") return;
+      // We can get events with a `CONTROL_MESSAGE` type. It happens when CloudWatch checks if the Lambda is reachable.
+      if (parsedResult.messageType === "CONTROL_MESSAGE") return;
 
-        for (const log of parsedResult.logEvents) {
-          const logMessage = safeParseLogIncludingJSON(log.message);
-          // If logMessage is false, then the message is not JSON
-          if (logMessage) {
-            const message = `
+      for (const log of parsedResult.logEvents) {
+        const logMessage = safeParseLogIncludingJSON(log.message);
+        // If logMessage is false, then the message is not JSON
+        if (logMessage) {
+          const message = `
             ${logMessage.msg}
             ${logMessage.error ? "\n".concat(logMessage.error) : ""}
             ${logMessage.severity ? "\n\nSeverity level: ".concat(logMessage.severity) : ""}
             `;
-            sendToSlack(parsedResult.logGroup, message, logMessage.level, context);
-            sendToOpsGenie(parsedResult.logGroup, message, logMessage.severity);
-            console.log(
-              JSON.stringify({
-                msg: `Event Data for ${parsedResult.logGroup}: ${JSON.stringify(
-                  logMessage,
-                  null,
-                  2
-                )}`,
-              })
-            );
-          } else {
-            // These are unhandled errors from the GCForms app only
-            sendToSlack(parsedResult.logGroup, log.message, "error", context);
+          sendToSlack(parsedResult.logGroup, message, logMessage.level, context);
+          sendToOpsGenie(parsedResult.logGroup, message, logMessage.severity);
+          console.log(
+            JSON.stringify({
+              msg: `Event Data for ${parsedResult.logGroup}: ${JSON.stringify(
+                logMessage,
+                null,
+                2
+              )}`,
+            })
+          );
+        } else {
+          // These are unhandled errors from the GCForms app only
+          sendToSlack(parsedResult.logGroup, log.message, "error", context);
 
-            console.log(
-              JSON.stringify({
-                msg: `Event Data for ${parsedResult.logGroup}: ${log.message}`,
-              })
-            );
-          }
+          console.log(
+            JSON.stringify({
+              msg: `Event Data for ${parsedResult.logGroup}: ${log.message}`,
+            })
+          );
         }
       }
-    });
-  } else {
-    // This is an SNS message triggered by an AWS CloudWatch alarm
-    var message = event.Records[0].Sns.Message;
-
-    const severity = getSNSMessageSeverity(message);
-
-    if (severity === "alarm_reset") {
-      message = "Alarm Status now OK - " + getAlarmDescription(message);
-    } else {
-      message = getAlarmDescription(message);
     }
+  });
+};
 
-    console.log(
-      JSON.stringify({
-        msg: `Event Data for Alarms: ${event.Records[0].Sns.Message}`,
-      })
-    );
+export const handleSnsEventFromCloudWatchAlarm = (event: any, context: Context) => {
+  var message = event.Records[0].Sns.Message;
 
-    sendToSlack("CloudWatch Alarm Event", message, severity, context);
-    sendToOpsGenie("CloudWatch Alarm Event", message, severity);
+  const severity = getSNSMessageSeverity(message);
+
+  if (severity === "alarm_reset") {
+    message = "Alarm Status now OK - " + getAlarmDescription(message);
+  } else {
+    message = getAlarmDescription(message);
   }
+
+  console.log(
+    JSON.stringify({
+      msg: `Event Data for Alarms: ${event.Records[0].Sns.Message}`,
+    })
+  );
+
+  sendToSlack("CloudWatch Alarm Event", message, severity, context);
+  sendToOpsGenie("CloudWatch Alarm Event", message, severity);
 };
