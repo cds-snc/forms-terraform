@@ -83,6 +83,16 @@ variable "lb_arn_suffix" {
   type        = string
 }
 
+variable "lb_target_group_1_arn" {
+  description = "Load balancer target group 1 ARN"
+  type        = string
+}
+
+variable "lb_target_group_2_arn" {
+  description = "Load balancer target group 2 ARN"
+  type        = string
+}
+
 variable "slack_webhook" {
   description = "The Slack webhook path that notifications are sent to (posted to https://hooks.slack.com/)"
   type        = string
