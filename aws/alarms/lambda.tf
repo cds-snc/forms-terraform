@@ -3,7 +3,7 @@
 #
 data "archive_file" "notify_slack" {
   type        = "zip"
-  source_file = "lambda/notify_slack/notify_slack.js"
+  source_file = "lambda/notify_slack/notify_slack.ts"
   output_path = "/tmp/notify_slack.zip"
 }
 

@@ -180,7 +180,7 @@ export const sendToSlack = (
   req.end();
 };
 
-export const handler: Handler = async (event: any, context: Context) => {
+export const handler = async (event, context) => {
   if (event.awslogs) {
     // This is a CloudWatch log event
     var payload = Buffer.from(event.awslogs.data, "base64");
