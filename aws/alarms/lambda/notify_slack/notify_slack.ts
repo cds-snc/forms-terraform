@@ -19,6 +19,7 @@ export const handler: Handler = async (event: any, context: Context) => {
       statusCode: "SUCCESS",
     };
   } catch (error) {
+    console.log("Handler Error: ", error);
     return {
       statusCode: "ERROR",
       error: (error as Error).message,
@@ -206,7 +207,9 @@ export const sendToSlack = (
 };
 
 export const handleCloudWatchLogEvent = (event: any, context: Context) => {
-  var payload = Buffer.from(event.awslogs.data, "base64");
+  console.log("Received CloudWatch logs event: ", JSON.stringify(event));
+  var payload = Buffer.from(event.awslogs.data as string, "base64");
+
   zlib.gunzip(payload, function (error, result) {
     if (error) {
       throw error;
