@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.7.0](https://github.com/cds-snc/forms-terraform/compare/v3.6.0...v3.7.0) (2024-02-29)
+
+
+### Features
+
+* enable file scanning on Vault S3 bucket ([#611](https://github.com/cds-snc/forms-terraform/issues/611)) ([a44318c](https://github.com/cds-snc/forms-terraform/commit/a44318ca35a03c7484fb82d6b29f615dffcd66a3))
+
+
+### Bug Fixes
+
+* cloudwatch alarm configuration for unhealthy host ([#604](https://github.com/cds-snc/forms-terraform/issues/604)) ([dbdbba1](https://github.com/cds-snc/forms-terraform/commit/dbdbba11c84a19d0ea521ba3bb341a2df4009c97))
+
+
+### Miscellaneous Chores
+
+* Rename next auth url in preperation for next auth upgrade ([f16e080](https://github.com/cds-snc/forms-terraform/commit/f16e080571b73e6f9800ae3ad69670fb93bf1701))
+
 ## [3.6.0](https://github.com/cds-snc/forms-terraform/compare/v3.5.2...v3.6.0) (2024-02-27)
 
 
