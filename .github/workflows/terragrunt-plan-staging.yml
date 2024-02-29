@@ -130,6 +130,9 @@ jobs:
             s3:
               - 'aws/s3/**'
               - 'env/cloud/s3/**'
+            file_scanning:
+              - 'aws/file_scanning/**'
+              - 'env/cloud/file_scanning/**'
             secrets:
               - 'aws/secrets/**'
               - 'env/cloud/secrets/**'
@@ -208,6 +211,17 @@ jobs:
           directory: "env/cloud/s3"
           comment-delete: "true"
           comment-title: "Staging: s3"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      # Depends on S3
+      - name: Terragrunt plan file_scanning
+        if: ${{ steps.filter.outputs.file_scanning == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/file_scanning"
+          comment-delete: "true"
+          comment-title: "Staging: file_scanning"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 

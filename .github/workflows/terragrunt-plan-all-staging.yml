@@ -116,6 +116,14 @@ jobs:
           comment: "false"
           terragrunt: "true"
 
+      # Depends on S3
+      - name: Terragrunt plan file_scanning
+        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        with:
+          directory: "env/cloud/file_scanning"
+          comment: "false"
+          terragrunt: "true"
+
       # Depends on kms
       - name: Terragrunt plan sns
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
