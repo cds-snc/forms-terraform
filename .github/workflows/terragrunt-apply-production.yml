@@ -99,6 +99,11 @@ jobs:
         working-directory: env/cloud/s3
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      # Depends on S3
+      - name: Terragrunt apply file_scanning
+        working-directory: env/cloud/file_scanning
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
       # Depends on kms
       - name: Terragrunt apply sns
         working-directory: env/cloud/sns

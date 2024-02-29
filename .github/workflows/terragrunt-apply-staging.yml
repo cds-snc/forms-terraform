@@ -126,6 +126,9 @@ jobs:
             s3:
               - 'aws/s3/**'
               - 'env/cloud/s3/**'
+            file_scanning:
+              - 'aws/file_scanning/**'
+              - 'env/cloud/file_scanning/**'
             secrets:
               - 'aws/secrets/**'
               - 'env/cloud/secrets/**'
@@ -170,6 +173,12 @@ jobs:
       - name: Terragrunt apply s3
         if: ${{ steps.filter.outputs.s3 == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/cloud/s3
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      # Depends on S3
+      - name: Terragrunt apply file_scanning
+        if: ${{ steps.filter.outputs.file_scanning == 'true' || steps.filter.outputs.common == 'true' }}
+        working-directory: env/cloud/file_scanning
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on kms
