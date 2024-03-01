@@ -156,14 +156,14 @@ jobs:
         run: ./aws/lambdas/code/deps.sh delete
 
       - name: Install Lambda Alarm deps
-        run: ./aws/alarms/deps.sh install
+        run: ./aws/alarms/lambda/deps.sh install
 
       - name: Terragrunt apply alarms
         working-directory: env/cloud/alarms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Remove Lambda deps
-        run: ./aws/alarms/deps.sh delete
+        run: ./aws/alarms/lambda/deps.sh delete
 
       - name: Notify Slack on failure
         if: failure()

@@ -334,6 +334,10 @@ jobs:
         if: ${{ steps.filter.outputs.lambdas == 'true' || steps.filter.outputs.common == 'true' }}
         run: ./aws/lambdas/code/deps.sh delete
 
+      - name: Install Lambda Alarms deps
+        if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/alarms/lambda/deps.sh install
+
       - name: Terragrunt plan alarms
         if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
@@ -343,6 +347,10 @@ jobs:
           comment-title: "Staging: alarms"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
+
+      - name: Remove Lambda Alarms deps
+        if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/alarms/lambda/deps.sh delete
 
       - name: Build Load Testing Lambda Container
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
