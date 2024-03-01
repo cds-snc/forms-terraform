@@ -1,18 +1,18 @@
-import { Context, Handler } from "aws-lambda";
+import { Handler } from "aws-lambda";
 import https from "https";
 import util from "util";
 import zlib from "zlib";
 
-export const handler: Handler = async (event: any, context: Context) => {
+export const handler: Handler = async (event: any) => {
   console.log(JSON.stringify(event));
   try {
     if (event.awslogs) {
-      handleCloudWatchLogEvent(event, context);
+      handleCloudWatchLogEvent(event);
     } else if (event?.Records?.[0]?.Sns?.Message) {
-      handleSnsEventFromCloudWatchAlarm(event, context);
+      handleSnsEventFromCloudWatchAlarm(event);
     } else {
       console.log("No supported event type found.");
-      sendToSlack("Unknown Event", JSON.stringify(event, null, 2), "info", context);
+      sendToSlack("Unknown Event", JSON.stringify(event, null, 2), "info");
     }
 
     return {
@@ -140,12 +140,7 @@ export const sendToOpsGenie = (logGroup: string, logMessage: string, logSeverity
   req.end();
 };
 
-export const sendToSlack = (
-  logGroup: string,
-  logMessage: string,
-  logLevel: string,
-  context: any
-) => {
+export const sendToSlack = (logGroup: string, logMessage: string, logLevel: string) => {
   var environment = process.env.ENVIRONMENT || "Staging";
 
   const logLevelAsEmojiAndColor = (emojiLevel: string) => {
@@ -187,8 +182,10 @@ export const sendToSlack = (
   var req = https.request(options, function (res) {
     res.setEncoding("utf8");
     res.on("data", function () {
-      context.succeed(
-        `Message successfully sent to Slack... log level: ${logLevel}, log message: ${logMessage}`
+      console.log(
+        JSON.stringify({
+          msg: `Message successfully sent to Slack... log level: ${logLevel}, log message: ${logMessage}`,
+        })
       );
     });
   });
@@ -199,14 +196,13 @@ export const sendToSlack = (
         msg: `problem with request: ${e.message}`,
       })
     );
-    context.fail(e);
   });
 
   req.write(util.format("%j", postData));
   req.end();
 };
 
-export const handleCloudWatchLogEvent = (event: any, context: Context) => {
+export const handleCloudWatchLogEvent = (event: any) => {
   console.log("Received CloudWatch logs event: ", JSON.stringify(event));
   var payload = Buffer.from(event.awslogs.data as string, "base64");
 
@@ -228,7 +224,7 @@ export const handleCloudWatchLogEvent = (event: any, context: Context) => {
             ${logMessage.error ? "\n".concat(logMessage.error) : ""}
             ${logMessage.severity ? "\n\nSeverity level: ".concat(logMessage.severity) : ""}
             `;
-          sendToSlack(parsedResult.logGroup, message, logMessage.level, context);
+          sendToSlack(parsedResult.logGroup, message, logMessage.level);
           sendToOpsGenie(parsedResult.logGroup, message, logMessage.severity);
           console.log(
             JSON.stringify({
@@ -241,7 +237,7 @@ export const handleCloudWatchLogEvent = (event: any, context: Context) => {
           );
         } else {
           // These are unhandled errors from the GCForms app only
-          sendToSlack(parsedResult.logGroup, log.message, "error", context);
+          sendToSlack(parsedResult.logGroup, log.message, "error");
 
           console.log(
             JSON.stringify({
@@ -254,7 +250,7 @@ export const handleCloudWatchLogEvent = (event: any, context: Context) => {
   });
 };
 
-export const handleSnsEventFromCloudWatchAlarm = (event: any, context: Context) => {
+export const handleSnsEventFromCloudWatchAlarm = (event: any) => {
   var message = event.Records[0].Sns.Message;
 
   const severity = getSNSMessageSeverity(message);
@@ -271,6 +267,6 @@ export const handleSnsEventFromCloudWatchAlarm = (event: any, context: Context) 
     })
   );
 
-  sendToSlack("CloudWatch Alarm Event", message, severity, context);
+  sendToSlack("CloudWatch Alarm Event", message, severity);
   sendToOpsGenie("CloudWatch Alarm Event", message, severity);
 };

@@ -2,7 +2,7 @@
   "name": "notify_slack",
   "version": "1.0.0",
   "description": "Lambda that notifies Slack and triggers Opsgenie alert",
-  "main": "notify_slack.ts",
+  "main": "notify_slack.js",
   "type": "module",
   "scripts": {
     "prebuild": "rm -rf dist",
@@ -14,9 +14,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.126",
-    "@types/jest": "^29.5.12",
     "jest": "^29.7.0",
-    "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.2.2"
   }

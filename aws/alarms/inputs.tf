@@ -144,3 +144,13 @@ variable "sns_topic_alert_ok_us_east_arn" {
   description = "SNS topic ARN that ok alerts are sent to (US East)"
   type        = string
 }
+
+variable "lambda_code_id" {
+  description = "S3 bucket id for lambda code"
+  type        = string
+}
+
+variable "lambda_code_arn" {
+  description = "S3 bucket arn for lambda code"
+  type        = string
+}

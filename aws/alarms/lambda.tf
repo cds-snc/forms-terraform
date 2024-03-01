@@ -1,22 +1,30 @@
 #
 # Lambda - Notify Slack and OpsGenie
 #
-data "archive_file" "notify_slack" {
+data "archive_file" "notify_slack_code" {
   type        = "zip"
-  source_file = "lambda/notify_slack/notify_slack.ts"
-  output_path = "/tmp/notify_slack.zip"
+  source_dir  = "lambda/notify_slack/dist"
+  output_path = "/tmp/notify_slack_code.zip"
+}
+resource "aws_s3_object" "notify_slack_code_code" {
+  bucket      = var.lambda_code_id
+  key         = "notify_slack_code_code"
+  source      = data.archive_file.notify_slack_code_code.output_path
+  source_hash = data.archive_file.notify_slack_code_code.output_base64sha256
 }
 
 #tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "notify_slack" {
-  filename      = "/tmp/notify_slack.zip"
-  function_name = "NotifySlack"
-  role          = aws_iam_role.notify_slack_lambda.arn
-  handler       = "notify_slack.handler"
+  s3_bucket         = aws_s3_object.notify_slack_code.bucket
+  s3_key            = aws_s3_object.notify_slack_code.key
+  s3_object_version = aws_s3_object.notify_slack_code.version_id
+  function_name     = "NotifySlack"
+  role              = aws_iam_role.notify_slack_lambda.arn
+  handler           = "notify_slack.handler"
 
-  source_code_hash = data.archive_file.notify_slack.output_base64sha256
-
-  runtime = "nodejs18.x"
+  source_code_hash = data.archive_file.notify_slack_code.output_base64sha256
+  runtime          = "nodejs18.x"
+  timeout          = 300
 
   environment {
     variables = {
@@ -29,8 +37,6 @@ resource "aws_lambda_function" "notify_slack" {
   tracing_config {
     mode = "PassThrough"
   }
-
-
 }
 
 #
