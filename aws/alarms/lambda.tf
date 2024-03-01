@@ -6,11 +6,11 @@ data "archive_file" "notify_slack_code" {
   source_dir  = "lambda/notify_slack/dist"
   output_path = "/tmp/notify_slack_code.zip"
 }
-resource "aws_s3_object" "notify_slack_code_code" {
+resource "aws_s3_object" "notify_slack_code" {
   bucket      = var.lambda_code_id
-  key         = "notify_slack_code_code"
-  source      = data.archive_file.notify_slack_code_code.output_path
-  source_hash = data.archive_file.notify_slack_code_code.output_base64sha256
+  key         = "notify_slack_code"
+  source      = data.archive_file.notify_slack_code.output_path
+  source_hash = data.archive_file.notify_slack_code.output_base64sha256
 }
 
 #tfsec:ignore:aws-lambda-enable-tracing
