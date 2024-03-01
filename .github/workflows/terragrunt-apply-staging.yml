@@ -236,10 +236,18 @@ jobs:
         if: ${{ steps.filter.outputs.lambdas == 'true' || steps.filter.outputs.common == 'true' }}
         run: ./aws/lambdas/code/deps.sh delete
 
+      - name: Install Lambda Alarm deps
+        if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/cognito/lambda/deps.sh install
+
       - name: Terragrunt apply alarms
         if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/cloud/alarms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+        - name: Remove Lambda Alarm deps
+        if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
+        run: ./aws/cognito/lambda/deps.sh delete
 
         # Load Testing - Depends on ECR
       - name: Build Load Testing Lambda Container
