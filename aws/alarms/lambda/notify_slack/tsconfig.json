@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
     "lib": ["es2023"],
-    "module": "ES2022",
+    "module": "node16",
     "target": "es2022",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "Bundler",
+    "moduleResolution": "node16",
     "typeRoots": ["./types", "./node_modules/@types"],
     "preserveConstEnums": true,
     "sourceMap": false,
