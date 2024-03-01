@@ -1,13 +1,13 @@
 import { Handler } from "aws-lambda";
 import https from "https";
 import util from "util";
-import zlib from "zlib";
+import { gunzip } from "zlib";
 
 export const handler: Handler = async (event: any) => {
   console.log(JSON.stringify(event));
   try {
     if (event.awslogs) {
-      handleCloudWatchLogEvent(event);
+      await handleCloudWatchLogEvent(event);
     } else if (event?.Records?.[0]?.Sns?.Message) {
       handleSnsEventFromCloudWatchAlarm(event);
     } else {
@@ -202,51 +202,54 @@ export const sendToSlack = (logGroup: string, logMessage: string, logLevel: stri
   req.end();
 };
 
-export const handleCloudWatchLogEvent = (event: any) => {
+export const handleCloudWatchLogEvent = async (event: any) => {
   console.log("Received CloudWatch logs event: ", JSON.stringify(event));
   var payload = Buffer.from(event.awslogs.data as string, "base64");
 
-  zlib.gunzip(payload, function (error, result) {
-    if (error) {
-      throw error;
-    } else {
-      const parsedResult = JSON.parse(result.toString());
+  return new Promise<void>(function (resolve, reject) {
+    gunzip(payload, function (error, result) {
+      if (error) {
+        reject(error);
+      } else {
+        const parsedResult = JSON.parse(result.toString());
 
-      // We can get events with a `CONTROL_MESSAGE` type. It happens when CloudWatch checks if the Lambda is reachable.
-      if (parsedResult.messageType === "CONTROL_MESSAGE") return;
+        // We can get events with a `CONTROL_MESSAGE` type. It happens when CloudWatch checks if the Lambda is reachable.
+        if (parsedResult.messageType === "CONTROL_MESSAGE") return;
 
-      for (const log of parsedResult.logEvents) {
-        const logMessage = safeParseLogIncludingJSON(log.message);
-        // If logMessage is false, then the message is not JSON
-        if (logMessage) {
-          const message = `
-            ${logMessage.msg}
-            ${logMessage.error ? "\n".concat(logMessage.error) : ""}
-            ${logMessage.severity ? "\n\nSeverity level: ".concat(logMessage.severity) : ""}
-            `;
-          sendToSlack(parsedResult.logGroup, message, logMessage.level);
-          sendToOpsGenie(parsedResult.logGroup, message, logMessage.severity);
-          console.log(
-            JSON.stringify({
-              msg: `Event Data for ${parsedResult.logGroup}: ${JSON.stringify(
-                logMessage,
-                null,
-                2
-              )}`,
-            })
-          );
-        } else {
-          // These are unhandled errors from the GCForms app only
-          sendToSlack(parsedResult.logGroup, log.message, "error");
+        for (const log of parsedResult.logEvents) {
+          const logMessage = safeParseLogIncludingJSON(log.message);
+          // If logMessage is false, then the message is not JSON
+          if (logMessage) {
+            const message = `
+              ${logMessage.msg}
+              ${logMessage.error ? "\n".concat(logMessage.error) : ""}
+              ${logMessage.severity ? "\n\nSeverity level: ".concat(logMessage.severity) : ""}
+              `;
+            sendToSlack(parsedResult.logGroup, message, logMessage.level);
+            sendToOpsGenie(parsedResult.logGroup, message, logMessage.severity);
+            console.log(
+              JSON.stringify({
+                msg: `Event Data for ${parsedResult.logGroup}: ${JSON.stringify(
+                  logMessage,
+                  null,
+                  2
+                )}`,
+              })
+            );
+          } else {
+            // These are unhandled errors from the GCForms app only
+            sendToSlack(parsedResult.logGroup, log.message, "error");
 
-          console.log(
-            JSON.stringify({
-              msg: `Event Data for ${parsedResult.logGroup}: ${log.message}`,
-            })
-          );
+            console.log(
+              JSON.stringify({
+                msg: `Event Data for ${parsedResult.logGroup}: ${log.message}`,
+              })
+            );
+          }
         }
+        resolve();
       }
-    }
+    });
   });
 };
 
