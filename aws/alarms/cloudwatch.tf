@@ -58,18 +58,40 @@ resource "aws_cloudwatch_metric_alarm" "ELB_5xx_error_warn" {
   alarm_actions       = [var.sns_topic_alert_warning_arn]
 }
 
-resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount" {
-  alarm_name          = "UnHealthyHostCount-SEV1" # SEV1 will prompt the on-call team to respond.
-  alarm_description   = "ELB Health Check - UnHealthyHostCount exceed threshold."
-  comparison_operator = "GreaterThanThreshold"
+resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount-TargetGroup1" {
+  alarm_name          = "UnHealthyHostCount-TargetGroup1-SEV1" # SEV1 will prompt the on-call team to respond.
+  alarm_description   = "ELB Health Check - UnHealthyHostCount exceed threshold for TargetGroup1."
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  threshold           = "1" # If there is at least one unhealthy host
   evaluation_periods  = "1" # Evaluate once
-  metric_name         = "HTTPCode_ELB_5XX_Count"
+  metric_name         = "UnHealthyHostCount"
   namespace           = "AWS/ApplicationELB"
   period              = "60"           # Every minute
   statistic           = "SampleCount"  # use the number of data points during the period
-  threshold           = "1"            # If there is at least one unhealthy host
   treat_missing_data  = "notBreaching" # don't alarm if there's no data
   alarm_actions       = [var.sns_topic_alert_critical_arn]
+  dimensions = {
+    LoadBalancer = var.lb_arn_suffix
+    TargetGroup  = var.lb_target_group_1_arn
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount-TargetGroup2" {
+  alarm_name          = "UnHealthyHostCount-TargetGroup2-SEV1" # SEV1 will prompt the on-call team to respond.
+  alarm_description   = "ELB Health Check - UnHealthyHostCount exceed threshold for TargetGroup2."
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  threshold           = "1" # If there is at least one unhealthy host
+  evaluation_periods  = "1" # Evaluate once
+  metric_name         = "UnHealthyHostCount"
+  namespace           = "AWS/ApplicationELB"
+  period              = "60"           # Every minute
+  statistic           = "SampleCount"  # use the number of data points during the period
+  treat_missing_data  = "notBreaching" # don't alarm if there's no data
+  alarm_actions       = [var.sns_topic_alert_critical_arn]
+  dimensions = {
+    LoadBalancer = var.lb_arn_suffix
+    TargetGroup  = var.lb_target_group_2_arn
+  }
 }
 
 #
