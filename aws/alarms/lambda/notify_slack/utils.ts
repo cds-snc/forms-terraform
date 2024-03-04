@@ -40,7 +40,6 @@ export const sendToSlack = (logGroup: string, logMessage: string, logLevel: stri
     path: process.env.SLACK_WEBHOOK,
   };
 
-  console.log("Sending to Slack...");
   var req = https.request(options, function (res) {
     res.setEncoding("utf8");
     res.on("data", function () {
@@ -62,6 +61,8 @@ export const sendToSlack = (logGroup: string, logMessage: string, logLevel: stri
 
   req.write(util.format("%j", postData));
   req.end();
+
+  return true;
 };
 
 export const sendToOpsGenie = (logGroup: string, logMessage: string, logSeverity: string) => {
@@ -69,7 +70,7 @@ export const sendToOpsGenie = (logGroup: string, logMessage: string, logSeverity
     console.log(
       `Skipping sending to OpsGenie because logSeverity is not SEV1 or 1: ${logSeverity}`
     );
-    return;
+    return false;
   }
 
   var postData = {
@@ -114,4 +115,6 @@ export const sendToOpsGenie = (logGroup: string, logMessage: string, logSeverity
 
   req.write(util.format("%j", postData));
   req.end();
+
+  return true;
 };

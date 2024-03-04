@@ -254,7 +254,7 @@ jobs:
         working-directory: env/cloud/alarms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-        - name: Remove Lambda Alarm deps
+      - name: Remove Lambda Alarm deps
         if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
         run: ./aws/alarms/lambda/deps.sh delete
 
