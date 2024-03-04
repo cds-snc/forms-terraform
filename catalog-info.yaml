@@ -8,4 +8,4 @@ metadata:
 spec:
   type: website
   lifecycle: experimental
-  owner: forms-dev-admins
+  owner: group:cds-snc/forms-dev-admin
