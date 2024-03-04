@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: forms-terraform
+  description: Infrastructure as Code for the GC Forms environment
+  labels:
+    license: MIT
+spec:
+  type: website
+  lifecycle: experimental
+  owner: group:cds-snc/forms-dev-admin
