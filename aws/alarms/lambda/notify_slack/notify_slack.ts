@@ -5,9 +5,9 @@ export const handler = async (event: any) => {
   console.log(JSON.stringify(event));
   try {
     if (event.awslogs) {
-      await handleCloudWatchLogEvent(event);
+      await handleCloudWatchLogEvent(event.awslogs.data);
     } else if (event?.Records?.[0]?.Sns?.Message) {
-      handleSnsEventFromCloudWatchAlarm(event);
+      handleSnsEventFromCloudWatchAlarm(event.Records[0].Sns.Message);
     } else {
       console.log("No supported event type found.");
       sendToSlack("Unknown Event", JSON.stringify(event, null, 2), "info");
@@ -61,7 +61,7 @@ export const getSNSMessageSeverity = (message: string): string => {
 
   if (message.indexOf("sev1") != -1) return "SEV1";
 
-  for (var errorMessagesItem in errorMessages) {
+  for (const errorMessagesItem in errorMessages) {
     if (
       message.indexOf(errorMessages[errorMessagesItem]) != -1 &&
       message.indexOf(alarm_ok_status) == -1 // is not an OK status
@@ -72,7 +72,7 @@ export const getSNSMessageSeverity = (message: string): string => {
     }
   }
 
-  for (var warningMessagesItem in warningMessages) {
+  for (const warningMessagesItem in warningMessages) {
     if (
       message.indexOf(warningMessages[warningMessagesItem]) != -1 &&
       message.indexOf(alarm_ok_status) == -1 // is not an OK status
@@ -86,9 +86,9 @@ export const getSNSMessageSeverity = (message: string): string => {
   return "info";
 };
 
-export const handleCloudWatchLogEvent = async (event: any) => {
-  console.log("Received CloudWatch logs event: ", JSON.stringify(event));
-  var payload = Buffer.from(event.awslogs.data as string, "base64");
+export const handleCloudWatchLogEvent = async (logData: string) => {
+  console.log("Received CloudWatch logs event: ", JSON.stringify(logData));
+  const payload = Buffer.from(logData, "base64");
 
   return new Promise<void>(function (resolve, reject) {
     gunzip(payload, function (error, result) {
@@ -98,7 +98,7 @@ export const handleCloudWatchLogEvent = async (event: any) => {
         const parsedResult = JSON.parse(result.toString());
 
         // We can get events with a `CONTROL_MESSAGE` type. It happens when CloudWatch checks if the Lambda is reachable.
-        if (parsedResult.messageType === "CONTROL_MESSAGE") return;
+        if (parsedResult.messageType !== "DATA_MESSAGE") resolve();
 
         for (const log of parsedResult.logEvents) {
           const logMessage = safeParseLogIncludingJSON(log.message);
@@ -137,8 +137,12 @@ export const handleCloudWatchLogEvent = async (event: any) => {
   });
 };
 
-export const handleSnsEventFromCloudWatchAlarm = (event: any) => {
-  var message = event.Records[0].Sns.Message;
+export const handleSnsEventFromCloudWatchAlarm = (message: string) => {
+  console.log(
+    JSON.stringify({
+      msg: `Event Data for Alarms: ${message}`,
+    })
+  );
 
   const severity = getSNSMessageSeverity(message);
 
@@ -147,12 +151,6 @@ export const handleSnsEventFromCloudWatchAlarm = (event: any) => {
   } else {
     message = getAlarmDescription(message);
   }
-
-  console.log(
-    JSON.stringify({
-      msg: `Event Data for Alarms: ${event.Records[0].Sns.Message}`,
-    })
-  );
 
   sendToSlack("CloudWatch Alarm Event", message, severity);
   sendToOpsGenie("CloudWatch Alarm Event", message, severity);

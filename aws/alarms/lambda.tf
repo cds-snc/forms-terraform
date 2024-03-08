@@ -88,8 +88,24 @@ resource "aws_lambda_permission" "notify_slack_ok_us_east" {
 resource "aws_iam_role" "notify_slack_lambda" {
   name               = "NotifySlackLambda"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
+}
 
+data "aws_iam_policy_document" "lambda_s3" {
+  statement {
+    effect = "Allow"
 
+    actions = [
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:ListBucket"
+    ]
+
+    resources = [
+      var.lambda_code_arn,
+      "${var.lambda_code_arn}/*"
+    ]
+  }
 }
 
 data "aws_iam_policy_document" "lambda_assume_policy" {
