@@ -1,10 +1,10 @@
 version: "3.8"
 volumes:
-  localstack_data:
+  localstack:
 services:
   localstack:
     container_name: "GCForms_LocalStack"
-    image: localstack/localstack:latest
+    image: localstack/localstack-pro:latest
     ports:
       - "127.0.0.1:4566:4566" # LocalStack Gateway
       - "127.0.0.1:4510-4559:4510-4559" # external services port range
@@ -15,9 +15,13 @@ services:
       - LAMBDA_IGNORE_ARCHITECTURE=1
       - DYNAMODB_SHARE_DB=1
       - DOCKER_HOST=unix:///var/run/docker.sock
+      - PERSISTENCE=1
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+      - SNAPSHOT_LOAD_STRATEGY=ON_STARTUP
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "localstack_data:/var/lib/localstack" # mount Docker volume
+      - /var/run/docker.sock:/var/run/docker.sock
+      - localstack:/var/lib/localstack"
+
   db:
     container_name: "GCForms_DB"
     image: postgres:13-alpine
