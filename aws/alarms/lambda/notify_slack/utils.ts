@@ -74,7 +74,7 @@ export const sendToOpsGenie = (logGroup: string, logMessage: string, logSeverity
   }
 
   var postData = {
-    message: logMessage.substring(0, 130) + "...", // Truncate the message to 130 characters as per OpsGenie's requirements
+    message: logMessage.length > 130 ? logMessage.substring(0, 126) + "..." : logMessage, // Truncate the message to 130 characters as per OpsGenie's requirements
     entity: `${logGroup}`,
     responders: [{ id: "dbe73fd1-8bfc-4345-bc0a-36987a684d26", type: "team" }], // Forms Team
     priority: "P1",
