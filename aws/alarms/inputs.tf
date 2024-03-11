@@ -83,13 +83,13 @@ variable "lb_arn_suffix" {
   type        = string
 }
 
-variable "lb_target_group_1_arn" {
-  description = "Load balancer target group 1 ARN"
+variable "lb_target_group_1_arn_suffix" {
+  description = "Load balancer target group 1 ARN suffix, used by response time alarms"
   type        = string
 }
 
-variable "lb_target_group_2_arn" {
-  description = "Load balancer target group 2 ARN"
+variable "lb_target_group_2_arn_suffix" {
+  description = "Load balancer target group 2 ARN suffix, used by response time alarms"
   type        = string
 }
 

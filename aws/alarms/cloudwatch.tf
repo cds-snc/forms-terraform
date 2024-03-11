@@ -90,7 +90,7 @@ resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount-TargetGroup2" {
   alarm_actions       = [var.sns_topic_alert_critical_arn]
   dimensions = {
     LoadBalancer = var.lb_arn_suffix
-    TargetGroup  = var.lb_target_group_2_arn
+    TargetGroup  = var.lb_target_group_2_arn_suffix
   }
 }
 
