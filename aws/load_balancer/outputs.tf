@@ -18,9 +18,14 @@ output "lb_target_group_1_arn" {
   value       = aws_lb_target_group.form_viewer_1.arn
 }
 
-output "lb_target_group_2_arn" {
-  description = "Load balancer target group 2 ARN"
-  value       = aws_lb_target_group.form_viewer_2.arn
+output "lb_target_group_1_arn_suffix" {
+  description = "Load balancer target group 1 ARN suffix for use with CloudWatch Alarm"
+  value       = aws_lb_target_group.form_viewer_1.arn_suffix
+}
+
+output "lb_target_group_2_arn_suffix" {
+  description = "Load balancer target group 2 ARN suffix for use with CloudWatch Alarm"
+  value       = aws_lb_target_group.form_viewer_2.arn_suffix
 }
 
 output "lb_target_group_1_name" {
