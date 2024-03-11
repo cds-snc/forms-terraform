@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../hosted_zone", "../kms", "../load_balancer", "../sqs", "../app", "../sns", "../lambdas"]
+  paths = ["../hosted_zone", "../kms", "../load_balancer", "../sqs", "../app", "../sns", "../lambdas", "../s3"]
 }
 
 locals {
@@ -98,6 +98,16 @@ dependency "sns" {
   }
 }
 
+dependency "s3" {
+  config_path                             = "../s3"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    lambda_code_arn = "arn:aws:s3:::forms-staging-lambda-code"
+    lambda_code_id  = "forms-staging-lambda-code"
+  }
+}
+
 inputs = {
   threshold_ecs_cpu_utilization_high    = "50"
   threshold_ecs_memory_utilization_high = "50"
@@ -135,6 +145,10 @@ inputs = {
   sns_topic_alert_ok_arn              = dependency.sns.outputs.sns_topic_alert_ok_arn
   sns_topic_alert_warning_us_east_arn = dependency.sns.outputs.sns_topic_alert_warning_us_east_arn
   sns_topic_alert_ok_us_east_arn      = dependency.sns.outputs.sns_topic_alert_ok_us_east_arn
+  
+  lambda_code_arn              = dependency.s3.outputs.lambda_code_arn
+  lambda_code_id               = dependency.s3.outputs.lambda_code_id
+
 }
 
 include {
