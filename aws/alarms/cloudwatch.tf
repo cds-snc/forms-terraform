@@ -67,12 +67,12 @@ resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount-TargetGroup1" {
   metric_name         = "UnHealthyHostCount"
   namespace           = "AWS/ApplicationELB"
   period              = "60"           # Every minute
-  statistic           = "SampleCount"  # use the number of data points during the period
+  statistic           = "Maximum"      # the highest value observed during the specified period
   treat_missing_data  = "notBreaching" # don't alarm if there's no data
   alarm_actions       = [var.sns_topic_alert_critical_arn]
   dimensions = {
     LoadBalancer = var.lb_arn_suffix
-    TargetGroup  = var.lb_target_group_1_arn
+    TargetGroup  = var.lb_target_group_1_arn_suffix
   }
 }
 
@@ -85,7 +85,7 @@ resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount-TargetGroup2" {
   metric_name         = "UnHealthyHostCount"
   namespace           = "AWS/ApplicationELB"
   period              = "60"           # Every minute
-  statistic           = "SampleCount"  # use the number of data points during the period
+  statistic           = "Maximum"      # the highest value observed during the specified period
   treat_missing_data  = "notBreaching" # don't alarm if there's no data
   alarm_actions       = [var.sns_topic_alert_critical_arn]
   dimensions = {
