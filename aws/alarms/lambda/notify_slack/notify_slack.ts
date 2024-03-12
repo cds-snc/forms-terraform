@@ -111,8 +111,8 @@ export const handleCloudWatchLogEvent = async (logData: string) => {
               ${logMessage.error ? "\n".concat(logMessage.error) : ""}
               ${logMessage.severity ? "\n\nSeverity level: ".concat(logMessage.severity) : ""}
               `;
-      sendToSlack(parsedResult.logGroup, message, logMessage.level);
-      sendToOpsGenie(parsedResult.logGroup, message, logMessage.severity);
+      await sendToSlack(parsedResult.logGroup, message, logMessage.level);
+      await sendToOpsGenie(parsedResult.logGroup, message, logMessage.severity);
       console.log(
         JSON.stringify({
           msg: `Event Data for ${parsedResult.logGroup}: ${JSON.stringify(logMessage, null, 2)}`,
@@ -120,7 +120,7 @@ export const handleCloudWatchLogEvent = async (logData: string) => {
       );
     } else {
       // These are unhandled errors from the GCForms app only
-      sendToSlack(parsedResult.logGroup, log.message, "error");
+      await sendToSlack(parsedResult.logGroup, log.message, "error");
 
       console.log(
         JSON.stringify({
