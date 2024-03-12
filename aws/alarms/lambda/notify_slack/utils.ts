@@ -81,7 +81,10 @@ export const sendToOpsGenie = async (logGroup: string, logMessage: string, logSe
     console.log(
       `Skipping sending to OpsGenie because logSeverity is not SEV1 or 1: ${logSeverity}`
     );
+    return;
   }
+
+  console.log("Sending to OpsGenie...");
 
   const postData = {
     message: logMessage.length > 130 ? logMessage.substring(0, 126) + "..." : logMessage, // Truncate the message to 130 characters as per OpsGenie's requirements
@@ -101,8 +104,6 @@ export const sendToOpsGenie = async (logGroup: string, logMessage: string, logSe
       Authorization: `GenieKey ${process.env.OPSGENIE_API_KEY}`,
     },
   };
-
-  console.log("Sending to OpsGenie...");
 
   try {
     await sendTo(options, postData);
