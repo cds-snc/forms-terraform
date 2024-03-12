@@ -9,7 +9,7 @@ describe("handler", () => {
   });
   it("should return success if no event type is found and it should have called 'send to Slack'", async () => {
     const mockSendToSlack = vi.spyOn(utils, "sendToSlack");
-    mockSendToSlack.mockImplementation(() => true);
+    mockSendToSlack.mockImplementation(() => Promise.resolve());
 
     const result = await notify_slack.handler({});
     expect(utils.sendToSlack).toHaveBeenCalled();
@@ -84,10 +84,10 @@ describe("handler", () => {
     };
 
     const mockSendToSlack = vi.spyOn(utils, "sendToSlack");
-    mockSendToSlack.mockImplementation(() => true);
+    mockSendToSlack.mockImplementation(() => Promise.resolve());
 
     const mockSendToOpsGenie = vi.spyOn(utils, "sendToOpsGenie");
-    mockSendToOpsGenie.mockImplementation(() => true);
+    mockSendToOpsGenie.mockImplementation(() => Promise.resolve());
 
     const result = await notify_slack.handler(event);
 
@@ -119,10 +119,10 @@ describe("handler", () => {
     };
 
     const mockSendToSlack = vi.spyOn(utils, "sendToSlack");
-    mockSendToSlack.mockImplementation(() => true);
+    mockSendToSlack.mockImplementation(() => Promise.resolve());
 
     const mockSendToOpsGenie = vi.spyOn(utils, "sendToOpsGenie");
-    mockSendToOpsGenie.mockImplementation(() => true);
+    mockSendToOpsGenie.mockImplementation(() => Promise.resolve());
 
     const result = await notify_slack.handler(event);
 
@@ -143,10 +143,10 @@ describe("handler", () => {
     };
 
     const mockSendToSlack = vi.spyOn(utils, "sendToSlack");
-    mockSendToSlack.mockImplementation(() => true);
+    mockSendToSlack.mockImplementation(() => Promise.resolve());
 
     const mockSendToOpsGenie = vi.spyOn(utils, "sendToOpsGenie");
-    mockSendToOpsGenie.mockImplementation(() => true);
+    mockSendToOpsGenie.mockImplementation(() => Promise.resolve());
 
     const result = await notify_slack.handler(event);
 
@@ -167,10 +167,10 @@ describe("handler", () => {
     };
 
     const mockSendToSlack = vi.spyOn(utils, "sendToSlack");
-    mockSendToSlack.mockImplementation(() => true);
+    mockSendToSlack.mockImplementation(() => Promise.resolve());
 
     const mockSendToOpsGenie = vi.spyOn(utils, "sendToOpsGenie");
-    mockSendToOpsGenie.mockImplementation(() => true);
+    mockSendToOpsGenie.mockImplementation(() => Promise.resolve());
 
     const result = await notify_slack.handler(event);
 
