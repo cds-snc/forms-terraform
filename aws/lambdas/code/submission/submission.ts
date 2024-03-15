@@ -76,12 +76,13 @@ const enqueueReliabilityProcessingRequest = async (submissionId: string): Promis
       })
     );
 
-    if (!sendMessageCommandOutput.MessageId)
+    if (!sendMessageCommandOutput.MessageId) {
       throw new Error("Received null SQS message identifier");
+    }
 
     return sendMessageCommandOutput.MessageId;
   } catch (error) {
-    throw new Error("Could not enqueue reliability processing request");
+    throw new Error("Could not enqueue reliability processing request. " + JSON.stringify(error));
   }
 };
 
