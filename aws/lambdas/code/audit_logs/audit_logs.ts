@@ -72,7 +72,7 @@ export const handler: Handler = async (event: SQSEvent) => {
           }`,
           TimeStamp: logEvent.timestamp,
           ...(logEvent.description && { Description: logEvent.description }),
-          Status: "Archivable"
+          Status: "Archivable",
         },
       },
     }));
@@ -153,7 +153,7 @@ export const handler: Handler = async (event: SQSEvent) => {
       console.error(
         JSON.stringify({
           level: "error",
-          severity: 1,
+          severity: 2,
           msg: `Failed to process ${
             unprocessedIDs.length
           } log events. List of unprocessed IDs: ${unprocessedIDs.join(",")}.`,
@@ -173,7 +173,7 @@ export const handler: Handler = async (event: SQSEvent) => {
     console.error(
       JSON.stringify({
         level: "error",
-        severity: 1,
+        severity: 2,
         msg: "Failed to run Audit Logs Processor.",
         error: (error as Error).message,
       })

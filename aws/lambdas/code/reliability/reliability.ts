@@ -54,7 +54,7 @@ export const handler: Handler = async (event: SQSEvent) => {
       console.error(
         JSON.stringify({
           level: "error",
-          severity: 1,
+          severity: 2,
           msg: `No associated form template (ID: ${formID}) exist in the database.`,
         })
       );
