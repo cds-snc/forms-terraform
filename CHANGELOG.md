@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.7.1](https://github.com/cds-snc/forms-terraform/compare/v3.7.0...v3.7.1) (2024-03-15)
+
+
+### Bug Fixes
+
+* async issue with lambda notification logic ([#616](https://github.com/cds-snc/forms-terraform/issues/616)) ([a344cc1](https://github.com/cds-snc/forms-terraform/commit/a344cc1483b9d3a75a808786bcb7bc38c833addc))
+* the alarm monitoring for 'unhealthyhost' wasn't working properly ([#614](https://github.com/cds-snc/forms-terraform/issues/614)) ([4309971](https://github.com/cds-snc/forms-terraform/commit/43099710b7b06268c84440262b4ac12180defffb))
+
+
+### Code Refactoring
+
+* lambda that notifies slack and opsgenie ([#609](https://github.com/cds-snc/forms-terraform/issues/609)) ([ba562d3](https://github.com/cds-snc/forms-terraform/commit/ba562d3e790cdd39f4a8f94c19b418eae2e69de2))
+
 ## [3.7.0](https://github.com/cds-snc/forms-terraform/compare/v3.6.0...v3.7.0) (2024-02-29)
 
 
