@@ -11,13 +11,11 @@
     "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cd ./dist && yarn install --production"
   },
   "dependencies": {
-    "@aws-sdk/client-rds-data": "3.430.0",
-    "pg": "^8.7.3"
+    "@aws-sdk/client-rds-data": "3.430.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.126",
     "@types/node": "^20.9.0",
-    "@types/pg": "^8.10.9",
     "typescript": "^5.2.2"
   }
 }

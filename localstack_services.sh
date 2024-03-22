@@ -46,12 +46,12 @@ printf "${color}...Setting up KMS${reset}\n"
 cd $basedir/env/cloud/kms
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
-printf "${color}...Setting up Secrets Manager${reset}\n"
-cd $basedir/env/cloud/secrets
+printf "${color}...Setting up Network${reset}\n"
+cd $basedir/env/cloud/network
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
-printf "${color}...Setting up S3${reset}\n"
-cd $basedir/env/cloud/s3
+printf "${color}...Setting up Secrets Manager${reset}\n"
+cd $basedir/env/cloud/secrets
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "${color}...Creating SQS queue${reset}\n"
@@ -60,6 +60,18 @@ terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-lev
 
 printf "${color}...Creating SNS queue${reset}\n"
 cd $basedir/env/cloud/sns
+terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
+printf "${color}...Setting up Redis${reset}\n"
+cd $basedir/env/cloud/redis
+terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
+printf "${color}...Setting up RDS${reset}\n"
+cd $basedir/env/cloud/rds
+terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
+printf "${color}...Setting up S3${reset}\n"
+cd $basedir/env/cloud/s3
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "${color}...Creating the DynamoDB database${reset}\n"

@@ -8,8 +8,9 @@ services:
     ports:
       - "127.0.0.1:4566:4566" # LocalStack Gateway
       - "127.0.0.1:4510-4559:4510-4559" # external services port range
+      - "127.0.0.1:6379:6379" # Redis
     environment:
-      - SERVICES=cloudwatch,dynamodb,ec2,events,iam,kinesis,kms,lambda,logs,s3,secretsmanager,sns,sqs
+      - SERVICES=cloudwatch,dynamodb,ec2,events,iam,kinesis,kms,lambda,logs,s3,secretsmanager,sns,sqs,elasticache,rds
       - LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT=60
       - LAMBDA_SYNCHRONOUS_CREATE=1
       - LAMBDA_IGNORE_ARCHITECTURE=1
@@ -22,28 +23,3 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - localstack:/var/lib/localstack"
-
-  db:
-    container_name: "GCForms_DB"
-    image: postgres:13-alpine
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=chummy
-      - PGDATA=/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    expose:
-      - "5432"
-    command:
-      - "postgres"
-      - "-c"
-      - "listen_addresses=*"
-    restart: always
-  redis:
-    container_name: "GCForms_Redis"
-    restart: always
-    image: redis:6-alpine
-    ports:
-      - "6379:6379"
-    expose:
-      - "6379"

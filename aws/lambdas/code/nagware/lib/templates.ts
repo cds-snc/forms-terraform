@@ -1,34 +1,33 @@
 import { RDSDataClient, ExecuteStatementCommand } from "@aws-sdk/client-rds-data";
-import pg from "pg";
 
-export async function getTemplateInfo(formID: string) {
+export type TemplateInfo = {
+  formName: string;
+  owners: {
+    name: string | undefined;
+    email: string;
+  }[];
+  isPublished: boolean;
+};
+
+export async function getTemplateInfo(formID: string): Promise<TemplateInfo> {
   try {
-    const { SQL, parameters } = createSQLString(formID);
-    const requestResult = process.env.LOCALSTACK === "true" ? requestSAM : requestRDS;
-    const result = await requestResult(SQL, parameters as any);
+    const rdsDataClient = new RDSDataClient({ region: process.env.REGION });
 
-    if (result) {
-      return result;
-    } else {
-      throw new Error(`Could not find any template with form identifier: ${formID}.`);
-    }
-  } catch (error) {
-    throw new Error(
-      `Failed to retrieve template information. Reason: ${(error as Error).message}.`
-    );
-  }
-}
+    // Due to Localstack limitations we have to define aliases for fields that have the same name
+    const sqlStatement = `
+      SELECT usr."name" AS user_name, usr."email", tem."name" AS template_name, tem."jsonConfig", tem."isPublished"
+      FROM "User" usr
+      JOIN "_TemplateToUser" ttu ON usr."id" = ttu."B"
+      JOIN "Template" tem ON tem."id" = ttu."A"
+      WHERE ttu."A" = :formID
+    `;
 
-const createSQLString = (formID: string) => {
-  const selectSQL = `
-  SELECT usr."name", usr."email", tem."name", tem."jsonConfig", tem."isPublished" 
-  FROM "User" usr 
-  JOIN "_TemplateToUser" ttu ON usr."id" = ttu."B" 
-  JOIN "Template" tem ON tem."id" = ttu."A"
-  `;
-  if (!(process.env.LOCALSTACK === "true")) {
-    return {
-      SQL: `${selectSQL} WHERE ttu."A" = :formID`,
+    const executeStatementCommand = new ExecuteStatementCommand({
+      database: process.env.DB_NAME,
+      resourceArn: process.env.DB_ARN,
+      secretArn: process.env.DB_SECRET,
+      sql: sqlStatement,
+      includeResultMetadata: false, // set to true if we want metadata like column names
       parameters: [
         {
           name: "formID",
@@ -37,71 +36,45 @@ const createSQLString = (formID: string) => {
           },
         },
       ],
-    };
-  } else {
-    return {
-      SQL: `${selectSQL} WHERE ttu."A" = $1`,
-      parameters: [formID],
-    };
-  }
-};
+    });
 
-const parseQueryResponse = (records: any[]) => {
-  if (records.length === 0) return null;
+    const response = await rdsDataClient.send(executeStatementCommand);
 
-  let formName = "";
+    if (response.records && response.records.length > 0) {
+      const firstRecord = response.records[0];
 
-  const firstRecord = records[0];
-  let isPublished = false;
+      if (
+        firstRecord[2].stringValue === undefined || // template name
+        firstRecord[3].stringValue === undefined || // template jsonConfig
+        firstRecord[4].booleanValue === undefined // template isPublished
+      ) {
+        throw new Error(
+          `Missing required parameters: template name = ${firstRecord[2].stringValue} ; template jsonConfig = ${firstRecord[3].stringValue} ; template isPublished = ${firstRecord[4].stringValue}.`
+        );
+      }
 
-  if (!(process.env.LOCALSTACK === "true")) {
-    const jsonConfig = JSON.parse(firstRecord[3].stringValue.trim(1, -1)) || undefined;
-    formName =
-      firstRecord[2].stringValue !== ""
-        ? firstRecord[2].stringValue
-        : `${jsonConfig.titleEn} - ${jsonConfig.titleFr}`;
-    isPublished = firstRecord[4].booleanValue;
-  } else {
-    formName =
-      firstRecord.name !== ""
-        ? firstRecord.name
-        : `${firstRecord.jsonConfig.titleEn} - ${firstRecord.jsonConfig.titleFr}`;
-    isPublished = firstRecord.isPublished;
-  }
+      const jsonConfig = JSON.parse(firstRecord[3].stringValue.trim());
 
-  const owners = records.map((record) => {
-    if (!(process.env.LOCALSTACK === "true")) {
-      return { name: record[0].stringValue, email: record[1].stringValue };
+      const formName =
+        firstRecord[2].stringValue !== ""
+          ? firstRecord[2].stringValue
+          : `${jsonConfig.titleEn} - ${jsonConfig.titleFr}`;
+
+      const isPublished = firstRecord[4].booleanValue;
+
+      const owners = response.records.map((record) => {
+        // make sure owner email is defined
+        if (record[1].stringValue === undefined) {
+          throw new Error(`Missing required parameters: owner email.`);
+        }
+
+        return { name: record[0].stringValue, email: record[1].stringValue };
+      });
+
+      return { formName, owners, isPublished };
     } else {
-      return { name: record.name, email: record.email };
+      throw new Error(`Could not find any template with form identifier: ${formID}.`);
     }
-  });
-
-  return { formName, owners, isPublished };
-};
-
-/**
- * Creates and processes request to LOCAL AWS SAM DB
- * @param {string} SQL
- * @param {string[]} parameters
- * @returns PG Client return value
- */
-const requestSAM = async (SQL: string, parameters: string[]) => {
-  // Placed outside of try block to be referenced in finally
-  const dbClient = new pg.Client();
-  try {
-    if (
-      process.env.PGHOST &&
-      process.env.PGUSER &&
-      process.env.PGDATABASE &&
-      process.env.PGPASSWORD
-    ) {
-      dbClient.connect();
-    } else {
-      throw new Error("Missing Environment Variables for DB config");
-    }
-    const data = await dbClient.query(SQL, parameters);
-    return parseQueryResponse(data.rows);
   } catch (error) {
     console.error(
       JSON.stringify({
@@ -109,45 +82,8 @@ const requestSAM = async (SQL: string, parameters: string[]) => {
         error: (error as Error).message,
       })
     );
-    // Lift more generic error to be able to capture event info higher in scope
-    throw new Error("Error connecting to LOCAL AWS SAM DB");
-  } finally {
-    dbClient.end();
-  }
-};
-
-/**
- * Creates and processes request to RDS
- * @param {string} SQL
- * @param {{name: string, value: {stringValue: string}[]}} parameters
- * @returns RDS client return value
- */
-const requestRDS = async (
-  SQL: string,
-  parameters: { name: string; value: { stringValue: string } }[]
-) => {
-  try {
-    const dbClient = new RDSDataClient({ region: process.env.REGION });
-    const params = {
-      database: process.env.DB_NAME,
-      resourceArn: process.env.DB_ARN,
-      secretArn: process.env.DB_SECRET,
-      sql: SQL,
-      includeResultMetadata: false, // set to true if we want metadata like column names
-      parameters: parameters,
-    };
-    const command = new ExecuteStatementCommand(params);
-
-    const data = await dbClient.send(command);
-    return parseQueryResponse(data.records ?? []);
-  } catch (error) {
-    console.error(
-      JSON.stringify({
-        status: "error",
-        error: (error as Error).message,
-      })
+    throw new Error(
+      `Failed to retrieve template information. Reason: ${(error as Error).message}.`
     );
-    // Lift more generic error to be able to capture event info higher in scope
-    throw new Error("Error connecting to RDS");
   }
-};
+}

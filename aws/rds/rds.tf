@@ -37,7 +37,6 @@ resource "aws_rds_cluster" "forms" {
   allow_major_version_upgrade = true
   copy_tags_to_snapshot       = true
 
-
   scaling_configuration {
     auto_pause   = false
     max_capacity = 8

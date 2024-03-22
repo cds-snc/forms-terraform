@@ -1,7 +1,7 @@
 import { Handler, SQSEvent } from "aws-lambda";
 import sendToNotify from "./lib/notifyProcessing.js";
 import sendToVault from "./lib/vaultProcessing.js";
-import { getTemplateFormConfig } from "./lib/templates.js";
+import { getTemplateInfo } from "./lib/templates.js";
 import { getSubmission } from "./lib/dataLayer.js";
 
 export const handler: Handler = async (event: SQSEvent) => {
@@ -13,7 +13,7 @@ export const handler: Handler = async (event: SQSEvent) => {
     const messageData = await getSubmission(message);
     const submissionID = messageData.Item?.SubmissionID ?? message.submissionID;
     const formID =
-      // dynamodb client could possibl return as a number due to early form identifiers being numeric
+      // dynamodb client could possibly return as a number due to early form identifiers being numeric
       typeof messageData.Item?.FormID === "string"
         ? messageData.Item?.FormID
         : messageData.Item?.FormID.toString() ?? null;
@@ -43,13 +43,24 @@ export const handler: Handler = async (event: SQSEvent) => {
       return { status: true };
     }
 
-    const configs = await getTemplateFormConfig(formID);
+    if (formID === null || typeof formID === "undefined") {
+      console.error(
+        JSON.stringify({
+          level: "error",
+          severity: 2,
+          msg: `Can't process submission because of null or undefined formID.`,
+        })
+      );
+      throw new Error(`Required formID parameter is null or undefined.`);
+    }
 
-    if (configs !== null && configs.formConfig !== null) {
+    const templateInfo = await getTemplateInfo(formID);
+
+    if (templateInfo !== null && templateInfo.formConfig !== null) {
       // Add form config back to submission to be processed
-      formSubmission.form = configs.formConfig;
+      formSubmission.form = templateInfo.formConfig;
       // add delivery option to formsubmission
-      formSubmission.deliveryOption = configs.deliveryOption;
+      formSubmission.deliveryOption = templateInfo.deliveryOption;
     } else {
       console.error(
         JSON.stringify({
