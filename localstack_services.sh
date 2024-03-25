@@ -25,20 +25,25 @@ tfswitch 1.6.6
 
 basedir=$(pwd)
 
-printf "${color}=> Cleaning up previous caches, terraform state, and lambda dependencies${reset}\n"
+ACTION=$1
 
-printf "${color}...Purging stale localstack related files${reset}\n"
-find $basedir/env/cloud -type d -name .terragrunt-cache -prune -print -exec rm -rf {} \;
+if [[ "${ACTION}" == "clean" ]]
+then
+  printf "${color}=> Cleaning up previous caches, terraform state, and lambda dependencies${reset}\n"
 
-printf "${color}...Purging stale terraform state files${reset}\n"
-find $basedir/env -type f -name terraform.tfstate -prune -exec rm -fv {} \;
+  printf "${color}...Purging stale localstack related files${reset}\n"
+  find $basedir/env/cloud -type d -name .terragrunt-cache -prune -print -exec rm -rf {} \;
 
-printf "${color}...Clearing old lambda_code archive files${reset}\n"
-rm -v /tmp/*.zip || true
+  printf "${color}...Purging stale terraform state files${reset}\n"
+  find $basedir/env -type f -name terraform.tfstate -prune -exec rm -fv {} \;
 
-printf "${color}...Removing old lambda dependencies${reset}\n"
-cd $basedir/aws/lambdas/code
-./deps.sh delete
+  printf "${color}...Clearing old lambda_code archive files${reset}\n"
+  rm -v /tmp/*.zip || true
+
+  printf "${color}...Removing old lambda dependencies${reset}\n"
+  cd $basedir/aws/lambdas/code
+  ./deps.sh delete
+fi
 
 printf "${color}=> Creating AWS services in Localstack${reset}\n"
 
