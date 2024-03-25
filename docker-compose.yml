@@ -18,8 +18,9 @@ services:
       - DOCKER_HOST=unix:///var/run/docker.sock
       - PERSISTENCE=1
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
-      - SNAPSHOT_LOAD_STRATEGY=ON_STARTUP
-      - SNAPSHOT_FLUSH_INTERVAL=60
+      - SNAPSHOT_SAVE_STRATEGY=${SNAPSHOT_SAVE_STRATEGY:-SCHEDULED}
+      - SNAPSHOT_FLUSH_INTERVAL=${SNAPSHOT_FLUSH_INTERVAL:-60}
+      - SNAPSHOT_LOAD_STRATEGY=${SNAPSHOT_LOAD_STRATEGY:-ON_STARTUP}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - localstack:/var/lib/localstack"
