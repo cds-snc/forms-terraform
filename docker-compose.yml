@@ -18,6 +18,7 @@ services:
       - PERSISTENCE=1
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - SNAPSHOT_LOAD_STRATEGY=ON_STARTUP
+      - SNAPSHOT_FLUSH_INTERVAL=60
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - localstack:/var/lib/localstack"
