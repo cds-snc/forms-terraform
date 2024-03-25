@@ -243,6 +243,7 @@ function handleType(
     case "textArea":
     case "dropdown":
     case "radio":
+    case "combobox":
       handleTextResponse(qTitle, response, collector);
       break;
     case "checkbox":
@@ -255,6 +256,9 @@ function handleType(
     case "fileInput":
       handleFileInputResponse(qTitle, response, collector);
       break;
+    default:
+      console.error(JSON.stringify("Invalid Form Element Type" + question.type));
+      throw new Error(`Invalid Form Element Type ${question.type}`);
   }
 }
 
@@ -276,6 +280,7 @@ function handleDynamicForm(
         case "textArea":
         case "dropdown":
         case "radio":
+        case "combobox":
           handleTextResponse(qTitle, (row as Record<string, Response>)[qIndex], rowCollector);
           break;
         case "fileInput":
@@ -285,7 +290,8 @@ function handleDynamicForm(
           handleArrayResponse(qTitle, (row as Record<string, Response>)[qIndex], rowCollector);
           break;
         default:
-          break;
+          console.error(JSON.stringify("Invalid Form Element Type" + qItem.type));
+          throw new Error(`Invalid Form Element Type ${qItem.type}`);
       }
     });
     rowCollector.unshift(`${String.fromCharCode(13)}***${rowLabel} ${rIndex + 1}***`);
