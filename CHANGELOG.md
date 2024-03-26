@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.7.2](https://github.com/cds-snc/forms-terraform/compare/v3.7.1...v3.7.2) (2024-03-26)
+
+
+### Miscellaneous Chores
+
+* synced file(s) with cds-snc/site-reliability-engineering ([#555](https://github.com/cds-snc/forms-terraform/issues/555)) ([bfd81fe](https://github.com/cds-snc/forms-terraform/commit/bfd81fef0c4875d16cd6a90f9b865fdcf8de67a4))
+* synced file(s) with cds-snc/site-reliability-engineering ([#621](https://github.com/cds-snc/forms-terraform/issues/621)) ([dd097d1](https://github.com/cds-snc/forms-terraform/commit/dd097d1f5ef894b246cdd9be8cd1caf7100d2cea))
+
 ## [3.7.1](https://github.com/cds-snc/forms-terraform/compare/v3.7.0...v3.7.1) (2024-03-15)
 
 
