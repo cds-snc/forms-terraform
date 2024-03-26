@@ -29,7 +29,7 @@ export default (
   // Using language attribute tags https://notification.canada.ca/format
   // This is done so screen readers can read in the correct voice
   if (language === "fr") {
-    emailMarkdown = `[[fr]]\n${emailMarkdown}\nDate de soumission: ${isoCreatedAtString}\nID: ${submissionID}\n[[/fr]]`;
+    emailMarkdown = `[[fr]]\n${emailMarkdown}\nDate de soumission : ${isoCreatedAtString}\nID : ${submissionID}\n[[/fr]]`;
   } else {
     emailMarkdown = `[[en]]\n${emailMarkdown}\nSubmission Date: ${isoCreatedAtString}\nID: ${submissionID}\n[[/en]]`;
   }

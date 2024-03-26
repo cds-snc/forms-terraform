@@ -59,6 +59,7 @@ export enum FormElementTypes {
   textField = "textField",
   textArea = "textArea",
   dropdown = "dropdown",
+  combobox = "combobox",
   radio = "radio",
   checkbox = "checkbox",
   fileInput = "fileInput",
