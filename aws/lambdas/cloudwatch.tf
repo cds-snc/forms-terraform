@@ -32,7 +32,7 @@ resource "aws_cloudwatch_event_rule" "nagware_lambda_trigger" {
   schedule_expression = "cron(0 10 ? * TUE,THU,SUN *)" # 5 AM EST = 10 AM UTC ; every Tuesday, Thursday and Sunday
 }
 
-resource "aws_cloudwatch_event_target" "audit_logs_archiver_lambda_trigger" {
+/*resource "aws_cloudwatch_event_target" "audit_logs_archiver_lambda_trigger" {
   rule = aws_cloudwatch_event_rule.audit_logs_archiver_lambda_trigger.name
   arn  = aws_lambda_function.audit_logs_archiver.arn
 }
@@ -50,7 +50,7 @@ resource "aws_cloudwatch_event_target" "response_archiver_lambda_trigger" {
 resource "aws_cloudwatch_event_target" "form_archiver_lambda_trigger" {
   rule = aws_cloudwatch_event_rule.form_archiver_lambda_trigger.name
   arn  = aws_lambda_function.form_archiver.arn
-}
+}*/
 
 resource "aws_cloudwatch_event_target" "nagware_lambda_trigger" {
   rule = aws_cloudwatch_event_rule.nagware_lambda_trigger.name

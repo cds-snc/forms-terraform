@@ -18,7 +18,7 @@ RUN yarn build
     
 FROM public.ecr.aws/lambda/nodejs:18
 WORKDIR ${LAMBDA_TASK_ROOT}
-COPY --from=builder /usr/app/dist/* ./
+COPY --from=builder /usr/app/dist/ ./
 CMD ["nagware.handler"]
 
 #docker build --platform linux/amd64 -t nagware-lambda-image:test .

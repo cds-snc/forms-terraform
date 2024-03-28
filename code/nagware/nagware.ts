@@ -29,6 +29,8 @@ export const handler: Handler = async () => {
       shouldSendSlackNotification: isSunday,
     });
 
+    console.log("DEBUG >>> HELLO SIR! WELL DONE! <<<");
+
     return {
       statusCode: "SUCCESS",
     };

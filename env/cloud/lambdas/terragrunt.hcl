@@ -8,7 +8,7 @@ include {
 
 
 dependencies {
-  paths = ["../rds", "../sqs", "../sns", "../kms", "../dynamodb", "../secrets", "../app", "../s3"]
+  paths = ["../rds", "../sqs", "../sns", "../kms", "../dynamodb", "../secrets", "../app", "../s3", "../ecr"]
 }
 
 locals {
@@ -114,6 +114,15 @@ dependency "s3" {
   }
 }
 
+dependency "ecr" {
+  config_path                             = "../ecr"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    reliability_file_storage_arn   = "arn:aws:s3:::forms-staging-reliability-file-storage"
+  }
+}
+
 inputs = {
   dynamodb_relability_queue_arn  = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
   dynamodb_vault_arn             = dependency.dynamodb.outputs.dynamodb_vault_arn
@@ -148,6 +157,8 @@ inputs = {
   lambda_code_id                 = dependency.s3.outputs.lambda_code_id
   audit_logs_archive_storage_id  = dependency.s3.outputs.audit_logs_archive_storage_id
   audit_logs_archive_storage_arn = dependency.s3.outputs.audit_logs_archive_storage_arn
+
+  ecr_repository_url_lambda = dependency.ecr.outputs.ecr_repository_url_lambda
 
   ecs_iam_role_arn = local.env == "local" ? "arn:aws:iam:ca-central-1:000000000000:forms_iam" : dependency.app.outputs.ecs_iam_role_arn
 
