@@ -29,16 +29,10 @@ resource "aws_lambda_function" "form_archiver" {
 
   environment {
     variables = {
-      ENVIRONMENT = var.env
-      REGION      = var.region
-      DB_ARN      = var.rds_cluster_arn
-      DB_SECRET   = var.database_secret_arn
-      DB_NAME     = var.rds_db_name
-      LOCALSTACK  = var.localstack_hosted
-      PGHOST      = var.localstack_hosted ? "host.docker.internal" : null
-      PGUSER      = var.localstack_hosted ? "postgres" : null
-      PGDATABASE  = var.localstack_hosted ? "formsDB" : null
-      PGPASSWORD  = var.localstack_hosted ? "chummy" : null
+      REGION    = var.region
+      DB_ARN    = var.rds_cluster_arn
+      DB_SECRET = var.database_secret_arn
+      DB_NAME   = var.rds_db_name
     }
   }
 

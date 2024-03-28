@@ -26,7 +26,6 @@ dependency "app" {
 }
 
 dependency "rds" {
-  enabled                                 = local.env == "local" ? false : true
   config_path                             = "../rds"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
@@ -126,9 +125,9 @@ inputs = {
   kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
   kms_key_dynamodb_arn   = dependency.kms.outputs.kms_key_dynamodb_arn
 
-  rds_cluster_arn     = local.env == "local" ? null : dependency.rds.outputs.rds_cluster_arn
-  rds_db_name         = local.env == "local" ? null : dependency.rds.outputs.rds_db_name
-  database_secret_arn = local.env == "local" ? "arn:aws:secretsmanager:ca-central-1:000000000000:secret:database_secret-VvMslX" : dependency.rds.outputs.database_secret_arn
+  rds_cluster_arn     = dependency.rds.outputs.rds_cluster_arn
+  rds_db_name         = dependency.rds.outputs.rds_db_name
+  database_secret_arn = dependency.rds.outputs.database_secret_arn
 
   sqs_reliability_queue_arn            = dependency.sqs.outputs.sqs_reliability_queue_arn
   sqs_reliability_queue_id             = dependency.sqs.outputs.sqs_reliability_queue_id

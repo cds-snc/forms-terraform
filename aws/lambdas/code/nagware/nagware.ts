@@ -15,7 +15,7 @@ type NagwareDetection = {
   formTimestamp: number;
   formId: string;
   formName: string;
-  owners: { name: string; email: string; }[]
+  owners: { name?: string; email: string }[];
 };
 
 export const handler: Handler = async () => {
@@ -24,7 +24,10 @@ export const handler: Handler = async () => {
 
     const isSunday = new Date().getDay() == 0; // 0 is Sunday
 
-    await nagOrDelete(oldestFormResponseByFormID, { shouldSendEmail: isSunday == false, shouldSendSlackNotification: isSunday });
+    await nagOrDelete(oldestFormResponseByFormID, {
+      shouldSendEmail: isSunday == false,
+      shouldSendSlackNotification: isSunday,
+    });
 
     return {
       statusCode: "SUCCESS",
@@ -66,7 +69,10 @@ async function findOldestFormResponseByFormID() {
   return Object.values(reduceResult);
 }
 
-async function nagOrDelete(oldestFormResponseByFormID: { formID: string; createdAt: number }[], notificationSettings: NotificationSettings) {
+async function nagOrDelete(
+  oldestFormResponseByFormID: { formID: string; createdAt: number }[],
+  notificationSettings: NotificationSettings
+) {
   for (const formResponse of oldestFormResponseByFormID) {
     try {
       const templateInfo = await getTemplateInfo(formResponse.formID);
@@ -78,12 +84,15 @@ async function nagOrDelete(oldestFormResponseByFormID: { formID: string; created
           }
         }
 
-        logNagwareDetection({ 
-          formTimestamp: formResponse.createdAt, 
-          formId: formResponse.formID, 
-          formName: templateInfo.formName, 
-          owners: templateInfo.owners,
-        }, notificationSettings.shouldSendSlackNotification);
+        logNagwareDetection(
+          {
+            formTimestamp: formResponse.createdAt,
+            formId: formResponse.formID,
+            formName: templateInfo.formName,
+            owners: templateInfo.owners,
+          },
+          notificationSettings.shouldSendSlackNotification
+        );
       } else {
         // Delete form response if form is not published and older than 28 days
         await deleteOldTestResponses(formResponse.formID);
@@ -102,7 +111,10 @@ async function nagOrDelete(oldestFormResponseByFormID: { formID: string; created
   }
 }
 
-function logNagwareDetection(nagwareDetection: NagwareDetection, shouldSendSlackNotification: boolean) {
+function logNagwareDetection(
+  nagwareDetection: NagwareDetection,
+  shouldSendSlackNotification: boolean
+) {
   const diffMs = Math.abs(Date.now() - nagwareDetection.formTimestamp);
   const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 

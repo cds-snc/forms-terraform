@@ -18,8 +18,7 @@ const s3Client = new S3Client({
   forcePathStyle: true,
 }) as NodeJsClient<S3Client>;
 
-const environment =
-  process.env.ENVIRONMENT || (process.env.LOCALSTACK === "true" ? "local" : "staging");
+const environment = process.env.ENVIRONMENT;
 const reliabilityBucketName = `forms-${environment}-reliability-file-storage`;
 const vaultBucketName = `forms-${environment}-vault-file-storage`;
 

@@ -43,7 +43,7 @@ export const ungzip = (input: Buffer) => {
 
 export const sendToSlack = async (logGroup: string, logMessage: string, logLevel: string) => {
   console.log("Sending to Slack...");
-  const environment = process.env.ENVIRONMENT || "Staging";
+  const environment = process.env.ENVIRONMENT || "staging";
   const logLevelThemeForSlack = logLevelAsEmojiAndColor(logLevel);
   const postData = {
     channel: `#forms-${environment.toLowerCase()}-events`,

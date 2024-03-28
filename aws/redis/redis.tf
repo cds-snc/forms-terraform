@@ -9,8 +9,8 @@ resource "aws_elasticache_replication_group" "redis" {
   replication_group_id       = "gcforms-redis-rep-group"
   description                = "Redis cluster for GCForms"
   node_type                  = "cache.t2.micro"
-  num_cache_clusters         = 2
-  engine_version             = "6.x"
+  num_cache_clusters         = var.env == "local" ? 1 : 2         # In Localstack, if Elasticache is used to host a Redis service it cannot have more than one node
+  engine_version             = var.env == "local" ? "6.2" : "6.x" # Localstack does not accept the use of latest minor version (`.x`) at creation time
   parameter_group_name       = "default.redis6.x"
   port                       = 6379
   multi_az_enabled           = true
