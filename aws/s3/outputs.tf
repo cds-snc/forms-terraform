@@ -28,16 +28,6 @@ output "archive_storage_arn" {
   value       = aws_s3_bucket.archive_storage.arn
 }
 
-output "lambda_code_id" {
-  description = "S3 bucket id for lambda code"
-  value       = aws_s3_bucket.lambda_code.id
-}
-
-output "lambda_code_arn" {
-  description = "S3 bucket arn for lambda code"
-  value       = aws_s3_bucket.lambda_code.arn
-}
-
 output "audit_logs_archive_storage_id" {
   description = "S3 bucket ID for audit logs archive storage"
   value       = aws_s3_bucket.audit_logs_archive_storage.id

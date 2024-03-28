@@ -1,30 +1,14 @@
 #
 # Lambda - Notify Slack and OpsGenie
 #
-data "archive_file" "notify_slack_code" {
-  type        = "zip"
-  source_dir  = "lambda/notify_slack/dist"
-  output_path = "/tmp/notify_slack_code.zip"
-}
-resource "aws_s3_object" "notify_slack_code" {
-  bucket      = var.lambda_code_id
-  key         = "notify_slack_code"
-  source      = data.archive_file.notify_slack_code.output_path
-  source_hash = data.archive_file.notify_slack_code.output_base64sha256
-}
 
 #tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "notify_slack" {
-  s3_bucket         = aws_s3_object.notify_slack_code.bucket
-  s3_key            = aws_s3_object.notify_slack_code.key
-  s3_object_version = aws_s3_object.notify_slack_code.version_id
-  function_name     = "NotifySlack"
-  role              = aws_iam_role.notify_slack_lambda.arn
-  handler           = "notify_slack.handler"
-
-  source_code_hash = data.archive_file.notify_slack_code.output_base64sha256
-  runtime          = "nodejs18.x"
-  timeout          = 300
+  function_name = "notify-slack"
+  image_uri     = "${var.ecr_repository_url_notify_slack_lambda}:latest"
+  package_type  = "Image"
+  role          = aws_iam_role.notify_slack_lambda.arn
+  timeout       = 300
 
   environment {
     variables = {
@@ -88,24 +72,6 @@ resource "aws_lambda_permission" "notify_slack_ok_us_east" {
 resource "aws_iam_role" "notify_slack_lambda" {
   name               = "NotifySlackLambda"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
-}
-
-data "aws_iam_policy_document" "lambda_s3" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:DeleteObject",
-      "s3:GetObject",
-      "s3:PutObject",
-      "s3:ListBucket"
-    ]
-
-    resources = [
-      var.lambda_code_arn,
-      "${var.lambda_code_arn}/*"
-    ]
-  }
 }
 
 data "aws_iam_policy_document" "lambda_assume_policy" {

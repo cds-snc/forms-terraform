@@ -10,13 +10,14 @@ services:
       - "127.0.0.1:4510-4559:4510-4559" # external services port range
       - "127.0.0.1:6379:6379" # Redis
     environment:
-      - SERVICES=cloudwatch,dynamodb,ec2,events,iam,kinesis,kms,lambda,logs,s3,secretsmanager,sns,sqs,elasticache,rds
+      - SERVICES=cloudwatch,dynamodb,ec2,events,iam,kinesis,kms,lambda,logs,s3,secretsmanager,sns,sqs,elasticache,rds,ecr
       - LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT=60
       - LAMBDA_SYNCHRONOUS_CREATE=1
       - LAMBDA_IGNORE_ARCHITECTURE=1
       - DYNAMODB_SHARE_DB=1
       - DOCKER_HOST=unix:///var/run/docker.sock
       - PERSISTENCE=1
+      - ENFORCE_IAM=1
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - SNAPSHOT_SAVE_STRATEGY=${SNAPSHOT_SAVE_STRATEGY:-SCHEDULED}
       - SNAPSHOT_FLUSH_INTERVAL=${SNAPSHOT_FLUSH_INTERVAL:-60}

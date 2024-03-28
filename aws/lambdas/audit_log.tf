@@ -2,31 +2,13 @@
 #
 # Audit Log Processing
 #
-data "archive_file" "audit_logs_code" {
-  type        = "zip"
-  source_dir  = "./code/audit_logs/dist"
-  output_path = "/tmp/audit_logs_code.zip"
-}
-
-resource "aws_s3_object" "audit_logs_code" {
-  bucket      = var.lambda_code_id
-  key         = "audit_logs_code"
-  source      = data.archive_file.audit_logs_code.output_path
-  source_hash = data.archive_file.audit_logs_code.output_base64sha256
-}
 
 resource "aws_lambda_function" "audit_logs" {
-  s3_bucket         = aws_s3_object.audit_logs_code.bucket
-  s3_key            = aws_s3_object.audit_logs_code.key
-  s3_object_version = aws_s3_object.audit_logs_code.version_id
-  function_name     = "Audit_Logs"
-  role              = aws_iam_role.lambda.arn
-  handler           = "audit_logs.handler"
-  timeout           = 60
-
-  source_code_hash = data.archive_file.audit_logs_code.output_base64sha256
-
-  runtime = "nodejs18.x"
+  function_name = "audit-logs"
+  image_uri     = "${var.ecr_repository_url_audit_logs_lambda}:latest"
+  package_type  = "Image"
+  role          = aws_iam_role.lambda.arn
+  timeout       = 60
 
   environment {
     variables = {

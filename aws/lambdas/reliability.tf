@@ -1,28 +1,9 @@
-data "archive_file" "reliability_code" {
-  type        = "zip"
-  source_dir  = "./code/reliability/dist/"
-  output_path = "/tmp/reliability_code.zip"
-}
-
-resource "aws_s3_object" "reliability_code" {
-  bucket      = var.lambda_code_id
-  key         = "reliability_code"
-  source      = data.archive_file.reliability_code.output_path
-  source_hash = data.archive_file.reliability_code.output_base64sha256
-}
-
 resource "aws_lambda_function" "reliability" {
-  s3_bucket         = aws_s3_object.reliability_code.bucket
-  s3_key            = aws_s3_object.reliability_code.key
-  s3_object_version = aws_s3_object.reliability_code.version_id
-  function_name     = "Reliability"
-  role              = aws_iam_role.lambda.arn
-  handler           = "reliability.handler"
-  timeout           = 300
-
-  source_code_hash = data.archive_file.reliability_code.output_base64sha256
-
-  runtime = "nodejs18.x"
+  function_name = "reliability"
+  image_uri     = "${var.ecr_repository_url_reliability_lambda}:latest"
+  package_type  = "Image"
+  role          = aws_iam_role.lambda.arn
+  timeout       = 300
 
   environment {
     variables = {

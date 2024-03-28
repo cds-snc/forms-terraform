@@ -12,7 +12,7 @@ dependency "lambdas" {
   mock_outputs_merge_with_state           = true
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    lambda_submission_function_name = "Submission"
+    lambda_submission_function_name = "submission"
   }
 }
 

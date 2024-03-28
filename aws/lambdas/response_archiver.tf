@@ -2,30 +2,13 @@
 #
 # Archive form responses
 #
-data "archive_file" "response_archiver_code" {
-  type        = "zip"
-  source_dir  = "./code/response_archiver/dist"
-  output_path = "/tmp/response_archiver_code.zip"
-}
-
-resource "aws_s3_object" "response_archiver_code" {
-  bucket      = var.lambda_code_id
-  key         = "response_archiver_code"
-  source      = data.archive_file.response_archiver_code.output_path
-  source_hash = data.archive_file.response_archiver_code.output_base64sha256
-}
 
 resource "aws_lambda_function" "response_archiver" {
-  s3_bucket         = aws_s3_object.response_archiver_code.bucket
-  s3_key            = aws_s3_object.response_archiver_code.key
-  s3_object_version = aws_s3_object.response_archiver_code.version_id
-  function_name     = "Response_Archiver"
-  role              = aws_iam_role.lambda.arn
-  handler           = "response_archiver.handler"
-
-  source_code_hash = data.archive_file.response_archiver_code.output_base64sha256
-  runtime          = "nodejs18.x"
-  timeout          = 300
+  function_name = "response-archiver"
+  image_uri     = "${var.ecr_repository_url_response_archiver_lambda}:latest"
+  package_type  = "Image"
+  role          = aws_iam_role.lambda.arn
+  timeout       = 300
 
   environment {
     variables = {

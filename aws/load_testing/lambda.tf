@@ -2,10 +2,9 @@
 # Load testing
 #
 
-
 resource "aws_lambda_function" "load_testing" {
   image_uri     = "${var.ecr_repository_url_load_test}:latest"
-  function_name = "LoadTesting"
+  function_name = "load-testing"
   role          = aws_iam_role.load_test_lambda.arn
   timeout       = 300
   memory_size   = 200
@@ -26,18 +25,15 @@ resource "aws_lambda_function" "load_testing" {
   tracing_config {
     mode = "PassThrough"
   }
-
-
 }
 
 #
 # IAM: Load testing
 #
+
 resource "aws_iam_role" "load_test_lambda" {
   name               = "LoadTestLambda"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
-
-
 }
 
 data "aws_iam_policy_document" "lambda_assume_policy" {

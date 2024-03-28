@@ -1,31 +1,13 @@
 #
 # Nagware
 #
-data "archive_file" "nagware_code" {
-  type        = "zip"
-  source_dir  = "./code/nagware/dist"
-  output_path = "/tmp/nagware_code.zip"
-}
-
-resource "aws_s3_object" "nagware_code" {
-  bucket      = var.lambda_code_id
-  key         = "nagware_code"
-  source      = data.archive_file.nagware_code.output_path
-  source_hash = data.archive_file.nagware_code.output_base64sha256
-}
 
 resource "aws_lambda_function" "nagware" {
-  s3_bucket         = aws_s3_object.nagware_code.bucket
-  s3_key            = aws_s3_object.nagware_code.key
-  s3_object_version = aws_s3_object.nagware_code.version_id
-  function_name     = "Nagware"
-  role              = aws_iam_role.lambda.arn
-  handler           = "nagware.handler"
-  timeout           = 300
-
-  source_code_hash = data.archive_file.nagware_code.output_base64sha256
-
-  runtime = "nodejs18.x"
+  function_name = "nagware"
+  image_uri     = "${var.ecr_repository_url_nagware_lambda}:latest"
+  package_type  = "Image"
+  role          = aws_iam_role.lambda.arn
+  timeout       = 300
 
   environment {
     variables = {
