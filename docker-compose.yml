@@ -4,7 +4,7 @@ volumes:
 services:
   localstack:
     container_name: "GCForms_LocalStack"
-    image: localstack/localstack-pro:latest
+    image: localstack/localstack-pro:latest@sha256:adf0f4da63b4db720d6a456b899a88d5f6d3028f7775010a3d2343edca719d8a
     ports:
       - "127.0.0.1:4566:4566" # LocalStack Gateway
       - "127.0.0.1:4510-4559:4510-4559" # external services port range
@@ -25,7 +25,7 @@ services:
 
   db:
     container_name: "GCForms_DB"
-    image: postgres:13-alpine
+    image: postgres:13-alpine@sha256:95f1dfacf62e4842d1c62866dd03034d7d68e0771b38a331daa5757ec2d4a86d
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=chummy
@@ -42,7 +42,7 @@ services:
   redis:
     container_name: "GCForms_Redis"
     restart: always
-    image: redis:6-alpine
+    image: redis:6-alpine@sha256:3fcb624d83a9c478357f16dc173c58ded325ccc5fd2a4375f3916c04cc579f70
     ports:
       - "6379:6379"
     expose:
