@@ -12,7 +12,6 @@
         "drop": ["ALL"]
       }
     },
-    "readonlyRootFilesystem": true,
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
