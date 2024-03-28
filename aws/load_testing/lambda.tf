@@ -26,8 +26,6 @@ resource "aws_lambda_function" "load_testing" {
   tracing_config {
     mode = "PassThrough"
   }
-
-
 }
 
 #

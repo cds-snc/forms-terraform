@@ -148,3 +148,8 @@ variable "audit_logs_archive_storage_arn" {
   description = "S3 bucket ARN for audit logs archive storage"
   type        = string
 }
+
+variable "ecr_repository_url_lambda" {
+  description = "URL of the Lambda ECR"
+  type        = string
+}

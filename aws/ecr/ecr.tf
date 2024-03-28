@@ -8,8 +8,6 @@ resource "aws_ecr_repository" "viewer_repository" {
   image_scanning_configuration {
     scan_on_push = true
   }
-
-
 }
 
 resource "aws_ecr_lifecycle_policy" "form_viewer_policy" {
@@ -34,7 +32,39 @@ resource "aws_ecr_lifecycle_policy" "form_viewer_policy" {
 }
 
 #
-# Elastic Container Registry
+# Holds the Lambda images used by the Lambda service
+#
+resource "aws_ecr_repository" "lambda_repository" {
+  name                 = "lambda_${var.env}"
+  image_tag_mutability = "IMMUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_lifecycle_policy" "lambda_repository" {
+  repository = aws_ecr_repository.lambda_repository.name
+  policy = jsonencode({ # to review
+    rules = [{
+      rulePriority = 1
+      description  = "Keep last 30 images"
+
+      selection = {
+        tagStatus     = "tagged"
+        tagPrefixList = ["v"]
+        countType     = "imageCountMoreThan"
+        countNumber   = 30
+      }
+
+      action = {
+        type = "expire"
+      }
+    }]
+  })
+}
+
+#
 # Holds the Load Test image used by the Lambda
 #
 resource "aws_ecr_repository" "load_test_repository" {

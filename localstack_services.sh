@@ -47,48 +47,52 @@ fi
 
 printf "${color}=> Creating AWS services in Localstack${reset}\n"
 
-printf "${color}...Setting up KMS${reset}\n"
-cd $basedir/env/cloud/kms
+#printf "${color}...Setting up KMS${reset}\n"
+#cd $basedir/env/cloud/kms
+#terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
+#printf "${color}...Setting up Network${reset}\n"
+#cd $basedir/env/cloud/network
+#terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
+#printf "${color}...Setting up Secrets Manager${reset}\n"
+#cd $basedir/env/cloud/secrets
+#terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
+#printf "${color}...Creating SQS queue${reset}\n"
+#cd $basedir/env/cloud/sqs
+#terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
+#printf "${color}...Creating SNS queue${reset}\n"
+#cd $basedir/env/cloud/sns
+#terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
+#printf "${color}...Setting up Redis${reset}\n"
+#cd $basedir/env/cloud/redis
+#terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
+#printf "${color}...Setting up RDS${reset}\n"
+#cd $basedir/env/cloud/rds
+#terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
+#printf "${color}...Setting up S3${reset}\n"
+#cd $basedir/env/cloud/s3
+#terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
+#printf "${color}...Setting up DynamoDB${reset}\n"
+#cd $basedir/env/cloud/dynamodb
+#terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
+printf "${color}...Setting up ECR${reset}\n"
+cd $basedir/env/cloud/ecr
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
-printf "${color}...Setting up Network${reset}\n"
-cd $basedir/env/cloud/network
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+#printf "${color}...Installing lambda dependencies${reset}\n"
+#cd $basedir/aws/lambdas/code
+#./deps.sh install
 
-printf "${color}...Setting up Secrets Manager${reset}\n"
-cd $basedir/env/cloud/secrets
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${color}...Creating SQS queue${reset}\n"
-cd $basedir/env/cloud/sqs
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${color}...Creating SNS queue${reset}\n"
-cd $basedir/env/cloud/sns
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${color}...Setting up Redis${reset}\n"
-cd $basedir/env/cloud/redis
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${color}...Setting up RDS${reset}\n"
-cd $basedir/env/cloud/rds
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${color}...Setting up S3${reset}\n"
-cd $basedir/env/cloud/s3
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${color}...Creating the DynamoDB database${reset}\n"
-cd $basedir/env/cloud/dynamodb
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${color}...Installing lambda dependencies${reset}\n"
-cd $basedir/aws/lambdas/code
-./deps.sh install
-
-printf "${color}...Creating lambdas${reset}\n"
-cd $basedir/env/cloud/lambdas
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+#printf "${color}...Setting up Lambdas${reset}\n"
+#cd $basedir/env/cloud/lambdas
+#terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "${color}All infratructure initialized:  Ready for requests${reset}\n"
