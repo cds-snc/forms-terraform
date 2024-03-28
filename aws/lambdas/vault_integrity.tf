@@ -2,7 +2,7 @@
 # Vault data integrity check
 #
 
-data "archive_file" "vault_integrity_code" {
+/*data "archive_file" "vault_integrity_code" {
   type        = "zip"
   source_dir  = "./code/vault_integrity/dist/"
   output_path = "/tmp/vault_integrity_code.zip"
@@ -84,4 +84,5 @@ resource "aws_signer_signing_job" "vault_integrity" {
   }
 
   ignore_signing_job_failure = true
-} 
+}
+*/

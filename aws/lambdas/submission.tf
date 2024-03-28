@@ -1,7 +1,7 @@
 #
 # Form Submission API processing
 #
-data "archive_file" "submission_code" {
+/*data "archive_file" "submission_code" {
   type        = "zip"
   source_dir  = "./code/submission/dist"
   output_path = "/tmp/submission_code.zip"
@@ -57,3 +57,4 @@ resource "aws_cloudwatch_log_group" "submission" {
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }
+*/

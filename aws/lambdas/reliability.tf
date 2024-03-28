@@ -1,3 +1,4 @@
+/*
 data "archive_file" "reliability_code" {
   type        = "zip"
   source_dir  = "./code/reliability/dist/"
@@ -61,3 +62,4 @@ resource "aws_cloudwatch_log_group" "reliability" {
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }
+*/

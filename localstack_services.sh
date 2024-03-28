@@ -91,8 +91,8 @@ terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-lev
 #cd $basedir/aws/lambdas/code
 #./deps.sh install
 
-#printf "${color}...Setting up Lambdas${reset}\n"
-#cd $basedir/env/cloud/lambdas
-#terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+printf "${color}...Setting up Lambdas${reset}\n"
+cd $basedir/env/cloud/lambdas
+terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "${color}All infratructure initialized:  Ready for requests${reset}\n"

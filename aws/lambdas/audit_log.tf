@@ -2,7 +2,7 @@
 #
 # Audit Log Processing
 #
-data "archive_file" "audit_logs_code" {
+/*data "archive_file" "audit_logs_code" {
   type        = "zip"
   source_dir  = "./code/audit_logs/dist"
   output_path = "/tmp/audit_logs_code.zip"
@@ -53,4 +53,4 @@ resource "aws_cloudwatch_log_group" "audit_logs" {
   name              = "/aws/lambda/${aws_lambda_function.audit_logs.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
-}
+}*/

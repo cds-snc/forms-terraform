@@ -2,7 +2,7 @@
 #
 # Dead letter queue consumer
 #
-data "archive_file" "reliability_dlq_consumer_code" {
+/*data "archive_file" "reliability_dlq_consumer_code" {
   type        = "zip"
   source_dir  = "./code/reliability_dlq_consumer/dist"
   output_path = "/tmp/reliability_dlq_consumer_code.zip"
@@ -54,4 +54,4 @@ resource "aws_cloudwatch_log_group" "dead_letter_queue_consumer" {
   name              = "/aws/lambda/${aws_lambda_function.reliability_dlq_consumer.function_name}"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
-}
+}*/

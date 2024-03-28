@@ -2,7 +2,7 @@
 #
 # Archive form responses
 #
-data "archive_file" "response_archiver_code" {
+/*data "archive_file" "response_archiver_code" {
   type        = "zip"
   source_dir  = "./code/response_archiver/dist"
   output_path = "/tmp/response_archiver_code.zip"
@@ -55,3 +55,4 @@ resource "aws_cloudwatch_log_group" "response_archiver" {
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }
+*/
