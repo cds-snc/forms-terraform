@@ -71,7 +71,7 @@ jobs:
         uses: cds-snc/terraform-tools-setup@v1
 
       - name: Configure AWS credentials using OIDC
-        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-plan
           role-session-name: TFPlan
@@ -146,7 +146,7 @@ jobs:
       # No dependencies
       - name: Terragrunt plan ecr
         if: ${{ steps.filter.outputs.ecr == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/ecr"
           comment-delete: "true"
@@ -156,7 +156,7 @@ jobs:
 
       - name: Terragrunt plan hosted_zone
         if: ${{ steps.filter.outputs.hosted_zone == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/hosted_zone"
           comment-delete: "true"
@@ -166,7 +166,7 @@ jobs:
 
       - name: Terragrunt plan kms
         if: ${{ steps.filter.outputs.kms == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/kms"
           comment-delete: "true"
@@ -176,7 +176,7 @@ jobs:
 
       - name: Terragrunt plan oidc_roles
         if: ${{ steps.filter.outputs.oidc_roles == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/oidc_roles"
           comment-delete: "true"
@@ -186,7 +186,7 @@ jobs:
 
       - name: Terragrunt plan sqs
         if: ${{ steps.filter.outputs.sqs == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/sqs"
           comment-delete: "true"
@@ -196,7 +196,7 @@ jobs:
 
       - name: Terragrunt plan secrets
         if: ${{ steps.filter.outputs.secrets == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/secrets"
           comment-delete: "true"
@@ -206,7 +206,7 @@ jobs:
 
       - name: Terragrunt plan s3
         if: ${{ steps.filter.outputs.s3 == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/s3"
           comment-delete: "true"
@@ -217,7 +217,7 @@ jobs:
       # Depends on S3
       - name: Terragrunt plan file_scanning
         if: ${{ steps.filter.outputs.file_scanning == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/file_scanning"
           comment-delete: "true"
@@ -228,7 +228,7 @@ jobs:
       # Depends on kms
       - name: Terragrunt plan sns
         if: ${{ steps.filter.outputs.sns == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/sns"
           comment-delete: "true"
@@ -242,7 +242,7 @@ jobs:
 
       - name: Terragrunt plan cognito
         if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/cognito"
           comment-delete: "true"
@@ -256,7 +256,7 @@ jobs:
 
       - name: Terragrunt plan network
         if: ${{ steps.filter.outputs.network == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/network"
           comment-delete: "true"
@@ -266,7 +266,7 @@ jobs:
 
       - name: Terragrunt plan dynamodb
         if: ${{ steps.filter.outputs.dynamodb == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/dynamodb"
           comment-delete: "true"
@@ -277,7 +277,7 @@ jobs:
       # Depends on network
       - name: Terragrunt plan load_balancer
         if: ${{ steps.filter.outputs.load_balancer == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/load_balancer"
           comment-delete: "true"
@@ -287,7 +287,7 @@ jobs:
 
       - name: Terragrunt plan redis
         if: ${{ steps.filter.outputs.redis == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/redis"
           comment-delete: "true"
@@ -297,7 +297,7 @@ jobs:
 
       - name: Terragrunt plan rds
         if: ${{ steps.filter.outputs.rds == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/rds"
           comment-delete: "true"
@@ -308,7 +308,7 @@ jobs:
       # Depends on everything
       - name: Terragrunt plan app
         if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/app"
           comment-delete: "true"
@@ -322,7 +322,7 @@ jobs:
 
       - name: Terragrunt plan lambdas
         if: ${{ steps.filter.outputs.lambdas == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/lambdas"
           comment-delete: "true"
@@ -340,7 +340,7 @@ jobs:
 
       - name: Terragrunt plan alarms
         if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/alarms"
           comment-delete: "true"
@@ -359,7 +359,7 @@ jobs:
 
       - name: Terragrunt plan load_testing
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/load_testing"
           comment-delete: "true"
@@ -368,7 +368,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan pr_review
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/pr_review"
           comment-delete: "true"
