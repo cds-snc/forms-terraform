@@ -12,52 +12,68 @@ permissions:
 
 env:
   APP_ENV: production
-  APP_DOMAINS: ${{ vars.PRODUCTION_APP_DOMAINS}}
+  APP_DOMAINS: ${{ vars.PRODUCTION_APP_DOMAINS }}
   AWS_ACCOUNT_ID: ${{ vars.PRODUCTION_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
-  CONFTEST_VERSION: 0.36.0
+  CONFTEST_VERSION: 0.46.0
   TERRAFORM_VERSION: 1.6.6
   TERRAGRUNT_VERSION: 0.54.8
   TF_INPUT: false
   TF_VAR_ecs_secret_token: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
-  TF_VAR_recaptcha_secret: ${{secrets.PRODUCTION_RECAPTCHA_SITE_SECRET}}
+  TF_VAR_recaptcha_secret: ${{ secrets.PRODUCTION_RECAPTCHA_SITE_SECRET }}
   TF_VAR_recaptcha_public: 6LfuLrQnAAAAAK9Df3gem4XLMRVY2Laq6t2fhZhZ
+  TF_VAR_notify_callback_bearer_token: ${{ secrets.PRODUCTION_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
   TF_VAR_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
   TF_VAR_freshdesk_api_key: ${{ secrets.PRODUCTION_FRESHDESK_API_KEY }}
   TF_VAR_rds_db_password: ${{ secrets.PRODUCTION_DB_PASSWORD }}
   TF_VAR_slack_webhook: ${{ secrets.PRODUCTION_SLACK_WEBHOOK }}
   TF_VAR_opsgenie_api_key: ${{ secrets.PRODUCTION_OPSGENIE_API_KEY }}
-
-  TF_VAR_notify_callback_bearer_token: ${{ secrets.PRODUCTION_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
   TF_VAR_gc_temp_token_template_id: 61cec9c4-64ca-4e4d-b4d2-a0e931c44422
   TF_VAR_gc_template_id: 92096ac6-1cc5-40ae-9052-fffdb8439a90
   TF_VAR_cognito_code_template_id: 8dde39b6-05b9-43ce-807f-c2364ed3bdb6
   TF_VAR_email_address_contact_us: ${{ vars.PRODUCTION_CONTACT_US_EMAIL }}
   TF_VAR_email_address_support: ${{ vars.PRODUCTION_SUPPORT_EMAIL }}
+
 jobs:
+  detect-lambda-changes:
+    if: startsWith(github.head_ref, 'release-please--')
+    runs-on: ubuntu-latest
+    outputs:
+      lambda-to-rebuild: ${{ steps.filter.outputs.changes }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Filter
+        id: filter
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        with:
+          filters: .github/lambda-filter.yml
+
+  build-lambda-images:
+    needs: detect-lambda-changes
+    if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Build Lambda images
+        uses: ./.github/workflows/build-lambda-images
+        with:
+          lambda-directory: lambda-code/${{ matrix.image }}
+          lambda-name: ${{ matrix.image }}
+
   terragrunt-plan:
-    if: ${{startsWith(github.head_ref, 'release-please--')}}
+    if: startsWith(github.head_ref, 'release-please--')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
-
-      # https://github.com/jlumbroso/free-disk-space/tree/54081f138730dfa15788a46383842cd2f914a1be#example
-      - name: Free Disk Space (Ubuntu)
-        uses: jlumbroso/free-disk-space@main
-        with:
-          # this might remove tools that are actually needed,
-          # if set to "true" but frees about 6 GB
-          tool-cache: false
-
-          # all of these default to true, but feel free to set to
-          # "false" if necessary for your workflow
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: true
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       # Setup Terraform, Terragrunt, and Conftest
       - name: Setup terraform tools
@@ -72,7 +88,7 @@ jobs:
 
       # No dependencies
       - name: Terragrunt plan ecr
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/ecr"
           comment-delete: "true"
@@ -81,7 +97,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan hosted_zone
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/hosted_zone"
           comment-delete: "true"
@@ -90,7 +106,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan kms
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/kms"
           comment-delete: "true"
@@ -99,7 +115,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan oidc_roles
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/oidc_roles"
           comment-delete: "true"
@@ -108,7 +124,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan sqs
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/sqs"
           comment-delete: "true"
@@ -117,7 +133,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan secrets
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/secrets"
           comment-delete: "true"
@@ -126,7 +142,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan s3
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/s3"
           comment-delete: "true"
@@ -136,7 +152,7 @@ jobs:
 
       # Depends on S3
       - name: Terragrunt plan file_scanning
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/file_scanning"
           comment-delete: "true"
@@ -146,7 +162,7 @@ jobs:
 
       # Depends on kms
       - name: Terragrunt plan sns
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/sns"
           comment-delete: "true"
@@ -154,11 +170,8 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Install Cognito Lambda deps
-        run: ./aws/cognito/lambda/deps.sh install
-
       - name: Terragrunt plan cognito
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/cognito"
           comment-delete: "true"
@@ -166,11 +179,8 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Remove Cognito Lambda deps
-        run: ./aws/cognito/lambda/deps.sh delete
-
       - name: Terragrunt plan network
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/network"
           comment-delete: "true"
@@ -179,7 +189,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan dynamodb
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/dynamodb"
           comment-delete: "true"
@@ -189,7 +199,7 @@ jobs:
 
       # Depends on network
       - name: Terragrunt plan load_balancer
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/load_balancer"
           comment-delete: "true"
@@ -198,7 +208,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan redis
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/redis"
           comment-delete: "true"
@@ -207,7 +217,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan rds
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/rds"
           comment-delete: "true"
@@ -216,9 +226,8 @@ jobs:
           terragrunt: "true"
 
       # Depends on everything
-
       - name: Terragrunt plan app
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/app"
           comment-delete: "true"
@@ -226,11 +235,8 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Install Lambda deps
-        run: ./aws/lambdas/code/deps.sh install
-
       - name: Terragrunt plan lambdas
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/lambdas"
           comment-delete: "true"
@@ -238,20 +244,11 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Remove Lambda deps
-        run: ./aws/lambdas/code/deps.sh delete
-
-      - name: Install Lambda Alarms deps
-        run: ./aws/alarms/lambda/deps.sh install
-
       - name: Terragrunt plan alarms
-        uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
           directory: "env/cloud/alarms"
           comment-delete: "true"
           comment-title: "Production: alarms"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
-
-      - name: Remove Lambda Alarms deps
-        run: ./aws/alarms/lambda/deps.sh delete

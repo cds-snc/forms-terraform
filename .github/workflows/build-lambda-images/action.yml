@@ -1,0 +1,16 @@
+name: Build Lambda images
+
+inputs:
+  lambda-directory:
+    required: true
+  lambda-name:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - run: docker build -t $LAMBDA_NAME-lambda .
+      env:
+        LAMBDA_NAME: ${{ inputs.lambda-name }}
+      working-directory: ${{ inputs.lambda-directory }}
+      shell: bash

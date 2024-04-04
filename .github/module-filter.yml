@@ -1,0 +1,81 @@
+common: &common
+  - "env/common/**"
+  - "env/terragrunt.hcl"
+  - ".github/workflows/terragrunt-plan-staging.yml"
+  - ".github/workflows/terragrunt-apply-staging.yml"
+alarms:
+  - *common
+  - "aws/alarms/**"
+  - "env/cloud/alarms/**"
+app:
+  - *common
+  - "aws/app/**"
+  - "env/cloud/app/**"
+cognito:
+  - *common
+  - "aws/cognito/**"
+  - "env/cloud/cognito/**"
+dynamodb:
+  - *common
+  - "aws/dynamodb/**"
+  - "env/cloud/dynamodb/**"
+ecr:
+  - *common
+  - "aws/ecr/**"
+  - "env/cloud/ecr/**"
+file_scanning:
+  - *common
+  - "aws/file_scanning/**"
+  - "env/cloud/file_scanning/**"
+hosted_zone:
+  - *common
+  - "aws/hosted_zone/**"
+  - "env/cloud/hosted_zone/**"
+kms:
+  - *common
+  - "aws/kms/**"
+  - "env/cloud/kms/**"
+lambdas:
+  - *common
+  - "aws/lambdas/**"
+  - "env/cloud/lambdas/**"
+load_balancer:
+  - *common
+  - "aws/load_balancer/**"
+  - "env/cloud/load_balancer/**"
+load_testing:
+  - *common
+  - "aws/load_testing/**"
+  - "env/cloud/load_testing/**"
+network:
+  - *common
+  - "aws/network/**"
+  - "env/cloud/network/**"
+oidc_roles:
+  - *common
+  - "aws/oidc_roles/**"
+  - "env/cloud/oidc_roles/**"
+rds:
+  - *common
+  - "aws/rds/**"
+  - "env/cloud/rds/**"
+redis:
+  - *common
+  - "aws/redis/**"
+  - "env/cloud/redis/**"
+s3:
+  - *common
+  - "aws/s3/**"
+  - "env/cloud/s3/**"
+secrets:
+  - *common
+  - "aws/secrets/**"
+  - "env/cloud/secrets/**"
+sns:
+  - *common
+  - "aws/sns/**"
+  - "env/cloud/sns/**"
+sqs:
+  - *common
+  - "aws/sqs/**"
+  - "env/cloud/sqs/**"
