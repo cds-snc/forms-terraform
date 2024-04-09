@@ -22,5 +22,6 @@ inputs = {
   notify_callback_bearer_token = local.notify_callback_bearer_token
   notify_api_key               = local.notify_api_key
   freshdesk_api_key            = local.freshdesk_api_key
+  # Overwritten in GitHub Actions by TFVARS
   rds_db_password              = local.rds_db_password
 }
