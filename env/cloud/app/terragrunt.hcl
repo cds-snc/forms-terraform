@@ -181,7 +181,6 @@ inputs = {
   vault_file_storage_id = dependency.s3.outputs.vault_file_storage_id
   reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
   reliability_file_storage_id = dependency.s3.outputs.reliability_file_storage_id
-
 }
 
 include {
