@@ -142,6 +142,8 @@ jobs:
             sqs:
               - 'aws/sqs/**'
               - 'env/cloud/sqs/**'
+            lambda_code:
+              - 'lambda-code/**'
 
       # No dependencies
       - name: Terragrunt plan ecr
@@ -153,6 +155,10 @@ jobs:
           comment-title: "Staging: ecr"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
+
+      - name: Build Lambda images
+        if: ${{ steps.filter.outputs.lambda_code == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: ./.github/workflows/build-lambda-images
 
       - name: Terragrunt plan hosted_zone
         if: ${{ steps.filter.outputs.hosted_zone == 'true' || steps.filter.outputs.common == 'true' }}
@@ -236,10 +242,6 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Install Cognito Lambda deps
-        if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/cognito/lambda/deps.sh install
-
       - name: Terragrunt plan cognito
         if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
@@ -249,10 +251,6 @@ jobs:
           comment-title: "Staging: cognito"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
-
-      - name: Remove Cognito Lambda deps
-        if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/cognito/lambda/deps.sh delete
 
       - name: Terragrunt plan network
         if: ${{ steps.filter.outputs.network == 'true' || steps.filter.outputs.common == 'true' }}
@@ -316,10 +314,6 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Install Lambda deps
-        if: ${{ steps.filter.outputs.lambdas == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/lambdas/code/deps.sh install
-
       - name: Terragrunt plan lambdas
         if: ${{ steps.filter.outputs.lambdas == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
@@ -330,14 +324,6 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Remove Lambda deps
-        if: ${{ steps.filter.outputs.lambdas == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/lambdas/code/deps.sh delete
-
-      - name: Install Lambda Alarms deps
-        if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/alarms/lambda/deps.sh install
-
       - name: Terragrunt plan alarms
         if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
@@ -347,15 +333,6 @@ jobs:
           comment-title: "Staging: alarms"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
-
-      - name: Remove Lambda Alarms deps
-        if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/alarms/lambda/deps.sh delete
-
-      - name: Build Load Testing Lambda Container
-        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: aws/load_testing/lambda
-        run: docker build -t load_testing_lambda:latest .
 
       - name: Terragrunt plan load_testing
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}

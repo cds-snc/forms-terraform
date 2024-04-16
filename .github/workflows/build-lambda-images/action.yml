@@ -1,0 +1,13 @@
+name: Build Lambda images
+
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        for lambdaFolderPath in $(pwd)/lambda-code/*/; do
+          lambdaName=$(basename $lambdaFolderPath)
+          cd $lambdaFolderPath
+          repositoryName=${lambdaName}-lambda
+          docker build -t $repositoryName .
+        done
+      shell: bash

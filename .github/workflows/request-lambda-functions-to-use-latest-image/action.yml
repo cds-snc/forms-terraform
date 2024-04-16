@@ -1,0 +1,20 @@
+name: Request Lambda functions to use latest image
+
+runs:
+  using: "composite"
+  steps:
+    - name: Login to Staging Amazon ECR
+      id: login-ecr-staging
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Update Lambda function code
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr-staging.outputs.registry }}
+      run: |
+        for lambdaFolderPath in $(pwd)/lambda-code/*/; do
+          lambdaName=$(basename $lambdaFolderPath)
+          cd $lambdaFolderPath
+          repositoryName=${lambdaName}-lambda
+          aws lambda update-function-code --function-name $lambdaName --image-uri $ECR_REGISTRY/$repositoryName:latest
+        done
+      shell: bash

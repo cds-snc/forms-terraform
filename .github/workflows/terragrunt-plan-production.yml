@@ -80,6 +80,9 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
+      - name: Build Lambda images
+        uses: ./.github/workflows/build-lambda-images
+
       - name: Terragrunt plan hosted_zone
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
@@ -154,9 +157,6 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Install Cognito Lambda deps
-        run: ./aws/cognito/lambda/deps.sh install
-
       - name: Terragrunt plan cognito
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
@@ -165,9 +165,6 @@ jobs:
           comment-title: "Production: cognito"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
-
-      - name: Remove Cognito Lambda deps
-        run: ./aws/cognito/lambda/deps.sh delete
 
       - name: Terragrunt plan network
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
@@ -226,9 +223,6 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Install Lambda deps
-        run: ./aws/lambdas/code/deps.sh install
-
       - name: Terragrunt plan lambdas
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
@@ -238,12 +232,6 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Remove Lambda deps
-        run: ./aws/lambdas/code/deps.sh delete
-
-      - name: Install Lambda Alarms deps
-        run: ./aws/alarms/lambda/deps.sh install
-
       - name: Terragrunt plan alarms
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
@@ -252,6 +240,3 @@ jobs:
           comment-title: "Production: alarms"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
-
-      - name: Remove Lambda Alarms deps
-        run: ./aws/alarms/lambda/deps.sh delete

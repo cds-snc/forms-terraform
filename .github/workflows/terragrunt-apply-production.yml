@@ -75,6 +75,12 @@ jobs:
         working-directory: env/cloud/ecr
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Build Lambda images
+        uses: ./.github/workflows/build-lambda-images
+
+      - name: Tag and push Lambda images
+        uses: ./.github/workflows/tag-and-push-lambda-images
+
       - name: Terragrunt apply hosted_zone
         working-directory: env/cloud/hosted_zone
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
@@ -109,15 +115,9 @@ jobs:
         working-directory: env/cloud/sns
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Install Cognito Lambda deps
-        run: ./aws/cognito/lambda/deps.sh install
-
       - name: Terragrunt apply cognito
         working-directory: env/cloud/cognito
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
-
-      - name: Remove Cognito Lambda deps
-        run: ./aws/cognito/lambda/deps.sh delete
 
       - name: Terragrunt apply network
         working-directory: env/cloud/network
@@ -145,25 +145,16 @@ jobs:
         working-directory: env/cloud/app
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Install Lambda deps
-        run: ./aws/lambdas/code/deps.sh install
-
       - name: Terragrunt apply lambdas
         working-directory: env/cloud/lambdas
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
-
-      - name: Remove Lambda deps
-        run: ./aws/lambdas/code/deps.sh delete
-
-      - name: Install Lambda Alarm deps
-        run: ./aws/alarms/lambda/deps.sh install
 
       - name: Terragrunt apply alarms
         working-directory: env/cloud/alarms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Remove Lambda deps
-        run: ./aws/alarms/lambda/deps.sh delete
+      - name: Request Lambda functions to use latest image
+        uses: ./.github/workflows/request-lambda-functions-to-use-latest-image
 
       - name: Notify Slack on failure
         if: failure()

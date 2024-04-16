@@ -1,0 +1,27 @@
+name: Tag and push Lambda images
+
+runs:
+  using: "composite"
+  steps:
+    - name: Login to Staging Amazon ECR
+      id: login-ecr-staging
+      uses: aws-actions/amazon-ecr-login@v2
+    
+    - name: Tag and push docker images
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr-staging.outputs.registry }}
+      run: |
+        for lambdaFolderPath in $(pwd)/lambda-code/*/; do
+          lambdaName=$(basename $lambdaFolderPath)
+          cd $lambdaFolderPath
+          repositoryName=${lambdaName}-lambda
+          docker tag $repositoryName $ECR_REGISTRY/$repositoryName:${GITHUB_SHA::7}
+          docker tag $repositoryName $ECR_REGISTRY/$repositoryName:latest
+          docker push $ECR_REGISTRY/$repositoryName:${GITHUB_SHA::7}
+          docker push $ECR_REGISTRY/$repositoryName:latest
+        done
+      shell: bash
+    
+    - name: Logout of Staging Amazon ECR
+      run: docker logout ${{ steps.login-ecr-staging.outputs.registry }}
+      shell: bash

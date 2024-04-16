@@ -74,6 +74,9 @@ jobs:
           comment: "false"
           terragrunt: "true"
 
+      - name: Build Lambda images
+        uses: ./.github/workflows/build-lambda-images
+
       - name: Terragrunt plan hosted_zone
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
@@ -132,18 +135,12 @@ jobs:
           comment: "false"
           terragrunt: "true"
 
-      - name: Install Cognito Lambda deps
-        run: ./aws/cognito/lambda/deps.sh install
-
       - name: Terragrunt plan cognito
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/cognito"
           comment: "false"
           terragrunt: "true"
-
-      - name: Remove Cognito Lambda deps
-        run: ./aws/cognito/lambda/deps.sh delete
 
       - name: Terragrunt plan network
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
@@ -189,9 +186,6 @@ jobs:
           comment: "false"
           terragrunt: "true"
 
-      - name: Install Lambda deps
-        run: ./aws/lambdas/code/deps.sh install
-
       - name: Terragrunt plan lambdas
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
@@ -199,25 +193,12 @@ jobs:
           comment: "false"
           terragrunt: "true"
 
-      - name: Remove Lambda deps
-        run: ./aws/lambdas/code/deps.sh delete
-
-      - name: Install Lambda Alarms deps
-        run: ./aws/alarms/lambda/deps.sh install
-
       - name: Terragrunt plan alarms
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7
         with:
           directory: "env/cloud/alarms"
           comment: "false"
           terragrunt: "true"
-
-      - name: Remove Lambda Alarms deps
-        run: ./aws/alarms/lambda/deps.sh delete
-
-      - name: Build Load Testing Lambda Container
-        working-directory: aws/load_testing/lambda
-        run: docker build -t load_testing_lambda:latest .
 
       - name: Terragrunt plan load_testing
         uses: cds-snc/terraform-plan@28d2efe5155573489fa5b5816fad20d44d1f274b # v3.0.7

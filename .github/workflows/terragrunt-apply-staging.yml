@@ -138,12 +138,22 @@ jobs:
             sqs:
               - 'aws/sqs/**'
               - 'env/cloud/sqs/**'
+            lambda_code:
+              - 'lambda-code/**'
 
       # No dependencies
       - name: Terragrunt apply ecr
         if: ${{ steps.filter.outputs.ecr == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/cloud/ecr
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Build Lambda images
+        if: ${{ steps.filter.outputs.lambda_code == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: ./.github/workflows/build-lambda-images
+
+      - name: Tag and push Lambda images
+        if: ${{ steps.filter.outputs.lambda_code == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: ./.github/workflows/tag-and-push-lambda-images
 
       - name: Terragrunt apply hosted_zone
         if: ${{ steps.filter.outputs.hosted_zone == 'true' || steps.filter.outputs.common == 'true' }}
@@ -187,18 +197,10 @@ jobs:
         working-directory: env/cloud/sns
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Install Cognito Lambda deps
-        if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/cognito/lambda/deps.sh install
-
       - name: Terragrunt apply cognito
         if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/cloud/cognito
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
-
-      - name: Remove Cognito Lambda deps
-        if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/cognito/lambda/deps.sh delete
 
       - name: Terragrunt apply network
         if: ${{ steps.filter.outputs.network == 'true' || steps.filter.outputs.common == 'true' }}
@@ -232,66 +234,15 @@ jobs:
         working-directory: env/cloud/app
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Install Lambda deps
-        if: ${{ steps.filter.outputs.lambdas == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/lambdas/code/deps.sh install
-
       - name: Terragrunt apply lambdas
         if: ${{ steps.filter.outputs.lambdas == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/cloud/lambdas
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Remove Lambda deps
-        if: ${{ steps.filter.outputs.lambdas == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/lambdas/code/deps.sh delete
-
-      - name: Install Lambda Alarm deps
-        if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/alarms/lambda/deps.sh install
-
       - name: Terragrunt apply alarms
         if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
         working-directory: env/cloud/alarms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
-
-      - name: Remove Lambda Alarm deps
-        if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/alarms/lambda/deps.sh delete
-
-        # Load Testing - Depends on ECR
-      - name: Build Load Testing Lambda Container
-        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: aws/load_testing/lambda
-        run: docker build -t load_testing_lambda:latest .
-
-      - name: Login to Staging Amazon ECR
-        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        id: login-ecr-staging
-        uses: aws-actions/amazon-ecr-login@fe743e6bc3eb2ab5094262c5b9c6a168ceb05bec
-
-      - name: Tag Images for Staging
-        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr-staging.outputs.registry }}
-          ECR_REPOSITORY: load_test
-        run: |
-          docker tag load_testing_lambda $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-      - name: Push containers to Staging Amazon ECR
-        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr-staging.outputs.registry }}
-          ECR_REPOSITORY: load_test
-        run: |
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-      - name: Logout of Staging Amazon ECR
-        if: always()
-        run: docker logout ${{ steps.login-ecr-staging.outputs.registry }}
-
-      - name: Remove local version of image
-        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        run: docker image rm load_testing_lambda
 
       - name: Terragrunt apply load_testing
         if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
@@ -301,6 +252,10 @@ jobs:
       - name: Terragrunt apply pr_review
         working-directory: env/cloud/pr_review
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Request Lambda functions to use latest image
+        if: ${{ steps.filter.outputs.lambda_code == 'true' || steps.filter.outputs.common == 'true' }}
+        uses: ./.github/workflows/request-lambda-functions-to-use-latest-image
 
       - name: Notify Slack on failure
         if: failure()
