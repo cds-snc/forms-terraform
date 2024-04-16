@@ -1,17 +1,5 @@
 # Changelog
 
-## [3.8.0](https://github.com/cds-snc/forms-terraform/compare/v3.7.2...v3.8.0) (2024-04-16)
-
-
-### Features
-
-* deploy redis and postgresql in localstack ([#620](https://github.com/cds-snc/forms-terraform/issues/620)) ([20e0fc1](https://github.com/cds-snc/forms-terraform/commit/20e0fc12be3789102a537b8ea8217c8dd64b99fb))
-
-
-### Bug Fixes
-
-* Add missing component (combobox / searchable list) for email responses ([4cbd734](https://github.com/cds-snc/forms-terraform/commit/4cbd734700ca36f804e80ddc2bc4b6b0ca884efa))
-
 ## [3.7.2](https://github.com/cds-snc/forms-terraform/compare/v3.7.1...v3.7.2) (2024-03-26)
 
 
