@@ -257,8 +257,8 @@ function handleType(
       handleFileInputResponse(qTitle, response, collector);
       break;
     default:
-      console.error(JSON.stringify("Invalid Form Element Type" + question.type));
-      throw new Error(`Invalid Form Element Type ${question.type}`);
+      // Do not try to handle form elements like richText that do not have responses
+      break;
   }
 }
 
@@ -290,8 +290,8 @@ function handleDynamicForm(
           handleArrayResponse(qTitle, (row as Record<string, Response>)[qIndex], rowCollector);
           break;
         default:
-          console.error(JSON.stringify("Invalid Form Element Type" + qItem.type));
-          throw new Error(`Invalid Form Element Type ${qItem.type}`);
+          // Do not try to handle form elements like richText that do not have responses
+          break;
       }
     });
     rowCollector.unshift(`${String.fromCharCode(13)}***${rowLabel} ${rIndex + 1}***`);
