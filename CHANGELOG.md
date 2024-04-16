@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.1](https://github.com/cds-snc/forms-terraform/compare/v3.8.0...v3.8.1) (2024-04-16)
+
+
+### Bug Fixes
+
+* Do not try to handle non form types ([#631](https://github.com/cds-snc/forms-terraform/issues/631)) ([ea6b3fb](https://github.com/cds-snc/forms-terraform/commit/ea6b3fb4aadf4c92677d5998385c49509332d696))
+
 ## [3.8.0](https://github.com/cds-snc/forms-terraform/compare/v3.7.2...v3.8.0) (2024-04-16)
 
 
