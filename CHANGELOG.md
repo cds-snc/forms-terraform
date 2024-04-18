@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.2](https://github.com/cds-snc/forms-terraform/compare/v3.8.1...v3.8.2) (2024-04-18)
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major docker images ([#500](https://github.com/cds-snc/forms-terraform/issues/500)) ([dc47785](https://github.com/cds-snc/forms-terraform/commit/dc477857612899c0c3e1df49856a6563a9d6706a))
+
 ## [3.8.1](https://github.com/cds-snc/forms-terraform/compare/v3.8.0...v3.8.1) (2024-04-16)
 
 
