@@ -32,7 +32,7 @@ if ! command -v awslocal > /dev/null; then
   exit 1
 fi
 
-if awslocal sqs get-queue-url --queue-name audit_log_queue > /dev/null 2>&1; then
+if awslocal kms list-keys | grep -q "KeyArn"; then
   printf "${yellowColor}=> Detected old Localstack instance. Will use existing Terraform state files to update resources...${reset}\n"
 else
   printf "${yellowColor}=> Detected fresh Localstack instance! Cleaning up Terragrunt caches and Terraform state files...${reset}\n"

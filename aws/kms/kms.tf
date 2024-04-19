@@ -6,8 +6,6 @@ resource "aws_kms_key" "cloudwatch" {
   description         = "CloudWatch Log Group Key"
   enable_key_rotation = true
   policy              = data.aws_iam_policy_document.kms_cloudwatch.json
-
-
 }
 
 resource "aws_kms_key" "cloudwatch_us_east" {
@@ -16,8 +14,6 @@ resource "aws_kms_key" "cloudwatch_us_east" {
   description         = "CloudWatch Log Group Key"
   enable_key_rotation = true
   policy              = data.aws_iam_policy_document.kms_cloudwatch.json
-
-
 }
 
 data "aws_iam_policy_document" "kms_cloudwatch" {
@@ -88,15 +84,12 @@ data "aws_iam_policy_document" "kms_cloudwatch" {
       identifiers = ["events.amazonaws.com"]
     }
   }
-
 }
 
 resource "aws_kms_key" "dynamo_db" {
   description         = "KMS key for DynamoDB encryption"
   enable_key_rotation = true
   policy              = data.aws_iam_policy_document.kms_dynamo_db.json
-
-
 }
 
 data "aws_iam_policy_document" "kms_dynamo_db" {
