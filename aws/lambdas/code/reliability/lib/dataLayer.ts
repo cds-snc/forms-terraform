@@ -58,7 +58,7 @@ export async function removeSubmission(submissionID: string) {
  */
 export async function notifyProcessed(submissionID: string) {
   try {
-    const expiringTime = (Math.floor(Date.now() / 1000) + 2592000).toString(); // expire after 30 days
+    const expiringTime = Math.floor(Date.now() / 1000) + 2592000; // expire after 30 days
     const DBParams = {
       TableName: "ReliabilityQueue",
       Key: {
