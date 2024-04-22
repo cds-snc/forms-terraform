@@ -6,7 +6,7 @@ RUN npm install -g yarn
 
 COPY package.json yarn.lock ./
 
-RUN yarn install
+RUN yarn install --frozen-lockfile
 
 COPY types ./types
 COPY lib ./lib
