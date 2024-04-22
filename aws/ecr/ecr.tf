@@ -39,16 +39,16 @@ locals {
   ecr_names = toset([
     "audit-logs-lambda",
     "audit-logs-archiver-lambda",
-    "form_archiver_lambda",
-    "nagware_lambda",
-    "reliability_lambda",
-    "reliability_dlq_consumer_lambda",
-    "response_archiver_lambda",
-    "submission_lambda",
-    "vault_integrity_lambda",
-    "notify_slack_lambda",
-    "cognito_email_sender_lambda",
-    "cognito_pre_sign_up_lambda"
+    "form-archiver-lambda",
+    "nagware-lambda",
+    "reliability-lambda",
+    "reliability-dlq-consumer-lambda",
+    "response-archiver-lambda",
+    "submission-lambda",
+    "vault-integrity-lambda",
+    "notify-slack-lambda",
+    "cognito-email-sender-lambda",
+    "cognito-pre-sign-up-lambda"
   ])
 }
 
