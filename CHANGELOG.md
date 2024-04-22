@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.3](https://github.com/cds-snc/forms-terraform/compare/v3.8.2...v3.8.3) (2024-04-22)
+
+
+### Bug Fixes
+
+* changed TTL field type from String to Number in ReliabilityQueue DynamoDB table ([#637](https://github.com/cds-snc/forms-terraform/issues/637)) ([868fa43](https://github.com/cds-snc/forms-terraform/commit/868fa435282ede065daf0b794c6b18602e59bc12))
+
 ## [3.8.2](https://github.com/cds-snc/forms-terraform/compare/v3.8.1...v3.8.2) (2024-04-18)
 
 
