@@ -12,8 +12,8 @@ color='\033[1;95m'
 reset='\033[0m' # No Color
 # Set proper terraform and terragrunt versions
 
-tgswitch 0.54.8
-tfswitch 1.6.6
+tgswitch 0.57.6
+tfswitch 1.8.1
 
 ACTION=$1
 DRY_RUN="-dry-run"
