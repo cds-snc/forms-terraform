@@ -10,6 +10,10 @@ resource "aws_lambda_function" "response_archiver" {
   role          = aws_iam_role.lambda.arn
   timeout       = 300
 
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
+
   environment {
     variables = {
       REGION                       = var.region

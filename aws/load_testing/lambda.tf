@@ -9,8 +9,11 @@ resource "aws_lambda_function" "load_testing" {
   timeout       = 300
   memory_size   = 200
   package_type  = "Image"
+  description   = "A function that runs a locust load test"
 
-  description = "A function that runs a locust load test"
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
 
   environment {
     variables = {

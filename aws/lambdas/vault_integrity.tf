@@ -9,6 +9,10 @@ resource "aws_lambda_function" "vault_integrity" {
   role          = aws_iam_role.lambda.arn
   timeout       = 60
 
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
+
   tracing_config {
     mode = "PassThrough"
   }

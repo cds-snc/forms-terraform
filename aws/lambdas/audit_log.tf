@@ -10,6 +10,10 @@ resource "aws_lambda_function" "audit_logs" {
   role          = aws_iam_role.lambda.arn
   timeout       = 60
 
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
+
   environment {
     variables = {
       REGION     = var.region

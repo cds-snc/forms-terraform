@@ -9,6 +9,10 @@ resource "aws_lambda_function" "nagware" {
   role          = aws_iam_role.lambda.arn
   timeout       = 300
 
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
+
   environment {
     variables = {
       ENVIRONMENT               = var.env

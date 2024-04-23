@@ -9,6 +9,10 @@ resource "aws_lambda_function" "cognito_email_sender" {
   role          = aws_iam_role.cognito_lambda.arn
   timeout       = 300
 
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
+
   environment {
     variables = {
       NOTIFY_API_KEY = var.notify_api_key_secret_arn
@@ -39,6 +43,10 @@ resource "aws_lambda_function" "cognito_pre_sign_up" {
   package_type  = "Image"
   role          = aws_iam_role.cognito_lambda.arn
   timeout       = 300
+
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
 
   tracing_config {
     mode = "PassThrough"

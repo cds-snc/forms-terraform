@@ -10,6 +10,10 @@ resource "aws_lambda_function" "notify_slack" {
   role          = aws_iam_role.notify_slack_lambda.arn
   timeout       = 300
 
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
+
   environment {
     variables = {
       ENVIRONMENT      = var.env
