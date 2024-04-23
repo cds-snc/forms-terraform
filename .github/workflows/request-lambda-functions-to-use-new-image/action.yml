@@ -1,4 +1,4 @@
-name: Request Lambda functions to use latest image
+name: Request Lambda functions to use new image
 
 inputs:
   aws-role-to-assume:
@@ -8,6 +8,8 @@ inputs:
   aws-region:
     required: true
   lambda-name:
+    required: true
+  image-tag:
     required: true
 
 runs:
@@ -27,8 +29,9 @@ runs:
     - name: Update Lambda function image
       env:
         LAMBDA_NAME: ${{ inputs.lambda-name }}
+        IMAGE_TAG: ${{ inputs.image-tag }}
         ECR_REGISTRY: ${{ steps.login-ecr-staging.outputs.registry }}
-      run: aws lambda update-function-code --function-name $LAMBDA_NAME --image-uri $ECR_REGISTRY/$LAMBDA_NAME-lambda:latest
+      run: aws lambda update-function-code --function-name $LAMBDA_NAME --image-uri $ECR_REGISTRY/$LAMBDA_NAME-lambda:$IMAGE_TAG
       shell: bash
 
     - name: Logout of Staging Amazon ECR

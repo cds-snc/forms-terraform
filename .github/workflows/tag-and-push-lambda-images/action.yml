@@ -9,6 +9,8 @@ inputs:
     required: true
   lambda-name:
     required: true
+  image-tag:
+    required: true
 
 runs:
   using: "composite"
@@ -27,13 +29,13 @@ runs:
     - name: Tag and push docker images
       env:
         LAMBDA_NAME: ${{ inputs.lambda-name }}
+        IMAGE_TAG: ${{ inputs.image-tag }}
         ECR_REGISTRY: ${{ steps.login-ecr-staging.outputs.registry }}
-        GITHUB_SHA: ${{ github.sha }}
       run: |
         REPOSITORY_NAME=$LAMBDA_NAME-lambda
-        docker tag $REPOSITORY_NAME $ECR_REGISTRY/$REPOSITORY_NAME:$GITHUB_SHA
+        docker tag $REPOSITORY_NAME $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_TAG
         docker tag $REPOSITORY_NAME $ECR_REGISTRY/$REPOSITORY_NAME:latest
-        docker push $ECR_REGISTRY/$REPOSITORY_NAME:$GITHUB_SHA
+        docker push $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_TAG
         docker push $ECR_REGISTRY/$REPOSITORY_NAME:latest
       shell: bash
 

@@ -55,7 +55,7 @@ resource "aws_ecr_repository" "lambda" {
   for_each = local.ecr_names
 
   name                 = each.key
-  image_tag_mutability = var.env == "production" ? "IMMUTABLE" : "MUTABLE"
+  image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
     scan_on_push = true

@@ -95,6 +95,7 @@ jobs:
           aws-role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
           lambda-name: ${{ matrix.image }}
+          image-tag: ${{ github.ref_name }}
 
   terragrunt-apply-all-modules:
     runs-on: ubuntu-latest
@@ -198,13 +199,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      - name: Request Lambda functions to use latest image
-        uses: ./.github/workflows/request-lambda-functions-to-use-latest-image
+      - name: Request Lambda functions to use new image
+        uses: ./.github/workflows/request-lambda-functions-to-use-new-image
         with:
           aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply-release
           aws-role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
           lambda-name: ${{ matrix.image }}
+          image-tag: ${{ github.ref_name }}
 
   notify-on-error:
     needs:
