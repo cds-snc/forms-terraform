@@ -18,9 +18,9 @@ resource "aws_ecr_lifecycle_policy" "form_viewer_policy" {
       description  = "Keep last 30 images"
 
       selection = {
-        tagStatus     = "any"
-        countType     = "imageCountMoreThan"
-        countNumber   = 30
+        tagStatus   = "any"
+        countType   = "imageCountMoreThan"
+        countNumber = 30
       }
 
       action = {
@@ -91,9 +91,9 @@ resource "aws_ecr_lifecycle_policy" "load_test_policy" {
       description  = "Keep last 5 images"
 
       selection = {
-        tagStatus     = "any"
-        countType     = "imageCountMoreThan"
-        countNumber   = 5
+        tagStatus   = "any"
+        countType   = "imageCountMoreThan"
+        countNumber = 5
       }
 
       action = {
