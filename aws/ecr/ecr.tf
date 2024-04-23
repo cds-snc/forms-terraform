@@ -18,8 +18,7 @@ resource "aws_ecr_lifecycle_policy" "form_viewer_policy" {
       description  = "Keep last 30 images"
 
       selection = {
-        tagStatus     = "tagged"
-        tagPrefixList = ["v"]
+        tagStatus     = "any"
         countType     = "imageCountMoreThan"
         countNumber   = 30
       }
@@ -56,7 +55,7 @@ resource "aws_ecr_repository" "lambda" {
   for_each = local.ecr_names
 
   name                 = each.key
-  image_tag_mutability = "MUTABLE"
+  image_tag_mutability = var.env == "production" ? "IMMUTABLE" : "MUTABLE"
 
   image_scanning_configuration {
     scan_on_push = true
@@ -92,8 +91,7 @@ resource "aws_ecr_lifecycle_policy" "load_test_policy" {
       description  = "Keep last 5 images"
 
       selection = {
-        tagStatus     = "tagged"
-        tagPrefixList = ["v"]
+        tagStatus     = "any"
         countType     = "imageCountMoreThan"
         countNumber   = 5
       }
