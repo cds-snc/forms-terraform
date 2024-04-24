@@ -8,33 +8,18 @@ variable "ecs_cloudwatch_log_group_name" {
   type        = string
 }
 
-variable "lambda_reliability_log_group_name" {
-  description = "Reliability Queues CloudWatch log group name"
-  type        = string
-}
-
-variable "lambda_submission_log_group_name" {
-  description = "Submission Lambda CloudWatch log group name"
-  type        = string
-}
-
-variable "lambda_response_archiver_log_group_name" {
-  description = "Response Archiver Lambda CloudWatch log group name"
-  type        = string
-}
-
-variable "lambda_dlq_consumer_log_group_name" {
-  description = "DQL Consumer CloudWatch log group name"
-  type        = string
-}
-
-variable "lambda_template_archiver_log_group_name" {
-  description = "Template Archiver Lambda CloudWatch log group name"
-  type        = string
-}
-
-variable "lambda_audit_log_group_name" {
+variable "lambda_audit_logs_log_group_name" {
   description = "Audit Log Lambda CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_audit_logs_archiver_log_group_name" {
+  description = "Audit logs archiver Lambda CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_form_archiver_log_group_name" {
+  description = "Template Archiver Lambda CloudWatch log group name"
   type        = string
 }
 
@@ -43,18 +28,33 @@ variable "lambda_nagware_log_group_name" {
   type        = string
 }
 
-variable "lambda_vault_data_integrity_check_function_name" {
-  description = "Vault data integrity check lambda function name"
+variable "lambda_reliability_log_group_name" {
+  description = "Reliability Queues CloudWatch log group name"
   type        = string
 }
 
-variable "lambda_vault_data_integrity_check_log_group_name" {
+variable "lambda_reliability_dlq_consumer_log_group_name" {
+  description = "DQL Consumer CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_response_archiver_log_group_name" {
+  description = "Response Archiver Lambda CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_submission_log_group_name" {
+  description = "Submission Lambda CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_vault_integrity_log_group_name" {
   description = "Vault data integrity check Lambda CloudWatch log group name"
   type        = string
 }
 
-variable "lambda_audit_logs_archiver_group_name" {
-  description = "Audit logs archiver Lambda CloudWatch log group name"
+variable "lambda_vault_integrity_function_name" {
+  description = "Vault data integrity check lambda function name"
   type        = string
 }
 

@@ -71,16 +71,16 @@ dependency "lambdas" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    lambda_reliability_log_group_name                = "/aws/lambda/reliability"
-    lambda_submission_log_group_name                 = "/aws/lambda/submission"
-    lambda_response_archiver_log_group_name          = "/aws/lambda/response-Archiver"
-    lambda_dlq_consumer_log_group_name               = "/aws/lambda/reliability-dlq-consumer"
-    lambda_template_archiver_log_group_name          = "/aws/lambda/form-archiver"
-    lambda_audit_log_group_name                      = "/aws/lambda/audit-logs"
-    lambda_nagware_log_group_name                    = "/aws/lambda/nagware"
-    lambda_vault_data_integrity_check_log_group_name = "/aws/lambda/vault-integrity"
-    lambda_vault_data_integrity_check_function_name  = "vault-integrity"
-    lambda_audit_logs_archiver_group_name            = "/aws/lambda/audit-logs-archiver"
+    lambda_audit_logs_log_group_name               = "/aws/lambda/audit-logs"
+    lambda_audit_logs_archiver_log_group_name      = "/aws/lambda/audit-logs-archiver"
+    lambda_form_archiver_log_group_name            = "/aws/lambda/form-archiver"
+    lambda_nagware_log_group_name                  = "/aws/lambda/nagware"
+    lambda_reliability_log_group_name              = "/aws/lambda/reliability"
+    lambda_reliability_dlq_consumer_log_group_name = "/aws/lambda/reliability-dlq-consumer"
+    lambda_response_archiver_log_group_name        = "/aws/lambda/response-archiver"
+    lambda_submission_log_group_name               = "/aws/lambda/submission"
+    lambda_vault_integrity_log_group_name          = "/aws/lambda/vault-integrity"
+    lambda_vault_integrity_function_name           = "vault-integrity"
   }
 }
 
@@ -128,16 +128,17 @@ inputs = {
   ecs_cloudwatch_log_group_name                    = dependency.app.outputs.ecs_cloudwatch_log_group_name
   ecs_cluster_name                                 = dependency.app.outputs.ecs_cluster_name
   ecs_service_name                                 = dependency.app.outputs.ecs_service_name
-  lambda_reliability_log_group_name                = dependency.lambdas.outputs.lambda_reliability_log_group_name
-  lambda_submission_log_group_name                 = dependency.lambdas.outputs.lambda_submission_log_group_name
-  lambda_response_archiver_log_group_name          = dependency.lambdas.outputs.lambda_response_archiver_log_group_name
-  lambda_dlq_consumer_log_group_name               = dependency.lambdas.outputs.lambda_dlq_consumer_log_group_name
-  lambda_template_archiver_log_group_name          = dependency.lambdas.outputs.lambda_template_archiver_log_group_name
-  lambda_audit_log_group_name                      = dependency.lambdas.outputs.lambda_audit_log_group_name
-  lambda_nagware_log_group_name                    = dependency.lambdas.outputs.lambda_nagware_log_group_name
-  lambda_vault_data_integrity_check_log_group_name = dependency.lambdas.outputs.lambda_vault_data_integrity_check_log_group_name
-  lambda_vault_data_integrity_check_function_name  = dependency.lambdas.outputs.lambda_vault_data_integrity_check_function_name
-  lambda_audit_logs_archiver_group_name            = dependency.lambdas.outputs.lambda_audit_logs_archiver_group_name
+
+  lambda_audit_logs_log_group_name               = dependency.lambdas.outputs.lambda_audit_logs_log_group_name
+  lambda_audit_logs_archiver_log_group_name      = dependency.lambdas.outputs.lambda_audit_logs_archiver_log_group_name
+  lambda_form_archiver_log_group_name            = dependency.lambdas.outputs.lambda_form_archiver_log_group_name
+  lambda_nagware_log_group_name                  = dependency.lambdas.outputs.lambda_nagware_log_group_name
+  lambda_reliability_log_group_name              = dependency.lambdas.outputs.lambda_reliability_log_group_name
+  lambda_reliability_dlq_consumer_log_group_name = dependency.lambdas.outputs.lambda_reliability_dlq_consumer_log_group_name
+  lambda_response_archiver_log_group_name        = dependency.lambdas.outputs.lambda_response_archiver_log_group_name
+  lambda_submission_log_group_name               = dependency.lambdas.outputs.lambda_submission_log_group_name
+  lambda_vault_integrity_log_group_name          = dependency.lambdas.outputs.lambda_vault_integrity_log_group_name
+  lambda_vault_integrity_function_name           = dependency.lambdas.outputs.lambda_vault_integrity_function_name
 
   sns_topic_alert_critical_arn        = dependency.sns.outputs.sns_topic_alert_critical_arn
   sns_topic_alert_warning_arn         = dependency.sns.outputs.sns_topic_alert_warning_arn
