@@ -32,6 +32,11 @@ if ! command -v awslocal > /dev/null; then
   exit 1
 fi
 
+if ! curl https://localhost.localstack.cloud:4566/_localstack/health > /dev/null 2>&1; then
+  printf "${redColor}=> Your Localstack instance appears to be offline. Use 'docker-compose up' to launch it.${reset}\n"
+  exit 1
+fi
+
 if awslocal kms list-keys | grep -q "KeyArn"; then
   printf "${yellowColor}=> Detected old Localstack instance. Will use existing Terraform state files to update resources...${reset}\n"
 else
