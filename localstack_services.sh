@@ -27,13 +27,13 @@ tfswitch 1.6.6
 
 basedir=$(pwd)
 
-if ! command -v awslocal > /dev/null; then
-  printf "${redColor}=> This script requires 'awslocal' to be installed.${reset}\n"
+if ! curl https://localhost.localstack.cloud:4566/_localstack/health > /dev/null 2>&1; then
+  printf "${redColor}=> Your Localstack instance appears to be offline. Use 'docker-compose up' to launch it.${reset}\n"
   exit 1
 fi
 
-if ! curl https://localhost.localstack.cloud:4566/_localstack/health > /dev/null 2>&1; then
-  printf "${redColor}=> Your Localstack instance appears to be offline. Use 'docker-compose up' to launch it.${reset}\n"
+if ! command -v awslocal > /dev/null; then
+  printf "${redColor}=> This script requires 'awslocal' to be installed.${reset}\n"
   exit 1
 fi
 
