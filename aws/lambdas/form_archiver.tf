@@ -45,7 +45,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_form_archiver_lambda" 
  * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
  */
 
-resource "aws_cloudwatch_log_group" "form_archiver" {
+resource "aws_cloudwatch_log_group" "archive_form_templates" {
   name              = "/aws/lambda/Archive_Form_Templates"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
