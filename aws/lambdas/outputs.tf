@@ -10,7 +10,7 @@ output "lambda_audit_logs_archiver_log_group_name" {
 
 output "lambda_form_archiver_log_group_name" {
   description = "Form archiver Lambda CloudWatch log group name"
-  value       = aws_cloudwatch_log_group.form_archiver.name
+  value       = aws_cloudwatch_log_group.archive_form_templates.name
 }
 
 output "lambda_nagware_log_group_name" {
@@ -25,7 +25,7 @@ output "lambda_reliability_log_group_name" {
 
 output "lambda_reliability_dlq_consumer_log_group_name" {
   description = "Reliability DQL consumer Lambda CloudWatch log group name"
-  value       = aws_cloudwatch_log_group.reliability_dlq_consumer.name
+  value       = aws_cloudwatch_log_group.dead_letter_queue_consumer.name
 }
 
 output "lambda_response_archiver_log_group_name" {
