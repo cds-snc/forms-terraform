@@ -143,7 +143,8 @@ resource "aws_s3_bucket" "lambda_code" {
   # checkov:skip=CKV_AWS_21: Versioning not required
   # checkov:skip=CKV2_AWS_61: Lifecycle configuration not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
-  bucket = "forms-${var.env}-lambda-code"
+  bucket        = "forms-${var.env}-lambda-code"
+  force_destroy = true // in preparation for the Lambda containerization upgrade which will delete this bucket
 }
 
 resource "aws_s3_bucket_ownership_controls" "lambda_code" {
