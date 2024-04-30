@@ -71,15 +71,15 @@ dependency "lambdas" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    lambda_audit_logs_log_group_name               = "/aws/lambda/audit-logs"
-    lambda_audit_logs_archiver_log_group_name      = "/aws/lambda/audit-logs-archiver"
-    lambda_form_archiver_log_group_name            = "/aws/lambda/form-archiver"
-    lambda_nagware_log_group_name                  = "/aws/lambda/nagware"
-    lambda_reliability_log_group_name              = "/aws/lambda/reliability"
-    lambda_reliability_dlq_consumer_log_group_name = "/aws/lambda/reliability-dlq-consumer"
-    lambda_response_archiver_log_group_name        = "/aws/lambda/response-archiver"
-    lambda_submission_log_group_name               = "/aws/lambda/submission"
-    lambda_vault_integrity_log_group_name          = "/aws/lambda/vault-integrity"
+    lambda_audit_logs_log_group_name               = "/aws/lambda/Audit_Logs"
+    lambda_audit_logs_archiver_log_group_name      = "/aws/lambda/Audit_Logs_Archiver"
+    lambda_form_archiver_log_group_name            = "/aws/lambda/Archive_Form_Templates"
+    lambda_nagware_log_group_name                  = "/aws/lambda/Nagware"
+    lambda_reliability_log_group_name              = "/aws/lambda/Reliability"
+    lambda_reliability_dlq_consumer_log_group_name = "/aws/lambda/Reliability_DLQ_Consumer"
+    lambda_response_archiver_log_group_name        = "/aws/lambda/Response_Archiver"
+    lambda_submission_log_group_name               = "/aws/lambda/Submission"
+    lambda_vault_integrity_log_group_name          = "/aws/lambda/Vault_Data_Integrity_Check"
     lambda_vault_integrity_function_name           = "vault-integrity"
   }
 }
