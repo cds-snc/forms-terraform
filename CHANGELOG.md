@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.5](https://github.com/cds-snc/forms-terraform/compare/v3.8.4...v3.8.5) (2024-04-30)
+
+
+### Miscellaneous Chores
+
+* set force_destroy to true on Lambda code bucket in preparation for the Lambda containerization upgrade which will delete this bucket ([#641](https://github.com/cds-snc/forms-terraform/issues/641)) ([a20e4cb](https://github.com/cds-snc/forms-terraform/commit/a20e4cb7c6d5c04815e7c1a2c848ec59535301b3))
+
 ## [3.8.4](https://github.com/cds-snc/forms-terraform/compare/v3.8.3...v3.8.4) (2024-04-23)
 
 
