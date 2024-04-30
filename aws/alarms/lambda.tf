@@ -22,6 +22,11 @@ resource "aws_lambda_function" "notify_slack" {
     }
   }
 
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/NotifySlack"
+  }
+
   tracing_config {
     mode = "PassThrough"
   }
@@ -96,8 +101,13 @@ resource "aws_iam_role_policy_attachment" "notify_slack_lambda_basic_access" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+/*
+ * When implementing containerized Lambda we had to rename some of the functions.
+ * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
+ */
+
 resource "aws_cloudwatch_log_group" "notify_slack" {
-  name              = "/aws/lambda/${aws_lambda_function.notify_slack.function_name}"
+  name              = "/aws/lambda/NotifySlack"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }

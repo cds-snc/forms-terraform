@@ -22,13 +22,23 @@ resource "aws_lambda_function" "cognito_email_sender" {
     }
   }
 
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/Cognito_Email_Sender"
+  }
+
   tracing_config {
     mode = "PassThrough"
   }
 }
 
+/*
+ * When implementing containerized Lambda we had to rename some of the functions.
+ * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
+ */
+
 resource "aws_cloudwatch_log_group" "cognito_email_sender" {
-  name              = "/aws/lambda/${aws_lambda_function.cognito_email_sender.function_name}"
+  name              = "/aws/lambda/Cognito_Email_Sender"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }
@@ -48,13 +58,23 @@ resource "aws_lambda_function" "cognito_pre_sign_up" {
     ignore_changes = [image_uri]
   }
 
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/Cognito_Pre_Sign_Up"
+  }
+
   tracing_config {
     mode = "PassThrough"
   }
 }
 
+/*
+ * When implementing containerized Lambda we had to rename some of the functions.
+ * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
+ */
+
 resource "aws_cloudwatch_log_group" "cognito_pre_sign_up" {
-  name              = "/aws/lambda/${aws_lambda_function.cognito_pre_sign_up.function_name}"
+  name              = "/aws/lambda/Cognito_Pre_Sign_Up"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }

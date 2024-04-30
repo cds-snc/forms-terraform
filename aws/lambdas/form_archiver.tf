@@ -22,6 +22,11 @@ resource "aws_lambda_function" "form_archiver" {
     }
   }
 
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/Archive_Form_Templates"
+  }
+
   tracing_config {
     mode = "PassThrough"
   }
@@ -35,8 +40,13 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_form_archiver_lambda" 
   source_arn    = aws_cloudwatch_event_rule.form_archiver_lambda_trigger.arn
 }
 
+/*
+ * When implementing containerized Lambda we had to rename some of the functions.
+ * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
+ */
+
 resource "aws_cloudwatch_log_group" "form_archiver" {
-  name              = "/aws/lambda/${aws_lambda_function.form_archiver.function_name}"
+  name              = "/aws/lambda/Archive_Form_Templates"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }

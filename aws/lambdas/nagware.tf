@@ -28,6 +28,11 @@ resource "aws_lambda_function" "nagware" {
     }
   }
 
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/Nagware"
+  }
+
   tracing_config {
     mode = "PassThrough"
   }
@@ -41,8 +46,13 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_nagware_lambda" {
   source_arn    = aws_cloudwatch_event_rule.nagware_lambda_trigger.arn
 }
 
+/*
+ * When implementing containerized Lambda we had to rename some of the functions.
+ * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
+ */
+
 resource "aws_cloudwatch_log_group" "nagware" {
-  name              = "/aws/lambda/${aws_lambda_function.nagware.function_name}"
+  name              = "/aws/lambda/Nagware"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }
