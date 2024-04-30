@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.4](https://github.com/cds-snc/forms-terraform/compare/v3.8.3...v3.8.4) (2024-04-23)
+
+
+### Bug Fixes
+
+* update name of Notify callback token TF variable ([#639](https://github.com/cds-snc/forms-terraform/issues/639)) ([269ac5a](https://github.com/cds-snc/forms-terraform/commit/269ac5a6d2c6922e65f587094855bd195e17fc42))
+
 ## [3.8.3](https://github.com/cds-snc/forms-terraform/compare/v3.8.2...v3.8.3) (2024-04-22)
 
 
