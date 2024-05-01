@@ -32,7 +32,7 @@ for lambdaFolderPath in $basedir/*/; do
 
   cd $lambdaFolderPath
 
-  if [[ "${ACTION}" == "skip" ]] && [[ $(git diff --cached -- .) == "" ]]; then
+  if [[ "${ACTION}" == "skip" ]] && [[ $(git diff HEAD .) == "" ]]; then
     printf "${yellowColor}=> Skipping $lambdaName Lambda as no code changes have been detected since last commit.${reset}\n"
   else
     printf "${greenColor}=> Building new ${lambdaName} image${reset}\n"
