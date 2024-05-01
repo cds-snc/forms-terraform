@@ -46,9 +46,11 @@ for lambdaFolderPath in $basedir/*/; do
     docker tag $repositoryName $ecrRepositoryAddress/$repositoryName
     docker push $ecrRepositoryAddress/$repositoryName
 
-    printf "${yellowColor}=> Requesting ${lambdaName} Lambda function to use new image. It can fail if the Lambda function is not deployed yet.${reset}\n"
+    functionName=$([ "$lambdaName" == "submission" ] && echo "Submission" || echo "$lambdaName")
 
-    awslocal lambda update-function-code --function-name $lambdaName --image-uri $ecrRepositoryAddress/$repositoryName > /dev/null || continue
+    printf "${yellowColor}=> Requesting ${functionName} Lambda function to use new image. It can fail if the Lambda function is not deployed yet.${reset}\n"
+
+    awslocal lambda update-function-code --function-name $functionName --image-uri $ecrRepositoryAddress/$repositoryName > /dev/null || continue
   fi
 done
 

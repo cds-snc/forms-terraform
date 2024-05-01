@@ -2,8 +2,14 @@
 # Form Submission API processing
 #
 
+/*
+ * For the submission Lambda, when working on https://github.com/cds-snc/forms-terraform/pull/626, we decided to not rename the function name
+ * to avoid any service disruption when releasing to Production. This is due to the web application directly calling the Submission (with a capital S) Lambda.
+ * All the others Lambda functions have lowercase names.
+ */
+
 resource "aws_lambda_function" "submission" {
-  function_name = "submission"
+  function_name = "Submission"
   image_uri     = "${var.ecr_repository_url_submission_lambda}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn

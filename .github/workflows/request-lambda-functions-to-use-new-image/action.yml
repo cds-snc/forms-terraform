@@ -31,7 +31,9 @@ runs:
         LAMBDA_NAME: ${{ inputs.lambda-name }}
         IMAGE_TAG: ${{ inputs.image-tag }}
         ECR_REGISTRY: ${{ steps.login-ecr-staging.outputs.registry }}
-      run: aws lambda update-function-code --function-name $LAMBDA_NAME --image-uri $ECR_REGISTRY/$LAMBDA_NAME-lambda:$IMAGE_TAG
+      run: |
+        functionName=$([ "$LAMBDA_NAME" == "submission" ] && echo "Submission" || echo "$LAMBDA_NAME")
+        aws lambda update-function-code --function-name $functionName --image-uri $ECR_REGISTRY/$LAMBDA_NAME-lambda:$IMAGE_TAG
       shell: bash
 
     - name: Logout of Staging Amazon ECR
