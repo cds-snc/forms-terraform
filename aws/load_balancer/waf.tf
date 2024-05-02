@@ -9,32 +9,42 @@ locals {
   cognito_login_outside_canada_rule_name = "AWSCognitoLoginOutsideCanada"
 }
 
-resource "aws_wafv2_web_acl" "forms_acl" {
-  name  = "GCForms"
-  scope = "REGIONAL"
-
-  default_action {
-    allow {}
-  }
+resource "aws_wafv2_rule_group" "rate_limiters_group" {
+  capacity = 10
+  name     = "RateLimitersGroup"
+  scope    = "REGIONAL"
 
   rule {
-    name     = "AWSManagedRulesAmazonIpReputationList"
-    priority = 1
+    name     = "PostRequestLimit"
+    priority = 2
 
-    override_action {
-      none {}
+    action {
+      block {}
     }
 
     statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesAmazonIpReputationList"
-        vendor_name = "AWS"
+      rate_based_statement {
+        limit              = 100
+        aggregate_key_type = "IP"
+        scope_down_statement {
+          byte_match_statement {
+            positional_constraint = "EXACTLY"
+            field_to_match {
+              method {}
+            }
+            search_string = "post"
+            text_transformation {
+              priority = 1
+              type     = "LOWERCASE"
+            }
+          }
+        }
       }
     }
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesAmazonIpReputationList"
+      metric_name                = "PostRequestRateLimit"
       sampled_requests_enabled   = true
     }
   }
@@ -73,6 +83,43 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       sampled_requests_enabled   = true
     }
   }
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "RateLimitersGroup"
+    sampled_requests_enabled   = false
+  }
+}
+
+resource "aws_wafv2_web_acl" "forms_acl" {
+  name  = "GCForms"
+  scope = "REGIONAL"
+
+  default_action {
+    allow {}
+  }
+
+  rule {
+    name     = "AWSManagedRulesAmazonIpReputationList"
+    priority = 1
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesAmazonIpReputationList"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesAmazonIpReputationList"
+      sampled_requests_enabled   = true
+    }
+  }
+
 
   rule {
     name     = "PreventHostInjections"
