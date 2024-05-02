@@ -13,14 +13,34 @@ output "ecr_repository_url_audit_logs_archiver_lambda" {
   value       = aws_ecr_repository.lambda["audit-logs-archiver-lambda"].repository_url
 }
 
+output "ecr_repository_url_cognito_email_sender_lambda" {
+  description = "URL of the Cognito Email Sender Lambda ECR"
+  value       = aws_ecr_repository.lambda["cognito-email-sender-lambda"].repository_url
+}
+
+output "ecr_repository_url_cognito_pre_sign_up_lambda" {
+  description = "URL of the Cognito Pre Sign Up Lambda ECR"
+  value       = aws_ecr_repository.lambda["cognito-pre-sign-up-lambda"].repository_url
+}
+
 output "ecr_repository_url_form_archiver_lambda" {
   description = "URL of the Form Archiver Lambda ECR"
   value       = aws_ecr_repository.lambda["form-archiver-lambda"].repository_url
 }
 
+output "ecr_repository_url_load_testing_lambda" {
+  description = "URL of the Load Testing Lambda ECR"
+  value       = aws_ecr_repository.lambda["load-testing-lambda"].repository_url
+}
+
 output "ecr_repository_url_nagware_lambda" {
   description = "URL of the Nagware Lambda ECR"
   value       = aws_ecr_repository.lambda["nagware-lambda"].repository_url
+}
+
+output "ecr_repository_url_notify_slack_lambda" {
+  description = "URL of the Notify Slack Lambda ECR"
+  value       = aws_ecr_repository.lambda["notify-slack-lambda"].repository_url
 }
 
 output "ecr_repository_url_reliability_lambda" {
@@ -46,24 +66,4 @@ output "ecr_repository_url_submission_lambda" {
 output "ecr_repository_url_vault_integrity_lambda" {
   description = "URL of the Vault Integrity Lambda ECR"
   value       = aws_ecr_repository.lambda["vault-integrity-lambda"].repository_url
-}
-
-output "ecr_repository_url_notify_slack_lambda" {
-  description = "URL of the Notify Slack Lambda ECR"
-  value       = aws_ecr_repository.lambda["notify-slack-lambda"].repository_url
-}
-
-output "ecr_repository_url_cognito_email_sender_lambda" {
-  description = "URL of the Cognito Email Sender Lambda ECR"
-  value       = aws_ecr_repository.lambda["cognito-email-sender-lambda"].repository_url
-}
-
-output "ecr_repository_url_cognito_pre_sign_up_lambda" {
-  description = "URL of the Cognito Pre Sign Up Lambda ECR"
-  value       = aws_ecr_repository.lambda["cognito-pre-sign-up-lambda"].repository_url
-}
-
-output "ecr_repository_url_load_test" {
-  description = "URL of the Form viewer ECR"
-  value       = length(aws_ecr_repository.load_test_repository) > 0 ? aws_ecr_repository.load_test_repository[0].repository_url : ""
 }

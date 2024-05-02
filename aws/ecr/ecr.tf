@@ -38,16 +38,17 @@ locals {
   ecr_names = toset([
     "audit-logs-lambda",
     "audit-logs-archiver-lambda",
+    "cognito-email-sender-lambda",
+    "cognito-pre-sign-up-lambda",
     "form-archiver-lambda",
+    "load-testing-lambda",
     "nagware-lambda",
+    "notify-slack-lambda",
     "reliability-lambda",
     "reliability-dlq-consumer-lambda",
     "response-archiver-lambda",
     "submission-lambda",
-    "vault-integrity-lambda",
-    "notify-slack-lambda",
-    "cognito-email-sender-lambda",
-    "cognito-pre-sign-up-lambda"
+    "vault-integrity-lambda"
   ])
 }
 
@@ -67,38 +68,4 @@ resource "aws_ecr_lifecycle_policy" "lambda" {
 
   repository = aws_ecr_repository.lambda[each.key].name
   policy     = file("${path.module}/policy/lambda_lifecycle.json")
-}
-
-#
-# Holds the Load Test image used by the Lambda
-#
-resource "aws_ecr_repository" "load_test_repository" {
-  count                = var.env == "staging" ? 1 : 0
-  name                 = "load_test"
-  image_tag_mutability = "MUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-}
-
-resource "aws_ecr_lifecycle_policy" "load_test_policy" {
-  count      = var.env == "staging" ? 1 : 0
-  repository = aws_ecr_repository.load_test_repository[0].name
-  policy = jsonencode({
-    rules = [{
-      rulePriority = 1
-      description  = "Keep last 5 images"
-
-      selection = {
-        tagStatus   = "any"
-        countType   = "imageCountMoreThan"
-        countNumber = 5
-      }
-
-      action = {
-        type = "expire"
-      }
-    }]
-  })
 }
