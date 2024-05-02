@@ -1,6 +1,5 @@
 {
   "name": "audit-logs",
-  "description": "to be removed",
   "version": "1.0.0",
   "main": "main.js",
   "type": "module",
