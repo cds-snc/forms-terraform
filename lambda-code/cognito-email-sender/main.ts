@@ -1,6 +1,7 @@
 import encryptionSDK from "@aws-crypto/client-node";
 import { Handler } from "aws-lambda";
 import { NotifyClient } from "notifications-node-client";
+import { AxiosError } from "axios";
 import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 
 const KEY_ARN = process.env.KEY_ARN;
@@ -9,7 +10,8 @@ const TEMPLATE_ID = process.env.TEMPLATE_ID;
 
 if (!KEY_ARN || !KEY_ALIAS || !TEMPLATE_ID) {
   throw new Error(
-    `Missing Environment Variables: ${KEY_ARN ? "" : "Key ARN"} ${KEY_ALIAS ? "" : "Key Alias"} ${TEMPLATE_ID ? "" : "Template ID"
+    `Missing Environment Variables: ${KEY_ARN ? "" : "Key ARN"} ${KEY_ALIAS ? "" : "Key Alias"} ${
+      TEMPLATE_ID ? "" : "Template ID"
     }`
   );
 }
@@ -18,7 +20,10 @@ const client = new SecretsManagerClient();
 const command = new GetSecretValueCommand({ SecretId: process.env.NOTIFY_API_KEY });
 console.log("Retrieving Notify API Key from Secrets Manager");
 const notifyApiKey = await client.send(command);
-const notifyClient = new NotifyClient("https://api.notification.canada.ca", notifyApiKey.SecretString);
+const notifyClient = new NotifyClient(
+  "https://api.notification.canada.ca",
+  notifyApiKey.SecretString
+);
 
 export const handler: Handler = async (event) => {
   // setup the encryptionSDK's key ring
@@ -68,13 +73,26 @@ export const handler: Handler = async (event) => {
         },
       });
     } catch (err) {
-      console.error(
-        JSON.stringify({
-          status: "failed",
-          message: "Notify Failed To Send the Code.",
-          error: (err as Error).message,
-        })
-      );
+      if (err instanceof AxiosError) {
+        // Error Message will be sent to slack
+        console.error(
+          JSON.stringify({
+            level: "error",
+            msg: `Failed to send password reset email to ${userEmail}`,
+            error: err.response?.data?.errors
+              ? JSON.stringify(err.response.data.errors)
+              : err.message,
+          })
+        );
+      } else {
+        console.error(
+          JSON.stringify({
+            status: "failed",
+            message: "Failed to send Notify Email.",
+            error: (err as Error).message,
+          })
+        );
+      }
       throw new Error("Notify failed to send the code");
     }
   }
