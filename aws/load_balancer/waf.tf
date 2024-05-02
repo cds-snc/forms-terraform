@@ -109,20 +109,20 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   }
 
   rule {
-    name = "RateLimitersRuleGroup"
+    name     = "RateLimitersRuleGroup"
     priority = 2
 
-  statement {
-    rule_group_reference_statement {
-      arn = aws_wafv2_rule_group.rate_limiters_group.arn
-    }
-  }
-
-  visibility_config {
-        cloudwatch_metrics_enabled = true
-        metric_name                = "rate_limiters_rule_group"
-        sampled_requests_enabled   = false
+    statement {
+      rule_group_reference_statement {
+        arn = aws_wafv2_rule_group.rate_limiters_group.arn
       }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "rate_limiters_rule_group"
+      sampled_requests_enabled   = false
+    }
   }
 
   rule {
