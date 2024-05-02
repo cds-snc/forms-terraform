@@ -111,6 +111,7 @@ jobs:
           image-tag: ${{ github.sha }}
 
   terragrunt-apply-all-modules:
+    needs: build-tag-push-lambda-images
     if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     steps:
