@@ -1,0 +1,39 @@
+audit-logs:
+  - "lambda-code/audit-logs/**"
+  - "lambda-code/force-deploy-images.txt"
+audit-logs-archiver:
+  - "lambda-code/audit-logs-archiver/**"
+  - "lambda-code/force-deploy-images.txt"
+cognito-email-sender:
+  - "lambda-code/cognito-email-sender/**"
+  - "lambda-code/force-deploy-images.txt"
+cognito-pre-sign-up:
+  - "lambda-code/cognito-pre-sign-up/**"
+  - "lambda-code/force-deploy-images.txt"
+form-archiver:
+  - "lambda-code/form-archiver/**"
+  - "lambda-code/force-deploy-images.txt"
+load-testing:
+  - "lambda-code/load-testing/**"
+  - "lambda-code/force-deploy-images.txt"
+nagware:
+  - "lambda-code/nagware/**"
+  - "lambda-code/force-deploy-images.txt"
+notify-slack:
+  - "lambda-code/notify-slack/**"
+  - "lambda-code/force-deploy-images.txt"
+reliability:
+  - "lambda-code/reliability/**"
+  - "lambda-code/force-deploy-images.txt"
+reliability-dlq-consumer:
+  - "lambda-code/reliability-dlq-consumer/**"
+  - "lambda-code/force-deploy-images.txt"
+response-archiver:
+  - "lambda-code/response-archiver/**"
+  - "lambda-code/force-deploy-images.txt"
+submission:
+  - "lambda-code/submission/**"
+  - "lambda-code/force-deploy-images.txt"
+vault-integrity:
+  - "lambda-code/vault-integrity/**"
+  - "lambda-code/force-deploy-images.txt"

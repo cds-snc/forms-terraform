@@ -1,31 +1,23 @@
 #
 # Form Submission API processing
 #
-data "archive_file" "submission_code" {
-  type        = "zip"
-  source_dir  = "./code/submission/dist"
-  output_path = "/tmp/submission_code.zip"
-}
 
-resource "aws_s3_object" "submission_code" {
-  bucket      = var.lambda_code_id
-  key         = "submission_code"
-  source      = data.archive_file.submission_code.output_path
-  source_hash = data.archive_file.submission_code.output_base64sha256
-}
+/*
+ * For the submission Lambda, when working on https://github.com/cds-snc/forms-terraform/pull/626, we decided to not rename the function name
+ * to avoid any service disruption when releasing to Production. This is due to the web application directly calling the Submission (with a capital S) Lambda.
+ * All the others Lambda functions have lowercase names.
+ */
 
 resource "aws_lambda_function" "submission" {
-  s3_bucket         = aws_s3_object.submission_code.bucket
-  s3_key            = aws_s3_object.submission_code.key
-  s3_object_version = aws_s3_object.submission_code.version_id
-  function_name     = "Submission"
-  role              = aws_iam_role.lambda.arn
-  handler           = "submission.handler"
-  timeout           = 60
+  function_name = "Submission"
+  image_uri     = "${var.ecr_repository_url_submission_lambda}:latest"
+  package_type  = "Image"
+  role          = aws_iam_role.lambda.arn
+  timeout       = 60
 
-  source_code_hash = data.archive_file.submission_code.output_base64sha256
-
-  runtime = "nodejs18.x"
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
 
   environment {
     variables = {
@@ -35,12 +27,14 @@ resource "aws_lambda_function" "submission" {
     }
   }
 
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/Submission"
+  }
+
   tracing_config {
     mode = "PassThrough"
   }
-
-
-
 }
 
 # Allow ECS to invoke Submission Lambda
@@ -53,19 +47,12 @@ resource "aws_lambda_permission" "submission" {
 }
 
 /*
- * This is a temporary change to allow the web application to call the legacy submission Lambda function name (see https://github.com/cds-snc/platform-forms-client/commit/48919e38b00c4ce591009f7dd076e3f8b4bbf5c3)
- * It can be removed once we have released https://github.com/cds-snc/forms-terraform/pull/626 in Production.
+ * When implementing containerized Lambda we had to rename some of the functions.
+ * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
  */
 
-resource "aws_lambda_permission" "submission_option_2" {
-  statement_id  = "AllowInvokeECS"
-  action        = "lambda:InvokeFunction"
-  function_name = "submission" // This will be changed to Submission in the Lambda containerization pull request
-  principal     = var.ecs_iam_role_arn
-}
-
 resource "aws_cloudwatch_log_group" "submission" {
-  name              = "/aws/lambda/${aws_lambda_function.submission.function_name}"
+  name              = "/aws/lambda/Submission"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }

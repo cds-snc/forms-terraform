@@ -1,27 +1,13 @@
-data "archive_file" "audit_logs_archiver_code" {
-  type        = "zip"
-  source_dir  = "./code/audit_logs_archiver/dist"
-  output_path = "/tmp/audit_logs_archiver_code.zip"
-}
-
-resource "aws_s3_object" "audit_logs_archiver_code" {
-  bucket      = var.lambda_code_id
-  key         = "audit_logs_archiver_code"
-  source      = data.archive_file.audit_logs_archiver_code.output_path
-  source_hash = data.archive_file.audit_logs_archiver_code.output_base64sha256
-}
-
 resource "aws_lambda_function" "audit_logs_archiver" {
-  s3_bucket         = aws_s3_object.audit_logs_archiver_code.bucket
-  s3_key            = aws_s3_object.audit_logs_archiver_code.key
-  s3_object_version = aws_s3_object.audit_logs_archiver_code.version_id
-  function_name     = "Audit_Logs_Archiver"
-  role              = aws_iam_role.lambda.arn
-  handler           = "audit_logs_archiver.handler"
+  function_name = "audit-logs-archiver"
+  image_uri     = "${var.ecr_repository_url_audit_logs_archiver_lambda}:latest"
+  package_type  = "Image"
+  role          = aws_iam_role.lambda.arn
+  timeout       = 900
 
-  source_code_hash = data.archive_file.audit_logs_archiver_code.output_base64sha256
-  runtime          = "nodejs18.x"
-  timeout          = 900
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
 
   environment {
     variables = {
@@ -30,6 +16,11 @@ resource "aws_lambda_function" "audit_logs_archiver" {
       AUDIT_LOGS_DYNAMODB_TABLE_NAME       = var.dynamodb_audit_logs_table_name
       AUDIT_LOGS_ARCHIVE_STORAGE_S3_BUCKET = var.audit_logs_archive_storage_id
     }
+  }
+
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/Audit_Logs_Archiver"
   }
 
   tracing_config {
@@ -45,8 +36,13 @@ resource "aws_lambda_permission" "audit_logs_archiver" {
   source_arn    = aws_cloudwatch_event_rule.audit_logs_archiver_lambda_trigger.arn
 }
 
+/*
+ * When implementing containerized Lambda we had to rename some of the functions.
+ * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
+ */
+
 resource "aws_cloudwatch_log_group" "audit_logs_archiver" {
-  name              = "/aws/lambda/${aws_lambda_function.audit_logs_archiver.function_name}"
+  name              = "/aws/lambda/Audit_Logs_Archiver"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }

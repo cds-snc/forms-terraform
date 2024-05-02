@@ -1,28 +1,13 @@
-data "archive_file" "reliability_code" {
-  type        = "zip"
-  source_dir  = "./code/reliability/dist/"
-  output_path = "/tmp/reliability_code.zip"
-}
-
-resource "aws_s3_object" "reliability_code" {
-  bucket      = var.lambda_code_id
-  key         = "reliability_code"
-  source      = data.archive_file.reliability_code.output_path
-  source_hash = data.archive_file.reliability_code.output_base64sha256
-}
-
 resource "aws_lambda_function" "reliability" {
-  s3_bucket         = aws_s3_object.reliability_code.bucket
-  s3_key            = aws_s3_object.reliability_code.key
-  s3_object_version = aws_s3_object.reliability_code.version_id
-  function_name     = "Reliability"
-  role              = aws_iam_role.lambda.arn
-  handler           = "reliability.handler"
-  timeout           = 300
+  function_name = "reliability"
+  image_uri     = "${var.ecr_repository_url_reliability_lambda}:latest"
+  package_type  = "Image"
+  role          = aws_iam_role.lambda.arn
+  timeout       = 300
 
-  source_code_hash = data.archive_file.reliability_code.output_base64sha256
-
-  runtime = "nodejs18.x"
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
 
   environment {
     variables = {
@@ -35,6 +20,11 @@ resource "aws_lambda_function" "reliability" {
       DB_NAME        = var.rds_db_name
       LOCALSTACK     = var.localstack_hosted
     }
+  }
+
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/Reliability"
   }
 
   tracing_config {
@@ -56,8 +46,13 @@ resource "aws_lambda_event_source_mapping" "reprocess_submission" {
   enabled          = true
 }
 
+/*
+ * When implementing containerized Lambda we had to rename some of the functions.
+ * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
+ */
+
 resource "aws_cloudwatch_log_group" "reliability" {
-  name              = "/aws/lambda/${aws_lambda_function.reliability.function_name}"
+  name              = "/aws/lambda/Reliability"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }

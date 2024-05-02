@@ -1,0 +1,42 @@
+name: Request Lambda functions to use new image
+
+inputs:
+  aws-role-to-assume:
+    required: true
+  aws-role-session-name:
+    required: true
+  aws-region:
+    required: true
+  lambda-name:
+    required: true
+  image-tag:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure AWS credentials using OIDC
+      uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+      with:
+        role-to-assume: ${{ inputs.aws-role-to-assume }}
+        role-session-name: ${{ inputs.aws-role-session-name }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Login to Staging Amazon ECR
+      id: login-ecr-staging
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Update Lambda function image
+      env:
+        LAMBDA_NAME: ${{ inputs.lambda-name }}
+        IMAGE_TAG: ${{ inputs.image-tag }}
+        ECR_REGISTRY: ${{ steps.login-ecr-staging.outputs.registry }}
+      run: |
+        functionName=$([ "$LAMBDA_NAME" == "submission" ] && echo "Submission" || echo "$LAMBDA_NAME")
+        aws lambda update-function-code --function-name $functionName --image-uri $ECR_REGISTRY/$LAMBDA_NAME-lambda:$IMAGE_TAG
+      shell: bash
+
+    - name: Logout of Staging Amazon ECR
+      if: always()
+      run: docker logout ${{ steps.login-ecr-staging.outputs.registry }}
+      shell: bash

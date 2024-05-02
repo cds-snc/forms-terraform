@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../hosted_zone", "../kms", "../load_balancer", "../sqs", "../app", "../sns", "../lambdas", "../s3"]
+  paths = ["../hosted_zone", "../kms", "../load_balancer", "../sqs", "../app", "../sns", "../lambdas", "../ecr"]
 }
 
 locals {
@@ -71,16 +71,16 @@ dependency "lambdas" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    lambda_reliability_log_group_name                = "/aws/lambda/Reliability"
-    lambda_submission_log_group_name                 = "/aws/lambda/Submission"
-    lambda_response_archiver_log_group_name          = "/aws/lambda/Response_Archiver"
-    lambda_dlq_consumer_log_group_name               = "/aws/lambda/DeadLetterQueueConsumer"
-    lambda_template_archiver_log_group_name          = "/aws/lambda/Archive_Form_Templates"
-    lambda_audit_log_group_name                      = "/aws/lambda/AuditLogs"
-    lambda_nagware_log_group_name                    = "/aws/lambda/Nagware"
-    lambda_vault_data_integrity_check_log_group_name = "/aws/lambda/Vault_Data_Integrity_Check"
-    lambda_vault_data_integrity_check_function_name  = "Vault_Data_Integrity_Check"
-    lambda_audit_logs_archiver_group_name            = "/aws/lambda/Audit_Logs_Archiver"
+    lambda_audit_logs_log_group_name               = "/aws/lambda/Audit_Logs"
+    lambda_audit_logs_archiver_log_group_name      = "/aws/lambda/Audit_Logs_Archiver"
+    lambda_form_archiver_log_group_name            = "/aws/lambda/Archive_Form_Templates"
+    lambda_nagware_log_group_name                  = "/aws/lambda/Nagware"
+    lambda_reliability_log_group_name              = "/aws/lambda/Reliability"
+    lambda_reliability_dlq_consumer_log_group_name = "/aws/lambda/Reliability_DLQ_Consumer"
+    lambda_response_archiver_log_group_name        = "/aws/lambda/Response_Archiver"
+    lambda_submission_log_group_name               = "/aws/lambda/Submission"
+    lambda_vault_integrity_log_group_name          = "/aws/lambda/Vault_Data_Integrity_Check"
+    lambda_vault_integrity_function_name           = "vault-integrity"
   }
 }
 
@@ -98,13 +98,12 @@ dependency "sns" {
   }
 }
 
-dependency "s3" {
-  config_path                             = "../s3"
+dependency "ecr" {
+  config_path                             = "../ecr"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    lambda_code_arn = "arn:aws:s3:::forms-staging-lambda-code"
-    lambda_code_id  = "forms-staging-lambda-code"
+    ecr_repository_url_notify_slack_lambda = ""
   }
 }
 
@@ -129,26 +128,25 @@ inputs = {
   ecs_cloudwatch_log_group_name                    = dependency.app.outputs.ecs_cloudwatch_log_group_name
   ecs_cluster_name                                 = dependency.app.outputs.ecs_cluster_name
   ecs_service_name                                 = dependency.app.outputs.ecs_service_name
-  lambda_reliability_log_group_name                = dependency.lambdas.outputs.lambda_reliability_log_group_name
-  lambda_submission_log_group_name                 = dependency.lambdas.outputs.lambda_submission_log_group_name
-  lambda_response_archiver_log_group_name          = dependency.lambdas.outputs.lambda_response_archiver_log_group_name
-  lambda_dlq_consumer_log_group_name               = dependency.lambdas.outputs.lambda_dlq_consumer_log_group_name
-  lambda_template_archiver_log_group_name          = dependency.lambdas.outputs.lambda_template_archiver_log_group_name
-  lambda_audit_log_group_name                      = dependency.lambdas.outputs.lambda_audit_log_group_name
-  lambda_nagware_log_group_name                    = dependency.lambdas.outputs.lambda_nagware_log_group_name
-  lambda_vault_data_integrity_check_log_group_name = dependency.lambdas.outputs.lambda_vault_data_integrity_check_log_group_name
-  lambda_vault_data_integrity_check_function_name  = dependency.lambdas.outputs.lambda_vault_data_integrity_check_function_name
-  lambda_audit_logs_archiver_group_name            = dependency.lambdas.outputs.lambda_audit_logs_archiver_group_name
+
+  lambda_audit_logs_log_group_name               = dependency.lambdas.outputs.lambda_audit_logs_log_group_name
+  lambda_audit_logs_archiver_log_group_name      = dependency.lambdas.outputs.lambda_audit_logs_archiver_log_group_name
+  lambda_form_archiver_log_group_name            = dependency.lambdas.outputs.lambda_form_archiver_log_group_name
+  lambda_nagware_log_group_name                  = dependency.lambdas.outputs.lambda_nagware_log_group_name
+  lambda_reliability_log_group_name              = dependency.lambdas.outputs.lambda_reliability_log_group_name
+  lambda_reliability_dlq_consumer_log_group_name = dependency.lambdas.outputs.lambda_reliability_dlq_consumer_log_group_name
+  lambda_response_archiver_log_group_name        = dependency.lambdas.outputs.lambda_response_archiver_log_group_name
+  lambda_submission_log_group_name               = dependency.lambdas.outputs.lambda_submission_log_group_name
+  lambda_vault_integrity_log_group_name          = dependency.lambdas.outputs.lambda_vault_integrity_log_group_name
+  lambda_vault_integrity_function_name           = dependency.lambdas.outputs.lambda_vault_integrity_function_name
 
   sns_topic_alert_critical_arn        = dependency.sns.outputs.sns_topic_alert_critical_arn
   sns_topic_alert_warning_arn         = dependency.sns.outputs.sns_topic_alert_warning_arn
   sns_topic_alert_ok_arn              = dependency.sns.outputs.sns_topic_alert_ok_arn
   sns_topic_alert_warning_us_east_arn = dependency.sns.outputs.sns_topic_alert_warning_us_east_arn
   sns_topic_alert_ok_us_east_arn      = dependency.sns.outputs.sns_topic_alert_ok_us_east_arn
-  
-  lambda_code_arn              = dependency.s3.outputs.lambda_code_arn
-  lambda_code_id               = dependency.s3.outputs.lambda_code_id
 
+  ecr_repository_url_notify_slack_lambda = dependency.ecr.outputs.ecr_repository_url_notify_slack_lambda
 }
 
 include {

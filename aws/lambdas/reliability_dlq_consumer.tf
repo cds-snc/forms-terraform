@@ -2,30 +2,17 @@
 #
 # Dead letter queue consumer
 #
-data "archive_file" "reliability_dlq_consumer_code" {
-  type        = "zip"
-  source_dir  = "./code/reliability_dlq_consumer/dist"
-  output_path = "/tmp/reliability_dlq_consumer_code.zip"
-}
-
-resource "aws_s3_object" "reliability_dlq_consumer_code" {
-  bucket      = var.lambda_code_id
-  key         = "reliability_dlq_consumer_code"
-  source      = data.archive_file.reliability_dlq_consumer_code.output_path
-  source_hash = data.archive_file.reliability_dlq_consumer_code.output_base64sha256
-}
 
 resource "aws_lambda_function" "reliability_dlq_consumer" {
-  s3_bucket         = aws_s3_object.reliability_dlq_consumer_code.bucket
-  s3_key            = aws_s3_object.reliability_dlq_consumer_code.key
-  s3_object_version = aws_s3_object.reliability_dlq_consumer_code.version_id
-  function_name     = "Reliability_DLQ_Consumer"
-  role              = aws_iam_role.lambda.arn
-  handler           = "dead_letter_queue_consumer.handler"
+  function_name = "reliability-dlq-consumer"
+  image_uri     = "${var.ecr_repository_url_reliability_dlq_consumer_lambda}:latest"
+  package_type  = "Image"
+  role          = aws_iam_role.lambda.arn
+  timeout       = 300
 
-  source_code_hash = data.archive_file.reliability_dlq_consumer_code.output_base64sha256
-  runtime          = "nodejs18.x"
-  timeout          = 300
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
 
   environment {
     variables = {
@@ -35,6 +22,11 @@ resource "aws_lambda_function" "reliability_dlq_consumer" {
       SNS_ERROR_TOPIC_ARN                 = var.sns_topic_alert_critical_arn
       LOCALSTACK                          = var.localstack_hosted
     }
+  }
+
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/Reliability_DLQ_Consumer"
   }
 
   tracing_config {
@@ -50,8 +42,13 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_dead_letter_queue_cons
   source_arn    = aws_cloudwatch_event_rule.reliability_dlq_lambda_trigger.arn
 }
 
+/*
+ * When implementing containerized Lambda we had to rename some of the functions.
+ * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
+ */
+
 resource "aws_cloudwatch_log_group" "dead_letter_queue_consumer" {
-  name              = "/aws/lambda/${aws_lambda_function.reliability_dlq_consumer.function_name}"
+  name              = "/aws/lambda/Reliability_DLQ_Consumer"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }

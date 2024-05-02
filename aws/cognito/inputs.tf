@@ -14,12 +14,12 @@ variable "notify_api_key_secret_arn" {
   sensitive   = true
 }
 
-variable "lambda_code_arn" {
-  description = "S3 bucket arn for lambda code"
+variable "ecr_repository_url_cognito_email_sender_lambda" {
+  description = "URL of the Cognito Email Sender Lambda ECR"
   type        = string
 }
 
-variable "lambda_code_id" {
-  description = "S3 bucket id for lambda code"
+variable "ecr_repository_url_cognito_pre_sign_up_lambda" {
+  description = "URL of the Cognito Pre Sign Up Lambda ECR"
   type        = string
 }
