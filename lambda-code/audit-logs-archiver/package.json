@@ -1,8 +1,9 @@
 {
   "name": "audit-logs-archiver",
+  "description": "to be removed",
   "version": "1.0.0",
   "main": "main.js",
-  "type" : "module",
+  "type": "module",
   "license": "MIT",
   "scripts": {
     "prebuild": "rm -rf dist",
