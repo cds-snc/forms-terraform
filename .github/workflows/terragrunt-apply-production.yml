@@ -188,7 +188,7 @@ jobs:
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
   update-lambda-function-image:
-    needs: [detect-lambda-changes, build-tag-push-lambda-images, terragrunt-plan]
+    needs: [detect-lambda-changes, build-tag-push-lambda-images, terragrunt-apply-all-modules]
     if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
     runs-on: ubuntu-latest
     strategy:
