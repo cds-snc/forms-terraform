@@ -1,31 +1,17 @@
 #
 # Nagware
 #
-data "archive_file" "nagware_code" {
-  type        = "zip"
-  source_dir  = "./code/nagware/dist"
-  output_path = "/tmp/nagware_code.zip"
-}
-
-resource "aws_s3_object" "nagware_code" {
-  bucket      = var.lambda_code_id
-  key         = "nagware_code"
-  source      = data.archive_file.nagware_code.output_path
-  source_hash = data.archive_file.nagware_code.output_base64sha256
-}
 
 resource "aws_lambda_function" "nagware" {
-  s3_bucket         = aws_s3_object.nagware_code.bucket
-  s3_key            = aws_s3_object.nagware_code.key
-  s3_object_version = aws_s3_object.nagware_code.version_id
-  function_name     = "Nagware"
-  role              = aws_iam_role.lambda.arn
-  handler           = "nagware.handler"
-  timeout           = 300
+  function_name = "nagware"
+  image_uri     = "${var.ecr_repository_url_nagware_lambda}:latest"
+  package_type  = "Image"
+  role          = aws_iam_role.lambda.arn
+  timeout       = 300
 
-  source_code_hash = data.archive_file.nagware_code.output_base64sha256
-
-  runtime = "nodejs18.x"
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
 
   environment {
     variables = {
@@ -42,6 +28,11 @@ resource "aws_lambda_function" "nagware" {
     }
   }
 
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/Nagware"
+  }
+
   tracing_config {
     mode = "PassThrough"
   }
@@ -55,8 +46,13 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_nagware_lambda" {
   source_arn    = aws_cloudwatch_event_rule.nagware_lambda_trigger.arn
 }
 
+/*
+ * When implementing containerized Lambda we had to rename some of the functions.
+ * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
+ */
+
 resource "aws_cloudwatch_log_group" "nagware" {
-  name              = "/aws/lambda/${aws_lambda_function.nagware.function_name}"
+  name              = "/aws/lambda/Nagware"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }

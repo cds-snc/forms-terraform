@@ -23,6 +23,14 @@ Pull Requests in this repository require all commits to be signed before they ca
   1. `brew install warrensbox/tap/tgswitch`
   1. `tgswitch 0.54.8`
 
+- Yarn (if you want to deploy the infrastructure locally):
+
+  ```shell
+  $ brew install yarn
+  ```
+
+  (source https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable)
+
 ### If using Colima
 
 - Docker: `brew install docker docker-compose docker-credential-manager`
@@ -105,21 +113,9 @@ Once Localstack is ready to use you should be able to interact with local AWS se
 
 Now that we have localstack up and running it's time to deploy our local AWS services to mimic our cloud environments.
 
-#### Deploy on fresh Localstack instance
-
-```shell
-$ ./localstack_services.sh clean
-```
-
-The `clean` argument will make sure all existing Terraform state files are being deleted first.
-
-#### Deploy on existing Localstack instance
-
 ```shell
 $ ./localstack_services.sh
 ```
-
-This is something you may have to do if you want to deploy an infrastructure update to your current Localstack instance.
 
 **Please note that if you stop Localstack you don't need to run this script again.**
 **Localstack Pro offers automatic persistence for all deployed services. This is enabled by default and can be tweaked through your `.env` file.**
@@ -133,6 +129,24 @@ $ awslocal lambda invoke --function-name <name_of_the_function> output.txt
 ```
 
 In case you want to invoke a function that expects a specific payload you can pass it using the `--payload '{}'` argument.
+
+## Containerized Lambda functions
+
+The `deps.sh` script allows you to download required dependencies for all Lambda packages available under `/lambda-code`.
+
+```shell
+$ cd lambda-code/
+$ ./deps.sh install
+```
+
+Once you have changed the code in one or multiple Lambda packages, you can call the `deploy-lambda-images.sh`. It will build, tag and push all Lambda images to ECR as well as letting the Lambda service know that a new version of the code should be used.
+
+```shell
+$ cd lambda-code/
+$ ./deploy-lambda-images.sh
+```
+
+**There is a `skip` argument you can pass to that script if you only want to deploy the Lambda images for which you have made changes. It uses the `git diff --cached -- .` command in every single Lambda folder to know whether the image should be deployed or skipped**
 
 ## Dynamo Database Table Schemas
 

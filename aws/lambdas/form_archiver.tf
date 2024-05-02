@@ -1,31 +1,17 @@
 #
 # Archive form templates
 #
-data "archive_file" "form_archiver_code" {
-  type        = "zip"
-  source_dir  = "./code/form_archiver/dist"
-  output_path = "/tmp/form_archiver_code.zip"
-}
-
-resource "aws_s3_object" "form_archiver_code" {
-  bucket      = var.lambda_code_id
-  key         = "form_archiver_code"
-  source      = data.archive_file.form_archiver_code.output_path
-  source_hash = data.archive_file.form_archiver_code.output_base64sha256
-}
 
 resource "aws_lambda_function" "form_archiver" {
-  s3_bucket         = aws_s3_object.form_archiver_code.bucket
-  s3_key            = aws_s3_object.form_archiver_code.key
-  s3_object_version = aws_s3_object.form_archiver_code.version_id
-  function_name     = "Archive_Form_Templates"
-  role              = aws_iam_role.lambda.arn
-  handler           = "form_archiver.handler"
-  timeout           = 300
+  function_name = "form-archiver"
+  image_uri     = "${var.ecr_repository_url_form_archiver_lambda}:latest"
+  package_type  = "Image"
+  role          = aws_iam_role.lambda.arn
+  timeout       = 300
 
-  source_code_hash = data.archive_file.form_archiver_code.output_base64sha256
-
-  runtime = "nodejs18.x"
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
 
   environment {
     variables = {
@@ -34,6 +20,11 @@ resource "aws_lambda_function" "form_archiver" {
       DB_SECRET = var.database_secret_arn
       DB_NAME   = var.rds_db_name
     }
+  }
+
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/Archive_Form_Templates"
   }
 
   tracing_config {
@@ -49,8 +40,13 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_run_form_archiver_lambda" 
   source_arn    = aws_cloudwatch_event_rule.form_archiver_lambda_trigger.arn
 }
 
+/*
+ * When implementing containerized Lambda we had to rename some of the functions.
+ * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
+ */
+
 resource "aws_cloudwatch_log_group" "archive_form_templates" {
-  name              = "/aws/lambda/${aws_lambda_function.form_archiver.function_name}"
+  name              = "/aws/lambda/Archive_Form_Templates"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }

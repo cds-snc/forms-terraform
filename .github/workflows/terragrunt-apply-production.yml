@@ -10,22 +10,21 @@ permissions:
 
 env:
   APP_ENV: production
-  APP_DOMAINS: ${{ vars.PRODUCTION_APP_DOMAINS}}
+  APP_DOMAINS: ${{ vars.PRODUCTION_APP_DOMAINS }}
   AWS_ACCOUNT_ID: ${{ vars.PRODUCTION_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
   TERRAFORM_VERSION: 1.6.6
   TERRAGRUNT_VERSION: 0.54.8
   TF_INPUT: false
   TF_VAR_ecs_secret_token: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
-  TF_VAR_recaptcha_secret: ${{secrets.PRODUCTION_RECAPTCHA_SITE_SECRET}}
+  TF_VAR_recaptcha_secret: ${{ secrets.PRODUCTION_RECAPTCHA_SITE_SECRET }}
   TF_VAR_recaptcha_public: 6LfuLrQnAAAAAK9Df3gem4XLMRVY2Laq6t2fhZhZ
+  TF_VAR_notify_callback_bearer_token: ${{ secrets.PRODUCTION_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
   TF_VAR_notify_api_key: ${{ secrets.PRODUCTION_NOTIFY_API_KEY }}
   TF_VAR_freshdesk_api_key: ${{ secrets.PRODUCTION_FRESHDESK_API_KEY }}
   TF_VAR_rds_db_password: ${{ secrets.PRODUCTION_DB_PASSWORD }}
   TF_VAR_slack_webhook: ${{ secrets.PRODUCTION_SLACK_WEBHOOK }}
   TF_VAR_opsgenie_api_key: ${{ secrets.PRODUCTION_OPSGENIE_API_KEY }}
-  TF_VAR_notify_callback_bearer_token: ${{ secrets.PRODUCTION_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
-
   TF_VAR_gc_temp_token_template_id: 61cec9c4-64ca-4e4d-b4d2-a0e931c44422
   TF_VAR_gc_template_id: 92096ac6-1cc5-40ae-9052-fffdb8439a90
   TF_VAR_cognito_code_template_id: 8dde39b6-05b9-43ce-807f-c2364ed3bdb6
@@ -33,31 +32,76 @@ env:
   TF_VAR_email_address_support: ${{ vars.PRODUCTION_SUPPORT_EMAIL }}
 
 jobs:
-  terragrunt-apply:
+  # We deploy ECR first to make sure it is available for the 'build-tag-push-lambda-images' job which will be run in parallel with `terragrunt-apply-all-modules`
+  terragrunt-apply-ecr-only:
     runs-on: ubuntu-latest
-    env:
-      TARGET_VERSION: ${{ needs.version-manifest.outputs.current }}
-      PREVIOUS_VERSION: ${{ needs.version-manifest.outputs.previous }}
     steps:
       - name: Checkout
-        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      # https://github.com/jlumbroso/free-disk-space/tree/54081f138730dfa15788a46383842cd2f914a1be#example
-      - name: Free Disk Space (Ubuntu)
-        uses: jlumbroso/free-disk-space@main
+      # Setup Terraform, Terragrunt, and Conftest
+      - name: Setup terraform tools
+        uses: cds-snc/terraform-tools-setup@v1
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
         with:
-          # this might remove tools that are actually needed,
-          # if set to "true" but frees about 6 GB
-          tool-cache: false
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply-release
+          role-session-name: TFApply
+          aws-region: ${{ env.AWS_REGION }}
 
-          # all of these default to true, but feel free to set to
-          # "false" if necessary for your workflow
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: true
+      - name: Terragrunt apply ecr
+        working-directory: env/cloud/ecr
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+  detect-lambda-changes:
+    needs: terragrunt-apply-ecr-only
+    runs-on: ubuntu-latest
+    outputs:
+      lambda-to-rebuild: ${{ steps.filter.outputs.changes }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Filter
+        id: filter
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        with:
+          filters: .github/lambda-filter.yml
+
+  build-tag-push-lambda-images:
+    needs: detect-lambda-changes
+    if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Build Lambda images
+        uses: ./.github/workflows/build-lambda-images
+        with:
+          lambda-directory: lambda-code/${{ matrix.image }}
+          lambda-name: ${{ matrix.image }}
+
+      - name: Tag and push Lambda images
+        uses: ./.github/workflows/tag-and-push-lambda-images
+        with:
+          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply-release
+          aws-role-session-name: TFApply
+          aws-region: ${{ env.AWS_REGION }}
+          lambda-name: ${{ matrix.image }}
+          image-tag: ${{ github.ref_name }}
+
+  terragrunt-apply-all-modules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       # Setup Terraform, Terragrunt, and Conftest
       - name: Setup terraform tools
@@ -71,10 +115,6 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       # No dependencies
-      - name: Terragrunt apply ecr
-        working-directory: env/cloud/ecr
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve
-
       - name: Terragrunt apply hosted_zone
         working-directory: env/cloud/hosted_zone
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
@@ -109,15 +149,9 @@ jobs:
         working-directory: env/cloud/sns
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Install Cognito Lambda deps
-        run: ./aws/cognito/lambda/deps.sh install
-
       - name: Terragrunt apply cognito
         working-directory: env/cloud/cognito
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
-
-      - name: Remove Cognito Lambda deps
-        run: ./aws/cognito/lambda/deps.sh delete
 
       - name: Terragrunt apply network
         working-directory: env/cloud/network
@@ -145,31 +179,50 @@ jobs:
         working-directory: env/cloud/app
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Install Lambda deps
-        run: ./aws/lambdas/code/deps.sh install
-
       - name: Terragrunt apply lambdas
         working-directory: env/cloud/lambdas
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
-
-      - name: Remove Lambda deps
-        run: ./aws/lambdas/code/deps.sh delete
-
-      - name: Install Lambda Alarm deps
-        run: ./aws/alarms/lambda/deps.sh install
 
       - name: Terragrunt apply alarms
         working-directory: env/cloud/alarms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Remove Lambda deps
-        run: ./aws/alarms/lambda/deps.sh delete
+  update-lambda-function-image:
+    needs: [detect-lambda-changes, build-tag-push-lambda-images, terragrunt-plan]
+    if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      - name: Notify Slack on failure
-        if: failure()
+      - name: Request Lambda functions to use new image
+        uses: ./.github/workflows/request-lambda-functions-to-use-new-image
+        with:
+          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply-release
+          aws-role-session-name: TFApply
+          aws-region: ${{ env.AWS_REGION }}
+          lambda-name: ${{ matrix.image }}
+          image-tag: ${{ github.ref_name }}
+
+  notify-on-error:
+    needs:
+      [
+        terragrunt-apply-ecr-only,
+        build-tag-push-lambda-images,
+        terragrunt-apply-all-modules,
+        update-lambda-function-image,
+      ]
+    if: always() && contains(needs.*.result, 'failure')
+    steps:
+      - name: Send error message on Slack
         env:
           WORKFLOW_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           WORKFLOW_NAME: "${{ github.workflow }}"
         run: |
           json='{"channel":"#forms-production-events", "blocks":[{"type":"section","text":{"type":"mrkdwn","text":":red: GitHub workflow failed: <${{ env.WORKFLOW_URL }}|${{ env.WORKFLOW_NAME }}>"}}]}'
           curl -X POST -H 'Content-type: application/json' --data "$json" "https://hooks.slack.com${{ secrets.PRODUCTION_SLACK_WEBHOOK }}"
+        shell: bash

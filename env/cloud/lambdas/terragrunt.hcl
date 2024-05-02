@@ -8,7 +8,7 @@ include {
 
 
 dependencies {
-  paths = ["../rds", "../sqs", "../sns", "../kms", "../dynamodb", "../secrets", "../app", "../s3"]
+  paths = ["../rds", "../sqs", "../sns", "../kms", "../dynamodb", "../secrets", "../app", "../s3", "../ecr"]
 }
 
 locals {
@@ -107,10 +107,25 @@ dependency "s3" {
     vault_file_storage_id          = "forms-staging-vault-file-storage"
     archive_storage_arn            = "arn:aws:s3:::forms-staging-archive-storage"
     archive_storage_id             = "forms-staging-archive-storage"
-    lambda_code_arn                = "arn:aws:s3:::forms-staging-lambda-code"
-    lambda_code_id                 = "forms-staging-lambda-code"
     audit_logs_archive_storage_id  = "forms-staging-audit-logs-archive-storage"
     audit_logs_archive_storage_arn = "arn:aws:s3:::forms-staging-audit-logs-archive-storage"
+  }
+}
+
+dependency "ecr" {
+  config_path                             = "../ecr"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    ecr_repository_url_audit_logs_lambda               = ""
+    ecr_repository_url_audit_logs_archiver_lambda      = ""
+    ecr_repository_url_form_archiver_lambda            = ""
+    ecr_repository_url_nagware_lambda                  = ""
+    ecr_repository_url_reliability_lambda              = ""
+    ecr_repository_url_reliability_dlq_consumer_lambda = ""
+    ecr_repository_url_response_archiver_lambda        = ""
+    ecr_repository_url_submission_lambda               = ""
+    ecr_repository_url_vault_integrity_lambda          = ""
   }
 }
 
@@ -144,10 +159,18 @@ inputs = {
   vault_file_storage_id          = dependency.s3.outputs.vault_file_storage_id
   archive_storage_arn            = dependency.s3.outputs.archive_storage_arn
   archive_storage_id             = dependency.s3.outputs.archive_storage_id
-  lambda_code_arn                = dependency.s3.outputs.lambda_code_arn
-  lambda_code_id                 = dependency.s3.outputs.lambda_code_id
   audit_logs_archive_storage_id  = dependency.s3.outputs.audit_logs_archive_storage_id
   audit_logs_archive_storage_arn = dependency.s3.outputs.audit_logs_archive_storage_arn
+
+  ecr_repository_url_audit_logs_lambda               = dependency.ecr.outputs.ecr_repository_url_audit_logs_lambda
+  ecr_repository_url_audit_logs_archiver_lambda      = dependency.ecr.outputs.ecr_repository_url_audit_logs_archiver_lambda
+  ecr_repository_url_form_archiver_lambda            = dependency.ecr.outputs.ecr_repository_url_form_archiver_lambda
+  ecr_repository_url_nagware_lambda                  = dependency.ecr.outputs.ecr_repository_url_nagware_lambda
+  ecr_repository_url_reliability_lambda              = dependency.ecr.outputs.ecr_repository_url_reliability_lambda
+  ecr_repository_url_reliability_dlq_consumer_lambda = dependency.ecr.outputs.ecr_repository_url_reliability_dlq_consumer_lambda
+  ecr_repository_url_response_archiver_lambda        = dependency.ecr.outputs.ecr_repository_url_response_archiver_lambda
+  ecr_repository_url_submission_lambda               = dependency.ecr.outputs.ecr_repository_url_submission_lambda
+  ecr_repository_url_vault_integrity_lambda          = dependency.ecr.outputs.ecr_repository_url_vault_integrity_lambda
 
   ecs_iam_role_arn = local.env == "local" ? "arn:aws:iam:ca-central-1:000000000000:forms_iam" : dependency.app.outputs.ecs_iam_role_arn
 

@@ -421,8 +421,8 @@ resource "aws_cloudwatch_metric_alarm" "vault_data_integrity_check_lambda_iterat
   ok_actions          = [var.sns_topic_alert_ok_arn]
 
   dimensions = {
-    FunctionName = var.lambda_vault_data_integrity_check_function_name
-    Resource     = var.lambda_vault_data_integrity_check_function_name
+    FunctionName = var.lambda_vault_integrity_function_name
+    Resource     = var.lambda_vault_integrity_function_name
   }
 }
 
@@ -430,15 +430,15 @@ resource "aws_cloudwatch_metric_alarm" "vault_data_integrity_check_lambda_iterat
 
 locals {
   map_of_lambda_log_group = {
-    reliability                = var.lambda_reliability_log_group_name,
-    submission                 = var.lambda_submission_log_group_name,
-    response_archiver          = var.lambda_response_archiver_log_group_name,
-    template_archiver          = var.lambda_template_archiver_log_group_name,
-    dlq_consumer               = var.lambda_dlq_consumer_log_group_name,
-    audit_log                  = var.lambda_audit_log_group_name,
-    nagware                    = var.lambda_nagware_log_group_name,
-    vault_data_integrity_check = var.lambda_vault_data_integrity_check_log_group_name,
-    audit_logs_archiver        = var.lambda_audit_logs_archiver_group_name
+    audit_logs               = var.lambda_audit_logs_log_group_name,
+    audit_logs_archiver      = var.lambda_audit_logs_archiver_log_group_name,
+    form_archiver            = var.lambda_form_archiver_log_group_name,
+    nagware                  = var.lambda_nagware_log_group_name,
+    reliability              = var.lambda_reliability_log_group_name,
+    reliability_dlq_consumer = var.lambda_reliability_dlq_consumer_log_group_name,
+    response_archiver        = var.lambda_response_archiver_log_group_name,
+    submission               = var.lambda_submission_log_group_name,
+    vault_integrity          = var.lambda_vault_integrity_log_group_name
   }
 }
 

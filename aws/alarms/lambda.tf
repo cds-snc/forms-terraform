@@ -1,30 +1,18 @@
 #
 # Lambda - Notify Slack and OpsGenie
 #
-data "archive_file" "notify_slack_code" {
-  type        = "zip"
-  source_dir  = "lambda/notify_slack/dist"
-  output_path = "/tmp/notify_slack_code.zip"
-}
-resource "aws_s3_object" "notify_slack_code" {
-  bucket      = var.lambda_code_id
-  key         = "notify_slack_code"
-  source      = data.archive_file.notify_slack_code.output_path
-  source_hash = data.archive_file.notify_slack_code.output_base64sha256
-}
 
 #tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "notify_slack" {
-  s3_bucket         = aws_s3_object.notify_slack_code.bucket
-  s3_key            = aws_s3_object.notify_slack_code.key
-  s3_object_version = aws_s3_object.notify_slack_code.version_id
-  function_name     = "NotifySlack"
-  role              = aws_iam_role.notify_slack_lambda.arn
-  handler           = "notify_slack.handler"
+  function_name = "notify-slack"
+  image_uri     = "${var.ecr_repository_url_notify_slack_lambda}:latest"
+  package_type  = "Image"
+  role          = aws_iam_role.notify_slack_lambda.arn
+  timeout       = 300
 
-  source_code_hash = data.archive_file.notify_slack_code.output_base64sha256
-  runtime          = "nodejs18.x"
-  timeout          = 300
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
 
   environment {
     variables = {
@@ -32,6 +20,11 @@ resource "aws_lambda_function" "notify_slack" {
       SLACK_WEBHOOK    = var.slack_webhook
       OPSGENIE_API_KEY = var.opsgenie_api_key
     }
+  }
+
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/NotifySlack"
   }
 
   tracing_config {
@@ -90,24 +83,6 @@ resource "aws_iam_role" "notify_slack_lambda" {
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
 }
 
-data "aws_iam_policy_document" "lambda_s3" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:DeleteObject",
-      "s3:GetObject",
-      "s3:PutObject",
-      "s3:ListBucket"
-    ]
-
-    resources = [
-      var.lambda_code_arn,
-      "${var.lambda_code_arn}/*"
-    ]
-  }
-}
-
 data "aws_iam_policy_document" "lambda_assume_policy" {
   statement {
     effect = "Allow"
@@ -126,8 +101,13 @@ resource "aws_iam_role_policy_attachment" "notify_slack_lambda_basic_access" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+/*
+ * When implementing containerized Lambda we had to rename some of the functions.
+ * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
+ */
+
 resource "aws_cloudwatch_log_group" "notify_slack" {
-  name              = "/aws/lambda/${aws_lambda_function.notify_slack.function_name}"
+  name              = "/aws/lambda/NotifySlack"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }

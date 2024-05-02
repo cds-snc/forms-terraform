@@ -8,6 +8,7 @@ on:
       - "aws/**"
       - "env/common/**"
       - "env/cloud/**"
+      - "lambda-code/**"
       - ".github/workflows/terragrunt-apply-staging.yml"
 
 permissions:
@@ -15,7 +16,7 @@ permissions:
   contents: read
 
 env:
-  APP_ENV: "staging"
+  APP_ENV: staging
   APP_DOMAINS: ${{ vars.STAGING_APP_DOMAINS }}
   AWS_ACCOUNT_ID: ${{ vars.STAGING_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
@@ -23,15 +24,14 @@ env:
   TERRAGRUNT_VERSION: 0.54.8
   TF_INPUT: false
   TF_VAR_ecs_secret_token: ${{ secrets.STAGING_TOKEN_SECRET }}
-  TF_VAR_recaptcha_secret: ${{secrets.STAGING_RECAPTCHA_SITE_SECRET}}
+  TF_VAR_recaptcha_secret: ${{ secrets.STAGING_RECAPTCHA_SITE_SECRET }}
   TF_VAR_recaptcha_public: 6LfJDN4eAAAAAGvdRF7ZnQ7ciqdo1RQnQDFmh0VY
+  TF_VAR_notify_callback_bearer_token: ${{ secrets.STAGING_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
   TF_VAR_notify_api_key: ${{ secrets.STAGING_NOTIFY_API_KEY }}
   TF_VAR_freshdesk_api_key: ${{ secrets.STAGING_FRESHDESK_API_KEY }}
   TF_VAR_rds_db_password: ${{ secrets.STAGING_DB_PASSWORD }}
   TF_VAR_slack_webhook: ${{ secrets.STAGING_SLACK_WEBHOOK }}
   TF_VAR_opsgenie_api_key: ${{ secrets.STAGING_OPSGENIE_API_KEY }}
-  TF_VAR_notify_callback_bearer_token: ${{ secrets.STAGING_GC_NOTIFY_CALLBACK_BEARER_TOKEN }}
-
   TF_VAR_gc_temp_token_template_id: b6885d06-d10a-422a-973f-05e274d9aa86
   TF_VAR_gc_template_id: 8d597a1b-a1d6-4e3c-8421-042a2b4158b7
   TF_VAR_cognito_code_template_id: 12a18f84-062c-4a67-8310-bf114af051ea
@@ -39,29 +39,13 @@ env:
   TF_VAR_email_address_support: ${{ vars.STAGING_SUPPORT_EMAIL }}
 
 jobs:
-  terragrunt-apply:
-    if: ${{ github.ref == 'refs/heads/develop' }}
+  # We deploy ECR first to make sure it is available for the 'build-tag-push-lambda-images' job which will be run in parallel with `terragrunt-apply-all-modules`
+  terragrunt-apply-ecr-only:
+    if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
-
-      # https://github.com/jlumbroso/free-disk-space/tree/54081f138730dfa15788a46383842cd2f914a1be#example
-      - name: Free Disk Space (Ubuntu)
-        uses: jlumbroso/free-disk-space@main
-        with:
-          # this might remove tools that are actually needed,
-          # if set to "true" but frees about 6 GB
-          tool-cache: false
-
-          # all of these default to true, but feel free to set to
-          # "false" if necessary for your workflow
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: true
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Setup terraform tools
         uses: cds-snc/terraform-tools-setup@v1
@@ -73,228 +57,172 @@ jobs:
           role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
 
-      - uses: cds-snc/paths-filter@b316143212d841aed668b7b29240c719d603a9b9 # tag=v2.10.4
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
         id: filter
         with:
-          filters: |
-            alarms:
-              - 'aws/alarms/**'
-              - 'env/cloud/alarms/**'
-            app:
-              - 'aws/app/**'
-              - 'env/cloud/app/**'
-            cognito:
-              - 'aws/cognito/**'
-              - 'aws/cloud/cognito/**'
-            common:
-              - '.github/workflows/terragrunt-apply-staging.yml'
-              - 'env/common/**'
-              - 'env/terragrunt.hcl'
-            dynamodb:
-              - 'aws/dynamodb/**'
-              - 'env/cloud/dynamodb/**'
-            ecr:
-              - 'aws/ecr/**'
-              - 'env/cloud/ecr/**'
-            hosted_zone:
-              - 'aws/hosted_zone/**'
-              - 'env/cloud/hosted_zone/**'
-            kms:
-              - 'aws/kms/**'
-              - 'env/cloud/kms/**'
-            lambdas:
-              - 'aws/lambdas/**'
-              - 'env/cloud/lambdas/**'
-            load_balancer:
-              - 'aws/load_balancer/**'
-              - 'env/cloud/load_balancer/**'
-            load_testing:
-              - 'aws/load_testing/**'
-              - 'env/cloud/load_testing/**'
-            network:
-              - 'aws/network/**'
-              - 'env/cloud/network/**'
-            oidc_roles:
-              - 'aws/oidc_roles/**'
-              - 'env/cloud/oidc_roles/**'              
-            rds:
-              - 'aws/rds/**'
-              - 'env/cloud/rds/**'
-            redis:
-              - 'aws/redis/**'
-              - 'env/cloud/redis/**'
-            s3:
-              - 'aws/s3/**'
-              - 'env/cloud/s3/**'
-            file_scanning:
-              - 'aws/file_scanning/**'
-              - 'env/cloud/file_scanning/**'
-            secrets:
-              - 'aws/secrets/**'
-              - 'env/cloud/secrets/**'
-            sns:
-              - 'aws/sns/**'
-              - 'env/cloud/sns/**'
-            sqs:
-              - 'aws/sqs/**'
-              - 'env/cloud/sqs/**'
+          filters: .github/module-filter.yml
 
-      # No dependencies
       - name: Terragrunt apply ecr
-        if: ${{ steps.filter.outputs.ecr == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.ecr == 'true'
         working-directory: env/cloud/ecr
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+  detect-lambda-changes:
+    needs: terragrunt-apply-ecr-only
+    runs-on: ubuntu-latest
+    outputs:
+      lambda-to-rebuild: ${{ steps.filter.outputs.changes }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Filter
+        id: filter
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        with:
+          filters: .github/lambda-filter.yml
+
+  build-tag-push-lambda-images:
+    needs: detect-lambda-changes
+    if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Build Lambda images
+        uses: ./.github/workflows/build-lambda-images
+        with:
+          lambda-directory: lambda-code/${{ matrix.image }}
+          lambda-name: ${{ matrix.image }}
+
+      - name: Tag and push Lambda images
+        uses: ./.github/workflows/tag-and-push-lambda-images
+        with:
+          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
+          aws-role-session-name: TFApply
+          aws-region: ${{ env.AWS_REGION }}
+          lambda-name: ${{ matrix.image }}
+          image-tag: ${{ github.sha }}
+
+  terragrunt-apply-all-modules:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Setup terraform tools
+        uses: cds-snc/terraform-tools-setup@v1
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
+          role-session-name: TFApply
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        id: filter
+        with:
+          filters: .github/module-filter.yml
+
       - name: Terragrunt apply hosted_zone
-        if: ${{ steps.filter.outputs.hosted_zone == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.hosted_zone == 'true'
         working-directory: env/cloud/hosted_zone
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply kms
-        if: ${{ steps.filter.outputs.kms == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.kms == 'true'
         working-directory: env/cloud/kms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply oidc_roles
-        if: ${{ steps.filter.outputs.oidc_roles == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.oidc_roles == 'true'
         working-directory: env/cloud/oidc_roles
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply sqs
-        if: ${{ steps.filter.outputs.sqs == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.sqs == 'true'
         working-directory: env/cloud/sqs
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply secrets
-        if: ${{ steps.filter.outputs.secrets == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.secrets == 'true'
         working-directory: env/cloud/secrets
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply s3
-        if: ${{ steps.filter.outputs.s3 == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.s3 == 'true'
         working-directory: env/cloud/s3
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on S3
       - name: Terragrunt apply file_scanning
-        if: ${{ steps.filter.outputs.file_scanning == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.file_scanning == 'true'
         working-directory: env/cloud/file_scanning
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on kms
       - name: Terragrunt apply sns
-        if: ${{ steps.filter.outputs.sns == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.sns == 'true'
         working-directory: env/cloud/sns
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Install Cognito Lambda deps
-        if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/cognito/lambda/deps.sh install
-
       - name: Terragrunt apply cognito
-        if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.cognito == 'true'
         working-directory: env/cloud/cognito
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Remove Cognito Lambda deps
-        if: ${{ steps.filter.outputs.cognito == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/cognito/lambda/deps.sh delete
-
       - name: Terragrunt apply network
-        if: ${{ steps.filter.outputs.network == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.network == 'true'
         working-directory: env/cloud/network
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply dynamodb
-        if: ${{ steps.filter.outputs.dynamodb == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.dynamodb == 'true'
         working-directory: env/cloud/dynamodb
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on network
       - name: Terragrunt apply load_balancer
-        if: ${{ steps.filter.outputs.load_balancer == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.load_balancer == 'true'
         working-directory: env/cloud/load_balancer
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply redis
-        if: ${{ steps.filter.outputs.redis == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.redis == 'true'
         working-directory: env/cloud/redis
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply rds
-        if: ${{ steps.filter.outputs.rds == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.rds == 'true'
         working-directory: env/cloud/rds
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on everything
       - name: Terragrunt apply app
-        if: ${{ steps.filter.outputs.app == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.app == 'true'
         working-directory: env/cloud/app
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Install Lambda deps
-        if: ${{ steps.filter.outputs.lambdas == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/lambdas/code/deps.sh install
-
       - name: Terragrunt apply lambdas
-        if: ${{ steps.filter.outputs.lambdas == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.lambdas == 'true'
         working-directory: env/cloud/lambdas
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Remove Lambda deps
-        if: ${{ steps.filter.outputs.lambdas == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/lambdas/code/deps.sh delete
-
-      - name: Install Lambda Alarm deps
-        if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/alarms/lambda/deps.sh install
-
       - name: Terragrunt apply alarms
-        if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.alarms == 'true'
         working-directory: env/cloud/alarms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Remove Lambda Alarm deps
-        if: ${{ steps.filter.outputs.alarms == 'true' || steps.filter.outputs.common == 'true' }}
-        run: ./aws/alarms/lambda/deps.sh delete
-
-        # Load Testing - Depends on ECR
-      - name: Build Load Testing Lambda Container
-        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        working-directory: aws/load_testing/lambda
-        run: docker build -t load_testing_lambda:latest .
-
-      - name: Login to Staging Amazon ECR
-        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        id: login-ecr-staging
-        uses: aws-actions/amazon-ecr-login@fe743e6bc3eb2ab5094262c5b9c6a168ceb05bec
-
-      - name: Tag Images for Staging
-        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr-staging.outputs.registry }}
-          ECR_REPOSITORY: load_test
-        run: |
-          docker tag load_testing_lambda $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-      - name: Push containers to Staging Amazon ECR
-        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr-staging.outputs.registry }}
-          ECR_REPOSITORY: load_test
-        run: |
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-      - name: Logout of Staging Amazon ECR
-        if: always()
-        run: docker logout ${{ steps.login-ecr-staging.outputs.registry }}
-
-      - name: Remove local version of image
-        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
-        run: docker image rm load_testing_lambda
-
       - name: Terragrunt apply load_testing
-        if: ${{ steps.filter.outputs.load_testing == 'true' || steps.filter.outputs.common == 'true' }}
+        if: steps.filter.outputs.load_testing == 'true'
         working-directory: env/cloud/load_testing
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
@@ -302,11 +230,42 @@ jobs:
         working-directory: env/cloud/pr_review
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      - name: Notify Slack on failure
-        if: failure()
+  update-lambda-function-image:
+    needs: [detect-lambda-changes, build-tag-push-lambda-images, terragrunt-plan]
+    if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Request Lambda functions to use new image
+        uses: ./.github/workflows/request-lambda-functions-to-use-new-image
+        with:
+          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
+          aws-role-session-name: TFApply
+          aws-region: ${{ env.AWS_REGION }}
+          lambda-name: ${{ matrix.image }}
+          image-tag: ${{ github.sha }}
+
+  notify-on-error:
+    needs:
+      [
+        terragrunt-apply-ecr-only,
+        build-tag-push-lambda-images,
+        terragrunt-apply-all-modules,
+        update-lambda-function-image,
+      ]
+    if: always() && contains(needs.*.result, 'failure')
+    steps:
+      - name: Send error message on Slack
         env:
           WORKFLOW_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           WORKFLOW_NAME: "${{ github.workflow }}"
         run: |
           json='{"channel":"#forms-staging-events", "blocks":[{"type":"section","text":{"type":"mrkdwn","text":":red: GitHub workflow failed: <${{ env.WORKFLOW_URL }}|${{ env.WORKFLOW_NAME }}>"}}]}'
           curl -X POST -H 'Content-type: application/json' --data "$json" "https://hooks.slack.com${{ secrets.STAGING_SLACK_WEBHOOK }}"
+        shell: bash

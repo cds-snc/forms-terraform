@@ -2,37 +2,28 @@
 #
 # Audit Log Processing
 #
-data "archive_file" "audit_logs_code" {
-  type        = "zip"
-  source_dir  = "./code/audit_logs/dist"
-  output_path = "/tmp/audit_logs_code.zip"
-}
-
-resource "aws_s3_object" "audit_logs_code" {
-  bucket      = var.lambda_code_id
-  key         = "audit_logs_code"
-  source      = data.archive_file.audit_logs_code.output_path
-  source_hash = data.archive_file.audit_logs_code.output_base64sha256
-}
 
 resource "aws_lambda_function" "audit_logs" {
-  s3_bucket         = aws_s3_object.audit_logs_code.bucket
-  s3_key            = aws_s3_object.audit_logs_code.key
-  s3_object_version = aws_s3_object.audit_logs_code.version_id
-  function_name     = "Audit_Logs"
-  role              = aws_iam_role.lambda.arn
-  handler           = "audit_logs.handler"
-  timeout           = 60
+  function_name = "audit-logs"
+  image_uri     = "${var.ecr_repository_url_audit_logs_lambda}:latest"
+  package_type  = "Image"
+  role          = aws_iam_role.lambda.arn
+  timeout       = 60
 
-  source_code_hash = data.archive_file.audit_logs_code.output_base64sha256
-
-  runtime = "nodejs18.x"
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
 
   environment {
     variables = {
       REGION     = var.region
       LOCALSTACK = var.localstack_hosted
     }
+  }
+
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/Audit_Logs"
   }
 
   tracing_config {
@@ -49,8 +40,13 @@ resource "aws_lambda_event_source_mapping" "audit_logs" {
   enabled                            = true
 }
 
+/*
+ * When implementing containerized Lambda we had to rename some of the functions.
+ * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
+ */
+
 resource "aws_cloudwatch_log_group" "audit_logs" {
-  name              = "/aws/lambda/${aws_lambda_function.audit_logs.function_name}"
+  name              = "/aws/lambda/Audit_Logs"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }
