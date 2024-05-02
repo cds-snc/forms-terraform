@@ -6,7 +6,10 @@ const client = new SecretsManagerClient();
 const command = new GetSecretValueCommand({ SecretId: process.env.NOTIFY_API_KEY });
 console.log("Retrieving Notify API Key from Secrets Manager");
 const notifyApiKey = await client.send(command);
-const notifyClient = new NotifyClient("https://api.notification.canada.ca", notifyApiKey.SecretString);
+const notifyClient = new NotifyClient(
+  "https://api.notification.canada.ca",
+  notifyApiKey.SecretString
+);
 
 export async function notifyFormOwner(
   formID: string,
@@ -49,16 +52,6 @@ Si les réponses ne sont toujours pas traitées après 45 jours, un processus d'
     });
   } catch (error) {
     if (error instanceof AxiosError) {
-      if (process.env.ENVIRONMENT === "staging") {
-        if (error.response?.data?.errors) {
-          if (
-            error.response.data.errors.find((e: Error) =>
-              e.message.includes("Can’t send to this recipient using a team-only API key")
-            ) !== undefined
-          )
-            return;
-        }
-      }
       // Error Message will be sent to slack
       console.error(
         JSON.stringify({
@@ -67,6 +60,15 @@ Si les réponses ne sont toujours pas traitées après 45 jours, un processus d'
           error: error.response?.data?.errors
             ? JSON.stringify(error.response.data.errors)
             : error.message,
+        })
+      );
+    } else {
+      console.error(
+        JSON.stringify({
+          status: "failed",
+          message:
+            "Failed to send nagware email to form owner: ${formOwnerEmailAddress} for form ID ${formID}",
+          error: (error as Error).message,
         })
       );
     }

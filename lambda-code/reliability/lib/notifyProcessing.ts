@@ -10,7 +10,10 @@ const client = new SecretsManagerClient();
 const command = new GetSecretValueCommand({ SecretId: process.env.NOTIFY_API_KEY });
 console.log("Retrieving Notify API Key from Secrets Manager");
 const notifyApiKey = await client.send(command);
-const notifyClient = new NotifyClient("https://api.notification.canada.ca", notifyApiKey.SecretString);
+const notifyClient = new NotifyClient(
+  "https://api.notification.canada.ca",
+  notifyApiKey.SecretString
+);
 
 export default async (
   submissionID: string,
@@ -50,8 +53,8 @@ export default async (
           ? formSubmission.deliveryOption.emailSubjectFr
           : formSubmission.form.titleFr
         : formSubmission.deliveryOption.emailSubjectEn
-          ? formSubmission.deliveryOption.emailSubjectEn
-          : formSubmission.form.titleEn;
+        ? formSubmission.deliveryOption.emailSubjectEn
+        : formSubmission.form.titleEn;
 
     await notifyClient.sendEmail(templateID, formSubmission.deliveryOption.emailAddress, {
       personalisation: {
@@ -94,9 +97,8 @@ export default async (
          */
         errorMessage = `${error.request}.`;
       }
-    }
-    if (error instanceof Error) {
-      errorMessage = `${error.message}.`;
+    } else if (error instanceof Error) {
+      errorMessage = `${(error as Error).message}.`;
     }
 
     console.error(
