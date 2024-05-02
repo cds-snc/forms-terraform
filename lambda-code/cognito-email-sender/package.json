@@ -1,5 +1,6 @@
 {
   "name": "cognito-email-sender",
+  "description": "to be removed",
   "version": "1.0.0",
   "main": "main.js",
   "type": "module",

@@ -1,7 +1,7 @@
 {
   "name": "notify-slack",
-  "version": "1.0.0",
   "description": "Lambda that notifies Slack and triggers Opsgenie alert",
+  "version": "1.0.0",
   "main": "main.js",
   "type": "module",
   "scripts": {
