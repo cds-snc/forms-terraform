@@ -10,13 +10,13 @@ locals {
 }
 
 resource "aws_wafv2_rule_group" "rate_limiters_group" {
-  capacity = 10
+  capacity = 32 // 2, as a base cost. For each custom aggregation key that you specify, add 30 WCUs.
   name     = "RateLimitersGroup"
   scope    = "REGIONAL"
 
   rule {
-    name     = "PostRequestLimit"
-    priority = 2
+    name     = "BlanketRequestLimit"
+    priority = 1
 
     action {
       block {}
@@ -24,27 +24,15 @@ resource "aws_wafv2_rule_group" "rate_limiters_group" {
 
     statement {
       rate_based_statement {
-        limit              = 100
+        limit              = 2000
         aggregate_key_type = "IP"
-        scope_down_statement {
-          byte_match_statement {
-            positional_constraint = "EXACTLY"
-            field_to_match {
-              method {}
-            }
-            search_string = "post"
-            text_transformation {
-              priority = 1
-              type     = "LOWERCASE"
-            }
-          }
-        }
+
       }
     }
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "PostRequestRateLimit"
+      metric_name                = "BlanketRequestLimit"
       sampled_requests_enabled   = true
     }
   }
@@ -120,6 +108,22 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     }
   }
 
+  rule {
+    name = "RateLimitersRuleGroup"
+    priority = 2
+
+  statement {
+    rule_group_reference_statement {
+      arn = aws_wafv2_rule_group.rate_limiters_group.arn
+    }
+  }
+
+  visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "rate_limiters_rule_group"
+        sampled_requests_enabled   = false
+      }
+  }
 
   rule {
     name     = "PreventHostInjections"
