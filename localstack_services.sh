@@ -33,7 +33,7 @@ if ! curl https://localhost.localstack.cloud:4566/_localstack/health > /dev/null
 fi
 
 if ! command -v awslocal > /dev/null; then
-  printf "${redColor}=> This script requires 'awslocal' to be installed.${reset}\n"
+  printf "${redColor}=> This script requires 'awslocal' to be installed. See 'Prerequisites' section in the README file.${reset}\n"
   exit 1
 fi
 
