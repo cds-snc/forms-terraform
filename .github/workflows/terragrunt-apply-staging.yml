@@ -260,6 +260,7 @@ jobs:
         update-lambda-function-image,
       ]
     if: always() && contains(needs.*.result, 'failure')
+    runs-on: ubuntu-latest
     steps:
       - name: Send error message on Slack
         env:
