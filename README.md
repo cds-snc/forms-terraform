@@ -31,6 +31,22 @@ Pull Requests in this repository require all commits to be signed before they ca
 
   (source https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable)
 
+- awslocal (if you want to deploy the infrastructure locally):
+
+  ```shell
+  $ brew install awscli-local
+  ```
+
+  (source https://formulae.brew.sh/formula/awscli-local)
+
+  OR
+
+  ```shell
+  $ pip install awscli-local
+  ```
+
+  (source https://github.com/localstack/awscli-local)
+
 ### If using Colima
 
 - Docker: `brew install docker docker-compose docker-credential-manager`
