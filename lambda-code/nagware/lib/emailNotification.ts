@@ -66,7 +66,8 @@ Si les réponses ne sont toujours pas traitées après 45 jours, un processus d'
       console.error(
         JSON.stringify({
           status: "failed",
-          message: "Failed to send Notify Email.",
+          message:
+            "Failed to send nagware email to form owner: ${formOwnerEmailAddress} for form ID ${formID}",
           error: (error as Error).message,
         })
       );

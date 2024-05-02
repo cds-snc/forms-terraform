@@ -88,7 +88,7 @@ export const handler: Handler = async (event) => {
         console.error(
           JSON.stringify({
             status: "failed",
-            message: "Failed to send Notify Email.",
+            message: `Failed to send password reset email to ${userEmail}`,
             error: (err as Error).message,
           })
         );
