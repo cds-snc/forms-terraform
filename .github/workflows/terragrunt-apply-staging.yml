@@ -57,13 +57,7 @@ jobs:
           role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
 
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
-        id: filter
-        with:
-          filters: .github/module-filter.yml
-
       - name: Terragrunt apply ecr
-        if: steps.filter.outputs.ecr == 'true'
         working-directory: env/cloud/ecr
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
@@ -111,6 +105,7 @@ jobs:
           image-tag: ${{ github.sha }}
 
   terragrunt-apply-all-modules:
+    needs: build-tag-push-lambda-images
     if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     steps:
@@ -127,102 +122,79 @@ jobs:
           role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
 
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
-        id: filter
-        with:
-          filters: .github/module-filter.yml
-
       - name: Terragrunt apply hosted_zone
-        if: steps.filter.outputs.hosted_zone == 'true'
         working-directory: env/cloud/hosted_zone
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply kms
-        if: steps.filter.outputs.kms == 'true'
         working-directory: env/cloud/kms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply oidc_roles
-        if: steps.filter.outputs.oidc_roles == 'true'
         working-directory: env/cloud/oidc_roles
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply sqs
-        if: steps.filter.outputs.sqs == 'true'
         working-directory: env/cloud/sqs
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply secrets
-        if: steps.filter.outputs.secrets == 'true'
         working-directory: env/cloud/secrets
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply s3
-        if: steps.filter.outputs.s3 == 'true'
         working-directory: env/cloud/s3
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on S3
       - name: Terragrunt apply file_scanning
-        if: steps.filter.outputs.file_scanning == 'true'
         working-directory: env/cloud/file_scanning
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on kms
       - name: Terragrunt apply sns
-        if: steps.filter.outputs.sns == 'true'
         working-directory: env/cloud/sns
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply cognito
-        if: steps.filter.outputs.cognito == 'true'
         working-directory: env/cloud/cognito
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply network
-        if: steps.filter.outputs.network == 'true'
         working-directory: env/cloud/network
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply dynamodb
-        if: steps.filter.outputs.dynamodb == 'true'
         working-directory: env/cloud/dynamodb
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on network
       - name: Terragrunt apply load_balancer
-        if: steps.filter.outputs.load_balancer == 'true'
         working-directory: env/cloud/load_balancer
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply redis
-        if: steps.filter.outputs.redis == 'true'
         working-directory: env/cloud/redis
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply rds
-        if: steps.filter.outputs.rds == 'true'
         working-directory: env/cloud/rds
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on everything
       - name: Terragrunt apply app
-        if: steps.filter.outputs.app == 'true'
         working-directory: env/cloud/app
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply lambdas
-        if: steps.filter.outputs.lambdas == 'true'
         working-directory: env/cloud/lambdas
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply alarms
-        if: steps.filter.outputs.alarms == 'true'
         working-directory: env/cloud/alarms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply load_testing
-        if: steps.filter.outputs.load_testing == 'true'
         working-directory: env/cloud/load_testing
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
