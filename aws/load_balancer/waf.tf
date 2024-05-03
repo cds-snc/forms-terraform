@@ -112,6 +112,10 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     name     = "RateLimitersRuleGroup"
     priority = 2
 
+    override_action {
+      none {}
+    }
+
     statement {
       rule_group_reference_statement {
         arn = aws_wafv2_rule_group.rate_limiters_group.arn
