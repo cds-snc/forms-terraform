@@ -9,32 +9,30 @@ locals {
   cognito_login_outside_canada_rule_name = "AWSCognitoLoginOutsideCanada"
 }
 
-resource "aws_wafv2_web_acl" "forms_acl" {
-  name  = "GCForms"
-  scope = "REGIONAL"
-
-  default_action {
-    allow {}
-  }
+resource "aws_wafv2_rule_group" "rate_limiters_group" {
+  capacity = 32 // 2, as a base cost. For each custom aggregation key that you specify, add 30 WCUs.
+  name     = "RateLimitersGroup"
+  scope    = "REGIONAL"
 
   rule {
-    name     = "AWSManagedRulesAmazonIpReputationList"
+    name     = "BlanketRequestLimit"
     priority = 1
 
-    override_action {
-      none {}
+    action {
+      block {}
     }
 
     statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesAmazonIpReputationList"
-        vendor_name = "AWS"
+      rate_based_statement {
+        limit              = 2000
+        aggregate_key_type = "IP"
+
       }
     }
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesAmazonIpReputationList"
+      metric_name                = "BlanketRequestLimit"
       sampled_requests_enabled   = true
     }
   }
@@ -71,6 +69,63 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       cloudwatch_metrics_enabled = true
       metric_name                = "PostRequestRateLimit"
       sampled_requests_enabled   = true
+    }
+  }
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "RateLimitersGroup"
+    sampled_requests_enabled   = false
+  }
+}
+
+resource "aws_wafv2_web_acl" "forms_acl" {
+  name  = "GCForms"
+  scope = "REGIONAL"
+
+  default_action {
+    allow {}
+  }
+
+  rule {
+    name     = "AWSManagedRulesAmazonIpReputationList"
+    priority = 1
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesAmazonIpReputationList"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesAmazonIpReputationList"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "RateLimitersRuleGroup"
+    priority = 2
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      rule_group_reference_statement {
+        arn = aws_wafv2_rule_group.rate_limiters_group.arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "rate_limiters_rule_group"
+      sampled_requests_enabled   = false
     }
   }
 
@@ -288,6 +343,10 @@ resource "aws_wafv2_regex_pattern_set" "cognito_login_paths" {
   regular_expression {
     regex_string = "^\\/(api\\/auth\\/(signin|callback)\\/cognito)$"
   }
+
+  regular_expression {
+    regex_string = "^\\/(api\\/auth\\/(session|csrf))$"
+  }
 }
 
 #
@@ -320,7 +379,7 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
   description = "Regex to match the app valid urls"
 
   regular_expression {
-    regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|profile|forms|unsupported-browser|terms-of-use|404)(?:\\/[\\w-]+)?)(?:\\/.*)?$"
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|profile|forms|unsupported-browser|terms-of-use|contact|support|404)(?:\\/[\\w-]+)?)(?:\\/.*)?$"
   }
 
   regular_expression {
