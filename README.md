@@ -162,7 +162,7 @@ $ cd lambda-code/
 $ ./deploy-lambda-images.sh
 ```
 
-**There is a `skip` argument you can pass to that script if you only want to deploy the Lambda images for which you have made changes. It uses the `git diff --cached -- .` command in every single Lambda folder to know whether the image should be deployed or skipped**
+**There is a `skip` argument you can pass to that script if you only want to deploy the Lambda images for which you have made changes. It uses the `git diff HEAD .` command in every single Lambda folder to know whether the image should be deployed or skipped**
 
 ## Dynamo Database Table Schemas
 

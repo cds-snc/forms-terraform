@@ -106,7 +106,7 @@ jobs:
 
   terragrunt-apply-all-modules:
     needs: build-tag-push-lambda-images
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/develop' && always() && (needs.build-tag-push-lambda-images.result == 'success' || needs.build-tag-push-lambda-images.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -203,7 +203,7 @@ jobs:
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
   update-lambda-function-image:
-    needs: [detect-lambda-changes, build-tag-push-lambda-images, terragrunt-apply-all-modules]
+    needs: [detect-lambda-changes, terragrunt-apply-all-modules]
     if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
     runs-on: ubuntu-latest
     strategy:
