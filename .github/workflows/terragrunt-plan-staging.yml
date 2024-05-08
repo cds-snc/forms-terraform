@@ -56,6 +56,24 @@ jobs:
         with:
           filters: .github/lambda-filter.yml
 
+  test-lambda-code:
+    needs: detect-lambda-changes
+    if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Test Lambda code
+        uses: ./.github/workflows/test-lambda-code
+        with:
+          lambda-directory: lambda-code/${{ matrix.image }}
+          lambda-name: ${{ matrix.image }}
+
   build-lambda-images:
     needs: detect-lambda-changes
     if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
