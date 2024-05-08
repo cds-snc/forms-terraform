@@ -345,7 +345,11 @@ resource "aws_wafv2_regex_pattern_set" "cognito_login_paths" {
   }
 
   regular_expression {
-    regex_string = "^\\/(api\\/auth\\/(session|csrf))$"
+    regex_string = "^\\/(api\\/auth\\/csrf)$"
+  }
+
+  regular_expression {
+    regex_string = "^\\/(?:en|fr)?\\/auth\\/mfa$"
   }
 }
 
