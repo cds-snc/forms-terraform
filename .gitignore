@@ -55,4 +55,4 @@ tf.plan
 .env
 
 # Ignore coverage reports
-**/coverage/*
+**/coverage/
