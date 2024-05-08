@@ -83,6 +83,13 @@ export const sendToOpsGenie = async (logGroup: string, logMessage: string, logSe
     );
     return;
   }
+  const environment = process.env.ENVIRONMENT || "staging";
+  if (environment !== "production") {
+    console.log(
+      `Skipping sending to OpsGenie because environment is not production: ${environment}`
+    );
+    return;
+  }
 
   console.log("Sending to OpsGenie...");
 
