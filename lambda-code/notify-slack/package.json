@@ -5,7 +5,10 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
+    "prebuild": "rm -rf dist",
     "build": "tsc --project tsconfig.json",
+    "build:dev": "tsc --project tsconfig.json --watch",
+    "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cd ./dist && yarn install --production",
     "test": "vitest --coverage"
   },
   "license": "MIT",
