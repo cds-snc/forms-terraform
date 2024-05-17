@@ -15,5 +15,5 @@ WORKFLOW_VARS="$(grep -r "^\s*TF_VAR" $SCRIPT_DIR/../ | awk -F ':' '{print $2}' 
 # Loop through all the variables in the workflow and check if they are defined in the *.tf code
 for VAR in $WORKFLOW_VARS; do
     echo "🔎 Checking variable: \"$VAR\""
-    grep -r "variable \"$VAR\"" "$SCRIPT_DIR/../../../" || (echo "❌ Variable \"$VAR\" is not defined as a Terraform variable" && exit 1)
+    grep -r --include="*.tf" "variable \"$VAR\"" "$SCRIPT_DIR/../../../" || (echo "❌ Variable \"$VAR\" is not defined as a Terraform variable" && exit 1)
 done
