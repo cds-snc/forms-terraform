@@ -1,0 +1,34 @@
+name: Conventional commit lint
+
+on:
+  pull_request:
+
+jobs:
+  conventional-commit-lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get all PR commits
+      run: echo "PR_FETCH_DEPTH=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> "${GITHUB_ENV}"
+
+    - name: Checkout
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+        fetch-depth: ${{ env.PR_FETCH_DEPTH }}      
+
+    - name: Setup Node.js
+      uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+      with:
+        node-version: '20.x'
+
+    - name: Setup commitlint
+      run: |
+        npm install -g @commitlint/config-conventional @commitlint/cli
+
+    - name: Validate all PR commits
+      run: |
+        npx commitlint \
+          --extends '@commitlint/config-conventional' \
+          --from HEAD~${{ github.event.pull_request.commits }} \
+          --to HEAD \
+          --verbose
