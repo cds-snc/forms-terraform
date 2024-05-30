@@ -70,7 +70,7 @@ jobs:
           filters: .github/lambda-filter.yml
 
   build-tag-push-lambda-images:
-    if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
+    needs: detect-lambda-changes
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
