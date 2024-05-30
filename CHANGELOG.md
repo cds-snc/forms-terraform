@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.9.1](https://github.com/cds-snc/forms-terraform/compare/v3.9.0...v3.9.1) (2024-05-30)
+
+
+### Bug Fixes
+
+* deployment issue in production ([#668](https://github.com/cds-snc/forms-terraform/issues/668)) ([64f08d8](https://github.com/cds-snc/forms-terraform/commit/64f08d879d88357cf9835c53cb7e674a05890b39))
+* production deployment issue ([#666](https://github.com/cds-snc/forms-terraform/issues/666)) ([35361dd](https://github.com/cds-snc/forms-terraform/commit/35361dddb695b9d323c6e8421a880916f2860bf0))
+
 ## [3.9.0](https://github.com/cds-snc/forms-terraform/compare/v3.8.5...v3.9.0) (2024-05-17)
 
 
