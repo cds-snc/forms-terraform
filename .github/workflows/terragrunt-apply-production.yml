@@ -190,12 +190,11 @@ jobs:
 
   update-lambda-function-image:
     needs: [detect-lambda-changes, terragrunt-apply-all-modules]
-    if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
+        image: [audit-logs, audit-logs-archiver, cognito-email-sender, cognito-pre-sign-up, form-archiver, load-testing, nagware, notify-slack, reliability, reliability-dlq-consumer, response-archiver, submission, vault-integrity]
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
