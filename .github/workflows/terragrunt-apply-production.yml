@@ -56,6 +56,7 @@ jobs:
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
   build-tag-push-lambda-images:
+    needs: terragrunt-apply-ecr-only
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
