@@ -30,7 +30,6 @@ env:
   TF_VAR_cognito_code_template_id: 8dde39b6-05b9-43ce-807f-c2364ed3bdb6
   TF_VAR_email_address_contact_us: ${{ vars.PRODUCTION_CONTACT_US_EMAIL }}
   TF_VAR_email_address_support: ${{ vars.PRODUCTION_SUPPORT_EMAIL }}
-  LAMBDA_IMAGE_MATRIX: [audit-logs, audit-logs-archiver, cognito-email-sender, cognito-pre-sign-up, form-archiver, load-testing, nagware, notify-slack, reliability, reliability-dlq-consumer, response-archiver, submission, vault-integrity]
 
 jobs:
   # We deploy ECR first to make sure it is available for the 'build-tag-push-lambda-images' job which will be run in parallel with `terragrunt-apply-all-modules`
@@ -61,7 +60,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: ${{ env.LAMBDA_IMAGE_MATRIX }}
+        image: [audit-logs, audit-logs-archiver, cognito-email-sender, cognito-pre-sign-up, form-archiver, load-testing, nagware, notify-slack, reliability, reliability-dlq-consumer, response-archiver, submission, vault-integrity]
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -179,7 +178,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: ${{ env.LAMBDA_IMAGE_MATRIX }}
+        image: [audit-logs, audit-logs-archiver, cognito-email-sender, cognito-pre-sign-up, form-archiver, load-testing, nagware, notify-slack, reliability, reliability-dlq-consumer, response-archiver, submission, vault-integrity]
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
