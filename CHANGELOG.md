@@ -1,5 +1,39 @@
 # Changelog
 
+## [3.9.0](https://github.com/cds-snc/forms-terraform/compare/v3.8.5...v3.9.0) (2024-05-17)
+
+
+### Features
+
+* add TF_VAR check and conventional commit lint workflows ([#663](https://github.com/cds-snc/forms-terraform/issues/663)) ([bf44015](https://github.com/cds-snc/forms-terraform/commit/bf4401501858e352494e35c3fecae8cd153082e6))
+
+
+### Bug Fixes
+
+* include the mfa endpoint for WAF detection ([0a3baea](https://github.com/cds-snc/forms-terraform/commit/0a3baea9eb149d27982ccf112473034ba7d2e77f))
+* missing runs on property in Github workflow ([#647](https://github.com/cds-snc/forms-terraform/issues/647)) ([94b3e2f](https://github.com/cds-snc/forms-terraform/commit/94b3e2ff5f2a88bf545eba2a9869934d39d27afd))
+* modify the load balancer endpoint so it works with both the pre-app router and the new app router ([7a16224](https://github.com/cds-snc/forms-terraform/commit/7a16224864a83f8b7fea7a168b1e19248d2e56b2))
+* notify slack lambda function had missing scripts in package.json ([#660](https://github.com/cds-snc/forms-terraform/issues/660)) ([db9f8cd](https://github.com/cds-snc/forms-terraform/commit/db9f8cd2e1005c1752c2e1fd1af8943c418b0592))
+* Update Notify error handling across lambdas ([#651](https://github.com/cds-snc/forms-terraform/issues/651)) ([de189e2](https://github.com/cds-snc/forms-terraform/commit/de189e2c587cb936dcfbae3f28b446f858268a75))
+* wrong job dependency name in Github Workflow ([#648](https://github.com/cds-snc/forms-terraform/issues/648)) ([342ecb1](https://github.com/cds-snc/forms-terraform/commit/342ecb11dced01fd831d27fefa013d6b877817c8))
+
+
+### Miscellaneous Chores
+
+* add permission for ECS task to call legacy submission Lambda function name ([#643](https://github.com/cds-snc/forms-terraform/issues/643)) ([66f98b9](https://github.com/cds-snc/forms-terraform/commit/66f98b92e41c52d0c2651fd11e9914d4cbc5517d))
+* added description in all package.json files ([#649](https://github.com/cds-snc/forms-terraform/issues/649)) ([2b7ea5c](https://github.com/cds-snc/forms-terraform/commit/2b7ea5cbaa21b71d8c786f6511342fdfd28a7683))
+* added test-lambda-code job to Github workflow ([#658](https://github.com/cds-snc/forms-terraform/issues/658)) ([87c2939](https://github.com/cds-snc/forms-terraform/commit/87c29391328a9c6555df69155d4c0312b6f6c50a))
+* adjust WAF rules ([e9a3b8a](https://github.com/cds-snc/forms-terraform/commit/e9a3b8af5c1cfebce59001d50f39b8e169e3fb49))
+* Disable OpsGenie alerting for non-production environment ([72fc8cb](https://github.com/cds-snc/forms-terraform/commit/72fc8cbdf3a92b71781bd6d33095e7cbf4554c1d))
+* Github workflow deployment script not working as intended ([#655](https://github.com/cds-snc/forms-terraform/issues/655)) ([f6d16cf](https://github.com/cds-snc/forms-terraform/commit/f6d16cf9e9eac1559e10b095072cc2fc4b4c1e06))
+* sanitize GitHub workflow logs ([e7e9537](https://github.com/cds-snc/forms-terraform/commit/e7e953751fc5bc905b22bcb37bf4d1c483ee8a6c))
+* wait for lambdas images to be ready to use before applying Terraform modules ([#650](https://github.com/cds-snc/forms-terraform/issues/650)) ([3ca2993](https://github.com/cds-snc/forms-terraform/commit/3ca2993cac9cfaa02b7c62574a1b449bb09576cd))
+
+
+### Code Refactoring
+
+* convert Lambda code from S3 binary object to ECR container image ([#626](https://github.com/cds-snc/forms-terraform/issues/626)) ([524d68f](https://github.com/cds-snc/forms-terraform/commit/524d68f8f6d58e3a9601ff17e08438f6c0ce9bdc))
+
 ## [3.8.5](https://github.com/cds-snc/forms-terraform/compare/v3.8.4...v3.8.5) (2024-04-30)
 
 
