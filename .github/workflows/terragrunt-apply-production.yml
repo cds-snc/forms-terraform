@@ -76,7 +76,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
+        image: [audit-logs, audit-logs-archiver, cognito-email-sender, cognito-pre-sign-up, form-archiver, load-testing, nagware, notify-slack, reliability, reliability-dlq-consumer, response-archiver, submission, vault-integrity]
 
     steps:
       - name: Checkout
