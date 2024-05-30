@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.9.2](https://github.com/cds-snc/forms-terraform/compare/v3.9.1...v3.9.2) (2024-05-30)
+
+
+### Bug Fixes
+
+* Remove CSRF regex pattern from WAF out-of-country rule ([#671](https://github.com/cds-snc/forms-terraform/issues/671)) ([6e98154](https://github.com/cds-snc/forms-terraform/commit/6e981540fcf1e93d6f7e2c04c4d6b1f0b0ca6755))
+
+
+### Miscellaneous Chores
+
+* use static array of lambda name when deploying to production ([#669](https://github.com/cds-snc/forms-terraform/issues/669)) ([15baf0b](https://github.com/cds-snc/forms-terraform/commit/15baf0b2a178ef933e63d4b2f5e2978dcc0a5af3))
+
 ## [3.9.1](https://github.com/cds-snc/forms-terraform/compare/v3.9.0...v3.9.1) (2024-05-30)
 
 
