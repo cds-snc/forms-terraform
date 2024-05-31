@@ -82,7 +82,7 @@ jobs:
 
   terragrunt-apply-all-modules:
     needs: build-tag-push-lambda-images
-    if: !failure() && !cancelled()
+    if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -200,7 +200,7 @@ jobs:
         terragrunt-apply-all-modules,
         update-lambda-function-image,
       ]
-    if: failure() && !cancelled()
+    if: ${{ failure() && !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       - name: Send error message on Slack
