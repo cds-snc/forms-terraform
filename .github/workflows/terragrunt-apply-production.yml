@@ -82,7 +82,7 @@ jobs:
 
   terragrunt-apply-all-modules:
     needs: build-tag-push-lambda-images
-    if: always() && (needs.build-tag-push-lambda-images.result == 'success' || needs.build-tag-push-lambda-images.result == 'skipped')
+    if: !failure() && !cancelled()
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -200,7 +200,7 @@ jobs:
         terragrunt-apply-all-modules,
         update-lambda-function-image,
       ]
-    if: always() && contains(needs.*.result, 'failure')
+    if: failure() && !cancelled()
     runs-on: ubuntu-latest
     steps:
       - name: Send error message on Slack
