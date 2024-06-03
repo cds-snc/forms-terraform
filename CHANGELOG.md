@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.9.3](https://github.com/cds-snc/forms-terraform/compare/v3.9.2...v3.9.3) (2024-06-03)
+
+
+### Bug Fixes
+
+* remove load-testing lambda deployment from apply production workflow ([#675](https://github.com/cds-snc/forms-terraform/issues/675)) ([62a7e26](https://github.com/cds-snc/forms-terraform/commit/62a7e26504376185176d8f022e9216fd5e934b13))
+
+
+### Miscellaneous Chores
+
+* add more information to the error message we get when failing to save a submission ([#673](https://github.com/cds-snc/forms-terraform/issues/673)) ([1265b9c](https://github.com/cds-snc/forms-terraform/commit/1265b9cef12ca48bc1e9f7c0b694407586800976))
+* fix Lambda deployment issue with Localstack ([#676](https://github.com/cds-snc/forms-terraform/issues/676)) ([860136b](https://github.com/cds-snc/forms-terraform/commit/860136b614f968e1d3f2d81042133f56a1a9f8d0))
+
 ## [3.9.2](https://github.com/cds-snc/forms-terraform/compare/v3.9.1...v3.9.2) (2024-05-30)
 
 
