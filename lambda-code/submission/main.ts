@@ -121,7 +121,11 @@ const saveSubmission = async (submissionId: string, formData: AnyObject): Promis
       })
     );
   } catch (error) {
-    throw new Error("Could not save submission to Reliability Temporary Storage");
+    throw new Error(
+      `Could not save submission to Reliability Temporary Storage. Reason: ${
+        (error as Error).message
+      }`
+    );
   }
 };
 
