@@ -11,7 +11,7 @@ yellowColor='\033[0;33m'
 redColor='\033[0;31m'
 reset='\033[0m' # No Color
 
-ecrRepositoryAddress=000000000000.dkr.ecr.ca-central-1.localhost.localstack.cloud:4511
+ecrRepositoryAddress=000000000000.dkr.ecr.ca-central-1.localhost.localstack.cloud:4566
 lambdasToSkip=("cognito-email-sender", "cognito-pre-sign-up", "notify-slack", "load-testing")
 basedir=$(pwd)
 
