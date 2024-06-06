@@ -109,7 +109,6 @@ jobs:
           lambda-name: ${{ matrix.image }}
 
   terragrunt-plan:
-    if: startsWith(github.head_ref, 'release-please--')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
