@@ -3,7 +3,9 @@ name: "Terragrunt plan PRODUCTION"
 on:
   pull_request:
     branches:
-      - "develop"
+      - develop
+    paths:
+      - "version.txt"   
 
 permissions:
   id-token: write
@@ -35,14 +37,30 @@ env:
   TF_VAR_email_address_support: ${{ vars.PRODUCTION_SUPPORT_EMAIL }}
 
 jobs:
+  get-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Release please PR, use branch
+        if: ${{ startsWith(github.head_ref, 'release-please--') }}
+        run: echo "VERSION=${{ github.head_ref }}" >> $GITHUB_ENV
+
+      - name: Revert PR, use tag
+        if: ${{ !startsWith(github.head_ref, 'release-please--') }}
+        run: echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV        
+
   detect-lambda-changes:
-    if: startsWith(github.head_ref, 'release-please--')
+    needs: get-version
     runs-on: ubuntu-latest
     outputs:
       lambda-to-rebuild: ${{ steps.filter.outputs.changes }}
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          ref: ${{ env.VERSION }}
 
       - name: Filter
         id: filter
@@ -61,6 +79,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          ref: ${{ env.VERSION }}
 
       - name: Test Lambda code
         uses: ./.github/workflows/test-lambda-code
@@ -79,6 +99,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          ref: ${{ env.VERSION }}
 
       - name: Build Lambda images
         uses: ./.github/workflows/build-lambda-images
@@ -92,6 +114,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          ref: ${{ env.VERSION }}
 
       # Setup Terraform, Terragrunt, and Conftest
       - name: Setup terraform tools
