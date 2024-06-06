@@ -3,7 +3,7 @@ name: "Terragrunt apply PRODUCTION"
 on:
   push:
     branches:
-      - develop
+      - "develop"
     paths:
       - "version.txt"
 
@@ -42,7 +42,7 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Get version
-        run: echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV
+        run: echo "VERSION=v$(cat version.txt)" >> $GITHUB_ENV
 
       - name: Wait for tag to exist
         run: ./.github/workflows/scripts/wait-for-tag.sh ${{ env.VERSION }}
