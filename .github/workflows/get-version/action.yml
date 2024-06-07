@@ -10,14 +10,16 @@ outputs:
     value: ${{ steps.output-version.outputs.version }}
 
 runs:
-  using: "composite" 
+  using: "composite"
   steps:
     - name: Checkout
       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
     - name: Get version, release PR branch
       if: inputs.is-tagged == 'false'
-      run: echo "version=${{ github.head_ref }}" >> $GITHUB_ENV
+      env:
+        GITHUB_HEAD_REF: ${{ github.head_ref }}
+      run: echo "version=$GITHUB_HEAD_REF" >> $GITHUB_ENV
 
     - name: Get version, perform release of tag
       if: inputs.is-tagged == 'true'
