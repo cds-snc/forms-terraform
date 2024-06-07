@@ -39,21 +39,20 @@ env:
 jobs:
   get-version:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}    
     steps:
-      - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-
-      - name: Release please PR, use branch
-        if: ${{ startsWith(github.head_ref, 'release-please--') }}
-        run: echo "VERSION=${{ github.head_ref }}" >> $GITHUB_ENV
-
-      - name: Revert PR, use tag
-        if: ${{ !startsWith(github.head_ref, 'release-please--') }}
-        run: echo "VERSION=v$(cat version.txt)" >> $GITHUB_ENV        
+      - name: Get version to deploy
+        id: get-version
+        uses: ./.github/workflows/get-version
+        with:
+          is-tagged: ${{ !startsWith(github.head_ref, 'release-please--') }} # If not the release PR branch, assume it is a revert PR
 
   detect-lambda-changes:
     needs: get-version
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}  
     outputs:
       lambda-to-rebuild: ${{ steps.filter.outputs.changes }}
     steps:
@@ -69,9 +68,11 @@ jobs:
           filters: .github/lambda-filter.yml
 
   test-lambda-code:
-    needs: detect-lambda-changes
+    needs: [get-version, detect-lambda-changes]
     if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
     strategy:
       fail-fast: false
       matrix:
@@ -89,9 +90,11 @@ jobs:
           lambda-name: ${{ matrix.image }}
 
   build-lambda-images:
-    needs: detect-lambda-changes
+    needs: [get-version, detect-lambda-changes]
     if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
     strategy:
       fail-fast: false
       matrix:
@@ -109,7 +112,10 @@ jobs:
           lambda-name: ${{ matrix.image }}
 
   terragrunt-plan:
+    needs: get-version
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1

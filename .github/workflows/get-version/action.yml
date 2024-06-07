@@ -1,0 +1,32 @@
+name: Get infrastructure version to deploy
+
+inputs:
+  is-tagged:
+    description: "Is this for the release of a tagged version?  This action will wait for the tag to exist if so."
+    required: true
+outputs:
+  version:
+    description: "Infrastructure version to deploy"
+    value: ${{ steps.output-version.outputs.version }}
+
+runs:
+  using: "composite" 
+  steps:
+    - name: Checkout
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+    - name: Get version, release PR branch
+      if: inputs.is-tagged == 'false'
+      run: echo "version=${{ github.head_ref }}" >> $GITHUB_ENV
+
+    - name: Get version, perform release of tag
+      if: inputs.is-tagged == 'true'
+      run: echo "version=v$(cat version.txt)" >> $GITHUB_ENV
+
+    - name: Wait for tag to exist
+      if: inputs.is-tagged == 'true'
+      run: ./.github/workflows/scripts/wait-for-tag.sh ${{ env.version }}
+
+    - name: Output version
+      id: output-version
+      run: echo "version=${{ env.version }}" >> $GITHUB_OUTPUT
