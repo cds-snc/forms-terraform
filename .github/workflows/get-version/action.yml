@@ -12,23 +12,24 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout
-      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-
     - name: Get version, release PR branch
-      if: inputs.is-tagged == 'false'
+      if: inputs.is-tagged == 'false' && startsWith(github.head_ref, 'release-please--')
       env:
         GITHUB_HEAD_REF: ${{ github.head_ref }}
       run: echo "version=$GITHUB_HEAD_REF" >> $GITHUB_ENV
+      shell: bash
 
     - name: Get version, perform release of tag
       if: inputs.is-tagged == 'true'
       run: echo "version=v$(cat version.txt)" >> $GITHUB_ENV
+      shell: bash
 
     - name: Wait for tag to exist
       if: inputs.is-tagged == 'true'
       run: ./.github/workflows/scripts/wait-for-tag.sh ${{ env.version }}
+      shell: bash
 
     - name: Output version
       id: output-version
       run: echo "version=${{ env.version }}" >> $GITHUB_OUTPUT
+      shell: bash
