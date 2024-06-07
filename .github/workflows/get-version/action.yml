@@ -29,6 +29,11 @@ runs:
       run: ./.github/workflows/scripts/wait-for-tag.sh ${{ env.version }}
       shell: bash
 
+    - name: Fail if no version set
+      if: env.version == ''   
+      run: exit 1
+      shell: bash
+
     - name: Output version
       id: output-version
       run: echo "version=${{ env.version }}" >> $GITHUB_OUTPUT
