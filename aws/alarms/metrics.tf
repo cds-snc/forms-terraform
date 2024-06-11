@@ -10,8 +10,7 @@ locals {
     name           = "FormsClientSubmitFailed"
     pattern        = "Attempted response submission for Form ID"
     log_group_name = var.ecs_cloudwatch_log_group_name
-    }
-  ]
+  }]
 }
 
 resource "aws_cloudwatch_log_metric_filter" "healthcheck" {
