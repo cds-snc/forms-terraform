@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.9.4](https://github.com/cds-snc/forms-terraform/compare/v3.9.3...v3.9.4) (2024-06-04)
+
+
+### Bug Fixes
+
+* remove use of `always()` in the TF apply jobs ([#672](https://github.com/cds-snc/forms-terraform/issues/672)) ([01d12fa](https://github.com/cds-snc/forms-terraform/commit/01d12fa7068553e40206df28060dcac3f2b5a7e3))
+
 ## [3.9.3](https://github.com/cds-snc/forms-terraform/compare/v3.9.2...v3.9.3) (2024-06-03)
 
 
