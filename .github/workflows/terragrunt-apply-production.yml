@@ -1,8 +1,11 @@
 name: "Terragrunt apply PRODUCTION"
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - "develop"
+    paths:
+      - "version.txt"
 
 permissions:
   id-token: write
@@ -32,12 +35,31 @@ env:
   TF_VAR_email_address_support: ${{ vars.PRODUCTION_SUPPORT_EMAIL }}
 
 jobs:
-  # We deploy ECR first to make sure it is available for the 'build-tag-push-lambda-images' job which will be run in parallel with `terragrunt-apply-all-modules`
-  terragrunt-apply-ecr-only:
+  get-version:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}    
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Get version to deploy
+        id: get-version
+        uses: ./.github/workflows/get-version
+        with:
+          is-tagged: 'true'
+
+  # We deploy ECR first to make sure it is available for the 'build-tag-push-lambda-images' job which will be run in parallel with `terragrunt-apply-all-modules`
+  terragrunt-apply-ecr-only:
+    needs: get-version
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          ref: ${{ env.VERSION }}
 
       # Setup Terraform, Terragrunt, and Conftest
       - name: Setup terraform tools
@@ -55,8 +77,10 @@ jobs:
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
   build-tag-push-lambda-images:
-    needs: terragrunt-apply-ecr-only
+    needs: [get-version, terragrunt-apply-ecr-only]
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
     strategy:
       fail-fast: false
       matrix:
@@ -64,6 +88,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          ref: ${{ env.VERSION }}
 
       - name: Build Lambda images
         uses: ./.github/workflows/build-lambda-images
@@ -78,15 +104,19 @@ jobs:
           aws-role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
           lambda-name: ${{ matrix.image }}
-          image-tag: ${{ github.ref_name }}
+          image-tag: ${{ env.VERSION }}
 
   terragrunt-apply-all-modules:
-    needs: build-tag-push-lambda-images
+    needs: [get-version, build-tag-push-lambda-images]
     if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          ref: ${{ env.VERSION }}
 
       # Setup Terraform, Terragrunt, and Conftest
       - name: Setup terraform tools
@@ -173,16 +203,15 @@ jobs:
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
   update-lambda-function-image:
-    needs: terragrunt-apply-all-modules
+    needs: [get-version, terragrunt-apply-all-modules]
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
     strategy:
       fail-fast: false
       matrix:
         image: [audit-logs, audit-logs-archiver, cognito-email-sender, cognito-pre-sign-up, form-archiver, nagware, notify-slack, reliability, reliability-dlq-consumer, response-archiver, submission, vault-integrity]
     steps:
-      - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-
       - name: Request Lambda functions to use new image
         uses: ./.github/workflows/request-lambda-functions-to-use-new-image
         with:
@@ -190,11 +219,12 @@ jobs:
           aws-role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
           lambda-name: ${{ matrix.image }}
-          image-tag: ${{ github.ref_name }}
+          image-tag: ${{ env.VERSION }}
 
   notify-on-error:
     needs:
       [
+        get-version,
         terragrunt-apply-ecr-only,
         build-tag-push-lambda-images,
         terragrunt-apply-all-modules,
