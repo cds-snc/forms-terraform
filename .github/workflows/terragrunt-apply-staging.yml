@@ -41,6 +41,7 @@ env:
 jobs:
   # We deploy ECR first to make sure it is available for the 'build-tag-push-lambda-images' job which will be run in parallel with `terragrunt-apply-all-modules`
   terragrunt-apply-ecr-only:
+    if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -77,7 +78,7 @@ jobs:
 
   build-tag-push-lambda-images:
     needs: detect-lambda-changes
-    if: ${{ needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]' }}
+    if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -105,7 +106,7 @@ jobs:
 
   terragrunt-apply-all-modules:
     needs: build-tag-push-lambda-images
-    if: ${{ !failure() && !cancelled() }}
+    if: github.ref == 'refs/heads/develop' && always() && (needs.build-tag-push-lambda-images.result == 'success' || needs.build-tag-push-lambda-images.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -203,7 +204,7 @@ jobs:
 
   update-lambda-function-image:
     needs: [detect-lambda-changes, terragrunt-apply-all-modules]
-    if: ${{ needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]' && !failure() && !cancelled() }}
+    if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -230,7 +231,7 @@ jobs:
         terragrunt-apply-all-modules,
         update-lambda-function-image,
       ]
-    if: ${{ failure() && !cancelled() }}
+    if: always() && contains(needs.*.result, 'failure')
     runs-on: ubuntu-latest
     steps:
       - name: Send error message on Slack
