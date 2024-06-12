@@ -1,3 +1,3 @@
 # Users that are allowed to approve a release PR
 
-.release-please-manifest.json @bryan-robitaille @dsamojlenko @timarney @craigzour
+version.txt @bryan-robitaille @dsamojlenko @timarney @craigzour
