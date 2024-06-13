@@ -43,6 +43,14 @@ export const handler: Handler = async () => {
 
     await archiveResponses(dynamodbClient, s3Client);
 
+    console.log(
+      JSON.stringify({
+        level: "info",
+        status: "success",
+        msg: "Response Archiver ran successfully.",
+      })
+    );
+
     return {
       statusCode: "SUCCESS",
     };
@@ -51,6 +59,7 @@ export const handler: Handler = async () => {
     console.error(
       JSON.stringify({
         level: "error",
+        status: "failed",
         msg: "Failed to run Form Responses Archiver.",
         error: (error as Error).message,
       })

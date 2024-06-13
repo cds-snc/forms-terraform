@@ -5,6 +5,14 @@ export const handler: Handler = async () => {
   try {
     await deleteFormTemplatesMarkedAsArchived();
 
+    console.log(
+      JSON.stringify({
+        level: "info",
+        status: "success",
+        msg: "Form Archiver ran successfully.",
+      })
+    );
+
     return {
       statusCode: "SUCCESS",
     };
@@ -13,6 +21,7 @@ export const handler: Handler = async () => {
     console.error(
       JSON.stringify({
         level: "error",
+        status: "failed",
         msg: "Failed to run Form Templates Archiver.",
         error: (error as Error).message,
       })
