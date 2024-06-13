@@ -79,8 +79,6 @@ locals {
     name           = "SubmissionFailed"
     pattern        = "{$.status = \"failed\"}"
     log_group_name = var.lambda_submission_log_group_name
-    }, {
-
   }]
 }
 
