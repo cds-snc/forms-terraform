@@ -212,6 +212,11 @@ jobs:
       matrix:
         image: [audit-logs, audit-logs-archiver, cognito-email-sender, cognito-pre-sign-up, form-archiver, nagware, notify-slack, reliability, reliability-dlq-consumer, response-archiver, submission, vault-integrity]
     steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          ref: ${{ env.VERSION }}
+
       - name: Request Lambda functions to use new image
         uses: ./.github/workflows/request-lambda-functions-to-use-new-image
         with:
