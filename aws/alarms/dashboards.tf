@@ -1,6 +1,6 @@
 resource "aws_cloudwatch_dashboard" "forms_service_health" {
   dashboard_name = "Forms-Service-Health"
-  dashboard_body = jsonencode(templatefile("${path.module}/dashboards/forms_service_health.tmpl.json", {
+  dashboard_body = templatefile("${path.module}/dashboards/forms_service_health.tmpl.json", {
     alarm_ecs_cpu_utilization_warn          = aws_cloudwatch_metric_alarm.forms_cpu_utilization_high_warn.arn,
     alarm_ecs_memory_utilization_warn       = aws_cloudwatch_metric_alarm.forms_memory_utilization_high_warn.arn,
     alarm_lb_response_5xx_warn              = aws_cloudwatch_metric_alarm.ELB_5xx_error_warn.arn,
@@ -19,5 +19,5 @@ resource "aws_cloudwatch_dashboard" "forms_service_health" {
     lambda_vault_integrity_log_group_name   = var.lambda_vault_integrity_log_group_name,
     rds_cluster_identifier                  = var.rds_cluster_identifier,
     region                                  = var.region
-  }))
+  })
 }
