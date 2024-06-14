@@ -22,10 +22,10 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { data: comments } = await github.issues.listComments({...context.repo, issue_number: context.issue.number});
+            const { data: comments } = await github.rest.issues.listComments({...context.repo, issue_number: context.issue.number});
             const comment = comments.find(comment => comment.user.type === "Bot" && comment.body.indexOf("Version diff") > -1);
             if (comment) {
-              await github.issues.deleteComment({...context.repo, comment_id: comment.id});
+              await github.rest.issues.deleteComment({...context.repo, comment_id: comment.id});
             }
 
       - name: Add version diff comment
@@ -33,7 +33,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            github.issues.createComment({
+            github.rest.issues.createComment({
               ...context.repo,
               issue_number: context.issue.number,
               body: "## Version diff\nhttps://github.com/cds-snc/forms-terraform/compare/${{ inputs.base }}...${{ inputs.ref }}"
