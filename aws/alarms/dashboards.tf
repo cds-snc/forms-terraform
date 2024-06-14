@@ -8,7 +8,7 @@ resource "aws_cloudwatch_dashboard" "forms_service_health" {
     alarm_lb_unhealth_host_count_tg1        = aws_cloudwatch_metric_alarm.UnHealthyHostCount-TargetGroup1.arn,
     alarm_lb_unhealth_host_count_tg2        = aws_cloudwatch_metric_alarm.UnHealthyHostCount-TargetGroup2.arn,
     alarm_reliability_deadletter_queue      = aws_cloudwatch_metric_alarm.reliability_dead_letter_queue_warn.arn,
-    alb_arn_suffx                           = var.lb_arn_suffix,
+    lb_arn_suffix                           = var.lb_arn_suffix,
     ecs_cloudwatch_log_group_name           = var.ecs_cloudwatch_log_group_name,
     ecs_cluster_name                        = var.ecs_cluster_name,
     ecs_service_name                        = var.ecs_service_name,
@@ -17,7 +17,7 @@ resource "aws_cloudwatch_dashboard" "forms_service_health" {
     lambda_response_archiver_log_group_name = var.lambda_response_archiver_log_group_name,
     lambda_submission_log_group_name        = var.lambda_submission_log_group_name,
     lambda_vault_integrity_log_group_name   = var.lambda_vault_integrity_log_group_name,
-    rds_cluster_name                        = var.rds_cluster_identifier,
+    rds_cluster_identifier                  = var.rds_cluster_identifier,
     region                                  = var.region
   }))
 }
