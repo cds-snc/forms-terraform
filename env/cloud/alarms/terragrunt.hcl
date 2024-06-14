@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../hosted_zone", "../kms", "../load_balancer", "../sqs", "../app", "../sns", "../lambdas", "../ecr"]
+  paths = ["../hosted_zone", "../kms", "../load_balancer", "../rds", "../sqs", "../app", "../sns", "../lambdas", "../ecr"]
 }
 
 locals {
@@ -40,6 +40,16 @@ dependency "load_balancer" {
     lb_arn_suffix         = null
     lb_target_group_1_arn_suffix = null
     lb_target_group_2_arn_suffix = null
+  }
+}
+
+dependency "rds" {
+  config_path = "../rds"
+
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs = {
+    rds_cluster_identifier = "forms-mock-db-cluster"
   }
 }
 
@@ -139,6 +149,8 @@ inputs = {
   lambda_submission_log_group_name               = dependency.lambdas.outputs.lambda_submission_log_group_name
   lambda_vault_integrity_log_group_name          = dependency.lambdas.outputs.lambda_vault_integrity_log_group_name
   lambda_vault_integrity_function_name           = dependency.lambdas.outputs.lambda_vault_integrity_function_name
+
+  rds_cluster_identifier = dependency.rds.outputs.rds_cluster_identifier
 
   sns_topic_alert_critical_arn        = dependency.sns.outputs.sns_topic_alert_critical_arn
   sns_topic_alert_warning_arn         = dependency.sns.outputs.sns_topic_alert_warning_arn

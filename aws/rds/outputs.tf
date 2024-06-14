@@ -13,6 +13,11 @@ output "rds_cluster_arn" {
   value       = aws_rds_cluster.forms.arn
 }
 
+output "rds_cluster_identifier" {
+  description = "RDS cluster identifier"
+  value       = aws_rds_cluster.forms.cluster_identifier
+}
+
 output "rds_db_name" {
   description = "Name of the database"
   value       = var.rds_db_name
