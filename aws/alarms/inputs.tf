@@ -105,6 +105,11 @@ variable "opsgenie_api_key" {
   sensitive   = true
 }
 
+variable "rds_cluster_identifier" {
+  description = "RDS cluster identifier used for alarms and dashboards"
+  type        = string
+}
+
 variable "sqs_reliability_deadletter_queue_arn" {
   description = "ARN of the Reliability queue's SQS Dead Letter Queue"
   type        = string
