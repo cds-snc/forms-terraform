@@ -36,7 +36,7 @@ jobs:
           echo "terragrunt=${TERRAGRUNT_USED}" >> $GITHUB_OUTPUT
 
       - name: Delete previous comments
-        uses: actions/github-script@10b53a9ec6c222bb4ce97aa6bd2b5f739696b536 # v4.2.0
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -48,7 +48,7 @@ jobs:
 
       - name: Add version comment
         if: steps.latest.outputs.terraform != steps.used.outputs.terraform || steps.latest.outputs.terragrunt != steps.used.outputs.terragrunt
-        uses: actions/github-script@10b53a9ec6c222bb4ce97aa6bd2b5f739696b536 # v4.2.0
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
