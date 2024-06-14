@@ -18,22 +18,22 @@ jobs:
     steps:
 
       - name: Delete previous comments
-        uses: actions/github-script@10b53a9ec6c222bb4ce97aa6bd2b5f739696b536 # v4.2.0
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { data: comments } = await github.issues.listComments({...context.repo, issue_number: context.issue.number});
+            const { data: comments } = await github.rest.issues.listComments({...context.repo, issue_number: context.issue.number});
             const comment = comments.find(comment => comment.user.type === "Bot" && comment.body.indexOf("Version diff") > -1);
             if (comment) {
-              await github.issues.deleteComment({...context.repo, comment_id: comment.id});
+              await github.rest.issues.deleteComment({...context.repo, comment_id: comment.id});
             }
 
       - name: Add version diff comment
-        uses: actions/github-script@10b53a9ec6c222bb4ce97aa6bd2b5f739696b536 # v4.2.0
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            github.issues.createComment({
+            github.rest.issues.createComment({
               ...context.repo,
               issue_number: context.issue.number,
               body: "## Version diff\nhttps://github.com/cds-snc/forms-terraform/compare/${{ inputs.base }}...${{ inputs.ref }}"
