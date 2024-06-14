@@ -42,7 +42,7 @@
         {
             "height": 8,
             "width": 6,
-            "y": 74,
+            "y": 95,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -92,7 +92,7 @@
         {
             "height": 8,
             "width": 6,
-            "y": 74,
+            "y": 95,
             "x": 6,
             "type": "metric",
             "properties": {
@@ -111,7 +111,7 @@
         {
             "height": 8,
             "width": 6,
-            "y": 74,
+            "y": 95,
             "x": 12,
             "type": "metric",
             "properties": {
@@ -130,7 +130,7 @@
         {
             "height": 8,
             "width": 6,
-            "y": 74,
+            "y": 95,
             "x": 18,
             "type": "metric",
             "properties": {
@@ -217,7 +217,7 @@
         {
             "height": 2,
             "width": 24,
-            "y": 43,
+            "y": 64,
             "x": 0,
             "type": "text",
             "properties": {
@@ -239,7 +239,7 @@
         {
             "height": 2,
             "width": 24,
-            "y": 45,
+            "y": 66,
             "x": 0,
             "type": "text",
             "properties": {
@@ -250,7 +250,7 @@
         {
             "height": 7,
             "width": 8,
-            "y": 36,
+            "y": 57,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -269,7 +269,7 @@
         {
             "height": 7,
             "width": 8,
-            "y": 36,
+            "y": 57,
             "x": 8,
             "type": "metric",
             "properties": {
@@ -288,7 +288,7 @@
         {
             "height": 2,
             "width": 24,
-            "y": 59,
+            "y": 80,
             "x": 0,
             "type": "text",
             "properties": {
@@ -299,7 +299,7 @@
         {
             "height": 2,
             "width": 24,
-            "y": 61,
+            "y": 82,
             "x": 0,
             "type": "text",
             "properties": {
@@ -310,7 +310,7 @@
         {
             "height": 6,
             "width": 18,
-            "y": 47,
+            "y": 68,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -330,7 +330,7 @@
         {
             "height": 6,
             "width": 6,
-            "y": 47,
+            "y": 68,
             "x": 18,
             "type": "metric",
             "properties": {
@@ -349,7 +349,7 @@
         {
             "height": 6,
             "width": 18,
-            "y": 53,
+            "y": 74,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -369,7 +369,7 @@
         {
             "height": 6,
             "width": 6,
-            "y": 53,
+            "y": 74,
             "x": 18,
             "type": "metric",
             "properties": {
@@ -388,7 +388,7 @@
         {
             "height": 7,
             "width": 8,
-            "y": 36,
+            "y": 57,
             "x": 16,
             "type": "metric",
             "properties": {
@@ -406,7 +406,7 @@
         {
             "height": 7,
             "width": 9,
-            "y": 63,
+            "y": 84,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -426,7 +426,7 @@
         {
             "height": 7,
             "width": 6,
-            "y": 63,
+            "y": 84,
             "x": 18,
             "type": "metric",
             "properties": {
@@ -445,7 +445,7 @@
         {
             "height": 2,
             "width": 24,
-            "y": 70,
+            "y": 91,
             "x": 0,
             "type": "text",
             "properties": {
@@ -456,7 +456,7 @@
         {
             "height": 2,
             "width": 24,
-            "y": 72,
+            "y": 93,
             "x": 0,
             "type": "text",
             "properties": {
@@ -467,7 +467,7 @@
         {
             "height": 7,
             "width": 9,
-            "y": 63,
+            "y": 84,
             "x": 9,
             "type": "metric",
             "properties": {
@@ -483,11 +483,11 @@
             }
         },
         {
-            "type": "log",
-            "x": 0,
-            "y": 24,
-            "width": 20,
             "height": 8,
+            "width": 20,
+            "y": 24,
+            "x": 0,
+            "type": "log",
             "properties": {
                 "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | SOURCE '${lambda_reliability_log_group_name}' | SOURCE '${lambda_submission_log_group_name}' | SOURCE '${lambda_nagware_log_group_name}' | SOURCE '${lambda_response_archiver_log_group_name}' | SOURCE '${lambda_vault_integrity_log_group_name}' | fields @timestamp, @message, @logStream, @log\n| filter level = 'error' or level = 'warn' or status = 'failed'\n| sort @timestamp desc\n| limit 1000",
                 "region": "${region}",
@@ -497,11 +497,11 @@
             }
         },
         {
-            "type": "alarm",
-            "x": 20,
-            "y": 24,
-            "width": 4,
             "height": 8,
+            "width": 4,
+            "y": 24,
+            "x": 20,
+            "type": "alarm",
             "properties": {
                 "title": "Alarms",
                 "alarms": [
@@ -538,130 +538,130 @@
             }
         },
         {
-          "height": 7,
-          "width": 8,
-          "y": 36,
-          "x": 8,
-          "type": "log",
-          "properties": {
-              "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: cognito sign-up/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
-              "region": "${region}",
-              "stacked": false,
-              "view": "timeSeries",
-              "title": "Cognito sign-up"
-          }
-      },
-      {
-          "height": 7,
-          "width": 8,
-          "y": 36,
-          "x": 16,
-          "type": "log",
-          "properties": {
-              "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: cognito sign-in/\n| parse @message \"success\" as @successCount\n| parse @message \"undefined token\" as @undefinedTokenCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@undefinedTokenCount) as undefinedToken, count(@failureCount) as failure by bin(5m)",
-              "region": "${region}",
-              "stacked": false,
-              "title": "Cognito sign-in",
-              "view": "timeSeries"
-          }
-      },
-      {
-          "height": 7,
-          "width": 8,
-          "y": 43,
-          "x": 0,
-          "type": "log",
-          "properties": {
-              "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: send initial 2fa code/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
-              "region": "${region}",
-              "stacked": false,
-              "view": "timeSeries",
-              "title": "Send initial 2FA code"
-          }
-      },
-      {
-          "height": 7,
-          "width": 8,
-          "y": 43,
-          "x": 8,
-          "type": "log",
-          "properties": {
-              "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: request new 2fa code/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
-              "region": "${region}",
-              "stacked": false,
-              "view": "timeSeries",
-              "title": "Request new 2FA code"
-          }
-      },
-      {
-          "height": 7,
-          "width": 8,
-          "y": 43,
-          "x": 16,
-          "type": "log",
-          "properties": {
-              "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: 2fa code validation/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
-              "region": "${region}",
-              "stacked": false,
-              "view": "timeSeries",
-              "title": "2FA code validation"
-          }
-      },
-      {
-          "height": 7,
-          "width": 8,
-          "y": 50,
-          "x": 16,
-          "type": "log",
-          "properties": {
-              "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: confirm submissions/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
-              "region": "${region}",
-              "stacked": false,
-              "view": "timeSeries",
-              "title": "Confirm submissions"
-          }
-      },
-      {
-          "height": 7,
-          "width": 8,
-          "y": 36,
-          "x": 0,
-          "type": "log",
-          "properties": {
-              "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: send email/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
-              "region": "${region}",
-              "stacked": false,
-              "view": "timeSeries",
-              "title": "Email sender (GC Notify API connector)"
-          }
-      },
-      {
-          "height": 7,
-          "width": 8,
-          "y": 50,
-          "x": 0,
-          "type": "log",
-          "properties": {
-              "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: list submissions/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
-              "region": "${region}",
-              "stacked": false,
-              "view": "timeSeries",
-              "title": "List submissions"
-          }
-      },
-      {
-          "height": 7,
-          "width": 8,
-          "y": 50,
-          "x": 8,
-          "type": "log",
-          "properties": {
-              "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: retrieve submissions/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
-              "region": "${region}",
-              "stacked": false,
-              "view": "timeSeries",
-              "title": "Retrieve submissions"
-          }
-      }
+            "height": 7,
+            "width": 8,
+            "y": 36,
+            "x": 8,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: cognito sign-up/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "region": "${region}",
+                "stacked": false,
+                "view": "timeSeries",
+                "title": "Cognito sign-up"
+            }
+        },
+        {
+            "height": 7,
+            "width": 8,
+            "y": 36,
+            "x": 16,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: cognito sign-in/\n| parse @message \"success\" as @successCount\n| parse @message \"undefined token\" as @undefinedTokenCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@undefinedTokenCount) as undefinedToken, count(@failureCount) as failure by bin(5m)",
+                "region": "${region}",
+                "stacked": false,
+                "title": "Cognito sign-in",
+                "view": "timeSeries"
+            }
+        },
+        {
+            "height": 7,
+            "width": 8,
+            "y": 43,
+            "x": 0,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: send initial 2fa code/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "region": "${region}",
+                "stacked": false,
+                "view": "timeSeries",
+                "title": "Send initial 2FA code"
+            }
+        },
+        {
+            "height": 7,
+            "width": 8,
+            "y": 43,
+            "x": 8,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: request new 2fa code/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "region": "${region}",
+                "stacked": false,
+                "view": "timeSeries",
+                "title": "Request new 2FA code"
+            }
+        },
+        {
+            "height": 7,
+            "width": 8,
+            "y": 43,
+            "x": 16,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: 2fa code validation/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "region": "${region}",
+                "stacked": false,
+                "view": "timeSeries",
+                "title": "2FA code validation"
+            }
+        },
+        {
+            "height": 7,
+            "width": 8,
+            "y": 50,
+            "x": 16,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: confirm submissions/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "region": "${region}",
+                "stacked": false,
+                "view": "timeSeries",
+                "title": "Confirm submissions"
+            }
+        },
+        {
+            "height": 7,
+            "width": 8,
+            "y": 36,
+            "x": 0,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: send email/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "region": "${region}",
+                "stacked": false,
+                "view": "timeSeries",
+                "title": "Email sender (GC Notify API connector)"
+            }
+        },
+        {
+            "height": 7,
+            "width": 8,
+            "y": 50,
+            "x": 0,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: list submissions/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "region": "${region}",
+                "stacked": false,
+                "view": "timeSeries",
+                "title": "List submissions"
+            }
+        },
+        {
+            "height": 7,
+            "width": 8,
+            "y": 50,
+            "x": 8,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: retrieve submissions/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "region": "${region}",
+                "stacked": false,
+                "view": "timeSeries",
+                "title": "Retrieve submissions"
+            }
+        }
     ]
 }
