@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/vscode/devcontainers/base:buster@sha256:b42cb5b189abb742fbc2de3db825b4c174569e79bbe34f01fa055aba075c924d
+FROM mcr.microsoft.com/vscode/devcontainers/base:buster@sha256:f164c696cac616c6559a214962e0178319172655e0fcb52251577247753c0248
 
 ARG USERNAME=vscode
 ARG AWS_SAM_VERSION
