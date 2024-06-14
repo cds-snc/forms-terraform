@@ -41,7 +41,7 @@ jobs:
       version: ${{ steps.get-version.outputs.version }}    
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
       - name: Get version to deploy
         id: get-version
@@ -57,7 +57,7 @@ jobs:
       VERSION: ${{ needs.get-version.outputs.version }}    
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
           ref: ${{ env.VERSION }}
 
@@ -66,7 +66,7 @@ jobs:
         uses: cds-snc/terraform-tools-setup@v1
 
       - name: Configure AWS credentials using OIDC
-        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply-release
           role-session-name: TFApply
@@ -87,7 +87,7 @@ jobs:
         image: [audit-logs, audit-logs-archiver, cognito-email-sender, cognito-pre-sign-up, form-archiver, nagware, notify-slack, reliability, reliability-dlq-consumer, response-archiver, submission, vault-integrity]
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
           ref: ${{ env.VERSION }}
 
@@ -114,7 +114,7 @@ jobs:
       VERSION: ${{ needs.get-version.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
           ref: ${{ env.VERSION }}
 
@@ -123,7 +123,7 @@ jobs:
         uses: cds-snc/terraform-tools-setup@v1
 
       - name: Configure AWS credentials using OIDC
-        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply-release
           role-session-name: TFApply
@@ -213,7 +213,7 @@ jobs:
         image: [audit-logs, audit-logs-archiver, cognito-email-sender, cognito-pre-sign-up, form-archiver, nagware, notify-slack, reliability, reliability-dlq-consumer, response-archiver, submission, vault-integrity]
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
           ref: ${{ env.VERSION }}
 
