@@ -42,7 +42,7 @@
         {
             "height": 8,
             "width": 6,
-            "y": 95,
+            "y": 111,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -79,20 +79,9 @@
             }
         },
         {
-            "height": 2,
-            "width": 24,
-            "y": 20,
-            "x": 0,
-            "type": "text",
-            "properties": {
-                "markdown": "",
-                "background": "transparent"
-            }
-        },
-        {
             "height": 8,
             "width": 6,
-            "y": 95,
+            "y": 111,
             "x": 6,
             "type": "metric",
             "properties": {
@@ -111,7 +100,7 @@
         {
             "height": 8,
             "width": 6,
-            "y": 95,
+            "y": 111,
             "x": 12,
             "type": "metric",
             "properties": {
@@ -130,7 +119,7 @@
         {
             "height": 8,
             "width": 6,
-            "y": 95,
+            "y": 111,
             "x": 18,
             "type": "metric",
             "properties": {
@@ -215,42 +204,31 @@
             }
         },
         {
-            "height": 2,
+            "height": 3,
             "width": 24,
-            "y": 64,
+            "y": 20,
             "x": 0,
             "type": "text",
             "properties": {
-                "markdown": "",
+                "markdown": " \n# Form responses\nTracking form response list, retrieval and confirm.",
                 "background": "transparent"
             }
         },
         {
-            "height": 2,
+            "height": 3,
             "width": 24,
-            "y": 22,
+            "y": 83,
             "x": 0,
             "type": "text",
             "properties": {
-                "markdown": "# Errors\nError logs and alarms from the app and lambdas.",
-                "background": "transparent"
-            }
-        },
-        {
-            "height": 2,
-            "width": 24,
-            "y": 66,
-            "x": 0,
-            "type": "text",
-            "properties": {
-                "markdown": "# Lambdas\nPerformance metrics for the Lambda functions.",
+                "markdown": " \n## Lambdas\nPerformance metrics for the Submission and Reliability functions.",
                 "background": "transparent"
             }
         },
         {
             "height": 7,
             "width": 8,
-            "y": 57,
+            "y": 76,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -269,7 +247,7 @@
         {
             "height": 7,
             "width": 8,
-            "y": 57,
+            "y": 76,
             "x": 8,
             "type": "metric",
             "properties": {
@@ -286,38 +264,27 @@
             }
         },
         {
-            "height": 2,
+            "height": 3,
             "width": 24,
-            "y": 80,
+            "y": 98,
             "x": 0,
             "type": "text",
             "properties": {
-                "markdown": "",
-                "background": "transparent"
-            }
-        },
-        {
-            "height": 2,
-            "width": 24,
-            "y": 82,
-            "x": 0,
-            "type": "text",
-            "properties": {
-                "markdown": "# Load balancer\nRequests, errors and response time for the app's load balancer.",
+                "markdown": " \n## Load balancer\nRequests, errors and response time for the app's load balancer.",
                 "background": "transparent"
             }
         },
         {
             "height": 6,
             "width": 18,
-            "y": 68,
+            "y": 86,
             "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
                     [ "AWS/Lambda", "Invocations", "FunctionName", "Submission", { "region": "${region}" } ],
                     [ ".", "Throttles", ".", ".", { "color": "#ffbb78", "region": "${region}" } ],
-                    [ ".", "Errors", ".", ".", { "region": "${region}" } ]
+                    [ ".", "Errors", ".", ".", { "region": "${region}", "color": "#d62728" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -330,7 +297,7 @@
         {
             "height": 6,
             "width": 6,
-            "y": 68,
+            "y": 86,
             "x": 18,
             "type": "metric",
             "properties": {
@@ -349,14 +316,14 @@
         {
             "height": 6,
             "width": 18,
-            "y": 74,
+            "y": 92,
             "x": 0,
             "type": "metric",
             "properties": {
                 "metrics": [
                     [ "AWS/Lambda", "Invocations", "FunctionName", "reliability", "Resource", "reliability", { "region": "${region}" } ],
                     [ ".", "Throttles", ".", ".", ".", ".", { "region": "${region}", "color": "#ffbb78" } ],
-                    [ ".", "Errors", ".", ".", ".", ".", { "region": "${region}" } ]
+                    [ ".", "Errors", ".", ".", ".", ".", { "region": "${region}", "color": "#d62728" } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -369,7 +336,7 @@
         {
             "height": 6,
             "width": 6,
-            "y": 74,
+            "y": 92,
             "x": 18,
             "type": "metric",
             "properties": {
@@ -388,7 +355,7 @@
         {
             "height": 7,
             "width": 8,
-            "y": 57,
+            "y": 76,
             "x": 16,
             "type": "metric",
             "properties": {
@@ -406,7 +373,7 @@
         {
             "height": 7,
             "width": 9,
-            "y": 84,
+            "y": 101,
             "x": 0,
             "type": "metric",
             "properties": {
@@ -426,7 +393,7 @@
         {
             "height": 7,
             "width": 6,
-            "y": 84,
+            "y": 101,
             "x": 18,
             "type": "metric",
             "properties": {
@@ -443,31 +410,20 @@
             }
         },
         {
-            "height": 2,
+            "height": 3,
             "width": 24,
-            "y": 91,
+            "y": 108,
             "x": 0,
             "type": "text",
             "properties": {
-                "markdown": "",
-                "background": "transparent"
-            }
-        },
-        {
-            "height": 2,
-            "width": 24,
-            "y": 93,
-            "x": 0,
-            "type": "text",
-            "properties": {
-                "markdown": "# Database\nPerformance metrics for the database cluster.",
+                "markdown": " \n## Database\nPerformance metrics for the database cluster.",
                 "background": "transparent"
             }
         },
         {
             "height": 7,
             "width": 9,
-            "y": 84,
+            "y": 101,
             "x": 9,
             "type": "metric",
             "properties": {
@@ -485,11 +441,11 @@
         {
             "height": 8,
             "width": 20,
-            "y": 24,
+            "y": 64,
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | SOURCE '${lambda_reliability_log_group_name}' | SOURCE '${lambda_submission_log_group_name}' | SOURCE '${lambda_nagware_log_group_name}' | SOURCE '${lambda_response_archiver_log_group_name}' | SOURCE '${lambda_vault_integrity_log_group_name}' | fields @timestamp, @message, @logStream, @log\n| filter level = 'error' or level = 'warn' or status = 'failed'\n| sort @timestamp desc\n| limit 1000",
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | SOURCE '${lambda_reliability_log_group_name}' | SOURCE '${lambda_submission_log_group_name}' | SOURCE '${lambda_nagware_log_group_name}' | SOURCE '${lambda_response_archiver_log_group_name}' | SOURCE '${lambda_vault_integrity_log_group_name}' | fields @timestamp, @message, @logStream, @log\n| filter level = 'error' or level = 'warn' or status = 'failed'\n| filter @message not like /days since submission/\n| sort @timestamp desc\n| limit 1000",
                 "region": "${region}",
                 "stacked": false,
                 "title": "Errors: app and lambdas",
@@ -499,7 +455,7 @@
         {
             "height": 8,
             "width": 4,
-            "y": 24,
+            "y": 64,
             "x": 20,
             "type": "alarm",
             "properties": {
@@ -518,85 +474,74 @@
         {
             "height": 2,
             "width": 24,
-            "y": 32,
+            "y": 72,
             "x": 0,
             "type": "text",
             "properties": {
-                "markdown": "",
-                "background": "transparent"
-            }
-        },
-        {
-            "height": 2,
-            "width": 24,
-            "y": 34,
-            "x": 0,
-            "type": "text",
-            "properties": {
-                "markdown": "# App\nPerformance metrics for the ECS form viewer client app.",
+                "markdown": " \n# Performance",
                 "background": "transparent"
             }
         },
         {
             "height": 7,
             "width": 8,
-            "y": 36,
-            "x": 8,
+            "y": 54,
+            "x": 0,
             "type": "log",
             "properties": {
                 "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: cognito sign-up/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
                 "region": "${region}",
                 "stacked": false,
                 "view": "timeSeries",
-                "title": "Cognito sign-up"
+                "title": "App: Cognito sign-up"
             }
         },
         {
-            "height": 7,
-            "width": 8,
-            "y": 36,
-            "x": 16,
+            "height": 14,
+            "width": 16,
+            "y": 40,
+            "x": 0,
             "type": "log",
             "properties": {
                 "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: cognito sign-in/\n| parse @message \"success\" as @successCount\n| parse @message \"undefined token\" as @undefinedTokenCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@undefinedTokenCount) as undefinedToken, count(@failureCount) as failure by bin(5m)",
                 "region": "${region}",
                 "stacked": false,
-                "title": "Cognito sign-in",
+                "title": "App: Cognito sign-in",
                 "view": "timeSeries"
             }
         },
         {
             "height": 7,
             "width": 8,
-            "y": 43,
-            "x": 0,
+            "y": 40,
+            "x": 16,
             "type": "log",
             "properties": {
                 "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: send initial 2fa code/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
                 "region": "${region}",
                 "stacked": false,
                 "view": "timeSeries",
-                "title": "Send initial 2FA code"
+                "title": "App: send initial 2FA code"
             }
         },
         {
             "height": 7,
             "width": 8,
-            "y": 43,
-            "x": 8,
+            "y": 54,
+            "x": 16,
             "type": "log",
             "properties": {
                 "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: request new 2fa code/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
                 "region": "${region}",
                 "stacked": false,
                 "view": "timeSeries",
-                "title": "Request new 2FA code"
+                "title": "App: request new 2FA code"
             }
         },
         {
             "height": 7,
             "width": 8,
-            "y": 43,
+            "y": 47,
             "x": 16,
             "type": "log",
             "properties": {
@@ -604,13 +549,13 @@
                 "region": "${region}",
                 "stacked": false,
                 "view": "timeSeries",
-                "title": "2FA code validation"
+                "title": "App: 2FA code validation"
             }
         },
         {
             "height": 7,
             "width": 8,
-            "y": 50,
+            "y": 30,
             "x": 16,
             "type": "log",
             "properties": {
@@ -618,27 +563,27 @@
                 "region": "${region}",
                 "stacked": false,
                 "view": "timeSeries",
-                "title": "Confirm submissions"
+                "title": "App: confirm submissions"
             }
         },
         {
             "height": 7,
             "width": 8,
-            "y": 36,
-            "x": 0,
+            "y": 54,
+            "x": 8,
             "type": "log",
             "properties": {
                 "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: send email/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
                 "region": "${region}",
                 "stacked": false,
                 "view": "timeSeries",
-                "title": "Email sender (GC Notify API connector)"
+                "title": "App: email sender (GC Notify API connector)"
             }
         },
         {
-            "height": 7,
-            "width": 8,
-            "y": 50,
+            "height": 14,
+            "width": 16,
+            "y": 23,
             "x": 0,
             "type": "log",
             "properties": {
@@ -646,21 +591,54 @@
                 "region": "${region}",
                 "stacked": false,
                 "view": "timeSeries",
-                "title": "List submissions"
+                "title": "App: list submissions"
             }
         },
         {
             "height": 7,
             "width": 8,
-            "y": 50,
-            "x": 8,
+            "y": 23,
+            "x": 16,
             "type": "log",
             "properties": {
                 "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: retrieve submissions/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
                 "region": "${region}",
                 "stacked": false,
                 "view": "timeSeries",
-                "title": "Retrieve submissions"
+                "title": "App: retrieve submissions"
+            }
+        },
+        {
+            "height": 3,
+            "width": 24,
+            "y": 37,
+            "x": 0,
+            "type": "text",
+            "properties": {
+                "markdown": " \n# Sign in and create account\nTracking user flow as they sign in and create new accounts.",
+                "background": "transparent"
+            }
+        },
+        {
+            "height": 3,
+            "width": 24,
+            "y": 61,
+            "x": 0,
+            "type": "text",
+            "properties": {
+                "markdown": " \n# Errors\nError logs and alarms from the app and lambdas.",
+                "background": "transparent"
+            }
+        },
+        {
+            "height": 2,
+            "width": 24,
+            "y": 74,
+            "x": 0,
+            "type": "text",
+            "properties": {
+                "markdown": "## App\nPerformance metrics for the ECS form viewer client app.",
+                "background": "transparent"
             }
         }
     ]
