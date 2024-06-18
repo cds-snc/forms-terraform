@@ -68,7 +68,7 @@ jobs:
       - name: Configure AWS credentials using OIDC
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply-release
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
           role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
 
@@ -100,7 +100,7 @@ jobs:
       - name: Tag and push Lambda images
         uses: ./.github/workflows/tag-and-push-lambda-images
         with:
-          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply-release
+          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
           aws-role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
           lambda-name: ${{ matrix.image }}
@@ -125,7 +125,7 @@ jobs:
       - name: Configure AWS credentials using OIDC
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply-release
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
           role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
 
@@ -220,7 +220,7 @@ jobs:
       - name: Request Lambda functions to use new image
         uses: ./.github/workflows/request-lambda-functions-to-use-new-image
         with:
-          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply-release
+          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
           aws-role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
           lambda-name: ${{ matrix.image }}
