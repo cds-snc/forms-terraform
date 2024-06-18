@@ -1,5 +1,36 @@
 # Changelog
 
+## [3.10.0](https://github.com/cds-snc/forms-terraform/compare/v3.9.4...v3.10.0) (2024-06-17)
+
+
+### Features
+
+* add CloudWatch metrics for Lambda behaviour ([#683](https://github.com/cds-snc/forms-terraform/issues/683)) ([489db64](https://github.com/cds-snc/forms-terraform/commit/489db64b8f409abd58aa74712a78cb7e7178d76b))
+* add form submission health check metrics ([#681](https://github.com/cds-snc/forms-terraform/issues/681)) ([182e920](https://github.com/cds-snc/forms-terraform/commit/182e920835b6bd5b878461cdce4a004732a5e426))
+* add health dashboard sections ([#692](https://github.com/cds-snc/forms-terraform/issues/692)) ([142e41d](https://github.com/cds-snc/forms-terraform/commit/142e41d352005b299e03921b181d043cb22eccd0))
+* add system health dashboard ([#688](https://github.com/cds-snc/forms-terraform/issues/688)) ([74b810f](https://github.com/cds-snc/forms-terraform/commit/74b810fc543d2bf021d05b2c3f34ad2e68bc4427))
+* add workflow to catch release of reverted tags ([#684](https://github.com/cds-snc/forms-terraform/issues/684)) ([bde87ea](https://github.com/cds-snc/forms-terraform/commit/bde87eabad0a4d107181d9ee3bab03d5cc1b6a88))
+* connects new healthchecks logs from web app in GC Forms healtcheck dashboard ([#689](https://github.com/cds-snc/forms-terraform/issues/689)) ([f908efd](https://github.com/cds-snc/forms-terraform/commit/f908efd61061ee0f4e0a916a89c4d9d730702fba))
+* simplify production release reverts ([#678](https://github.com/cds-snc/forms-terraform/issues/678)) ([f8af121](https://github.com/cds-snc/forms-terraform/commit/f8af1217b81b8a8a690f9f4527321da83be71160))
+
+
+### Bug Fixes
+
+* Athena load balancer create table query ([#679](https://github.com/cds-snc/forms-terraform/issues/679)) ([140a250](https://github.com/cds-snc/forms-terraform/commit/140a250c42dadeac7de4f574809ae761376d147c))
+* checkout code for update lambda workflow step ([#685](https://github.com/cds-snc/forms-terraform/issues/685)) ([944fdf8](https://github.com/cds-snc/forms-terraform/commit/944fdf81fd24c408729344b1967d328f7a95e3a3))
+* healthchecks dashboard layout is broken ([#690](https://github.com/cds-snc/forms-terraform/issues/690)) ([e45dff3](https://github.com/cds-snc/forms-terraform/commit/e45dff37b10add9ba8507cbc0a736f346e7e82c8))
+
+
+### Miscellaneous Chores
+
+* **deps:** update actions/checkout action to v4 ([#686](https://github.com/cds-snc/forms-terraform/issues/686)) ([a3bdd69](https://github.com/cds-snc/forms-terraform/commit/a3bdd69f071e3ec9015cd220a85054ddfddad7c6))
+* **deps:** update actions/github-script action to v7 ([#687](https://github.com/cds-snc/forms-terraform/issues/687)) ([a7f1bc4](https://github.com/cds-snc/forms-terraform/commit/a7f1bc480f0e990e0c32327ef358bfc2adf5c063))
+* **deps:** update all non-major docker images ([#636](https://github.com/cds-snc/forms-terraform/issues/636)) ([2ac8525](https://github.com/cds-snc/forms-terraform/commit/2ac8525e6ca6b9f1690b3b0ceb8410fb3b56d2c8))
+* **deps:** update all non-major github action dependencies ([#549](https://github.com/cds-snc/forms-terraform/issues/549)) ([554e8b6](https://github.com/cds-snc/forms-terraform/commit/554e8b69827c7c4a7c6560ae93637b7a4ae90645))
+* **deps:** update localstack/localstack docker digest to c7a01ee ([#691](https://github.com/cds-snc/forms-terraform/issues/691)) ([2f73044](https://github.com/cds-snc/forms-terraform/commit/2f73044c7c321332c5f519945caaa0194f0c67b2))
+* synced file(s) with cds-snc/site-reliability-engineering ([#665](https://github.com/cds-snc/forms-terraform/issues/665)) ([a671f77](https://github.com/cds-snc/forms-terraform/commit/a671f7738bfd384b9449dc4f026ee0bed33cc941))
+* update codeowners to protect version.txt ([#682](https://github.com/cds-snc/forms-terraform/issues/682)) ([7098c54](https://github.com/cds-snc/forms-terraform/commit/7098c54e8a091aa06e4ec326913706fdc814cf71))
+
 ## [3.9.4](https://github.com/cds-snc/forms-terraform/compare/v3.9.3...v3.9.4) (2024-06-04)
 
 
