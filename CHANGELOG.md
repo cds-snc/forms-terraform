@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.10.1](https://github.com/cds-snc/forms-terraform/compare/v3.10.0...v3.10.1) (2024-06-18)
+
+
+### Bug Fixes
+
+* use correct IAM role for TF apply ([#694](https://github.com/cds-snc/forms-terraform/issues/694)) ([d32fecd](https://github.com/cds-snc/forms-terraform/commit/d32fecd507de6c0b5bee799aeda6e139b5911425))
+
 ## [3.10.0](https://github.com/cds-snc/forms-terraform/compare/v3.9.4...v3.10.0) (2024-06-17)
 
 
