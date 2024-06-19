@@ -1,45 +1,6 @@
 {
     "widgets": [
         {
-            "height": 12,
-            "width": 12,
-            "y": 2,
-            "x": 0,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ "forms", "ClientSubmitSuccess", { "color": "#2ca02c" } ],
-                    [ ".", "ClientSubmitFailed", { "color": "#d62728" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "${region}",
-                "stat": "Sum",
-                "period": 300,
-                "title": "App: client submissions"
-            }
-        },
-        {
-            "height": 6,
-            "width": 12,
-            "y": 2,
-            "x": 12,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ "forms", "SubmissionSuccess", { "color": "#2ca02c" } ],
-                    [ ".", "SubmissionWarn", { "color": "#ffbb78" } ],
-                    [ ".", "SubmissionFailed", { "color": "#d62728" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "${region}",
-                "stat": "Sum",
-                "period": 300,
-                "title": "Lambda: submission"
-            }
-        },
-        {
             "height": 8,
             "width": 6,
             "y": 111,
@@ -56,26 +17,6 @@
                 "period": 60,
                 "title": "DB: CPU use",
                 "stacked": false
-            }
-        },
-        {
-            "height": 6,
-            "width": 12,
-            "y": 8,
-            "x": 12,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ "forms", "ReliabilitySuccess", { "color": "#2ca02c" } ],
-                    [ ".", "ReliabilityWarn", { "color": "#ffbb78" } ],
-                    [ ".", "ReliabilityFailed", { "color": "#d62728" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "${region}",
-                "stat": "Sum",
-                "period": 300,
-                "title": "Lambda: reliability"
             }
         },
         {
@@ -180,27 +121,6 @@
                 "stat": "Average",
                 "period": 300,
                 "title": "Queue: submission message age"
-            }
-        },
-        {
-            "height": 6,
-            "width": 12,
-            "y": 14,
-            "x": 12,
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    [ "forms", "ReliabilityNotifySendSuccess", { "region": "${region}", "color": "#2ca02c" } ],
-                    [ ".", "ReliabilityNotifySendFailed", { "region": "${region}", "color": "#d62728" } ],
-                    [ ".", "ReliabilityVaultSaveSuccess", { "color": "#1f77b4", "region": "${region}" } ],
-                    [ ".", "ReliabilityVaultSaveFailed", { "color": "#ff7f0e", "region": "${region}" } ]
-                ],
-                "view": "timeSeries",
-                "stacked": false,
-                "region": "${region}",
-                "stat": "Sum",
-                "period": 300,
-                "title": "Lambda: reliability send/save"
             }
         },
         {
@@ -489,11 +409,11 @@
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: cognito sign-up/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: cognito sign-up/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count(@successCount) as Success, count(@failureCount) as Failed by bin(5m)",
                 "region": "${region}",
                 "stacked": false,
-                "view": "timeSeries",
-                "title": "App: Cognito sign-up"
+                "title": "App: Cognito sign-up",
+                "view": "timeSeries"
             }
         },
         {
@@ -503,7 +423,7 @@
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: cognito sign-in/\n| parse @message \"success\" as @successCount\n| parse @message \"undefined token\" as @undefinedTokenCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@undefinedTokenCount) as undefinedToken, count(@failureCount) as failure by bin(5m)",
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: cognito sign-in/\n| parse @message \"success\" as @successCount\n| parse @message \"undefined token\" as @undefinedTokenCount\n| parse @message \"failure\" as @failureCount\n| stats count(@successCount) as Success, count(@undefinedTokenCount) as UndefinedToken, count(@failureCount) as Failed by bin(5m)",
                 "region": "${region}",
                 "stacked": false,
                 "title": "App: Cognito sign-in",
@@ -517,11 +437,11 @@
             "x": 16,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: send initial 2fa code/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: send initial 2fa code/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count(@successCount) as Success, count(@failureCount) as Failed by bin(5m)",
                 "region": "${region}",
                 "stacked": false,
-                "view": "timeSeries",
-                "title": "App: send initial 2FA code"
+                "title": "App: send initial 2FA code",
+                "view": "timeSeries"
             }
         },
         {
@@ -531,11 +451,11 @@
             "x": 16,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: request new 2fa code/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: request new 2fa code/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count(@successCount) as Success, count(@failureCount) as Failed by bin(5m)",
                 "region": "${region}",
                 "stacked": false,
-                "view": "timeSeries",
-                "title": "App: request new 2FA code"
+                "title": "App: request new 2FA code",
+                "view": "timeSeries"
             }
         },
         {
@@ -545,11 +465,11 @@
             "x": 16,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: 2fa code validation/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: 2fa code validation/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count(@successCount) as Success, count(@failureCount) as Failed by bin(5m)",
                 "region": "${region}",
                 "stacked": false,
-                "view": "timeSeries",
-                "title": "App: 2FA code validation"
+                "title": "App: 2FA code validation",
+                "view": "timeSeries"
             }
         },
         {
@@ -559,11 +479,11 @@
             "x": 16,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: confirm submissions/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: confirm submissions/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count(@successCount) as Success, count(@failureCount) as Failed by bin(5m)",
                 "region": "${region}",
                 "stacked": false,
-                "view": "timeSeries",
-                "title": "App: confirm submissions"
+                "title": "App: confirm submissions",
+                "view": "timeSeries"
             }
         },
         {
@@ -573,11 +493,11 @@
             "x": 8,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: send email/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: send email/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count(@successCount) as Success, count(@failureCount) as Failed by bin(5m)",
                 "region": "${region}",
                 "stacked": false,
-                "view": "timeSeries",
-                "title": "App: email sender (GC Notify API connector)"
+                "title": "App: email sender (GC Notify API connector)",
+                "view": "timeSeries"
             }
         },
         {
@@ -587,11 +507,11 @@
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: list submissions/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: list submissions/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count(@successCount) as Success, count(@failureCount) as Failed by bin(5m)",
                 "region": "${region}",
                 "stacked": false,
-                "view": "timeSeries",
-                "title": "App: list submissions"
+                "title": "App: list submissions",
+                "view": "timeSeries"
             }
         },
         {
@@ -601,11 +521,11 @@
             "x": 16,
             "type": "log",
             "properties": {
-                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: retrieve submissions/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count() as numberOfRequests, count(@successCount) as success, count(@failureCount) as failure by bin(5m)",
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message =~ /HealthCheck: retrieve submissions/\n| parse @message \"success\" as @successCount\n| parse @message \"failure\" as @failureCount\n| stats count(@successCount) as Success, count(@failureCount) as Failed by bin(5m)",
                 "region": "${region}",
                 "stacked": false,
-                "view": "timeSeries",
-                "title": "App: retrieve submissions"
+                "title": "App: retrieve submissions",
+                "view": "timeSeries"
             }
         },
         {
@@ -639,6 +559,62 @@
             "properties": {
                 "markdown": "## App\nPerformance metrics for the ECS form viewer client app.",
                 "background": "transparent"
+            }
+        },
+        {
+            "height": 12,
+            "width": 12,
+            "y": 2,
+            "x": 0,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${ecs_cloudwatch_log_group_name}' | fields @message\n| filter @message ~= \"Response submitted for Form ID\" or @message ~= \"Attempted response submission for Form ID\"\n| parse @message \"Response submitted\" as @successCount\n| parse @message \"Attempted\" as @failureCount\n| stats count(@successCount) as Success, count(@failureCount) as Failure by bin(5m)",
+                "region": "${region}",
+                "stacked": false,
+                "title": "App: client submissions",
+                "view": "timeSeries"
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 2,
+            "x": 12,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${lambda_submission_log_group_name}' | fields status\n| filter status in [\"success\", \"failed\"] or level == \"warn\"\n| parse @message \"status\\\":\\\"success\" as @successCount\n| parse @message \"status\\\":\\\"failed\" as @failedCount\n| parse @message \"level\\\":\\\"warn\" as @warnCount\n| stats count(@successCount) as Success, count(@failedCount) as Failed, count(@warnCount) as Warn by bin(5m)",
+                "region": "${region}",
+                "stacked": false,
+                "title": "Lambda: submission",
+                "view": "timeSeries"
+            }
+        },
+        {
+            "height": 6,
+            "width": 12,
+            "y": 8,
+            "x": 12,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE '${lambda_reliability_log_group_name}' | fields status\n| filter status in [\"success\", \"failed\"] or level == \"warn\"\n| parse @message \"status\\\":\\\"success\" as @successCount\n| parse @message \"status\\\":\\\"failed\" as @failedCount\n| parse @message \"level\\\":\\\"warn\" as @warnCount\n| stats count(@successCount) as Success, count(@failedCount) as Failed, count(@warnCount) as Warn by bin(5m)",
+                "region": "${region}",
+                "stacked": false,
+                "view": "timeSeries",
+                "title": "Lambda: reliability"
+            }
+        },
+        {
+            "type": "log",
+            "x": 12,
+            "y": 14,
+            "width": 12,
+            "height": 6,
+            "properties": {
+                "query": "SOURCE '${lambda_reliability_log_group_name}' | fields @message\n| filter \n    @message ~= \"Successfully sent submission through GC Notify\"\n    or @message ~= \"Successfully saved submission to Vault\"\n    or @message ~= \"Failed to send submission through GC Notify\"\n    or @message ~= \"Failed to save submission to Vault\"\n| parse @message \"Successfully sent submission through GC Notify\" as @successNotify\n| parse @message \"Successfully saved submission to Vault\" as @successVault\n| parse @message \"Failed to send submission through GC Notify\" as @failedNotify\n| parse @message \"Failed to save submission to Vault\" as @failedVault\n| stats count(@successVault) as SuccessVaultSave, count(@successNotify) as SuccessNotifySend, count(@failedVault) as FailedVaultSave, count(@failedNotify) as FailedNotifySend by bin(5m)",
+                "region": "${region}",
+                "stacked": false,
+                "title": "Lambda: reliability send/save",
+                "view": "timeSeries"
             }
         }
     ]
