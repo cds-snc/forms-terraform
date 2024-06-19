@@ -1,17 +1,5 @@
 # Changelog
 
-## [3.10.2](https://github.com/cds-snc/forms-terraform/compare/v3.10.1...v3.10.2) (2024-06-18)
-
-
-### Bug Fixes
-
-* remove custom health check metrics ([#698](https://github.com/cds-snc/forms-terraform/issues/698)) ([cbd6fac](https://github.com/cds-snc/forms-terraform/commit/cbd6facc5e6de5b6c79c75bd460370cc6433b921))
-
-
-### Miscellaneous Chores
-
-* remove `forms-terraform-apply-release` OIDC role ([#696](https://github.com/cds-snc/forms-terraform/issues/696)) ([69bb7e1](https://github.com/cds-snc/forms-terraform/commit/69bb7e1817c15a1be063923919ba68157e9f7849))
-
 ## [3.10.1](https://github.com/cds-snc/forms-terraform/compare/v3.10.0...v3.10.1) (2024-06-18)
 
 
