@@ -60,7 +60,7 @@ jobs:
         id: generate-matrix
         run: |
           LAMBDA_ARRAY=$(echo $(cat ./.github/production-lambda-functions.conf) | sed 's/ //g' )
-          echo "::set-output name=matrix::$LAMBDA_ARRAY"
+          echo "matrix=$LAMBDA_ARRAY" >> $GITHUB_OUTPUT
     outputs:
       lambda-functions-matrix: ${{ steps.generate-matrix.outputs.matrix }}
 
