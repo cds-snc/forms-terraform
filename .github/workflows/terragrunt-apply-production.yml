@@ -49,6 +49,19 @@ jobs:
         with:
           is-tagged: 'true'
 
+  generate-lambda-functions-matrix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+      - name: Generate matrix
+        id: generate-matrix
+        run: |
+          LAMBDA_ARRAY=$(echo $(cat ./.github/production-lambda-functions.conf) | sed 's/ //g' )
+          echo "::set-output name=matrix::$LAMBDA_ARRAY"
+    outputs:
+      lambda-functions-matrix: ${{ steps.generate-matrix.outputs.matrix }}
+
   # We deploy ECR first to make sure it is available for the 'build-tag-push-lambda-images' job which will be run in parallel with `terragrunt-apply-all-modules`
   terragrunt-apply-ecr-only:
     needs: get-version
@@ -77,14 +90,14 @@ jobs:
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
   build-tag-push-lambda-images:
-    needs: [get-version, terragrunt-apply-ecr-only]
+    needs: [get-version, generate-lambda-functions-matrix, terragrunt-apply-ecr-only]
     runs-on: ubuntu-latest
     env:
       VERSION: ${{ needs.get-version.outputs.version }}
     strategy:
       fail-fast: false
       matrix:
-        image: [audit-logs, audit-logs-archiver, cognito-email-sender, cognito-pre-sign-up, form-archiver, nagware, notify-slack, reliability, reliability-dlq-consumer, response-archiver, submission, vault-integrity]
+        image: ${{ fromJSON(needs.generate-lambda-functions-matrix.outputs.lambda-functions-matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
@@ -203,14 +216,14 @@ jobs:
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
   update-lambda-function-image:
-    needs: [get-version, terragrunt-apply-all-modules]
+    needs: [get-version, generate-lambda-functions-matrix, terragrunt-apply-all-modules]
     runs-on: ubuntu-latest
     env:
       VERSION: ${{ needs.get-version.outputs.version }}
     strategy:
       fail-fast: false
       matrix:
-        image: [audit-logs, audit-logs-archiver, cognito-email-sender, cognito-pre-sign-up, form-archiver, nagware, notify-slack, reliability, reliability-dlq-consumer, response-archiver, submission, vault-integrity]
+        image: ${{ fromJSON(needs.generate-lambda-functions-matrix.outputs.lambda-functions-matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
