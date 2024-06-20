@@ -43,6 +43,16 @@ variable "lambda_response_archiver_log_group_name" {
   type        = string
 }
 
+variable "lambda_submission_expect_invocation_in_period" {
+  description = "Submission Lambda period (minutes) during which it is expected at least one function invocation will occur.  This is used for the healthcheck alarms."
+  type        = number
+}
+
+variable "lambda_submission_function_name" {
+  description = "Submission Lambda function name"
+  type        = string
+}
+
 variable "lambda_submission_log_group_name" {
   description = "Submission Lambda CloudWatch log group name"
   type        = string

@@ -516,3 +516,70 @@ resource "aws_cloudwatch_metric_alarm" "cognito_login_outside_canada_warn" {
 
   alarm_description = "Forms: A sign-in by a forms owner has been detected from outside of Canada."
 }
+
+#
+# Service health: these will trigger if expected metrics thresholds are not met
+#
+
+# Submission lambda: no invocations in a given period during core hours
+resource "aws_cloudwatch_metric_alarm" "healthcheck_lambda_submission_invocations_core_hours" {
+  alarm_name          = "SubmissionLambdaNoInvocationsCoreHours"
+  alarm_description   = "HealthCheck - no `submission` invocations in ${local.lambda_submission_expect_invocation_in_period} minutes."
+  comparison_operator = "LessThanThreshold"
+  evaluation_periods  = 1
+  threshold           = 1
+  treat_missing_data  = "breaching"
+
+  metric_query {
+    id          = "invocations_core_hours"
+    label       = "Invocations (core hours)"
+    expression  = "IF(((HOUR(invocations)>=9 OR HOUR(invocations)<=6)),invocations,1)" # Before 6am or after 9am (UTC) use metric, otherwise return `1`
+    return_data = true
+  }
+
+  metric_query {
+    id = "invocations"
+    metric {
+      metric_name = "Invocations"
+      namespace   = "AWS/Lambda"
+      period      = local.lambda_submission_expect_invocation_in_period * 60
+      stat        = "Sum"
+      unit        = "Count"
+      dimensions = {
+        FunctionName = var.lambda_submission_function_name
+      }
+    }
+  }
+}
+
+# Submission lambda: anomaly detection, trigger when invocations are below lower threshold
+resource "aws_cloudwatch_metric_alarm" "healthcheck_lambda_submission_invocations_anomaly" {
+  alarm_name          = "SubmissionLambdaInvocationsAnomaly"
+  alarm_description   = "HealthCheck - `submission` invocations in ${local.lambda_submission_expect_invocation_in_period} minutes is low."
+  comparison_operator = "LessThanLowerThreshold"
+  evaluation_periods  = 1
+  threshold_metric_id = "invocations_expected"
+  treat_missing_data  = "notBreaching"
+
+  metric_query {
+    id          = "invocations_expected"
+    expression  = "ANOMALY_DETECTION_BAND(invocations)"
+    label       = "Invocations (expected)"
+    return_data = "true"
+  }
+
+  metric_query {
+    id          = "invocations"
+    return_data = "true"
+    metric {
+      metric_name = "Invocations"
+      namespace   = "AWS/Lambda"
+      period      = local.lambda_submission_expect_invocation_in_period * 60
+      stat        = "Sum"
+      unit        = "Count"
+      dimensions = {
+        FunctionName = var.lambda_submission_function_name
+      }
+    }
+  }
+}

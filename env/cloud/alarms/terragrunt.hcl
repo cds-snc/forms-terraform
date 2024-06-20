@@ -88,6 +88,7 @@ dependency "lambdas" {
     lambda_reliability_log_group_name              = "/aws/lambda/Reliability"
     lambda_reliability_dlq_consumer_log_group_name = "/aws/lambda/Reliability_DLQ_Consumer"
     lambda_response_archiver_log_group_name        = "/aws/lambda/Response_Archiver"
+    lambda_submission_function_name                = "Submission"
     lambda_submission_log_group_name               = "/aws/lambda/Submission"
     lambda_vault_integrity_log_group_name          = "/aws/lambda/Vault_Data_Integrity_Check"
     lambda_vault_integrity_function_name           = "vault-integrity"
@@ -146,6 +147,8 @@ inputs = {
   lambda_reliability_log_group_name              = dependency.lambdas.outputs.lambda_reliability_log_group_name
   lambda_reliability_dlq_consumer_log_group_name = dependency.lambdas.outputs.lambda_reliability_dlq_consumer_log_group_name
   lambda_response_archiver_log_group_name        = dependency.lambdas.outputs.lambda_response_archiver_log_group_name
+  lambda_submission_expect_invocation_in_period  = 30
+  lambda_submission_function_name                = dependency.lambdas.outputs.lambda_submission_function_name
   lambda_submission_log_group_name               = dependency.lambdas.outputs.lambda_submission_log_group_name
   lambda_vault_integrity_log_group_name          = dependency.lambdas.outputs.lambda_vault_integrity_log_group_name
   lambda_vault_integrity_function_name           = dependency.lambdas.outputs.lambda_vault_integrity_function_name
