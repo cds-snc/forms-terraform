@@ -51,15 +51,33 @@ jobs:
         with:
           is-tagged: ${{ !startsWith(github.head_ref, 'release-please--') }} # If not the release PR branch, assume it is a revert PR
 
-  test-lambda-code:
+  generate-lambda-functions-matrix:
     needs: get-version
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        with:
+          ref: ${{ env.VERSION }}
+      - name: Generate matrix
+        id: generate-matrix
+        run: |
+          LAMBDA_ARRAY=$(echo $(cat ./.github/production-lambda-functions.conf) | sed 's/ //g' )
+          echo "matrix=$LAMBDA_ARRAY" >> $GITHUB_OUTPUT
+    outputs:
+      lambda-functions-matrix: ${{ steps.generate-matrix.outputs.matrix }}
+
+  test-lambda-code:
+    needs: [get-version, generate-lambda-functions-matrix]
     runs-on: ubuntu-latest
     env:
       VERSION: ${{ needs.get-version.outputs.version }}
     strategy:
       fail-fast: false
       matrix:
-        image: [audit-logs, audit-logs-archiver, cognito-email-sender, cognito-pre-sign-up, form-archiver, nagware, notify-slack, reliability, reliability-dlq-consumer, response-archiver, submission, vault-integrity]
+        image: ${{ fromJSON(needs.generate-lambda-functions-matrix.outputs.lambda-functions-matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
@@ -73,14 +91,14 @@ jobs:
           lambda-name: ${{ matrix.image }}
 
   build-lambda-images:
-    needs: get-version
+    needs: [get-version, generate-lambda-functions-matrix]
     runs-on: ubuntu-latest
     env:
       VERSION: ${{ needs.get-version.outputs.version }}
     strategy:
       fail-fast: false
       matrix:
-        image: [audit-logs, audit-logs-archiver, cognito-email-sender, cognito-pre-sign-up, form-archiver, nagware, notify-slack, reliability, reliability-dlq-consumer, response-archiver, submission, vault-integrity]
+        image: ${{ fromJSON(needs.generate-lambda-functions-matrix.outputs.lambda-functions-matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
