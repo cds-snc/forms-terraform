@@ -48,7 +48,7 @@ jobs:
       lambda-to-rebuild: ${{ steps.filter.outputs.changes }}
     steps:
       - name: Checkout
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Filter
         id: filter
@@ -66,7 +66,7 @@ jobs:
         image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Test Lambda code
         uses: ./.github/workflows/test-lambda-code
@@ -84,7 +84,7 @@ jobs:
         image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Build Lambda images
         uses: ./.github/workflows/build-lambda-images
@@ -97,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       # Setup Terraform, Terragrunt, and Conftest
       - name: Setup terraform tools
