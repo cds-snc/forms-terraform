@@ -1,5 +1,25 @@
 # Changelog
 
+## [3.11.0](https://github.com/cds-snc/forms-terraform/compare/v3.10.2...v3.11.0) (2024-06-24)
+
+
+### Features
+
+* add CloudWatch Lambda function invocation alarms ([#706](https://github.com/cds-snc/forms-terraform/issues/706)) ([24a6cd6](https://github.com/cds-snc/forms-terraform/commit/24a6cd64f693287f4f82d1fee5a8e3ac5ab70212))
+* health check alarm for submission lambda invocations ([#703](https://github.com/cds-snc/forms-terraform/issues/703)) ([4795366](https://github.com/cds-snc/forms-terraform/commit/47953660088469dd72c380c3393227f747d2cc83))
+
+
+### Bug Fixes
+
+* switch dashboard to log insight graphs ([#702](https://github.com/cds-snc/forms-terraform/issues/702)) ([5d741df](https://github.com/cds-snc/forms-terraform/commit/5d741dff1514cb5e2fac3b8084f79da8d0a6dab0))
+
+
+### Miscellaneous Chores
+
+* **deps:** update actions/checkout action to v4.1.7 ([#705](https://github.com/cds-snc/forms-terraform/issues/705)) ([77f33c4](https://github.com/cds-snc/forms-terraform/commit/77f33c44abe7c4b0ea456ca5830e30c35a2a3b47))
+* solidify lambda functions matrix definition using a configuration file where we list functions that need to be deployed in production ([#699](https://github.com/cds-snc/forms-terraform/issues/699)) ([4ea0a7f](https://github.com/cds-snc/forms-terraform/commit/4ea0a7f886e77dd4fcc4813b22ef66a2362867bb))
+* synced file(s) with cds-snc/site-reliability-engineering ([#693](https://github.com/cds-snc/forms-terraform/issues/693)) ([7f26d0e](https://github.com/cds-snc/forms-terraform/commit/7f26d0e3ff17f1d180f2cd627555e544a3e2fac4))
+
 ## [3.10.2](https://github.com/cds-snc/forms-terraform/compare/v3.10.1...v3.10.2) (2024-06-18)
 
 
