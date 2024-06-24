@@ -8,9 +8,19 @@ output "lambda_audit_logs_archiver_log_group_name" {
   value       = aws_cloudwatch_log_group.audit_logs_archiver.name
 }
 
+output "lambda_form_archiver_function_name" {
+  description = "Form Archiver Lambda function name"
+  value       = aws_lambda_function.form_archiver.function_name
+}
+
 output "lambda_form_archiver_log_group_name" {
   description = "Form archiver Lambda CloudWatch log group name"
   value       = aws_cloudwatch_log_group.archive_form_templates.name
+}
+
+output "lambda_nagware_function_name" {
+  description = "Nagware Lambda function name"
+  value       = aws_lambda_function.nagware.function_name
 }
 
 output "lambda_nagware_log_group_name" {
@@ -26,6 +36,11 @@ output "lambda_reliability_log_group_name" {
 output "lambda_reliability_dlq_consumer_log_group_name" {
   description = "Reliability DQL consumer Lambda CloudWatch log group name"
   value       = aws_cloudwatch_log_group.dead_letter_queue_consumer.name
+}
+
+output "lambda_response_archiver_function_name" {
+  description = "Response Archiver Lambda function name"
+  value       = aws_lambda_function.response_archiver.function_name
 }
 
 output "lambda_response_archiver_log_group_name" {

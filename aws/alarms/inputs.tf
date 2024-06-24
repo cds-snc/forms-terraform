@@ -18,8 +18,18 @@ variable "lambda_audit_logs_archiver_log_group_name" {
   type        = string
 }
 
+variable "lambda_form_archiver_function_name" {
+  description = "Form Archiver function name"
+  type        = string
+}
+
 variable "lambda_form_archiver_log_group_name" {
   description = "Template Archiver Lambda CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_nagware_function_name" {
+  description = "Nagware Lambda function name"
   type        = string
 }
 
@@ -35,6 +45,11 @@ variable "lambda_reliability_log_group_name" {
 
 variable "lambda_reliability_dlq_consumer_log_group_name" {
   description = "DQL Consumer CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_response_archiver_function_name" {
+  description = "Response Archiver function name"
   type        = string
 }
 

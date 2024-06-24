@@ -583,3 +583,70 @@ resource "aws_cloudwatch_metric_alarm" "healthcheck_lambda_submission_invocation
     }
   }
 }
+
+# Nagware lambda: no invocations on a Tuesday, Thursday or Sunday
+resource "aws_cloudwatch_metric_alarm" "healthcheck_lambda_nagware_invocations_schedule" {
+  alarm_name          = "NagwareLambdaNoInvocationsSchedule"
+  alarm_description   = "HealthCheck - no `${var.lambda_nagware_function_name}` invocations on schedule."
+  comparison_operator = "LessThanThreshold"
+  evaluation_periods  = 1
+  threshold           = 1
+  treat_missing_data  = "breaching"
+
+  metric_query {
+    id          = "invocations_schedule"
+    label       = "Invocations (schedule)"
+    expression  = "IF((DAY(invocations)==2 OR DAY(invocations)==4 OR DAY(invocations)==7),invocations,1)" # Tues/Thurs/Sun use metric, otherwise return `1`
+    return_data = true
+  }
+
+  metric_query {
+    id = "invocations"
+    metric {
+      metric_name = "Invocations"
+      namespace   = "AWS/Lambda"
+      period      = 86400
+      stat        = "Sum"
+      unit        = "Count"
+      dimensions = {
+        FunctionName = var.lambda_nagware_function_name
+      }
+    }
+  }
+}
+
+# Form archiver: no invocations in a day
+resource "aws_cloudwatch_metric_alarm" "healthcheck_lambda_form_archiver_invocations" {
+  alarm_name          = "FormArchiverLambdaNoInvocations"
+  alarm_description   = "HealthCheck - no `${var.lambda_form_archiver_function_name}` invocations in a day."
+  comparison_operator = "LessThanThreshold"
+  evaluation_periods  = 1
+  threshold           = 1
+  namespace           = "AWS/Lambda"
+  metric_name         = "Invocations"
+  statistic           = "Sum"
+  period              = 86400
+  treat_missing_data  = "breaching"
+
+  dimensions = {
+    FunctionName = var.lambda_form_archiver_function_name
+  }
+}
+
+# Response archiver: no invocations in a day
+resource "aws_cloudwatch_metric_alarm" "healthcheck_lambda_response_archiver_invocations" {
+  alarm_name          = "ResponseArchiverLambdaNoInvocations"
+  alarm_description   = "HealthCheck - no `${var.lambda_response_archiver_function_name}` invocations in a day."
+  comparison_operator = "LessThanThreshold"
+  evaluation_periods  = 1
+  threshold           = 1
+  namespace           = "AWS/Lambda"
+  metric_name         = "Invocations"
+  statistic           = "Sum"
+  period              = 86400
+  treat_missing_data  = "breaching"
+
+  dimensions = {
+    FunctionName = var.lambda_response_archiver_function_name
+  }
+}
