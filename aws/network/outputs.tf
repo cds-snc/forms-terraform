@@ -13,6 +13,21 @@ output "egress_security_group_id" {
   value       = aws_security_group.forms_egress.id
 }
 
+output "idp_db_security_group_id" {
+  description = "IdP database security group ID"
+  value       = aws_security_group.idp_db.id
+}
+
+output "idp_ecs_security_group_id" {
+  description = "IdP ECS task security group ID"
+  value       = aws_security_group.idp_ecs.id
+}
+
+output "idp_lb_security_group_id" {
+  description = "IdP load balancer security group ID"
+  value       = aws_security_group.idp_lb.id
+}
+
 output "public_subnet_ids" {
   description = "List of the VPC's public subnet IDs"
   value       = aws_subnet.forms_public.*.id

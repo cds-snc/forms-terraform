@@ -18,8 +18,13 @@ variable "billing_tag_value" {
   type        = string
 }
 
+variable "domain_idp" {
+  description = "The identity provider domain"
+  type        = string
+}
+
 variable "domains" {
-  description = "The server domains"
+  description = "The application domains"
   type        = list(string)
 }
 

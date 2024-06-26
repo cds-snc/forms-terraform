@@ -1,14 +1,16 @@
 locals {
   account_id = get_env("AWS_ACCOUNT_ID", "")
-  env = get_env("APP_ENV", "local")
-  domains = get_env("APP_DOMAINS", "[\"localhost:3000\"]")
+  env        = get_env("APP_ENV", "local")
+  domain_idp = get_env("IDP_DOMAIN", "localhost:8080")
+  domains    = get_env("APP_DOMAINS", "[\"localhost:3000\"]")
 }
 
 inputs = {
   account_id                = "${local.account_id}"
   billing_tag_key           = "CostCentre"
-  billing_tag_value         = "forms-platform-${local.env}"   
-  domains                    = local.domains
+  billing_tag_value         = "forms-platform-${local.env}"
+  domain_idp                = local.domain_idp   
+  domains                   = local.domains
   env                       = "${local.env}"
   region                    = "ca-central-1"
   cbs_satellite_bucket_name = "cbs-satellite-${local.account_id}"

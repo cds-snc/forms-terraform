@@ -67,5 +67,19 @@ resource "aws_ecr_lifecycle_policy" "lambda" {
   for_each = local.ecr_names
 
   repository = aws_ecr_repository.lambda[each.key].name
-  policy     = file("${path.module}/policy/lambda_lifecycle.json")
+  policy     = file("${path.module}/policy/lifecycle.json")
+}
+
+resource "aws_ecr_repository" "idp" {
+  name                 = "idp/zitadel"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_lifecycle_policy" "idp" {
+  repository = aws_ecr_repository.idp.name
+  policy     = file("${path.module}/policy/lifecycle.json")
 }
