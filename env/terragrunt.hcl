@@ -1,8 +1,9 @@
 locals {
-  account_id = get_env("AWS_ACCOUNT_ID", "")
-  env        = get_env("APP_ENV", "local")
-  domain_idp = get_env("IDP_DOMAIN", "localhost:8080")
-  domains    = get_env("APP_DOMAINS", "[\"localhost:3000\"]")
+  account_id       = get_env("AWS_ACCOUNT_ID", "")
+  env              = get_env("APP_ENV", "local")
+  feature_flag_idp = get_env("FF_IDP", "false")
+  domain_idp       = get_env("IDP_DOMAIN", "localhost:8080")
+  domains          = get_env("APP_DOMAINS", "[\"localhost:3000\"]")
 }
 
 inputs = {
@@ -12,6 +13,7 @@ inputs = {
   domain_idp                = local.domain_idp   
   domains                   = local.domains
   env                       = "${local.env}"
+  feature_flag_idp          = local.feature_flag_idp
   region                    = "ca-central-1"
   cbs_satellite_bucket_name = "cbs-satellite-${local.account_id}"
 }

@@ -71,6 +71,8 @@ resource "aws_ecr_lifecycle_policy" "lambda" {
 }
 
 resource "aws_ecr_repository" "idp" {
+  count = var.feature_flag_idp ? 1 : 0
+
   name                 = "idp/zitadel"
   image_tag_mutability = "MUTABLE"
 
@@ -80,6 +82,8 @@ resource "aws_ecr_repository" "idp" {
 }
 
 resource "aws_ecr_lifecycle_policy" "idp" {
-  repository = aws_ecr_repository.idp.name
+  count = var.feature_flag_idp ? 1 : 0
+
+  repository = aws_ecr_repository.idp[0].name
   policy     = file("${path.module}/policy/lifecycle.json")
 }

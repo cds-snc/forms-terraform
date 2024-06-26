@@ -15,17 +15,17 @@ output "egress_security_group_id" {
 
 output "idp_db_security_group_id" {
   description = "IdP database security group ID"
-  value       = aws_security_group.idp_db.id
+  value       = var.feature_flag_idp ? aws_security_group.idp_db[0].id : ""
 }
 
 output "idp_ecs_security_group_id" {
   description = "IdP ECS task security group ID"
-  value       = aws_security_group.idp_ecs.id
+  value       = var.feature_flag_idp ? aws_security_group.idp_ecs[0].id : ""
 }
 
 output "idp_lb_security_group_id" {
   description = "IdP load balancer security group ID"
-  value       = aws_security_group.idp_lb.id
+  value       = var.feature_flag_idp ? aws_security_group.idp_lb[0].id : ""
 }
 
 output "public_subnet_ids" {

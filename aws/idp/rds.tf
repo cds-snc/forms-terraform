@@ -2,7 +2,7 @@
 # RDS Postgress cluster
 #
 module "idp_database" {
-  source = "github.com/cds-snc/terraform-modules//rds?ref=v9.5.2"
+  source = "github.com/cds-snc/terraform-modules//rds?ref=544060caeadb399c773247e2c25640e0c62fb0ed" # v9.5.3
   name   = "idp"
 
   database_name           = var.zitadel_database_name
@@ -30,6 +30,7 @@ module "idp_database" {
 }
 
 resource "aws_ssm_parameter" "idp_database_cluster_admin_username" {
+  # checkov:skip=CKV_AWS_337: Default SSM service key encryption is acceptable
   name  = "idp_database_cluster_admin_username"
   type  = "SecureString"
   value = var.idp_database_cluster_admin_username
@@ -37,6 +38,7 @@ resource "aws_ssm_parameter" "idp_database_cluster_admin_username" {
 }
 
 resource "aws_ssm_parameter" "idp_database_cluster_admin_password" {
+  # checkov:skip=CKV_AWS_337: Default SSM service key encryption is acceptable
   name  = "idp_database_cluster_admin_password"
   type  = "SecureString"
   value = var.idp_database_cluster_admin_password
@@ -44,6 +46,7 @@ resource "aws_ssm_parameter" "idp_database_cluster_admin_password" {
 }
 
 resource "aws_ssm_parameter" "zitadel_database_host" {
+  # checkov:skip=CKV_AWS_337: Default SSM service key encryption is acceptable
   name  = "zitadel_database_host"
   type  = "SecureString"
   value = module.idp_database.proxy_endpoint
@@ -51,6 +54,7 @@ resource "aws_ssm_parameter" "zitadel_database_host" {
 }
 
 resource "aws_ssm_parameter" "zitadel_database_name" {
+  # checkov:skip=CKV_AWS_337: Default SSM service key encryption is acceptable
   name  = "zitadel_database_name"
   type  = "SecureString"
   value = var.zitadel_database_name
@@ -58,6 +62,7 @@ resource "aws_ssm_parameter" "zitadel_database_name" {
 }
 
 resource "aws_ssm_parameter" "zitadel_database_user_username" {
+  # checkov:skip=CKV_AWS_337: Default SSM service key encryption is acceptable
   name  = "zitadel_database_user_username"
   type  = "SecureString"
   value = var.zitadel_database_user_username
@@ -65,6 +70,7 @@ resource "aws_ssm_parameter" "zitadel_database_user_username" {
 }
 
 resource "aws_ssm_parameter" "zitadel_database_user_password" {
+  # checkov:skip=CKV_AWS_337: Default SSM service key encryption is acceptable
   name  = "zitadel_database_user_password"
   type  = "SecureString"
   value = var.zitadel_database_user_password
@@ -72,6 +78,7 @@ resource "aws_ssm_parameter" "zitadel_database_user_password" {
 }
 
 resource "aws_secretsmanager_secret" "zidatel_database_proxy_auth" {
+  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
   name = "zidatel_database_proxy_auth"
   tags = local.common_tags
 }

@@ -86,7 +86,7 @@ locals {
 }
 
 module "idp_ecs" {
-  source = "github.com/cds-snc/terraform-modules//ecs?ref=v9.5.2"
+  source = "github.com/cds-snc/terraform-modules//ecs?ref=544060caeadb399c773247e2c25640e0c62fb0ed" # v9.5.3
 
   cluster_name = "idp"
   service_name = "zitadel"
@@ -149,6 +149,7 @@ data "aws_iam_policy_document" "ecs_task_ssm_parameters" {
 # SSM Parameters
 #
 resource "aws_ssm_parameter" "zitadel_secret_key" {
+  # checkov:skip=CKV_AWS_337: Default SSM service key encryption is acceptable
   name  = "zitadel_secret_key"
   type  = "SecureString"
   value = var.zitadel_secret_key
@@ -156,6 +157,7 @@ resource "aws_ssm_parameter" "zitadel_secret_key" {
 }
 
 resource "aws_ssm_parameter" "zitadel_admin_username" {
+  # checkov:skip=CKV_AWS_337: Default SSM service key encryption is acceptable
   name  = "zitadel_admin_username"
   type  = "SecureString"
   value = var.zitadel_admin_username
@@ -163,6 +165,7 @@ resource "aws_ssm_parameter" "zitadel_admin_username" {
 }
 
 resource "aws_ssm_parameter" "zitadel_admin_password" {
+  # checkov:skip=CKV_AWS_337: Default SSM service key encryption is acceptable
   name  = "zitadel_admin_password"
   type  = "SecureString"
   value = var.zitadel_admin_password

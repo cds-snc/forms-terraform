@@ -1,4 +1,5 @@
 resource "aws_lb" "idp" {
+  # checkov:skip=CKV2_AWS_28: TODO add WAF ACL
   name               = "idp"
   internal           = false
   load_balancer_type = "application"
