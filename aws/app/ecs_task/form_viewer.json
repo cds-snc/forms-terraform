@@ -4,11 +4,16 @@
     "image": "${image}",
     "portMappings": [
       {
-        "containerPort": 3000
+        "containerPort": 3000,
+        "hostPort": 3000,
+        "protocol": "tcp"
       }
     ],
+    "cpu": 0,
+    "essential": true,
     "linuxParameters": {
       "capabilities": {
+        "add": [],
         "drop": ["ALL"]
       }
     },
@@ -111,6 +116,9 @@
         "name": "FRESHDESK_API_KEY",
         "valueFrom": "${freshdesk_api_key}"
       }
-    ]
+    ],
+    "mountPoints": [],
+    "volumesFrom": [],
+    "systemControls": []
   }
 ]
