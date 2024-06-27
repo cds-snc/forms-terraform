@@ -25,6 +25,11 @@ variable "idp_database_max_acu" {
   type        = number
 }
 
+variable "kinesis_firehose_waf_logs_arn" {
+  description = "The Kinesis Firehose delivery stream ARN used to collect and write WAF ACL logs to an S3 bucket."
+  type        = string
+}
+
 variable "private_subnet_ids" {
   description = "The private subnet IDs to create the resources in."
   type        = list(string)

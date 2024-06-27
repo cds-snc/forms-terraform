@@ -1,5 +1,4 @@
 resource "aws_lb" "idp" {
-  # checkov:skip=CKV2_AWS_28: TODO add WAF ACL
   name               = "idp"
   internal           = false
   load_balancer_type = "application"
@@ -7,10 +6,14 @@ resource "aws_lb" "idp" {
   drop_invalid_header_fields = true
   enable_deletion_protection = true
 
-  security_groups = [
-    var.security_group_idp_lb_id
-  ]
-  subnets = var.public_subnet_ids
+  security_groups = [var.security_group_idp_lb_id]
+  subnets         = var.public_subnet_ids
+
+  access_logs {
+    bucket  = var.cbs_satellite_bucket_name
+    prefix  = "lb_logs"
+    enabled = true
+  }
 
   tags = local.common_tags
 }
@@ -92,4 +95,9 @@ resource "aws_lb_listener" "idp_http_redirect" {
   }
 
   tags = local.common_tags
+}
+
+resource "aws_shield_protection" "alb" {
+  name         = "LoadBalancer"
+  resource_arn = aws_lb.idp.arn
 }

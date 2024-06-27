@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../hosted_zone", "../network", "../ecr"]
+  paths = ["../hosted_zone", "../network", "../ecr", "../load_balancer"]
 }
 
 dependency "hosted_zone" {
@@ -13,16 +13,6 @@ dependency "hosted_zone" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     hosted_zone_ids = ["Z123456789012"]
-  }
-}
-
-dependency "ecr" {
-  config_path = "../ecr"
-
-  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_strategy_with_state  = "shallow"
-  mock_outputs = {
-    ecr_repository_url_idp = "https://123456789012.dkr.ecr.ca-central-1.amazonaws.com/idp/zitadel"
   }
 }
 
@@ -40,6 +30,26 @@ dependency "network" {
   }
 }
 
+dependency "ecr" {
+  config_path = "../ecr"
+
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs = {
+    ecr_repository_url_idp = "https://123456789012.dkr.ecr.ca-central-1.amazonaws.com/idp/zitadel"
+  }
+}
+
+dependency "load_balancer" {
+  config_path = "../load_balancer"
+
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs = {
+    kinesis_firehose_waf_logs_arn = "arn:aws:firehose:ca-central-1:123456789012:deliverystream/waf-logs"
+  }
+}
+
 inputs = {
   hosted_zone_ids = dependency.hosted_zone.outputs.hosted_zone_ids
 
@@ -52,6 +62,8 @@ inputs = {
 
   zitadel_image_ecr_url = dependency.ecr.outputs.ecr_repository_url_idp
   zitadel_image_tag     = "v2.55.0"
+
+  kinesis_firehose_waf_logs_arn = dependency.load_balancer.outputs.kinesis_firehose_waf_logs_arn
 
   # 1 ACU ~= 2GB of memory and 1vCPU
   idp_database_min_acu = 2
