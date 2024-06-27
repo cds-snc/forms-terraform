@@ -1,0 +1,15 @@
+{
+  "name": "poc-api-load-tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "k6 run script.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/k6": "^0.52.0"
+  }
+}
