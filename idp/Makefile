@@ -1,4 +1,8 @@
-.PHONY: cert
+.PHONY: build cert
+
+# Build the IdP's Docker image
+build: cert
+	docker build -t idp/zitadel:latest ./docker -f ./docker/Dockerfile
 
 # Generate the certificate used to encrypt load balancer traffic to the ECS task
 cert:

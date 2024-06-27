@@ -1,0 +1,11 @@
+# Default config is merged with the overrides in this file.  
+# https://zitadel.com/docs/self-hosting/manage/configure#database-initialization-file
+#
+# These steps only run if Zitadel is started with the `start-with-init` command.  The 
+# initialization is idempotent when run multiple times with the same Zitadel version.
+
+FirstInstance:
+  Org:
+    Name: CDS-SNC
+    Human:
+      PasswordChangeRequired: false
