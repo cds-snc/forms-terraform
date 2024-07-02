@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.1](https://github.com/cds-snc/forms-terraform/compare/v3.11.0...v3.11.1) (2024-06-27)
+
+
+### Bug Fixes
+
+* ECS task definition constant change on TF plan ([#709](https://github.com/cds-snc/forms-terraform/issues/709)) ([20e0a2e](https://github.com/cds-snc/forms-terraform/commit/20e0a2ef6e56c63dd1fe641c7620e3ed9838390a))
+
 ## [3.11.0](https://github.com/cds-snc/forms-terraform/compare/v3.10.2...v3.11.0) (2024-06-24)
 
 
