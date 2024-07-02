@@ -33,7 +33,7 @@ Downloading of responses will be restricted if responses are older than 35 days
 
 After 45 days, if responses remain overdue, an incident process will kick-off.
 
-[Download and sign off on the removal of form responses](${baseUrl}/form-builder/responses/${formID})
+[Download and sign off on the removal of form responses](${baseUrl}/form-builder/${formID}/responses)
 
 ****
 
@@ -47,7 +47,7 @@ Le téléchargement des réponses sera limité si les réponses datent de plus d
 
 Si les réponses ne sont toujours pas traitées après 45 jours, un processus d'incident sera déclaré.
 
-[Télécharger et approuver la suppression des réponses au formulaire](${baseUrl}/fr/form-builder/responses/${formID})`,
+[Télécharger et approuver la suppression des réponses au formulaire](${baseUrl}/fr/form-builder/${formID}/responses)`,
       },
     });
   } catch (error) {
