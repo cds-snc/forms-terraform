@@ -23,7 +23,7 @@ Downloading of responses will be restricted if unconfirmed responses are older t
 
 After 45 days, if responses remain unconfirmed, an incident process will kick-off.
 
-[Download and confirm form responses now](${baseUrl}/form-builder/responses/${formID})
+[Download and confirm form responses now](${baseUrl}/form-builder/${formID}/responses)
 
 ****
 
@@ -37,7 +37,7 @@ Le téléchargement des réponses sera limité si les réponses non confirmées 
 
 Si les réponses ne sont toujours pas confirmées après 45 jours, un processus d'incident sera déclaré.
 
-[Télécharger et confirmer les réponses au formulaire maintenant](${baseUrl}/fr/form-builder/responses/${formID})`,
+[Télécharger et confirmer les réponses au formulaire maintenant](${baseUrl}/fr/form-builder/${formID}/responses)`,
       },
     });
   } catch (error) {
