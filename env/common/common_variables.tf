@@ -18,14 +18,25 @@ variable "billing_tag_value" {
   type        = string
 }
 
+variable "domain_idp" {
+  description = "The identity provider domain"
+  type        = string
+}
+
 variable "domains" {
-  description = "The server domains"
+  description = "The application domains"
   type        = list(string)
 }
 
 variable "env" {
   description = "The current running environment"
   type        = string
+}
+
+variable "feature_flag_idp" {
+  description = "Feature flag that determines if the IdP infrastructure is deployed"
+  type        = bool
+  default     = false
 }
 
 variable "region" {

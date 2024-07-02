@@ -56,3 +56,7 @@ tf.plan
 
 # Ignore coverage reports
 **/coverage/
+
+# Ignore IdP certificates
+idp/docker/*.crt
+idp/docker/*.key

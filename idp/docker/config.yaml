@@ -1,0 +1,23 @@
+# Default config is merged with the overrides in this file.
+# https://zitadel.com/docs/self-hosting/manage/configure#runtime-configuration-file
+
+Log:
+  Level: info
+
+Port: 8080
+ExternalPort: 443
+ExternalSecure: true
+TLS:
+  Enabled: true
+  KeyPath: /app/private.key
+  CertPath: /app/certificate.crt
+
+Database:
+  postgres:
+    Port: 5432
+    User:
+      SSL:
+        Mode: require
+    Admin:
+      SSL:
+        Mode: require

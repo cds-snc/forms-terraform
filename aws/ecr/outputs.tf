@@ -67,3 +67,8 @@ output "ecr_repository_url_vault_integrity_lambda" {
   description = "URL of the Vault Integrity Lambda ECR"
   value       = aws_ecr_repository.lambda["vault-integrity-lambda"].repository_url
 }
+
+output "ecr_repository_url_idp" {
+  description = "URL of the Zitadel IdP's ECR"
+  value       = var.feature_flag_idp ? aws_ecr_repository.idp[0].repository_url : ""
+}

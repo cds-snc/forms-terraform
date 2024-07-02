@@ -112,6 +112,29 @@ resource "aws_security_group_rule" "privatelink_forms_ingress" {
   source_security_group_id = aws_security_group.forms.id
 }
 
+resource "aws_security_group_rule" "privatelink_idp_ecs_ingress" {
+  count = var.feature_flag_idp ? 1 : 0
+
+  description              = "Security group rule for Zitadel IdP ECS task ingress"
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.privatelink.id
+  source_security_group_id = aws_security_group.idp_ecs[0].id
+}
+
+resource "aws_security_group_rule" "privatelink_idp_db_ingress" {
+  count = var.feature_flag_idp ? 1 : 0
+
+  description              = "Security group rule for Zitadel IdP database ingress"
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.privatelink.id
+  source_security_group_id = aws_security_group.idp_db[0].id
+}
 
 # Allow traffic from the app and from the lambdas
 resource "aws_security_group" "forms_database" {
