@@ -61,7 +61,7 @@ inputs = {
   vpc_id                    = dependency.network.outputs.vpc_id
 
   zitadel_image_ecr_url = dependency.ecr.outputs.ecr_repository_url_idp
-  zitadel_image_tag     = "v2.55.0"
+  zitadel_image_tag     = "latest" # TODO: pin to specific tag for prod
 
   kinesis_firehose_waf_logs_arn = dependency.load_balancer.outputs.kinesis_firehose_waf_logs_arn
 
