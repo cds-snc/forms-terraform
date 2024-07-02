@@ -2,7 +2,7 @@
 # RDS Postgress cluster
 #
 module "idp_database" {
-  source = "github.com/cds-snc/terraform-modules//rds?ref=544060caeadb399c773247e2c25640e0c62fb0ed" # v9.5.3
+  source = "github.com/cds-snc/terraform-modules//rds?ref=50c0f631d2c8558e6eec44138ffc2e963a1dfa9a" # v9.6.0
   name   = "idp"
 
   database_name           = var.zitadel_database_name
@@ -12,6 +12,7 @@ module "idp_database" {
   instance_class          = "db.serverless"
   serverless_min_capacity = var.idp_database_min_acu
   serverless_max_capacity = var.idp_database_max_acu
+  use_proxy               = false # TODO: enable for prod loads if performance requires it
 
   username               = var.idp_database_cluster_admin_username
   password               = var.idp_database_cluster_admin_password
