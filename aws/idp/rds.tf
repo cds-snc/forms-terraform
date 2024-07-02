@@ -14,8 +14,8 @@ module "idp_database" {
   serverless_max_capacity = var.idp_database_max_acu
   use_proxy               = false # TODO: enable for prod loads if performance requires it
 
-  username               = var.idp_database_cluster_admin_username
-  password               = var.idp_database_cluster_admin_password
+  username = var.idp_database_cluster_admin_username
+  password = var.idp_database_cluster_admin_password
 
   backup_retention_period      = 14
   preferred_backup_window      = "02:00-04:00"
