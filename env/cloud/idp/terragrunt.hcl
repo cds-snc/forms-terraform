@@ -66,8 +66,8 @@ inputs = {
   kinesis_firehose_waf_logs_arn = dependency.load_balancer.outputs.kinesis_firehose_waf_logs_arn
 
   # 1 ACU ~= 2GB of memory and 1vCPU
-  idp_database_min_acu = 2
-  idp_database_max_acu = 4
+  idp_database_min_acu = 1
+  idp_database_max_acu = 2
 }
 
 include {
