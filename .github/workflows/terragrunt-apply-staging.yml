@@ -18,11 +18,13 @@ permissions:
 env:
   APP_ENV: staging
   APP_DOMAINS: ${{ vars.STAGING_APP_DOMAINS }}
+  IDP_DOMAIN: ${{ vars.STAGING_IDP_DOMAIN }}
   AWS_ACCOUNT_ID: ${{ vars.STAGING_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
   TERRAFORM_VERSION: 1.6.6
   TERRAGRUNT_VERSION: 0.54.8
   TF_INPUT: false
+  # App
   TF_VAR_ecs_secret_token: ${{ secrets.STAGING_TOKEN_SECRET }}
   TF_VAR_recaptcha_secret: ${{ secrets.STAGING_RECAPTCHA_SITE_SECRET }}
   TF_VAR_recaptcha_public: 6LfJDN4eAAAAAGvdRF7ZnQ7ciqdo1RQnQDFmh0VY
@@ -37,6 +39,16 @@ env:
   TF_VAR_cognito_code_template_id: 12a18f84-062c-4a67-8310-bf114af051ea
   TF_VAR_email_address_contact_us: ${{ vars.STAGING_CONTACT_US_EMAIL }}
   TF_VAR_email_address_support: ${{ vars.STAGING_SUPPORT_EMAIL }}
+  # IdP
+  FF_IDP: true
+  TF_VAR_idp_database_cluster_admin_username: ${{ secrets.STAGING_IDP_DATABASE_CLUSTER_ADMIN_USERNAME }}
+  TF_VAR_idp_database_cluster_admin_password: ${{ secrets.STAGING_IDP_DATABASE_CLUSTER_ADMIN_PASSWORD }}
+  TF_VAR_zitadel_admin_password: ${{ secrets.STAGING_ZITADEL_ADMIN_PASSWORD }}
+  TF_VAR_zitadel_admin_username: ${{ secrets.STAGING_ZITADEL_ADMIN_USERNAME }}
+  TF_VAR_zitadel_database_name: ${{ secrets.STAGING_ZITADEL_DATABASE_NAME }}
+  TF_VAR_zitadel_database_user_password: ${{ secrets.STAGING_ZITADEL_DATABASE_USER_PASSWORD }}
+  TF_VAR_zitadel_database_user_username: ${{ secrets.STAGING_ZITADEL_DATABASE_USER_USERNAME }}
+  TF_VAR_zitadel_secret_key: ${{ secrets.STAGING_ZITADEL_SECRET_KEY }}
 
 jobs:
   # We deploy ECR first to make sure it is available for the 'build-tag-push-lambda-images' job which will be run in parallel with `terragrunt-apply-all-modules`
@@ -95,16 +107,38 @@ jobs:
           lambda-name: ${{ matrix.image }}
 
       - name: Tag and push Lambda images
-        uses: ./.github/workflows/tag-and-push-lambda-images
+        uses: ./.github/workflows/tag-and-push-docker-images
         with:
           aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
           aws-role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
-          lambda-name: ${{ matrix.image }}
+          image-name: ${{ matrix.image }}
           image-tag: ${{ github.sha }}
 
+  build-tag-push-idp-image:
+    needs: terragrunt-apply-ecr-only
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Build IdP image
+        working-directory: idp
+        run: |
+          make build
+
+      - name: Tag and push IdP image
+        uses: ./.github/workflows/tag-and-push-docker-images
+        with:
+          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
+          aws-role-session-name: TFApply
+          aws-region: ${{ env.AWS_REGION }}
+          image-name: idp/zitadel
+          image-tag: ${{ github.sha }}
+          repository-suffix: ''
+
   terragrunt-apply-all-modules:
-    needs: build-tag-push-lambda-images
+    needs: [build-tag-push-lambda-images, build-tag-push-idp-image]
     if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     steps:
@@ -180,6 +214,10 @@ jobs:
         working-directory: env/cloud/rds
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Terragrunt apply idp
+        working-directory: env/cloud/idp
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
       # Depends on everything
       - name: Terragrunt apply app
         working-directory: env/cloud/app
@@ -227,6 +265,7 @@ jobs:
       [
         terragrunt-apply-ecr-only,
         build-tag-push-lambda-images,
+        build-tag-push-idp-image,
         terragrunt-apply-all-modules,
         update-lambda-function-image,
       ]

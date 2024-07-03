@@ -31,6 +31,10 @@ hosted_zone:
   - *common
   - "aws/hosted_zone/**"
   - "env/cloud/hosted_zone/**"
+idp:
+  - *common
+  - "aws/idp/**"
+  - "env/cloud/idp/**"
 kms:
   - *common
   - "aws/kms/**"

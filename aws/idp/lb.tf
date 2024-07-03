@@ -97,7 +97,7 @@ resource "aws_lb_listener" "idp_http_redirect" {
   tags = local.common_tags
 }
 
-resource "aws_shield_protection" "alb" {
-  name         = "LoadBalancer"
+resource "aws_shield_protection" "idp" {
+  name         = "LoadBalancerIdP"
   resource_arn = aws_lb.idp.arn
 }

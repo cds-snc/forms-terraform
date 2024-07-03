@@ -39,7 +39,7 @@ resource "aws_wafv2_web_acl" "idp" {
 
     statement {
       rule_group_reference_statement {
-        arn = aws_wafv2_rule_group.rate_limiters_group.arn
+        arn = aws_wafv2_rule_group.rate_limiters_group_idp.arn
       }
     }
 
@@ -100,9 +100,9 @@ resource "aws_wafv2_web_acl" "idp" {
   tags = local.common_tags
 }
 
-resource "aws_wafv2_rule_group" "rate_limiters_group" {
+resource "aws_wafv2_rule_group" "rate_limiters_group_idp" {
   capacity = 32 // 2, as a base cost. For each custom aggregation key that you specify, add 30 WCUs.
-  name     = "RateLimitersGroup"
+  name     = "RateLimitersGroupIdP"
   scope    = "REGIONAL"
 
   rule {

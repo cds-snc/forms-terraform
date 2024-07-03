@@ -7,10 +7,13 @@ inputs:
     required: true
   aws-region:
     required: true
-  lambda-name:
+  image-name:
     required: true
   image-tag:
     required: true
+  repository-suffix:
+    default: '-lambda'
+    required: false
 
 runs:
   using: "composite"
@@ -28,11 +31,11 @@ runs:
 
     - name: Tag and push docker images
       env:
-        LAMBDA_NAME: ${{ inputs.lambda-name }}
+        IMAGE_NAME: ${{ inputs.image-name }}
         IMAGE_TAG: ${{ inputs.image-tag }}
         ECR_REGISTRY: ${{ steps.login-ecr-staging.outputs.registry }}
       run: |
-        REPOSITORY_NAME=$LAMBDA_NAME-lambda
+        REPOSITORY_NAME=$IMAGE_NAME${{ inputs.repository-suffix }}
         docker tag $REPOSITORY_NAME $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_TAG
         docker tag $REPOSITORY_NAME $ECR_REGISTRY/$REPOSITORY_NAME:latest
         docker push $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_TAG

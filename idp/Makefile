@@ -13,5 +13,5 @@ cert:
 		-x509 -days 3650 \
 		-keyout ./docker/private.key \
 		-out ./docker/certificate.crt \
-		-subj "/C=CA/ST=Ontario/L=Ottawa/O=cds-snc/OU=platform/CN=auth.forms-formulaires.alpha.canada.ca/emailAddress=platform@cds-snc.ca" &&\
+		-subj "/C=CA/ST=Ontario/L=Ottawa/O=cds-snc/OU=platform/CN=auth.forms-formulaires.alpha.canada.ca/emailAddress=platform@cds-snc.ca" > /dev/null 2>&1 &&\
 	chmod +r ./docker/private.key

@@ -116,12 +116,12 @@ jobs:
           lambda-name: ${{ matrix.image }}
 
       - name: Tag and push Lambda images
-        uses: ./.github/workflows/tag-and-push-lambda-images
+        uses: ./.github/workflows/tag-and-push-docker-images
         with:
           aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
           aws-role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
-          lambda-name: ${{ matrix.image }}
+          image-name: ${{ matrix.image }}
           image-tag: ${{ env.VERSION }}
 
   terragrunt-apply-all-modules:
