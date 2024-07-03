@@ -11,7 +11,25 @@ resource "aws_ses_domain_identity_verification" "idp" {
 }
 
 resource "aws_iam_user" "idp_send_email" {
+  # checkov:skip=CKV_AWS_273: SES IAM user is required to confirgure SMTP credentials
   name = "idp_send_email"
+}
+
+resource "aws_iam_group" "idp_send_email" {
+  name = "idp_send_email"
+}
+
+resource "aws_iam_group_membership" "idp_send_email" {
+  name  = aws_iam_user.idp_send_email.name
+  group = aws_iam_group.idp_send_email.name
+  users = [
+    aws_iam_user.idp_send_email.name
+  ]
+}
+
+resource "aws_iam_group_policy_attachment" "idp_send_email" {
+  group      = aws_iam_user.idp_send_email.name
+  policy_arn = aws_iam_policy.idp_send_email.arn
 }
 
 data "aws_iam_policy_document" "idp_send_email" {
@@ -21,7 +39,7 @@ data "aws_iam_policy_document" "idp_send_email" {
       "ses:SendRawEmail"
     ]
     resources = [
-      "*"
+      aws_ses_domain_identity.idp.arn
     ]
   }
 }
@@ -29,11 +47,6 @@ data "aws_iam_policy_document" "idp_send_email" {
 resource "aws_iam_policy" "idp_send_email" {
   name   = "idp_send_email"
   policy = data.aws_iam_policy_document.idp_send_email.json
-}
-
-resource "aws_iam_user_policy_attachment" "idp_send_email" {
-  user       = aws_iam_user.idp_send_email.name
-  policy_arn = aws_iam_policy.idp_send_email.arn
 }
 
 resource "aws_iam_access_key" "idp_send_email" {
