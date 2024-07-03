@@ -10,6 +10,7 @@ resource "aws_route53_record" "idp" {
   }
 }
 
+# ACM certification validation
 resource "aws_route53_record" "idp_validation" {
   zone_id = local.hosted_zone_id
 
@@ -31,4 +32,13 @@ resource "aws_route53_record" "idp_validation" {
 resource "aws_acm_certificate_validation" "idp" {
   certificate_arn         = aws_acm_certificate.idp.arn
   validation_record_fqdns = [for record in aws_route53_record.idp_validation : record.fqdn]
+}
+
+# SES domain validation
+resource "aws_route53_record" "idp_ses_verification_TXT" {
+  zone_id = local.hosted_zone_id
+  name    = "_amazonses.${aws_ses_domain_identity.idp.id}"
+  type    = "TXT"
+  ttl     = "600"
+  records = [aws_ses_domain_identity.idp.verification_token]
 }
