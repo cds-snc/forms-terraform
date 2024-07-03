@@ -15,6 +15,10 @@ TLS:
 Database:
   postgres:
     Port: 5432
+    MaxOpenConns: 200
+    MaxIdleConns: 20
+    MaxConnLifetime: 1800
+    MaxConnIdleTime: 1800
     User:
       SSL:
         Mode: require
