@@ -42,3 +42,35 @@ resource "aws_route53_record" "idp_ses_verification_TXT" {
   ttl     = "600"
   records = [aws_ses_domain_identity.idp.verification_token]
 }
+
+# Email sending
+resource "aws_route53_record" "idp_spf_TXT" {
+  zone_id = local.hosted_zone_id
+  name    = var.domain_idp
+  type    = "TXT"
+  ttl     = "300"
+  records = [
+    "v=spf1 include:amazonses.com -all"
+  ]
+}
+
+resource "aws_route53_record" "idp_dkim_CNAME" {
+  count   = 3
+  zone_id = local.hosted_zone_id
+  name    = "${element(aws_ses_domain_dkim.idp.dkim_tokens, count.index)}._domainkey.${var.domain_idp}"
+  type    = "CNAME"
+  ttl     = "300"
+  records = [
+    "${element(aws_ses_domain_dkim.idp.dkim_tokens, count.index)}.dkim.amazonses.com",
+  ]
+}
+
+resource "aws_route53_record" "idp_dmarc_TXT" {
+  zone_id = local.hosted_zone_id
+  name    = "_dmarc.${var.domain_idp}"
+  type    = "TXT"
+  ttl     = "300"
+  records = [
+    "v=DMARC1; p=reject; sp=reject; pct=100; rua=mailto:security@cds-snc.ca"
+  ]
+}
