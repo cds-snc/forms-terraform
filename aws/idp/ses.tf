@@ -5,6 +5,10 @@ resource "aws_ses_domain_identity" "idp" {
   domain = var.domain_idp
 }
 
+resource "aws_ses_domain_dkim" "idp" {
+  domain = aws_ses_domain_identity.idp.domain
+}
+
 resource "aws_ses_domain_identity_verification" "idp" {
   domain     = aws_ses_domain_identity.idp.id
   depends_on = [aws_route53_record.idp_ses_verification_TXT]
