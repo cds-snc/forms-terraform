@@ -1,5 +1,25 @@
 # Changelog
 
+## [3.12.0](https://github.com/cds-snc/forms-terraform/compare/v3.11.1...v3.12.0) (2024-07-04)
+
+
+### Features
+
+* add IdP Staging Terraform plan/apply steps ([#714](https://github.com/cds-snc/forms-terraform/issues/714)) ([c3f3958](https://github.com/cds-snc/forms-terraform/commit/c3f395857e5f391811f72d38aee247e48505fada))
+* add module for Zitadel IdP infrastructure ([#708](https://github.com/cds-snc/forms-terraform/issues/708)) ([c6835b2](https://github.com/cds-snc/forms-terraform/commit/c6835b296cdbf088f9b5ddb8c6001475c4dad57c))
+* add SPF, DKIM and DMARC DNS records ([#716](https://github.com/cds-snc/forms-terraform/issues/716)) ([e6b9641](https://github.com/cds-snc/forms-terraform/commit/e6b9641bc39ae534b6568d6b7e75e3aed416f136))
+* send IdP emails using SES SMTP server ([#715](https://github.com/cds-snc/forms-terraform/issues/715)) ([f1150e7](https://github.com/cds-snc/forms-terraform/commit/f1150e776751aefa89bdc98241a57af1b8050413))
+
+
+### Bug Fixes
+
+* fix overdue response url ([#712](https://github.com/cds-snc/forms-terraform/issues/712)) ([b109fd5](https://github.com/cds-snc/forms-terraform/commit/b109fd51744c67b6d1670e037ecc6bd23e76099f))
+
+
+### Miscellaneous Chores
+
+* synced file(s) with cds-snc/site-reliability-engineering ([#707](https://github.com/cds-snc/forms-terraform/issues/707)) ([324cea1](https://github.com/cds-snc/forms-terraform/commit/324cea120c27dced4612c2d901990c362777154e))
+
 ## [3.11.1](https://github.com/cds-snc/forms-terraform/compare/v3.11.0...v3.11.1) (2024-06-27)
 
 
