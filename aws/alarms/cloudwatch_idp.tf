@@ -129,29 +129,7 @@ resource "aws_cloudwatch_metric_alarm" "idp_rds_cpu_utilization" {
   ok_actions    = [var.sns_topic_alert_ok_arn]
 
   dimensions = {
-    DBClusterIdentifier = var.rds_idp_cluster_id
-  }
-}
-
-resource "aws_cloudwatch_metric_alarm" "idp_rds_acu_utilization" {
-  count = var.feature_flag_idp ? 1 : 0
-
-  alarm_name          = "IdP-RDSAcuUtilization"
-  alarm_description   = "IdP RDS Warning - high ACU use for RDS cluster in a 5 minute period"
-  comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "1"
-  metric_name         = "ACUUtilization"
-  namespace           = "AWS/RDS"
-  period              = "300"
-  statistic           = "Average"
-  threshold           = var.rds_idp_acu_maximum
-
-
-  alarm_actions = [aws_sns_topic.alert_warning.arn]
-  ok_actions    = [aws_sns_topic.alert_warning.arn]
-
-  dimensions = {
-    DBClusterIdentifier = var.rds_idp_cluster_id
+    DBClusterIdentifier = var.rds_idp_cluster_identifier
   }
 }
 

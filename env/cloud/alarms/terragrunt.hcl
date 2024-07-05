@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../hosted_zone", "../kms", "../load_balancer", "../rds", "../sqs", "../app", "../sns", "../lambdas", "../ecr"]
+  paths = ["../hosted_zone", "../kms", "../load_balancer", "../rds", "../sqs", "../app", "../sns", "../lambdas", "../ecr", "../idp"]
 }
 
 locals {
@@ -121,6 +121,20 @@ dependency "ecr" {
   }
 }
 
+dependency "idp" {
+  config_path                             = "../idp"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    ecs_idp_cluster_name              = "idp"
+    ecs_idp_cloudwatch_log_group_name = "/aws/ecs/idp/zitadel"
+    ecs_idp_service_name              = "zitadel"
+    lb_idp_arn_suffix                 = "loadbalancer/app/idp/1234567890123456"
+    lb_idp_target_group_arn_suffix    = "targetgroup/idp-tg-abc/1234567890123456"
+    rds_idp_cluster_identifier        = "idp-cluster"
+  }
+}
+
 inputs = {
   threshold_ecs_cpu_utilization_high    = "50"
   threshold_ecs_memory_utilization_high = "50"
@@ -168,6 +182,14 @@ inputs = {
   sns_topic_alert_ok_us_east_arn      = dependency.sns.outputs.sns_topic_alert_ok_us_east_arn
 
   ecr_repository_url_notify_slack_lambda = dependency.ecr.outputs.ecr_repository_url_notify_slack_lambda
+
+  ecs_idp_cluster_name              = dependency.idp.outputs.ecs_idp_cluster_name
+  ecs_idp_cloudwatch_log_group_name = dependency.idp.outputs.ecs_idp_cloudwatch_log_group_name
+  ecs_idp_service_name              = dependency.idp.outputs.ecs_idp_service_name
+  lb_idp_arn_suffix                 = dependency.idp.outputs.lb_idp_arn_suffix
+  lb_idp_target_group_arn_suffix    = dependency.idp.outputs.lb_idp_target_group_arn_suffix
+  rds_idp_cluster_identifier        = dependency.idp.outputs.rds_idp_cluster_identifier
+  rds_idp_cpu_maxiumum              = 80
 }
 
 include {

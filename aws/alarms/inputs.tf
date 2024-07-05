@@ -93,8 +93,18 @@ variable "ecs_cluster_name" {
   type        = string
 }
 
+variable "ecs_idp_cluster_name" {
+  description = "IdP's ECS cluster name, used by CPU/memory threshold alarms"
+  type        = string
+}
+
 variable "ecs_service_name" {
   description = "ECS service name, used by CPU/memory threshold alarms"
+  type        = string
+}
+
+variable "ecs_idp_service_name" {
+  description = "IdP's ECS service name, used by CPU/memory threshold alarms"
   type        = string
 }
 
@@ -113,6 +123,11 @@ variable "lb_arn_suffix" {
   type        = string
 }
 
+variable "lb_idp_arn_suffix" {
+  description = "IdP's load balancer ARN suffix, used by response time alarms"
+  type        = string
+}
+
 variable "lb_target_group_1_arn_suffix" {
   description = "Load balancer target group 1 ARN suffix, used by response time alarms"
   type        = string
@@ -120,6 +135,11 @@ variable "lb_target_group_1_arn_suffix" {
 
 variable "lb_target_group_2_arn_suffix" {
   description = "Load balancer target group 2 ARN suffix, used by response time alarms"
+  type        = string
+}
+
+variable "lb_idp_target_group_arn_suffix" {
+  description = "IdP's load balancer target group ARN suffix, used by response time alarms"
   type        = string
 }
 
@@ -138,6 +158,17 @@ variable "opsgenie_api_key" {
 variable "rds_cluster_identifier" {
   description = "RDS cluster identifier used for alarms and dashboards"
   type        = string
+}
+
+variable "rds_idp_cluster_identifier" {
+  description = "The IdP's RDS cluster identifier used for alarms and dashboards"
+  type        = string
+}
+
+variable "rds_idp_cpu_maxiumum" {
+  description = "The maximum CPU utilization percentage threshold for the IdP's RDS cluster"
+  type        = number
+
 }
 
 variable "sqs_reliability_deadletter_queue_arn" {
