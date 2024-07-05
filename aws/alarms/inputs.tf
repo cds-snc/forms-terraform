@@ -4,7 +4,12 @@ variable "kms_key_cloudwatch_arn" {
 }
 
 variable "ecs_cloudwatch_log_group_name" {
-  description = "ECS Forms CloudWatch log group name, used by app error metric alarms"
+  description = "ECS App Forms CloudWatch log group name, used by app error metric alarms"
+  type        = string
+}
+
+variable "ecs_idp_cloudwatch_log_group_name" {
+  description = "ECS IdP CloudWatch log group name, used by IdP error metric alarms"
   type        = string
 }
 
