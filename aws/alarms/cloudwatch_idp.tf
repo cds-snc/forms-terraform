@@ -83,6 +83,8 @@ resource "aws_cloudwatch_metric_alarm" "idb_lb_unhealthy_host_count" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "idp_response_time_warn" {
+  count = var.feature_flag_idp ? 1 : 0
+
   alarm_name          = "IdP-ResponseTimeWarn"
   alarm_description   = "IdP LB Warning - The latency of response times from the IdP are abnormally high."
   comparison_operator = "GreaterThanThreshold"
