@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.13.0](https://github.com/cds-snc/forms-terraform/compare/v3.12.0...v3.13.0) (2024-07-05)
+
+
+### Features
+
+* increase the number of form viewer tasks in prod ([#717](https://github.com/cds-snc/forms-terraform/issues/717)) ([0a252de](https://github.com/cds-snc/forms-terraform/commit/0a252def72117fc0f3e0526f49c324754d6b680b))
+
+
+### Bug Fixes
+
+* scale Staging to multiple ECS tasks ([#719](https://github.com/cds-snc/forms-terraform/issues/719)) ([2e45c8b](https://github.com/cds-snc/forms-terraform/commit/2e45c8b9a5759b8640a92119dee4576928b531a1))
+
 ## [3.12.0](https://github.com/cds-snc/forms-terraform/compare/v3.11.1...v3.12.0) (2024-07-04)
 
 
