@@ -73,7 +73,7 @@ resource "aws_ecs_service" "form_viewer" {
   propagate_tags       = "SERVICE"
   force_new_deployment = true
 
-  desired_count                     = local.ecs_min_tasks
+  desired_count                     = var.ecs_min_tasks
   health_check_grace_period_seconds = 60
 
   deployment_controller {
@@ -113,8 +113,8 @@ resource "aws_appautoscaling_target" "forms" {
   service_namespace  = "ecs"
   resource_id        = "service/${aws_ecs_cluster.forms.name}/${aws_ecs_service.form_viewer.name}"
   scalable_dimension = "ecs:service:DesiredCount"
-  min_capacity       = local.ecs_min_tasks
-  max_capacity       = local.ecs_max_tasks
+  min_capacity       = var.ecs_min_tasks
+  max_capacity       = var.ecs_max_tasks
 }
 
 resource "aws_appautoscaling_policy" "forms_cpu" {
