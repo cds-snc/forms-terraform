@@ -39,7 +39,31 @@ module "athena_bucket" {
 #
 
 resource "aws_s3_bucket" "athena_spill_bucket" {
+  # checkov:skip=CKV2_AWS_62: Event notifications not required
+  # checkov:skip=CKV_AWS_18: Access logging not required
+  # checkov:skip=CKV_AWS_21: Versioning not required
   bucket = "gc-forms-${var.env}-athena-spill-bucket"
+}
+
+resource "aws_s3_bucket_ownership_controls" "athena_spill_bucket" {
+  bucket = aws_s3_bucket.athena_spill_bucket.id
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "athena_spill_bucket" {
+  bucket = aws_s3_bucket.athena_spill_bucket.id
+
+  rule {
+    id     = "Clear spill bucket after 1 day"
+    status = "Enabled"
+
+    expiration {
+      days = 1
+    }
+  }
 }
 
 #
