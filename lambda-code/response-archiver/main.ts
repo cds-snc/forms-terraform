@@ -1,5 +1,5 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { BatchWriteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { BatchWriteCommand, ScanCommand, ScanCommandOutput } from "@aws-sdk/lib-dynamodb";
 import {
   S3Client,
   PutObjectCommand,
@@ -76,7 +76,10 @@ async function archiveResponses(dynamodbClient: DynamoDBClient, s3Client: S3Clie
   let lastEvaluatedKey = null;
 
   while (lastEvaluatedKey !== undefined) {
-    const archivableResponses = await retrieveArchivableResponses(dynamodbClient, lastEvaluatedKey ?? undefined);
+    const archivableResponses = await retrieveArchivableResponses(
+      dynamodbClient,
+      lastEvaluatedKey ?? undefined
+    );
 
     let fileAttachmentsToDelete: FileAttachement[] = [];
 
@@ -123,38 +126,35 @@ async function archiveResponses(dynamodbClient: DynamoDBClient, s3Client: S3Clie
 async function retrieveArchivableResponses(
   dynamodbClient: DynamoDBClient,
   lastEvaluatedKey?: Record<string, any>
-): Promise<{ responses: FormResponse[], lastEvaluatedKey?: Record<string, any> }> {
+): Promise<{ responses: FormResponse[]; lastEvaluatedKey?: Record<string, any> }> {
   try {
-    const queryCommandResponse = await dynamodbClient.send(
-      new QueryCommand({
+    const scanResults: ScanCommandOutput = await dynamodbClient.send(
+      new ScanCommand({
         TableName: DYNAMODB_VAULT_TABLE_NAME,
-        IndexName: "Archive",
         Limit: PROCESSING_CHUNK_SIZE,
         ExclusiveStartKey: lastEvaluatedKey,
-        KeyConditionExpression: "#status = :status AND RemovalDate <= :removalDate",
+        FilterExpression: "attribute_exists(RemovalDate) AND RemovalDate <= :removalDate",
+        ProjectionExpression: "FormID,#name,SubmissionID,FormSubmission,CreatedAt,ConfirmationCode",
         ExpressionAttributeNames: {
-          "#status": "Status",
           "#name": "Name",
         },
         ExpressionAttributeValues: {
-          ":status": "Confirmed",
           ":removalDate": Date.now(),
         },
-        ProjectionExpression:
-          "FormID,#name,SubmissionID,FormSubmission,CreatedAt,ConfirmationCode",
       })
     );
 
     return {
-      responses: queryCommandResponse.Items?.map((item) => ({
-        formId: item.FormID,
-        name: item.Name,
-        submissionId: item.SubmissionID,
-        responsesAsJson: item.FormSubmission,
-        createdAt: item.CreatedAt,
-        confirmationCode: item.ConfirmationCode,
-      })) ?? [],
-      lastEvaluatedKey: queryCommandResponse.LastEvaluatedKey
+      responses:
+        scanResults.Items?.map((item) => ({
+          formId: item.FormID,
+          name: item.Name,
+          submissionId: item.SubmissionID,
+          responsesAsJson: item.FormSubmission,
+          createdAt: item.CreatedAt,
+          confirmationCode: item.ConfirmationCode,
+        })) ?? [],
+      lastEvaluatedKey: scanResults.LastEvaluatedKey,
     };
   } catch (error) {
     throw new Error(
@@ -172,7 +172,9 @@ async function archiveFileAttachments(
   try {
     const copyObjectRequests = fileAttachments.map((attachment) => {
       const fromUri = `${attachment.path}`;
-      const toUri = `${new Date().toISOString().slice(0, 10)}/${formId}/${submissionId}/${submissionId}_${attachment.name}`;
+      const toUri = `${new Date()
+        .toISOString()
+        .slice(0, 10)}/${formId}/${submissionId}/${submissionId}_${attachment.name}`;
 
       return s3Client.send(
         new CopyObjectCommand({
@@ -186,7 +188,8 @@ async function archiveFileAttachments(
     await Promise.all(copyObjectRequests);
   } catch (error) {
     throw new Error(
-      `Failed to copy file attachments from Vault to Archiving S3 bucket. Reason: ${(error as Error).message
+      `Failed to copy file attachments from Vault to Archiving S3 bucket. Reason: ${
+        (error as Error).message
       }.`
     );
   }
@@ -203,20 +206,21 @@ async function archiveResponsesAsJson(
       new PutObjectCommand({
         Bucket: ARCHIVING_S3_BUCKET,
         Body: responsesAsJson,
-        Key: `${new Date().toISOString().slice(0, 10)}/${formId}/${submissionId}/${submissionId}.json`,
+        Key: `${new Date()
+          .toISOString()
+          .slice(0, 10)}/${formId}/${submissionId}/${submissionId}.json`,
       })
     );
   } catch (error) {
     throw new Error(
-      `Failed to save responses as JSON in Archiving S3 bucket. Reason: ${(error as Error).message}.`
+      `Failed to save responses as JSON in Archiving S3 bucket. Reason: ${
+        (error as Error).message
+      }.`
     );
   }
 }
 
-async function deleteFileAttachments(
-  s3Client: S3Client,
-  fileAttachments: FileAttachement[]
-) {
+async function deleteFileAttachments(s3Client: S3Client, fileAttachments: FileAttachement[]) {
   if (fileAttachments.length === 0) return;
 
   try {
@@ -224,7 +228,7 @@ async function deleteFileAttachments(
       new DeleteObjectsCommand({
         Bucket: VAULT_FILE_STORAGE_S3_BUCKET,
         Delete: {
-          Objects: fileAttachments.map(f => ({ Key: f.path })),
+          Objects: fileAttachments.map((f) => ({ Key: f.path })),
         },
       })
     );
@@ -241,10 +245,7 @@ async function deleteFileAttachments(
   }
 }
 
-async function deleteResponses(
-  dynamodbClient: DynamoDBClient,
-  responses: FormResponse[]
-) {
+async function deleteResponses(dynamodbClient: DynamoDBClient, responses: FormResponse[]) {
   if (responses.length === 0) return;
 
   /**
@@ -291,7 +292,7 @@ async function deleteResponses(
           })
         );
       }
-    }
+    };
   });
 
   await runPromisesSynchronously(chunkedDeleteRequests);

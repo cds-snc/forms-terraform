@@ -8,7 +8,7 @@ resource "aws_lambda_function" "response_archiver" {
   image_uri     = "${var.ecr_repository_url_response_archiver_lambda}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
-  timeout       = 300
+  timeout       = 900
 
   lifecycle {
     ignore_changes = [image_uri]
