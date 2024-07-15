@@ -45,15 +45,16 @@ resource "aws_s3_bucket" "athena_spill_bucket" {
   bucket = "gc-forms-${var.env}-athena-spill-bucket"
 }
 
-resource "aws_s3_bucket_ownership_controls" "athena_spill_bucket" {
-  bucket = aws_s3_bucket.athena_spill_bucket.id
-
-  rule {
-    object_ownership = "BucketOwnerEnforced"
-  }
+resource "aws_s3_bucket_public_access_block" "athena_spill_bucket" {
+  bucket                  = aws_s3_bucket.athena_spill_bucket.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "athena_spill_bucket" {
+  # checkov:skip=CKV_AWS_300: Lifecycle configuration for aborting failed (multipart) upload not required
   bucket = aws_s3_bucket.athena_spill_bucket.id
 
   rule {
