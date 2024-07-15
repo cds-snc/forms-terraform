@@ -63,8 +63,8 @@ data "aws_lambda_function" "existing" {
   depends_on    = [aws_serverlessapplicationrepository_cloudformation_stack.dynamodb_connector]
 }
 
-resource "aws_athena_data_catalog" "dynamodb_data_catalog" {
-  name        = "dynamodb-data-catalog"
+resource "aws_athena_data_catalog" "dynamodb" {
+  name        = "dynamodb"
   description = "Athena dynamodb data catalog"
   type        = "LAMBDA"
 
