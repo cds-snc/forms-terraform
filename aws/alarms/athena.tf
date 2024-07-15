@@ -33,3 +33,42 @@ module "athena_bucket" {
     },
   ]
 }
+
+#
+# Enable Athena Federated Query
+#
+
+resource "aws_s3_bucket" "athena_spill_bucket" {
+  bucket = "gc-forms-${var.env}-athena-spill-bucket"
+}
+
+#
+# Enables Amazon Athena to communicate with DynamoDB
+#
+resource "aws_serverlessapplicationrepository_cloudformation_stack" "dynamodb_connector" {
+  name           = "dynamodb-connector"
+  application_id = "arn:aws:serverlessrepo:us-east-1:292517598671:applications/AthenaDynamoDBConnector"
+  capabilities = [
+    "CAPABILITY_IAM",
+    "CAPABILITY_RESOURCE_POLICY",
+  ]
+  parameters = {
+    AthenaCatalogName = "dynamodb-lambda-connector"
+    SpillBucket       = aws_s3_bucket.athena_spill_bucket.id
+  }
+}
+
+data "aws_lambda_function" "existing" {
+  function_name = "dynamodb-lambda-connector"
+  depends_on    = [aws_serverlessapplicationrepository_cloudformation_stack.dynamodb_connector]
+}
+
+resource "aws_athena_data_catalog" "dynamodb_data_catalog" {
+  name        = "dynamodb-data-catalog"
+  description = "Athena dynamodb data catalog"
+  type        = "LAMBDA"
+
+  parameters = {
+    "function" = data.aws_lambda_function.existing.arn
+  }
+}
