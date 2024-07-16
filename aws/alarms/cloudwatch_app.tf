@@ -552,38 +552,6 @@ resource "aws_cloudwatch_metric_alarm" "healthcheck_lambda_submission_invocation
   }
 }
 
-# Submission lambda: anomaly detection, trigger when invocations are below lower threshold
-resource "aws_cloudwatch_metric_alarm" "healthcheck_lambda_submission_invocations_anomaly" {
-  alarm_name          = "SubmissionLambdaInvocationsAnomaly"
-  alarm_description   = "HealthCheck - `submission` invocations in ${local.lambda_submission_expect_invocation_in_period} minutes is low."
-  comparison_operator = "LessThanLowerThreshold"
-  evaluation_periods  = 1
-  threshold_metric_id = "invocations_expected"
-  treat_missing_data  = "notBreaching"
-
-  metric_query {
-    id          = "invocations_expected"
-    expression  = "ANOMALY_DETECTION_BAND(invocations)"
-    label       = "Invocations (expected)"
-    return_data = "true"
-  }
-
-  metric_query {
-    id          = "invocations"
-    return_data = "true"
-    metric {
-      metric_name = "Invocations"
-      namespace   = "AWS/Lambda"
-      period      = local.lambda_submission_expect_invocation_in_period * 60
-      stat        = "Sum"
-      unit        = "Count"
-      dimensions = {
-        FunctionName = var.lambda_submission_function_name
-      }
-    }
-  }
-}
-
 # Nagware lambda: no invocations on a Tuesday, Thursday or Sunday
 resource "aws_cloudwatch_metric_alarm" "healthcheck_lambda_nagware_invocations_schedule" {
   alarm_name          = "NagwareLambdaNoInvocationsSchedule"
