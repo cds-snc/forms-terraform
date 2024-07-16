@@ -1,5 +1,5 @@
 import {
-  retrieveFormResponsesOver28DaysOld,
+  retrieveNewOrDownloadedFormResponsesOver28DaysOld,
   deleteOldTestResponses,
 } from "./lib/dynamodbDataLayer.js";
 import { getTemplateInfo } from "./lib/templates.js";
@@ -50,10 +50,9 @@ export const handler: Handler = async () => {
 };
 
 async function findOldestFormResponseByFormID() {
-  const unsavedFormResponses = await retrieveFormResponsesOver28DaysOld("New");
-  const unconfirmedFormResponses = await retrieveFormResponsesOver28DaysOld("Downloaded");
+  const formResponses = await retrieveNewOrDownloadedFormResponsesOver28DaysOld();
 
-  const reduceResult = unsavedFormResponses.concat(unconfirmedFormResponses).reduce((acc, curr) => {
+  const reduceResult = formResponses.reduce((acc, curr) => {
     const { formID, createdAt } = curr;
 
     const previousEntry = acc[formID];

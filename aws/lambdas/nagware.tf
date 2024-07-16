@@ -7,7 +7,7 @@ resource "aws_lambda_function" "nagware" {
   image_uri     = "${var.ecr_repository_url_nagware_lambda}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
-  timeout       = 300
+  timeout       = 900
 
   lifecycle {
     ignore_changes = [image_uri]

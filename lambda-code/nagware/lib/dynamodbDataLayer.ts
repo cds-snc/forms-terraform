@@ -1,60 +1,59 @@
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
-  DynamoDBClient,
+  BatchWriteCommand,
   QueryCommand,
-  BatchWriteItemCommand,
-  QueryCommandInput,
-} from "@aws-sdk/client-dynamodb";
-
-const dynamoDb = new DynamoDBClient({
-  region: process.env.REGION,
-  ...(process.env.LOCALSTACK === "true" && { endpoint: "http://host.docker.internal:4566" }),
-});
+  QueryCommandOutput,
+  ScanCommand,
+  ScanCommandOutput,
+} from "@aws-sdk/lib-dynamodb";
 
 const DYNAMODB_VAULT_TABLE_NAME = process.env.DYNAMODB_VAULT_TABLE_NAME ?? "";
 
-export async function retrieveFormResponsesOver28DaysOld(status: string) {
+const dynamodbClient = new DynamoDBClient({
+  region: process.env.REGION ?? "ca-central-1",
+  ...(process.env.LOCALSTACK === "true" && {
+    endpoint: "http://host.docker.internal:4566",
+  }),
+});
+
+export async function retrieveNewOrDownloadedFormResponsesOver28DaysOld() {
   try {
     let formResponses: { formID: string; createdAt: number }[] = [];
     let lastEvaluatedKey = null;
 
     while (lastEvaluatedKey !== undefined) {
-      const queryCommandInput: QueryCommandInput = {
-        TableName: DYNAMODB_VAULT_TABLE_NAME,
-        IndexName: "Nagware",
-        ExclusiveStartKey: lastEvaluatedKey ?? undefined,
-        KeyConditionExpression: "#status = :status AND CreatedAt <= :createdAt",
-        ExpressionAttributeNames: {
-          "#status": "Status",
-        },
-        ExpressionAttributeValues: {
-          ":status": {
-            S: status,
+      const scanResults: ScanCommandOutput = await dynamodbClient.send(
+        new ScanCommand({
+          TableName: DYNAMODB_VAULT_TABLE_NAME,
+          ExclusiveStartKey: lastEvaluatedKey ?? undefined,
+          FilterExpression:
+            "(#status = :statusNew OR #status = :statusDownloaded) AND CreatedAt <= :createdAt",
+          ProjectionExpression: "FormID,CreatedAt",
+          ExpressionAttributeNames: {
+            "#status": "Status",
           },
-          ":createdAt": {
-            N: (Date.now() - 2419200000).toString(), // 2419200000 milliseconds = 28 days
+          ExpressionAttributeValues: {
+            ":statusNew": "New",
+            ":statusDownloaded": "Downloaded",
+            ":createdAt": Date.now() - 2419200000, // 2419200000 milliseconds = 28 days
           },
-        },
-        ProjectionExpression: "FormID,CreatedAt",
-      };
+        })
+      );
 
-      const response = await dynamoDb.send(new QueryCommand(queryCommandInput));
+      formResponses = formResponses.concat(
+        scanResults.Items?.map((item) => ({
+          formID: item.FormID,
+          createdAt: item.CreatedAt,
+        })) ?? []
+      );
 
-      if (response.Items?.length) {
-        formResponses = formResponses.concat(
-          response.Items.map((item) => ({
-            formID: item.FormID.S ?? "",
-            createdAt: item.CreatedAt.N ? Number(item.CreatedAt.N) : 0,
-          }))
-        );
-      }
-
-      lastEvaluatedKey = response.LastEvaluatedKey;
+      lastEvaluatedKey = scanResults.LastEvaluatedKey;
     }
 
     return formResponses;
   } catch (error) {
     throw new Error(
-      `Failed to retrieve ${status} form responses. Reason: ${(error as Error).message}.`
+      `Failed to retrieve new or downloaded form responses. Reason: ${(error as Error).message}.`
     );
   }
 }
@@ -64,22 +63,21 @@ export async function deleteOldTestResponses(formID: string) {
     let accumulatedResponses: string[] = [];
     let lastEvaluatedKey = null;
     while (lastEvaluatedKey !== undefined) {
-      const queryCommandInput: QueryCommandInput = {
-        TableName: DYNAMODB_VAULT_TABLE_NAME,
-        ExclusiveStartKey: lastEvaluatedKey ?? undefined,
-        KeyConditionExpression: "FormID = :formID",
-        ExpressionAttributeValues: {
-          ":formID": {
-            S: formID,
+      const response: QueryCommandOutput = await dynamodbClient.send(
+        new QueryCommand({
+          TableName: DYNAMODB_VAULT_TABLE_NAME,
+          ExclusiveStartKey: lastEvaluatedKey ?? undefined,
+          KeyConditionExpression: "FormID = :formID",
+          ExpressionAttributeValues: {
+            ":formID": formID,
           },
-        },
-        ProjectionExpression: "NAME_OR_CONF",
-      };
-      const response = await dynamoDb.send(new QueryCommand(queryCommandInput));
+          ProjectionExpression: "NAME_OR_CONF",
+        })
+      );
 
       if (response.Items?.length) {
         accumulatedResponses = accumulatedResponses.concat(
-          response.Items.map((item) => item.NAME_OR_CONF.S ?? "")
+          response.Items.map((item) => item.NAME_OR_CONF)
         );
       }
       lastEvaluatedKey = response.LastEvaluatedKey;
@@ -99,28 +97,19 @@ export async function deleteOldTestResponses(formID: string) {
 }
 
 async function deleteDraftFormResponsesFromDynamoDb(formID: string, formResponses: string[]) {
-  const chunks = (arr: any[], size: number) =>
-    Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
-      arr.slice(i * size, i * size + size)
-    );
-
   try {
     /**
      * The `BatchWriteItemCommand` can only take up to 25 `DeleteRequest` at a time.
      */
     const asyncDeleteRequests = chunks(formResponses, 25).map((request) => {
-      return dynamoDb.send(
-        new BatchWriteItemCommand({
+      return dynamodbClient.send(
+        new BatchWriteCommand({
           RequestItems: {
             [DYNAMODB_VAULT_TABLE_NAME]: request.map((entryName) => ({
               DeleteRequest: {
                 Key: {
-                  FormID: {
-                    S: formID,
-                  },
-                  NAME_OR_CONF: {
-                    S: entryName,
-                  },
+                  FormID: formID,
+                  NAME_OR_CONF: entryName,
                 },
               },
             })),
@@ -149,4 +138,10 @@ async function deleteDraftFormResponsesFromDynamoDb(formID: string, formResponse
       `Failed to delete overdue draft form responses. Reason: ${(error as Error).message}.`
     );
   }
+}
+
+function chunks<T>(arr: T[], size: number): T[][] {
+  return Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
+    arr.slice(i * size, i * size + size)
+  );
 }
