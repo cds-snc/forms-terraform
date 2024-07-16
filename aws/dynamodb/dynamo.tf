@@ -66,11 +66,10 @@ resource "aws_dynamodb_table" "vault" {
   }
 
   global_secondary_index {
-    name               = "Archive"
-    hash_key           = "Status"
-    range_key          = "RemovalDate"
-    projection_type    = "INCLUDE"
-    non_key_attributes = ["FormID,Name,SubmissionID,FormSubmission,CreatedAt,ConfirmationCode"]
+    name            = "Archive"
+    hash_key        = "Status"
+    range_key       = "RemovalDate"
+    projection_type = "ALL"
   }
 
   global_secondary_index {
