@@ -7,7 +7,8 @@ dependencies {
 }
 
 locals {
-  domain = jsondecode(get_env("APP_DOMAINS", "[\"localhost:3000\"]"))
+  domain           = jsondecode(get_env("APP_DOMAINS", "[\"localhost:3000\"]"))
+  feature_flag_idp = get_env("FF_IDP", "false")
 }
 
 dependency "hosted_zone" {
@@ -122,6 +123,7 @@ dependency "ecr" {
 }
 
 dependency "idp" {
+  enabled                                 = local.feature_flag_idp
   config_path                             = "../idp"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
@@ -183,12 +185,12 @@ inputs = {
 
   ecr_repository_url_notify_slack_lambda = dependency.ecr.outputs.ecr_repository_url_notify_slack_lambda
 
-  ecs_idp_cluster_name              = dependency.idp.outputs.ecs_idp_cluster_name
-  ecs_idp_cloudwatch_log_group_name = dependency.idp.outputs.ecs_idp_cloudwatch_log_group_name
-  ecs_idp_service_name              = dependency.idp.outputs.ecs_idp_service_name
-  lb_idp_arn_suffix                 = dependency.idp.outputs.lb_idp_arn_suffix
-  lb_idp_target_group_arn_suffix    = dependency.idp.outputs.lb_idp_target_group_arn_suffix
-  rds_idp_cluster_identifier        = dependency.idp.outputs.rds_idp_cluster_identifier
+  ecs_idp_cluster_name              = local.feature_flag_idp == "true" ? dependency.idp.outputs.ecs_idp_cluster_name : ""
+  ecs_idp_cloudwatch_log_group_name = local.feature_flag_idp == "true" ? dependency.idp.outputs.ecs_idp_cloudwatch_log_group_name : ""
+  ecs_idp_service_name              = local.feature_flag_idp == "true" ? dependency.idp.outputs.ecs_idp_service_name : ""
+  lb_idp_arn_suffix                 = local.feature_flag_idp == "true" ? dependency.idp.outputs.lb_idp_arn_suffix : ""
+  lb_idp_target_group_arn_suffix    = local.feature_flag_idp == "true" ? dependency.idp.outputs.lb_idp_target_group_arn_suffix : ""
+  rds_idp_cluster_identifier        = local.feature_flag_idp == "true" ? dependency.idp.outputs.rds_idp_cluster_identifier : ""
   rds_idp_cpu_maxiumum              = 80
 }
 
