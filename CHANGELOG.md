@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.14.0](https://github.com/cds-snc/forms-terraform/compare/v3.13.0...v3.14.0) (2024-07-16)
+
+
+### Features
+
+* add IdP CloudWatch alarms ([#720](https://github.com/cds-snc/forms-terraform/issues/720)) ([f2696eb](https://github.com/cds-snc/forms-terraform/commit/f2696eb3fb480a92fe943e384ba6c6b775a1c4f4))
+* Enable Amazon Athena to communicate with DynamoDB ([#723](https://github.com/cds-snc/forms-terraform/issues/723)) ([188824d](https://github.com/cds-snc/forms-terraform/commit/188824d2930dfb38329a20f5126f0992cd947daa))
+
+
+### Bug Fixes
+
+* Change the Archive Index key projection back to All ([#727](https://github.com/cds-snc/forms-terraform/issues/727)) ([4cdccf5](https://github.com/cds-snc/forms-terraform/commit/4cdccf5fd0b5185ea7e568fcf6c8815303f4a186))
+* Updates global indexes to only project needed keys ([#725](https://github.com/cds-snc/forms-terraform/issues/725)) ([78ef137](https://github.com/cds-snc/forms-terraform/commit/78ef137cb7fb89bd076da24491c262769ee50024))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#721](https://github.com/cds-snc/forms-terraform/issues/721)) ([aa42dae](https://github.com/cds-snc/forms-terraform/commit/aa42dae6dd650e52cf415618d4d4097caed13eb8))
+* switch from using GSIs to Scan operations for both the response archiver and the nagware lambda functions ([#726](https://github.com/cds-snc/forms-terraform/issues/726)) ([c09caba](https://github.com/cds-snc/forms-terraform/commit/c09cabaa08176d05d5d34d057a4b48f243ed768d))
+* synced file(s) with cds-snc/site-reliability-engineering ([#722](https://github.com/cds-snc/forms-terraform/issues/722)) ([605faef](https://github.com/cds-snc/forms-terraform/commit/605faef6ff1d157581d7ded4e2add58f0c38e607))
+
 ## [3.13.0](https://github.com/cds-snc/forms-terraform/compare/v3.12.0...v3.13.0) (2024-07-05)
 
 
