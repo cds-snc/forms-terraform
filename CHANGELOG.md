@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.14.1](https://github.com/cds-snc/forms-terraform/compare/v3.14.0...v3.14.1) (2024-07-18)
+
+
+### Bug Fixes
+
+* `alarm` module apply when `idp` not enabled ([#728](https://github.com/cds-snc/forms-terraform/issues/728)) ([e48896e](https://github.com/cds-snc/forms-terraform/commit/e48896e7637ec6c97dfea72dc9bbf70889733985))
+* response archiver lambda will ignore confirmation code entries in the DynamoDB Vault table when scanning for items ([#730](https://github.com/cds-snc/forms-terraform/issues/730)) ([dbd7242](https://github.com/cds-snc/forms-terraform/commit/dbd7242fbd5beb173c257a1e1fbcedf8c08e2bde))
+
 ## [3.14.0](https://github.com/cds-snc/forms-terraform/compare/v3.13.0...v3.14.0) (2024-07-16)
 
 
