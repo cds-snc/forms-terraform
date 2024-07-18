@@ -133,12 +133,14 @@ async function retrieveArchivableResponses(
         TableName: DYNAMODB_VAULT_TABLE_NAME,
         Limit: PROCESSING_CHUNK_SIZE,
         ExclusiveStartKey: lastEvaluatedKey,
-        FilterExpression: "attribute_exists(RemovalDate) AND RemovalDate <= :removalDate",
+        FilterExpression:
+          "begins_with(NAME_OR_CONF, :nameOrConfPrefix) AND RemovalDate <= :removalDate",
         ProjectionExpression: "FormID,#name,SubmissionID,FormSubmission,CreatedAt,ConfirmationCode",
         ExpressionAttributeNames: {
           "#name": "Name",
         },
         ExpressionAttributeValues: {
+          ":nameOrConfPrefix": "NAME#",
           ":removalDate": Date.now(),
         },
       })
