@@ -80,6 +80,7 @@ resource "aws_serverlessapplicationrepository_cloudformation_stack" "dynamodb_co
   parameters = {
     AthenaCatalogName = "dynamodb-lambda-connector"
     SpillBucket       = aws_s3_bucket.athena_spill_bucket.id
+    LambdaRole        = aws_iam_role.athena_dynamodb_role.arn
   }
 }
 
@@ -95,7 +96,6 @@ resource "aws_athena_data_catalog" "dynamodb" {
 
   parameters = {
     "function"   = data.aws_lambda_function.existing.arn
-    "LambdaRole" = aws_iam_role.athena_dynamodb_role.arn
   }
 }
 
@@ -147,7 +147,7 @@ resource "aws_iam_role_policy" "athena_dynamodb_policy" {
         "Action" : [
           "kms:Decrypt"
         ],
-        "Resource" : "*",
+        "Resource" : "${var.kms_key_dynamodb_arn}",
         "Effect" : "Allow"
       },
       {

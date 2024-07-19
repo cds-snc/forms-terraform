@@ -28,6 +28,7 @@ dependency "kms" {
   mock_outputs = {
     kms_key_cloudwatch_arn         = null
     kms_key_cloudwatch_us_east_arn = null
+    kms_key_dynamodb_arn           = null
   }
 }
 
@@ -143,7 +144,6 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_audit_logs_table_name = "AuditLogs"
     dynamodb_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:123456789012:table/AuditLogs"
   }
 }
@@ -205,6 +205,8 @@ inputs = {
   rds_idp_cpu_maxiumum              = 80
 
   dynamodb_audit_logs_arn           = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
+  kms_key_cloudwatch_arn            = dependency.kms.outputs.kms_key_dynamodb_arn
+
 }
 
 include {

@@ -230,3 +230,8 @@ variable "dynamodb_audit_logs_arn" {
   description = "Audit Logs table ARN"
   type        = string
 }
+
+variable "kms_key_dynamodb_arn" {
+  description = "DynamoDB KMS key ARN used to encrypt"
+  type        = string
+}
