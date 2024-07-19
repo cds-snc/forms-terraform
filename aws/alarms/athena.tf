@@ -95,7 +95,7 @@ resource "aws_athena_data_catalog" "dynamodb" {
   type        = "LAMBDA"
 
   parameters = {
-    "function"   = data.aws_lambda_function.existing.arn
+    "function" = data.aws_lambda_function.existing.arn
   }
 }
 

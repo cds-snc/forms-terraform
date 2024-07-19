@@ -205,7 +205,7 @@ inputs = {
   rds_idp_cpu_maxiumum              = 80
 
   dynamodb_audit_logs_arn           = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
-  kms_key_cloudwatch_arn            = dependency.kms.outputs.kms_key_dynamodb_arn
+  kms_key_dynamodb_arn              = dependency.kms.outputs.kms_key_dynamodb_arn
 
 }
 
