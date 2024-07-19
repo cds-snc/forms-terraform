@@ -94,6 +94,92 @@ resource "aws_athena_data_catalog" "dynamodb" {
   type        = "LAMBDA"
 
   parameters = {
-    "function" = data.aws_lambda_function.existing.arn
+    "function"   = data.aws_lambda_function.existing.arn
+    "LambdaRole" = aws_iam_role.athena_dynamodb_role.arn
   }
+}
+
+resource "aws_iam_role_policy" "athena_dynamodb_policy" {
+  name = "athena_dynamodb_policy"
+  role = aws_iam_role.athena_dynamodb_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Resource" : "*"
+      },
+      {
+        "Action" : [
+          "glue:GetTableVersions",
+          "glue:GetPartitions",
+          "glue:GetTables",
+          "glue:GetTableVersion",
+          "glue:GetDatabases",
+          "glue:GetTable",
+          "glue:GetPartition",
+          "glue:GetDatabase",
+          "athena:GetQueryExecution",
+          "s3:ListAllMyBuckets"
+        ],
+        "Resource" : "*",
+        "Effect" : "Allow"
+      },
+      {
+        "Action" : [
+          "dynamodb:DescribeTable",
+          "dynamodb:ListSchemas",
+          "dynamodb:ListTables",
+          "dynamodb:Query",
+          "dynamodb:Scan",
+          "dynamodb:PartiQLSelect",
+          "kms:Decrypt"
+        ],
+        "Resource" : "table/AuditLog",
+        "Effect" : "Allow"
+      },
+      {
+        "Action" : [
+          "s3:GetObject",
+          "s3:ListBucket",
+          "s3:GetBucketLocation",
+          "s3:GetObjectVersion",
+          "s3:PutObject",
+          "s3:PutObjectAcl",
+          "s3:GetLifecycleConfiguration",
+          "s3:PutLifecycleConfiguration",
+          "s3:DeleteObject"
+        ],
+        "Resource" : [
+          "${aws_s3_bucket.athena_spill_bucket.id}",
+          "${aws_s3_bucket.athena_spill_bucket.id}/*"
+        ],
+        "Effect" : "Allow"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role" "athena_dynamodb_role" {
+  name = "athena_dynamodb_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      },
+    ]
+  })
 }
