@@ -33,6 +33,12 @@ variable "env" {
   type        = string
 }
 
+variable "feature_flag_api" {
+  description = "Feature flag that determines if the API infrastructure is deployed"
+  type        = bool
+  default     = false
+}
+
 variable "feature_flag_idp" {
   description = "Feature flag that determines if the IdP infrastructure is deployed"
   type        = bool

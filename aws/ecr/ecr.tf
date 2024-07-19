@@ -87,3 +87,21 @@ resource "aws_ecr_lifecycle_policy" "idp" {
   repository = aws_ecr_repository.idp[0].name
   policy     = file("${path.module}/policy/lifecycle.json")
 }
+
+resource "aws_ecr_repository" "api" {
+  count = var.feature_flag_api ? 1 : 0
+
+  name                 = "forms/api"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_lifecycle_policy" "api" {
+  count = var.feature_flag_api ? 1 : 0
+
+  repository = aws_ecr_repository.api[0].name
+  policy     = file("${path.module}/policy/lifecycle.json")
+}
