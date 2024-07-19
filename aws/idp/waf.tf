@@ -8,6 +8,45 @@ resource "aws_wafv2_web_acl" "idp" {
   }
 
   rule {
+    name     = "InvalidHost"
+    priority = 5
+
+    action {
+      block {}
+    }
+
+    statement {
+      not_statement {
+        statement {
+          byte_match_statement {
+            field_to_match {
+              single_header {
+                name = "host"
+              }
+            }
+            text_transformation {
+              priority = 1
+              type     = "COMPRESS_WHITE_SPACE"
+            }
+            text_transformation {
+              priority = 2
+              type     = "LOWERCASE"
+            }
+            positional_constraint = "EXACTLY"
+            search_string         = var.domain_idp
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "InvalidHost"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
     name     = "AWSManagedRulesAmazonIpReputationList"
     priority = 10
 
