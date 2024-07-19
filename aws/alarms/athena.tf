@@ -138,10 +138,16 @@ resource "aws_iam_role_policy" "athena_dynamodb_policy" {
           "dynamodb:ListTables",
           "dynamodb:Query",
           "dynamodb:Scan",
-          "dynamodb:PartiQLSelect",
+          "dynamodb:PartiQLSelect"
+        ],
+        "Resource" : "${var.dynamodb_audit_logs_arn}",
+        "Effect" : "Allow"
+      },
+      {
+        "Action" : [
           "kms:Decrypt"
         ],
-        "Resource" : "table/AuditLog",
+        "Resource" : "*",
         "Effect" : "Allow"
       },
       {

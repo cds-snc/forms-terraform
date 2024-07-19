@@ -225,3 +225,8 @@ variable "ecr_repository_url_notify_slack_lambda" {
   description = "URL of the Notify Slack Lambda ECR"
   type        = string
 }
+
+variable "dynamodb_audit_logs_arn" {
+  description = "Audit Logs table ARN"
+  type        = string
+}

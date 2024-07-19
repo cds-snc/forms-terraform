@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../hosted_zone", "../kms", "../load_balancer", "../rds", "../sqs", "../app", "../sns", "../lambdas", "../ecr", "../idp"]
+  paths = ["../hosted_zone", "../kms", "../load_balancer", "../rds", "../sqs", "../app", "../sns", "../lambdas", "../ecr", "../idp", "../dynamodb"]
 }
 
 locals {
@@ -137,6 +137,17 @@ dependency "idp" {
   }
 }
 
+dependency "dynamodb" {
+  config_path = "../dynamodb"
+
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs = {
+    dynamodb_audit_logs_table_name = "AuditLogs"
+    dynamodb_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:123456789012:table/AuditLogs"
+  }
+}
+
 inputs = {
   threshold_ecs_cpu_utilization_high    = "50"
   threshold_ecs_memory_utilization_high = "50"
@@ -192,6 +203,8 @@ inputs = {
   lb_idp_target_group_arn_suffix    = local.feature_flag_idp == "true" ? dependency.idp.outputs.lb_idp_target_group_arn_suffix : ""
   rds_idp_cluster_identifier        = local.feature_flag_idp == "true" ? dependency.idp.outputs.rds_idp_cluster_identifier : ""
   rds_idp_cpu_maxiumum              = 80
+
+  dynamodb_audit_logs_arn           = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
 }
 
 include {
