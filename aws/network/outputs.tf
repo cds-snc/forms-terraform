@@ -3,6 +3,11 @@ output "alb_security_group_id" {
   value       = aws_security_group.forms_load_balancer.id
 }
 
+output "api_ecs_security_group_id" {
+  description = "API ECS task security group ID"
+  value       = var.feature_flag_api ? aws_security_group.api_ecs[0].id : ""
+}
+
 output "ecs_security_group_id" {
   description = "ECS task security group ID"
   value       = aws_security_group.forms.id
