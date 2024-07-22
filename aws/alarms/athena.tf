@@ -163,8 +163,8 @@ resource "aws_iam_role_policy" "athena_dynamodb_policy" {
           "s3:DeleteObject"
         ],
         "Resource" : [
-          "${aws_s3_bucket.athena_spill_bucket.id}",
-          "${aws_s3_bucket.athena_spill_bucket.id}/*"
+          "${aws_s3_bucket.athena_spill_bucket.arn}",
+          "${aws_s3_bucket.athena_spill_bucket.arn}/*"
         ],
         "Effect" : "Allow"
       }
