@@ -99,12 +99,12 @@ import {
 
 import {
   to = aws_security_group_rule.forms_lb_ingress_internet_80
-  id = "${aws_security_group.forms_load_balancer.id}__ingress_tcp_80_80_0.0.0.0/0"
+  id = "${aws_security_group.forms_load_balancer.id}_ingress_tcp_80_80_0.0.0.0/0"
 }
 
 import {
   to = aws_security_group_rule.forms_lb_egress_vpc
-  id = "${aws_security_group.forms_load_balancer.id}__egress_tcp_3000_3000_${var.vpc_cidr_block}"
+  id = "${aws_security_group.forms_load_balancer.id}_egress_tcp_3000_3000_${var.vpc_cidr_block}"
 }
 
 resource "aws_security_group" "forms_egress" {
