@@ -57,27 +57,54 @@ resource "aws_security_group" "forms_load_balancer" {
   name        = "forms-load-balancer"
   description = "Ingress - forms Load Balancer"
   vpc_id      = aws_vpc.forms.id
+}
 
-  ingress {
-    protocol    = "tcp"
-    from_port   = 443
-    to_port     = 443
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "aws_security_group_rule" "forms_lb_ingress_internet_443" {
+  description       = "Ingress to the Load Balancer from the internet on port 443"
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  security_group_id = aws_security_group.forms_load_balancer.id
+  cidr_blocks       = ["0.0.0.0/0"]
+}
 
-  ingress {
-    protocol    = "tcp"
-    from_port   = 80
-    to_port     = 80
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "aws_security_group_rule" "forms_lb_ingress_internet_80" {
+  description       = "Ingress to the Load Balancer from the internet on port 80"
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  security_group_id = aws_security_group.forms_load_balancer.id
+  cidr_blocks       = ["0.0.0.0/0"]
+}
 
-  egress {
-    protocol    = "tcp"
-    from_port   = 3000
-    to_port     = 3000
-    cidr_blocks = [var.vpc_cidr_block]
-  }
+# TODO: scope this down to the app ECS task only
+resource "aws_security_group_rule" "forms_lb_egress_vpc" {
+  description       = "Egress from the Load Balancer to the VPC"
+  type              = "egress"
+  from_port         = 3000
+  to_port           = 3000
+  protocol          = "tcp"
+  security_group_id = aws_security_group.forms_load_balancer.id
+  cidr_blocks       = [var.vpc_cidr_block]
+}
+
+# TODO: remove once these have applied in Production
+# These are being converted to standalone SG rules to prevent rule flip-flops.
+import {
+  to = aws_security_group_rule.forms_lb_ingress_internet_443
+  id = "${aws_security_group.forms_load_balancer.id}_ingress_tcp_443_443_0.0.0.0/0"
+}
+
+import {
+  to = aws_security_group_rule.forms_lb_ingress_internet_80
+  id = "${aws_security_group.forms_load_balancer.id}__ingress_tcp_80_80_0.0.0.0/0"
+}
+
+import {
+  to = aws_security_group_rule.forms_lb_egress_vpc
+  id = "${aws_security_group.forms_load_balancer.id}__egress_tcp_3000_3000_${var.vpc_cidr_block}"
 }
 
 resource "aws_security_group" "forms_egress" {
