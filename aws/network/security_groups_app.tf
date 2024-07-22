@@ -70,6 +70,7 @@ resource "aws_security_group_rule" "forms_lb_ingress_internet_443" {
 }
 
 resource "aws_security_group_rule" "forms_lb_ingress_internet_80" {
+  # checkov:skip=CKV_AWS_260: Ingress from 0.0.0.0:0 to port 80 is required by the load balancer to redirect users from HTTP to HTTPS
   description       = "Ingress to the Load Balancer from the internet on port 80"
   type              = "ingress"
   from_port         = 80
