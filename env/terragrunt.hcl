@@ -3,14 +3,16 @@ locals {
   env              = get_env("APP_ENV", "local")
   feature_flag_api = get_env("FF_API", "false")
   feature_flag_idp = get_env("FF_IDP", "false")
+  domain_api       = get_env("API_DOMAIN", "localhost:3001") 
   domain_idp       = get_env("IDP_DOMAIN", "localhost:8080")
-  domains          = get_env("APP_DOMAINS", "[\"localhost:3000\"]")
+  domains          = get_env("APP_DOMAINS", "[\"localhost:3000\",\"localhost:3001\"]")
 }
 
 inputs = {
   account_id                = "${local.account_id}"
   billing_tag_key           = "CostCentre"
   billing_tag_value         = "forms-platform-${local.env}"
+  domain_api                = local.domain_api  
   domain_idp                = local.domain_idp   
   domains                   = local.domains
   env                       = "${local.env}"

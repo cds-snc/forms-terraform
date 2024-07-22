@@ -71,6 +71,32 @@ resource "aws_lb_target_group" "form_viewer_2" {
   }
 }
 
+resource "aws_lb_target_group" "form_api" {
+  count = var.feature_flag_api ? 1 : 0
+
+  name                 = "form-api"
+  port                 = 3001
+  protocol             = "HTTP"
+  target_type          = "ip"
+  deregistration_delay = 30
+  vpc_id               = var.vpc_id
+
+  health_check {
+    enabled             = true
+    interval            = 10
+    port                = 3001
+    path                = "/"
+    matcher             = "200"
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+
+  tags = {
+    Name = "form_api"
+  }
+}
+
 resource "aws_lb_listener" "form_viewer_https" {
   depends_on = [
     aws_acm_certificate.form_viewer
@@ -113,5 +139,23 @@ resource "aws_lb_listener" "form_viewer_http" {
     ignore_changes = [
       default_action # updated by codedeploy
     ]
+  }
+}
+
+resource "aws_alb_listener_rule" "form_api" {
+  count = var.feature_flag_api ? 1 : 0
+
+  listener_arn = aws_lb_listener.form_viewer_https.arn
+  priority     = 100
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.form_api.arn
+  }
+
+  condition {
+    host_header {
+      values = [var.domain_api]
+    }
   }
 }
