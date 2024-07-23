@@ -134,13 +134,19 @@ resource "aws_iam_role_policy" "athena_dynamodb_policy" {
       {
         "Action" : [
           "dynamodb:DescribeTable",
-          "dynamodb:ListSchemas",
           "dynamodb:ListTables",
           "dynamodb:Query",
           "dynamodb:Scan",
           "dynamodb:PartiQLSelect"
         ],
-        "Resource" : "${var.dynamodb_audit_logs_arn}",
+        "Resource" : ["${var.dynamodb_audit_logs_arn}", "${lower(var.dynamodb_audit_logs_arn)}"]
+        "Effect" : "Allow"
+      },
+      {
+        "Action" : [
+          "dynamodb:ListTables",
+        ],
+        "Resource" : "*",
         "Effect" : "Allow"
       },
       {
