@@ -40,12 +40,12 @@ output "lb_target_group_2_name" {
 
 output "lb_target_group_api_arn" {
   description = "Load balancer target group ARN for the API"
-  value       = var.feature_flag_api ? aws_lb_target_group.form_api.arn : ""
+  value       = var.feature_flag_api ? aws_lb_target_group.form_api[0].arn : ""
 }
 
 output "lb_target_group_api_arn_suffix" {
   description = "Load balancer target group ARN suffix for the API"
-  value       = var.feature_flag_api ? aws_lb_target_group.form_api.arn_suffix : ""
+  value       = var.feature_flag_api ? aws_lb_target_group.form_api[0].arn_suffix : ""
 }
 
 output "kinesis_firehose_waf_logs_arn" {
