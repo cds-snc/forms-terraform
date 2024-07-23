@@ -3,31 +3,25 @@
 #
 
 resource "aws_acm_certificate" "form_viewer" {
-  # First entry in domain list is the primary domain
-  domain_name               = var.domains[0]
+  domain_name               = local.app_primary_domain
   validation_method         = "DNS"
-  subject_alternative_names = length(var.domains) > 1 ? setsubtract(var.domains, [var.domains[0]]) : []
+  subject_alternative_names = local.cert_subject_alternative_names
 
   lifecycle {
     create_before_destroy = true
   }
-
-
 }
 
 resource "aws_acm_certificate" "form_viewer_maintenance_mode" {
-  # First entry in domain list is the primary domain
-  domain_name               = var.domains[0]
+  domain_name               = local.app_primary_domain
   validation_method         = "DNS"
-  subject_alternative_names = length(var.domains) > 1 ? setsubtract(var.domains, [var.domains[0]]) : []
+  subject_alternative_names = local.cert_subject_alternative_names
 
   provider = aws.us-east-1
 
   lifecycle {
     create_before_destroy = true
   }
-
-
 }
 
 resource "aws_acm_certificate_validation" "form_viewer_maintenance_mode_cloudfront_certificate" {

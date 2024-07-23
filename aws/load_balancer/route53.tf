@@ -41,6 +41,20 @@ resource "aws_route53_record" "form_viewer_maintenance" {
   set_identifier = "form_viewer_${var.domains[count.index]}_secondary"
 }
 
+resource "aws_route53_record" "form_api" {
+  count = var.feature_flag_api ? 1 : 0
+
+  zone_id = var.hosted_zone_ids[0]
+  name    = var.domain_api
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.form_viewer.dns_name
+    zone_id                = aws_lb.form_viewer.zone_id
+    evaluate_target_health = true
+  }
+}
+
 #
 # Certificate validation
 # 

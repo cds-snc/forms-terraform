@@ -149,9 +149,20 @@ resource "aws_alb_listener_rule" "form_api" {
   priority     = 100
 
   action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.form_api.arn
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "HEALTHY"
+      status_code  = "200"
+    }
   }
+
+  # TODO: replace fixed response with forward action once API is running
+  # action {
+  #   type             = "forward"
+  #   target_group_arn = aws_lb_target_group.form_api.arn
+  # }
 
   condition {
     host_header {
