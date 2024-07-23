@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.15.0](https://github.com/cds-snc/forms-terraform/compare/v3.14.1...v3.15.0) (2024-07-23)
+
+
+### Features
+
+* add API ECS service to the Forms cluster ([#734](https://github.com/cds-snc/forms-terraform/issues/734)) ([62d1753](https://github.com/cds-snc/forms-terraform/commit/62d17539f23ab03f40f3d3942989bd1db201d881))
+
+
+### Bug Fixes
+
+* block invalid `host` requests to the IdP ([#732](https://github.com/cds-snc/forms-terraform/issues/732)) ([7ad863d](https://github.com/cds-snc/forms-terraform/commit/7ad863d62db68bf1f0efccb041c88eacd2bbae80))
+* convert LB security rules to standalone ([#740](https://github.com/cds-snc/forms-terraform/issues/740)) ([443fe06](https://github.com/cds-snc/forms-terraform/commit/443fe0684a08ecb0c02e68e8faf7d045e4243ef3))
+* terraform script for athena-dynamodb ([#738](https://github.com/cds-snc/forms-terraform/issues/738)) ([0d16981](https://github.com/cds-snc/forms-terraform/commit/0d169819b755ff599764aef5190580104f9d9868))
+* Use a custom policy for the dynamodb-lambda connector (allows access to AuditLog only) ([#731](https://github.com/cds-snc/forms-terraform/issues/731)) ([089f27d](https://github.com/cds-snc/forms-terraform/commit/089f27d8009458be3f216a73a446a07e6ff4e239))
+
+
+### Miscellaneous Chores
+
+* upgrade to latest Terraform and Terragrunt ([#735](https://github.com/cds-snc/forms-terraform/issues/735)) ([c21f697](https://github.com/cds-snc/forms-terraform/commit/c21f697c631ab3b4d82e853e3202f99193e395c1))
+* upgrade to latest Terraform AWS provider ([#739](https://github.com/cds-snc/forms-terraform/issues/739)) ([981e82f](https://github.com/cds-snc/forms-terraform/commit/981e82f1437c5a844785241d96426ecbd76e2623))
+
 ## [3.14.1](https://github.com/cds-snc/forms-terraform/compare/v3.14.0...v3.14.1) (2024-07-18)
 
 
