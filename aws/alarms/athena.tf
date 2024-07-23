@@ -125,6 +125,7 @@ resource "aws_iam_role_policy" "athena_dynamodb_policy" {
           "glue:GetTable",
           "glue:GetPartition",
           "glue:GetDatabase",
+          "glue:ListSchemas",
           "athena:GetQueryExecution",
           "s3:ListAllMyBuckets"
         ],
