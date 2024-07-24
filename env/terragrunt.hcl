@@ -5,7 +5,7 @@ locals {
   feature_flag_idp = get_env("FF_IDP", "false")
   domain_api       = get_env("API_DOMAIN", "localhost:3001") 
   domain_idp       = get_env("IDP_DOMAIN", "localhost:8080")
-  domains          = get_env("APP_DOMAINS", "[\"localhost:3000\",\"localhost:3001\"]")
+  domains          = get_env("APP_DOMAINS", "[\"localhost:3000\"]")
 }
 
 inputs = {
