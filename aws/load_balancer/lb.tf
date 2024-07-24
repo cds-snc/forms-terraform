@@ -120,6 +120,13 @@ resource "aws_lb_listener" "form_viewer_https" {
   }
 }
 
+resource "aws_lb_listener_certificate" "form_api_https" {
+  count = var.feature_flag_api ? 1 : 0
+
+  listener_arn    = aws_lb_listener.form_viewer_https.arn
+  certificate_arn = aws_acm_certificate.form_api[0].arn
+}
+
 resource "aws_lb_listener" "form_viewer_http" {
   load_balancer_arn = aws_lb.form_viewer.arn
   port              = "80"

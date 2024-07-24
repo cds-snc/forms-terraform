@@ -103,3 +103,21 @@ resource "aws_route53_record" "form_viewer_maintenance_mode_certificate_validati
   type            = each.value.type
   zone_id         = local.domain_name_to_zone_id[each.value.domain]
 }
+
+resource "aws_route53_record" "form_api_certificate_validation" {
+  for_each = var.feature_flag_api ? {
+    for dvo in aws_acm_certificate.form_api[0].domain_validation_options : dvo.domain_name => {
+      domain = dvo.domain_name
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  } : {}
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = var.hosted_zone_ids[0]
+}
