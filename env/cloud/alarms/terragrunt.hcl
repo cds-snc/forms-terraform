@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../hosted_zone", "../kms", "../load_balancer", "../rds", "../sqs", "../app", "../sns", "../lambdas", "../ecr", "../idp", "../dynamodb"]
+  paths = ["../hosted_zone", "../kms", "../load_balancer", "../rds", "../sqs", "../app", "../sns", "../lambdas", "../ecr", "../idp", "../dynamodb", "../network"]
 }
 
 locals {
@@ -51,7 +51,8 @@ dependency "rds" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    rds_cluster_identifier = "forms-mock-db-cluster"
+    rds_cluster_identifier  = "forms-mock-db-cluster"
+    database_secret_arn     = null
   }
 }
 
@@ -148,6 +149,16 @@ dependency "dynamodb" {
   }
 }
 
+dependency "network" {
+  config_path                             = "../network"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    private_subnet_ids    = [""]
+    rds_security_group_id = null
+  }
+}
+
 inputs = {
   threshold_ecs_cpu_utilization_high    = "50"
   threshold_ecs_memory_utilization_high = "50"
@@ -206,6 +217,10 @@ inputs = {
 
   dynamodb_audit_logs_arn           = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
   kms_key_dynamodb_arn              = dependency.kms.outputs.kms_key_dynamodb_arn
+
+  private_subnet_ids                = dependency.network.outputs.private_subnet_ids
+  rds_security_group_id             = dependency.network.outputs.rds_security_group_id
+  database_url                      = dependency.rds.outputs.database_url_secret_arn
 
 }
 
