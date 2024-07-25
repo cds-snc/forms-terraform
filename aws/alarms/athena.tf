@@ -196,3 +196,39 @@ resource "aws_iam_role" "athena_dynamodb_role" {
     ]
   })
 }
+
+#
+# Enables Amazon Athena to communicate with RDS
+#
+
+resource "aws_serverlessapplicationrepository_cloudformation_stack" "rds_connector" {
+  name           = "rds-connector"
+  application_id = "arn:aws:serverlessrepo:us-east-1:292517598671:applications/AthenaPostgreSQLConnector"
+  capabilities = [
+    "CAPABILITY_IAM",
+    "CAPABILITY_RESOURCE_POLICY",
+  ]
+  parameters = {
+    SpillBucket             = aws_s3_bucket.athena_spill_bucket.id
+    SecretNamePrefix        = "rds-connector"
+    LambdaFunctionName      = "rds-lambda-connector"
+    SecurityGroupIds        = var.rds_security_group_id
+    SubnetIds               = join(",", var.private_subnet_ids)
+    DefaultConnectionString = "postgres://jdbc:postgresql://${var.rds_cluster_endpoint}:5432/${var.rds_db_name}?$${rds-connector}"
+  }
+}
+
+data "aws_lambda_function" "rds_existing" {
+  function_name = "rds-lambda-connector"
+  depends_on    = [aws_serverlessapplicationrepository_cloudformation_stack.rds_connector]
+}
+
+resource "aws_athena_data_catalog" "rds_data_catalog" {
+  name        = "rds"
+  description = "Athena-RDS data catalog"
+  type        = "LAMBDA"
+
+  parameters = {
+    "function" = data.aws_lambda_function.rds_existing.arn
+  }
+}

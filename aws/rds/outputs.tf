@@ -22,3 +22,9 @@ output "rds_db_name" {
   description = "Name of the database"
   value       = var.rds_db_name
 }
+
+output "rds_cluster_endpoint" {
+  description = "RDS cluster endpoint"
+  sensitive   = true
+  value       = aws_rds_cluster.forms.endpoint
+}

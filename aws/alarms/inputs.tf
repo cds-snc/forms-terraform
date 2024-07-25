@@ -235,3 +235,23 @@ variable "kms_key_dynamodb_arn" {
   description = "DynamoDB KMS key ARN used to encrypt"
   type        = string
 }
+variable "private_subnet_ids" {
+  description = "The list of private subnet IDs used by the RDS cluster to"
+  type        = list(string)
+}
+
+variable "rds_security_group_id" {
+  description = "The security group used by RDS"
+  type        = string
+}
+
+variable "rds_cluster_endpoint" {
+  description = "RDS cluster endpoint"
+  sensitive   = true
+  type        = string
+}
+
+variable "rds_db_name" {
+  description = "RDS database name"
+  type        = string
+}

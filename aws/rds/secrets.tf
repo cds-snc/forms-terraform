@@ -23,3 +23,17 @@ resource "aws_secretsmanager_secret_version" "database_secret" {
   secret_id     = aws_secretsmanager_secret.database_secret.id
   secret_string = "{\"dbInstanceIdentifier\": \"${var.rds_name}-cluster\",\"engine\": \"${aws_rds_cluster.forms.engine}\",\"host\": \"${aws_rds_cluster.forms.endpoint}\",\"port\": ${aws_rds_cluster.forms.port},\"resourceId\": \"${aws_rds_cluster.forms.cluster_resource_id}\",\"username\": \"${var.rds_db_user}\",\"password\": \"${var.rds_db_password}\"}"
 }
+
+resource "aws_secretsmanager_secret" "rds_connector" {
+  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
+  name                    = "rds-connector"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "rds_connector" {
+  depends_on    = [aws_rds_cluster.forms]
+  secret_id     = aws_secretsmanager_secret.rds_connector.id
+  secret_string = "{\"username\": \"${var.rds_db_user}\",\"password\": \"${var.rds_db_password}\"}"
+}
+
+
