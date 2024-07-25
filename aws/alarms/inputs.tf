@@ -245,7 +245,12 @@ variable "rds_security_group_id" {
   type        = string
 }
 
-variable "database_url" {
-  description = "Database connection secret arn"
+variable "rds_endpoint" {
+  description = "RDS cluster endpoint"
+  type        = string
+}
+
+variable "rds_db_name" {
+  description = "RDS database name"
   type        = string
 }

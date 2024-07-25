@@ -52,7 +52,8 @@ dependency "rds" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     rds_cluster_identifier  = "forms-mock-db-cluster"
-    database_secret_arn     = null
+    rds_endpoint            = null
+    rds_db_name             = null
   }
 }
 
@@ -220,7 +221,8 @@ inputs = {
 
   private_subnet_ids                = dependency.network.outputs.private_subnet_ids
   rds_security_group_id             = dependency.network.outputs.rds_security_group_id
-  database_url                      = dependency.rds.outputs.database_url_secret_arn
+  rds_endpoint                      = dependency.rds.outputs.rds_cluster_endpoint
+  rds_db_name                       = dependency.rds.outputs.rds_db_name
 
 }
 
