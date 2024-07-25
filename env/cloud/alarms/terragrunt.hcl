@@ -52,8 +52,8 @@ dependency "rds" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     rds_cluster_identifier  = "forms-mock-db-cluster"
-    rds_cluster_endpoint    = null
-    rds_db_name             = null
+    rds_cluster_endpoint    = "localhost"
+    rds_db_name             = "default"
   }
 }
 
