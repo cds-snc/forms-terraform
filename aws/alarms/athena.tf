@@ -214,7 +214,7 @@ resource "aws_serverlessapplicationrepository_cloudformation_stack" "rds_connect
     LambdaFunctionName      = "rds-lambda-connector"
     SecurityGroupIds        = var.rds_security_group_id
     SubnetIds               = join(",", var.private_subnet_ids)
-    DefaultConnectionString = "postgres://jdbc:postgresql://${var.rds_endpoint}:5432/${var.rds_db_name}?${database-secret}"
+    DefaultConnectionString = "postgres://jdbc:postgresql://${var.rds_cluster_endpoint}:5432/${var.rds_db_name}?${rds-connector}"
   }
 }
 

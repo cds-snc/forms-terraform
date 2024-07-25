@@ -247,6 +247,7 @@ variable "rds_security_group_id" {
 
 variable "rds_endpoint" {
   description = "RDS cluster endpoint"
+  sensitive   = true
   type        = string
 }
 
