@@ -124,7 +124,7 @@ resource "aws_lb_listener_certificate" "form_api_https" {
   count = var.feature_flag_api ? 1 : 0
 
   listener_arn    = aws_lb_listener.form_viewer_https.arn
-  certificate_arn = aws_acm_certificate.form_api[0].arn
+  certificate_arn = aws_acm_certificate_validation.form_api[0].certificate_arn
 }
 
 resource "aws_lb_listener" "form_viewer_http" {
