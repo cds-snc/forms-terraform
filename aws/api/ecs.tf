@@ -20,8 +20,8 @@ module "api_ecs" {
 
   # Task definition
   container_image       = "${var.api_image_ecr_url}:${var.api_image_tag}"
-  container_host_port   = 3000
-  container_port        = 3000
+  container_host_port   = 3001
+  container_port        = 3001
   container_environment = local.container_env
   container_secrets     = local.container_secrets
 

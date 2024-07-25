@@ -18,6 +18,11 @@ variable "billing_tag_value" {
   type        = string
 }
 
+variable "domain_api" {
+  description = "The API's domain"
+  type        = string
+}
+
 variable "domain_idp" {
   description = "The identity provider domain"
   type        = string

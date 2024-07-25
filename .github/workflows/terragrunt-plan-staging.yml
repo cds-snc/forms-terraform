@@ -19,6 +19,7 @@ permissions:
 env:
   APP_ENV: staging
   APP_DOMAINS: ${{ vars.STAGING_APP_DOMAINS }}
+  API_DOMAIN: ${{ vars.STAGING_API_DOMAIN }}
   IDP_DOMAIN: ${{ vars.STAGING_IDP_DOMAIN }}
   AWS_ACCOUNT_ID: ${{ vars.STAGING_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1

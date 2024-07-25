@@ -11,8 +11,6 @@ resource "aws_acm_certificate" "form_viewer" {
   lifecycle {
     create_before_destroy = true
   }
-
-
 }
 
 resource "aws_acm_certificate" "form_viewer_maintenance_mode" {
@@ -26,8 +24,17 @@ resource "aws_acm_certificate" "form_viewer_maintenance_mode" {
   lifecycle {
     create_before_destroy = true
   }
+}
 
+resource "aws_acm_certificate" "form_api" {
+  count = var.feature_flag_api ? 1 : 0
 
+  domain_name       = var.domain_api
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_acm_certificate_validation" "form_viewer_maintenance_mode_cloudfront_certificate" {

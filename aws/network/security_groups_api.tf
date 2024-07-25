@@ -37,8 +37,8 @@ resource "aws_security_group_rule" "api_ecs_ingress_lb" {
 
   description              = "Ingress from load balancer to API ECS task"
   type                     = "ingress"
-  from_port                = 3000
-  to_port                  = 3000
+  from_port                = 3001
+  to_port                  = 3001
   protocol                 = "tcp"
   security_group_id        = aws_security_group.api_ecs[0].id
   source_security_group_id = aws_security_group.forms_load_balancer.id
@@ -49,8 +49,8 @@ resource "aws_security_group_rule" "lb_egress_api_ecs" {
 
   description              = "Egress from load balancer to API ECS task"
   type                     = "egress"
-  from_port                = 3000
-  to_port                  = 3000
+  from_port                = 3001
+  to_port                  = 3001
   protocol                 = "tcp"
   security_group_id        = aws_security_group.forms_load_balancer.id
   source_security_group_id = aws_security_group.api_ecs[0].id
