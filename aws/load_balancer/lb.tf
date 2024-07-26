@@ -85,7 +85,7 @@ resource "aws_lb_target_group" "form_api" {
     enabled             = true
     interval            = 10
     port                = 3001
-    path                = "/"
+    path                = "/status"
     matcher             = "200"
     timeout             = 5
     healthy_threshold   = 2

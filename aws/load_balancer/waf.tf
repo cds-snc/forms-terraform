@@ -110,7 +110,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "RateLimitersRuleGroup"
-    priority = 2
+    priority = 10
 
     override_action {
       none {}
@@ -131,7 +131,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "PreventHostInjections"
-    priority = 3
+    priority = 20
 
     statement {
       not_statement {
@@ -168,7 +168,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AWSManagedRulesCommonRuleSet"
-    priority = 5
+    priority = 30
 
     override_action {
       none {}
@@ -200,7 +200,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AWSManagedRulesKnownBadInputsRuleSet"
-    priority = 6
+    priority = 40
     override_action {
       none {}
     }
@@ -221,10 +221,12 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AWSManagedRulesLinuxRuleSet"
-    priority = 7
+    priority = 50
+
     override_action {
       none {}
     }
+
     statement {
       managed_rule_group_statement {
         name        = "AWSManagedRulesLinuxRuleSet"
@@ -239,22 +241,15 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     }
   }
 
-
-
-
   visibility_config {
     cloudwatch_metrics_enabled = true
     metric_name                = "forms_global_rule"
     sampled_requests_enabled   = false
   }
 
-
-
-
-
   rule {
     name     = "AllowOnlyAppUrls"
-    priority = 4
+    priority = 60
 
     action {
       block {}
@@ -289,8 +284,44 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   }
 
   rule {
+    name     = "AllowOnlyApiUrls"
+    priority = 70
+
+    action {
+      block {}
+    }
+
+    statement {
+      not_statement {
+        statement {
+          regex_pattern_set_reference_statement {
+            arn = aws_wafv2_regex_pattern_set.valid_api_uri_paths.arn
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 1
+              type     = "COMPRESS_WHITE_SPACE"
+            }
+            text_transformation {
+              priority = 2
+              type     = "LOWERCASE"
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AllowOnlyApiUrls"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
     name     = local.cognito_login_outside_canada_rule_name
-    priority = 8
+    priority = 80
 
     action {
       count {}
@@ -397,6 +428,16 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
 
   regular_expression {
     regex_string = "^\\/(?:en|fr)?\\/?$"
+  }
+}
+
+resource "aws_wafv2_regex_pattern_set" "valid_api_uri_paths" {
+  name        = "valid_api_uri_paths"
+  scope       = "REGIONAL"
+  description = "Regex to match the API valid urls"
+
+  regular_expression {
+    regex_string = "^\\/(?:v1)?\\/?(?:(status))(?:\\/)?$"
   }
 }
 
