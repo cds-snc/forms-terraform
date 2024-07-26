@@ -12,7 +12,7 @@ resource "aws_security_group_rule" "connector_ingress_rds" {
   to_port                  = 5432
   protocol                 = "tcp"
   security_group_id        = aws_security_group.forms_database.id
-  source_security_group_id = aws_security_group.connector_db.id 
+  source_security_group_id = aws_security_group.connector_db.id
 }
 
 resource "aws_security_group_rule" "connector_egress_rds" {
