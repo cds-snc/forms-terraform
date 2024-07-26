@@ -284,44 +284,8 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   }
 
   rule {
-    name     = "AllowOnlyApiUrls"
-    priority = 70
-
-    action {
-      block {}
-    }
-
-    statement {
-      not_statement {
-        statement {
-          regex_pattern_set_reference_statement {
-            arn = aws_wafv2_regex_pattern_set.valid_api_uri_paths.arn
-            field_to_match {
-              uri_path {}
-            }
-            text_transformation {
-              priority = 1
-              type     = "COMPRESS_WHITE_SPACE"
-            }
-            text_transformation {
-              priority = 2
-              type     = "LOWERCASE"
-            }
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AllowOnlyApiUrls"
-      sampled_requests_enabled   = false
-    }
-  }
-
-  rule {
     name     = local.cognito_login_outside_canada_rule_name
-    priority = 80
+    priority = 70
 
     action {
       count {}
@@ -407,7 +371,7 @@ resource "aws_wafv2_web_acl_logging_configuration" "firehose_waf_logs_forms" {
 resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
   name        = "valid_app_uri_paths"
   scope       = "REGIONAL"
-  description = "Regex to match the app valid urls"
+  description = "Regex to match the app and api valid urls"
 
   regular_expression {
     regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|id|api|auth|signup|profile|forms|unsupported-browser|terms-of-use|contact|support|404)(?:\\/[\\w-]+)?)(?:\\/.*)?$"
@@ -421,6 +385,11 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
     regex_string = "^\\/(?:en|fr)?\\/?(?:(static|_next|img|favicon\\.ico)(?:\\/[\\w-]+)*)(?:\\/.*)?$"
   }
 
+  # API paths
+  regular_expression {
+    regex_string = "^\\/(?:v1)?\\/?(?:(status))(?:\\/)?$"
+  }
+
   # This is a temporary rule to allow search engines tools to access ownership verification files
   regular_expression {
     regex_string = "^\\/?(BingSiteAuth\\.xml|googlef34bd8c094c26cb0\\.html)$"
@@ -428,16 +397,6 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
 
   regular_expression {
     regex_string = "^\\/(?:en|fr)?\\/?$"
-  }
-}
-
-resource "aws_wafv2_regex_pattern_set" "valid_api_uri_paths" {
-  name        = "valid_api_uri_paths"
-  scope       = "REGIONAL"
-  description = "Regex to match the API valid urls"
-
-  regular_expression {
-    regex_string = "^\\/(?:v1)?\\/?(?:(status))(?:\\/)?$"
   }
 }
 
