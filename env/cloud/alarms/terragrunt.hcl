@@ -155,8 +155,8 @@ dependency "network" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    private_subnet_ids    = [""]
-    rds_security_group_id = null
+    private_subnet_ids          = [""]
+    connector_security_group_id = null
   }
 }
 
@@ -220,7 +220,7 @@ inputs = {
   kms_key_dynamodb_arn              = dependency.kms.outputs.kms_key_dynamodb_arn
 
   private_subnet_ids                = dependency.network.outputs.private_subnet_ids
-  rds_security_group_id             = dependency.network.outputs.rds_security_group_id
+  connector_security_group_id       = dependency.network.outputs.connector_security_group_id
   rds_cluster_endpoint              = dependency.rds.outputs.rds_cluster_endpoint
   rds_db_name                       = dependency.rds.outputs.rds_db_name
 

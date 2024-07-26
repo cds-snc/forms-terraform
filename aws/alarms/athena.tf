@@ -212,7 +212,7 @@ resource "aws_serverlessapplicationrepository_cloudformation_stack" "rds_connect
     SpillBucket             = aws_s3_bucket.athena_spill_bucket.id
     SecretNamePrefix        = "rds-connector"
     LambdaFunctionName      = "rds-lambda-connector"
-    SecurityGroupIds        = var.rds_security_group_id
+    SecurityGroupIds        = var.connector_security_group_id
     SubnetIds               = join(",", var.private_subnet_ids)
     DefaultConnectionString = "postgres://jdbc:postgresql://${var.rds_cluster_endpoint}:5432/${var.rds_db_name}?$${rds-connector}"
   }
