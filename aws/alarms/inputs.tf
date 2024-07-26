@@ -240,8 +240,8 @@ variable "private_subnet_ids" {
   type        = list(string)
 }
 
-variable "rds_security_group_id" {
-  description = "The security group used by RDS"
+variable "connector_security_group_id" {
+  description = "The security group used by the connector"
   type        = string
 }
 

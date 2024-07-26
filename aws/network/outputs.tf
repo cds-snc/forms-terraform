@@ -63,3 +63,7 @@ output "vpc_id" {
   value       = aws_vpc.forms.id
 }
 
+output "connector_security_group_id" {
+  description = "Connector security group ID"
+  value       = aws_security_group.connector_db.id
+}
