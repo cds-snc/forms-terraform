@@ -44,3 +44,15 @@ resource "aws_security_group_rule" "privatelink_connector_db_ingress" {
   security_group_id        = aws_security_group.privatelink.id
   source_security_group_id = aws_security_group.connector_db.id
 }
+
+resource "aws_security_group_rule" "s3_gateway_connector_db_egress" {
+  description       = "Security group rule for Lambda RDS Connector S3 egress through VPC endpoints"
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  security_group_id = aws_security_group.connector_db.id
+  prefix_list_ids = [
+    aws_vpc_endpoint.s3.prefix_list_id
+  ]
+}
