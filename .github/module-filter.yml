@@ -7,6 +7,10 @@ alarms:
   - *common
   - "aws/alarms/**"
   - "env/cloud/alarms/**"
+api:
+  - *common
+  - "aws/api/**"
+  - "env/cloud/api/**"
 app:
   - *common
   - "aws/app/**"

@@ -30,7 +30,7 @@ variable "lb_target_group_arn_api_ecs" {
 
 variable "private_subnet_ids" {
   description = "IDs of the private subnets for the ECS service"
-  type        = string
+  type        = list(string)
 }
 
 variable "s3_vault_file_storage_arn" {

@@ -226,6 +226,10 @@ jobs:
         working-directory: env/cloud/app
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Terragrunt apply api
+        working-directory: env/cloud/api
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
       - name: Terragrunt apply lambdas
         working-directory: env/cloud/lambdas
         run: terragrunt apply --terragrunt-non-interactive -auto-approve

@@ -1,6 +1,6 @@
 locals {
-  container_env     = [] # TODO: app api environment variables
-  container_secrets = [] # TODO: app api secrets
+  container_env     = [] # TODO: add api environment variables
+  container_secrets = [] # TODO: add api secrets
 }
 
 module "api_ecs" {

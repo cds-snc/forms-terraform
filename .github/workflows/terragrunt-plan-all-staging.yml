@@ -188,6 +188,13 @@ jobs:
           comment: "false"
           terragrunt: "true"
 
+      - name: Terragrunt plan api
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        with:
+          directory: "env/cloud/api"
+          comment: "false"
+          terragrunt: "true"
+
       - name: Terragrunt plan lambdas
         uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
         with:
