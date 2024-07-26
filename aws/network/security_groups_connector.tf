@@ -16,7 +16,6 @@ resource "aws_security_group_rule" "connector_ingress_rds" {
 }
 
 resource "aws_security_group_rule" "connector_egress_rds" {
-
   description              = "Egress from lambda connector to database"
   type                     = "egress"
   from_port                = 5432
@@ -27,7 +26,6 @@ resource "aws_security_group_rule" "connector_egress_rds" {
 }
 
 resource "aws_security_group_rule" "connector_db_egress_privatelink" {
-
   description              = "Egress from lambda connector to PrivateLink endpoints"
   type                     = "egress"
   from_port                = 443
