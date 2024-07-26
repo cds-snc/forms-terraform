@@ -8,7 +8,7 @@ module "api_ecs" {
 
   create_cluster = false
   cluster_name   = var.ecs_cluster_name
-  service_name   = "forms-api"
+  service_name   = "form-api"
   task_cpu       = 1024
   task_memory    = 2048
 
@@ -19,11 +19,12 @@ module "api_ecs" {
   autoscaling_max_capacity = 3
 
   # Task definition
-  container_image       = "${var.api_image_ecr_url}:${var.api_image_tag}"
-  container_host_port   = 3001
-  container_port        = 3001
-  container_environment = local.container_env
-  container_secrets     = local.container_secrets
+  container_image                     = "${var.api_image_ecr_url}:${var.api_image_tag}"
+  container_host_port                 = 3001
+  container_port                      = 3001
+  container_environment               = local.container_env
+  container_secrets                   = local.container_secrets
+  container_read_only_root_filesystem = false # TODO: mount tmp filesystem for yarn cache and logs
 
   task_exec_role_policy_documents = [
     data.aws_iam_policy_document.api_ecs_dynamodb_vault.json,
