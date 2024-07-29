@@ -24,6 +24,7 @@ inputs = {
   private_subnet_ids    = dependency.network.outputs.private_subnet_ids
   rds_security_group_id = dependency.network.outputs.rds_security_group_id
 
+  rds_connector_db_user    = "rds_connector_read"
   rds_db_user              = local.env == "local" ? "localstack_postgres" : "postgres" # We cannot use `postgres` as a username in Localstack
   rds_db_name              = "forms"
   rds_name                 = local.env == "staging" ? "forms-staging-db" : "forms-db"

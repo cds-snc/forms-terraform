@@ -8,6 +8,17 @@ variable "rds_db_name" {
   type        = string
 }
 
+variable "rds_connector_db_user" {
+  description = "The username the RDS connector uses to connect to the database"
+  type        = string
+}
+
+variable "rds_connector_db_password" {
+  description = "The password the RDS connector uses to connect to the database"
+  type        = string
+  sensitive   = true
+}
+
 variable "rds_db_user" {
   description = "The username of the RDS database"
   type        = string
