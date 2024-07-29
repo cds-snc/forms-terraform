@@ -33,7 +33,5 @@ resource "aws_secretsmanager_secret" "rds_connector" {
 resource "aws_secretsmanager_secret_version" "rds_connector" {
   depends_on    = [aws_rds_cluster.forms]
   secret_id     = aws_secretsmanager_secret.rds_connector.id
-  secret_string = "{\"username\": \"${var.rds_db_user}\",\"password\": \"${var.rds_db_password}\"}"
+  secret_string = "{\"username\": \"${var.rds_connector_db_user}\",\"password\": \"${var.rds_connector_db_password}\"}"
 }
-
-
