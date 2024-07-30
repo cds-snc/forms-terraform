@@ -8,6 +8,11 @@ variable "ecs_cloudwatch_log_group_name" {
   type        = string
 }
 
+variable "ecs_api_cloudwatch_log_group_name" {
+  description = "ECS API CloudWatch log group name, used by API error metric alarms"
+  type        = string
+}
+
 variable "ecs_idp_cloudwatch_log_group_name" {
   description = "ECS IdP CloudWatch log group name, used by IdP error metric alarms"
   type        = string
@@ -93,6 +98,11 @@ variable "ecs_cluster_name" {
   type        = string
 }
 
+variable "ecs_api_cluster_name" {
+  description = "API's ECS cluster name, used by CPU/memory threshold alarms"
+  type        = string
+}
+
 variable "ecs_idp_cluster_name" {
   description = "IdP's ECS cluster name, used by CPU/memory threshold alarms"
   type        = string
@@ -100,6 +110,11 @@ variable "ecs_idp_cluster_name" {
 
 variable "ecs_service_name" {
   description = "ECS service name, used by CPU/memory threshold alarms"
+  type        = string
+}
+
+variable "ecs_api_service_name" {
+  description = "API's ECS service name, used by CPU/memory threshold alarms"
   type        = string
 }
 
@@ -123,6 +138,11 @@ variable "lb_arn_suffix" {
   type        = string
 }
 
+variable "lb_api_arn_suffix" {
+  description = "API's load balancer ARN suffix, used by response time alarms"
+  type        = string
+}
+
 variable "lb_idp_arn_suffix" {
   description = "IdP's load balancer ARN suffix, used by response time alarms"
   type        = string
@@ -135,6 +155,11 @@ variable "lb_target_group_1_arn_suffix" {
 
 variable "lb_target_group_2_arn_suffix" {
   description = "Load balancer target group 2 ARN suffix, used by response time alarms"
+  type        = string
+}
+
+variable "lb_api_target_group_arn_suffix" {
+  description = "API's load balancer target group ARN suffix, used by response time alarms"
   type        = string
 }
 

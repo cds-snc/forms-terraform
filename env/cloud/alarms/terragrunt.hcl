@@ -3,11 +3,12 @@ terraform {
 }
 
 dependencies {
-  paths = ["../hosted_zone", "../kms", "../load_balancer", "../rds", "../sqs", "../app", "../sns", "../lambdas", "../ecr", "../idp", "../dynamodb", "../network"]
+  paths = ["../hosted_zone", "../kms", "../load_balancer", "../rds", "../sqs", "../app", "../sns", "../lambdas", "../ecr", "../api", "../idp", "../dynamodb", "../network"]
 }
 
 locals {
   domain           = jsondecode(get_env("APP_DOMAINS", "[\"localhost:3000\"]"))
+  feature_flag_api = get_env("FF_API", "false")
   feature_flag_idp = get_env("FF_IDP", "false")
 }
 
@@ -38,10 +39,11 @@ dependency "load_balancer" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    lb_arn                = null
-    lb_arn_suffix         = null
-    lb_target_group_1_arn_suffix = null
-    lb_target_group_2_arn_suffix = null
+    lb_arn                         = null
+    lb_arn_suffix                  = null
+    lb_target_group_1_arn_suffix   = null
+    lb_target_group_2_arn_suffix   = null
+    lb_target_group_api_arn_suffix = null
   }
 }
 
@@ -125,6 +127,18 @@ dependency "ecr" {
   }
 }
 
+dependency "api" {
+  enabled                                 = local.feature_flag_api
+  config_path                             = "../api"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    ecs_api_cloudwatch_log_group_name = "/aws/ecs/Forms/form-api"
+    ecs_api_cluster_name              = "Forms"
+    ecs_api_service_name              = "form-api"
+  }
+}
+
 dependency "idp" {
   enabled                                 = local.feature_flag_idp
   config_path                             = "../idp"
@@ -170,10 +184,12 @@ inputs = {
   kms_key_cloudwatch_arn         = dependency.kms.outputs.kms_key_cloudwatch_arn
   kms_key_cloudwatch_us_east_arn = dependency.kms.outputs.kms_key_cloudwatch_us_east_arn
 
-  lb_arn                        = dependency.load_balancer.outputs.lb_arn
-  lb_arn_suffix                 = dependency.load_balancer.outputs.lb_arn_suffix
-  lb_target_group_1_arn_suffix  = dependency.load_balancer.outputs.lb_target_group_1_arn_suffix
-  lb_target_group_2_arn_suffix  = dependency.load_balancer.outputs.lb_target_group_2_arn_suffix
+  lb_arn                         = dependency.load_balancer.outputs.lb_arn
+  lb_arn_suffix                  = dependency.load_balancer.outputs.lb_arn_suffix
+  lb_api_arn_suffix              = dependency.load_balancer.outputs.lb_arn_suffix
+  lb_target_group_1_arn_suffix   = dependency.load_balancer.outputs.lb_target_group_1_arn_suffix
+  lb_target_group_2_arn_suffix   = dependency.load_balancer.outputs.lb_target_group_2_arn_suffix
+  lb_api_target_group_arn_suffix = dependency.load_balancer.outputs.lb_target_group_api_arn_suffix
 
   sqs_reliability_deadletter_queue_arn = dependency.sqs.outputs.sqs_reliability_deadletter_queue_arn
   sqs_audit_log_deadletter_queue_arn   = dependency.sqs.outputs.sqs_audit_log_deadletter_queue_arn
@@ -207,6 +223,10 @@ inputs = {
   sns_topic_alert_ok_us_east_arn      = dependency.sns.outputs.sns_topic_alert_ok_us_east_arn
 
   ecr_repository_url_notify_slack_lambda = dependency.ecr.outputs.ecr_repository_url_notify_slack_lambda
+
+  ecs_api_cluster_name              = local.feature_flag_api == "true" ? dependency.api.outputs.ecs_api_cluster_name : ""
+  ecs_api_cloudwatch_log_group_name = local.feature_flag_api == "true" ? dependency.api.outputs.ecs_api_cloudwatch_log_group_name : ""
+  ecs_api_service_name              = local.feature_flag_api == "true" ? dependency.iapip.outputs.ecs_api_service_name : ""
 
   ecs_idp_cluster_name              = local.feature_flag_idp == "true" ? dependency.idp.outputs.ecs_idp_cluster_name : ""
   ecs_idp_cloudwatch_log_group_name = local.feature_flag_idp == "true" ? dependency.idp.outputs.ecs_idp_cloudwatch_log_group_name : ""
