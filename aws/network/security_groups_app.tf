@@ -91,23 +91,6 @@ resource "aws_security_group_rule" "forms_lb_egress_vpc" {
   cidr_blocks       = [var.vpc_cidr_block]
 }
 
-# TODO: remove once these have applied in Production
-# These are being converted to standalone SG rules to prevent rule flip-flops.
-import {
-  to = aws_security_group_rule.forms_lb_ingress_internet_443
-  id = "${aws_security_group.forms_load_balancer.id}_ingress_tcp_443_443_0.0.0.0/0"
-}
-
-import {
-  to = aws_security_group_rule.forms_lb_ingress_internet_80
-  id = "${aws_security_group.forms_load_balancer.id}_ingress_tcp_80_80_0.0.0.0/0"
-}
-
-import {
-  to = aws_security_group_rule.forms_lb_egress_vpc
-  id = "${aws_security_group.forms_load_balancer.id}_egress_tcp_3000_3000_${var.vpc_cidr_block}"
-}
-
 resource "aws_security_group" "forms_egress" {
   name        = "egress-anywhere"
   description = "Egress - Forms External Services"
