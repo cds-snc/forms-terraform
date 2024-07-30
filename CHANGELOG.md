@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.16.0](https://github.com/cds-snc/forms-terraform/compare/v3.15.0...v3.16.0) (2024-07-29)
+
+
+### Features
+
+* add API load balancer target group ([#736](https://github.com/cds-snc/forms-terraform/issues/736)) ([7e87c4e](https://github.com/cds-snc/forms-terraform/commit/7e87c4ebc8917ba5d16e208fd0c733bd117892ea))
+* add read-only user for RDS connector ([#751](https://github.com/cds-snc/forms-terraform/issues/751)) ([0a3a853](https://github.com/cds-snc/forms-terraform/commit/0a3a853e0140df5ed8105764dbfa468a44bbf41f))
+* deploy API ECS service in Staging ([#746](https://github.com/cds-snc/forms-terraform/issues/746)) ([64cd26d](https://github.com/cds-snc/forms-terraform/commit/64cd26df20999078de8c2aa007bda8b288001d40))
+* Enable Athena Federated Query for RDS ([#745](https://github.com/cds-snc/forms-terraform/issues/745)) ([133145d](https://github.com/cds-snc/forms-terraform/commit/133145d49b6f95017ee3ba00b04fe53e4d863e93))
+
+
+### Bug Fixes
+
+* add API paths to WAF and fix healthcheck ([#747](https://github.com/cds-snc/forms-terraform/issues/747)) ([907c469](https://github.com/cds-snc/forms-terraform/commit/907c46944659345190e17974476018fb967728d5))
+* Athena-DynamoDB connector policy ([#741](https://github.com/cds-snc/forms-terraform/issues/741)) ([dea7b19](https://github.com/cds-snc/forms-terraform/commit/dea7b19e430f7750f91f679e33c2473cc2dca858))
+* combine API valid paths with app ([#748](https://github.com/cds-snc/forms-terraform/issues/748)) ([0185313](https://github.com/cds-snc/forms-terraform/commit/018531332b236726903c7c56861c58840df304df))
+* create API certificate validation resource ([#744](https://github.com/cds-snc/forms-terraform/issues/744)) ([b4fb494](https://github.com/cds-snc/forms-terraform/commit/b4fb4941c82f039564b11cb660810b455350bfaa))
+* create dedicated security group for connector ([#749](https://github.com/cds-snc/forms-terraform/issues/749)) ([a883778](https://github.com/cds-snc/forms-terraform/commit/a88377811e4ce2776710eb78dcc4f34694d517e0))
+* downgrade local AWS provider ([#743](https://github.com/cds-snc/forms-terraform/issues/743)) ([bb92b87](https://github.com/cds-snc/forms-terraform/commit/bb92b87d0184f3355a2f4f115b6e69a5d73b6b99))
+* S3 egress from the connector ([#750](https://github.com/cds-snc/forms-terraform/issues/750)) ([4d17823](https://github.com/cds-snc/forms-terraform/commit/4d1782341adadc3e06081d49fdb3a44162d0a638))
+
 ## [3.15.0](https://github.com/cds-snc/forms-terraform/compare/v3.14.1...v3.15.0) (2024-07-23)
 
 
