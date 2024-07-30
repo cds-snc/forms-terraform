@@ -226,7 +226,7 @@ inputs = {
 
   ecs_api_cluster_name              = local.feature_flag_api == "true" ? dependency.api.outputs.ecs_api_cluster_name : ""
   ecs_api_cloudwatch_log_group_name = local.feature_flag_api == "true" ? dependency.api.outputs.ecs_api_cloudwatch_log_group_name : ""
-  ecs_api_service_name              = local.feature_flag_api == "true" ? dependency.iapip.outputs.ecs_api_service_name : ""
+  ecs_api_service_name              = local.feature_flag_api == "true" ? dependency.api.outputs.ecs_api_service_name : ""
 
   ecs_idp_cluster_name              = local.feature_flag_idp == "true" ? dependency.idp.outputs.ecs_idp_cluster_name : ""
   ecs_idp_cloudwatch_log_group_name = local.feature_flag_idp == "true" ? dependency.idp.outputs.ecs_idp_cloudwatch_log_group_name : ""
