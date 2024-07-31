@@ -31,7 +31,8 @@ inputs = {
   rds_db_subnet_group_name = local.env == "staging" ? "forms-staging-db" : "forms-db"
 
   # Overwritten in GitHub Actions by TFVARS
-  rds_db_password = "chummy" # RDS database password used for local setup
+  rds_db_password           = "chummy" # RDS database password used for local setup
+  rds_connector_db_password = ""
 }
 
 include {
