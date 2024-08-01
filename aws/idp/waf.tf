@@ -1,6 +1,6 @@
 locals {
   excluded_common_rules = [
-    "EC2MetaDataSSRF_BODY" # Rule is blocking IdP app creation
+    "EC2MetaDataSSRF_BODY" # Rule is blocking IdP OIDC app creation
   ]
 }
 
@@ -243,6 +243,51 @@ resource "aws_wafv2_web_acl" "idp" {
     cloudwatch_metrics_enabled = true
     metric_name                = "idp"
     sampled_requests_enabled   = true
+  }
+
+  # Label match rule
+  # Blocks requests that trigger `AWSManagedRulesCommonRuleSet.EC2MetaDataSSRF_Body` except those creating an OIDC app
+  rule {
+    name     = "Label_EC2MetaDataSSRF_BODY"
+    priority = 60
+
+    action {
+      block {}
+    }
+
+    statement {
+      and_statement {
+        statement {
+          label_match_statement {
+            scope = "LABEL"
+            key   = "awswaf:managed:aws:core-rule-set:EC2MetaDataSSRF_Body"
+          }
+        }
+        statement {
+          not_statement {
+            statement {
+              byte_match_statement {
+                field_to_match {
+                  uri_path {}
+                }
+                positional_constraint = "CONTAINS"
+                search_string         = "/addoidcapp"
+                text_transformation {
+                  type     = "LOWERCASE"
+                  priority = 0
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "Label_EC2MetaDataSSRF_BODY"
+      sampled_requests_enabled   = true
+    }
   }
 
   tags = local.common_tags
