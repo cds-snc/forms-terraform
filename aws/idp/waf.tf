@@ -1,5 +1,7 @@
 locals {
-  excluded_common_rules = ["EC2MetaDataSSRF_Body"]
+  excluded_common_rules = [
+    "EC2MetaDataSSRF_BODY" # Rule is blocking IdP app creation
+  ]
 }
 
 resource "aws_wafv2_web_acl" "idp" {
