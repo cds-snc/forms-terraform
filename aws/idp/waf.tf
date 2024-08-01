@@ -1,4 +1,7 @@
-# TODO: add AWS Common Ruleset once service has been stood up
+locals {
+  excluded_common_rules = ["EC2MetaDataSSRF_Body"]
+}
+
 resource "aws_wafv2_web_acl" "idp" {
   name  = "idp"
   scope = "REGIONAL"
@@ -206,13 +209,25 @@ resource "aws_wafv2_web_acl" "idp" {
   rule {
     name     = "AWSManagedRulesCommonRuleSet"
     priority = 50
+
     override_action {
       none {}
     }
+
     statement {
       managed_rule_group_statement {
         name        = "AWSManagedRulesCommonRuleSet"
         vendor_name = "AWS"
+
+        dynamic "rule_action_override" {
+          for_each = local.excluded_common_rules
+          content {
+            name = rule_action_override.value
+            action_to_use {
+              count {}
+            }
+          }
+        }
       }
     }
 
