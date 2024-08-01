@@ -25,7 +25,7 @@ resource "random_string" "idp_alb_tg_suffix" {
   keepers = {
     port             = 8080
     protocol         = "HTTPS"
-    protocol_version = "HTTP2"
+    protocol_version = "HTTP1"
   }
 }
 
@@ -33,7 +33,7 @@ resource "aws_lb_target_group" "idp" {
   name                 = "idp-tg-${random_string.idp_alb_tg_suffix.result}"
   port                 = 8080
   protocol             = "HTTPS"
-  protocol_version     = "HTTP2"
+  protocol_version     = "HTTP1"
   target_type          = "ip"
   deregistration_delay = 30
   vpc_id               = var.vpc_id
