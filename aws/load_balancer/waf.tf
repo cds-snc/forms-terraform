@@ -387,7 +387,7 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
 
   # API paths
   regular_expression {
-    regex_string = "^\\/(?:v1)?\\/?(?:(status))(?:\\/)?$"
+    regex_string = "^\\/(?:v1)?\\/?(?:(docs|status))(?:\\/)?$"
   }
 
   # This is a temporary rule to allow search engines tools to access ownership verification files
