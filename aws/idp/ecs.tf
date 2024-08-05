@@ -48,10 +48,11 @@ locals {
 module "idp_ecs" {
   source = "github.com/cds-snc/terraform-modules//ecs?ref=544060caeadb399c773247e2c25640e0c62fb0ed" # v9.5.3
 
-  cluster_name = "idp"
-  service_name = "zitadel"
-  task_cpu     = 1024
-  task_memory  = 2048
+  cluster_name   = "idp"
+  service_name   = "zitadel"
+  container_name = "zitadel"
+  task_cpu       = 1024
+  task_memory    = 2048
 
   # Scaling
   enable_autoscaling       = true
@@ -72,9 +73,15 @@ module "idp_ecs" {
   ]
 
   # Networking
-  lb_target_group_arn = aws_lb_target_group.idp.arn
-  subnet_ids          = var.private_subnet_ids
-  security_group_ids  = [var.security_group_idp_ecs_id]
+  lb_target_group_arns = [
+    for protocol_version in local.protocol_version : {
+      target_group_arn = aws_lb_target_group.idp[protocol_version].arn
+      container_name   = "zitadel"
+      container_port   = 8080
+    }
+  ]
+  subnet_ids         = var.private_subnet_ids
+  security_group_ids = [var.security_group_idp_ecs_id]
 
   billing_tag_key   = var.billing_tag_key
   billing_tag_value = var.billing_tag_value

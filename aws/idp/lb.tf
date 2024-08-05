@@ -23,17 +23,19 @@ resource "random_string" "idp_alb_tg_suffix" {
   special = false
   upper   = false
   keepers = {
-    port             = 8080
-    protocol         = "HTTPS"
-    protocol_version = "HTTP1"
+    port              = 8080
+    protocol          = "HTTPS"
+    protocol_versions = join(",", local.protocol_versions)
   }
 }
 
 resource "aws_lb_target_group" "idp" {
-  name                 = "idp-tg-${random_string.idp_alb_tg_suffix.result}"
+  for_each = local.protocol_versions
+
+  name                 = "idp-tg-${each.value}-${random_string.idp_alb_tg_suffix.result}"
   port                 = 8080
   protocol             = "HTTPS"
-  protocol_version     = "HTTP1"
+  protocol_version     = each.value
   target_type          = "ip"
   deregistration_delay = 30
   vpc_id               = var.vpc_id
@@ -95,6 +97,24 @@ resource "aws_lb_listener" "idp_http_redirect" {
   }
 
   tags = local.common_tags
+}
+
+# Send REST API endpoint requests to the HTTP1 target group
+# All other requests are sent to the HTTP2 target group
+resource "aws_alb_listener_rule" "idp_protocol_version" {
+  listener_arn = aws_lb_listener.idp.arn
+  priority     = 100
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.idp["HTTP1"].arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/*/v?/*"] # REST API endpoint pattern `/type/v1/some/endpoint/go/now`
+    }
+  }
 }
 
 resource "aws_shield_protection" "idp" {
