@@ -74,7 +74,7 @@ module "idp_ecs" {
 
   # Networking
   lb_target_group_arns = [
-    for protocol_version in local.protocol_version : {
+    for protocol_version in local.protocol_versions : {
       target_group_arn = aws_lb_target_group.idp[protocol_version].arn
       container_name   = "zitadel"
       container_port   = 8080

@@ -70,7 +70,7 @@ resource "aws_lb_listener" "idp" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.idp.arn
+    target_group_arn = aws_lb_target_group.idp["HTTP2"].arn
   }
 
   depends_on = [
