@@ -18,9 +18,11 @@ output "lb_idp_arn_suffix" {
   value       = aws_lb.idp.arn_suffix
 }
 
+# TODO: add an output for both target groups
+# TODO: create a CloudWatch alarm for each target group
 output "lb_idp_target_group_arn_suffix" {
-  description = "IdP's load balancer target group ARN suffix"
-  value       = aws_lb_target_group.idp.arn_suffix
+  description = "IdP's HTTP1 load balancer target group ARN suffix"
+  value       = aws_lb_target_group.idp["HTTP1"].arn_suffix
 }
 
 output "rds_idp_cluster_identifier" {
