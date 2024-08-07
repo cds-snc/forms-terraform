@@ -183,8 +183,8 @@ inputs = {
   reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
   reliability_file_storage_id = dependency.s3.outputs.reliability_file_storage_id
 
-  zitadel_provider = dependency.secrets.outputs.zitadel_provider_secret_arn
-  zitadel_administration_key = dependency.secrets.outputs.zitadel_administration_key_secret_arn
+  zitadel_provider_secret_arn = dependency.secrets.outputs.zitadel_provider_secret_arn
+  zitadel_administration_key_secret_arn = dependency.secrets.outputs.zitadel_administration_key_secret_arn
 }
 
 include {
