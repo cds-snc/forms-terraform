@@ -43,6 +43,8 @@ data "template_file" "form_viewer_task" {
     email_address_support           = var.email_address_support
     reprocess_submission_queue      = var.sqs_reprocess_submission_queue_id
     audit_log_queue_url             = var.sqs_audit_log_queue_id
+    zitadel_provider                = var.zitadel_provider_secret_arn
+    zitadel_administration_key      = var.zitadel_administration_key_secret_arn
   }
 }
 

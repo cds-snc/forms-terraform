@@ -242,3 +242,15 @@ variable "vault_file_storage_arn" {
   description = "arn of the vault file storage bucket"
   type        = string
 }
+
+variable "zitadel_provider_secret_arn" {
+  description = "The Zitadel provider secret used by the ECS task and Lambda arn"
+  type        = string
+  sensitive   = true
+}
+
+variable "zitadel_administration_key_secret_arn" {
+  description = "The Zitadel administration key secret used by the ECS task and Lambda arn"
+  type        = string
+  sensitive   = true
+}
