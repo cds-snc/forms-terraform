@@ -19,9 +19,8 @@ jobs:
           app_id: ${{ secrets.SRE_APP_ID }}
           private_key: ${{ secrets.SRE_APP_PRIVATE_KEY }}
 
-      - uses: google-github-actions/release-please-action@db8f2c60ee802b3748b512940dde88eabd7b7e01 # v3.7.13
+      - uses: googleapis/release-please-action@7987652d64b4581673a76e33ad5e98e3dd56832f # v4.1.3
         with:
-          command: manifest
           token: ${{ steps.sre_app_token.outputs.token }}
-          release-type: simple
-          default-branch: develop
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
