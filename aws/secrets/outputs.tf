@@ -23,11 +23,6 @@ output "notify_callback_bearer_token_secret_arn" {
   value       = aws_secretsmanager_secret.notify_callback_bearer_token.arn
 }
 
-output "zitadel_provider_secret_arn" {
-  description = "ARN of zitadel_provider secret"
-  value       = aws_secretsmanager_secret_version.zitadel_provider.arn
-}
-
 output "zitadel_administration_key_secret_arn" {
   description = "ARN of zitadel_administration_key secret"
   value       = aws_secretsmanager_secret_version.zitadel_administration_key.arn

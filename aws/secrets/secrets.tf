@@ -56,16 +56,6 @@ resource "aws_secretsmanager_secret_version" "notify_callback_bearer_token" {
   secret_string = var.notify_callback_bearer_token
 }
 
-resource "aws_secretsmanager_secret" "zitadel_provider" {
-  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
-  name                    = "zitadel_provider"
-  recovery_window_in_days = 0
-}
-
-resource "aws_secretsmanager_secret_version" "zitadel_provider" {
-  secret_id     = aws_secretsmanager_secret.zitadel_provider.id
-  secret_string = var.zitadel_provider
-}
 resource "aws_secretsmanager_secret" "zitadel_administration_key" {
   # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
   name                    = "zitadel_administration_key"

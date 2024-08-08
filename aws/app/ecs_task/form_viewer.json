@@ -89,6 +89,10 @@
       {
         "name": "AUDIT_LOG_QUEUE_URL",
         "value": "${audit_log_queue_url}"
+      },
+      {
+        "name": "ZITADEL_PROVIDER",
+        "valueFrom": "${zitadel_provider}"
       }
     ],
     "secrets": [
@@ -115,10 +119,6 @@
       {
         "name": "FRESHDESK_API_KEY",
         "valueFrom": "${freshdesk_api_key}"
-      },
-      {
-        "name": "ZITADEL_PROVIDER",
-        "valueFrom": "${zitadel_provider}"
       },
       {
         "name": "ZITADEL_ADMINISTRATION_KEY",
