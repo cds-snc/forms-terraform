@@ -133,9 +133,9 @@ dependency "api" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    ecs_api_cloudwatch_log_group_name = "/aws/ecs/Forms/form-api"
+    ecs_api_cloudwatch_log_group_name = "/aws/ecs/Forms/forms-api"
     ecs_api_cluster_name              = "Forms"
-    ecs_api_service_name              = "form-api"
+    ecs_api_service_name              = "forms-api"
   }
 }
 

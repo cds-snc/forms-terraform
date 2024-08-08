@@ -50,7 +50,7 @@ dependency "load_balancer" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    lb_target_group_api_arn = "arn:aws:elasticloadbalancing:ca-central-1:123456789012:targetgroup/form-api/1234567890abcdef"
+    lb_target_group_api_arn = "arn:aws:elasticloadbalancing:ca-central-1:123456789012:targetgroup/forms-api/1234567890abcdef"
   }
 }
 
