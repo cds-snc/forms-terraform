@@ -92,7 +92,7 @@
       },
       {
         "name": "ZITADEL_PROVIDER",
-        "valueFrom": "${zitadel_provider}"
+        "value": "${zitadel_provider}"
       }
     ],
     "secrets": [
