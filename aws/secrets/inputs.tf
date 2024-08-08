@@ -29,12 +29,6 @@ variable "freshdesk_api_key" {
   sensitive   = true
 }
 
-variable "zitadel_provider" {
-  description = "The Zitadel provider endpoint used by the ECS task and Lambda"
-  type        = string
-  sensitive   = true
-}
-
 variable "zitadel_administration_key" {
   description = "The Zitadel administration key used by the ECS task and Lambda"
   type        = string
