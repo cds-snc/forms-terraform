@@ -71,10 +71,10 @@ resource "aws_lb_target_group" "form_viewer_2" {
   }
 }
 
-resource "aws_lb_target_group" "form_api" {
+resource "aws_lb_target_group" "forms_api" {
   count = var.feature_flag_api ? 1 : 0
 
-  name                 = "form-api"
+  name                 = "forms-api"
   port                 = 3001
   protocol             = "HTTP"
   target_type          = "ip"
@@ -93,8 +93,13 @@ resource "aws_lb_target_group" "form_api" {
   }
 
   tags = {
-    Name = "form_api"
+    Name = "forms_api"
   }
+}
+
+moved {
+  from = aws_lb_target_group.form_api
+  to   = aws_lb_target_group.forms_api
 }
 
 resource "aws_lb_listener" "form_viewer_https" {
@@ -120,11 +125,16 @@ resource "aws_lb_listener" "form_viewer_https" {
   }
 }
 
-resource "aws_lb_listener_certificate" "form_api_https" {
+resource "aws_lb_listener_certificate" "forms_api_https" {
   count = var.feature_flag_api ? 1 : 0
 
   listener_arn    = aws_lb_listener.form_viewer_https.arn
-  certificate_arn = aws_acm_certificate_validation.form_api[0].certificate_arn
+  certificate_arn = aws_acm_certificate_validation.forms_api[0].certificate_arn
+}
+
+moved {
+  from = aws_lb_listener_certificate.form_api_https
+  to   = aws_lb_listener_certificate.forms_api_https
 }
 
 resource "aws_lb_listener" "form_viewer_http" {
@@ -149,7 +159,7 @@ resource "aws_lb_listener" "form_viewer_http" {
   }
 }
 
-resource "aws_alb_listener_rule" "form_api" {
+resource "aws_alb_listener_rule" "forms_api" {
   count = var.feature_flag_api ? 1 : 0
 
   listener_arn = aws_lb_listener.form_viewer_https.arn
@@ -157,7 +167,7 @@ resource "aws_alb_listener_rule" "form_api" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.form_api[0].arn
+    target_group_arn = aws_lb_target_group.forms_api[0].arn
   }
 
   condition {
@@ -165,4 +175,9 @@ resource "aws_alb_listener_rule" "form_api" {
       values = [var.domain_api]
     }
   }
+}
+
+moved {
+  from = aws_alb_listener_rule.form_api
+  to   = aws_alb_listener_rule.forms_api
 }

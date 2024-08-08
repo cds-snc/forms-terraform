@@ -41,7 +41,7 @@ resource "aws_route53_record" "form_viewer_maintenance" {
   set_identifier = "form_viewer_${var.domains[count.index]}_secondary"
 }
 
-resource "aws_route53_record" "form_api" {
+resource "aws_route53_record" "forms_api" {
   count = var.feature_flag_api ? 1 : 0
 
   zone_id = var.hosted_zone_ids[0]
@@ -54,6 +54,12 @@ resource "aws_route53_record" "form_api" {
     evaluate_target_health = true
   }
 }
+
+moved {
+  from = aws_route53_record.form_api
+  to   = aws_route53_record.forms_api
+}
+
 
 #
 # Certificate validation
@@ -104,9 +110,9 @@ resource "aws_route53_record" "form_viewer_maintenance_mode_certificate_validati
   zone_id         = local.domain_name_to_zone_id[each.value.domain]
 }
 
-resource "aws_route53_record" "form_api_certificate_validation" {
+resource "aws_route53_record" "forms_api_certificate_validation" {
   for_each = var.feature_flag_api ? {
-    for dvo in aws_acm_certificate.form_api[0].domain_validation_options : dvo.domain_name => {
+    for dvo in aws_acm_certificate.forms_api[0].domain_validation_options : dvo.domain_name => {
       domain = dvo.domain_name
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
@@ -120,4 +126,9 @@ resource "aws_route53_record" "form_api_certificate_validation" {
   ttl             = 60
   type            = each.value.type
   zone_id         = var.hosted_zone_ids[0]
+}
+
+moved {
+  from = aws_route53_record.form_api_certificate_validation
+  to   = aws_route53_record.forms_api_certificate_validation
 }
