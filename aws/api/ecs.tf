@@ -4,13 +4,18 @@ locals {
 }
 
 module "api_ecs" {
-  source = "github.com/cds-snc/terraform-modules//ecs?ref=50c0f631d2c8558e6eec44138ffc2e963a1dfa9a" # v9.6.0
+  source = "github.com/cds-snc/terraform-modules//ecs?ref=f11e70a097b0796e661b7e209e29f7d6b62240cf" # v9.6.3
 
   create_cluster = false
   cluster_name   = var.ecs_cluster_name
   service_name   = "forms-api"
   task_cpu       = 1024
   task_memory    = 2048
+
+  # This causes the service to always use the latest ACTIVE task definition.
+  # This gives precedence to the `cds-snc/forms-api` repo's CI/CD task deployments
+  # and prevents the Terraform from undoing deployments.
+  service_use_latest_task_def = true
 
   # Scaling
   enable_autoscaling       = true
