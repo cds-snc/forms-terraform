@@ -71,6 +71,6 @@ resource "aws_route53_record" "idp_dmarc_TXT" {
   type    = "TXT"
   ttl     = "300"
   records = [
-    "v=DMARC1; p=reject; sp=reject; pct=100; rua=mailto:security@cds-snc.ca"
+    "v=DMARC1; p=reject; sp=reject; pct=100; rua=mailto:CDS.SECURITY-SECURITE.SNC@servicecanada.gc.ca"
   ]
 }
