@@ -60,10 +60,10 @@ resource "aws_cloudwatch_log_subscription_filter" "idp_error_detection" {
 # Load balancer
 #
 resource "aws_cloudwatch_metric_alarm" "idb_lb_unhealthy_host_count" {
-  count = var.feature_flag_idp ? 1 : 0
+  for_each = var.feature_flag_idp ? var.lb_idp_target_groups_arn_suffix : {}
 
-  alarm_name          = "IdP-UnhealthyHostCount" # TODO: bump to SEV1 once this is in production
-  alarm_description   = "IdP ELB Warning - unhealthy host count >= 1 in a 1 minute period"
+  alarm_name          = "IdP-UnhealthyHostCount-${each.key}" # TODO: bump to SEV1 once this is in production
+  alarm_description   = "IdP ELB Warning - unhealthy ${each.key} host count >= 1 in a 1 minute period"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   threshold           = "1"
   evaluation_periods  = "1"
@@ -78,7 +78,7 @@ resource "aws_cloudwatch_metric_alarm" "idb_lb_unhealthy_host_count" {
 
   dimensions = {
     LoadBalancer = var.lb_idp_arn_suffix
-    TargetGroup  = var.lb_idp_target_group_arn_suffix
+    TargetGroup  = each.value
   }
 }
 

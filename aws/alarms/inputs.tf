@@ -163,9 +163,9 @@ variable "lb_api_target_group_arn_suffix" {
   type        = string
 }
 
-variable "lb_idp_target_group_arn_suffix" {
-  description = "IdP's load balancer target group ARN suffix, used by response time alarms"
-  type        = string
+variable "lb_idp_target_groups_arn_suffix" {
+  description = "IdP's load balancer target groups ARN suffixes, used by response time alarms"
+  type        = map(string)
 }
 
 variable "slack_webhook" {
