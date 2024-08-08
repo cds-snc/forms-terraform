@@ -38,7 +38,9 @@ data "aws_iam_policy_document" "forms_secrets_manager" {
       var.notify_api_key_secret_arn,
       var.token_secret_arn,
       var.notify_callback_bearer_token_secret_arn,
-      var.freshdesk_api_key_secret_arn
+      var.freshdesk_api_key_secret_arn,
+      var.zitadel_provider_secret_arn,
+      var.zitadel_administration_key_secret_arn
     ]
   }
 }

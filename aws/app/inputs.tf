@@ -244,7 +244,7 @@ variable "vault_file_storage_arn" {
 }
 
 variable "zitadel_provider_secret_arn" {
-  description = "The Zitadel provider secret used by the ECS task and Lambda arn"
+  description = "The Zitadel provider endpoint used by the ECS task and Lambda arn"
   type        = string
   sensitive   = true
 }
