@@ -43,6 +43,8 @@ env:
   TF_VAR_cognito_code_template_id: 12a18f84-062c-4a67-8310-bf114af051ea
   TF_VAR_email_address_contact_us: ${{ vars.STAGING_CONTACT_US_EMAIL }}
   TF_VAR_email_address_support: ${{ vars.STAGING_SUPPORT_EMAIL }}
+  TF_VAR_zitadel_provider: ${{ vars.STAGING_ZITADEL_PROVIDER }}
+  TF_VAR_zitadel_administration_key: ${{ vars.STAGING_ZITADEL_ADMINISTRATION_KEY }}
   # IdP
   FF_IDP: true
   TF_VAR_idp_database_cluster_admin_username: ${{ secrets.STAGING_IDP_DATABASE_CLUSTER_ADMIN_USERNAME }}
@@ -139,7 +141,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           image-name: idp/zitadel
           image-tag: ${{ github.sha }}
-          repository-suffix: ''
+          repository-suffix: ""
 
   terragrunt-apply-all-modules:
     needs: [build-tag-push-lambda-images, build-tag-push-idp-image]
@@ -258,7 +260,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-      
+
       - name: Request Lambda functions to use new image
         uses: ./.github/workflows/request-lambda-functions-to-use-new-image
         with:

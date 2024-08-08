@@ -3,12 +3,6 @@ output "notify_api_key_secret_arn" {
   value       = aws_secretsmanager_secret_version.notify_api_key.arn
 }
 
-output "notify_api_key_secret_value" {
-  description = "Value of notify_api_key secret"
-  value       = aws_secretsmanager_secret_version.notify_api_key.secret_string
-  sensitive   = true
-}
-
 output "freshdesk_api_key_secret_arn" {
   description = "ARN of freshdesk_api_key secret"
   value       = aws_secretsmanager_secret.freshdesk_api_key.arn
@@ -27,4 +21,14 @@ output "recaptcha_secret_arn" {
 output "notify_callback_bearer_token_secret_arn" {
   description = "ARN of notify_callback_bearer_token_secret"
   value       = aws_secretsmanager_secret.notify_callback_bearer_token.arn
+}
+
+output "zitadel_provider_secret_arn" {
+  description = "ARN of zitadel_provider secret"
+  value       = aws_secretsmanager_secret_version.zitadel_provider.arn
+}
+
+output "zitadel_administration_key_arn" {
+  description = "ARN of zitadel_administration_key secret"
+  value       = aws_secretsmanager_secret_version.zitadel_administration_key.arn
 }

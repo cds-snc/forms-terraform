@@ -110,7 +110,8 @@ dependency "secrets" {
     token_secret_arn                        = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:token_secret"
     recaptcha_secret_arn                    = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:recaptcha_secret"
     notify_callback_bearer_token_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_callback_bearer_token_secret"
-
+    zitadel_provider_secret_arn             = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:zitadel_provider"
+    zitadel_administration_key_secret_arn   = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:zitadel_administration_key"
   }
 }
 
@@ -181,6 +182,9 @@ inputs = {
   vault_file_storage_id = dependency.s3.outputs.vault_file_storage_id
   reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
   reliability_file_storage_id = dependency.s3.outputs.reliability_file_storage_id
+
+  zitadel_provider_secret_arn = dependency.secrets.outputs.zitadel_provider_secret_arn
+  zitadel_administration_key_secret_arn = dependency.secrets.outputs.zitadel_administration_key_secret_arn
 }
 
 include {

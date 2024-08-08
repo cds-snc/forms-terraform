@@ -115,6 +115,14 @@
       {
         "name": "FRESHDESK_API_KEY",
         "valueFrom": "${freshdesk_api_key}"
+      },
+      {
+        "name": "ZITADEL_PROVIDER",
+        "valueFrom": "${zitadel_provider}"
+      },
+      {
+        "name": "ZITADEL_ADMINISTRATION_KEY",
+        "valueFrom": "${zitadel_administration_key}"
       }
     ],
     "mountPoints": [],
