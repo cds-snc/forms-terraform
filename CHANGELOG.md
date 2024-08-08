@@ -1,5 +1,32 @@
 # Changelog
 
+## [3.17.0](https://github.com/cds-snc/forms-terraform/compare/v3.16.0...v3.17.0) (2024-08-08)
+
+
+### Features
+
+* add API CloudWatch alarms ([#754](https://github.com/cds-snc/forms-terraform/issues/754)) ([f7d3e38](https://github.com/cds-snc/forms-terraform/commit/f7d3e38af3179a302944971a30c87bce2e9f0aae))
+* add HTTP2 IdP target group ([#762](https://github.com/cds-snc/forms-terraform/issues/762)) ([e49bcb6](https://github.com/cds-snc/forms-terraform/commit/e49bcb6f8fbe5787457a1880af1543957992b5a0))
+* update IdP WAF to block large requests ([#756](https://github.com/cds-snc/forms-terraform/issues/756)) ([4fae4a4](https://github.com/cds-snc/forms-terraform/commit/4fae4a4f84ca0e8f6749ba47a05df4576884f39f))
+
+
+### Bug Fixes
+
+* add label match custom rule ([#760](https://github.com/cds-snc/forms-terraform/issues/760)) ([e8a76c8](https://github.com/cds-snc/forms-terraform/commit/e8a76c84ce9419493f4ff9db9fa6ed7bd35be2d4))
+* exclude EC2MetaDataSSRF_Body WAF ACL rule ([#759](https://github.com/cds-snc/forms-terraform/issues/759)) ([4dceba4](https://github.com/cds-snc/forms-terraform/commit/4dceba4de51b38fa6d43c8d219c3909ab504698d))
+* IdP listener rule for well-known config ([#763](https://github.com/cds-snc/forms-terraform/issues/763)) ([0e0010c](https://github.com/cds-snc/forms-terraform/commit/0e0010cb9a91da666f2e43763e7ec949bfe4c007))
+* switch IdP LB protocol to HTTP1 ([#758](https://github.com/cds-snc/forms-terraform/issues/758)) ([2379e06](https://github.com/cds-snc/forms-terraform/commit/2379e06bef5efcd46d5eca6f70a839e0bdd2dbaf))
+
+
+### Miscellaneous Chores
+
+* add OpenAPI doc route to WAF ([#761](https://github.com/cds-snc/forms-terraform/issues/761)) ([010fcec](https://github.com/cds-snc/forms-terraform/commit/010fcec35ef9067fbcbff92fc434e4985fb964ad))
+* added rds_connector_db_password variable to RDS terragrunt.hcl file ([#757](https://github.com/cds-snc/forms-terraform/issues/757)) ([2173fca](https://github.com/cds-snc/forms-terraform/commit/2173fca3607bd889ec83f7e618818439181bae51))
+* remove completed `import` blocks ([#755](https://github.com/cds-snc/forms-terraform/issues/755)) ([2170624](https://github.com/cds-snc/forms-terraform/commit/217062440846414622cdf3a555c8f27c091e250f))
+* rename ECS API task from form-api to forms-api ([#766](https://github.com/cds-snc/forms-terraform/issues/766)) ([391ff5e](https://github.com/cds-snc/forms-terraform/commit/391ff5e09f319c171c9a15a964b109ccbe3c6248))
+* synced file(s) with cds-snc/site-reliability-engineering ([#752](https://github.com/cds-snc/forms-terraform/issues/752)) ([67e6358](https://github.com/cds-snc/forms-terraform/commit/67e6358ecc5b176ec58c1085a3b002288ea614d9))
+* upgrade to Release Please v4 ([#765](https://github.com/cds-snc/forms-terraform/issues/765)) ([ae1920e](https://github.com/cds-snc/forms-terraform/commit/ae1920ed6544ef0744350a077e3b3c1a59fa4bd0))
+
 ## [3.16.0](https://github.com/cds-snc/forms-terraform/compare/v3.15.0...v3.16.0) (2024-07-29)
 
 
