@@ -235,7 +235,7 @@ inputs = {
   ecs_idp_cloudwatch_log_group_name = local.feature_flag_idp == "true" ? dependency.idp.outputs.ecs_idp_cloudwatch_log_group_name : ""
   ecs_idp_service_name              = local.feature_flag_idp == "true" ? dependency.idp.outputs.ecs_idp_service_name : ""
   lb_idp_arn_suffix                 = local.feature_flag_idp == "true" ? dependency.idp.outputs.lb_idp_arn_suffix : ""
-  lb_idp_target_group_arn_suffix    = local.feature_flag_idp == "true" ? dependency.idp.outputs.lb_idp_target_groups_arn_suffix : {}
+  lb_idp_target_groups_arn_suffix   = local.feature_flag_idp == "true" ? dependency.idp.outputs.lb_idp_target_groups_arn_suffix : {}
   rds_idp_cluster_identifier        = local.feature_flag_idp == "true" ? dependency.idp.outputs.rds_idp_cluster_identifier : ""
   rds_idp_cpu_maxiumum              = 80
 
