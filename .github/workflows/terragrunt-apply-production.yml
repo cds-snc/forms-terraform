@@ -34,12 +34,13 @@ env:
   TF_VAR_cognito_code_template_id: 8dde39b6-05b9-43ce-807f-c2364ed3bdb6
   TF_VAR_email_address_contact_us: ${{ vars.PRODUCTION_CONTACT_US_EMAIL }}
   TF_VAR_email_address_support: ${{ vars.PRODUCTION_SUPPORT_EMAIL }}
+  TF_VAR_zitadel_provider: ${{ vars.PRODUCTION_ZITADEL_PROVIDER }}
 
 jobs:
   get-version:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.get-version.outputs.version }}    
+      version: ${{ steps.get-version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -48,7 +49,7 @@ jobs:
         id: get-version
         uses: ./.github/workflows/get-version
         with:
-          is-tagged: 'true'
+          is-tagged: "true"
 
   generate-lambda-functions-matrix:
     needs: get-version
@@ -73,7 +74,7 @@ jobs:
     needs: get-version
     runs-on: ubuntu-latest
     env:
-      VERSION: ${{ needs.get-version.outputs.version }}    
+      VERSION: ${{ needs.get-version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7

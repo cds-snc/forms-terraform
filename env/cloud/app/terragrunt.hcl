@@ -126,6 +126,10 @@ dependency "s3" {
   }
 }
 
+locals {
+  zitadel_provider                            = get_env("ZITADEL_PROVIDER", "https://localhost")
+}
+
 inputs = {
   codedeploy_manual_deploy_enabled            = false
   codedeploy_termination_wait_time_in_minutes = 1
@@ -176,13 +180,14 @@ inputs = {
   freshdesk_api_key_secret_arn            = dependency.secrets.outputs.freshdesk_api_key_secret_arn
   notify_callback_bearer_token_secret_arn = dependency.secrets.outputs.notify_callback_bearer_token_secret_arn
   token_secret_arn                        = dependency.secrets.outputs.token_secret_arn
+  zitadel_administration_key_secret_arn   = dependency.secrets.outputs.zitadel_administration_key_secret_arn
 
   vault_file_storage_arn = dependency.s3.outputs.vault_file_storage_arn
   vault_file_storage_id = dependency.s3.outputs.vault_file_storage_id
   reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
   reliability_file_storage_id = dependency.s3.outputs.reliability_file_storage_id
 
-  zitadel_administration_key_secret_arn = dependency.secrets.outputs.zitadel_administration_key_secret_arn
+  zitadel_provider = local.zitadel_provider
 }
 
 include {
