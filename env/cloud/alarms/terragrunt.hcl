@@ -149,7 +149,10 @@ dependency "idp" {
     ecs_idp_cloudwatch_log_group_name = "/aws/ecs/idp/zitadel"
     ecs_idp_service_name              = "zitadel"
     lb_idp_arn_suffix                 = "loadbalancer/app/idp/1234567890123456"
-    lb_idp_target_group_arn_suffix    = "targetgroup/idp-tg-abc/1234567890123456"
+    lb_idp_target_groups_arn_suffix   = {
+      HTTP1 = "targetgroup/idp-tg-http1-abc/1234567890123456"
+      HTTP2 = "targetgroup/idp-tg-http2-abc/1234567890123456"
+    }
     rds_idp_cluster_identifier        = "idp-cluster"
   }
 }
@@ -232,7 +235,7 @@ inputs = {
   ecs_idp_cloudwatch_log_group_name = local.feature_flag_idp == "true" ? dependency.idp.outputs.ecs_idp_cloudwatch_log_group_name : ""
   ecs_idp_service_name              = local.feature_flag_idp == "true" ? dependency.idp.outputs.ecs_idp_service_name : ""
   lb_idp_arn_suffix                 = local.feature_flag_idp == "true" ? dependency.idp.outputs.lb_idp_arn_suffix : ""
-  lb_idp_target_group_arn_suffix    = local.feature_flag_idp == "true" ? dependency.idp.outputs.lb_idp_target_group_arn_suffix : ""
+  lb_idp_target_groups_arn_suffix   = local.feature_flag_idp == "true" ? dependency.idp.outputs.lb_idp_target_groups_arn_suffix : {}
   rds_idp_cluster_identifier        = local.feature_flag_idp == "true" ? dependency.idp.outputs.rds_idp_cluster_identifier : ""
   rds_idp_cpu_maxiumum              = 80
 
