@@ -207,11 +207,6 @@ export function extractFileInputResponses(submission: FormSubmission) {
                 return [...acc, ...subElementFiles];
               }
 
-              // const fileInputPath = Array.isArray(response) && response[currentIndex];
-              // if (fileInputPath !== "" && typeof fileInputPath === "string") {
-              //   return [...acc, fileInputPath];
-              // }
-
               return [...acc];
             } else {
               return acc;
