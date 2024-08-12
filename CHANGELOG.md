@@ -1,5 +1,28 @@
 # Changelog
 
+## [3.18.0](https://github.com/cds-snc/forms-terraform/compare/v3.17.0...v3.18.0) (2024-08-12)
+
+
+### Features
+
+* add new secrets for Zitadel ([#764](https://github.com/cds-snc/forms-terraform/issues/764)) ([631db20](https://github.com/cds-snc/forms-terraform/commit/631db2041b333b16248da88897ebb1796d62dcb1))
+
+
+### Bug Fixes
+
+* remove unused secret ([#772](https://github.com/cds-snc/forms-terraform/issues/772)) ([e812b7d](https://github.com/cds-snc/forms-terraform/commit/e812b7d7199273bc3918e9fbf58bb04c23cf1583))
+* secret arn output name ([#771](https://github.com/cds-snc/forms-terraform/issues/771)) ([eadcb8a](https://github.com/cds-snc/forms-terraform/commit/eadcb8aad8970f52e6599904a3b25cb054c54b17))
+* Secrets vs variable ([#770](https://github.com/cds-snc/forms-terraform/issues/770)) ([34b4da0](https://github.com/cds-snc/forms-terraform/commit/34b4da018585b5b3a8829f75f1d63d80b3fe156c))
+* set API service to use latest task def ([#767](https://github.com/cds-snc/forms-terraform/issues/767)) ([769eae9](https://github.com/cds-snc/forms-terraform/commit/769eae96a6fd9f2865caece82fb6193230758a39))
+
+
+### Miscellaneous Chores
+
+* add alarms for all IdP LB target groups ([#773](https://github.com/cds-snc/forms-terraform/issues/773)) ([cb8768c](https://github.com/cds-snc/forms-terraform/commit/cb8768c559a97eb44b5c92e5267ec62680815c4d))
+* add AWS CLI prerequisite to README.md ([#775](https://github.com/cds-snc/forms-terraform/issues/775)) ([0001d46](https://github.com/cds-snc/forms-terraform/commit/0001d46d0f5423148c89786dbbf970661041b15a))
+* prepare zitadel variables for production deployment ([#774](https://github.com/cds-snc/forms-terraform/issues/774)) ([1607916](https://github.com/cds-snc/forms-terraform/commit/16079169207262eb5e9c611823dd55c7a4d0822c))
+* update IdP DMARC security email ([#769](https://github.com/cds-snc/forms-terraform/issues/769)) ([4a7e047](https://github.com/cds-snc/forms-terraform/commit/4a7e0479a0ccc5852b7dc7062503a614e68d1053))
+
 ## [3.17.0](https://github.com/cds-snc/forms-terraform/compare/v3.16.0...v3.17.0) (2024-08-08)
 
 
