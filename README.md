@@ -31,6 +31,8 @@ Pull Requests in this repository require all commits to be signed before they ca
 
   (source https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable)
 
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+
 - awslocal (if you want to deploy the infrastructure locally):
 
   ```shell
