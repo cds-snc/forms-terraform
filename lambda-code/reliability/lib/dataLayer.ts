@@ -198,10 +198,20 @@ export function extractFileInputResponses(submission: FormSubmission) {
             if (current.type === "fileInput") {
               const response = submission.responses[element.id];
 
-              const fileInputPath = Array.isArray(response) && response[currentIndex];
-              if (fileInputPath !== "" && typeof fileInputPath === "string") {
-                return [...acc, fileInputPath];
+              const subElementFiles: string[] = [];
+              if (Array.isArray(response)) {
+                response.forEach((element) => {
+                  // @ts-expect-error
+                  subElementFiles.push(element[0]);
+                });
+                return [...acc, ...subElementFiles];
               }
+
+              // const fileInputPath = Array.isArray(response) && response[currentIndex];
+              // if (fileInputPath !== "" && typeof fileInputPath === "string") {
+              //   return [...acc, fileInputPath];
+              // }
+
               return [...acc];
             } else {
               return acc;
