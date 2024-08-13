@@ -202,7 +202,10 @@ export function extractFileInputResponses(submission: FormSubmission) {
               if (Array.isArray(response)) {
                 response.forEach((element) => {
                   // @ts-expect-error
-                  subElementFiles.push(element[0]);
+                  if (element[0] && element[0] !== "" && typeof element[0] === "string") {
+                    // @ts-expect-error
+                    subElementFiles.push(element[0]);
+                  }
                 });
                 return [...acc, ...subElementFiles];
               }
