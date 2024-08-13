@@ -197,14 +197,18 @@ export function extractFileInputResponses(submission: FormSubmission) {
           (acc: string[], current: FormElement, currentIndex: number) => {
             if (current.type === "fileInput") {
               const response = submission.responses[element.id];
-
               const subElementFiles: string[] = [];
               if (Array.isArray(response)) {
                 response.forEach((element) => {
                   // @ts-expect-error
-                  if (element[0] && element[0] !== "" && typeof element[0] === "string") {
-                    // @ts-expect-error
-                    subElementFiles.push(element[0]);
+                  const answer = element[currentIndex];
+                  if (
+                    answer &&
+                    answer !== "" &&
+                    typeof answer === "string" &&
+                    answer.startsWith("form_attachments")
+                  ) {
+                    subElementFiles.push(answer);
                   }
                 });
                 return [...acc, ...subElementFiles];
