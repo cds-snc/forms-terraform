@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.18.1](https://github.com/cds-snc/forms-terraform/compare/v3.18.0...v3.18.1) (2024-08-13)
+
+
+### Bug Fixes
+
+* Attach files from fileInputs in a dynamicRow ([#776](https://github.com/cds-snc/forms-terraform/issues/776)) ([b8084a8](https://github.com/cds-snc/forms-terraform/commit/b8084a8bfc00d2b96f90e6a90dc2bb15605dd500))
+
 ## [3.18.0](https://github.com/cds-snc/forms-terraform/compare/v3.17.0...v3.18.0) (2024-08-12)
 
 
