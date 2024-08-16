@@ -8,7 +8,6 @@ COPY package.json yarn.lock ./
 
 RUN yarn install --frozen-lockfile
 
-COPY types ./types
 COPY lib ./lib
 COPY main.ts tsconfig.json ./
 

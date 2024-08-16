@@ -1,4 +1,4 @@
-import { NotifyClient } from "notifications-node-client";
+import { GCNotifyClient } from "./gc-notify-client.js";
 import { AxiosError } from "axios";
 import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 
@@ -6,10 +6,12 @@ const client = new SecretsManagerClient();
 const command = new GetSecretValueCommand({ SecretId: process.env.NOTIFY_API_KEY });
 console.log("Retrieving Notify API Key from Secrets Manager");
 const notifyApiKey = await client.send(command);
-const notifyClient = new NotifyClient(
-  "https://api.notification.canada.ca",
-  notifyApiKey.SecretString
-);
+
+if (notifyApiKey.SecretString === undefined) {
+  throw new Error("GCNotify API key is undefined");
+}
+
+const gcNotifyClient = GCNotifyClient.default(notifyApiKey.SecretString);
 
 export async function notifyFormOwner(
   formID: string,
@@ -17,12 +19,17 @@ export async function notifyFormOwner(
   formOwnerEmailAddress: string
 ) {
   try {
+    const templateId = process.env.TEMPLATE_ID;
+
+    if (templateId === undefined) {
+      throw new Error(`Missing Environment Variables: ${templateId ? "" : "Template ID"}`);
+    }
+
     const baseUrl = `http://${process.env.DOMAIN}`;
 
-    await notifyClient.sendEmail(process.env.TEMPLATE_ID, formOwnerEmailAddress, {
-      personalisation: {
-        subject: "Overdue form responses - Réponses de formulaire non traitées",
-        formResponse: `
+    await gcNotifyClient.sendEmail(formOwnerEmailAddress, templateId, {
+      subject: "Overdue form responses - Réponses de formulaire non traitées",
+      formResponse: `
 **GC Forms Notification**
 
 Form name: ${formName}
@@ -48,30 +55,17 @@ Le téléchargement des réponses sera limité si les réponses datent de plus d
 Si les réponses ne sont toujours pas traitées après 45 jours, un processus d'incident sera déclaré.
 
 [Télécharger et approuver la suppression des réponses au formulaire](${baseUrl}/fr/form-builder/${formID}/responses)`,
-      },
     });
   } catch (error) {
-    if (error instanceof AxiosError) {
-      // Error Message will be sent to slack
-      console.error(
-        JSON.stringify({
-          level: "error",
-          msg: `Failed to send nagware email to form owner: ${formOwnerEmailAddress} for form ID ${formID} .`,
-          error: error.response?.data?.errors
-            ? JSON.stringify(error.response.data.errors)
-            : error.message,
-        })
-      );
-    } else {
-      console.error(
-        JSON.stringify({
-          status: "failed",
-          message:
-            "Failed to send nagware email to form owner: ${formOwnerEmailAddress} for form ID ${formID}",
-          error: (error as Error).message,
-        })
-      );
-    }
+    // Error Message will be sent to slack
+    console.error(
+      JSON.stringify({
+        level: "error",
+        msg: `Failed to send nagware email to form owner: ${formOwnerEmailAddress} for form ID ${formID} .`,
+        error: (error as Error).message,
+      })
+    );
+
     // Continue to send nagware emails even if one fails
     return;
   }

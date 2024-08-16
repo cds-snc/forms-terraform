@@ -1,4 +1,4 @@
-import { NotifyClient } from "notifications-node-client";
+import { GCNotifyClient } from "./gc-notify-client.js";
 import convertMessage from "./markdown.js";
 import { extractFileInputResponses, notifyProcessed } from "./dataLayer.js";
 import { retrieveFilesFromReliabilityStorage } from "./s3FileInput.js";
@@ -10,10 +10,12 @@ const client = new SecretsManagerClient();
 const command = new GetSecretValueCommand({ SecretId: process.env.NOTIFY_API_KEY });
 console.log("Retrieving Notify API Key from Secrets Manager");
 const notifyApiKey = await client.send(command);
-const notifyClient = new NotifyClient(
-  "https://api.notification.canada.ca",
-  notifyApiKey.SecretString
-);
+
+if (notifyApiKey.SecretString === undefined) {
+  throw new Error("GCNotify API key is undefined");
+}
+
+const gcNotifyClient = GCNotifyClient.default(notifyApiKey.SecretString);
 
 export default async (
   submissionID: string,
@@ -44,7 +46,11 @@ export default async (
       };
     }, {});
 
-    const templateID = process.env.TEMPLATE_ID;
+    const templateId = process.env.TEMPLATE_ID;
+
+    if (templateId === undefined) {
+      throw new Error(`Missing Environment Variables: ${templateId ? "" : "Template ID"}`);
+    }
 
     const emailBody = convertMessage(formSubmission, submissionID, language, createdAt);
     const messageSubject =
@@ -56,14 +62,16 @@ export default async (
         ? formSubmission.deliveryOption.emailSubjectEn
         : formSubmission.form.titleEn;
 
-    await notifyClient.sendEmail(templateID, formSubmission.deliveryOption.emailAddress, {
-      personalisation: {
+    await gcNotifyClient.sendEmail(
+      formSubmission.deliveryOption.emailAddress,
+      templateId,
+      {
         subject: messageSubject,
         formResponse: emailBody,
         ...attachFileParameters,
       },
-      reference: submissionID,
-    });
+      submissionID
+    );
 
     await notifyProcessed(submissionID);
 
@@ -77,30 +85,6 @@ export default async (
       })
     );
   } catch (error) {
-    let errorMessage = "";
-
-    if (error instanceof AxiosError) {
-      if (error.response) {
-        /*
-         * The request was made and the server responded with a
-         * status code that falls out of the range of 2xx
-         */
-        const notifyErrors = Array.isArray(error.response.data.errors)
-          ? JSON.stringify(error.response.data.errors)
-          : error.response.data.errors;
-        errorMessage = `GC Notify errored with status code ${error.response.status} and returned the following detailed errors ${notifyErrors}.`;
-      } else if (error.request) {
-        /*
-         * The request was made but no response was received, `error.request`
-         * is an instance of XMLHttpRequest in the browser and an instance
-         * of http.ClientRequest in Node.js
-         */
-        errorMessage = `${error.request}.`;
-      }
-    } else if (error instanceof Error) {
-      errorMessage = `${(error as Error).message}.`;
-    }
-
     console.error(
       JSON.stringify({
         level: "error",
@@ -108,12 +92,9 @@ export default async (
         submissionId: submissionID ?? "n/a",
         sendReceipt: sendReceipt ?? "n/a",
         msg: "Failed to send submission through GC Notify",
-        error: errorMessage,
+        error: (error as Error).message,
       })
     );
-
-    // Log full error to console, it will not be sent to Slack
-    console.log(JSON.stringify(error));
 
     throw new Error(`Failed to send submission through GC Notify.`);
   }
