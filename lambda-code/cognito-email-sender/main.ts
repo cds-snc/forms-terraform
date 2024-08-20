@@ -1,8 +1,7 @@
 import encryptionSDK from "@aws-crypto/client-node";
 import { Handler } from "aws-lambda";
-import { NotifyClient } from "notifications-node-client";
-import { AxiosError } from "axios";
 import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
+import { GCNotifyClient } from "lib/gc-notify-client.js";
 
 const KEY_ARN = process.env.KEY_ARN;
 const KEY_ALIAS = process.env.KEY_ALIAS;
@@ -20,10 +19,12 @@ const client = new SecretsManagerClient();
 const command = new GetSecretValueCommand({ SecretId: process.env.NOTIFY_API_KEY });
 console.log("Retrieving Notify API Key from Secrets Manager");
 const notifyApiKey = await client.send(command);
-const notifyClient = new NotifyClient(
-  "https://api.notification.canada.ca",
-  notifyApiKey.SecretString
-);
+
+if (notifyApiKey.SecretString === undefined) {
+  throw new Error("GCNotify API key is undefined");
+}
+
+const gcNotifyClient = GCNotifyClient.default(notifyApiKey.SecretString);
 
 export const handler: Handler = async (event) => {
   // setup the encryptionSDK's key ring
@@ -55,7 +56,8 @@ export const handler: Handler = async (event) => {
     }
   }
 
-  const userEmail = event.request.userAttributes.email;
+  const userEmail: string = event.request.userAttributes.email;
+
   if (
     plainTextCode &&
     userEmail &&
@@ -63,36 +65,23 @@ export const handler: Handler = async (event) => {
   ) {
     // attempt to send the code to the user through Notify
     try {
-      await notifyClient.sendEmail(TEMPLATE_ID, userEmail, {
-        personalisation: {
-          passwordReset: event.triggerSource === "CustomEmailSender_ForgotPassword",
-          // Keeping `accountVerification` and `resendCode` variables in case we need them in the future. They were removed when we implemented 2FA.
-          accountVerification: false,
-          resendCode: false,
-          code: plainTextCode,
-        },
+      await gcNotifyClient.sendEmail(userEmail, TEMPLATE_ID, {
+        passwordReset: event.triggerSource === "CustomEmailSender_ForgotPassword",
+        // Keeping `accountVerification` and `resendCode` variables in case we need them in the future. They were removed when we implemented 2FA.
+        accountVerification: false,
+        resendCode: false,
+        code: plainTextCode,
       });
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        // Error Message will be sent to slack
-        console.error(
-          JSON.stringify({
-            level: "error",
-            msg: `Failed to send password reset email to ${userEmail}`,
-            error: err.response?.data?.errors
-              ? JSON.stringify(err.response.data.errors)
-              : err.message,
-          })
-        );
-      } else {
-        console.error(
-          JSON.stringify({
-            status: "failed",
-            message: `Failed to send password reset email to ${userEmail}`,
-            error: (err as Error).message,
-          })
-        );
-      }
+    } catch (error) {
+      // Error message will be sent to slack
+      console.error(
+        JSON.stringify({
+          level: "error",
+          msg: `Failed to send password reset email to ${userEmail}`,
+          error: (error as Error).message,
+        })
+      );
+
       throw new Error("Notify failed to send the code");
     }
   }
