@@ -45,6 +45,7 @@ module "api_ecs" {
     data.aws_iam_policy_document.api_ecs_dynamodb_vault.json,
     data.aws_iam_policy_document.api_ecs_kms_vault.json,
     data.aws_iam_policy_document.api_ecs_s3_vault.json,
+    data.aws_iam_policy_document.api_ecs_secrets_manager.json
   ]
 
   # Networking
