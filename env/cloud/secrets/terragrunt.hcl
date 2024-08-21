@@ -14,6 +14,7 @@ locals {
   notify_api_key               = get_env("NOTIFY_API_KEY", "I_am_not_a_secret_token")
   freshdesk_api_key            = get_env("FRESHDESK_API_KEY", "I_am_not_a_secret_token")
   zitadel_administration_key   = get_env("ZITADEL_ADMINISTRATION_KEY", "I_am_not_a_secret_token")
+  zitadel_application_key      = get_env("ZITADEL_APPLICATION_KEY", "I_am_not_a_secret_token")
   rds_db_password              = "chummy"
 }
 
@@ -24,6 +25,7 @@ inputs = {
   notify_api_key               = local.notify_api_key
   freshdesk_api_key            = local.freshdesk_api_key
   zitadel_administration_key   = local.zitadel_administration_key
+  zitadel_application_key      = local.zitadel_application_key
   # Overwritten in GitHub Actions by TFVARS
   rds_db_password              = local.rds_db_password
 }

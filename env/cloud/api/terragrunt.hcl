@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms", "../network", "../dynamodb", "../load_balancer", "../ecr", "../s3", "../app"]
+  paths = ["../kms", "../network", "../dynamodb", "../load_balancer", "../ecr", "../s3", "../app", "../secrets"]
 }
 
 dependency "app" {
@@ -73,6 +73,19 @@ dependency "s3" {
   }
 }
 
+dependency "secrets" {
+  config_path                             = "../secrets"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs = {
+      zitadel_application_key_secret_arn   = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:zitadel_application_key"
+  }
+}
+
+locals {
+  zitadel_domain            = get_env("ZITADEL_PROVIDER", "https://localhost")
+}
+
 inputs = {
   api_image_tag = "latest"
 
@@ -84,6 +97,10 @@ inputs = {
   private_subnet_ids          = dependency.network.outputs.private_subnet_ids
   security_group_id_api_ecs   = dependency.network.outputs.api_ecs_security_group_id
   s3_vault_file_storage_arn   = dependency.s3.outputs.vault_file_storage_arn
+  zitadel_application_key_secret_arn   = dependency.secrets.outputs.zitadel_application_key_secret_arn
+
+  zitadel_domain              = local.zitadel_domain
+
 }
 
 include {

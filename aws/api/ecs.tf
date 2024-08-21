@@ -1,8 +1,18 @@
 locals {
-  container_env     = [] # TODO: add api environment variables
-  container_secrets = [] # TODO: add api secrets
-}
+  container_env = [
+    {
+      name  = "ZITADEL_DOMAIN"
+      value = var.zitadel_provider
+    }
+  ]
 
+  container_secrets = [
+    {
+      name      = "ZITADEL_APPLICATION_KEY"
+      valueFrom = var.zitadel_application_key_secret_arn
+    }
+  ]
+}
 module "api_ecs" {
   source = "github.com/cds-snc/terraform-modules//ecs?ref=f11e70a097b0796e661b7e209e29f7d6b62240cf" # v9.6.3
 
@@ -98,6 +108,20 @@ data "aws_iam_policy_document" "api_ecs_s3_vault" {
     resources = [
       var.s3_vault_file_storage_arn,
       "${var.s3_vault_file_storage_arn}/*"
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "api_ecs_secrets_manager" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+
+    resources = [
+      var.zitadel_application_key_secret_arn
     ]
   }
 }

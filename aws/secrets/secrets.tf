@@ -66,3 +66,14 @@ resource "aws_secretsmanager_secret_version" "zitadel_administration_key" {
   secret_id     = aws_secretsmanager_secret.zitadel_administration_key.id
   secret_string = var.zitadel_administration_key
 }
+
+resource "aws_secretsmanager_secret" "zitadel_application_key" {
+  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
+  name                    = "zitadel_application_key"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "zitadel_application_key" {
+  secret_id     = aws_secretsmanager_secret.zitadel_application_key.id
+  secret_string = var.zitadel_application_key
+}

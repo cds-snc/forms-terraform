@@ -34,3 +34,9 @@ variable "zitadel_administration_key" {
   type        = string
   sensitive   = true
 }
+
+variable "zitadel_application_key" {
+  description = "The Zitadel application key used by the ECS task (API)"
+  type        = string
+  sensitive   = true
+}

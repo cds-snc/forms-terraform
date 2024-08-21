@@ -27,3 +27,8 @@ output "zitadel_administration_key_secret_arn" {
   description = "ARN of zitadel_administration_key secret"
   value       = aws_secretsmanager_secret_version.zitadel_administration_key.arn
 }
+
+output "zitadel_application_key_secret_arn" {
+  description = "ARN of zitadel_application_key secret"
+  value       = aws_secretsmanager_secret_version.zitadel_application_key.arn
+}
