@@ -73,6 +73,10 @@ dependency "s3" {
   }
 }
 
+locals {
+  zitadel_domain            = get_env("ZITADEL_PROVIDER", "https://localhost")
+}
+
 inputs = {
   api_image_tag = "latest"
 
@@ -84,6 +88,10 @@ inputs = {
   private_subnet_ids          = dependency.network.outputs.private_subnet_ids
   security_group_id_api_ecs   = dependency.network.outputs.api_ecs_security_group_id
   s3_vault_file_storage_arn   = dependency.s3.outputs.vault_file_storage_arn
+  zitadel_administration_key_secret_arn   = dependency.secrets.outputs.zitadel_application_key_secret_arn
+
+  zitadel_domain              = local.zitadel_provider
+
 }
 
 include {

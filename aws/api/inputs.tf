@@ -42,3 +42,14 @@ variable "security_group_id_api_ecs" {
   description = "ID of the security group for the API ECS service"
   type        = string
 }
+
+variable "zitadel_provider" {
+  description = "The Zitadel provider endpoint used by the ECS task"
+  type        = string
+}
+
+variable "zitadel_application_key_secret_arn" {
+  description = "The Zitadel application key secret used by the ECS task"
+  type        = string
+  sensitive   = true
+}

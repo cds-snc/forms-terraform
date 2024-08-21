@@ -27,6 +27,8 @@ env:
   TF_INPUT: false
   # API
   FF_API: true
+  TF_VAR_zitadel_provider: ${{ vars.STAGING_ZITADEL_PROVIDER }}
+  TF_VAR_zitadel_application_key: ${{ secrets.STAGING_ZITADEL_APPLICATION_KEY }}
   # App
   TF_VAR_ecs_secret_token: ${{ secrets.STAGING_TOKEN_SECRET }}
   TF_VAR_recaptcha_secret: ${{ secrets.STAGING_RECAPTCHA_SITE_SECRET }}
