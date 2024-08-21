@@ -99,7 +99,7 @@ inputs = {
   s3_vault_file_storage_arn   = dependency.s3.outputs.vault_file_storage_arn
   zitadel_application_key_secret_arn   = dependency.secrets.outputs.zitadel_application_key_secret_arn
 
-  zitadel_domain              = locals.zitadel_domain
+  zitadel_domain              = local.zitadel_domain
 
 }
 
