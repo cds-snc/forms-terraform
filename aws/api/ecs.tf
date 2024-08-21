@@ -42,12 +42,12 @@ module "api_ecs" {
   container_read_only_root_filesystem = false # TODO: mount tmp filesystem for yarn cache and logs
 
   task_role_policy_documents = [
+    data.aws_iam_policy_document.api_ecs_kms_vault.json,
     data.aws_iam_policy_document.api_ecs_dynamodb_vault.json,
     data.aws_iam_policy_document.api_ecs_s3_vault.json
   ]
 
   task_exec_role_policy_documents = [
-    data.aws_iam_policy_document.api_ecs_kms_vault.json,
     data.aws_iam_policy_document.api_ecs_secrets_manager.json
   ]
 
