@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.18.2](https://github.com/cds-snc/forms-terraform/compare/v3.18.1...v3.18.2) (2024-08-22)
+
+
+### Bug Fixes
+
+* add api missing variables (zitadel domain and app key) ([#781](https://github.com/cds-snc/forms-terraform/issues/781)) ([0d92933](https://github.com/cds-snc/forms-terraform/commit/0d929332552856ec0561647ae566e768b50f9734))
+* attach permission to retrieve secrets to API ECS task ([#783](https://github.com/cds-snc/forms-terraform/issues/783)) ([b2d73f8](https://github.com/cds-snc/forms-terraform/commit/b2d73f8582278356710151e85094acd307215340))
+* permission to use DynamoDB was not properly set in the ECS task configuration ([#784](https://github.com/cds-snc/forms-terraform/issues/784)) ([ee6c425](https://github.com/cds-snc/forms-terraform/commit/ee6c425f5747cfb291b9cb53189b6b09818f904b))
+* permission to use KMS was not properly set in the ECS task configuration ([#785](https://github.com/cds-snc/forms-terraform/issues/785)) ([6101829](https://github.com/cds-snc/forms-terraform/commit/610182938a8c272aa3bc8aa40fa4a982c15940af))
+
 ## [3.18.1](https://github.com/cds-snc/forms-terraform/compare/v3.18.0...v3.18.1) (2024-08-13)
 
 
