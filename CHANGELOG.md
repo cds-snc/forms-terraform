@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.18.3](https://github.com/cds-snc/forms-terraform/compare/v3.18.2...v3.18.3) (2024-08-27)
+
+
+### Bug Fixes
+
+* wrong import in Cognito Email Sender lambda function ([#786](https://github.com/cds-snc/forms-terraform/issues/786)) ([f1cfae9](https://github.com/cds-snc/forms-terraform/commit/f1cfae997c84283fda2d8b7239d2bd8a13c71576))
+
 ## [3.18.2](https://github.com/cds-snc/forms-terraform/compare/v3.18.1...v3.18.2) (2024-08-22)
 
 
