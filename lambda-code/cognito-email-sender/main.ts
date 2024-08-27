@@ -1,7 +1,7 @@
 import encryptionSDK from "@aws-crypto/client-node";
 import { Handler } from "aws-lambda";
 import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
-import { GCNotifyClient } from "lib/gc-notify-client.js";
+import { GCNotifyClient } from "./lib/gc-notify-client.js";
 
 const KEY_ARN = process.env.KEY_ARN;
 const KEY_ALIAS = process.env.KEY_ALIAS;
