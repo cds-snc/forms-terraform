@@ -25,7 +25,7 @@ resource "aws_security_group_rule" "connector_egress_rds" {
   source_security_group_id = aws_security_group.forms_database.id
 }
 
-resource "aws_security_group_rule" "connector_ingress_rds" {
+resource "aws_security_group_rule" "connector_ingress_redis" {
   description              = "Ingress to redis from lambda connector"
   type                     = "ingress"
   from_port                = 6379
@@ -35,7 +35,7 @@ resource "aws_security_group_rule" "connector_ingress_rds" {
   source_security_group_id = aws_security_group.connector_db.id
 }
 
-resource "aws_security_group_rule" "connector_egress_rds" {
+resource "aws_security_group_rule" "connector_egress_redis" {
   description              = "Egress from lambda connector to redis"
   type                     = "egress"
   from_port                = 6379
