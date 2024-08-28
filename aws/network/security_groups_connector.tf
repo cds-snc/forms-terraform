@@ -25,6 +25,26 @@ resource "aws_security_group_rule" "connector_egress_rds" {
   source_security_group_id = aws_security_group.forms_database.id
 }
 
+resource "aws_security_group_rule" "connector_ingress_rds" {
+  description              = "Ingress to redis from lambda connector"
+  type                     = "ingress"
+  from_port                = 6379
+  to_port                  = 6379
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.forms_redis.id
+  source_security_group_id = aws_security_group.connector_db.id
+}
+
+resource "aws_security_group_rule" "connector_egress_rds" {
+  description              = "Egress from lambda connector to redis"
+  type                     = "egress"
+  from_port                = 6379
+  to_port                  = 6379
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.connector_db.id
+  source_security_group_id = aws_security_group.forms_redis.id
+}
+
 resource "aws_security_group_rule" "connector_db_egress_privatelink" {
   description              = "Egress from lambda connector to PrivateLink endpoints"
   type                     = "egress"
