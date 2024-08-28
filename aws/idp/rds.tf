@@ -79,6 +79,7 @@ resource "aws_ssm_parameter" "zitadel_database_user_password" {
 }
 
 resource "aws_secretsmanager_secret" "zidatel_database_proxy_auth" {
+  # checkov:skip=CKV2_AWS_57: automated rotation is not applicable to this secret
   name = "zidatel_database_proxy_auth"
   tags = local.common_tags
 }
