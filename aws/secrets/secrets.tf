@@ -23,6 +23,18 @@ resource "aws_secretsmanager_secret_version" "freshdesk_api_key" {
   secret_string = var.freshdesk_api_key
 }
 
+resource "aws_secretsmanager_secret" "addresscomplete_api_key" {
+  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
+  name                    = "addresscomplete_api_key"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "addresscomplete_api_key" {
+  secret_id     = aws_secretsmanager_secret.addresscomplete_api_key.id
+  secret_string = var.addresscomplete_api_key
+}
+
+
 resource "aws_secretsmanager_secret" "token_secret" {
   # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
   name                    = "token_secret"

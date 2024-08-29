@@ -153,6 +153,12 @@ variable "freshdesk_api_key_secret_arn" {
   sensitive   = true
 }
 
+variable "addresscomplete_api_key_secret_arn" {
+  description = "The AddressComplete API key secret used by Client app"
+  type        = string
+  sensitive   = true
+}
+
 variable "private_subnet_ids" {
   description = "Private subnet IDs for the ECS service"
   type        = list(string)

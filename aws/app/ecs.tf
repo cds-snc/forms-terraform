@@ -26,6 +26,7 @@ data "template_file" "form_viewer_task" {
     tracer_provider                 = var.tracer_provider
     notify_api_key                  = var.notify_api_key_secret_arn
     freshdesk_api_key               = var.freshdesk_api_key_secret_arn
+    addresscomplete_api_key         = var.addresscomplete_api_key_secret_arn
     recaptcha_secret                = var.recaptcha_secret_arn
     recaptcha_public                = var.recaptcha_public
     gc_notify_callback_bearer_token = var.notify_callback_bearer_token_secret_arn
