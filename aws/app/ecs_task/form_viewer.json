@@ -121,6 +121,10 @@
         "valueFrom": "${freshdesk_api_key}"
       },
       {
+        "name": "NEXT_PUBLIC_ADDRESSCOMPLETE_API_KEY",
+        "valueFrom": "${addresscomplete_api_key}"
+      },
+      {
         "name": "ZITADEL_ADMINISTRATION_KEY",
         "valueFrom": "${zitadel_administration_key}"
       }

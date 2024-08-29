@@ -188,6 +188,9 @@ inputs = {
   reliability_file_storage_id = dependency.s3.outputs.reliability_file_storage_id
 
   zitadel_provider = local.zitadel_provider
+
+  # Address Complete is completed on the client browser side.
+  addresscomplete_api_key                = "UR78-BU29-RU35-EP49" # Key is domain locked, and presented to the client.
 }
 
 include {
