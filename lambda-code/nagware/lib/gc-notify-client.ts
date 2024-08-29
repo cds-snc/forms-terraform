@@ -51,14 +51,14 @@ export class GCNotifyClient {
            * is an instance of XMLHttpRequest in the browser and an instance
            * of http.ClientRequest in Node.js
            */
-          errorMessage = `Error sending to Notify with request :${error.request}.`;
+          errorMessage = `Request timed out.`;
         }
       } else if (error instanceof Error) {
         errorMessage = `${(error as Error).message}.`;
       }
 
       throw new Error(
-        `Failed to send submission through GC Notify to ${emailAddress}. Reason: ${errorMessage}.`
+        `Failed to send submission through GC Notify to ${emailAddress}. Reason: ${errorMessage}`
       );
     }
   }
