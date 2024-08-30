@@ -3,6 +3,10 @@ locals {
     {
       name  = "ZITADEL_DOMAIN"
       value = var.zitadel_provider
+    },
+    {
+      name  = "ENVIRONMENT_MODE"
+      value = var.env
     }
   ]
 
