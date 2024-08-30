@@ -253,3 +253,9 @@ variable "zitadel_administration_key_secret_arn" {
   type        = string
   sensitive   = true
 }
+
+variable "sentry_api_key_secret_arn" {
+  description = "The Sentry API key secret used by the ECS task"
+  type        = string
+  sensitive   = true
+}
