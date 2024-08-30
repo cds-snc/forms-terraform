@@ -121,7 +121,7 @@
         "valueFrom": "${freshdesk_api_key}"
       },
       {
-        "name": "SENTRY_AUTH_TOKEN",
+        "name": "SENTRY_API_KEY",
         "valueFrom": "${sentry_api_key}"
       },
       {
