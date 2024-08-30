@@ -8,6 +8,11 @@ output "freshdesk_api_key_secret_arn" {
   value       = aws_secretsmanager_secret.freshdesk_api_key.arn
 }
 
+output "sentry_api_key_secret_arn" {
+  description = "ARN of sentry_api_key secret"
+  value       = aws_secretsmanager_secret.sentry_api_key.arn
+}
+
 output "token_secret_arn" {
   description = "ARN of tokensecret"
   value       = aws_secretsmanager_secret.token_secret.arn
