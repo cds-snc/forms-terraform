@@ -128,6 +128,7 @@ dependency "s3" {
 
 locals {
   zitadel_provider                            = get_env("ZITADEL_PROVIDER", "https://localhost")
+  env = get_env("APP_ENV", "local")
 }
 
 inputs = {
@@ -190,7 +191,7 @@ inputs = {
   zitadel_provider = local.zitadel_provider
 
   # Address Complete is completed on the client browser side.
-  addresscomplete_api_key                = "UR78-BU29-RU35-EP49" # Key is domain locked, and presented to the client.
+  addresscomplete_api_key = local.env == "staging" ? "UR78-BU29-RU35-EP49"  : "tbd" # Key is domain locked, and presented to the client.
 }
 
 include {
