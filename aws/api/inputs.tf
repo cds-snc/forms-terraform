@@ -53,3 +53,9 @@ variable "zitadel_application_key_secret_arn" {
   type        = string
   sensitive   = true
 }
+
+variable "freshdesk_api_key_secret_arn" {
+  description = "The Freshdesk application key secret used by the ECS task"
+  type        = string
+  sensitive   = true
+}
