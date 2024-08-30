@@ -153,7 +153,7 @@ variable "freshdesk_api_key_secret_arn" {
   sensitive   = true
 }
 
-variable "addresscomplete_api_key_secret_arn" {
+variable "addresscomplete_api_key" {
   description = "The Address Complete API key passed to the forms client"
   type        = string
   sensitive   = true
