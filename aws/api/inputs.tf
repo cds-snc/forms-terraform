@@ -33,6 +33,11 @@ variable "private_subnet_ids" {
   type        = list(string)
 }
 
+variable "redis_url" {
+  description = "Redis URL used by the ECS task"
+  type        = string
+}
+
 variable "s3_vault_file_storage_arn" {
   description = "ARN of the S3 bucket used for the Vault's file storage"
   type        = string

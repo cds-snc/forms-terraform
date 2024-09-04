@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms", "../network", "../dynamodb", "../load_balancer", "../ecr", "../s3", "../app", "../secrets"]
+  paths = ["../kms", "../network", "../dynamodb", "../load_balancer", "../ecr", "../redis", "../s3", "../app", "../secrets"]
 }
 
 dependency "app" {
@@ -64,6 +64,15 @@ dependency "network" {
   }
 }
 
+dependency "redis" {
+  config_path                             = "../redis"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    redis_url = "mock-redis-url.0001.cache.amazonaws.com"
+  }
+}
+
 dependency "s3" {
   config_path                             = "../s3"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
@@ -99,6 +108,8 @@ inputs = {
   dynamodb_vault_arn          = dependency.dynamodb.outputs.dynamodb_vault_arn
   s3_vault_file_storage_arn   = dependency.s3.outputs.vault_file_storage_arn
   
+  redis_url = dependency.redis.outputs.redis_url
+
   zitadel_domain                     = local.zitadel_domain
   zitadel_application_key_secret_arn = dependency.secrets.outputs.zitadel_application_key_secret_arn
   

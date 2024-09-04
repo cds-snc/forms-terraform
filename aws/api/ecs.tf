@@ -7,6 +7,10 @@ locals {
     {
       name  = "ENVIRONMENT_MODE"
       value = var.env
+    },
+    {
+      name  = "REDIS_URL"
+      value = var.redis_url
     }
   ]
 
