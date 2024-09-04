@@ -27,7 +27,7 @@ tfswitch 1.9.2
 
 basedir=$(pwd)
 
-if ! curl https://localhost.localstack.cloud:4566/_localstack/health > /dev/null 2>&1; then
+if ! curl http://localhost.localstack.cloud:4566/_localstack/health > /dev/null 2>&1; then
   printf "${redColor}=> Your Localstack instance appears to be offline. Use 'docker-compose up' to launch it.${reset}\n"
   exit 1
 fi
