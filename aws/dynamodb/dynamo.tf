@@ -48,11 +48,24 @@ resource "aws_dynamodb_table" "vault" {
     type = "S"
   }
 
+  attribute {
+    name = "Status#CreatedAt"
+    type = "S"
+  }
+
   global_secondary_index {
     name            = "Status"
     hash_key        = "FormID"
     range_key       = "Status"
     projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name               = "StatusCreatedAt"
+    hash_key           = "FormID"
+    range_key          = "Status#CreatedAt"
+    projection_type    = "INCLUDE"
+    non_key_attributes = ["CreatedAt", "Name"]
   }
 
   server_side_encryption {
