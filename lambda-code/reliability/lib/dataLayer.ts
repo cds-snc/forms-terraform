@@ -124,7 +124,7 @@ export async function saveToVault(
             CreatedAt: Number(createdAt),
             SecurityAttribute: securityAttribute,
             Status: "New",
-            "Status#CreatedAt": `NEW#${Number(createdAt)}`,
+            "Status#CreatedAt": `New#${Number(createdAt)}`,
             ConfirmationCode: confirmationCode,
             Name: name,
             FormSubmissionHash: formSubmissionHash,
