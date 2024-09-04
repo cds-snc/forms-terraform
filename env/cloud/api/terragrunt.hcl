@@ -69,7 +69,8 @@ dependency "redis" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    redis_url = "mock-redis-url.0001.cache.amazonaws.com"
+    redis_port = 6379
+    redis_url  = "mock-redis-url.0001.cache.amazonaws.com"
   }
 }
 
@@ -104,11 +105,12 @@ inputs = {
   lb_target_group_arn_api_ecs = dependency.load_balancer.outputs.lb_target_group_api_arn
   private_subnet_ids          = dependency.network.outputs.private_subnet_ids
   
-  kms_key_dynamodb_arn        = dependency.kms.outputs.kms_key_dynamodb_arn
-  dynamodb_vault_arn          = dependency.dynamodb.outputs.dynamodb_vault_arn
-  s3_vault_file_storage_arn   = dependency.s3.outputs.vault_file_storage_arn
+  kms_key_dynamodb_arn      = dependency.kms.outputs.kms_key_dynamodb_arn
+  dynamodb_vault_arn        = dependency.dynamodb.outputs.dynamodb_vault_arn
+  s3_vault_file_storage_arn = dependency.s3.outputs.vault_file_storage_arn
   
-  redis_url = dependency.redis.outputs.redis_url
+  redis_port = dependency.redis.outputs.redis_port
+  redis_url  = dependency.redis.outputs.redis_url
 
   zitadel_domain                     = local.zitadel_domain
   zitadel_application_key_secret_arn = dependency.secrets.outputs.zitadel_application_key_secret_arn

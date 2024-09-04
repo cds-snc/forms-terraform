@@ -33,8 +33,13 @@ variable "private_subnet_ids" {
   type        = list(string)
 }
 
+variable "redis_port" {
+  description = "Redis port used by the ECS task"
+  type        = number
+}
+
 variable "redis_url" {
-  description = "Redis URL used by the ECS task"
+  description = "Redis URL used by the ECS task.  This should not include the protocol or port."
   type        = string
 }
 
