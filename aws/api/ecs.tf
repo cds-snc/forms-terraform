@@ -10,7 +10,7 @@ locals {
     },
     {
       name  = "REDIS_URL"
-      value = var.redis_url
+      value = "redis://${var.redis_url}:${var.redis_port}"
     }
   ]
 
