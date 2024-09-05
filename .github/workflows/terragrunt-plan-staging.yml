@@ -8,6 +8,7 @@ on:
       - "aws/**"
       - "env/common/**"
       - "env/cloud/**"
+      - "idp/**"
       - "lambda-code/**"
       - ".github/workflows/terragrunt-plan-staging.yml"
 
