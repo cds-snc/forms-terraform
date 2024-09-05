@@ -1,23 +1,22 @@
 import axios, { type AxiosInstance } from "axios";
 
+const API_URL: string = "https://api.notification.canada.ca";
+
 export type Personalisation = Record<string, string | boolean | Record<string, string | boolean>>;
 
 export class GCNotifyClient {
-  private axiosInstance: AxiosInstance;
+  private apiUrl: string;
+  private apiKey: string;
+  private timeout: number;
 
   public static default(apiKey: string, timeout: number = 2000): GCNotifyClient {
-    return new GCNotifyClient("https://api.notification.canada.ca", apiKey, timeout);
+    return new GCNotifyClient(API_URL, apiKey, timeout);
   }
 
   private constructor(apiUrl: string, apiKey: string, timeout: number) {
-    this.axiosInstance = axios.create({
-      baseURL: apiUrl,
-      timeout: timeout,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `ApiKey-v1 ${apiKey}`,
-      },
-    });
+    this.apiUrl = apiUrl;
+    this.apiKey = apiKey;
+    this.timeout = timeout;
   }
 
   public async sendEmail(
@@ -27,11 +26,20 @@ export class GCNotifyClient {
     reference?: string
   ): Promise<void> {
     try {
-      await this.axiosInstance.post("/v2/notifications/email", {
-        email_address: emailAddress,
-        template_id: templateId,
-        personalisation,
-        ...(reference && { reference }),
+      await axios({
+        url: `${this.apiUrl}/v2/notifications/email`,
+        method: "POST",
+        timeout: this.timeout,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `ApiKey-v1 ${this.apiKey}`,
+        },
+        data: {
+          email_address: emailAddress,
+          template_id: templateId,
+          personalisation,
+          ...(reference && { reference }),
+        },
       });
     } catch (error) {
       let errorMessage = "";
