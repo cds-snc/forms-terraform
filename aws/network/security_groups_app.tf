@@ -159,6 +159,16 @@ resource "aws_security_group_rule" "privatelink_api_ecs_ingress" {
   source_security_group_id = aws_security_group.api_ecs[0].id
 }
 
+resource "aws_security_group_rule" "privatelink_lambda_nagware_ingress" {
+  description              = "Security group rule for Nagware Lambda function ingress"
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.privatelink.id
+  source_security_group_id = aws_security_group.lambda_nagware.id
+}
+
 # Allow traffic from the app and from the lambdas
 resource "aws_security_group" "forms_database" {
   name        = "forms-database"
