@@ -1,0 +1,64 @@
+name: Request ECS service to use new image
+
+inputs:
+  aws-role-to-assume:
+    required: true
+  aws-role-session-name:
+    required: true
+  aws-region:
+    required: true
+  ecs-cluster-name:
+    required: true
+  ecs-service-name:
+    required: true
+  ecs-task-def-name:
+    required: true
+  image-tag:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure AWS credentials using OIDC
+      uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+      with:
+        role-to-assume: ${{ inputs.aws-role-to-assume }}
+        role-session-name: ${{ inputs.aws-role-session-name }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Login to Staging Amazon ECR
+      id: login-ecr-staging
+      uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
+
+    - name: Download ECS task definition
+      shell: bash
+      run: |
+        aws ecs describe-task-definition \
+        --task-definition ${{ inputs.ecs-service-name }} \
+        --query taskDefinition > task-definition.json
+
+    - name: Update ECS task image
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@9933bf0d77b7f6d52e3886fbb8aae95a677db1ab # v1.5.0
+      with:
+        task-definition: task-definition.json
+        container-name: ${{ inputs.ecs-service-name }}
+        image: "${{ steps.login-ecr-staging.outputs.registry }}/${{ inputs.image-tag }}"
+
+    - name: Create the new ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@0a9a8fb7b39516cf53cc01d453b05c67c6fc7a2c # v2.0.0
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        cluster: ${{ inputs.ecs-cluster-name }}
+
+    - name: Deploy the new ECS task definition
+      shell: bash
+      run: |
+        aws ecs update-service \
+          --cluster ${{ inputs.ecs-cluster-name }} \
+          --service ${{ inputs.ecs-service-name }} \
+          --task-definition ${{ inputs.ecs-task-def-name }} \
+          --force-new-deployment > /dev/null 2>&1
+        aws ecs wait services-stable \
+          --cluster ${{ inputs.ecs-cluster-name }} \
+          --services ${{ inputs.ecs-service-name }}
