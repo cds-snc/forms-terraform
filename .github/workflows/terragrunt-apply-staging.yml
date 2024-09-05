@@ -95,6 +95,23 @@ jobs:
         with:
           filters: .github/lambda-filter.yml
 
+  detect-idp-changes:
+    needs: terragrunt-apply-ecr-only
+    runs-on: ubuntu-latest
+    outputs:
+      changes: ${{ steps.filter.outputs.changes }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Filter
+        id: filter
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        with:
+          filters: |
+            idp:
+              - 'idp/**'
+
   build-tag-push-lambda-images:
     needs: detect-lambda-changes
     if: ${{ needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]' }}
@@ -124,7 +141,8 @@ jobs:
           image-tag: ${{ github.sha }}
 
   build-tag-push-idp-image:
-    needs: terragrunt-apply-ecr-only
+    needs: detect-idp-changes
+    if: ${{ needs.detect-idp-changes.outputs.changes != '[]' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -272,6 +290,25 @@ jobs:
           lambda-name: ${{ matrix.image }}
           image-tag: ${{ github.sha }}
 
+  update-idp-ecs-service-image:
+    needs: [detect-idp-changes, terragrunt-apply-all-modules]
+    if: ${{ needs.detect-idp-changes.outputs.changes != '[]' && !failure() && !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Update IdP ESC service to use new image
+        uses: ./.github/workflows/request-ecs-service-to-use-new-image
+        with:
+          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
+          aws-role-session-name: TFApply
+          aws-region: ${{ env.AWS_REGION }}
+          ecs-cluster-name: idp
+          ecs-service-name: zitadel
+          ecs-task-def-name: zitadel
+          image-tag: "idp/zitadel:${{ github.sha }}"
+
   notify-on-error:
     needs:
       [
@@ -280,6 +317,7 @@ jobs:
         build-tag-push-idp-image,
         terragrunt-apply-all-modules,
         update-lambda-function-image,
+        update-idp-ecs-service-image,
       ]
     if: ${{ failure() && !cancelled() }}
     runs-on: ubuntu-latest

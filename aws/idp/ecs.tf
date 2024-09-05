@@ -54,6 +54,8 @@ module "idp_ecs" {
   task_cpu       = 1024
   task_memory    = 2048
 
+  service_use_latest_task_def = true
+
   # Scaling
   enable_autoscaling       = true
   desired_count            = 1
