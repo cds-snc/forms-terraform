@@ -193,3 +193,13 @@ variable "private_subnet_ids" {
   description = "Private subnet IDs"
   type        = list(string)
 }
+
+variable "redis_port" {
+  description = "Redis port used by the Nagware function"
+  type        = number
+}
+
+variable "redis_url" {
+  description = "Redis URL used by the Nagware function.  This should not include the protocol or port."
+  type        = string
+}
