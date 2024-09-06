@@ -8,7 +8,7 @@ include {
 
 
 dependencies {
-  paths = ["../network", "../rds", "../sqs", "../sns", "../kms", "../dynamodb", "../secrets", "../app", "../s3", "../ecr"]
+  paths = ["../network", "../rds", "../redis", "../sqs", "../sns", "../kms", "../dynamodb", "../secrets", "../app", "../s3", "../ecr"]
 }
 
 locals {
@@ -43,6 +43,16 @@ dependency "rds" {
     rds_cluster_arn     = null
     rds_db_name         = null
     database_secret_arn = null
+  }
+}
+
+dependency "redis" {
+  config_path                             = "../redis"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    redis_port = 6379
+    redis_url  = "mock-redis-url.0001.cache.amazonaws.com"
   }
 }
 
@@ -156,6 +166,9 @@ inputs = {
   rds_cluster_arn     = dependency.rds.outputs.rds_cluster_arn
   rds_db_name         = dependency.rds.outputs.rds_db_name
   database_secret_arn = dependency.rds.outputs.database_secret_arn
+
+  redis_port = dependency.redis.outputs.redis_port
+  redis_url  = dependency.redis.outputs.redis_url
 
   sqs_reliability_queue_arn            = dependency.sqs.outputs.sqs_reliability_queue_arn
   sqs_reliability_queue_id             = dependency.sqs.outputs.sqs_reliability_queue_id

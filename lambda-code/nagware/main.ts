@@ -4,6 +4,7 @@ import {
 } from "./lib/dynamodbDataLayer.js";
 import { getTemplateInfo } from "./lib/templates.js";
 import { notifyFormOwner } from "./lib/emailNotification.js";
+import { setOverdueResponseCache } from "./lib/overdueResponseCache.js";
 import { Handler } from "aws-lambda";
 
 type NotificationSettings = {
@@ -28,6 +29,8 @@ export const handler: Handler = async () => {
       shouldSendEmail: isSunday == false,
       shouldSendSlackNotification: isSunday,
     });
+
+    await setOverdueResponseCache(oldestFormResponseByFormID);
 
     return {
       statusCode: "SUCCESS",
