@@ -8,8 +8,8 @@ import { RedisConnector } from "./redisConnector.js";
  * when loading the user's `/forms` page. 
  */
 
-const OVERDUE_CACHE_EXPIRE_SECONDS = process.env.OVERDUE_CACHE_EXPIRE_SECONDS ?? "259200"; // 3 day default
-const OVERDUE_CACHE_KEY = process.env.OVERDUE_CACHE_KEY ?? "overdue:responses:template-ids"
+const OVERDUE_CACHE_EXPIRE_SECONDS = 259200; // 3 days
+const OVERDUE_CACHE_KEY = "overdue:responses:template-ids";
 
 export async function setOverdueResponseCache(
   formResponses: { formID: string; createdAt: number }[],
@@ -19,6 +19,6 @@ export async function setOverdueResponseCache(
   await redisConnector.client.set(
     OVERDUE_CACHE_KEY,
     JSON.stringify(formIDs),
-    { EX: parseInt(OVERDUE_CACHE_EXPIRE_SECONDS, 10) },
+    { EX: OVERDUE_CACHE_EXPIRE_SECONDS },
   );
 }
