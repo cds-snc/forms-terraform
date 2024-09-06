@@ -8,7 +8,7 @@ include {
 
 
 dependencies {
-  paths = ["../rds", "../sqs", "../sns", "../kms", "../dynamodb", "../secrets", "../app", "../s3", "../ecr"]
+  paths = ["../network", "../rds", "../sqs", "../sns", "../kms", "../dynamodb", "../secrets", "../app", "../s3", "../ecr"]
 }
 
 locals {
@@ -22,6 +22,16 @@ dependency "app" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
     ecs_iam_role_arn = "arn:aws:iam::123456789012:role/form-viewer"
+  }
+}
+
+dependency "network" {
+  config_path                             = "../network"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    lambda_nagware_security_group_id = "sg-1234"
+    private_subnet_ids               = ["prv-1", "prv-2"]
   }
 }
 
@@ -130,6 +140,9 @@ dependency "ecr" {
 }
 
 inputs = {
+  lambda_nagware_security_group_id = dependency.network.outputs.lambda_nagware_security_group_id
+  private_subnet_ids               = dependency.network.outputs.private_subnet_ids
+
   dynamodb_relability_queue_arn  = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
   dynamodb_vault_arn             = dependency.dynamodb.outputs.dynamodb_vault_arn
   dynamodb_vault_table_name      = dependency.dynamodb.outputs.dynamodb_vault_table_name

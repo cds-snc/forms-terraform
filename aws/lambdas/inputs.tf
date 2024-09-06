@@ -183,3 +183,13 @@ variable "ecr_repository_url_vault_integrity_lambda" {
   description = "URL of the Vault Integrity Lambda ECR"
   type        = string
 }
+
+variable "lambda_nagware_security_group_id" {
+  description = "Security group ID for the Nagware Lambda"
+  type        = string
+}
+
+variable "private_subnet_ids" {
+  description = "Private subnet IDs"
+  type        = list(string)
+}

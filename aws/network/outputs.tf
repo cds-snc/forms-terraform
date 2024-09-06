@@ -33,6 +33,11 @@ output "idp_lb_security_group_id" {
   value       = var.feature_flag_idp ? aws_security_group.idp_lb[0].id : ""
 }
 
+output "lambda_nagware_security_group_id" {
+  description = "Lambda Nagware function security group ID"
+  value       = aws_security_group.lambda_nagware.id
+}
+
 output "public_subnet_ids" {
   description = "List of the VPC's public subnet IDs"
   value       = aws_subnet.forms_public.*.id
