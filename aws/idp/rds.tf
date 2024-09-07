@@ -2,7 +2,7 @@
 # RDS Postgress cluster
 #
 module "idp_database" {
-  source = "github.com/cds-snc/terraform-modules//rds?ref=50c0f631d2c8558e6eec44138ffc2e963a1dfa9a" # v9.6.0
+  source = "github.com/cds-snc/terraform-modules//rds?ref=3628ac59c9e56f6fd7d2fe1b7f77e94c9137e922" # v9.6.0
   name   = "idp"
 
   database_name           = var.zitadel_database_name
@@ -12,7 +12,6 @@ module "idp_database" {
   instance_class          = "db.serverless"
   serverless_min_capacity = var.idp_database_min_acu
   serverless_max_capacity = var.idp_database_max_acu
-  use_proxy               = true
 
   username               = var.idp_database_cluster_admin_username
   password               = var.idp_database_cluster_admin_password
