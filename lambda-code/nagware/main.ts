@@ -23,10 +23,12 @@ export const handler: Handler = async () => {
   try {
     const oldestFormResponseByFormID = await findOldestFormResponseByFormID();
 
-    const isSunday = new Date().getDay() == 0; // 0 is Sunday
+    const dayOfWeek = new Date().getDay();
+    const isSunday = dayOfWeek == 0;
+    const isTuesdayOrThursday = dayOfWeek == 2 || dayOfWeek == 4;
 
     await nagOrDelete(oldestFormResponseByFormID, {
-      shouldSendEmail: isSunday == false,
+      shouldSendEmail: isTuesdayOrThursday,
       shouldSendSlackNotification: isSunday,
     });
 

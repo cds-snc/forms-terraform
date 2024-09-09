@@ -8,7 +8,7 @@ import { RedisConnector } from "./redisConnector.js";
  * when loading the user's `/forms` page. 
  */
 
-const OVERDUE_CACHE_EXPIRE_SECONDS = 259200; // 3 days
+const OVERDUE_CACHE_EXPIRE_SECONDS = 86400; // 1 day
 const OVERDUE_CACHE_KEY = "overdue:responses:template-ids";
 
 export async function setOverdueResponseCache(
