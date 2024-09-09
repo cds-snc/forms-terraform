@@ -24,7 +24,7 @@ resource "aws_wafv2_rule_group" "rate_limiters_group" {
 
     statement {
       rate_based_statement {
-        limit              = 2000
+        limit              = 2500
         aggregate_key_type = "IP"
 
       }
