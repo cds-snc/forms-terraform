@@ -28,8 +28,8 @@ resource "aws_cloudwatch_event_rule" "form_archiver_lambda_trigger" {
 
 resource "aws_cloudwatch_event_rule" "nagware_lambda_trigger" {
   name                = "nagware-lambda-trigger"
-  description         = "Fires every Tuesday, Thursday and Sunday at 5am EST"
-  schedule_expression = "cron(0 10 ? * TUE,THU,SUN *)" # 5 AM EST = 10 AM UTC ; every Tuesday, Thursday and Sunday
+  description         = "Fires every day at 5am EST"
+  schedule_expression = "cron(0 10 * * ? *)" # 5 AM EST = 10 AM UTC
 }
 
 resource "aws_cloudwatch_event_target" "audit_logs_archiver_lambda_trigger" {
