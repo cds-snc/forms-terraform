@@ -139,6 +139,7 @@ export async function saveToVault(
             FormID: formID,
             NAME_OR_CONF: `CONF#${confirmationCode}`,
             Name: name,
+            CreatedAt: Number(createdAt),
             ConfirmationCode: confirmationCode,
           },
         },
