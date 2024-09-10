@@ -28,14 +28,24 @@ output "sqs_reliability_deadletter_queue_arn" {
   value       = aws_sqs_queue.reliability_deadletter_queue.name
 }
 
-output "sqs_audit_log_queue_arn" {
+output "sqs_app_audit_log_queue_arn" {
   description = "SQS audit log queue ARN"
-  value       = aws_sqs_queue.audit_log_queue.arn
+  value       = aws_sqs_queue.app_audit_log_queue.arn
 }
 
-output "sqs_audit_log_queue_id" {
+output "sqs_app_audit_log_queue_id" {
   description = "SQS audit log queue URL"
-  value       = aws_sqs_queue.audit_log_queue.id
+  value       = aws_sqs_queue.app_audit_log_queue.id
+}
+
+output "sqs_api_audit_log_queue_arn" {
+  description = "SQS audit log queue ARN"
+  value       = aws_sqs_queue.api_audit_log_queue.arn
+}
+
+output "sqs_api_audit_log_queue_id" {
+  description = "SQS audit log queue URL"
+  value       = aws_sqs_queue.api_audit_log_queue.id
 }
 
 output "sqs_audit_log_deadletter_queue_arn" {

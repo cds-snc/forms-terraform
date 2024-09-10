@@ -32,7 +32,7 @@ resource "aws_lambda_function" "audit_logs" {
 }
 
 resource "aws_lambda_event_source_mapping" "audit_logs" {
-  event_source_arn                   = var.sqs_audit_log_queue_arn
+  event_source_arn                   = var.sqs_app_audit_log_queue_arn
   function_name                      = aws_lambda_function.audit_logs.arn
   function_response_types            = ["ReportBatchItemFailures"]
   batch_size                         = 10
