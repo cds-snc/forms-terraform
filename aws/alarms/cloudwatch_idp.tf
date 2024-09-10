@@ -95,9 +95,7 @@ resource "aws_cloudwatch_metric_alarm" "idb_lb_healthy_host_count" {
   period              = "60"
   statistic           = "Maximum"
   treat_missing_data  = "notBreaching"
-
-  alarm_actions = [var.sns_topic_alert_warning_arn]
-  ok_actions    = [var.sns_topic_alert_ok_arn]
+  alarm_actions       = [var.sns_topic_alert_warning_arn]
 
   dimensions = {
     LoadBalancer = var.lb_idp_arn_suffix
