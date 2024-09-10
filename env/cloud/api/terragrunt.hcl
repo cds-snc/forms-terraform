@@ -100,10 +100,6 @@ dependency "rds" {
   mock_outputs = {
   database_url_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:database_url"
   }
-
-  locals {
-    zitadel_domain = get_env("ZITADEL_PROVIDER", "https://localhost")
-  }
 }
 
 inputs = {
