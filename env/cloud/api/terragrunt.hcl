@@ -94,15 +94,16 @@ dependency "secrets" {
 }
 
 dependency "rds" {
-config_path =" ../rds"
-mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-mock_outputs_merge_strategy_with_state = "shallow"
-mock_outputs = {
+  config_path =" ../rds"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_strategy_with_state = "shallow"
+  mock_outputs = {
   database_url_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:database_url"
-}
+  }
 
-locals {
-  zitadel_domain = get_env("ZITADEL_PROVIDER", "https://localhost")
+  locals {
+    zitadel_domain = get_env("ZITADEL_PROVIDER", "https://localhost")
+  }
 }
 
 inputs = {
