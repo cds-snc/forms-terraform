@@ -1,5 +1,46 @@
 # Changelog
 
+## [3.19.0](https://github.com/cds-snc/forms-terraform/compare/v3.18.3...v3.19.0) (2024-09-10)
+
+
+### Features
+
+* add a new GSI to support the API endpoint returning the submission names sorted by creation time ([#799](https://github.com/cds-snc/forms-terraform/issues/799)) ([0e782ab](https://github.com/cds-snc/forms-terraform/commit/0e782ab0ec11fd045b32341850a47251c0c6b20d))
+* add ENVIRONMENT_MODE env var to API ECS task ([#797](https://github.com/cds-snc/forms-terraform/issues/797)) ([00176a4](https://github.com/cds-snc/forms-terraform/commit/00176a4c96f7a75c793ee1a5156782730857577d))
+* add Freshdesk API key secret to API ECS task ([#795](https://github.com/cds-snc/forms-terraform/issues/795)) ([bfc68e9](https://github.com/cds-snc/forms-terraform/commit/bfc68e98aea6ad7d462bb3729cf96dfb6cc4f391))
+* add Redis URL to the API ECS task ([#801](https://github.com/cds-snc/forms-terraform/issues/801)) ([0530fe5](https://github.com/cds-snc/forms-terraform/commit/0530fe5e5ad06fe866390f8dfca14e0387a556b4))
+* allow API to access Redis ([#790](https://github.com/cds-snc/forms-terraform/issues/790)) ([e127f66](https://github.com/cds-snc/forms-terraform/commit/e127f66a80d6fab9dfde706c3de039c4e8206e41))
+* cache the Nagware overdue response form IDs ([#808](https://github.com/cds-snc/forms-terraform/issues/808)) ([8ef2d6a](https://github.com/cds-snc/forms-terraform/commit/8ef2d6a8bb5f43773870ba05bcb8289b05c3b48b))
+* Nagware Lambda connect to Redis ([#807](https://github.com/cds-snc/forms-terraform/issues/807)) ([c57f45b](https://github.com/cds-snc/forms-terraform/commit/c57f45be2c57db37d8329c2caade5b6522d72a7f))
+* run Nagware every day ([#811](https://github.com/cds-snc/forms-terraform/issues/811)) ([d87a640](https://github.com/cds-snc/forms-terraform/commit/d87a64016da380ab4da0d21da664c00dcb8197fa))
+* use RDS Proxy for IdP database connection pool ([#788](https://github.com/cds-snc/forms-terraform/issues/788)) ([c3f7b7b](https://github.com/cds-snc/forms-terraform/commit/c3f7b7bc4d85fa787c4e2167cd1ccca5c28a211d))
+
+
+### Bug Fixes
+
+* add missing input variable for sentry api ([#798](https://github.com/cds-snc/forms-terraform/issues/798)) ([337f220](https://github.com/cds-snc/forms-terraform/commit/337f220c21965772b42799d97da31bf70141e887))
+* allow API ECS task runtime secret access ([#815](https://github.com/cds-snc/forms-terraform/issues/815)) ([85940c3](https://github.com/cds-snc/forms-terraform/commit/85940c37770598c28d72306bbd09df4ab7b9611a))
+* Allow API to access RDS connection url secret ([#813](https://github.com/cds-snc/forms-terraform/issues/813)) ([ea2f71c](https://github.com/cds-snc/forms-terraform/commit/ea2f71c9e5e9fbf2127d22e8c121b1c05513e304))
+* API Redis URL add protocol and port ([#802](https://github.com/cds-snc/forms-terraform/issues/802)) ([ab6a87e](https://github.com/cds-snc/forms-terraform/commit/ab6a87eb3e87bd4d65355c02094e8ed402981b8c))
+* deploy new IdP image if changes ([#805](https://github.com/cds-snc/forms-terraform/issues/805)) ([921fbc9](https://github.com/cds-snc/forms-terraform/commit/921fbc9299a9dedcc070a6e62b9d49885f4c9dfb))
+* ECS task to access to Sentry secret ([#803](https://github.com/cds-snc/forms-terraform/issues/803)) ([3dc3824](https://github.com/cds-snc/forms-terraform/commit/3dc382498d7823edc12dd286d362be24a8ec5639))
+* increase blanket WAF ACL rate limit ([#812](https://github.com/cds-snc/forms-terraform/issues/812)) ([c1aca16](https://github.com/cds-snc/forms-terraform/commit/c1aca16e9834a51c9af08a85a5779ed17575543c))
+
+
+### Miscellaneous Chores
+
+* **deps:** update aws-actions/amazon-ecs-render-task-definition action to v1.5.1 ([#809](https://github.com/cds-snc/forms-terraform/issues/809)) ([83db613](https://github.com/cds-snc/forms-terraform/commit/83db6139362edd302b15c61cc3111e1f034ed052))
+* increase memory scaling limit to 25 percent ([#800](https://github.com/cds-snc/forms-terraform/issues/800)) ([7ee82c4](https://github.com/cds-snc/forms-terraform/commit/7ee82c4112ba8b37f8a8cce092f4bf7a3043c201))
+* Sentry API key setup ([#796](https://github.com/cds-snc/forms-terraform/issues/796)) ([5e6bb31](https://github.com/cds-snc/forms-terraform/commit/5e6bb3122f6abbe818d1126dba4cd91e559de22a))
+* synced file(s) with cds-snc/site-reliability-engineering ([#777](https://github.com/cds-snc/forms-terraform/issues/777)) ([78d2bc9](https://github.com/cds-snc/forms-terraform/commit/78d2bc9df269cca97b91ba05a842f11dab75d47e))
+* upgrade Zitadel to v2.55.6 ([#806](https://github.com/cds-snc/forms-terraform/issues/806)) ([b108e32](https://github.com/cds-snc/forms-terraform/commit/b108e327117936929b84814ef840c153d663482f))
+
+
+### Code Refactoring
+
+* remove axios instance in GCNotifyClient ([#804](https://github.com/cds-snc/forms-terraform/issues/804)) ([6d2a721](https://github.com/cds-snc/forms-terraform/commit/6d2a721e664f90207e8a98b9316e64d402c6427d))
+* reword error log for when a GC Notify request times out ([#792](https://github.com/cds-snc/forms-terraform/issues/792)) ([132e992](https://github.com/cds-snc/forms-terraform/commit/132e9924f462bebec3e64272666c84179fb40dfc))
+
 ## [3.18.3](https://github.com/cds-snc/forms-terraform/compare/v3.18.2...v3.18.3) (2024-08-27)
 
 
