@@ -102,6 +102,10 @@ dependency "rds" {
   }
 }
 
+locals {
+  zitadel_domain = get_env("ZITADEL_PROVIDER", "https://localhost")
+}
+
 inputs = {
   api_image_tag               = "latest"
   api_image_ecr_url           = dependency.ecr.outputs.ecr_repository_url_api
