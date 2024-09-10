@@ -128,7 +128,7 @@ dependency "s3" {
 }
 
 locals {
-  zitadel_provider                            = get_env("ZITADEL_PROVIDER", "https://localhost")
+  zitadel_provider = get_env("ZITADEL_PROVIDER", "https://localhost")
 }
 
 inputs = {
@@ -184,10 +184,10 @@ inputs = {
   zitadel_administration_key_secret_arn   = dependency.secrets.outputs.zitadel_administration_key_secret_arn
   sentry_api_key_secret_arn               = dependency.secrets.outputs.sentry_api_key_secret_arn
 
-  vault_file_storage_arn = dependency.s3.outputs.vault_file_storage_arn
-  vault_file_storage_id = dependency.s3.outputs.vault_file_storage_id
+  vault_file_storage_arn       = dependency.s3.outputs.vault_file_storage_arn
+  vault_file_storage_id        = dependency.s3.outputs.vault_file_storage_id
   reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
-  reliability_file_storage_id = dependency.s3.outputs.reliability_file_storage_id
+  reliability_file_storage_id  = dependency.s3.outputs.reliability_file_storage_id
 
   zitadel_provider = local.zitadel_provider
 }

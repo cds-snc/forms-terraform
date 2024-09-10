@@ -23,7 +23,7 @@ dependency "network" {
   mock_outputs = {
     idp_db_security_group_id  = "sg-db"
     idp_ecs_security_group_id = "sg-ecs"
-    idp_lb_security_group_id  = "sg-lb"    
+    idp_lb_security_group_id  = "sg-lb"
     private_subnet_ids        = ["prv-1", "prv-2"]
     public_subnet_ids         = ["pub-1", "pub-2"]
     vpc_id                    = "vpc-id"
