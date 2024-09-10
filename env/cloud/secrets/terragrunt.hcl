@@ -28,6 +28,6 @@ inputs = {
   zitadel_administration_key   = local.zitadel_administration_key
   zitadel_application_key      = local.zitadel_application_key
   # Overwritten in GitHub Actions by TFVARS
-  rds_db_password              = local.rds_db_password
-  sentry_api_key               = local.sentry_api_key
+  rds_db_password = local.rds_db_password
+  sentry_api_key  = local.sentry_api_key
 }

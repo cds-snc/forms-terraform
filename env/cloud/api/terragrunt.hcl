@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms", "../network", "../dynamodb", "../load_balancer", "../ecr", "../redis", "../s3", "../app", "../secrets"]
+  paths = ["../kms", "../network", "../dynamodb", "../load_balancer", "../ecr", "../redis", "../s3", "../app", "../secrets", "../rds"]
 }
 
 dependency "app" {
@@ -88,8 +88,17 @@ dependency "secrets" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-      zitadel_application_key_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:zitadel_application_key"
-      freshdesk_api_key_secret_arn       = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:freshdesk_api_key_secret"
+    zitadel_application_key_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:zitadel_application_key"
+    freshdesk_api_key_secret_arn       = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:freshdesk_api_key_secret"
+  }
+}
+
+dependency "rds" {
+  config_path                             = "../rds"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs = {
+    database_url_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:database_url"
   }
 }
 
@@ -104,18 +113,20 @@ inputs = {
   security_group_id_api_ecs   = dependency.network.outputs.api_ecs_security_group_id
   lb_target_group_arn_api_ecs = dependency.load_balancer.outputs.lb_target_group_api_arn
   private_subnet_ids          = dependency.network.outputs.private_subnet_ids
-  
+
   kms_key_dynamodb_arn      = dependency.kms.outputs.kms_key_dynamodb_arn
   dynamodb_vault_arn        = dependency.dynamodb.outputs.dynamodb_vault_arn
   s3_vault_file_storage_arn = dependency.s3.outputs.vault_file_storage_arn
-  
+
   redis_port = dependency.redis.outputs.redis_port
   redis_url  = dependency.redis.outputs.redis_url
 
   zitadel_domain                     = local.zitadel_domain
   zitadel_application_key_secret_arn = dependency.secrets.outputs.zitadel_application_key_secret_arn
-  
+
   freshdesk_api_key_secret_arn = dependency.secrets.outputs.freshdesk_api_key_secret_arn
+
+  rds_connection_url_secret_arn = dependency.rds.outputs.database_url_secret_arn
 }
 
 include {

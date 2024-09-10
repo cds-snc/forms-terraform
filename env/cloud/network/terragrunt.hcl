@@ -3,8 +3,8 @@ terraform {
 }
 
 inputs = {
-  vpc_cidr_block         = "172.16.0.0/16"
-  vpc_name               = "forms"
+  vpc_cidr_block = "172.16.0.0/16"
+  vpc_name       = "forms"
 }
 
 include {

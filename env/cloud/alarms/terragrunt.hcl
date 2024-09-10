@@ -53,9 +53,9 @@ dependency "rds" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    rds_cluster_identifier  = "forms-mock-db-cluster"
-    rds_cluster_endpoint    = "localhost"
-    rds_db_name             = "default"
+    rds_cluster_identifier = "forms-mock-db-cluster"
+    rds_cluster_endpoint   = "localhost"
+    rds_db_name            = "default"
   }
 }
 
@@ -149,11 +149,11 @@ dependency "idp" {
     ecs_idp_cloudwatch_log_group_name = "/aws/ecs/idp/zitadel"
     ecs_idp_service_name              = "zitadel"
     lb_idp_arn_suffix                 = "loadbalancer/app/idp/1234567890123456"
-    lb_idp_target_groups_arn_suffix   = {
+    lb_idp_target_groups_arn_suffix = {
       HTTP1 = "targetgroup/idp-tg-http1-abc/1234567890123456"
       HTTP2 = "targetgroup/idp-tg-http2-abc/1234567890123456"
     }
-    rds_idp_cluster_identifier        = "idp-cluster"
+    rds_idp_cluster_identifier = "idp-cluster"
   }
 }
 
@@ -163,7 +163,7 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:123456789012:table/AuditLogs"
+    dynamodb_audit_logs_arn = "arn:aws:dynamodb:ca-central-1:123456789012:table/AuditLogs"
   }
 }
 
@@ -197,9 +197,9 @@ inputs = {
   sqs_reliability_deadletter_queue_arn = dependency.sqs.outputs.sqs_reliability_deadletter_queue_arn
   sqs_audit_log_deadletter_queue_arn   = dependency.sqs.outputs.sqs_audit_log_deadletter_queue_arn
 
-  ecs_cloudwatch_log_group_name                    = dependency.app.outputs.ecs_cloudwatch_log_group_name
-  ecs_cluster_name                                 = dependency.app.outputs.ecs_cluster_name
-  ecs_service_name                                 = dependency.app.outputs.ecs_service_name
+  ecs_cloudwatch_log_group_name = dependency.app.outputs.ecs_cloudwatch_log_group_name
+  ecs_cluster_name              = dependency.app.outputs.ecs_cluster_name
+  ecs_service_name              = dependency.app.outputs.ecs_service_name
 
   lambda_audit_logs_log_group_name               = dependency.lambdas.outputs.lambda_audit_logs_log_group_name
   lambda_audit_logs_archiver_log_group_name      = dependency.lambdas.outputs.lambda_audit_logs_archiver_log_group_name
@@ -239,13 +239,13 @@ inputs = {
   rds_idp_cluster_identifier        = local.feature_flag_idp == "true" ? dependency.idp.outputs.rds_idp_cluster_identifier : ""
   rds_idp_cpu_maxiumum              = 80
 
-  dynamodb_audit_logs_arn           = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
-  kms_key_dynamodb_arn              = dependency.kms.outputs.kms_key_dynamodb_arn
+  dynamodb_audit_logs_arn = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
+  kms_key_dynamodb_arn    = dependency.kms.outputs.kms_key_dynamodb_arn
 
-  private_subnet_ids                = dependency.network.outputs.private_subnet_ids
-  connector_security_group_id       = dependency.network.outputs.connector_security_group_id
-  rds_cluster_endpoint              = dependency.rds.outputs.rds_cluster_endpoint
-  rds_db_name                       = dependency.rds.outputs.rds_db_name
+  private_subnet_ids          = dependency.network.outputs.private_subnet_ids
+  connector_security_group_id = dependency.network.outputs.connector_security_group_id
+  rds_cluster_endpoint        = dependency.rds.outputs.rds_cluster_endpoint
+  rds_db_name                 = dependency.rds.outputs.rds_db_name
 
 }
 
