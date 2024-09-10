@@ -8,7 +8,7 @@ resource "aws_cloudwatch_metric_alarm" "forms_cpu_utilization_high_warn" {
   metric_name         = "CPUUtilization"
   namespace           = "AWS/ECS"
   period              = "120"
-  statistic           = "Average"
+  statistic           = "Maximum"
   threshold           = var.threshold_ecs_cpu_utilization_high
   alarm_description   = "End User Forms Warning - High CPU usage has been detected."
 
@@ -27,7 +27,7 @@ resource "aws_cloudwatch_metric_alarm" "forms_memory_utilization_high_warn" {
   metric_name         = "MemoryUtilization"
   namespace           = "AWS/ECS"
   period              = "120"
-  statistic           = "Average"
+  statistic           = "Maximum"
   threshold           = var.threshold_ecs_memory_utilization_high
   alarm_description   = "End User Forms Warning - High memory usage has been detected."
 
