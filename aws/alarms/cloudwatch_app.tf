@@ -66,7 +66,6 @@ resource "aws_cloudwatch_metric_alarm" "ELB_healthy_hosts" {
   evaluation_periods  = "1"
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_topic_alert_critical_arn]
-  ok_actions          = [var.sns_topic_alert_ok_arn]
 
   metric_query {
     id          = "healthy_hosts"
