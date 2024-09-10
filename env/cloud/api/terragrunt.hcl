@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms", "../network", "../dynamodb", "../load_balancer", "../ecr", "../redis", "../s3", "../app", "../secrets"]
+  paths = ["../kms", "../network", "../dynamodb", "../load_balancer", "../ecr", "../redis", "../s3", "../app", "../secrets", "../rds"]
 }
 
 dependency "app" {
@@ -93,6 +93,14 @@ dependency "secrets" {
   }
 }
 
+dependency "rds" {
+config_path =" ../rds"
+mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+mock_outputs_merge_strategy_with_state = "shallow"
+mock_outputs = {
+  database_url_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:database_url"
+}
+
 locals {
   zitadel_domain = get_env("ZITADEL_PROVIDER", "https://localhost")
 }
@@ -116,6 +124,8 @@ inputs = {
   zitadel_application_key_secret_arn = dependency.secrets.outputs.zitadel_application_key_secret_arn
   
   freshdesk_api_key_secret_arn = dependency.secrets.outputs.freshdesk_api_key_secret_arn
+
+  rds_connection_url_secret_arn = dependency.rds.outputs.database_url_secret_arn
 }
 
 include {
