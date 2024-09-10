@@ -5,6 +5,7 @@ resource "aws_cloudwatch_dashboard" "forms_service_health" {
     alarm_ecs_memory_utilization_warn       = aws_cloudwatch_metric_alarm.forms_memory_utilization_high_warn.arn,
     alarm_lb_response_5xx_warn              = aws_cloudwatch_metric_alarm.ELB_5xx_error_warn.arn,
     alarm_lb_response_time_warn             = aws_cloudwatch_metric_alarm.response_time_warn.arn,
+    alarm_lb_healthy_host_count             = aws_cloudwatch_metric_alarm.ELB_healthy_hosts.arn,
     alarm_lb_unhealth_host_count_tg1        = aws_cloudwatch_metric_alarm.UnHealthyHostCount-TargetGroup1.arn,
     alarm_lb_unhealth_host_count_tg2        = aws_cloudwatch_metric_alarm.UnHealthyHostCount-TargetGroup2.arn,
     alarm_reliability_deadletter_queue      = aws_cloudwatch_metric_alarm.reliability_dead_letter_queue_warn.arn,

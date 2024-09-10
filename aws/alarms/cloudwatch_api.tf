@@ -62,12 +62,35 @@ resource "aws_cloudwatch_log_subscription_filter" "api_error_detection" {
 resource "aws_cloudwatch_metric_alarm" "api_lb_unhealthy_host_count" {
   count = var.feature_flag_api ? 1 : 0
 
-  alarm_name          = "API-UnhealthyHostCount" # TODO: bump to SEV1 once this is in production
+  alarm_name          = "API-UnhealthyHostCount"
   alarm_description   = "API LB Warning - unhealthy host count >= 1 in a 1 minute period"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   threshold           = "1"
   evaluation_periods  = "1"
   metric_name         = "UnHealthyHostCount"
+  namespace           = "AWS/ApplicationELB"
+  period              = "60"
+  statistic           = "Maximum"
+  treat_missing_data  = "notBreaching"
+
+  alarm_actions = [var.sns_topic_alert_warning_arn]
+  ok_actions    = [var.sns_topic_alert_ok_arn]
+
+  dimensions = {
+    LoadBalancer = var.lb_api_arn_suffix
+    TargetGroup  = var.lb_api_target_group_arn_suffix
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "api_lb_healthy_host_count" {
+  count = var.feature_flag_api ? 1 : 0
+
+  alarm_name          = "API-HealthyHostCount" # TODO: bump to SEV1 once this is in production
+  alarm_description   = "API LB Critical - no healthy hosts in a 1 minute period"
+  comparison_operator = "LessThanThreshold"
+  threshold           = "1"
+  evaluation_periods  = "1"
+  metric_name         = "HealthyHostCount"
   namespace           = "AWS/ApplicationELB"
   period              = "60"
   statistic           = "Maximum"

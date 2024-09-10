@@ -385,6 +385,7 @@
                     "${alarm_ecs_memory_utilization_warn}",
                     "${alarm_lb_response_5xx_warn}",
                     "${alarm_lb_response_time_warn}",
+                    "${alarm_lb_healthy_host_count}",
                     "${alarm_lb_unhealth_host_count_tg1}",
                     "${alarm_lb_unhealth_host_count_tg2}",
                     "${alarm_reliability_deadletter_queue}"
