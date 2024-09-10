@@ -57,7 +57,8 @@ module "api_ecs" {
   task_role_policy_documents = [
     data.aws_iam_policy_document.api_ecs_kms_vault.json,
     data.aws_iam_policy_document.api_ecs_dynamodb_vault.json,
-    data.aws_iam_policy_document.api_ecs_s3_vault.json
+    data.aws_iam_policy_document.api_ecs_s3_vault.json,
+    data.aws_iam_policy_document.api_ecs_secrets_manager_runtime.json
   ]
 
   task_exec_role_policy_documents = [
@@ -129,6 +130,20 @@ data "aws_iam_policy_document" "api_ecs_s3_vault" {
   }
 }
 
+data "aws_iam_policy_document" "api_ecs_secrets_manager_runtime" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+
+    resources = [
+      var.rds_connection_url_secret_arn
+    ]
+  }
+}
+
 data "aws_iam_policy_document" "api_ecs_secrets_manager" {
   statement {
     effect = "Allow"
@@ -139,8 +154,7 @@ data "aws_iam_policy_document" "api_ecs_secrets_manager" {
 
     resources = [
       var.zitadel_application_key_secret_arn,
-      var.freshdesk_api_key_secret_arn,
-      var.rds_connection_url_secret_arn
+      var.freshdesk_api_key_secret_arn
     ]
   }
 }
