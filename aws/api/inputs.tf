@@ -70,8 +70,8 @@ variable "freshdesk_api_key_secret_arn" {
   sensitive   = true
 }
 
-variable "rds_connection_url_secret_arn"{
+variable "rds_connection_url_secret_arn" {
   description = "The RDS connection URL secret used by the ECS task"
-  type = string
-  sensitive = true
+  type        = string
+  sensitive   = true
 }
