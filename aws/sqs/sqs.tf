@@ -61,8 +61,8 @@ resource "aws_sqs_queue" "reprocess_submission_queue" {
 
 # App Audit Log Queue
 
-resource "aws_sqs_queue" "app_audit_log_queue" {
-  name                       = "app_audit_log_queue"
+resource "aws_sqs_queue" "audit_log_queue" {
+  name                       = "audit_log_queue"
   delay_seconds              = 0
   max_message_size           = 262144
   message_retention_seconds  = 172800 // 2 days
@@ -75,18 +75,18 @@ resource "aws_sqs_queue" "app_audit_log_queue" {
   kms_data_key_reuse_period_seconds = 300
 
   redrive_policy = jsonencode({
-    deadLetterTargetArn = aws_sqs_queue.app_audit_log_deadletter_queue.arn
+    deadLetterTargetArn = aws_sqs_queue.audit_log_deadletter_queue.arn
     maxReceiveCount     = 5
   })
 
   redrive_allow_policy = jsonencode({
     redrivePermission = "byQueue",
-    sourceQueueArns   = [aws_sqs_queue.app_audit_log_deadletter_queue.arn]
+    sourceQueueArns   = [aws_sqs_queue.audit_log_deadletter_queue.arn]
   })
 }
 
-resource "aws_sqs_queue" "app_audit_log_deadletter_queue" {
-  name                      = "app_audit_log_deadletter_queue"
+resource "aws_sqs_queue" "audit_log_deadletter_queue" {
+  name                      = "audit_log_deadletter_queue"
   delay_seconds             = 60
   max_message_size          = 262144
   message_retention_seconds = 1209600
@@ -99,7 +99,7 @@ resource "aws_sqs_queue" "app_audit_log_deadletter_queue" {
 # API Audit Log Queue
 
 resource "aws_sqs_queue" "api_audit_log_queue" {
-  name                       = "audit_log_queue"
+  name                       = "api_audit_log_queue"
   delay_seconds              = 0
   max_message_size           = 262144
   message_retention_seconds  = 172800 // 2 days

@@ -66,7 +66,7 @@ dependency "sqs" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     sqs_reliability_deadletter_queue_arn = null
-    sqs_audit_log_deadletter_queue_arn   = null
+    sqs_app_audit_log_deadletter_queue_arn   = null
   }
 }
 
@@ -195,7 +195,7 @@ inputs = {
   lb_api_target_group_arn_suffix = dependency.load_balancer.outputs.lb_target_group_api_arn_suffix
 
   sqs_reliability_deadletter_queue_arn = dependency.sqs.outputs.sqs_reliability_deadletter_queue_arn
-  sqs_audit_log_deadletter_queue_arn   = dependency.sqs.outputs.sqs_audit_log_deadletter_queue_arn
+  sqs_app_audit_log_deadletter_queue_arn   = dependency.sqs.outputs.sqs_app_audit_log_deadletter_queue_arn
 
   ecs_cloudwatch_log_group_name = dependency.app.outputs.ecs_cloudwatch_log_group_name
   ecs_cluster_name              = dependency.app.outputs.ecs_cluster_name

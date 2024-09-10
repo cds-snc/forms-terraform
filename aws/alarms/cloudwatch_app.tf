@@ -174,7 +174,7 @@ resource "aws_cloudwatch_metric_alarm" "audit_log_dead_letter_queue_warn" {
       unit        = "Count"
 
       dimensions = {
-        QueueName = var.sqs_audit_log_deadletter_queue_arn
+        QueueName = var.sqs_app_audit_log_deadletter_queue_arn
       }
     }
   }
@@ -190,7 +190,7 @@ resource "aws_cloudwatch_metric_alarm" "audit_log_dead_letter_queue_warn" {
       unit        = "Count"
 
       dimensions = {
-        QueueName = var.sqs_audit_log_deadletter_queue_arn
+        QueueName = var.sqs_app_audit_log_deadletter_queue_arn
       }
     }
   }
