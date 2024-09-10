@@ -58,9 +58,55 @@ resource "aws_cloudwatch_metric_alarm" "ELB_5xx_error_warn" {
   alarm_actions       = [var.sns_topic_alert_warning_arn]
 }
 
+resource "aws_cloudwatch_metric_alarm" "ELB_healthy_hosts" {
+  alarm_name          = "App-HealthyHostCount-SEV1" # SEV1 will prompt the on-call team to respond.
+  alarm_description   = "App LB Critical - no healthy hosts in a 1 minute period"
+  comparison_operator = "LessThanThreshold"
+  threshold           = "1"
+  evaluation_periods  = "1"
+  treat_missing_data  = "notBreaching"
+  alarm_actions       = [var.sns_topic_alert_critical_arn]
+  ok_actions          = [var.sns_topic_alert_ok_arn]
+
+  metric_query {
+    id          = "healthy_hosts"
+    expression  = "target_group_1 + target_group_2"
+    label       = "Healthy hosts"
+    return_data = "true"
+  }
+
+  metric_query {
+    id = "target_group_1"
+    metric {
+      metric_name = "HealthyHostCount"
+      namespace   = "AWS/ApplicationELB"
+      stat        = "Maximum"
+      period      = "60"
+      dimensions = {
+        LoadBalancer = var.lb_arn_suffix
+        TargetGroup  = var.lb_target_group_1_arn_suffix
+      }
+    }
+  }
+
+  metric_query {
+    id = "target_group_2"
+    metric {
+      metric_name = "HealthyHostCount"
+      namespace   = "AWS/ApplicationELB"
+      stat        = "Maximum"
+      period      = "60"
+      dimensions = {
+        LoadBalancer = var.lb_arn_suffix
+        TargetGroup  = var.lb_target_group_2_arn_suffix
+      }
+    }
+  }
+}
+
 resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount-TargetGroup1" {
-  alarm_name          = "UnHealthyHostCount-TargetGroup1-SEV1" # SEV1 will prompt the on-call team to respond.
-  alarm_description   = "ELB Health Check - UnHealthyHostCount exceed threshold for TargetGroup1."
+  alarm_name          = "App-UnHealthyHostCount-TargetGroup1"
+  alarm_description   = "App LB Warning - unhealthy host count >= 1 in a 1 minute period for TargetGroup1"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   threshold           = "1" # If there is at least one unhealthy host
   evaluation_periods  = "1" # Evaluate once
@@ -69,7 +115,7 @@ resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount-TargetGroup1" {
   period              = "60"           # Every minute
   statistic           = "Maximum"      # the highest value observed during the specified period
   treat_missing_data  = "notBreaching" # don't alarm if there's no data
-  alarm_actions       = [var.sns_topic_alert_critical_arn]
+  alarm_actions       = [var.sns_topic_alert_warning_arn]
   dimensions = {
     LoadBalancer = var.lb_arn_suffix
     TargetGroup  = var.lb_target_group_1_arn_suffix
@@ -77,8 +123,8 @@ resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount-TargetGroup1" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount-TargetGroup2" {
-  alarm_name          = "UnHealthyHostCount-TargetGroup2-SEV1" # SEV1 will prompt the on-call team to respond.
-  alarm_description   = "ELB Health Check - UnHealthyHostCount exceed threshold for TargetGroup2."
+  alarm_name          = "App-UnHealthyHostCount-TargetGroup2"
+  alarm_description   = "App LB Warning - unhealthy host count >= 1 in a 1 minute period for TargetGroup2"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   threshold           = "1" # If there is at least one unhealthy host
   evaluation_periods  = "1" # Evaluate once
@@ -87,7 +133,7 @@ resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount-TargetGroup2" {
   period              = "60"           # Every minute
   statistic           = "Maximum"      # the highest value observed during the specified period
   treat_missing_data  = "notBreaching" # don't alarm if there's no data
-  alarm_actions       = [var.sns_topic_alert_critical_arn]
+  alarm_actions       = [var.sns_topic_alert_warning_arn]
   dimensions = {
     LoadBalancer = var.lb_arn_suffix
     TargetGroup  = var.lb_target_group_2_arn_suffix

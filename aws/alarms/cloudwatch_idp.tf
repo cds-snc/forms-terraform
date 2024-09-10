@@ -62,12 +62,35 @@ resource "aws_cloudwatch_log_subscription_filter" "idp_error_detection" {
 resource "aws_cloudwatch_metric_alarm" "idb_lb_unhealthy_host_count" {
   for_each = var.feature_flag_idp ? var.lb_idp_target_groups_arn_suffix : {}
 
-  alarm_name          = "IdP-UnhealthyHostCount-${each.key}" # TODO: bump to SEV1 once this is in production
-  alarm_description   = "IdP ELB Warning - unhealthy ${each.key} host count >= 1 in a 1 minute period"
+  alarm_name          = "IdP-UnhealthyHostCount-${each.key}"
+  alarm_description   = "IdP LB Warning - unhealthy ${each.key} host count >= 1 in a 1 minute period"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   threshold           = "1"
   evaluation_periods  = "1"
   metric_name         = "UnHealthyHostCount"
+  namespace           = "AWS/ApplicationELB"
+  period              = "60"
+  statistic           = "Maximum"
+  treat_missing_data  = "notBreaching"
+
+  alarm_actions = [var.sns_topic_alert_warning_arn]
+  ok_actions    = [var.sns_topic_alert_ok_arn]
+
+  dimensions = {
+    LoadBalancer = var.lb_idp_arn_suffix
+    TargetGroup  = each.value
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "idb_lb_healthy_host_count" {
+  for_each = var.feature_flag_idp ? var.lb_idp_target_groups_arn_suffix : {}
+
+  alarm_name          = "IdP-HealthyHostCount-${each.key}" # TODO: bump to SEV1 once in production
+  alarm_description   = "IdP LB Critical - no healthy ${each.key} hosts in a 1 minute period"
+  comparison_operator = "LessThanThreshold"
+  threshold           = "1"
+  evaluation_periods  = "1"
+  metric_name         = "HealthyHostCount"
   namespace           = "AWS/ApplicationELB"
   period              = "60"
   statistic           = "Maximum"
