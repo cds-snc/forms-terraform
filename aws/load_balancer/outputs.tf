@@ -52,3 +52,8 @@ output "kinesis_firehose_waf_logs_arn" {
   description = "Kinesis Firehose delivery stream ARN used to collect and write WAF ACL logs to an S3 bucket."
   value       = var.feature_flag_idp ? aws_kinesis_firehose_delivery_stream.firehose_waf_logs.arn : ""
 }
+
+output "waf_ipv4_blocklist_arn" {
+  description = "WAF ACL IPv4 blocklist"
+  value       = aws_wafv2_ip_set.ipv4_blocklist.arn
+}

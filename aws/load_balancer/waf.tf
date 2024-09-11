@@ -328,6 +328,27 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       sampled_requests_enabled   = true
     }
   }
+
+  rule {
+    name     = "BlockedIPv4"
+    priority = 80
+
+    action {
+      block {}
+    }
+
+    statement {
+      ip_set_reference_statement {
+        arn = aws_wafv2_ip_set.ipv4_blocklist.arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "BlockedIPv4"
+      sampled_requests_enabled   = true
+    }
+  }
 }
 
 // Matches the login paths for cognito /api/auth/signin/cognito OR /api/auth/callback/cognito
@@ -538,5 +559,19 @@ resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {
 
   regular_expression {
     regex_string = "^\\/(index.html|index-fr.html|style.css|site-unavailable.svg|favicon.ico)?$"
+  }
+}
+
+resource "aws_wafv2_ip_set" "ipv4_blocklist" {
+  name               = "ipv4_blocklist"
+  scope              = "REGIONAL"
+  ip_address_version = "IPV4"
+
+  addresses = []
+
+  lifecycle {
+    ignore_changes = [
+      addresses
+    ]
   }
 }
