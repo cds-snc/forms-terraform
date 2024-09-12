@@ -47,6 +47,7 @@ dependency "load_balancer" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     kinesis_firehose_waf_logs_arn = "arn:aws:firehose:ca-central-1:123456789012:deliverystream/waf-logs"
+    waf_ipv4_blocklist_arn        = "arn:aws:wafv2:ca-central-1:123456789012:ipset/mock-ip-blocklist/abcd1234-efgh5678-ijkl9012"
   }
 }
 
@@ -64,6 +65,7 @@ inputs = {
   zitadel_image_tag     = "latest" # TODO: pin to specific tag for prod
 
   kinesis_firehose_waf_logs_arn = dependency.load_balancer.outputs.kinesis_firehose_waf_logs_arn
+  waf_ipv4_blocklist_arn        = dependency.load_balancer.outputs.waf_ipv4_blocklist_arn
 
   # 1 ACU ~= 2GB of memory and 1vCPU
   idp_database_min_acu = 1

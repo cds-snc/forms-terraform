@@ -290,6 +290,27 @@ resource "aws_wafv2_web_acl" "idp" {
     }
   }
 
+  rule {
+    name     = "BlockedIPv4"
+    priority = 70
+
+    action {
+      block {}
+    }
+
+    statement {
+      ip_set_reference_statement {
+        arn = var.waf_ipv4_blocklist_arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "BlockedIPv4"
+      sampled_requests_enabled   = true
+    }
+  }
+
   tags = local.common_tags
 }
 

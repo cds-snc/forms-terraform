@@ -55,6 +55,11 @@ variable "security_group_idp_lb_id" {
   type        = string
 }
 
+variable "waf_ipv4_blocklist_arn" {
+  description = "The WAF ACL IPv4 blocklist ARN."
+  type        = string
+}
+
 variable "zitadel_admin_password" {
   description = "Zitadel administrator password."
   type        = string
