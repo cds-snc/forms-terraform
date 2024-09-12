@@ -1,5 +1,24 @@
 # Changelog
 
+## [3.20.0](https://github.com/cds-snc/forms-terraform/compare/v3.19.0...v3.20.0) (2024-09-12)
+
+
+### Features
+
+* add IPv4 blocklist rule to App, IdP WAF ACLs ([#821](https://github.com/cds-snc/forms-terraform/issues/821)) ([09210fb](https://github.com/cds-snc/forms-terraform/commit/09210fb062a06cf8d99c8e80f3c68217dd8b17fc))
+
+
+### Bug Fixes
+
+* add HealthyHostCount alarms to App, IdP, API ([#818](https://github.com/cds-snc/forms-terraform/issues/818)) ([0e2301d](https://github.com/cds-snc/forms-terraform/commit/0e2301d78815ea856a634cbb5aa3d83000c57954))
+* remove OK actions from critical alarms ([#819](https://github.com/cds-snc/forms-terraform/issues/819)) ([27de887](https://github.com/cds-snc/forms-terraform/commit/27de887afba0ce8d80a8bceb3fe22048795781c2))
+* use maximum CPU/memory stat for alarms ([#820](https://github.com/cds-snc/forms-terraform/issues/820)) ([9e53e16](https://github.com/cds-snc/forms-terraform/commit/9e53e164ce9a498b41695d80223aec82920cd877))
+
+
+### Miscellaneous Chores
+
+* synced file(s) with cds-snc/site-reliability-engineering ([#814](https://github.com/cds-snc/forms-terraform/issues/814)) ([7cd2407](https://github.com/cds-snc/forms-terraform/commit/7cd24077668f4bf38a0fda09698b68bcc52a15b2))
+
 ## [3.19.0](https://github.com/cds-snc/forms-terraform/compare/v3.18.3...v3.19.0) (2024-09-10)
 
 
