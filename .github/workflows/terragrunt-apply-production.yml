@@ -14,6 +14,7 @@ permissions:
 env:
   APP_ENV: production
   APP_DOMAINS: ${{ vars.PRODUCTION_APP_DOMAINS }}
+  IDP_DOMAIN: ${{ vars.PRODUCTION_IDP_DOMAIN }}
   AWS_ACCOUNT_ID: ${{ vars.PRODUCTION_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
   TERRAFORM_VERSION: 1.9.2
@@ -35,6 +36,16 @@ env:
   TF_VAR_email_address_contact_us: ${{ vars.PRODUCTION_CONTACT_US_EMAIL }}
   TF_VAR_email_address_support: ${{ vars.PRODUCTION_SUPPORT_EMAIL }}
   TF_VAR_zitadel_provider: ${{ vars.PRODUCTION_ZITADEL_PROVIDER }}
+  # IdP
+  FF_IDP: true
+  TF_VAR_idp_database_cluster_admin_username: ${{ secrets.PRODUCTION_IDP_DATABASE_CLUSTER_ADMIN_USERNAME }}
+  TF_VAR_idp_database_cluster_admin_password: ${{ secrets.PRODUCTION_IDP_DATABASE_CLUSTER_ADMIN_PASSWORD }}
+  TF_VAR_zitadel_admin_password: ${{ secrets.PRODUCTION_ZITADEL_ADMIN_PASSWORD }}
+  TF_VAR_zitadel_admin_username: ${{ secrets.PRODUCTION_ZITADEL_ADMIN_USERNAME }}
+  TF_VAR_zitadel_database_name: ${{ secrets.PRODUCTION_ZITADEL_DATABASE_NAME }}
+  TF_VAR_zitadel_database_user_password: ${{ secrets.PRODUCTION_ZITADEL_DATABASE_USER_PASSWORD }}
+  TF_VAR_zitadel_database_user_username: ${{ secrets.PRODUCTION_ZITADEL_DATABASE_USER_USERNAME }}
+  TF_VAR_zitadel_secret_key: ${{ secrets.PRODUCTION_ZITADEL_SECRET_KEY }}
 
 jobs:
   get-version:
@@ -126,8 +137,34 @@ jobs:
           image-name: ${{ matrix.image }}
           image-tag: ${{ env.VERSION }}
 
+  build-tag-push-idp-image:
+    needs: [get-version, terragrunt-apply-ecr-only]
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }} 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          ref: ${{ env.VERSION }}
+
+      - name: Build IdP image
+        working-directory: idp
+        run: |
+          make build
+
+      - name: Tag and push IdP image
+        uses: ./.github/workflows/tag-and-push-docker-images
+        with:
+          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
+          aws-role-session-name: TFApply
+          aws-region: ${{ env.AWS_REGION }}
+          image-name: idp/zitadel
+          image-tag: ${{ env.VERSION }}
+          repository-suffix: ""
+
   terragrunt-apply-all-modules:
-    needs: [get-version, build-tag-push-lambda-images]
+    needs: [get-version, build-tag-push-lambda-images, build-tag-push-idp-image]
     if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     env:
@@ -209,6 +246,10 @@ jobs:
         working-directory: env/cloud/rds
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Terragrunt apply idp
+        working-directory: env/cloud/idp
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
       # Depends on everything
       - name: Terragrunt apply app
         working-directory: env/cloud/app
@@ -224,6 +265,7 @@ jobs:
 
   update-lambda-function-image:
     needs: [get-version, generate-lambda-functions-matrix, terragrunt-apply-all-modules]
+    if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     env:
       VERSION: ${{ needs.get-version.outputs.version }}
@@ -246,14 +288,39 @@ jobs:
           lambda-name: ${{ matrix.image }}
           image-tag: ${{ env.VERSION }}
 
+  update-idp-ecs-service-image:
+    needs: [get-version, terragrunt-apply-all-modules]
+    if: ${{ !failure() && !cancelled() }}
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          ref: ${{ env.VERSION }}
+
+      - name: Update IdP ESC service to use new image
+        uses: ./.github/workflows/request-ecs-service-to-use-new-image
+        with:
+          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
+          aws-role-session-name: TFApply
+          aws-region: ${{ env.AWS_REGION }}
+          ecs-cluster-name: idp
+          ecs-service-name: zitadel
+          ecs-task-def-name: zitadel
+          image-tag: "idp/zitadel:${{ env.VERSION }}"
+
   notify-on-error:
     needs:
       [
         get-version,
         terragrunt-apply-ecr-only,
         build-tag-push-lambda-images,
+        build-tag-push-idp-image,
         terragrunt-apply-all-modules,
         update-lambda-function-image,
+        update-idp-ecs-service-image,
       ]
     if: ${{ failure() && !cancelled() }}
     runs-on: ubuntu-latest

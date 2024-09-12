@@ -15,6 +15,7 @@ permissions:
 env:
   APP_ENV: production
   APP_DOMAINS: ${{ vars.PRODUCTION_APP_DOMAINS }}
+  IDP_DOMAIN: ${{ vars.PRODUCTION_IDP_DOMAIN }}
   AWS_ACCOUNT_ID: ${{ vars.PRODUCTION_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
   CONFTEST_VERSION: 0.46.0
@@ -37,6 +38,16 @@ env:
   TF_VAR_email_address_contact_us: ${{ vars.PRODUCTION_CONTACT_US_EMAIL }}
   TF_VAR_email_address_support: ${{ vars.PRODUCTION_SUPPORT_EMAIL }}
   TF_VAR_zitadel_provider: ${{ vars.PRODUCTION_ZITADEL_PROVIDER }}
+  # IdP
+  FF_IDP: true
+  TF_VAR_idp_database_cluster_admin_username: ${{ secrets.PRODUCTION_IDP_DATABASE_CLUSTER_ADMIN_USERNAME }}
+  TF_VAR_idp_database_cluster_admin_password: ${{ secrets.PRODUCTION_IDP_DATABASE_CLUSTER_ADMIN_PASSWORD }}
+  TF_VAR_zitadel_admin_password: ${{ secrets.PRODUCTION_ZITADEL_ADMIN_PASSWORD }}
+  TF_VAR_zitadel_admin_username: ${{ secrets.PRODUCTION_ZITADEL_ADMIN_USERNAME }}
+  TF_VAR_zitadel_database_name: ${{ secrets.PRODUCTION_ZITADEL_DATABASE_NAME }}
+  TF_VAR_zitadel_database_user_password: ${{ secrets.PRODUCTION_ZITADEL_DATABASE_USER_PASSWORD }}
+  TF_VAR_zitadel_database_user_username: ${{ secrets.PRODUCTION_ZITADEL_DATABASE_USER_USERNAME }}
+  TF_VAR_zitadel_secret_key: ${{ secrets.PRODUCTION_ZITADEL_SECRET_KEY }}
 
 jobs:
   get-version:
@@ -112,6 +123,22 @@ jobs:
         with:
           lambda-directory: lambda-code/${{ matrix.image }}
           lambda-name: ${{ matrix.image }}
+
+  build-idp-image:
+    needs: get-version
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          ref: ${{ env.VERSION }}
+
+      - name: Build IdP image
+        working-directory: idp
+        run: |
+          make build
 
   terragrunt-plan:
     needs: get-version
@@ -271,6 +298,15 @@ jobs:
           directory: "env/cloud/rds"
           comment-delete: "true"
           comment-title: "Production: rds"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan idp
+        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        with:
+          directory: "env/cloud/idp"
+          comment-delete: "true"
+          comment-title: "Production: idp"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
