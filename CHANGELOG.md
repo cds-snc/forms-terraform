@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.21.0](https://github.com/cds-snc/forms-terraform/compare/v3.20.0...v3.21.0) (2024-09-12)
+
+
+### Features
+
+* deploy IdP to production ([#822](https://github.com/cds-snc/forms-terraform/issues/822)) ([c8017c7](https://github.com/cds-snc/forms-terraform/commit/c8017c701ab3e3c0d5a64deaeddd3c128923ea3f))
+
 ## [3.20.0](https://github.com/cds-snc/forms-terraform/compare/v3.19.0...v3.20.0) (2024-09-12)
 
 
