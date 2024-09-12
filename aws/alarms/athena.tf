@@ -140,7 +140,7 @@ resource "aws_iam_role_policy" "athena_dynamodb_policy" {
           "dynamodb:Scan",
           "dynamodb:PartiQLSelect"
         ],
-        "Resource" : ["${var.dynamodb_audit_logs_arn}", "${lower(var.dynamodb_audit_logs_arn)}"]
+        "Resource" : ["${var.dynamodb_app_audit_logs_arn}", "${lower(var.dynamodb_app_audit_logs_arn)}"]
         "Effect" : "Allow"
       },
       {

@@ -135,8 +135,10 @@ data "aws_iam_policy_document" "lambda_dynamodb" {
       var.dynamodb_vault_arn,
       "${var.dynamodb_vault_arn}/index/*",
       var.dynamodb_vault_stream_arn,
-      var.dynamodb_audit_logs_arn,
-      "${var.dynamodb_audit_logs_arn}/index/*"
+      var.dynamodb_app_audit_logs_arn,
+      "${var.dynamodb_app_audit_logs_arn}/index/*",
+      var.dynamodb_api_audit_logs_arn,
+      "${var.dynamodb_api_audit_logs_arn}/index/*"
     ]
   }
 }

@@ -49,6 +49,11 @@ variable "sqs_app_audit_log_queue_arn" {
   type        = string
 }
 
+variable "sqs_api_audit_log_queue_arn" {
+  description = "SQS Api audit log queue ARN"
+  type        = string
+}
+
 variable "kms_key_cloudwatch_arn" {
   description = "CloudWatch KMS key ARN, used by the ECS task's CloudWatch log group"
   type        = string
@@ -79,13 +84,23 @@ variable "dynamodb_relability_queue_arn" {
   type        = string
 }
 
-variable "dynamodb_audit_logs_arn" {
+variable "dynamodb_app_audit_logs_arn" {
   description = "Audit Logs table ARN"
   type        = string
 }
 
-variable "dynamodb_audit_logs_table_name" {
+variable "dynamodb_app_audit_logs_table_name" {
   description = "Audit Logs DynamodDB table name"
+  type        = string
+}
+
+variable "dynamodb_api_audit_logs_arn" {
+  description = "API Audit Logs table ARN"
+  type        = string
+}
+
+variable "dynamodb_api_audit_logs_table_name" {
+  description = "API Audit Logs DynamodDB table name"
   type        = string
 }
 
