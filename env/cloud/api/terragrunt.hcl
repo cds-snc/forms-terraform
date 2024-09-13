@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms", "../network", "../dynamodb", "../load_balancer", "../ecr", "../redis", "../s3", "../app", "../secrets", "../rds"]
+  paths = ["../kms", "../network", "../dynamodb", "../load_balancer", "../ecr", "../redis", "../s3", "../app", "../secrets", "../rds", "../sqs"]
 }
 
 dependency "app" {
@@ -102,6 +102,15 @@ dependency "rds" {
   }
 }
 
+dependency "sqs" {
+  config_path                             = "../sqs"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs = {
+   sqs_api_audit_log_queue_arn = ""arn:aws:sqs:ca-central-1:000000000000:api_audit_log_queue""
+  }
+}
+
 locals {
   zitadel_domain = get_env("ZITADEL_PROVIDER", "https://localhost")
 }
@@ -127,6 +136,8 @@ inputs = {
   freshdesk_api_key_secret_arn = dependency.secrets.outputs.freshdesk_api_key_secret_arn
 
   rds_connection_url_secret_arn = dependency.rds.outputs.database_url_secret_arn
+
+  sqs_api_audit_log_queue_arn = dependency.sqs.outputs.sqs_api_audit_log_queue_arn
 }
 
 include {
