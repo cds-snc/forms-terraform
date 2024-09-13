@@ -14,12 +14,17 @@ permissions:
 env:
   APP_ENV: production
   APP_DOMAINS: ${{ vars.PRODUCTION_APP_DOMAINS }}
+  API_DOMAIN: ${{ vars.PRODUCTION_API_DOMAIN }}
   IDP_DOMAIN: ${{ vars.PRODUCTION_IDP_DOMAIN }}
   AWS_ACCOUNT_ID: ${{ vars.PRODUCTION_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
   TERRAFORM_VERSION: 1.9.2
   TERRAGRUNT_VERSION: 0.63.2
   TF_INPUT: false
+  # API
+  FF_API: true
+  TF_VAR_zitadel_application_key: ${{ secrets.PRODUCTION_ZITADEL_APPLICATION_KEY }}
+  # App
   TF_VAR_ecs_secret_token: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
   TF_VAR_recaptcha_secret: ${{ secrets.PRODUCTION_RECAPTCHA_SITE_SECRET }}
   TF_VAR_recaptcha_public: 6LfuLrQnAAAAAK9Df3gem4XLMRVY2Laq6t2fhZhZ
@@ -253,6 +258,10 @@ jobs:
       # Depends on everything
       - name: Terragrunt apply app
         working-directory: env/cloud/app
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply api
+        working-directory: env/cloud/api
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply lambdas
