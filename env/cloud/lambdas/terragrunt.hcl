@@ -61,12 +61,12 @@ dependency "sqs" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    sqs_reliability_queue_arn            = null
-    sqs_reliability_queue_id             = null
-    sqs_reprocess_submission_queue_arn   = null
-    sqs_reliability_dead_letter_queue_id = null
-    sqs_app_audit_log_queue_arn          = null
-    sqs_api_audit_log_queue_arn          = null
+    sqs_reliability_queue_arn            = "arn:aws:sqs:ca-central-1:000000000000:reliability_queue"
+    sqs_reliability_queue_id             = "https://localhost.localstack.cloud:4566/000000000000/submission_processing.fifo"
+    sqs_reprocess_submission_queue_arn   = "arn:aws:sqs:ca-central-1:000000000000:reprocess_submission_queue.fifo"
+    sqs_reliability_dead_letter_queue_id = "https://localhost.localstack.cloud:4566/000000000000/reliability_deadletter_queue.fifo"
+    sqs_app_audit_log_queue_arn          = "arn:aws:sqs:ca-central-1:000000000000:audit_log_queue"
+    sqs_api_audit_log_queue_arn          = "arn:aws:sqs:ca-central-1:000000000000:api_audit_log_queue"
   }
 }
 
