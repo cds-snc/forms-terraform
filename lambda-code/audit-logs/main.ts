@@ -4,7 +4,7 @@ import { Handler, SQSEvent } from "aws-lambda";
 import type { BatchWriteCommandOutput } from "@aws-sdk/lib-dynamodb";
 
 type LogEvent = {
-  userID: string;
+  userId: string;
   event: string;
   timestamp: string;
   subject: { type: string; id?: string };
@@ -59,7 +59,7 @@ const notifyOnEvent = async (logEvents: Array<LogEvent>) => {
     console.warn(
       JSON.stringify({
         level: "warn",
-        msg: `User ${logEvent.userID} performed ${logEvent.event} on ${logEvent.subject?.type} ${
+        msg: `User ${logEvent.userId} performed ${logEvent.event} on ${logEvent.subject?.type} ${
           logEvent.subject.id ?? `with id ${logEvent.subject.id}.`
         }${logEvent.description ? "\n".concat(logEvent.description) : ""}`,
       })
@@ -126,7 +126,7 @@ const detectUnprocessedItems = (
         // Find the original LogEvent item that has the messageID
         const unprocessedItem = logEvents.filter(
           ({ logEvent }) =>
-            logEvent.userID === Item?.UserID &&
+            logEvent.userId === Item?.UserID &&
             logEvent.event === Item?.Event &&
             logEvent.timestamp === Item?.TimeStamp
         )[0];
@@ -163,7 +163,7 @@ const buildTransactionItems = (
     eventSourceARN: string;
   }>
 ) => {
-  const { apiAuditLogTransactions, appAuditLogTransactions } = logEvents.reduce(
+  return logEvents.reduce(
     (
       acc: {
         appAuditLogTransactions: TransactionRequest[];
@@ -174,7 +174,7 @@ const buildTransactionItems = (
       const item = {
         PutRequest: {
           Item: {
-            UserID: logEvent.userID,
+            UserID: logEvent.userId,
             "Event#SubjectID#TimeStamp": `${logEvent.event}#${
               logEvent.subject.id ?? logEvent.subject.type
             }#${logEvent.timestamp}`,
@@ -201,31 +201,24 @@ const buildTransactionItems = (
     },
     { appAuditLogTransactions: [], apiAuditLogTransactions: [] }
   );
-  return {
-    apiAuditLogTransactions:
-      apiAuditLogTransactions.length > 0 ? apiAuditLogTransactions : undefined,
-    appAuditLogTransactions:
-      appAuditLogTransactions.length > 0 ? appAuditLogTransactions : undefined,
-  };
 };
 
 export const handler: Handler = async (event: SQSEvent) => {
   try {
-    const logEvents = event.Records.map((record) => ({
-      messageId: record.messageId,
-      eventSourceARN: record.eventSourceARN,
-      logEvent: JSON.parse(record.body) as LogEvent,
-    }));
+    const logEvents = event.Records.map((record) => {
+      const logEvent = JSON.parse(record.body);
+      // App currently does not use userId, but userID
+      // Opening an issue to correct
+      logEvent.userId = logEvent.userId ?? logEvent.userID;
 
-    logEvents.forEach((log) => {
-      console.info(
-        `Event ARN ${log.eventSourceARN === ApiAuditLogArn ? "API" : "APP"} / Event: ${
-          log.logEvent.event
-        }`
-      );
+      return {
+        messageId: record.messageId,
+        eventSourceARN: record.eventSourceARN,
+        logEvent: logEvent as LogEvent,
+      };
     });
 
-    // Warn on events that should be notified
+    // Warn on App events that should be notified
     await notifyOnEvent(
       logEvents
         .filter((event) => event.eventSourceARN === AppAuditLogArn)
@@ -236,16 +229,13 @@ export const handler: Handler = async (event: SQSEvent) => {
 
     const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient(awsProperties));
 
-    // Handle Unprocessed Items
-    // Start here tomorrow
-
     const { UnprocessedItems } = await dynamoDb.send(
       new BatchWriteCommand({
         RequestItems: {
-          ...(appAuditLogTransactions && {
+          ...(appAuditLogTransactions.length && {
             AuditLogs: detectAndRemoveDuplicateEvents(appAuditLogTransactions),
           }),
-          ...(apiAuditLogTransactions && {
+          ...(apiAuditLogTransactions.length && {
             ApiAuditLogs: detectAndRemoveDuplicateEvents(apiAuditLogTransactions),
           }),
         },
