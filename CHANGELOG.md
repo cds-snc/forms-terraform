@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.22.0](https://github.com/cds-snc/forms-terraform/compare/v3.21.0...v3.22.0) (2024-09-13)
+
+
+### Features
+
+* deploy API to prod ([#826](https://github.com/cds-snc/forms-terraform/issues/826)) ([193b470](https://github.com/cds-snc/forms-terraform/commit/193b470a9a43a8b13f29388746ebaf08060ba30d))
+
 ## [3.21.0](https://github.com/cds-snc/forms-terraform/compare/v3.20.0...v3.21.0) (2024-09-12)
 
 
