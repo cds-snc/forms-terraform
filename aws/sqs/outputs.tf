@@ -39,12 +39,12 @@ output "sqs_app_audit_log_queue_id" {
 }
 
 output "sqs_api_audit_log_queue_arn" {
-  description = "SQS audit log queue ARN"
+  description = "SQS API audit log queue ARN"
   value       = aws_sqs_queue.api_audit_log_queue.arn
 }
 
 output "sqs_api_audit_log_queue_id" {
-  description = "SQS audit log queue URL"
+  description = "SQS API audit log queue URL"
   value       = aws_sqs_queue.api_audit_log_queue.id
 }
 
@@ -54,6 +54,6 @@ output "sqs_app_audit_log_deadletter_queue_arn" {
 }
 
 output "sqs_api_audit_log_deadletter_queue_arn" {
-  description = "Audit Log queues dead-letter queue ARN"
+  description = "API Audit Log queues dead-letter queue ARN"
   value       = aws_sqs_queue.api_audit_log_deadletter_queue.arn
 }

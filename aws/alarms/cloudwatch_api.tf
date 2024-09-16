@@ -110,3 +110,54 @@ resource "aws_cloudwatch_metric_alarm" "api_response_time_warn" {
     }
   }
 }
+
+#
+# Audit Log Dead Letter Queue
+#
+resource "aws_cloudwatch_metric_alarm" "api_audit_log_dead_letter_queue_warn" {
+  alarm_name          = "ApiAuditLogDeadLetterQueueWarn"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  threshold           = "0"
+  alarm_description   = "Detect when a message is sent to the API Audit Log Dead Letter Queue"
+  alarm_actions       = [var.sns_topic_alert_warning_arn]
+
+  metric_query {
+    id          = "e1"
+    expression  = "RATE(m2+m1)"
+    label       = "Error Rate"
+    return_data = "true"
+  }
+
+  metric_query {
+    id = "m1"
+
+    metric {
+      metric_name = "ApproximateNumberOfMessagesVisible"
+      namespace   = "AWS/SQS"
+      period      = "60"
+      stat        = "Sum"
+      unit        = "Count"
+
+      dimensions = {
+        QueueName = var.sqs_api_audit_log_deadletter_queue_arn
+      }
+    }
+  }
+
+  metric_query {
+    id = "m2"
+
+    metric {
+      metric_name = "ApproximateNumberOfMessagesNotVisible"
+      namespace   = "AWS/SQS"
+      period      = "60"
+      stat        = "Sum"
+      unit        = "Count"
+
+      dimensions = {
+        QueueName = var.sqs_api_audit_log_deadletter_queue_arn
+      }
+    }
+  }
+}
