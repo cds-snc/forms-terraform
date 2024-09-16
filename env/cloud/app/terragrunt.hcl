@@ -81,10 +81,10 @@ dependency "sqs" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    sqs_reprocess_submission_queue_arn = null
-    sqs_audit_log_queue_arn            = null
-    sqs_audit_log_queue_id             = null
-    sqs_reprocess_submission_queue_id  = null
+    sqs_reprocess_submission_queue_arn = "arn:aws:sqs:ca-central-1:000000000000:reprocess_submission_queue.fifo"
+    sqs_app_audit_log_queue_arn        = "arn:aws:sqs:ca-central-1:000000000000:audit_log_queue"
+    sqs_app_audit_log_queue_id         = "http://sqs.ca-central-1.localhost.localstack.cloud:4566/000000000000/audit_log_queue"
+    sqs_reprocess_submission_queue_id  = "https://localhost.localstack.cloud:4566/000000000000/reprocess_submission_queue.fifo"
   }
 }
 
@@ -168,8 +168,8 @@ inputs = {
   database_url_secret_arn = dependency.rds.outputs.database_url_secret_arn
 
   sqs_reprocess_submission_queue_arn = dependency.sqs.outputs.sqs_reprocess_submission_queue_arn
-  sqs_audit_log_queue_arn            = dependency.sqs.outputs.sqs_audit_log_queue_arn
-  sqs_audit_log_queue_id             = dependency.sqs.outputs.sqs_audit_log_queue_id
+  sqs_app_audit_log_queue_arn        = dependency.sqs.outputs.sqs_app_audit_log_queue_arn
+  sqs_app_audit_log_queue_id         = dependency.sqs.outputs.sqs_app_audit_log_queue_id
   sqs_reprocess_submission_queue_id  = dependency.sqs.outputs.sqs_reprocess_submission_queue_id
 
   cognito_endpoint_url  = dependency.cognito.outputs.cognito_endpoint_url

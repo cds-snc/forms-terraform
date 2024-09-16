@@ -58,7 +58,8 @@ module "api_ecs" {
     data.aws_iam_policy_document.api_ecs_kms_vault.json,
     data.aws_iam_policy_document.api_ecs_dynamodb_vault.json,
     data.aws_iam_policy_document.api_ecs_s3_vault.json,
-    data.aws_iam_policy_document.api_ecs_secrets_manager_runtime.json
+    data.aws_iam_policy_document.api_ecs_secrets_manager_runtime.json,
+    data.aws_iam_policy_document.api_sqs.json
   ]
 
   task_exec_role_policy_documents = [
@@ -155,6 +156,19 @@ data "aws_iam_policy_document" "api_ecs_secrets_manager" {
     resources = [
       var.zitadel_application_key_secret_arn,
       var.freshdesk_api_key_secret_arn
+    ]
+  }
+}
+data "aws_iam_policy_document" "api_sqs" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "sqs:GetQueueUrl",
+      "sqs:SendMessage"
+    ]
+
+    resources = [
+      var.sqs_api_audit_log_queue_arn
     ]
   }
 }

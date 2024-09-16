@@ -173,12 +173,12 @@ variable "sqs_reprocess_submission_queue_id" {
   type        = string
 }
 
-variable "sqs_audit_log_queue_arn" {
+variable "sqs_app_audit_log_queue_arn" {
   description = "SQS audit log queue ARN"
   type        = string
 }
 
-variable "sqs_audit_log_queue_id" {
+variable "sqs_app_audit_log_queue_id" {
   description = "SQS audit log queue URL"
   type        = string
 }

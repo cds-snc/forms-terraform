@@ -61,11 +61,12 @@ dependency "sqs" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    sqs_reliability_queue_arn            = null
-    sqs_reliability_queue_id             = null
-    sqs_reprocess_submission_queue_arn   = null
-    sqs_reliability_dead_letter_queue_id = null
-    sqs_audit_log_queue_arn              = null
+    sqs_reliability_queue_arn            = "arn:aws:sqs:ca-central-1:000000000000:reliability_queue"
+    sqs_reliability_queue_id             = "https://localhost.localstack.cloud:4566/000000000000/submission_processing.fifo"
+    sqs_reprocess_submission_queue_arn   = "arn:aws:sqs:ca-central-1:000000000000:reprocess_submission_queue.fifo"
+    sqs_reliability_dead_letter_queue_id = "https://localhost.localstack.cloud:4566/000000000000/reliability_deadletter_queue.fifo"
+    sqs_app_audit_log_queue_arn          = "arn:aws:sqs:ca-central-1:000000000000:audit_log_queue"
+    sqs_api_audit_log_queue_arn          = "arn:aws:sqs:ca-central-1:000000000000:api_audit_log_queue"
   }
 }
 
@@ -95,12 +96,14 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_relability_queue_arn  = "arn:aws:dynamodb:ca-central-1:123456789012:table/ReliabilityQueue"
-    dynamodb_vault_arn             = "arn:aws:dynamodb:ca-central-1:123456789012:table/Vault"
-    dynamodb_vault_table_name      = "Vault"
-    dynamodb_vault_stream_arn      = "arn:aws:dynamodb:ca-central-1:123456789012:table/Vault/stream/2023-03-14T15:54:31.086"
-    dynamodb_audit_logs_table_name = "AuditLogs"
-    dynamodb_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:123456789012:table/AuditLogs"
+    dynamodb_relability_queue_arn      = "arn:aws:dynamodb:ca-central-1:123456789012:table/ReliabilityQueue"
+    dynamodb_vault_arn                 = "arn:aws:dynamodb:ca-central-1:123456789012:table/Vault"
+    dynamodb_vault_table_name          = "Vault"
+    dynamodb_vault_stream_arn          = "arn:aws:dynamodb:ca-central-1:123456789012:table/Vault/stream/2023-03-14T15:54:31.086"
+    dynamodb_app_audit_logs_table_name = "AuditLogs"
+    dynamodb_app_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:123456789012:table/AuditLogs"
+    dynamodb_api_audit_logs_table_name = "ApiAuditLogs"
+    dynamodb_api_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:123456789012:table/ApiAuditLogs"
   }
 }
 
@@ -153,12 +156,14 @@ inputs = {
   lambda_nagware_security_group_id = dependency.network.outputs.lambda_nagware_security_group_id
   private_subnet_ids               = dependency.network.outputs.private_subnet_ids
 
-  dynamodb_relability_queue_arn  = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
-  dynamodb_vault_arn             = dependency.dynamodb.outputs.dynamodb_vault_arn
-  dynamodb_vault_table_name      = dependency.dynamodb.outputs.dynamodb_vault_table_name
-  dynamodb_vault_stream_arn      = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
-  dynamodb_audit_logs_table_name = dependency.dynamodb.outputs.dynamodb_audit_logs_table_name
-  dynamodb_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
+  dynamodb_relability_queue_arn      = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
+  dynamodb_vault_arn                 = dependency.dynamodb.outputs.dynamodb_vault_arn
+  dynamodb_vault_table_name          = dependency.dynamodb.outputs.dynamodb_vault_table_name
+  dynamodb_vault_stream_arn          = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
+  dynamodb_app_audit_logs_table_name = dependency.dynamodb.outputs.dynamodb_app_audit_logs_table_name
+  dynamodb_app_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_app_audit_logs_arn
+  dynamodb_api_audit_logs_table_name = dependency.dynamodb.outputs.dynamodb_api_audit_logs_table_name
+  dynamodb_api_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_api_audit_logs_arn
 
   kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
   kms_key_dynamodb_arn   = dependency.kms.outputs.kms_key_dynamodb_arn
@@ -174,7 +179,8 @@ inputs = {
   sqs_reliability_queue_id             = dependency.sqs.outputs.sqs_reliability_queue_id
   sqs_reprocess_submission_queue_arn   = dependency.sqs.outputs.sqs_reprocess_submission_queue_arn
   sqs_reliability_dead_letter_queue_id = dependency.sqs.outputs.sqs_reliability_dead_letter_queue_id
-  sqs_audit_log_queue_arn              = dependency.sqs.outputs.sqs_audit_log_queue_arn
+  sqs_app_audit_log_queue_arn          = dependency.sqs.outputs.sqs_app_audit_log_queue_arn
+  sqs_api_audit_log_queue_arn          = dependency.sqs.outputs.sqs_api_audit_log_queue_arn
 
   sns_topic_alert_critical_arn = dependency.sns.outputs.sns_topic_alert_critical_arn
 

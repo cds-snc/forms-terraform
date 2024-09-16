@@ -75,3 +75,8 @@ variable "rds_connection_url_secret_arn" {
   type        = string
   sensitive   = true
 }
+variable "sqs_api_audit_log_queue_arn" {
+  description = "SQS audit log queue ARN"
+  type        = string
+}
+

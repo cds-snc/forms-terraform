@@ -201,8 +201,13 @@ variable "sqs_reliability_deadletter_queue_arn" {
   type        = string
 }
 
-variable "sqs_audit_log_deadletter_queue_arn" {
+variable "sqs_app_audit_log_deadletter_queue_arn" {
   description = "ARN of the Audit Log queue's SQS Dead Letter Queue"
+  type        = string
+}
+
+variable "sqs_api_audit_log_deadletter_queue_arn" {
+  description = "ARN of the API Audit Log queue's SQS Dead Letter Queue"
   type        = string
 }
 
@@ -251,7 +256,7 @@ variable "ecr_repository_url_notify_slack_lambda" {
   type        = string
 }
 
-variable "dynamodb_audit_logs_arn" {
+variable "dynamodb_app_audit_logs_arn" {
   description = "Audit Logs table ARN"
   type        = string
 }

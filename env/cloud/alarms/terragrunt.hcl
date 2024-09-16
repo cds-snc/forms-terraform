@@ -65,8 +65,9 @@ dependency "sqs" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    sqs_reliability_deadletter_queue_arn = null
-    sqs_audit_log_deadletter_queue_arn   = null
+    sqs_reliability_deadletter_queue_arn   = "arn:aws:sqs:ca-central-1:000000000000:reliability_deadletter_queue.fifo"
+    sqs_app_audit_log_deadletter_queue_arn = "arn:aws:sqs:ca-central-1:000000000000:audit_log_deadletter_queue"
+    sqs_api_audit_log_deadletter_queue_arn = "arn:aws:sqs:ca-central-1:000000000000:api_audit_log_deadletter_queue"
   }
 }
 
@@ -163,7 +164,7 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_audit_logs_arn = "arn:aws:dynamodb:ca-central-1:123456789012:table/AuditLogs"
+    dynamodb_app_audit_logs_arn = "arn:aws:dynamodb:ca-central-1:123456789012:table/AuditLogs"
   }
 }
 
@@ -194,8 +195,9 @@ inputs = {
   lb_target_group_2_arn_suffix   = dependency.load_balancer.outputs.lb_target_group_2_arn_suffix
   lb_api_target_group_arn_suffix = dependency.load_balancer.outputs.lb_target_group_api_arn_suffix
 
-  sqs_reliability_deadletter_queue_arn = dependency.sqs.outputs.sqs_reliability_deadletter_queue_arn
-  sqs_audit_log_deadletter_queue_arn   = dependency.sqs.outputs.sqs_audit_log_deadletter_queue_arn
+  sqs_reliability_deadletter_queue_arn   = dependency.sqs.outputs.sqs_reliability_deadletter_queue_arn
+  sqs_app_audit_log_deadletter_queue_arn = dependency.sqs.outputs.sqs_app_audit_log_deadletter_queue_arn
+  sqs_api_audit_log_deadletter_queue_arn = dependency.sqs.outputs.sqs_api_audit_log_deadletter_queue_arn
 
   ecs_cloudwatch_log_group_name = dependency.app.outputs.ecs_cloudwatch_log_group_name
   ecs_cluster_name              = dependency.app.outputs.ecs_cluster_name
@@ -239,8 +241,8 @@ inputs = {
   rds_idp_cluster_identifier        = local.feature_flag_idp == "true" ? dependency.idp.outputs.rds_idp_cluster_identifier : ""
   rds_idp_cpu_maxiumum              = 80
 
-  dynamodb_audit_logs_arn = dependency.dynamodb.outputs.dynamodb_audit_logs_arn
-  kms_key_dynamodb_arn    = dependency.kms.outputs.kms_key_dynamodb_arn
+  dynamodb_app_audit_logs_arn = dependency.dynamodb.outputs.dynamodb_app_audit_logs_arn
+  kms_key_dynamodb_arn        = dependency.kms.outputs.kms_key_dynamodb_arn
 
   private_subnet_ids          = dependency.network.outputs.private_subnet_ids
   connector_security_group_id = dependency.network.outputs.connector_security_group_id
