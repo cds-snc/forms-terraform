@@ -66,7 +66,7 @@ dependency "sqs" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     sqs_reliability_deadletter_queue_arn   = "arn:aws:sqs:ca-central-1:000000000000:reliability_deadletter_queue.fifo"
-    sqs_app_audit_log_deadletter_queue_arn ="arn:aws:sqs:ca-central-1:000000000000:audit_log_deadletter_queue"
+    sqs_app_audit_log_deadletter_queue_arn = "arn:aws:sqs:ca-central-1:000000000000:audit_log_deadletter_queue"
     sqs_api_audit_log_deadletter_queue_arn = "arn:aws:sqs:ca-central-1:000000000000:api_audit_log_deadletter_queue"
   }
 }

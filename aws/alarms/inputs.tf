@@ -208,7 +208,7 @@ variable "sqs_app_audit_log_deadletter_queue_arn" {
 
 variable "sqs_api_audit_log_deadletter_queue_arn" {
   description = "ARN of the API Audit Log queue's SQS Dead Letter Queue"
-  type = string
+  type        = string
 }
 
 variable "threshold_ecs_cpu_utilization_high" {
