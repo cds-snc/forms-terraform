@@ -1,4 +1,5 @@
 locals {
+  forms_api_release                   = "forms-api-release"
   platform_forms_client_pr_review_env = "platform-forms-client-pr-review-env"
   platform_forms_client_release       = "platform-forms-client-release"
 }
@@ -21,6 +22,11 @@ module "github_workflow_roles" {
   billing_tag_value = var.billing_tag_value
   roles = [
     {
+      name      = local.forms_api_release
+      repo_name = "forms-api"
+      claim     = "ref:refs/tags/v*"
+    },
+    {
       name      = local.platform_forms_client_pr_review_env
       repo_name = "platform-forms-client"
       claim     = "pull_request"
@@ -37,6 +43,15 @@ module "github_workflow_roles" {
 # Attach polices to the OIDC roles to grant them permissions.  These
 # attachments are scoped to only the environments that require the role.
 #
+resource "aws_iam_role_policy_attachment" "forms_api_release" {
+  count      = var.env == "production" ? 1 : 0
+  role       = local.forms_api_release
+  policy_arn = aws_iam_policy.forms_api_release[0].arn
+  depends_on = [
+    module.github_workflow_roles
+  ]
+}
+
 resource "aws_iam_role_policy_attachment" "platform_forms_client_pr_review_env" {
   count      = var.env == "staging" ? 1 : 0
   role       = local.platform_forms_client_pr_review_env

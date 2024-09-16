@@ -114,14 +114,21 @@ data "aws_iam_policy_document" "platform_forms_client_pr_review_env" {
 #
 # Push and manage ECR images
 #
+resource "aws_iam_policy" "forms_api_release" {
+  count  = var.env == "production" ? 1 : 0
+  name   = local.forms_api_release
+  path   = "/"
+  policy = data.aws_iam_policy_document.ecr_push_image[0].json
+}
+
 resource "aws_iam_policy" "platform_forms_client_release" {
   count  = var.env == "production" ? 1 : 0
   name   = local.platform_forms_client_release
   path   = "/"
-  policy = data.aws_iam_policy_document.platform_forms_client_release[0].json
+  policy = data.aws_iam_policy_document.ecr_push_image[0].json
 }
 
-data "aws_iam_policy_document" "platform_forms_client_release" {
+data "aws_iam_policy_document" "ecr_push_image" {
   count = var.env == "production" ? 1 : 0
 
   statement {
@@ -142,7 +149,8 @@ data "aws_iam_policy_document" "platform_forms_client_release" {
       "ecr:UploadLayerPart"
     ]
     resources = [
-      "arn:aws:ecr:${var.region}:${var.account_id}:repository/form_viewer_production"
+      "arn:aws:ecr:${var.region}:${var.account_id}:repository/form_viewer_production",
+      "arn:aws:ecr:${var.region}:${var.account_id}:repository/forms/api"
     ]
   }
 
