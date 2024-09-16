@@ -19,21 +19,21 @@ output "dynamodb_vault_stream_arn" {
 }
 
 output "dynamodb_app_audit_logs_arn" {
-  description = "Audit Logs table ARN"
+  description = "App Audit Logs table ARN"
   value       = aws_dynamodb_table.audit_logs.arn
 }
 
 output "dynamodb_app_audit_logs_table_name" {
-  description = "Audit Logs table name"
+  description = "App Audit Logs table name"
   value       = aws_dynamodb_table.audit_logs.name
 }
 
 output "dynamodb_api_audit_logs_arn" {
-  description = "Audit Logs table ARN"
+  description = "API Audit Logs table ARN"
   value       = aws_dynamodb_table.api_audit_logs.arn
 }
 
 output "dynamodb_api_audit_logs_table_name" {
-  description = "Audit Logs table name"
+  description = "API Audit Logs table name"
   value       = aws_dynamodb_table.api_audit_logs.name
 }
