@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.23.0](https://github.com/cds-snc/forms-terraform/compare/v3.22.0...v3.23.0) (2024-09-16)
+
+
+### Features
+
+* API Audit Logs ([#824](https://github.com/cds-snc/forms-terraform/issues/824)) ([401d6b9](https://github.com/cds-snc/forms-terraform/commit/401d6b9a5945a0907f3ae91ed047a76c1007fdca))
+* create Forms API OIDC role for releases ([#830](https://github.com/cds-snc/forms-terraform/issues/830)) ([6ded50e](https://github.com/cds-snc/forms-terraform/commit/6ded50efb3c23d286c25bf14210ee92c6c8272d9))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#828](https://github.com/cds-snc/forms-terraform/issues/828)) ([a3988e8](https://github.com/cds-snc/forms-terraform/commit/a3988e8fbd8d6c34920a6fa3c0139f0cc54abfa0))
+
 ## [3.22.0](https://github.com/cds-snc/forms-terraform/compare/v3.21.0...v3.22.0) (2024-09-13)
 
 
