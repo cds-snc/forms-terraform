@@ -33,7 +33,8 @@ export const handler = async (event: any) => {
 export const safeParseLogIncludingJSON = (message: string) => {
   try {
     const jsonPartOfLogMessage = message.slice(message.indexOf("{"));
-    return JSON.parse(jsonPartOfLogMessage);
+    const jsonParsed = JSON.parse(jsonPartOfLogMessage);
+    return jsonParsed && typeof jsonParsed === "object" ? jsonParsed : false;
   } catch (e) {
     return false;
   }
