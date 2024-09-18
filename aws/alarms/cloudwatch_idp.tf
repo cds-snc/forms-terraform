@@ -52,7 +52,7 @@ resource "aws_cloudwatch_log_subscription_filter" "idp_error_detection" {
 
   name            = "error_detection_in_idp_logs"
   log_group_name  = var.ecs_idp_cloudwatch_log_group_name
-  filter_pattern  = "level=error"
+  filter_pattern  = local.idp_error_pattern
   destination_arn = aws_lambda_function.notify_slack.arn
 }
 
