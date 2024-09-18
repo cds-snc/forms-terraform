@@ -28,13 +28,13 @@ DefaultInstance:
     ForceMFA: true
     HidePasswordReset: true
   OIDCSettings:
-    AccessTokenLifetime: '1h'
-    IdTokenLifetime: '1h'
+    AccessTokenLifetime: '0.5h'
+    IdTokenLifetime: '0.5h'
     RefreshTokenIdleExpiration: '720h'
     RefreshTokenExpiration: '2160h'
 
 OIDC:
-  DefaultAccessTokenLifetime: '1h'
-  DefaultIdTokenLifetime: '1h'
+  DefaultAccessTokenLifetime: '0.5h'
+  DefaultIdTokenLifetime: '0.5h'
   DefaultRefreshTokenIdleExpiration: '720h'
   DefaultRefreshTokenExpiration: '2160h'
