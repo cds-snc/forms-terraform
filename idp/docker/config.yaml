@@ -21,3 +21,20 @@ Database:
     Admin:
       SSL:
         Mode: 'require'
+
+DefaultInstance:
+  LoginPolicy:
+    AllowRegister: false
+    ForceMFA: true
+    HidePasswordReset: true
+  OIDCSettings:
+    AccessTokenLifetime: '1h'
+    IdTokenLifetime: '1h'
+    RefreshTokenIdleExpiration: '720h'
+    RefreshTokenExpiration: '2160h'
+
+OIDC:
+  DefaultAccessTokenLifetime: '1h'
+  DefaultIdTokenLifetime: '1h'
+  DefaultRefreshTokenIdleExpiration: '720h'
+  DefaultRefreshTokenExpiration: '2160h'
