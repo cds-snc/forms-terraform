@@ -40,17 +40,17 @@ output "lb_target_group_2_name" {
 
 output "lb_target_group_api_arn" {
   description = "Load balancer target group ARN for the API"
-  value       = var.feature_flag_api ? aws_lb_target_group.forms_api[0].arn : ""
+  value       = aws_lb_target_group.forms_api.arn
 }
 
 output "lb_target_group_api_arn_suffix" {
   description = "Load balancer target group ARN suffix for the API"
-  value       = var.feature_flag_api ? aws_lb_target_group.forms_api[0].arn_suffix : ""
+  value       = aws_lb_target_group.forms_api.arn_suffix
 }
 
 output "kinesis_firehose_waf_logs_arn" {
   description = "Kinesis Firehose delivery stream ARN used to collect and write WAF ACL logs to an S3 bucket."
-  value       = var.feature_flag_idp ? aws_kinesis_firehose_delivery_stream.firehose_waf_logs.arn : ""
+  value       = aws_kinesis_firehose_delivery_stream.firehose_waf_logs.arn
 }
 
 output "waf_ipv4_blocklist_arn" {

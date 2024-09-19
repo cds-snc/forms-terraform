@@ -5,7 +5,7 @@ output "alb_security_group_id" {
 
 output "api_ecs_security_group_id" {
   description = "API ECS task security group ID"
-  value       = var.feature_flag_api ? aws_security_group.api_ecs[0].id : ""
+  value       = aws_security_group.api_ecs.id
 }
 
 output "ecs_security_group_id" {
@@ -20,17 +20,17 @@ output "egress_security_group_id" {
 
 output "idp_db_security_group_id" {
   description = "IdP database security group ID"
-  value       = var.feature_flag_idp ? aws_security_group.idp_db[0].id : ""
+  value       = aws_security_group.idp_db.id
 }
 
 output "idp_ecs_security_group_id" {
   description = "IdP ECS task security group ID"
-  value       = var.feature_flag_idp ? aws_security_group.idp_ecs[0].id : ""
+  value       = aws_security_group.idp_ecs.id
 }
 
 output "idp_lb_security_group_id" {
   description = "IdP load balancer security group ID"
-  value       = var.feature_flag_idp ? aws_security_group.idp_lb[0].id : ""
+  value       = aws_security_group.idp_lb.id
 }
 
 output "lambda_nagware_security_group_id" {

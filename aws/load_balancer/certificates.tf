@@ -27,19 +27,12 @@ resource "aws_acm_certificate" "form_viewer_maintenance_mode" {
 }
 
 resource "aws_acm_certificate" "forms_api" {
-  count = var.feature_flag_api ? 1 : 0
-
   domain_name       = var.domain_api
   validation_method = "DNS"
 
   lifecycle {
     create_before_destroy = true
   }
-}
-
-moved {
-  from = aws_acm_certificate.form_api
-  to   = aws_acm_certificate.forms_api
 }
 
 resource "aws_acm_certificate_validation" "form_viewer_maintenance_mode_cloudfront_certificate" {
@@ -50,9 +43,7 @@ resource "aws_acm_certificate_validation" "form_viewer_maintenance_mode_cloudfro
 }
 
 resource "aws_acm_certificate_validation" "forms_api" {
-  count = var.feature_flag_api ? 1 : 0
-
-  certificate_arn         = aws_acm_certificate.forms_api[0].arn
+  certificate_arn         = aws_acm_certificate.forms_api.arn
   validation_record_fqdns = [for record in aws_route53_record.forms_api_certificate_validation : record.fqdn]
 }
 

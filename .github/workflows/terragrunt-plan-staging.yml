@@ -29,7 +29,6 @@ env:
   TERRAGRUNT_VERSION: 0.63.2
   TF_INPUT: false
   # API
-  FF_API: true
   TF_VAR_zitadel_application_key: ${{ secrets.STAGING_ZITADEL_APPLICATION_KEY }}
   # App
   TF_VAR_ecs_secret_token: ${{ secrets.STAGING_TOKEN_SECRET }}
@@ -51,7 +50,6 @@ env:
   TF_VAR_zitadel_provider: ${{ vars.STAGING_ZITADEL_PROVIDER }}
   TF_VAR_zitadel_administration_key: ${{ secrets.STAGING_ZITADEL_ADMINISTRATION_KEY }}
   # IdP
-  FF_IDP: true
   TF_VAR_idp_database_cluster_admin_username: ${{ secrets.STAGING_IDP_DATABASE_CLUSTER_ADMIN_USERNAME }}
   TF_VAR_idp_database_cluster_admin_password: ${{ secrets.STAGING_IDP_DATABASE_CLUSTER_ADMIN_PASSWORD }}
   TF_VAR_zitadel_admin_password: ${{ secrets.STAGING_ZITADEL_ADMIN_PASSWORD }}
