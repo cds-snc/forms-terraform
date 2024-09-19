@@ -33,7 +33,8 @@ export const handler = async (event: any) => {
 export const safeParseLogIncludingJSON = (message: string) => {
   try {
     const jsonPartOfLogMessage = message.slice(message.indexOf("{"));
-    return JSON.parse(jsonPartOfLogMessage);
+    const jsonParsed = JSON.parse(jsonPartOfLogMessage);
+    return jsonParsed && typeof jsonParsed === "object" ? jsonParsed : false;
   } catch (e) {
     return false;
   }
@@ -119,7 +120,7 @@ export const handleCloudWatchLogEvent = async (logData: string) => {
         })
       );
     } else {
-      // These are unhandled errors from the GCForms app only
+      // Non-JSON log message.  Send as-is and treat as an error.
       await sendToSlack(parsedResult.logGroup, log.message, "error");
 
       console.log(
