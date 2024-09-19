@@ -24,7 +24,6 @@ env:
   TERRAGRUNT_VERSION: 0.63.2
   TF_INPUT: false
   # API
-  FF_API: true
   TF_VAR_zitadel_application_key: ${{ secrets.PRODUCTION_ZITADEL_APPLICATION_KEY }}
   # App
   TF_VAR_ecs_secret_token: ${{ secrets.PRODUCTION_TOKEN_SECRET }}
@@ -44,7 +43,6 @@ env:
   TF_VAR_email_address_support: ${{ vars.PRODUCTION_SUPPORT_EMAIL }}
   TF_VAR_zitadel_provider: ${{ vars.PRODUCTION_ZITADEL_PROVIDER }}
   # IdP
-  FF_IDP: true
   TF_VAR_idp_database_cluster_admin_username: ${{ secrets.PRODUCTION_IDP_DATABASE_CLUSTER_ADMIN_USERNAME }}
   TF_VAR_idp_database_cluster_admin_password: ${{ secrets.PRODUCTION_IDP_DATABASE_CLUSTER_ADMIN_PASSWORD }}
   TF_VAR_zitadel_admin_password: ${{ secrets.PRODUCTION_ZITADEL_ADMIN_PASSWORD }}

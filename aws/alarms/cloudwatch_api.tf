@@ -2,8 +2,6 @@
 # ECS resource usage alarms
 #
 resource "aws_cloudwatch_metric_alarm" "api_cpu_utilization_high_warn" {
-  count = var.feature_flag_api ? 1 : 0
-
   alarm_name          = "API-CpuUtilizationWarn"
   alarm_description   = "API ECS Warning - High CPU usage has been detected."
   comparison_operator = "GreaterThanThreshold"
@@ -25,8 +23,6 @@ resource "aws_cloudwatch_metric_alarm" "api_cpu_utilization_high_warn" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "api_memory_utilization_high_warn" {
-  count = var.feature_flag_api ? 1 : 0
-
   alarm_name          = "API-MemoryUtilizationWarn"
   alarm_description   = "API ECS Warning - High memory usage has been detected."
   comparison_operator = "GreaterThanThreshold"
@@ -48,8 +44,6 @@ resource "aws_cloudwatch_metric_alarm" "api_memory_utilization_high_warn" {
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "api_error_detection" {
-  count = var.feature_flag_api ? 1 : 0
-
   name            = "error_detection_in_api_logs"
   log_group_name  = var.ecs_api_cloudwatch_log_group_name
   filter_pattern  = "level=error"
@@ -60,8 +54,6 @@ resource "aws_cloudwatch_log_subscription_filter" "api_error_detection" {
 # Load balancer
 #
 resource "aws_cloudwatch_metric_alarm" "api_lb_unhealthy_host_count" {
-  count = var.feature_flag_api ? 1 : 0
-
   alarm_name          = "API-UnhealthyHostCount"
   alarm_description   = "API LB Warning - unhealthy host count >= 1 in a 1 minute period"
   comparison_operator = "GreaterThanOrEqualToThreshold"
@@ -83,8 +75,6 @@ resource "aws_cloudwatch_metric_alarm" "api_lb_unhealthy_host_count" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "api_lb_healthy_host_count" {
-  count = var.feature_flag_api ? 1 : 0
-
   alarm_name          = "API-HealthyHostCount" # TODO: bump to SEV1 once this is in production
   alarm_description   = "API LB Critical - no healthy hosts in a 1 minute period"
   comparison_operator = "LessThanThreshold"
@@ -104,8 +94,6 @@ resource "aws_cloudwatch_metric_alarm" "api_lb_healthy_host_count" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "api_response_time_warn" {
-  count = var.feature_flag_api ? 1 : 0
-
   alarm_name          = "API-ResponseTimeWarn"
   alarm_description   = "API LB Warning - The latency of response times from the API are abnormally high."
   comparison_operator = "GreaterThanThreshold"

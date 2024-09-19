@@ -2,8 +2,6 @@
 # ECS resource usage alarms
 #
 resource "aws_cloudwatch_metric_alarm" "idp_cpu_utilization_high_warn" {
-  count = var.feature_flag_idp ? 1 : 0
-
   alarm_name          = "IdP-CpuUtilizationWarn"
   alarm_description   = "IdP ECS Warning - High CPU usage has been detected."
   comparison_operator = "GreaterThanThreshold"
@@ -25,8 +23,6 @@ resource "aws_cloudwatch_metric_alarm" "idp_cpu_utilization_high_warn" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "idp_memory_utilization_high_warn" {
-  count = var.feature_flag_idp ? 1 : 0
-
   alarm_name          = "IdP-MemoryUtilizationWarn"
   alarm_description   = "IdP ECS Warning - High memory usage has been detected."
   comparison_operator = "GreaterThanThreshold"
@@ -48,8 +44,6 @@ resource "aws_cloudwatch_metric_alarm" "idp_memory_utilization_high_warn" {
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "idp_error_detection" {
-  count = var.feature_flag_idp ? 1 : 0
-
   name            = "error_detection_in_idp_logs"
   log_group_name  = var.ecs_idp_cloudwatch_log_group_name
   filter_pattern  = local.idp_error_pattern
@@ -60,7 +54,7 @@ resource "aws_cloudwatch_log_subscription_filter" "idp_error_detection" {
 # Load balancer
 #
 resource "aws_cloudwatch_metric_alarm" "idb_lb_unhealthy_host_count" {
-  for_each = var.feature_flag_idp ? var.lb_idp_target_groups_arn_suffix : {}
+  for_each = var.lb_idp_target_groups_arn_suffix
 
   alarm_name          = "IdP-UnhealthyHostCount-${each.key}"
   alarm_description   = "IdP LB Warning - unhealthy ${each.key} host count >= 1 in a 1 minute period"
@@ -83,7 +77,7 @@ resource "aws_cloudwatch_metric_alarm" "idb_lb_unhealthy_host_count" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "idb_lb_healthy_host_count" {
-  for_each = var.feature_flag_idp ? var.lb_idp_target_groups_arn_suffix : {}
+  for_each = var.lb_idp_target_groups_arn_suffix
 
   alarm_name          = "IdP-HealthyHostCount-${each.key}" # TODO: bump to SEV1 once in production
   alarm_description   = "IdP LB Critical - no healthy ${each.key} hosts in a 1 minute period"
@@ -104,8 +98,6 @@ resource "aws_cloudwatch_metric_alarm" "idb_lb_healthy_host_count" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "idp_response_time_warn" {
-  count = var.feature_flag_idp ? 1 : 0
-
   alarm_name          = "IdP-ResponseTimeWarn"
   alarm_description   = "IdP LB Warning - The latency of response times from the IdP are abnormally high."
   comparison_operator = "GreaterThanThreshold"
@@ -135,8 +127,6 @@ resource "aws_cloudwatch_metric_alarm" "idp_response_time_warn" {
 # RDS
 #
 resource "aws_cloudwatch_metric_alarm" "idp_rds_cpu_utilization" {
-  count = var.feature_flag_idp ? 1 : 0
-
   alarm_name          = "IdP-RDSCpuUtilization"
   alarm_description   = "IdP RDS Warning - high CPU use for RDS cluster in a 5 minute period"
   comparison_operator = "GreaterThanThreshold"
@@ -160,8 +150,6 @@ resource "aws_cloudwatch_metric_alarm" "idp_rds_cpu_utilization" {
 # SES bounces and complaints
 #
 resource "aws_cloudwatch_metric_alarm" "idp_bounce_rate_high" {
-  count = var.feature_flag_idp ? 1 : 0
-
   alarm_name          = "IdP-SESBounceRate"
   alarm_description   = "IdP SES Warning - bounce rate >=7% over the last 12 hours"
   comparison_operator = "GreaterThanOrEqualToThreshold"
@@ -178,8 +166,6 @@ resource "aws_cloudwatch_metric_alarm" "idp_bounce_rate_high" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "idp_complaint_rate_high" {
-  count = var.feature_flag_idp ? 1 : 0
-
   alarm_name          = "IdP-SESComplaintRate"
   alarm_description   = "IdP SES Warning - complaint rate >=0.4% over the last 12 hours"
   comparison_operator = "GreaterThanOrEqualToThreshold"

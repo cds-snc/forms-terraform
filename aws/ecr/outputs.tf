@@ -70,10 +70,10 @@ output "ecr_repository_url_vault_integrity_lambda" {
 
 output "ecr_repository_url_idp" {
   description = "URL of the Zitadel IdP's ECR"
-  value       = var.feature_flag_idp ? aws_ecr_repository.idp[0].repository_url : ""
+  value       = aws_ecr_repository.idp.repository_url
 }
 
 output "ecr_repository_url_api" {
   description = "URL of the Forms API's ECR"
-  value       = var.feature_flag_api ? aws_ecr_repository.api[0].repository_url : ""
+  value       = aws_ecr_repository.api.repository_url
 }
