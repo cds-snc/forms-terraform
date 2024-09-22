@@ -55,5 +55,5 @@ output "kinesis_firehose_waf_logs_arn" {
 
 output "waf_ipv4_blocklist_arn" {
   description = "WAF ACL IPv4 blocklist"
-  value       = aws_wafv2_ip_set.ipv4_blocklist.arn
+  value       = module.waf_ip_blocklist.ipv4_blocklist_arn
 }
