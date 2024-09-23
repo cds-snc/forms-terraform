@@ -46,8 +46,3 @@ resource "aws_acm_certificate_validation" "forms_api" {
   certificate_arn         = aws_acm_certificate.forms_api.arn
   validation_record_fqdns = [for record in aws_route53_record.forms_api_certificate_validation : record.fqdn]
 }
-
-moved {
-  from = aws_acm_certificate_validation.form_api
-  to   = aws_acm_certificate_validation.forms_api
-}
