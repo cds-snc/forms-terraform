@@ -295,7 +295,7 @@ resource "aws_wafv2_web_acl" "idp" {
     priority = 70
 
     action {
-      block {}
+      count {}
     }
 
     statement {

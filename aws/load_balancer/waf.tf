@@ -334,12 +334,12 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     priority = 80
 
     action {
-      block {}
+      count {}
     }
 
     statement {
       ip_set_reference_statement {
-        arn = aws_wafv2_ip_set.ipv4_blocklist.arn
+        arn = module.waf_ip_blocklist.ipv4_blocklist_arn
       }
     }
 
@@ -562,16 +562,20 @@ resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {
   }
 }
 
-resource "aws_wafv2_ip_set" "ipv4_blocklist" {
-  name               = "ipv4_blocklist"
-  scope              = "REGIONAL"
-  ip_address_version = "IPV4"
+#
+# IPv4 blocklist that is automatically managed by a Lambda function.  Any IP address in the WAF logs
+# that crosses a block threshold will be added to the blocklist.
+#
+module "waf_ip_blocklist" {
+  source = "github.com/cds-snc/terraform-modules//waf_ip_blocklist?ref=c21a88f0cfe608d7339b28eebb7f4eaf6cf123f2" # v9.6.7
 
-  addresses = []
+  service_name                = "forms_app"
+  athena_database_name        = "access_logs"
+  athena_query_results_bucket = "forms-${var.env}-athena-bucket"
+  athena_query_source_bucket  = "cbs-satellite-${var.account_id}"
+  athena_waf_table_name       = "waf_logs"
+  athena_workgroup_name       = "primary"
+  waf_rule_ids_skip           = ["BlockLargeRequests", "RateLimitersRuleGroup"]
 
-  lifecycle {
-    ignore_changes = [
-      addresses
-    ]
-  }
+  billing_tag_value = "forms"
 }
