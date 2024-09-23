@@ -53,12 +53,6 @@ resource "aws_route53_record" "forms_api" {
   }
 }
 
-moved {
-  from = aws_route53_record.form_api
-  to   = aws_route53_record.forms_api
-}
-
-
 #
 # Certificate validation
 # 
@@ -124,9 +118,4 @@ resource "aws_route53_record" "forms_api_certificate_validation" {
   ttl             = 60
   type            = each.value.type
   zone_id         = var.hosted_zone_ids[0]
-}
-
-moved {
-  from = aws_route53_record.form_api_certificate_validation
-  to   = aws_route53_record.forms_api_certificate_validation
 }
