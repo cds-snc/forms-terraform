@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.23.1](https://github.com/cds-snc/forms-terraform/compare/v3.23.0...v3.23.1) (2024-09-23)
+
+
+### Bug Fixes
+
+* set default OIDC token expiry times ([#834](https://github.com/cds-snc/forms-terraform/issues/834)) ([ffd6e97](https://github.com/cds-snc/forms-terraform/commit/ffd6e9707742a1ba27ecfa1e5ce1b0711de9d230))
+* test if Notify Slack log message JSON is valid ([#838](https://github.com/cds-snc/forms-terraform/issues/838)) ([2878a0d](https://github.com/cds-snc/forms-terraform/commit/2878a0d136b581c64845b63fdbe1020ca938a158))
+* upgrade `ecs` module to stop task revision flip-flop ([#842](https://github.com/cds-snc/forms-terraform/issues/842)) ([d2b9882](https://github.com/cds-snc/forms-terraform/commit/d2b9882251157f3e3a209590b8c644ded274f666))
+
+
+### Miscellaneous Chores
+
+* **deps:** update actions/create-github-app-token action to v1.11.0 ([#843](https://github.com/cds-snc/forms-terraform/issues/843)) ([df37373](https://github.com/cds-snc/forms-terraform/commit/df3737352f39d2c8d6798c4a645e41190fb1f1a2))
+* downgrade to Zitadel v2.61.1 ([#833](https://github.com/cds-snc/forms-terraform/issues/833)) ([678ebca](https://github.com/cds-snc/forms-terraform/commit/678ebca42f804c58c408d7b9ba909c8ec9bb3d87))
+* reduce Zitadel token timeout to 30 mins ([#837](https://github.com/cds-snc/forms-terraform/issues/837)) ([89b31c5](https://github.com/cds-snc/forms-terraform/commit/89b31c54e3c76c50f8adb8124391c8b742e908ba))
+* remove IdP and API feature flags ([#841](https://github.com/cds-snc/forms-terraform/issues/841)) ([5003a42](https://github.com/cds-snc/forms-terraform/commit/5003a42f63293cc209f2ae4e3b22212484d4c91e))
+* suppress `context canceled` IdP errors ([#836](https://github.com/cds-snc/forms-terraform/issues/836)) ([b5fd220](https://github.com/cds-snc/forms-terraform/commit/b5fd22029fa2ac1dfbbbe6196ff76ac178cd6e16))
+* synced file(s) with cds-snc/site-reliability-engineering ([#825](https://github.com/cds-snc/forms-terraform/issues/825)) ([d47d9cf](https://github.com/cds-snc/forms-terraform/commit/d47d9cfa17c4fc1d41d5bb01f4150c38a96416a5))
+* synced file(s) with cds-snc/site-reliability-engineering ([#835](https://github.com/cds-snc/forms-terraform/issues/835)) ([8210659](https://github.com/cds-snc/forms-terraform/commit/82106595a875aef2b4c6dcad8ee32060c2dd1196))
+* upgrade to Zitadel v2.62.0 ([#832](https://github.com/cds-snc/forms-terraform/issues/832)) ([099a5b2](https://github.com/cds-snc/forms-terraform/commit/099a5b2e58a87d1c389ad0a3864712f26a618bc5))
+
 ## [3.23.0](https://github.com/cds-snc/forms-terraform/compare/v3.22.0...v3.23.0) (2024-09-16)
 
 
