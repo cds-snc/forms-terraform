@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.24.0](https://github.com/cds-snc/forms-terraform/compare/v3.23.1...v3.24.0) (2024-09-23)
+
+
+### Features
+
+* add module to manage IPv4 blocklist ([#844](https://github.com/cds-snc/forms-terraform/issues/844)) ([76b0f03](https://github.com/cds-snc/forms-terraform/commit/76b0f036e3288004ca15ad02d426fcae51ad323f))
+
+
+### Miscellaneous Chores
+
+* Add zitadel key for app ([#847](https://github.com/cds-snc/forms-terraform/issues/847)) ([9c174ad](https://github.com/cds-snc/forms-terraform/commit/9c174ad2e24de873813f9935b207fd0d174866eb))
+* remove the `moved` blocks that are no longer needed ([#845](https://github.com/cds-snc/forms-terraform/issues/845)) ([5f70819](https://github.com/cds-snc/forms-terraform/commit/5f70819c81b9db1ded64d4e29bc7427fd6e612f4))
+
 ## [3.23.1](https://github.com/cds-snc/forms-terraform/compare/v3.23.0...v3.23.1) (2024-09-23)
 
 
