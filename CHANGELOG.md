@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.24.1](https://github.com/cds-snc/forms-terraform/compare/v3.24.0...v3.24.1) (2024-10-01)
+
+
+### Bug Fixes
+
+* adjust IdP CloudWatch alarm error filter ([#849](https://github.com/cds-snc/forms-terraform/issues/849)) ([7444d25](https://github.com/cds-snc/forms-terraform/commit/7444d258123d0b1dfe7c181c8e0637b5f425bbc0))
+
+
+### Miscellaneous Chores
+
+* **deps:** update actions/setup-node action to v4.0.4 ([#851](https://github.com/cds-snc/forms-terraform/issues/851)) ([63998b7](https://github.com/cds-snc/forms-terraform/commit/63998b743cfe5d7a61b850953046f02b4d45c2fa))
+* synced file(s) with cds-snc/site-reliability-engineering ([#848](https://github.com/cds-snc/forms-terraform/issues/848)) ([b43f0f2](https://github.com/cds-snc/forms-terraform/commit/b43f0f2eb1141bb096055b9ade9f01853b76d8e4))
+
 ## [3.24.0](https://github.com/cds-snc/forms-terraform/compare/v3.23.1...v3.24.0) (2024-09-23)
 
 
