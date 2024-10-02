@@ -57,6 +57,11 @@ tf.plan
 # Ignore coverage reports
 **/coverage/
 
-# Ignore IdP certificates
+# Ignore IdP certificates and private keys
 idp/docker/*.crt
 idp/docker/*.key
+*_private_api_key.json
+
+# Python
+*.pyc
+__pychache__

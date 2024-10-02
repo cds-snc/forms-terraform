@@ -1,1 +1,5 @@
+cryptography==43.0.1
+httpx==0.27.2
 invokust==0.77
+locust==2.31.7
+PyJWT==2.9.0
