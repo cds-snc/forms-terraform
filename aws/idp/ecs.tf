@@ -52,7 +52,7 @@ module "idp_ecs" {
   service_name   = "zitadel"
   container_name = "zitadel"
   task_cpu       = 4096
-  task_memory    = 8096
+  task_memory    = 8192
 
   service_use_latest_task_def = true
 
