@@ -69,7 +69,7 @@ inputs = {
 
   # 1 ACU ~= 2GB of memory and 1vCPU
   idp_database_min_acu = 3
-  idp_database_max_acu = 4
+  idp_database_max_acu = 6
 }
 
 include {
