@@ -68,8 +68,8 @@ inputs = {
   waf_ipv4_blocklist_arn        = dependency.load_balancer.outputs.waf_ipv4_blocklist_arn
 
   # 1 ACU ~= 2GB of memory and 1vCPU
-  idp_database_min_acu = 1
-  idp_database_max_acu = 2
+  idp_database_min_acu = 3
+  idp_database_max_acu = 4
 }
 
 include {
