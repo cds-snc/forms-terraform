@@ -51,16 +51,16 @@ module "idp_ecs" {
   cluster_name   = "idp"
   service_name   = "zitadel"
   container_name = "zitadel"
-  task_cpu       = 4096
-  task_memory    = 8192
+  task_cpu       = 1024
+  task_memory    = 2048
 
   service_use_latest_task_def = true
 
   # Scaling
   enable_autoscaling       = true
-  desired_count            = 3
-  autoscaling_min_capacity = 3
-  autoscaling_max_capacity = 6
+  desired_count            = 1
+  autoscaling_min_capacity = 1
+  autoscaling_max_capacity = 3
 
   # Task definition
   container_image       = "${var.zitadel_image_ecr_url}:${var.zitadel_image_tag}"
