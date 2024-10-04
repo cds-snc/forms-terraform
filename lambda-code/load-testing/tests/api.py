@@ -58,13 +58,21 @@ class RetrieveResponseBehaviour(SequentialTaskSet):
         self.form_responses = self.request_with_failure_check("get", f"{self.api_url}/forms/{self.form_id}/submission/new", 200, headers=headers)
 
     @task
-    def get_submission_by_name(self) -> None:
-        submission_name = random.choice(self.form_responses)["name"]
+    def get_form_template(self) -> None:
         headers = {
             "Authorization": f"Bearer {self.access_token}", 
             "Content-Type": "application/json"
         }
-        self.request_with_failure_check("get", f"{self.api_url}/forms/{self.form_id}/submission/{submission_name}", 200, headers=headers)
+        self.request_with_failure_check("get", f"{self.api_url}/forms/{self.form_id}/template", 200, headers=headers)
+
+    @task
+    def get_submission_by_name(self) -> None:
+        for submission in self.form_responses:
+            headers = {
+                "Authorization": f"Bearer {self.access_token}", 
+                "Content-Type": "application/json"
+            }
+            response = self.request_with_failure_check("get", f"{self.api_url}/forms/{self.form_id}/submission/{submission["name"]}", 200, headers=headers)
 
 
 class ApiUser(HttpUser):
