@@ -15,6 +15,7 @@ export type Response =
   | Record<string, unknown>[]
   | FileInputResponse
   | FileInputResponse[]
+  | DateFormat
   | Record<string, unknown>;
 
 export type FileInputResponse = {
@@ -45,6 +46,7 @@ export interface ElementProperties {
   isSectional?: boolean;
   maxNumberOfRows?: number;
   autoComplete?: string;
+  dateFormat?: string;
   [key: string]:
     | string
     | number
@@ -70,6 +72,7 @@ export enum FormElementTypes {
   name = "name",
   firstMiddleLastName = "firstMiddleLastName",
   contact = "contact",
+  formattedDate = "formattedDate",
 }
 // used to define attributes for a form element or field
 export interface FormElement {
@@ -128,3 +131,17 @@ export interface DeliveryOption {
 }
 
 export type SecurityAttribute = "Unclassified" | "Protected A" | "Protected B";
+
+export interface DateObject {
+  YYYY: number;
+  MM: number;
+  DD: number;
+}
+
+export enum DatePart {
+  DD = "day",
+  MM = "month",
+  YYYY = "year",
+}
+
+export type DateFormat = "YYYY-MM-DD" | "DD-MM-YYYY" | "MM-DD-YYYY";

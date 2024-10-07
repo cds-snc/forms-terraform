@@ -7,7 +7,15 @@ import {
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { v4 } from "uuid";
-import { FormElement, FormSubmission, Responses, Response } from "./types.js";
+import {
+  FormElement,
+  FormSubmission,
+  Responses,
+  Response,
+  DateFormat,
+  DateObject,
+} from "./types.js";
+import { getFormattedDateFromObject } from "./utils.js";
 
 const awsProperties = {
   region: process.env.REGION ?? "ca-central-1",
@@ -269,6 +277,14 @@ function handleType(
     case "fileInput":
       handleFileInputResponse(qTitle, response, collector);
       break;
+    case "formattedDate":
+      handleFormattedDateResponse(
+        qTitle,
+        response,
+        question.properties.dateFormat as DateFormat,
+        collector
+      );
+      break;
     default:
       // Do not try to handle form elements like richText that do not have responses
       break;
@@ -301,6 +317,14 @@ function handleDynamicForm(
           break;
         case "checkbox":
           handleArrayResponse(qTitle, (row as Record<string, Response>)[qIndex], rowCollector);
+          break;
+        case "formattedDate":
+          handleFormattedDateResponse(
+            qTitle,
+            (row as Record<string, Response>)[qIndex],
+            qItem.properties.dateFormat as DateFormat,
+            rowCollector
+          );
           break;
         default:
           // Do not try to handle form elements like richText that do not have responses
@@ -346,6 +370,25 @@ function handleFileInputResponse(title: string, response: Response, collector: s
   if (response !== undefined && response !== null && response !== "") {
     const fileName = (response as string).split("/").pop();
     collector.push(`**${title}**${String.fromCharCode(13)}${fileName}`);
+    return;
+  }
+
+  collector.push(`**${title}**${String.fromCharCode(13)}No Response`);
+}
+
+function handleFormattedDateResponse(
+  title: string,
+  response: Response,
+  dateFormat: DateFormat,
+  collector: string[]
+) {
+  if (response !== undefined && response !== null && response !== "") {
+    collector.push(
+      `**${title}**${String.fromCharCode(13)}${getFormattedDateFromObject(
+        dateFormat,
+        JSON.parse(String(response))
+      )}`
+    );
     return;
   }
 
