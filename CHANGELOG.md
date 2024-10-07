@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.24.2](https://github.com/cds-snc/forms-terraform/compare/v3.24.1...v3.24.2) (2024-10-07)
+
+
+### Bug Fixes
+
+* IdP task memory value ([#855](https://github.com/cds-snc/forms-terraform/issues/855)) ([2d43e7b](https://github.com/cds-snc/forms-terraform/commit/2d43e7b567ee7e25101628ad59bd6395aa6424f0))
+* Process formattedDate type response ([#862](https://github.com/cds-snc/forms-terraform/issues/862)) ([e56a600](https://github.com/cds-snc/forms-terraform/commit/e56a600756abdf1d786ae459a127bfac0aea5820))
+* set database max connection properties ([#859](https://github.com/cds-snc/forms-terraform/issues/859)) ([1675dc1](https://github.com/cds-snc/forms-terraform/commit/1675dc141e61a67aadca54eb9ed7e0e7fb092eeb))
+
 ## [3.24.1](https://github.com/cds-snc/forms-terraform/compare/v3.24.0...v3.24.1) (2024-10-01)
 
 
