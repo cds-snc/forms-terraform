@@ -39,7 +39,7 @@ runs:
 
     - name: Update ECS task image
       id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@3c975f1cb22919a28755c6541b4ca2656a690f49 # v1.5.1
+      uses: aws-actions/amazon-ecs-render-task-definition@e6fe15594a1f4a53b9c990f5805833cbfc8d130a # v1.5.2
       with:
         task-definition: task-definition.json
         container-name: ${{ inputs.ecs-service-name }}
