@@ -4,20 +4,7 @@ import time
 from dataclasses import dataclass
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
-
-@dataclass
-class PrivateApiKey:
-    key_id: str
-    key: str
-    user_or_client_id: str
-
-    @staticmethod
-    def from_json(json_object: dict) -> "PrivateApiKey":
-        return PrivateApiKey(
-            key_id=json_object["keyId"],
-            key=json_object["key"],
-            user_or_client_id=json_object.get("userId") or json_object.get("clientId"),
-        )
+from utils.data_structures import PrivateApiKey
 
 class JwtGenerator:
 
