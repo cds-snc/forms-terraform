@@ -6,8 +6,10 @@ locals {
     "level=ERROR"
   ]
   idp_error_ignore = [
-    "context canceled",        # user cancels request before it completes
-    "Errors.AuthNKey.NotFound" # user requests an access token with an invalid key
+    "context canceled",         # user cancels request before it completes
+    "Errors.AuthNKey.NotFound", # user requests an access token with an invalid key
+    "oidc.Time*cannot parse",   # user sends a JWT with a malformed epoch time
+    "token has expired"         # user access token has expired
   ]
   idp_error_pattern = "[(w1=\"*${join("*\" || w1=\"*", local.idp_error)}*\") && w1!=\"*${join("*\" && w1!=\"*", local.idp_error_ignore)}*\"]"
 
