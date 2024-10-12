@@ -6,15 +6,16 @@ import json
 import random
 from typing import Any, Dict
 
-from locust import HttpUser, SequentialTaskSet, task, between
+from locust import HttpUser, task, between
 from urllib.parse import urlparse
 
 from utils.data_structures import PrivateApiKey, EncryptedFormSubmission
 from utils.form_submission_decrypter import FormSubmissionDecrypter
 from utils.jwt_generator import JwtGenerator
+from utils.task_set import SequentialTaskSetWithFailure
 
 
-class RetrieveResponseBehaviour(SequentialTaskSet):
+class RetrieveResponseBehaviour(SequentialTaskSetWithFailure):
     def __init__(self, parent: HttpUser) -> None:
         super().__init__(parent)
 
@@ -34,14 +35,6 @@ class RetrieveResponseBehaviour(SequentialTaskSet):
         self.form_decrypted_submissions = {}
         self.jwt_user = None
         self.access_token = None
-
-    def request_with_failure_check(self, method: str, url: str, status_code: int, **kwargs: Dict[str, Any]) -> dict:
-        kwargs["catch_response"] = True
-        with self.client.request(method, url, **kwargs) as response:
-            if response.status_code != status_code:
-                response.failure(f"Request failed: {response.status_code} {response.text}")
-                raise ValueError(f"Request failed: {response.status_code} {response.text}")
-            return response.json() if "application/json" in response.headers.get("Content-Type", "") else response.text
 
     def on_start(self) -> None:
         self.jwt_user = JwtGenerator.generate(self.idp_url, self.private_api_key_user)

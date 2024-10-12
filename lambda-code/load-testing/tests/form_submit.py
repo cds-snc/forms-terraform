@@ -5,14 +5,15 @@ import os
 import json
 from typing import Any, Dict
 
-from locust import HttpUser, TaskSet, task, between
+from locust import HttpUser, task, between
 from urllib.parse import urlparse
 
 from utils.form_submission_generator import FormSubmissionGenerator
 from utils.jwt_generator import PrivateApiKey, JwtGenerator
+from utils.task_set import SequentialTaskSetWithFailure
 
 
-class FormSubmitBehaviour(TaskSet):
+class FormSubmitBehaviour(SequentialTaskSetWithFailure):
     def __init__(self, parent: HttpUser) -> None:
         super().__init__(parent)
 
@@ -31,14 +32,6 @@ class FormSubmitBehaviour(TaskSet):
         self.access_token = None
         self.form_template = None
         self.form_submission_generator = None
-
-    def request_with_failure_check(self, method: str, url: str, status_code: int, **kwargs: Dict[str, Any]) -> dict:
-        kwargs["catch_response"] = True
-        with self.client.request(method, url, **kwargs) as response:
-            if response.status_code != status_code:
-                response.failure(f"Request failed: {response.status_code} {response.text}")
-                raise ValueError(f"Request failed: {response.status_code} {response.text}")
-            return response.json() if "application/json" in response.headers.get("Content-Type", "") else response.text
 
     def on_start(self) -> None:
         self.jwt_user = JwtGenerator.generate(self.idp_url, self.private_api_key_user)

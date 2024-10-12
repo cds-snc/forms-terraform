@@ -5,12 +5,13 @@ import os
 import json
 from typing import Any, Dict
 
-from locust import HttpUser, SequentialTaskSet, task, between
+from locust import HttpUser, task, between
 from urllib.parse import urlparse
 from utils.jwt_generator import PrivateApiKey, JwtGenerator
+from utils.task_set import SequentialTaskSetWithFailure
 
 
-class AccessTokenBehaviour(SequentialTaskSet):
+class AccessTokenBehaviour(SequentialTaskSetWithFailure):
     def __init__(self, parent: HttpUser) -> None:
         super().__init__(parent)
 
@@ -32,14 +33,6 @@ class AccessTokenBehaviour(SequentialTaskSet):
     def on_start(self) -> None:
         self.jwt_app = JwtGenerator.generate(self.idp_url, self.private_api_key_app)
         self.jwt_user = JwtGenerator.generate(self.idp_url, self.private_api_key_user)
-
-    def request_with_failure_check(self, method: str, url: str, status_code: int, **kwargs: Dict[str, Any]) -> dict:
-        kwargs["catch_response"] = True
-        with self.client.request(method, url, **kwargs) as response:
-            if response.status_code != status_code:
-                response.failure(f"Request failed: {response.status_code} {response.text}")
-                raise ValueError(f"Request failed: {response.status_code} {response.text}")
-            return response.json()
 
     @task
     def request_access_token(self) -> None:
