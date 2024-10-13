@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
+
 @dataclass
 class PrivateApiKey:
     key_id: str
@@ -14,6 +15,7 @@ class PrivateApiKey:
             key=json_object["key"],
             user_or_client_id=json_object.get("userId") or json_object.get("clientId"),
         )
+
 
 @dataclass
 class EncryptedFormSubmission:

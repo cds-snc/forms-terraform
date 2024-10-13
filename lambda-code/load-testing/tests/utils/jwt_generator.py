@@ -6,6 +6,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from utils.data_structures import PrivateApiKey
 
+
 class JwtGenerator:
 
     @staticmethod

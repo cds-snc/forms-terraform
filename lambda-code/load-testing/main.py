@@ -6,6 +6,7 @@ from invokust import LocustLoadTest, create_settings
 
 logging.basicConfig(level=logging.INFO)
 
+
 class LoadTest(LocustLoadTest):
     def getFormInfo(self):
         for cls in self.env.user_classes:
@@ -37,11 +38,11 @@ def handler(event=None, context=None):
 
         form_input_file = open("/tmp/form_completion.json", "r")
         form_input = json.load(form_input_file)
-        loadtest_results.update({"form_input":form_input})
+        loadtest_results.update({"form_input": form_input})
         json_results = json.dumps(loadtest_results)
 
         ### Clean up
         if os.path.exists("/tmp/form_completion.json"):
             os.remove("/tmp/form_completion.json")
-        
+
         return json_results
