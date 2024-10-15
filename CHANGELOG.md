@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.24.3](https://github.com/cds-snc/forms-terraform/compare/v3.24.2...v3.24.3) (2024-10-15)
+
+
+### Bug Fixes
+
+* Increase default timeout to Notify ([#867](https://github.com/cds-snc/forms-terraform/issues/867)) ([0316710](https://github.com/cds-snc/forms-terraform/commit/0316710fc5c6e2419750f0e033c955d43af679ec))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#861](https://github.com/cds-snc/forms-terraform/issues/861)) ([924fd3b](https://github.com/cds-snc/forms-terraform/commit/924fd3bbda1a40c163b7a718b35ed559471a190d))
+* **deps:** update all non-major github action dependencies ([#866](https://github.com/cds-snc/forms-terraform/issues/866)) ([b6571e3](https://github.com/cds-snc/forms-terraform/commit/b6571e3b08d9bc13313ec79de7c4b3e52da5a164))
+* suppress user OIDC request errors ([#865](https://github.com/cds-snc/forms-terraform/issues/865)) ([9995021](https://github.com/cds-snc/forms-terraform/commit/99950212a2bb42dd3bf3dcdfdb16448ec2d72ec2))
+* synced file(s) with cds-snc/site-reliability-engineering ([#863](https://github.com/cds-snc/forms-terraform/issues/863)) ([704ad73](https://github.com/cds-snc/forms-terraform/commit/704ad7347ed90d64aae281bd567fb149d92557d6))
+
 ## [3.24.2](https://github.com/cds-snc/forms-terraform/compare/v3.24.1...v3.24.2) (2024-10-07)
 
 
