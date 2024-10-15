@@ -2,7 +2,7 @@ name: "Terraform security scan"
 
 on:
   push:
-    branches: [develop, main]
+    branches: [main]
     paths:
       - "aws/**"
       - ".github/workflows/terraform-security-scan.yml"

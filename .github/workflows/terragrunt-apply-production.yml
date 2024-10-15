@@ -3,7 +3,7 @@ name: "Terragrunt apply PRODUCTION"
 on:
   push:
     branches:
-      - "develop"
+      - main
     paths:
       - "version.txt"
 

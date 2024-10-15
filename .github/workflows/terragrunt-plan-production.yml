@@ -3,7 +3,7 @@ name: "Terragrunt plan PRODUCTION"
 on:
   pull_request:
     branches:
-      - "develop"
+      - main
     paths:
       - "version.txt"
 

@@ -3,9 +3,9 @@ name: "Terragrunt plan PRODUCTION warn release exists"
 on:
   pull_request:
     branches:
-      - "develop"
+      - main
     paths:
-      - "version.txt"  
+      - "version.txt"
 
 jobs:
   warn-release-exists:

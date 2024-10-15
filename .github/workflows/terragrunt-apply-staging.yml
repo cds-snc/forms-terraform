@@ -3,7 +3,7 @@ name: "Terragrunt apply STAGING"
 on:
   workflow_dispatch:
   push:
-    branches: [develop]
+    branches: [main]
     paths:
       - "aws/**"
       - "env/common/**"
