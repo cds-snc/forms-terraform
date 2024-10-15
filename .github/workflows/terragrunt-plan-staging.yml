@@ -3,7 +3,7 @@ name: "Terragrunt plan STAGING"
 on:
   pull_request:
     branches:
-      - "develop"
+      - main
     paths:
       - "aws/**"
       - "env/common/**"
