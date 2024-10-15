@@ -17,6 +17,11 @@ class FormSubmissionGenerator:
     form_id: str = None
     form_template: Dict[str, Any] = None
     lambda_client = None
+    lipsum_words = (
+        "adipisci aliquam amet consectetur dolor dolore dolorem eius est et"
+        "incidunt ipsum labore lorem magnam modi neque non numquam porro quaerat qui"
+        "quia quisquam sed sit tempora ut velit voluptatem"
+    ).split()
 
     def __init__(self, form_id: str, form_template: Dict[str, Any]) -> None:
         self.form_id = form_id
@@ -47,15 +52,9 @@ class FormSubmissionGenerator:
 
             question_type: str = question["type"]
             if question_type == "textField":
-                response[question_id] = (
-                    "Test response" if language == "en" else "Réponse de test"
-                )
+                response[question_id] = self.lipsum(random.randint(5, 10))
             elif question_type in ["textArea", "richText"]:
-                response[question_id] = (
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac metus sed odio rutrum eleifend. "
-                    "Donec eu viverra nisl. Duis sit amet accumsan lacus. Nunc eleifend justo nunc. Vestibulum vitae lectus "
-                    "nisl. Aenean ullamcorper dictum arcu, quis sagittis arcu bibendum non."
-                )
+                response[question_id] = self.lipsum(random.randint(10, 20))
             elif question_type in [
                 "dropdown",
                 "radio",
@@ -69,6 +68,10 @@ class FormSubmissionGenerator:
                 raise ValueError("Unsupported question type")
 
         return response
+
+    def lipsum(self, length: int) -> str:
+        """Generate a random string of lorem ipsum."""
+        return " ".join(random.choices(self.lipsum_words, k=length)).capitalize()
 
     def submit_response(self) -> None:
         """Submit a response to the Lambda Submission function."""

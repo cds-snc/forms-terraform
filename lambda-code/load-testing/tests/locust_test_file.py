@@ -14,7 +14,7 @@ class ApiUser(HttpUser):
 class FormSubmitUser(HttpUser):
     tasks = [FormSubmitBehaviour]
     wait_time = between(1, 5)
-    weight = 3
+    weight = 2
 
 
 class IdpUser(HttpUser):
