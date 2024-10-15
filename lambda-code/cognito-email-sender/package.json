@@ -11,7 +11,7 @@
     "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cd ./dist && yarn install --production"
   },
   "dependencies": {
-    "@aws-crypto/client-node": "4.0.0",
+    "@aws-crypto/client-node": "4.0.1",
     "@aws-sdk/client-secrets-manager": "^3.478.0",
     "axios": "^1.6.8"
   },
