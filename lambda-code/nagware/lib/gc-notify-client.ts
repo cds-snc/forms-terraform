@@ -9,7 +9,7 @@ export class GCNotifyClient {
   private apiKey: string;
   private timeout: number;
 
-  public static default(apiKey: string, timeout: number = 2000): GCNotifyClient {
+  public static default(apiKey: string, timeout: number = 5000): GCNotifyClient {
     return new GCNotifyClient(API_URL, apiKey, timeout);
   }
 
