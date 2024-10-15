@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.24.4](https://github.com/cds-snc/forms-terraform/compare/v3.24.3...v3.24.4) (2024-10-15)
+
+
+### Miscellaneous Chores
+
+* upgrade ALB to latest recommend SSL policy ([#868](https://github.com/cds-snc/forms-terraform/issues/868)) ([591f3c8](https://github.com/cds-snc/forms-terraform/commit/591f3c813747b6de196ef8a3601b4eb0ffc3a525))
+
 ## [3.24.3](https://github.com/cds-snc/forms-terraform/compare/v3.24.2...v3.24.3) (2024-10-15)
 
 
