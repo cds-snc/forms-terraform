@@ -14,10 +14,10 @@ resource "aws_ssm_parameter" "load_testing_form_private_key" {
   value       = var.load_testing_form_private_key
 }
 
-resource "aws_ssm_parameter" "load_testing_form_api_private_key" {
+resource "aws_ssm_parameter" "load_testing_zitadel_app_private_key" {
   # checkov:skip=CKV_AWS_337: default service encryption key is acceptable
-  name        = "/load-testing/form-api-private-key"
-  description = "Private key JSON used by the application to perform access token introspection requests.  This corresponds to the Zitadel application created for the API."
+  name        = "/load-testing/zitadel-app-private-key"
+  description = "Private key JSON of the Zitadel application to perform access token introspection requests."
   type        = "SecureString"
-  value       = var.load_testing_form_api_private_key
+  value       = var.load_testing_zitadel_app_private_key
 }

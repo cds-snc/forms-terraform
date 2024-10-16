@@ -78,7 +78,7 @@ data "aws_iam_policy_document" "load_test_lambda" {
     resources = [
       aws_ssm_parameter.load_testing_form_id.arn,
       aws_ssm_parameter.load_testing_form_private_key.arn,
-      aws_ssm_parameter.load_testing_form_api_private_key.arn,
+      aws_ssm_parameter.load_testing_zitadel_app_private_key.arn,
     ]
   }
 

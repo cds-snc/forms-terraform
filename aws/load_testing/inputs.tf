@@ -20,8 +20,8 @@ variable "load_testing_form_private_key" {
   sensitive   = true
 }
 
-variable "load_testing_form_api_private_key" {
-  description = "Private key JSON used by the API to perform access token introspection requests.  This corresponds to the Zitadel application created for the API."
+variable "load_testing_zitadel_app_private_key" {
+  description = "Private key JSON of the Zitadel application to perform access token introspection requests."
   type        = string
   sensitive   = true
 }

@@ -19,8 +19,8 @@ class SequentialTaskSetWithFailure(SequentialTaskSet):
         self.form_private_key = PrivateApiKey.from_json(
             json.loads(os.getenv("FORM_PRIVATE_KEY"))
         )
-        self.form_api_private_key = PrivateApiKey.from_json(
-            json.loads(os.getenv("FORM_API_PRIVATE_KEY"))
+        self.zitadel_app_private_key = PrivateApiKey.from_json(
+            json.loads(os.getenv("ZITADEL_APP_PRIVATE_KEY"))
         )
 
     def request_with_failure_check(
