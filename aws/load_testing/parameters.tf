@@ -19,5 +19,5 @@ resource "aws_ssm_parameter" "load_testing_form_api_private_key" {
   name        = "/load-testing/form-api-private-key"
   description = "Private key JSON used by the application to perform access token introspection requests.  This corresponds to the Zitadel application created for the API."
   type        = "SecureString"
-  value       = var.load_testing_app_private_key
+  value       = var.load_testing_form_api_private_key
 }

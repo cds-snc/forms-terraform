@@ -10,19 +10,19 @@ from utils.task_set import SequentialTaskSetWithFailure
 class AccessTokenBehaviour(SequentialTaskSetWithFailure):
     def __init__(self, parent: HttpUser) -> None:
         super().__init__(parent)
-        self.jwt_app = None
-        self.jwt_user = None
+        self.jwt_api = None
+        self.jwt_form = None
         self.access_token = None
 
     def on_start(self) -> None:
-        self.jwt_app = JwtGenerator.generate(self.idp_url, self.form_api_private_key)
-        self.jwt_user = JwtGenerator.generate(self.idp_url, self.form_private_key)
+        self.jwt_api = JwtGenerator.generate(self.idp_url, self.form_api_private_key)
+        self.jwt_form = JwtGenerator.generate(self.idp_url, self.form_private_key)
 
     @task
     def request_access_token(self) -> None:
         data = {
             "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
-            "assertion": self.jwt_user,
+            "assertion": self.jwt_form,
             "scope": f"openid profile urn:zitadel:iam:org:project:id:{self.idp_project_id}:aud",
         }
         response = self.request_with_failure_check(
@@ -34,7 +34,7 @@ class AccessTokenBehaviour(SequentialTaskSetWithFailure):
     def introspect_access_token(self) -> None:
         data = {
             "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-            "client_assertion": self.jwt_app,
+            "client_assertion": self.jwt_api,
             "token": self.access_token,
         }
         self.request_with_failure_check(

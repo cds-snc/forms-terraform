@@ -15,16 +15,16 @@ class FormSubmitBehaviour(SequentialTaskSetWithFailure):
     def __init__(self, parent: HttpUser) -> None:
         super().__init__(parent)
         self.access_token = None
-        self.jwt_user = None
+        self.jwt_form = None
         self.form_id = os.getenv("FORM_ID")
         self.form_template = None
         self.form_submission_generator = None
 
     def on_start(self) -> None:
-        self.jwt_user = JwtGenerator.generate(self.idp_url, self.form_private_key)
+        self.jwt_form = JwtGenerator.generate(self.idp_url, self.form_private_key)
         data = {
             "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
-            "assertion": self.jwt_user,
+            "assertion": self.jwt_form,
             "scope": f"openid profile urn:zitadel:iam:org:project:id:{self.idp_project_id}:aud",
         }
         response = self.request_with_failure_check(
