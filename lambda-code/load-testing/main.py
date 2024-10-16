@@ -1,47 +1,51 @@
 import logging
-import json
 import os
+import boto3
 from invokust.aws_lambda import get_lambda_runtime_info
 from invokust import LocustLoadTest, create_settings
 
 logging.basicConfig(level=logging.INFO)
 
-class LoadTest(LocustLoadTest):
-    def getFormInfo(self):
-        for cls in self.env.user_classes:
-            cls.on_test_stop()
+ssm_client = boto3.client("ssm")
+
+
+def get_ssm_parameter(client, parameter_name):
+    response = client.get_parameter(Name=parameter_name, WithDecryption=True)
+    return response["Parameter"]["Value"]
+
+# Load required environment variables from AWS SSM
+os.environ["FORM_ID"] = get_ssm_parameter(ssm_client, "load-testing/form-id")
+os.environ["PRIVATE_API_KEY_APP_JSON"] = get_ssm_parameter(
+    ssm_client, "load-testing/private-api-key-app"
+)
+os.environ["PRIVATE_API_KEY_USER_JSON"] = get_ssm_parameter(
+    ssm_client, "load-testing/private-api-key-user"
+)
 
 
 def handler(event=None, context=None):
+
+    # Check for required environment variables
+    required_env_vars = [
+        "FORM_ID",
+        "PRIVATE_API_KEY_APP_JSON",
+        "PRIVATE_API_KEY_USER_JSON",
+    ]
+    for env_var in required_env_vars:
+        if env_var not in os.environ:
+            raise ValueError(f"Missing required environment variable: {env_var}")
+
     try:
-        if event:
-            settings = create_settings(**event)
-        else:
-            settings = create_settings(from_environment=True)
-
-        if os.path.exists("/tmp/form_completion.json"):
-            os.remove("/tmp/form_completion.json")
-
-        loadtest = LoadTest(settings)
+        settings = (
+            create_settings(**event)
+            if event
+            else create_settings(from_environment=True)
+        )
+        loadtest = LocustLoadTest(settings)
         loadtest.run()
-
     except Exception as e:
-        logging.error("Locust exception {0}".format(repr(e)))
-
+        logging.error("Exception running locust tests {0}".format(repr(e)))
     else:
-        loadtest.getFormInfo()
         locust_stats = loadtest.stats()
-        lambda_runtime_info = get_lambda_runtime_info(context)
-        loadtest_results = locust_stats.copy()
-        loadtest_results.update(lambda_runtime_info)
-
-        form_input_file = open("/tmp/form_completion.json", "r")
-        form_input = json.load(form_input_file)
-        loadtest_results.update({"form_input":form_input})
-        json_results = json.dumps(loadtest_results)
-
-        ### Clean up
-        if os.path.exists("/tmp/form_completion.json"):
-            os.remove("/tmp/form_completion.json")
-        
-        return json_results
+        locust_stats.update(get_lambda_runtime_info(context))
+        return locust_stats
