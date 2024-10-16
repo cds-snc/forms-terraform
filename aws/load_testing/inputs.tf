@@ -14,14 +14,14 @@ variable "load_testing_form_id" {
   sensitive   = true
 }
 
-variable "load_testing_private_key_app" {
-  description = "Private key JSON used by the application to perform access token introspection requests."
+variable "load_testing_form_private_key" {
+  description = "Private key JSON of the form that will be used to authenticate the API requests.  This must be a key from the `var.load_testing_form_id` form."
   type        = string
   sensitive   = true
 }
 
-variable "load_testing_private_key_form" {
-  description = "Private key JSON of the form that will be used to authenticate the API requests.  This must be a key from the `var.load_testing_form_id` form."
+variable "load_testing_form_api_private_key" {
+  description = "Private key JSON used by the API to perform access token introspection requests.  This corresponds to the Zitadel application created for the API."
   type        = string
   sensitive   = true
 }

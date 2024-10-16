@@ -19,13 +19,13 @@ params = get_ssm_parameters(
     ssm_client,
     [
         "/load-testing/form-id",
-        "/load-testing/private-api-key-app",
-        "/load-testing/private-api-key-form",
+        "/load-testing/form-private-key",
+        "/load-testing/form-api-private-key",
     ],
 )
 os.environ["FORM_ID"] = params["/load-testing/form-id"]
-os.environ["PRIVATE_API_KEY_APP_JSON"] = params["/load-testing/private-api-key-app"]
-os.environ["PRIVATE_API_KEY_FORM_JSON"] = params["/load-testing/private-api-key-form"]
+os.environ["FORM_PRIVATE_KEY"] = params["/load-testing/form-private-key"]
+os.environ["FORM_API_PRIVATE_KEY"] = params["/load-testing/form-api-private-key"]
 
 
 def handler(event=None, context=None):
@@ -33,8 +33,8 @@ def handler(event=None, context=None):
     # Check for required environment variables
     required_env_vars = [
         "FORM_ID",
-        "PRIVATE_API_KEY_APP_JSON",
-        "PRIVATE_API_KEY_FORM_JSON",
+        "FORM_PRIVATE_KEY",
+        "FORM_API_PRIVATE_KEY",
     ]
     for env_var in required_env_vars:
         if env_var not in os.environ:

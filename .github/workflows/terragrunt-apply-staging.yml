@@ -46,8 +46,8 @@ env:
   TF_VAR_email_address_contact_us: ${{ vars.STAGING_CONTACT_US_EMAIL }}
   TF_VAR_email_address_support: ${{ vars.STAGING_SUPPORT_EMAIL }}
   TF_VAR_load_testing_form_id: ${{ vars.STAGING_LOAD_TESTING_FORM_ID }}
-  TF_VAR_load_testing_private_key_app: ${{ vars.STAGING_ZITADEL_APPLICATION_KEY }}
-  TF_VAR_load_testing_private_key_form: ${{ vars.STAGING_LOAD_TESTING_PRIVATE_KEY_FORM }}
+  TF_VAR_load_testing_form_private_key: ${{ vars.STAGING_LOAD_TESTING_FORM_PRIVATE_KEY }}
+  TF_VAR_load_testing_form_api_private_key: ${{ vars.STAGING_ZITADEL_APPLICATION_KEY }}
   TF_VAR_zitadel_provider: ${{ vars.STAGING_ZITADEL_PROVIDER }}
   TF_VAR_zitadel_administration_key: ${{ secrets.STAGING_ZITADEL_ADMINISTRATION_KEY }}
   # IdP

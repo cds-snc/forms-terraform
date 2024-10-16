@@ -16,11 +16,11 @@ class SequentialTaskSetWithFailure(SequentialTaskSet):
         self.api_url = f"{parsed_url.scheme}://api.{parsed_url.netloc}"
         self.idp_url = f"{parsed_url.scheme}://auth.{parsed_url.netloc}"
         self.idp_project_id = os.getenv("IDP_PROJECT_ID", "275372254274006635")
-        self.private_api_key_app = PrivateApiKey.from_json(
-            json.loads(os.getenv("PRIVATE_API_KEY_APP_JSON"))
+        self.form_private_key = PrivateApiKey.from_json(
+            json.loads(os.getenv("FORM_PRIVATE_KEY"))
         )
-        self.private_api_key_form = PrivateApiKey.from_json(
-            json.loads(os.getenv("PRIVATE_API_KEY_FORM_JSON"))
+        self.form_api_private_key = PrivateApiKey.from_json(
+            json.loads(os.getenv("FORM_API_PRIVATE_KEY"))
         )
 
     def request_with_failure_check(

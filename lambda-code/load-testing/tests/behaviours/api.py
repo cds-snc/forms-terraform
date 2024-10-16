@@ -23,7 +23,7 @@ class RetrieveResponseBehaviour(SequentialTaskSetWithFailure):
         self.jwt_user = None
 
     def on_start(self) -> None:
-        self.jwt_user = JwtGenerator.generate(self.idp_url, self.private_api_key_form)
+        self.jwt_user = JwtGenerator.generate(self.idp_url, self.form_private_key)
         data = {
             "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
             "assertion": self.jwt_user,
@@ -69,7 +69,7 @@ class RetrieveResponseBehaviour(SequentialTaskSetWithFailure):
         )
         encrypted_submission = EncryptedFormSubmission.from_json(response)
         decrypted_submission = FormSubmissionDecrypter.decrypt(
-            encrypted_submission, self.private_api_key_form
+            encrypted_submission, self.form_private_key
         )
         self.form_decrypted_submissions[submission["name"]] = json.loads(
             decrypted_submission

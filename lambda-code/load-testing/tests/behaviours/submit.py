@@ -21,7 +21,7 @@ class FormSubmitBehaviour(SequentialTaskSetWithFailure):
         self.form_submission_generator = None
 
     def on_start(self) -> None:
-        self.jwt_user = JwtGenerator.generate(self.idp_url, self.private_api_key_form)
+        self.jwt_user = JwtGenerator.generate(self.idp_url, self.form_private_key)
         data = {
             "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
             "assertion": self.jwt_user,
