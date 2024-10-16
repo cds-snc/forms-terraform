@@ -16,7 +16,7 @@ class AccessTokenBehaviour(SequentialTaskSetWithFailure):
 
     def on_start(self) -> None:
         self.jwt_app = JwtGenerator.generate(self.idp_url, self.private_api_key_app)
-        self.jwt_user = JwtGenerator.generate(self.idp_url, self.private_api_key_user)
+        self.jwt_user = JwtGenerator.generate(self.idp_url, self.private_api_key_form)
 
     @task
     def request_access_token(self) -> None:

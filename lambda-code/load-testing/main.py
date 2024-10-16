@@ -9,18 +9,23 @@ logging.basicConfig(level=logging.INFO)
 ssm_client = boto3.client("ssm")
 
 
-def get_ssm_parameter(client, parameter_name):
-    response = client.get_parameter(Name=parameter_name, WithDecryption=True)
-    return response["Parameter"]["Value"]
+def get_ssm_parameters(client, parameter_names):
+    response = client.get_parameter(Names=parameter_names, WithDecryption=True)
+    return {param["Name"]: param["Value"] for param in response["Parameters"]}
+
 
 # Load required environment variables from AWS SSM
-os.environ["FORM_ID"] = get_ssm_parameter(ssm_client, "load-testing/form-id")
-os.environ["PRIVATE_API_KEY_APP_JSON"] = get_ssm_parameter(
-    ssm_client, "load-testing/private-api-key-app"
+params = get_ssm_parameters(
+    ssm_client,
+    [
+        "/load-testing/form-id",
+        "/load-testing/private-api-key-app",
+        "/load-testing/private-api-key-form",
+    ],
 )
-os.environ["PRIVATE_API_KEY_USER_JSON"] = get_ssm_parameter(
-    ssm_client, "load-testing/private-api-key-user"
-)
+os.environ["FORM_ID"] = params["/load-testing/form-id"]
+os.environ["PRIVATE_API_KEY_APP_JSON"] = params["/load-testing/private-api-key-app"]
+os.environ["PRIVATE_API_KEY_FORM_JSON"] = params["/load-testing/private-api-key-form"]
 
 
 def handler(event=None, context=None):
@@ -29,7 +34,7 @@ def handler(event=None, context=None):
     required_env_vars = [
         "FORM_ID",
         "PRIVATE_API_KEY_APP_JSON",
-        "PRIVATE_API_KEY_USER_JSON",
+        "PRIVATE_API_KEY_FORM_JSON",
     ]
     for env_var in required_env_vars:
         if env_var not in os.environ:

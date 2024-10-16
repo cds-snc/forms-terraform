@@ -19,8 +19,8 @@ class SequentialTaskSetWithFailure(SequentialTaskSet):
         self.private_api_key_app = PrivateApiKey.from_json(
             json.loads(os.getenv("PRIVATE_API_KEY_APP_JSON"))
         )
-        self.private_api_key_user = PrivateApiKey.from_json(
-            json.loads(os.getenv("PRIVATE_API_KEY_USER_JSON"))
+        self.private_api_key_form = PrivateApiKey.from_json(
+            json.loads(os.getenv("PRIVATE_API_KEY_FORM_JSON"))
         )
 
     def request_with_failure_check(
