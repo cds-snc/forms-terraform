@@ -1,12 +1,9 @@
-FROM amazon/aws-lambda-python:3.11@sha256:99cadc3bd9674a32a4ef694ff2e27f0b3d6c7f369b174db792b0099699fa0da4
+FROM amazon/aws-lambda-python:3.12@sha256:37b95206c4c78331f6d5cb0e8389ef573f39cfea01f73c530f28f3ac6f6493c7
+
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
+
 COPY main.py .
 COPY tests ./tests
-COPY requirements.txt .
-
-RUN yum -y groupinstall "Development Tools"
-
-RUN pip3 install --upgrade pip
-
-RUN pip3 install -r requirements.txt
 
 CMD ["main.handler"]
