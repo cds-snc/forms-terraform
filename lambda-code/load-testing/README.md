@@ -1,6 +1,18 @@
 # Load testing
 Locust load tests that can be run in a Lambda function or locally.
 
+## Lambda
+Invoke the function using an event that looks like so:
+```json
+{
+  "locustfile": "./tests/locust_test_file.py",
+  "host": "https://forms-staging.cdssandbox.xyz",
+  "num_users": "5",
+  "spawn_rate": "1",
+  "run_time": "5m"
+}
+```
+
 ## Locally
 You will need AWS access credentials for the target environment, along with the following environment variables set:
 ```sh
