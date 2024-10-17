@@ -6,8 +6,8 @@ resource "aws_lambda_function" "load_testing" {
   image_uri     = "${var.ecr_repository_url_load_testing_lambda}:latest"
   function_name = "load-testing"
   role          = aws_iam_role.load_test_lambda.arn
-  timeout       = 300
-  memory_size   = 200
+  timeout       = 900
+  memory_size   = 1024
   package_type  = "Image"
   description   = "A function that runs a locust load test"
 

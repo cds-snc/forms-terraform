@@ -1,8 +1,7 @@
+import invokust
 import logging
 import os
 import boto3
-from invokust.aws_lambda import get_lambda_runtime_info
-from invokust import LocustLoadTest, create_settings
 
 logging.basicConfig(level=logging.INFO)
 
@@ -10,7 +9,7 @@ ssm_client = boto3.client("ssm")
 
 
 def get_ssm_parameters(client, parameter_names):
-    response = client.get_parameter(Names=parameter_names, WithDecryption=True)
+    response = client.get_parameters(Names=parameter_names, WithDecryption=True)
     return {param["Name"]: param["Value"] for param in response["Parameters"]}
 
 
@@ -27,7 +26,6 @@ os.environ["FORM_ID"] = params["/load-testing/form-id"]
 os.environ["FORM_PRIVATE_KEY"] = params["/load-testing/form-private-key"]
 os.environ["ZITADEL_APP_PRIVATE_KEY"] = params["/load-testing/zitadel-app-private-key"]
 
-
 def handler(event=None, context=None):
 
     # Check for required environment variables
@@ -42,15 +40,13 @@ def handler(event=None, context=None):
 
     try:
         settings = (
-            create_settings(**event)
+            invokust.create_settings(**event)
             if event
-            else create_settings(from_environment=True)
+            else invokust.create_settings(from_environment=True)
         )
-        loadtest = LocustLoadTest(settings)
+        loadtest = invokust.LocustLoadTest(settings)
         loadtest.run()
     except Exception as e:
         logging.error("Exception running locust tests {0}".format(repr(e)))
     else:
-        locust_stats = loadtest.stats()
-        locust_stats.update(get_lambda_runtime_info(context))
-        return locust_stats
+        return loadtest.stats()

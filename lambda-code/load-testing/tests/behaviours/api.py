@@ -33,7 +33,7 @@ class RetrieveResponseBehaviour(SequentialTaskSetWithFailure):
             "post", f"{self.idp_url}/oauth/v2/token", 200, data=data
         )
         self.headers = {
-            "Authorization": f"Bearer {response["access_token"]}",
+            "Authorization": f"Bearer {response['access_token']}",
             "Content-Type": "application/json",
         }
 
