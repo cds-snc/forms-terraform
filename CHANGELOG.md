@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.25.0](https://github.com/cds-snc/forms-terraform/compare/v3.24.3...v3.25.0) (2024-10-17)
+
+
+### Features
+
+* add IdP, API and form submit performance tests ([#853](https://github.com/cds-snc/forms-terraform/issues/853)) ([15c4d56](https://github.com/cds-snc/forms-terraform/commit/15c4d56e786c1bb68719c34b1078bce7dc8b1d96))
+* add SSM parameters for the load tests ([#872](https://github.com/cds-snc/forms-terraform/issues/872)) ([b6204ff](https://github.com/cds-snc/forms-terraform/commit/b6204ffbba0c050d9ad6aa7d4b7e0f0eac0ec45a))
+
+
+### Bug Fixes
+
+* Add missing workflow change for staging terraform plan ([#870](https://github.com/cds-snc/forms-terraform/issues/870)) ([1de10af](https://github.com/cds-snc/forms-terraform/commit/1de10af3fc0c5d6d296e4d17f86a332e14edf05b))
+
+
+### Miscellaneous Chores
+
+* upgrade ALB to latest recommend SSL policy ([#868](https://github.com/cds-snc/forms-terraform/issues/868)) ([591f3c8](https://github.com/cds-snc/forms-terraform/commit/591f3c813747b6de196ef8a3601b4eb0ffc3a525))
+
 ## [3.24.3](https://github.com/cds-snc/forms-terraform/compare/v3.24.2...v3.24.3) (2024-10-15)
 
 
