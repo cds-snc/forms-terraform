@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.25.0](https://github.com/cds-snc/forms-terraform/compare/v3.24.3...v3.25.0) (2024-10-21)
+
+
+### Features
+
+* add IdP, API and form submit performance tests ([#853](https://github.com/cds-snc/forms-terraform/issues/853)) ([15c4d56](https://github.com/cds-snc/forms-terraform/commit/15c4d56e786c1bb68719c34b1078bce7dc8b1d96))
+* add SSM parameters for the load tests ([#872](https://github.com/cds-snc/forms-terraform/issues/872)) ([b6204ff](https://github.com/cds-snc/forms-terraform/commit/b6204ffbba0c050d9ad6aa7d4b7e0f0eac0ec45a))
+
+
+### Bug Fixes
+
+* Add missing workflow change for staging terraform plan ([#870](https://github.com/cds-snc/forms-terraform/issues/870)) ([1de10af](https://github.com/cds-snc/forms-terraform/commit/1de10af3fc0c5d6d296e4d17f86a332e14edf05b))
+* **deps:** update all minor dependencies ([#516](https://github.com/cds-snc/forms-terraform/issues/516)) ([a493e1c](https://github.com/cds-snc/forms-terraform/commit/a493e1cbdf9e66136583a2add706aa3796af7f49))
+* **deps:** update dependency axios to v1.7.4 [security] ([#779](https://github.com/cds-snc/forms-terraform/issues/779)) ([c067222](https://github.com/cds-snc/forms-terraform/commit/c0672227bf1033e59df5da577bc1cdc892fc3783))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major docker images ([#704](https://github.com/cds-snc/forms-terraform/issues/704)) ([407cb32](https://github.com/cds-snc/forms-terraform/commit/407cb329e573a20aa191fbfb29d83119f5c7608b))
+* upgrade ALB to latest recommend SSL policy ([#868](https://github.com/cds-snc/forms-terraform/issues/868)) ([591f3c8](https://github.com/cds-snc/forms-terraform/commit/591f3c813747b6de196ef8a3601b4eb0ffc3a525))
+
 ## [3.24.3](https://github.com/cds-snc/forms-terraform/compare/v3.24.2...v3.24.3) (2024-10-15)
 
 
