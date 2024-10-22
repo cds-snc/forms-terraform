@@ -19,7 +19,7 @@
     "@aws-sdk/client-sqs": "3.667.0",
     "@aws-sdk/lib-dynamodb": "3.667.0",
     "axios": "^1.0.0",
-    "json2md": "^1.10.0",
+    "json2md": "^2.0.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
