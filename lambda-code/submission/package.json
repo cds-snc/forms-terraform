@@ -14,12 +14,12 @@
     "@aws-sdk/client-dynamodb": "3.667.0",
     "@aws-sdk/client-sqs": "3.667.0",
     "@aws-sdk/lib-dynamodb": "3.667.0",
-    "uuid": "^8.3.2"
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.128",
     "@types/node": "^20.9.4",
-    "@types/uuid": "^9.0.7",
+    "@types/uuid": "^10.0.0",
     "typescript": "^5.3.2"
   }
 }
