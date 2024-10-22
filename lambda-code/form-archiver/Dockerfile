@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/nodejs:18 as builder
+FROM public.ecr.aws/lambda/nodejs:20 as builder
 
 WORKDIR /usr/app
 
@@ -13,7 +13,7 @@ COPY main.ts tsconfig.json ./
 
 RUN yarn build
     
-FROM public.ecr.aws/lambda/nodejs:18
+FROM public.ecr.aws/lambda/nodejs:20
 
 WORKDIR ${LAMBDA_TASK_ROOT}
 
