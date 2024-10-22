@@ -47,12 +47,14 @@ export interface ElementProperties {
   maxNumberOfRows?: number;
   autoComplete?: string;
   dateFormat?: string;
+  addressComponents?: AddressCompleteProps | undefined;
   [key: string]:
     | string
     | number
     | boolean
     | Array<PropertyChoices>
     | Array<FormElement>
+    | AddressCompleteProps
     | undefined;
 }
 
@@ -73,6 +75,7 @@ export enum FormElementTypes {
   firstMiddleLastName = "firstMiddleLastName",
   contact = "contact",
   formattedDate = "formattedDate",
+  addressComplete = "addressComplete",
 }
 // used to define attributes for a form element or field
 export interface FormElement {
@@ -142,6 +145,21 @@ export enum DatePart {
   DD = "day",
   MM = "month",
   YYYY = "year",
+}
+
+// Props for the AddressComplete component
+export interface AddressCompleteProps {
+  canadianOnly: boolean;
+  splitAddress: boolean;
+}
+
+// Address Elements for the AddressComplete component
+export interface AddressElements {
+  streetAddress: string;
+  city: string;
+  province: string;
+  postalCode: string;
+  country: string;
 }
 
 export type DateFormat = "YYYY-MM-DD" | "DD-MM-YYYY" | "MM-DD-YYYY";

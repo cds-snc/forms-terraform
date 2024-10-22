@@ -14,6 +14,8 @@ import {
   Response,
   DateFormat,
   DateObject,
+  AddressElements,
+  AddressCompleteProps,
 } from "./types.js";
 import { getFormattedDateFromObject } from "./utils.js";
 
@@ -272,7 +274,7 @@ function handleType(
       break;
     case "dynamicRow":
       if (!question.properties.subElements) throw new Error("Dynamic Row must have sub elements");
-      handleDynamicForm(qTitle, qRowLabel, response, question.properties.subElements, collector);
+      handleDynamicForm(qTitle, qRowLabel, response, question.properties.subElements, collector, language);
       break;
     case "fileInput":
       handleFileInputResponse(qTitle, response, collector);
@@ -285,6 +287,9 @@ function handleType(
         collector
       );
       break;
+    case "addressComplete":
+      handleAddressCompleteResponse(qTitle, response, collector, language, question.properties.addressComponents);
+      break;
     default:
       // Do not try to handle form elements like richText that do not have responses
       break;
@@ -296,7 +301,8 @@ function handleDynamicForm(
   rowLabel = "Item",
   response: Response,
   question: FormElement[],
-  collector: string[]
+  collector: string[],
+  language: string
 ) {
   if (!Array.isArray(response)) throw new Error("Dynamic Row responses must be in an array");
   const responseCollector = response.map((row, rIndex: number) => {
@@ -325,6 +331,9 @@ function handleDynamicForm(
             qItem.properties.dateFormat as DateFormat,
             rowCollector
           );
+          break;
+        case "addressComplete":
+          handleAddressCompleteResponse(qTitle, (row as Record<string, Response>)[qIndex], rowCollector, language, qItem.properties.addressComponents);
           break;
         default:
           // Do not try to handle form elements like richText that do not have responses
@@ -389,6 +398,31 @@ function handleFormattedDateResponse(
         JSON.parse(String(response))
       )}`
     );
+    return;
+  }
+
+  collector.push(`**${title}**${String.fromCharCode(13)}No Response`);
+}
+
+function handleAddressCompleteResponse(title: string, response: Response, collector: string[], language: string, adddressComponents?: AddressCompleteProps) {
+  if (response !== undefined && response !== null && response !== "") {
+    const address = JSON.parse(response as string) as AddressElements;
+    if (adddressComponents?.splitAddress) {
+      collector.push(`**${title} - ${language === "fr" ? "Adresse municipale" : "Street Address"}**${String.fromCharCode(13)}${address.streetAddress}`);
+      collector.push(`**${title} - ${language === "fr" ? "City or Town" : "Ville ou communauté"} **${String.fromCharCode(13)}${address.city}`);
+      collector.push(`**${title} - ${language === "fr" ? "Province, territoire ou état " : "Province, territory or state"}**${String.fromCharCode(13)}${address.province}`);
+      collector.push(`**${title} - ${language === "fr" ? "Code postal ou zip" : "Postal Code or zip"}**${String.fromCharCode(13)}${address.postalCode}`);
+      if (!adddressComponents.canadianOnly) {
+        collector.push(`**${title} - ${language === "fr" ? "Pays" : "Country"}**${String.fromCharCode(13)}${address.country}`);
+      }
+    } else {
+      const addressString = `${address.streetAddress}, ${address.city}, ${address.province}, ${address.postalCode}`;
+      if (!adddressComponents?.canadianOnly) {
+        addressString.concat(`, ${address.country}`);
+      }
+      collector.push(`**${title}**${String.fromCharCode(13)}${addressString}`);
+    }
+    
     return;
   }
 
