@@ -406,8 +406,7 @@ function handleFormattedDateResponse(
 
 function handleAddressCompleteResponse(title: string, response: Response, collector: string[], language: string, adddressComponents?: AddressCompleteProps) {
   if (response !== undefined && response !== null && response !== "") {
-    const address = response as Record<string, string>;
-    //Convert address to AddressElements
+    const address = JSON.parse(response as string) as AddressElements;
     if (adddressComponents?.splitAddress) {
       collector.push(`**${title} - ${language === "fr" ? "Adresse municipale" : "Street Address"}**${String.fromCharCode(13)}${address.streetAddress}`);
       collector.push(`**${title} - ${language === "fr" ? "City or Town" : "Ville ou communauté"} **${String.fromCharCode(13)}${address.city}`);
