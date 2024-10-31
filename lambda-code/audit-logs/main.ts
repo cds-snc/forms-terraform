@@ -36,9 +36,6 @@ const AppAuditLogArn = process.env.APP_AUDIT_LOGS_SQS_ARN;
 const ApiAuditLogArn = process.env.API_AUDIT_LOGS_SQS_ARN;
 
 const warnOnEvents = [
-  // Form Events
-  "GrantFormAccess",
-  "RevokeFormAccess",
   // User Events
   "UserActivated",
   "UserDeactivated",
