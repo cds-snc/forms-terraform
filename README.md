@@ -51,7 +51,7 @@ Pull Requests in this repository require all commits to be signed before they ca
 
 ### If using Colima
 
-- Docker: `brew install docker docker-compose docker-credential-manager`
+- Docker: `brew install docker docker-compose docker-credential-helper`
 
 Modify the docker config file to use mac os keychain as `credStore`
 
