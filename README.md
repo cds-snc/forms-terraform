@@ -65,7 +65,7 @@ nano ~/.docker/config.json
 }
 ```
 
-- Colima: `brew insteall colima`
+- Colima: `brew install colima`
 
 ```shell
 # as /var/ is a protected directory, we will need sudo
