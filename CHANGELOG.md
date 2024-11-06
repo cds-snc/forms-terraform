@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.25.1](https://github.com/cds-snc/forms-terraform/compare/v3.25.0...v3.25.1) (2024-10-31)
+
+
+### Bug Fixes
+
+* Certain Redis infra features need to be disabled for localstack ([#880](https://github.com/cds-snc/forms-terraform/issues/880)) ([38d69c1](https://github.com/cds-snc/forms-terraform/commit/38d69c150281ff99d8cb4342b906887426250416))
+
+
+### Miscellaneous Chores
+
+* Remove warn on grant and revoke form access ([#883](https://github.com/cds-snc/forms-terraform/issues/883)) ([d434639](https://github.com/cds-snc/forms-terraform/commit/d43463937c3bd49760ca77d92f405aff19cc8fa0))
+
 ## [3.25.0](https://github.com/cds-snc/forms-terraform/compare/v3.24.3...v3.25.0) (2024-10-21)
 
 
