@@ -70,7 +70,7 @@ jobs:
       lambda-to-rebuild: ${{ steps.filter.outputs.changes }}
     steps:
       - name: Checkout
-        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Filter
         id: filter
@@ -88,7 +88,7 @@ jobs:
         image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Test Lambda code
         uses: ./.github/workflows/test-lambda-code
@@ -106,7 +106,7 @@ jobs:
         image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Build Lambda images
         uses: ./.github/workflows/build-lambda-images
@@ -119,7 +119,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Build IdP image
         working-directory: idp
@@ -131,7 +131,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       # Setup Terraform, Terragrunt, and Conftest
       - name: Setup terraform tools
@@ -152,7 +152,7 @@ jobs:
       # No dependencies
       - name: Terragrunt plan ecr
         if: steps.filter.outputs.ecr == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/ecr"
           comment-delete: "true"
@@ -162,7 +162,7 @@ jobs:
 
       - name: Terragrunt plan hosted_zone
         if: steps.filter.outputs.hosted_zone == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/hosted_zone"
           comment-delete: "true"
@@ -172,7 +172,7 @@ jobs:
 
       - name: Terragrunt plan kms
         if: steps.filter.outputs.kms == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/kms"
           comment-delete: "true"
@@ -182,7 +182,7 @@ jobs:
 
       - name: Terragrunt plan oidc_roles
         if: steps.filter.outputs.oidc_roles == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/oidc_roles"
           comment-delete: "true"
@@ -192,7 +192,7 @@ jobs:
 
       - name: Terragrunt plan sqs
         if: steps.filter.outputs.sqs == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/sqs"
           comment-delete: "true"
@@ -202,7 +202,7 @@ jobs:
 
       - name: Terragrunt plan secrets
         if: steps.filter.outputs.secrets == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/secrets"
           comment-delete: "true"
@@ -212,7 +212,7 @@ jobs:
 
       - name: Terragrunt plan s3
         if: steps.filter.outputs.s3 == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/s3"
           comment-delete: "true"
@@ -223,7 +223,7 @@ jobs:
       # Depends on S3
       - name: Terragrunt plan file_scanning
         if: steps.filter.outputs.file_scanning == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/file_scanning"
           comment-delete: "true"
@@ -234,7 +234,7 @@ jobs:
       # Depends on kms
       - name: Terragrunt plan sns
         if: steps.filter.outputs.sns == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/sns"
           comment-delete: "true"
@@ -244,7 +244,7 @@ jobs:
 
       - name: Terragrunt plan cognito
         if: steps.filter.outputs.cognito == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/cognito"
           comment-delete: "true"
@@ -254,7 +254,7 @@ jobs:
 
       - name: Terragrunt plan network
         if: steps.filter.outputs.network == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/network"
           comment-delete: "true"
@@ -264,7 +264,7 @@ jobs:
 
       - name: Terragrunt plan dynamodb
         if: steps.filter.outputs.dynamodb == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/dynamodb"
           comment-delete: "true"
@@ -275,7 +275,7 @@ jobs:
       # Depends on network
       - name: Terragrunt plan load_balancer
         if: steps.filter.outputs.load_balancer == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/load_balancer"
           comment-delete: "true"
@@ -285,7 +285,7 @@ jobs:
 
       - name: Terragrunt plan redis
         if: steps.filter.outputs.redis == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/redis"
           comment-delete: "true"
@@ -295,7 +295,7 @@ jobs:
 
       - name: Terragrunt plan rds
         if: steps.filter.outputs.rds == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/rds"
           comment-delete: "true"
@@ -305,7 +305,7 @@ jobs:
 
       - name: Terragrunt plan idp
         if: steps.filter.outputs.idp == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/idp"
           comment-delete: "true"
@@ -316,7 +316,7 @@ jobs:
       # Depends on everything
       - name: Terragrunt plan app
         if: steps.filter.outputs.app == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/app"
           comment-delete: "true"
@@ -326,7 +326,7 @@ jobs:
 
       - name: Terragrunt plan api
         if: steps.filter.outputs.api == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/api"
           comment-delete: "true"
@@ -336,7 +336,7 @@ jobs:
 
       - name: Terragrunt plan lambdas
         if: steps.filter.outputs.lambdas == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/lambdas"
           comment-delete: "true"
@@ -346,7 +346,7 @@ jobs:
 
       - name: Terragrunt plan alarms
         if: steps.filter.outputs.alarms == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/alarms"
           comment-delete: "true"
@@ -356,7 +356,7 @@ jobs:
 
       - name: Terragrunt plan load_testing
         if: steps.filter.outputs.load_testing == 'true'
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/load_testing"
           comment-delete: "true"
@@ -365,7 +365,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan pr_review
-        uses: cds-snc/terraform-plan@4719878d72d1b0078e0bce2e7571e854e79903b8 # v3.2.2
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
         with:
           directory: "env/cloud/pr_review"
           comment-delete: "true"
