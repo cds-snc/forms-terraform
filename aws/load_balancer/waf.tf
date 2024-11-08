@@ -46,6 +46,64 @@ resource "aws_wafv2_rule_group" "rate_limiters_group" {
     }
 
     statement {
+      not_statement {
+        statement {
+          and_statement {
+            statement {
+              byte_match_statement {
+                positional_constraint = "EXACTLY"
+                search_string         = "/api/notify-callback"
+
+                field_to_match {
+                  uri_path {}
+                }
+
+                text_transformation {
+                  priority = 1
+                  type     = "LOWERCASE"
+                }
+              }
+            }
+
+            statement {
+              byte_match_statement {
+                positional_constraint = "STARTS_WITH"
+                search_string         = "Bearer"
+
+                field_to_match {
+                  single_header {
+                    name = "authorization"
+                  }
+                }
+
+                text_transformation {
+                  priority = 1
+                  type     = "NONE"
+                }
+              }
+            }
+
+            statement {
+              byte_match_statement {
+                positional_constraint = "STARTS_WITH"
+                search_string         = "python-requests"
+
+                field_to_match {
+                  single_header {
+                    name = "user-agent"
+                  }
+                }
+
+                text_transformation {
+                  priority = 1
+                  type     = "LOWERCASE"
+                }
+              }
+            }
+          }
+        }
+      }
+
       rate_based_statement {
         limit              = 100
         aggregate_key_type = "IP"
