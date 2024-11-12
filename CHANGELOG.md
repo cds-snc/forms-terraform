@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.25.2](https://github.com/cds-snc/forms-terraform/compare/v3.25.1...v3.25.2) (2024-11-06)
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#885](https://github.com/cds-snc/forms-terraform/issues/885)) ([8cca769](https://github.com/cds-snc/forms-terraform/commit/8cca769c825a6e08d842d9abab82787ffadcccbe))
+* Update Readme  ([#884](https://github.com/cds-snc/forms-terraform/issues/884)) ([5cb6a59](https://github.com/cds-snc/forms-terraform/commit/5cb6a59698bde99d2b48369b20056ece6a489a8d))
+
 ## [3.25.1](https://github.com/cds-snc/forms-terraform/compare/v3.25.0...v3.25.1) (2024-10-31)
 
 
