@@ -35,6 +35,12 @@ variable "sentry_api_key" {
   sensitive   = true
 }
 
+variable "next_server_actions_encryption_key" {
+  description = "The Next.js server action key used by the ECS task and Lambda"
+  type        = string
+  sensitive   = true
+}
+
 variable "zitadel_administration_key" {
   description = "The Zitadel administration key used by the ECS task and Lambda"
   type        = string

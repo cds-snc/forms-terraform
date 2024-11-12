@@ -29,6 +29,12 @@ resource "aws_secretsmanager_secret" "sentry_api_key" {
   recovery_window_in_days = 0
 }
 
+resource "aws_secretsmanager_secret" "next_server_actions_encryption_key" {
+  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
+  name                    = "next_server_actions_encryption_key"
+  recovery_window_in_days = 0
+}
+
 resource "aws_secretsmanager_secret_version" "sentry_api_key" {
   secret_id     = aws_secretsmanager_secret.sentry_api_key.id
   secret_string = var.sentry_api_key

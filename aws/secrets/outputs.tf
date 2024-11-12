@@ -13,6 +13,11 @@ output "sentry_api_key_secret_arn" {
   value       = aws_secretsmanager_secret.sentry_api_key.arn
 }
 
+output "next_server_actions_encryption_key_secret_arn" {
+  description = "ARN of next_server_actions_encryption_key secret"
+  value       = aws_secretsmanager_secret.next_server_actions_encryption_key.arn
+}
+
 output "token_secret_arn" {
   description = "ARN of tokensecret"
   value       = aws_secretsmanager_secret.token_secret.arn
