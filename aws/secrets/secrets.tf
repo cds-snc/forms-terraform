@@ -23,6 +23,17 @@ resource "aws_secretsmanager_secret_version" "freshdesk_api_key" {
   secret_string = var.freshdesk_api_key
 }
 
+resource "aws_secretsmanager_secret" "next_server_actions_encryption_key" {
+  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
+  name                    = "next_server_actions_encryption_key"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "next_server_actions_encryption_key" {
+  secret_id     = aws_secretsmanager_secret.next_server_actions_encryption_key.id
+  secret_string = var.next_server_actions_encryption_key
+}
+
 resource "aws_secretsmanager_secret" "sentry_api_key" {
   # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
   name                    = "sentry_api_key"
