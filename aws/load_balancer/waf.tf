@@ -26,7 +26,25 @@ resource "aws_wafv2_rule_group" "rate_limiters_group" {
       rate_based_statement {
         limit              = 2500
         aggregate_key_type = "IP"
-
+        scope_down_statement {
+          not_statement {
+            statement {
+              byte_match_statement {
+                positional_constraint = "EXACTLY"
+                field_to_match {
+                  single_header {
+                    name = "host"
+                  }
+                }
+                search_string = var.domain_api
+                text_transformation {
+                  priority = 1
+                  type     = "LOWERCASE"
+                }
+              }
+            }
+          }
+        }
       }
     }
 
@@ -50,15 +68,38 @@ resource "aws_wafv2_rule_group" "rate_limiters_group" {
         limit              = 100
         aggregate_key_type = "IP"
         scope_down_statement {
-          byte_match_statement {
-            positional_constraint = "EXACTLY"
-            field_to_match {
-              method {}
+          and_statement {
+            statement {
+              not_statement {
+                statement {
+                  byte_match_statement {
+                    positional_constraint = "EXACTLY"
+                    field_to_match {
+                      single_header {
+                        name = "host"
+                      }
+                    }
+                    search_string = var.domain_api
+                    text_transformation {
+                      priority = 1
+                      type     = "LOWERCASE"
+                    }
+                  }
+                }
+              }
             }
-            search_string = "post"
-            text_transformation {
-              priority = 1
-              type     = "LOWERCASE"
+            statement {
+              byte_match_statement {
+                positional_constraint = "EXACTLY"
+                field_to_match {
+                  method {}
+                }
+                search_string = "post"
+                text_transformation {
+                  priority = 1
+                  type     = "LOWERCASE"
+                }
+              }
             }
           }
         }
