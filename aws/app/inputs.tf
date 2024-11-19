@@ -259,9 +259,3 @@ variable "sentry_api_key_secret_arn" {
   type        = string
   sensitive   = true
 }
-
-variable "next_server_actions_encryption_key_secret_arn" {
-  description = "The Next.js server action key used by the ECS task"
-  type        = string
-  sensitive   = true
-}
