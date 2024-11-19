@@ -105,14 +105,14 @@ dependency "secrets" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    notify_api_key_secret_arn                                   = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_api_key"
-    freshdesk_api_key_secret_arn                                = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:freshdesk_api_key_secret"
-    token_secret_arn                                            = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:token_secret"
-    recaptcha_secret_arn                                        = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:recaptcha_secret"
-    notify_callback_bearer_token_secret_arn                     = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_callback_bearer_token_secret"
-    zitadel_administration_key_secret_arn                       = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:zitadel_administration_key"
-    sentry_api_key_secret_arn                                   = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:sentry_api_key"
-    next_server_actions_encryption_key_secret_arn               = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:next_server_actions_encryption_key"
+    notify_api_key_secret_arn                     = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_api_key"
+    freshdesk_api_key_secret_arn                  = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:freshdesk_api_key_secret"
+    token_secret_arn                              = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:token_secret"
+    recaptcha_secret_arn                          = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:recaptcha_secret"
+    notify_callback_bearer_token_secret_arn       = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_callback_bearer_token_secret"
+    zitadel_administration_key_secret_arn         = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:zitadel_administration_key"
+    sentry_api_key_secret_arn                     = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:sentry_api_key"
+    next_server_actions_encryption_key_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:next_server_actions_encryption_key"
   }
 }
 
