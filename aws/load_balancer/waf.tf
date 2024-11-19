@@ -610,16 +610,16 @@ resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {
 module "waf_ip_blocklist" {
   source = "github.com/cds-snc/terraform-modules//waf_ip_blocklist?ref=cb640e42f6a3dfe51cce4c702998e611fff48903" # v10.0.1
 
-  service_name                = "forms_app"
-  athena_database_name        = "access_logs"
-  athena_query_results_bucket = "forms-${var.env}-athena-bucket"
-  athena_query_source_bucket  = var.cbs_satellite_bucket_name
-  athena_workgroup_name       = "primary"
-  waf_rule_ids_skip           = ["BlockLargeRequests", "RateLimitersRuleGroup"]
-  athena_lb_table_name       = "lb_logs"
-  query_lb   = true
-  query_waf  = false
-  waf_block_threshold = 50
+  service_name                     = "forms_app"
+  athena_database_name             = "access_logs"
+  athena_query_results_bucket      = "forms-${var.env}-athena-bucket"
+  athena_query_source_bucket       = var.cbs_satellite_bucket_name
+  athena_workgroup_name            = "primary"
+  waf_rule_ids_skip                = ["BlockLargeRequests", "RateLimitersRuleGroup"]
+  athena_lb_table_name             = "lb_logs"
+  query_lb                         = true
+  query_waf                        = false
+  waf_block_threshold              = 50
   waf_ip_blocklist_update_schedule = "rate(15 minutes)"
-  billing_tag_value = "forms"
+  billing_tag_value                = "forms"
 }
