@@ -285,3 +285,8 @@ variable "rds_db_name" {
   description = "RDS database name"
   type        = string
 }
+
+variable "waf_ip_blocking_cloudwatch_log_group_name"{
+  description = "WAF IP Blocking CloudWatch log group name"
+  type        = string
+}

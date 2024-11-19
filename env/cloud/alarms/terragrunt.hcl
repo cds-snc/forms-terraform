@@ -42,6 +42,7 @@ dependency "load_balancer" {
     lb_target_group_1_arn_suffix   = null
     lb_target_group_2_arn_suffix   = null
     lb_target_group_api_arn_suffix = null
+    waf_ipv4_lambda_cloudwatch_log_group_name = "default"
   }
 }
 
@@ -190,6 +191,7 @@ inputs = {
   lb_target_group_1_arn_suffix   = dependency.load_balancer.outputs.lb_target_group_1_arn_suffix
   lb_target_group_2_arn_suffix   = dependency.load_balancer.outputs.lb_target_group_2_arn_suffix
   lb_api_target_group_arn_suffix = dependency.load_balancer.outputs.lb_target_group_api_arn_suffix
+  waf_ip_blocking_cloudwatch_log_group_name = dependency.load_balancer.outputs.waf_ipv4_lambda_cloudwatch_log_group_name
 
   sqs_reliability_deadletter_queue_arn   = dependency.sqs.outputs.sqs_reliability_deadletter_queue_arn
   sqs_app_audit_log_deadletter_queue_arn = dependency.sqs.outputs.sqs_app_audit_log_deadletter_queue_arn
