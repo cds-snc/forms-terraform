@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.25.3](https://github.com/cds-snc/forms-terraform/compare/v3.25.2...v3.25.3) (2024-11-19)
+
+
+### Bug Fixes
+
+* Remove rate limiting WAF on api domain url ([#889](https://github.com/cds-snc/forms-terraform/issues/889)) ([0f92923](https://github.com/cds-snc/forms-terraform/commit/0f92923c9af7199c8582338c9a7337688b295225))
+
+
+### Miscellaneous Chores
+
+* Setup Next.js server action key ([#887](https://github.com/cds-snc/forms-terraform/issues/887)) ([77bcdb4](https://github.com/cds-snc/forms-terraform/commit/77bcdb418e95714755f077e6ddb3260f40533a7b))
+
 ## [3.25.2](https://github.com/cds-snc/forms-terraform/compare/v3.25.1...v3.25.2) (2024-11-06)
 
 
