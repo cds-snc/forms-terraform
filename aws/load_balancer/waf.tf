@@ -608,15 +608,18 @@ resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {
 # that crosses a block threshold will be added to the blocklist.
 #
 module "waf_ip_blocklist" {
-  source = "github.com/cds-snc/terraform-modules//waf_ip_blocklist?ref=c21a88f0cfe608d7339b28eebb7f4eaf6cf123f2" # v9.6.7
+  source = "github.com/cds-snc/terraform-modules//waf_ip_blocklist?ref=756ec2826ca26bcb353ef7420f542dac4828bdc1" # v10.1.0
 
-  service_name                = "forms_app"
-  athena_database_name        = "access_logs"
-  athena_query_results_bucket = "forms-${var.env}-athena-bucket"
-  athena_query_source_bucket  = "cbs-satellite-${var.account_id}"
-  athena_waf_table_name       = "waf_logs"
-  athena_workgroup_name       = "primary"
-  waf_rule_ids_skip           = ["BlockLargeRequests", "RateLimitersRuleGroup"]
-
-  billing_tag_value = "forms"
+  service_name                     = "forms_app"
+  athena_database_name             = "access_logs"
+  athena_query_results_bucket      = "forms-${var.env}-athena-bucket"
+  athena_query_source_bucket       = var.cbs_satellite_bucket_name
+  athena_workgroup_name            = "primary"
+  waf_rule_ids_skip                = ["BlockLargeRequests", "RateLimitersRuleGroup"]
+  athena_lb_table_name             = "lb_logs"
+  query_lb                         = true
+  query_waf                        = false
+  waf_block_threshold              = 50
+  waf_ip_blocklist_update_schedule = "rate(15 minutes)"
+  billing_tag_value                = "forms"
 }
