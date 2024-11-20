@@ -608,7 +608,7 @@ resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {
 # that crosses a block threshold will be added to the blocklist.
 #
 module "waf_ip_blocklist" {
-  source = "github.com/cds-snc/terraform-modules//waf_ip_blocklist?ref=cb640e42f6a3dfe51cce4c702998e611fff48903" # v10.0.1
+  source = "github.com/cds-snc/terraform-modules//waf_ip_blocklist?ref=756ec2826ca26bcb353ef7420f542dac4828bdc1" # v10.1.0
 
   service_name                     = "forms_app"
   athena_database_name             = "access_logs"

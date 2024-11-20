@@ -58,7 +58,12 @@ output "waf_ipv4_blocklist_arn" {
   value       = module.waf_ip_blocklist.ipv4_blocklist_arn
 }
 
-output "waf_ipv4_lambda_cloudwatch_log_group_name" {
-  description = "WAF ACL IP blocklist Lambda CloudWatch name"
-  value       = module.waf_ip_blocklist.ipv4_lambda_cloudwatch_log_group_name
+output "waf_ipv4_new_blocked_ip_metric_filter_name" {
+  description = "WAF ACL IP blocklist CloudWatch Metric Filter name"
+  value       = module.waf_ip_blocklist.ipv4_new_blocked_ip_metric_filter_name
+}
+
+output "waf_ipv4_new_blocked_ip_metric_filter_namespace" {
+  description = "WAF ACL IP blocklist CloudWatch Metric Filter namespace"
+  value       = module.waf_ip_blocklist.ipv4_new_blocked_ip_metric_filter_namespace
 }
