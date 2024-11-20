@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.26.0](https://github.com/cds-snc/forms-terraform/compare/v3.25.3...v3.26.0) (2024-11-20)
+
+
+### Features
+
+* add CreatedAt field to Vault CONF# items ([#810](https://github.com/cds-snc/forms-terraform/issues/810)) ([f03ba83](https://github.com/cds-snc/forms-terraform/commit/f03ba83519d9c55432f03bad6cc0cc2851d24784))
+
+
+### Bug Fixes
+
+* Updates responses to use "-" for no responses ([#893](https://github.com/cds-snc/forms-terraform/issues/893)) ([a54e988](https://github.com/cds-snc/forms-terraform/commit/a54e988e73e9389b98a55dccf98776a99e82f206))
+
 ## [3.25.3](https://github.com/cds-snc/forms-terraform/compare/v3.25.2...v3.25.3) (2024-11-19)
 
 
