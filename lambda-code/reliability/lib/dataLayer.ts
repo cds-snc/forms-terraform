@@ -149,6 +149,7 @@ export async function saveToVault(
             FormID: formID,
             NAME_OR_CONF: `CONF#${confirmationCode}`,
             Name: name,
+            CreatedAt: Number(createdAt),
             ConfirmationCode: confirmationCode,
           },
         },
@@ -363,7 +364,9 @@ function handleArrayResponse(title: string, response: Response, collector: strin
       return;
     }
   }
-  collector.push(`**${title}**${String.fromCharCode(13)}No response`);
+  // Note the below dash is an em_dash (longer dash). This is a work around for a lone dash being
+  // stripped out in an email. Same fore similar cases below.
+  collector.push(`**${title}**${String.fromCharCode(13)}—`); 
 }
 
 function handleTextResponse(title: string, response: Response, collector: string[]) {
@@ -372,7 +375,7 @@ function handleTextResponse(title: string, response: Response, collector: string
     return;
   }
 
-  collector.push(`**${title}**${String.fromCharCode(13)}No Response`);
+  collector.push(`**${title}**${String.fromCharCode(13)}—`); 
 }
 
 function handleFileInputResponse(title: string, response: Response, collector: string[]) {
@@ -382,7 +385,7 @@ function handleFileInputResponse(title: string, response: Response, collector: s
     return;
   }
 
-  collector.push(`**${title}**${String.fromCharCode(13)}No Response`);
+  collector.push(`**${title}**${String.fromCharCode(13)}—`);
 }
 
 function handleFormattedDateResponse(
@@ -401,7 +404,7 @@ function handleFormattedDateResponse(
     return;
   }
 
-  collector.push(`**${title}**${String.fromCharCode(13)}No Response`);
+  collector.push(`**${title}**${String.fromCharCode(13)}—`);
 }
 
 function handleAddressCompleteResponse(title: string, response: Response, collector: string[], language: string, adddressComponents?: AddressCompleteProps) {
@@ -426,5 +429,5 @@ function handleAddressCompleteResponse(title: string, response: Response, collec
     return;
   }
 
-  collector.push(`**${title}**${String.fromCharCode(13)}No Response`);
+  collector.push(`**${title}**${String.fromCharCode(13)}—`);
 }
