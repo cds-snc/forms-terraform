@@ -285,3 +285,13 @@ variable "rds_db_name" {
   description = "RDS database name"
   type        = string
 }
+
+variable "waf_ipv4_new_blocked_ip_metric_filter_name" {
+  description = "WAF IP Blocking CloudWatch metric name"
+  type        = string
+}
+
+variable "waf_ipv4_new_blocked_ip_metric_filter_namespace" {
+  description = "WAF IP Blocking CloudWatch metric namespace"
+  type        = string
+}
