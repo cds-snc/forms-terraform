@@ -91,7 +91,7 @@ const saveSubmission = async (submissionId: string, formData: AnyObject): Promis
     const securityAttribute = formData.securityAttribute ?? "Protected A";
     delete formData.securityAttribute;
 
-    const timeStamp = Date.now().toString();
+    const timeStamp = Date.now();
 
     const alteredFormDataAsString = JSON.stringify(formData);
 
@@ -114,7 +114,7 @@ const saveSubmission = async (submissionId: string, formData: AnyObject): Promis
           SendReceipt: "unknown",
           FormSubmissionLanguage: formData.language,
           FormData: alteredFormDataAsString,
-          CreatedAt: Number(timeStamp),
+          CreatedAt: timeStamp,
           SecurityAttribute: securityAttribute,
           FormSubmissionHash: formResponsesAsHash,
         },
