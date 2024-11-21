@@ -282,12 +282,6 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     }
   }
 
-  visibility_config {
-    cloudwatch_metrics_enabled = true
-    metric_name                = "forms_global_rule"
-    sampled_requests_enabled   = false
-  }
-
   rule {
     name     = "AllowOnlyAppUrls"
     priority = 60
@@ -301,27 +295,27 @@ resource "aws_wafv2_web_acl" "forms_acl" {
         statement {
           and_statement {
             statement {
-              or_statement {
-                dynamic "statement" {
-                  for_each = var.domains
-                  content {
-                    byte_match_statement {
-                      positional_constraint = "EXACTLY"
-                      field_to_match {
-                        single_header {
-                          name = "host"
-                        }
+              // The OR statement is commented out until we have more then one domain to check against
+              // or_statement {
+              dynamic "statement" {
+                for_each = var.domains
+                content {
+                  byte_match_statement {
+                    positional_constraint = "EXACTLY"
+                    field_to_match {
+                      single_header {
+                        name = "host"
                       }
-                      search_string = statement.value
-                      text_transformation {
-                        priority = 1
-                        type     = "LOWERCASE"
-                      }
+                    }
+                    search_string = statement.value
+                    text_transformation {
+                      priority = 1
+                      type     = "LOWERCASE"
                     }
                   }
                 }
               }
-
+              // }
             }
             statement {
               regex_pattern_set_reference_statement {
@@ -473,6 +467,13 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       metric_name                = "BlockedIPv4"
       sampled_requests_enabled   = true
     }
+  }
+
+  // ACL visibility Metric
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "forms_global_rule"
+    sampled_requests_enabled   = false
   }
 }
 
