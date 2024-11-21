@@ -22,8 +22,8 @@ fi
 
 # Set proper terraform and terragrunt versions
 
-tgswitch 0.63.2
-tfswitch 1.9.2
+tgswitch 0.69.0
+tfswitch 1.9.8
 
 basedir=$(pwd)
 

@@ -10,9 +10,9 @@
       "moby": true
     },
     "terraform": {
-      "version": "1.9.2",
+      "version": "1.9.8",
       "tflint": "latest",
-      "terragrunt": "0.63.2"
+      "terragrunt": "0.69.0"
     },
     "aws-cli": {
       "version": "2.5.6"
@@ -32,7 +32,7 @@
         "[terraform]": {
           "editor.formatOnSave": true
         }
-      },      
+      },
       "extensions": [
         "hashicorp.terraform",
         "redhat.vscode-yaml",
@@ -43,7 +43,6 @@
   },
 
   // Add the IDs of extensions you want installed when the container is created.
-
 
   // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode",
