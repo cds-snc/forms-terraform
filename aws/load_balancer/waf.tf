@@ -294,29 +294,29 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       not_statement {
         statement {
           and_statement {
-            statement {
-              // The OR statement is commented out until we have more then one domain to check against
-              // or_statement {
-              dynamic "statement" {
-                for_each = var.domains
-                content {
-                  byte_match_statement {
-                    positional_constraint = "EXACTLY"
-                    field_to_match {
-                      single_header {
-                        name = "host"
-                      }
+            // statement {
+            // The OR statement is commented out until we have more then one domain to check against
+            // or_statement {
+            dynamic "statement" {
+              for_each = var.domains
+              content {
+                byte_match_statement {
+                  positional_constraint = "EXACTLY"
+                  field_to_match {
+                    single_header {
+                      name = "host"
                     }
-                    search_string = statement.value
-                    text_transformation {
-                      priority = 1
-                      type     = "LOWERCASE"
-                    }
+                  }
+                  search_string = statement.value
+                  text_transformation {
+                    priority = 1
+                    type     = "LOWERCASE"
                   }
                 }
               }
-              // }
             }
+            // }
+            // }
             statement {
               regex_pattern_set_reference_statement {
                 arn = aws_wafv2_regex_pattern_set.valid_app_uri_paths.arn
