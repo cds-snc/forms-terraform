@@ -19,9 +19,9 @@ Pull Requests in this repository require all commits to be signed before they ca
 - Terragrunt:
 
   1. `brew install warrensbox/tap/tfswitch`
-  1. `tfswitch 1.9.2`
+  1. `tfswitch 1.9.8`
   1. `brew install warrensbox/tap/tgswitch`
-  1. `tgswitch 0.63.2`
+  1. `tgswitch 0.69.0`
 
 - Yarn (if you want to deploy the infrastructure locally):
 
@@ -84,7 +84,7 @@ You will need to create a Localstack account using your CDS email address [here]
 
 ## Set your environment variables
 
-Create an `.env` file at the root of the project and use the `.env.example` as a template. You can find some of the values in 1Password > Local Development .ENV secure note. 
+Create an `.env` file at the root of the project and use the `.env.example` as a template. You can find some of the values in 1Password > Local Development .ENV secure note.
 The `LOCALSTACK_AUTH_TOKEN` value will be accessible [here](https://app.localstack.cloud/workspace/auth-token) once you have been assigned a Pro license.
 
 ## Start Localstack
