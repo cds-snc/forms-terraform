@@ -290,33 +290,42 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       block {}
     }
 
+    /* 
+  app && !url
+  app = true && url = false = block
+  app = false && url = true = allow
+  app = true && url = true = allow
+  app = false && url = false = allow   
+    */
+
     statement {
-      not_statement {
-        statement {
-          and_statement {
-            // statement {
-            // The OR statement is commented out until we have more then one domain to check against
-            // or_statement {
-            dynamic "statement" {
-              for_each = var.domains
-              content {
-                byte_match_statement {
-                  positional_constraint = "EXACTLY"
-                  field_to_match {
-                    single_header {
-                      name = "host"
-                    }
-                  }
-                  search_string = statement.value
-                  text_transformation {
-                    priority = 1
-                    type     = "LOWERCASE"
-                  }
+
+      and_statement {
+        // statement {
+        // The OR statement is commented out until we have more then one domain to check against
+        // or_statement {
+        dynamic "statement" {
+          for_each = var.domains
+          content {
+            byte_match_statement {
+              positional_constraint = "EXACTLY"
+              field_to_match {
+                single_header {
+                  name = "host"
                 }
               }
+              search_string = statement.value
+              text_transformation {
+                priority = 1
+                type     = "LOWERCASE"
+              }
             }
-            // }
-            // }
+          }
+        }
+        // }
+        // }
+        statement {
+          not_statement {
             statement {
               regex_pattern_set_reference_statement {
                 arn = aws_wafv2_regex_pattern_set.valid_app_uri_paths.arn
@@ -354,25 +363,32 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       block {}
     }
 
+    /* 
+  api && !url
+  api = true && url = false = block
+  api = false && url = true = allow
+  api = true && url = true = allow
+  api = false && url = false = allow   
+    */
     statement {
-      not_statement {
+      and_statement {
         statement {
-          and_statement {
-            statement {
-              byte_match_statement {
-                positional_constraint = "EXACTLY"
-                field_to_match {
-                  single_header {
-                    name = "host"
-                  }
-                }
-                search_string = var.domain_api
-                text_transformation {
-                  priority = 1
-                  type     = "LOWERCASE"
-                }
+          byte_match_statement {
+            positional_constraint = "EXACTLY"
+            field_to_match {
+              single_header {
+                name = "host"
               }
             }
+            search_string = var.domain_api
+            text_transformation {
+              priority = 1
+              type     = "LOWERCASE"
+            }
+          }
+        }
+        statement {
+          not_statement {
             statement {
               regex_pattern_set_reference_statement {
                 arn = aws_wafv2_regex_pattern_set.valid_api_uri_paths.arn
