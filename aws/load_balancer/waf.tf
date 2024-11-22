@@ -538,7 +538,7 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
 
   # App paths
   regular_expression {
-    regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|form-builder|forms|id|auth|profile|support|contact|unlock-publishing)(?:\\/[\\w-]+)?)(?:\\/.*)?$"
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(admin|api|form-builder|forms|id|auth|profile|support|contact|unlock-publishing)(?:\\/[\\w-]+)?)(?:\\/.*)?$"
   }
 
   # Static Pages
