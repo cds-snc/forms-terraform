@@ -46,7 +46,7 @@ resource "aws_cloudwatch_metric_alarm" "api_memory_utilization_high_warn" {
 resource "aws_cloudwatch_log_subscription_filter" "api_error_detection" {
   name            = "error_detection_in_api_logs"
   log_group_name  = var.ecs_api_cloudwatch_log_group_name
-  filter_pattern  = "level=error"
+  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
   destination_arn = aws_lambda_function.notify_slack.arn
 }
 
