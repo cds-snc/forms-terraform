@@ -27,10 +27,10 @@ export async function retrieveNewOrDownloadedFormResponsesOver28DaysOld() {
           TableName: DYNAMODB_VAULT_TABLE_NAME,
           ExclusiveStartKey: lastEvaluatedKey ?? undefined,
           FilterExpression:
-            "(#status = :statusNew OR #status = :statusDownloaded) AND CreatedAt <= :createdAt",
+            "(begins_with(#statusCreatedAt, :statusNew) OR begins_with(#statusCreatedAt, :statusDownloaded)) AND CreatedAt <= :createdAt",
           ProjectionExpression: "FormID,CreatedAt",
           ExpressionAttributeNames: {
-            "#status": "Status",
+            "#statusCreatedAt": "Status#CreatedAt",
           },
           ExpressionAttributeValues: {
             ":statusNew": "New",
