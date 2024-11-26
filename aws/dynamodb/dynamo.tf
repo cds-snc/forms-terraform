@@ -44,20 +44,8 @@ resource "aws_dynamodb_table" "vault" {
   }
 
   attribute {
-    name = "Status"
-    type = "S"
-  }
-
-  attribute {
     name = "Status#CreatedAt"
     type = "S"
-  }
-
-  global_secondary_index {
-    name            = "Status"
-    hash_key        = "FormID"
-    range_key       = "Status"
-    projection_type = "ALL"
   }
 
   global_secondary_index {
