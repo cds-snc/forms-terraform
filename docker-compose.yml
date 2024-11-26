@@ -9,7 +9,7 @@ services:
       - "127.0.0.1:4510-4559:4510-4559" # external services port range
       - "127.0.0.1:6379:6379" # Redis
     environment:
-      - SERVICES=cloudwatch,dynamodb,ec2,events,iam,kinesis,kms,lambda,logs,s3,secretsmanager,sns,sqs,elasticache,rds,ecr
+      - SERVICES=cloudwatch,dynamodb,ec2,events,iam,kinesis,kms,lambda,logs,s3,secretsmanager,sns,sqs,elasticache,rds,ecr,glue
       - LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT=60
       - LAMBDA_SYNCHRONOUS_CREATE=1
       - LAMBDA_IGNORE_ARCHITECTURE=1
