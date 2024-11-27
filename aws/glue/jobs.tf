@@ -19,6 +19,7 @@ resource "aws_glue_job" "rds_glue_job" {
     python_version  = "3"
   }
   default_arguments = {
+    "--s3_endpoint" = var.s3_endpoint
     "--rds_endpoint" = var.rds_cluster_endpoint
     "--rds_db_name"  = var.rds_db_name
     "--rds_username" = var.rds_db_user
