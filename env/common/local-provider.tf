@@ -53,6 +53,7 @@ provider "aws" {
     sts            = "http://${var.localstack_host}:4566"
     kms            = "http://${var.localstack_host}:4566"
     ecr            = "http://${var.localstack_host}:4566"
+    glue           = "http://${var.localstack_host}:4566"
   }
 }
 
@@ -91,6 +92,7 @@ provider "aws" {
     sts            = "http://${var.localstack_host}:4566"
     kms            = "http://${var.localstack_host}:4566"
     ecr            = "http://${var.localstack_host}:4566"
+    glue           = "http://${var.localstack_host}:4566"
   }
 }
 
@@ -129,5 +131,6 @@ provider "aws" {
     sts            = "http://${var.localstack_host}:4566"
     kms            = "http://${var.localstack_host}:4566"
     ecr            = "http://${var.localstack_host}:4566"
+    glue           = "http://${var.localstack_host}:4566"
   }
 }
