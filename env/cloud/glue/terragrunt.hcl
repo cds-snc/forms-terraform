@@ -43,7 +43,7 @@ inputs = {
   rds_db_user                  = local.env == "local" ? "localstack_postgres" : "postgres" # We cannot use `postgres` as a username in Localstack
   rds_db_password              = "chummy" # RDS database password used for local setup TODO: < this.
   rds_cluster_endpoint         = dependency.rds.outputs.rds_cluster_endpoint
-  s3_endpoint                  = local.env == "local" ? "http://127.0.0.1:4566" : "s3://"
+  s3_endpoint                  = local.env == "local" ? "http://127.0.0.1:4566/" : "s3://"
 }
 
 include {
