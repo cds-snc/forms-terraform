@@ -15,7 +15,7 @@ resource "aws_glue_job" "rds_glue_job" {
   name     = "rds_glue_job"
   role_arn = aws_iam_role.glue_etl.arn
   command {
-    script_location = "s3://${aws_s3_object.glue_script.bucket}/${aws_s3_object.glue_script.key}"
+    script_location = "${var.s3_endpoint}${aws_s3_object.glue_script.bucket}/${aws_s3_object.glue_script.key}"
     python_version  = "3"
   }
   default_arguments = {

@@ -32,3 +32,8 @@ variable "etl_bucket_name" {
   description = "The name of the ETL bucket"
   type        = string
 }
+
+variable "s3_endpoint" {
+  description = "The S3 endpoint"
+  type        = string
+}
