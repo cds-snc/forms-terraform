@@ -15,9 +15,7 @@ resource "aws_lambda_function" "reliability" {
       REGION         = var.region
       NOTIFY_API_KEY = var.notify_api_key_secret_arn
       TEMPLATE_ID    = var.gc_template_id
-      DB_ARN         = var.rds_cluster_arn
-      DB_SECRET      = var.database_secret_arn
-      DB_NAME        = var.rds_db_name
+      DB_URL        = var.database_url_secret_arn
       LOCALSTACK     = var.localstack_hosted
     }
   }
