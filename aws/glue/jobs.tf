@@ -8,6 +8,7 @@ resource "aws_s3_object" "glue_script" {
   bucket = var.etl_bucket_name
   key    = "rds_etl.py"
   source = data.local_file.glue_script.filename
+  etag   = filemd5(data.local_file.glue_script.filename)
 }
 
 # Define the CloudWatch log group
