@@ -24,14 +24,14 @@ resource "aws_glue_security_configuration" "encryption_at_rest" {
 resource "aws_glue_crawler" "forms_rds_data" {
   name          = "RDS Usage Report"
   description   = "Classify the Forms RDS data"
-  database_name = "rds_db_name"
+  database_name = "rds_db_catalog"
   table_prefix  = "rds_report_"
 
   role                   = aws_iam_role.glue_crawler.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 
   s3_target {
-    path = "s3://${var.datalake_bucket_name}/operations/aws/rds-usage-report"
+    path = "s3://${var.datalake_bucket_name}/processed-data"
   }
 
   configuration = jsonencode(

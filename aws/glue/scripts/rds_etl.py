@@ -43,7 +43,7 @@ datasink4 = glueContext.write_dynamic_frame.from_options(
     frame = final_df,
     connection_type = "s3",
     connection_options = {"path": f"s3://{args['rds_bucket']}/processed-data/"},
-    format = "json",
+    format = "parquet",
     transformation_ctx = "datasink4"
 )
 
