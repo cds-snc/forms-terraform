@@ -1,53 +1,53 @@
 #
 # Nagware
 #
-resource "aws_security_group" "lambda_nagware" {
-  description = "Lambda Nagware"
-  name        = "lambda_nagware"
+resource "aws_security_group" "lambda" {
+  description = "Lambdas"
+  name        = "lambda"
   vpc_id      = aws_vpc.forms.id
 }
 
 # Internet
-resource "aws_security_group_rule" "lambda_nagware_egress_internet" {
-  description       = "Egress to the internet from Nagware Lambda function"
+resource "aws_security_group_rule" "lambda_egress_internet" {
+  description       = "Egress to the internet from Lambda function"
   type              = "egress"
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
-  security_group_id = aws_security_group.lambda_nagware.id
+  security_group_id = aws_security_group.lambda.id
   cidr_blocks       = ["0.0.0.0/0"]
 }
 
 # PrivateLink
-resource "aws_security_group_rule" "privatelink_lambda_nagware_ingress" {
-  description              = "Security group rule for Nagware Lambda function ingress"
+resource "aws_security_group_rule" "privatelink_lambda_ingress" {
+  description              = "Security group rule for Lambda function ingress"
   type                     = "ingress"
   from_port                = 443
   to_port                  = 443
   protocol                 = "tcp"
   security_group_id        = aws_security_group.privatelink.id
-  source_security_group_id = aws_security_group.lambda_nagware.id
+  source_security_group_id = aws_security_group.lambda.id
 }
 
 # Redis
-resource "aws_security_group_rule" "redis_ingress_lambda_nagware" {
-  description              = "Ingress to Redis from Nagware Lambda function"
+resource "aws_security_group_rule" "lambda_ingress_redis" {
+  description              = "Ingress to Redis from Lambda function"
   type                     = "ingress"
   from_port                = 6379
   to_port                  = 6379
   protocol                 = "tcp"
   security_group_id        = aws_security_group.forms_redis.id
-  source_security_group_id = aws_security_group.lambda_nagware.id
+  source_security_group_id = aws_security_group.lambda.id
 }
 
-resource "aws_security_group_rule" "lambda_nagware_egress_redis" {
-  description              = "Egress from Nagware Lambda function to Redis"
-  type                     = "egress"
-  from_port                = 6379
-  to_port                  = 6379
+resource "aws_security_group_rule" "lambda_ingress_rds" {
+  description              = "Ingress to database from lambda"
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
   protocol                 = "tcp"
-  security_group_id        = aws_security_group.lambda_nagware.id
-  source_security_group_id = aws_security_group.forms_redis.id
+  security_group_id        = aws_security_group.forms_database.id
+  source_security_group_id = aws_security_group.lambda.id
 }
 
 #
