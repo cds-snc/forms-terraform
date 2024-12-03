@@ -72,7 +72,7 @@ resource "aws_vpc_security_group_ingress_rule" "privatelink" {
 
 }
 
-resource "aws_vpc_security_group_egress_rule" "privatelink" {
+resource "aws_vpc_security_group_egress_rule" "internet" {
   description       = "Egress to the internet from Nagware Lambda function"
   security_group_id = aws_security_group.lambda.id
   ip_protocol       = "tcp"
