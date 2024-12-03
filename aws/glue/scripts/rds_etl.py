@@ -5,6 +5,7 @@ from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.dynamicframe import DynamicFrame
+from pyspark.sql.functions import col, from_unixtime, date_format
 
 # Initialize Glue context
 args = getResolvedOptions(sys.argv, ['JOB_NAME', 'rds_endpoint', 'rds_db_name', 'rds_username', 'rds_password', 'rds_bucket', 's3_endpoint'])
@@ -30,7 +31,11 @@ datasource0 = glueContext.create_dynamic_frame.from_options(
     transformation_ctx = "datasource0"
 )
 
+# Remove Bearer Token
 redacted_df = datasource0.toDF().drop("bearerToken")
+# Ensure the data types are set to timestamps for Athena.
+redacted_df = redacted_df.withColumn("created_at", date_format(from_unixtime(col("created_at").cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
+redacted_df = redacted_df.withColumn("updated_at", date_format(from_unixtime(col("updated_at").cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
 
 logger.info("Produced Redacted Data Frame")
 
