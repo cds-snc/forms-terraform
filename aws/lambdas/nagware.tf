@@ -10,7 +10,7 @@ resource "aws_lambda_function" "nagware" {
   timeout       = 900
 
   vpc_config {
-    security_group_ids = [var.lambda_security_group_id]
+    security_group_ids = [var.lambda_nagware_security_group_id]
     subnet_ids         = var.private_subnet_ids
   }
 
@@ -24,7 +24,9 @@ resource "aws_lambda_function" "nagware" {
       REGION                    = var.region
       DOMAIN                    = var.domains[0]
       DYNAMODB_VAULT_TABLE_NAME = var.dynamodb_vault_table_name
-      DB_URL                    = var.database_url_secret_arn
+      DB_ARN                    = var.rds_cluster_arn
+      DB_SECRET                 = var.database_secret_arn
+      DB_NAME                   = var.rds_db_name
       NOTIFY_API_KEY            = var.notify_api_key_secret_arn
       REDIS_URL                 = "redis://${var.redis_url}:${var.redis_port}"
       TEMPLATE_ID               = var.gc_template_id

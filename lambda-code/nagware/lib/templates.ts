@@ -1,4 +1,4 @@
-import { DatabaseConnectorClient } from "./rdsConnector.js";
+import { RDSDataClient, ExecuteStatementCommand } from "@aws-sdk/client-rds-data";
 
 export type TemplateInfo = {
   formName: string;
@@ -11,41 +11,64 @@ export type TemplateInfo = {
 
 export async function getTemplateInfo(formID: string): Promise<TemplateInfo> {
   try {
+    const rdsDataClient = new RDSDataClient({ region: process.env.REGION });
+
     // Due to Localstack limitations we have to define aliases for fields that have the same name
-    const result = await DatabaseConnectorClient<
-      {
-        user_name?: string;
-        email: string;
-        template_name?: string;
-        jsonConfig: Record<string, unknown>;
-        isPublished: boolean;
-      }[]
-    >`SELECT usr."name" AS user_name, usr."email", tem."name" AS template_name, tem."jsonConfig", tem."isPublished"
+    const sqlStatement = `
+      SELECT usr."name" AS user_name, usr."email", tem."name" AS template_name, tem."jsonConfig", tem."isPublished"
       FROM "User" usr
       JOIN "_TemplateToUser" ttu ON usr."id" = ttu."B"
       JOIN "Template" tem ON tem."id" = ttu."A"
-      WHERE ttu."A" = ${formID}
+      WHERE ttu."A" = :formID
     `;
 
-    if (result.length > 0) {
-      const { template_name, jsonConfig, isPublished } = result[0];
+    const executeStatementCommand = new ExecuteStatementCommand({
+      database: process.env.DB_NAME,
+      resourceArn: process.env.DB_ARN,
+      secretArn: process.env.DB_SECRET,
+      sql: sqlStatement,
+      includeResultMetadata: false, // set to true if we want metadata like column names
+      parameters: [
+        {
+          name: "formID",
+          value: {
+            stringValue: formID,
+          },
+        },
+      ],
+    });
 
-      if (!template_name || !jsonConfig || isPublished === undefined) {
+    const response = await rdsDataClient.send(executeStatementCommand);
+
+    if (response.records && response.records.length > 0) {
+      const firstRecord = response.records[0];
+
+      if (
+        firstRecord[2].stringValue === undefined || // template name
+        firstRecord[3].stringValue === undefined || // template jsonConfig
+        firstRecord[4].booleanValue === undefined // template isPublished
+      ) {
         throw new Error(
-          `Missing required parameters: template name = ${template_name} ; template jsonConfig = ${jsonConfig} ; template isPublished = ${isPublished}.`
+          `Missing required parameters: template name = ${firstRecord[2].stringValue} ; template jsonConfig = ${firstRecord[3].stringValue} ; template isPublished = ${firstRecord[4].stringValue}.`
         );
       }
 
-      // Note we use || instead of ?? to allow for empty strings
-      const formName = template_name || `${jsonConfig.titleEn} - ${jsonConfig.titleFr}`;
+      const jsonConfig = JSON.parse(firstRecord[3].stringValue.trim());
 
-      const owners = result.map((record) => {
+      const formName =
+        firstRecord[2].stringValue !== ""
+          ? firstRecord[2].stringValue
+          : `${jsonConfig.titleEn} - ${jsonConfig.titleFr}`;
+
+      const isPublished = firstRecord[4].booleanValue;
+
+      const owners = response.records.map((record) => {
         // make sure owner email is defined
-        if (!record.email) {
+        if (record[1].stringValue === undefined) {
           throw new Error(`Missing required parameters: owner email.`);
         }
 
-        return { name: record.user_name, email: record.email };
+        return { name: record[0].stringValue, email: record[1].stringValue };
       });
 
       return { formName, owners, isPublished };

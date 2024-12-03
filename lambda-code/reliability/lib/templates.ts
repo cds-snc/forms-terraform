@@ -1,5 +1,5 @@
+import { RDSDataClient, ExecuteStatementCommand } from "@aws-sdk/client-rds-data";
 import { FormProperties } from "./types.js";
-import { DatabaseConnectorClient } from "./rdsConnector.js";
 
 export type TemplateInfo = {
   formConfig: FormProperties;
@@ -12,34 +12,48 @@ export type TemplateInfo = {
 
 export async function getTemplateInfo(formID: string): Promise<TemplateInfo | null> {
   try {
-    const templates = await DatabaseConnectorClient<
-      {
-        jsonConfig?: Record<string, unknown>;
-        emailAddress?: string;
-        emailSubjectEn?: string;
-        emailSubjectFr?: string;
-      }[]
-    >`SELECT  t."jsonConfig", deli."emailAddress", deli."emailSubjectEn", deli."emailSubjectFr"
+    const rdsDataClient = new RDSDataClient({ region: process.env.REGION });
+
+    const sqlStatement = `
+      SELECT  t."jsonConfig", deli."emailAddress", deli."emailSubjectEn", deli."emailSubjectFr"
       FROM "Template" t
       LEFT JOIN "DeliveryOption" deli ON t.id = deli."templateId"
-      WHERE t.id = ${formID}
- `;
+      WHERE t.id = :formID
+    `;
 
-    if (templates.length === 1) {
-      const { jsonConfig, emailAddress, emailSubjectEn, emailSubjectFr } = templates[0];
+    const executeStatementCommand = new ExecuteStatementCommand({
+      database: process.env.DB_NAME,
+      resourceArn: process.env.DB_ARN,
+      secretArn: process.env.DB_SECRET,
+      sql: sqlStatement,
+      includeResultMetadata: false, // set to true if we want metadata like column names
+      parameters: [
+        {
+          name: "formID",
+          value: {
+            stringValue: formID,
+          },
+        },
+      ],
+    });
+
+    const response = await rdsDataClient.send(executeStatementCommand);
+
+    if (response.records && response.records.length === 1) {
+      const firstRecord = response.records[0];
 
       // make sure template jsonConfig is defined
-      if (jsonConfig === undefined) {
+      if (firstRecord[0].stringValue === undefined) {
         throw new Error(`Missing required parameters: template jsonConfig.`);
       }
 
-      const formConfig = jsonConfig as FormProperties;
+      const formConfig = JSON.parse(firstRecord[0].stringValue!.trim()) as FormProperties;
 
-      const deliveryOption = emailAddress
+      const deliveryOption = firstRecord[1].stringValue
         ? {
-            emailAddress,
-            emailSubjectEn,
-            emailSubjectFr,
+            emailAddress: firstRecord[1].stringValue,
+            emailSubjectEn: firstRecord[2].stringValue,
+            emailSubjectFr: firstRecord[3].stringValue,
           }
         : null;
 

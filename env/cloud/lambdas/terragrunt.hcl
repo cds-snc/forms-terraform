@@ -30,8 +30,8 @@ dependency "network" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    lambda_security_group_id = "sg-1234"
-    private_subnet_ids       = ["prv-1", "prv-2"]
+    lambda_nagware_security_group_id = "sg-1234"
+    private_subnet_ids               = ["prv-1", "prv-2"]
   }
 }
 
@@ -40,10 +40,9 @@ dependency "rds" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    rds_cluster_arn         = null
-    rds_db_name             = null
-    database_secret_arn     = null
-    database_url_secret_arn = null
+    rds_cluster_arn     = null
+    rds_db_name         = null
+    database_secret_arn = null
   }
 }
 
@@ -154,8 +153,8 @@ dependency "ecr" {
 }
 
 inputs = {
-  lambda_security_group_id = dependency.network.outputs.lambda_security_group_id
-  private_subnet_ids       = dependency.network.outputs.private_subnet_ids
+  lambda_nagware_security_group_id = dependency.network.outputs.lambda_nagware_security_group_id
+  private_subnet_ids               = dependency.network.outputs.private_subnet_ids
 
   dynamodb_relability_queue_arn      = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
   dynamodb_vault_arn                 = dependency.dynamodb.outputs.dynamodb_vault_arn
@@ -169,10 +168,9 @@ inputs = {
   kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
   kms_key_dynamodb_arn   = dependency.kms.outputs.kms_key_dynamodb_arn
 
-  rds_cluster_arn         = dependency.rds.outputs.rds_cluster_arn
-  rds_db_name             = dependency.rds.outputs.rds_db_name
-  database_secret_arn     = dependency.rds.outputs.database_secret_arn
-  database_url_secret_arn = dependency.rds.outputs.database_url_secret_arn
+  rds_cluster_arn     = dependency.rds.outputs.rds_cluster_arn
+  rds_db_name         = dependency.rds.outputs.rds_db_name
+  database_secret_arn = dependency.rds.outputs.database_secret_arn
 
   redis_port = dependency.redis.outputs.redis_port
   redis_url  = dependency.redis.outputs.redis_url
@@ -187,7 +185,6 @@ inputs = {
   sns_topic_alert_critical_arn = dependency.sns.outputs.sns_topic_alert_critical_arn
 
   notify_api_key_secret_arn = dependency.secrets.outputs.notify_api_key_secret_arn
-
 
   reliability_file_storage_arn   = dependency.s3.outputs.reliability_file_storage_arn
   vault_file_storage_arn         = dependency.s3.outputs.vault_file_storage_arn
