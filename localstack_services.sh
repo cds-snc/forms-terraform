@@ -95,6 +95,10 @@ printf "${greenColor}...Setting up AWS Glue${reset}\n"
 cd $basedir/env/cloud/glue
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
+printf "${greenColor}...Setting up Athena${reset}\n"
+cd $basedir/env/cloud/athena
+terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
 printf "${greenColor}...Setting up ECR${reset}\n"
 cd $basedir/env/cloud/ecr
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
