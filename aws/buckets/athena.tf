@@ -2,7 +2,7 @@
 # Holds Athena query resuts
 #
 module "athena_bucket" {
-  source            = "github.com/cds-snc/terraform-modules//S3?ref=v10.1.0"
+  source            = "github.com/cds-snc/terraform-modules//S3?ref=17994187b8628dc5decf74ead84768501378df4c" # ref for v10.0.0
   bucket_name       = "cds-data-lake-athena-${var.env}"
   billing_tag_value = var.billing_tag_value
 

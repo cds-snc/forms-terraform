@@ -1,8 +1,9 @@
 #
 # Holds exported data from ETL transformations
 #
+
 module "lake_bucket" {
-  source            = "github.com/cds-snc/terraform-modules//S3?ref=v10.0.0"
+  source            = "github.com/cds-snc/terraform-modules//S3?ref=17994187b8628dc5decf74ead84768501378df4c" # ref for v10.0.0
   bucket_name       = "cds-data-lake-bucket-${var.env}"
   billing_tag_value = var.billing_tag_value
 
