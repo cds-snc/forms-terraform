@@ -12,7 +12,7 @@
     "terraform": {
       "version": "1.9.8",
       "tflint": "latest",
-      "terragrunt": "0.69.2"
+      "terragrunt": "0.69.0"
     },
     "aws-cli": {
       "version": "2.5.6"

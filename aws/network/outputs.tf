@@ -33,9 +33,9 @@ output "idp_lb_security_group_id" {
   value       = aws_security_group.idp_lb.id
 }
 
-output "lambda_security_group_id" {
+output "lambda_nagware_security_group_id" {
   description = "Lambda Nagware function security group ID"
-  value       = aws_security_group.lambda.id
+  value       = aws_security_group.lambda_nagware.id
 }
 
 output "public_subnet_ids" {
