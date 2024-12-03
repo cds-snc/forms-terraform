@@ -40,9 +40,11 @@ dependency "network" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     vpc_id                           = null
-    privatelink_security_group_id    = null
-    forms_database_security_group_id = null
-    forms_redis_security_group_id    = null
+    privatelink_security_group_id    = "sg-1234567890"
+    forms_database_security_group_id = "sg-1234567890"
+    forms_redis_security_group_id    = "sg-1234567890"
+    rds_security_group_id            = "sg-1234567890"
+    redis_security_group_id          = "sg-1234567890"
   }
 }
 

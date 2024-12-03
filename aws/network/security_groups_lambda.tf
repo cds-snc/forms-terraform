@@ -1,6 +1,4 @@
-#
-# Nagware
-#
+### Everything below this line needs to be deleted
 resource "aws_security_group" "lambda_nagware" {
   description = "Lambda Nagware"
   name        = "lambda_nagware"
@@ -48,7 +46,63 @@ resource "aws_security_group_rule" "lambda_nagware_egress_redis" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.lambda_nagware.id
   source_security_group_id = aws_security_group.forms_redis.id
+
 }
+### Everything above this line needs to be deleted
+
+
+#
+# Nagware
+#
+resource "aws_security_group" "lambda" {
+  description = "Lambdas"
+  name        = "lambda"
+  vpc_id      = aws_vpc.forms.id
+}
+
+# Internet
+
+resource "aws_vpc_security_group_ingress_rule" "privatelink" {
+  description                  = "Security group rule for Nagware Lambda function ingress"
+  security_group_id            = aws_security_group.lambda.id
+  referenced_security_group_id = aws_security_group.privatelink.id
+  ip_protocol                  = "tcp"
+  from_port                    = 443
+  to_port                      = 443
+
+}
+
+resource "aws_vpc_security_group_egress_rule" "internet" {
+  description       = "Egress to the internet from Nagware Lambda function"
+  security_group_id = aws_security_group.lambda.id
+  ip_protocol       = "tcp"
+  from_port         = 443
+  to_port           = 443
+  cidr_ipv4         = "0.0.0.0/0"
+}
+
+
+# Redis
+resource "aws_vpc_security_group_ingress_rule" "redis" {
+  description                  = "Ingress to Redis from lambda"
+  security_group_id            = aws_security_group.forms_redis.id
+  referenced_security_group_id = aws_security_group.lambda.id
+  ip_protocol                  = "tcp"
+  from_port                    = 6379
+  to_port                      = 6379
+
+}
+
+# RDS
+resource "aws_vpc_security_group_ingress_rule" "rds" {
+  description                  = "Ingress to database from lambda"
+  security_group_id            = aws_security_group.forms_database.id
+  referenced_security_group_id = aws_security_group.lambda.id
+  ip_protocol                  = "tcp"
+  from_port                    = 5432
+  to_port                      = 5432
+}
+
 
 #
 # Athena connector

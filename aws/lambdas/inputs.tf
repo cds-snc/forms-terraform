@@ -14,6 +14,11 @@ variable "database_secret_arn" {
   type        = string
 }
 
+variable "database_url_secret_arn" {
+  description = "Database URL secret version ARN, used by the ECS task"
+  type        = string
+}
+
 variable "rds_cluster_arn" {
   description = "RDS cluster ARN"
   type        = string
@@ -199,8 +204,8 @@ variable "ecr_repository_url_vault_integrity_lambda" {
   type        = string
 }
 
-variable "lambda_nagware_security_group_id" {
-  description = "Security group ID for the Nagware Lambda"
+variable "lambda_security_group_id" {
+  description = "Security group ID for the Lambdas"
   type        = string
 }
 
