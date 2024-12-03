@@ -63,9 +63,9 @@ resource "aws_security_group" "lambda" {
 # Internet
 
 resource "aws_vpc_security_group_ingress_rule" "privatelink" {
-  description                  = "Security group rule for Nagware Lambda function ingress"
-  security_group_id            = aws_security_group.lambda.id
-  referenced_security_group_id = aws_security_group.privatelink.id
+  description                  = "Security group rule for Lambda function ingress"
+  security_group_id            =  aws_security_group.privatelink.id
+  referenced_security_group_id =  aws_security_group.lambda.id
   ip_protocol                  = "tcp"
   from_port                    = 443
   to_port                      = 443
