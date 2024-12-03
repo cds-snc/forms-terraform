@@ -172,12 +172,13 @@ jobs:
           comment: "false"
           terragrunt: "true"
 
-      - name: Terragrunt plan rds
-        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
-        with:
-          directory: "env/cloud/rds"
-          comment: "false"
-          terragrunt: "true"
+      # Disabled for Serverless v1 -> v2 upgrade
+      # - name: Terragrunt plan rds
+      #   uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
+      #   with:
+      #     directory: "env/cloud/rds"
+      #     comment: "false"
+      #     terragrunt: "true"
 
       - name: Terragrunt plan idp
         uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
