@@ -26,7 +26,7 @@ env:
   AWS_REGION: ca-central-1
   CONFTEST_VERSION: 0.46.0
   TERRAFORM_VERSION: 1.9.8
-  TERRAGRUNT_VERSION: 0.69.0
+  TERRAGRUNT_VERSION: 0.69.2
   TF_INPUT: false
   # API
   TF_VAR_zitadel_application_key: ${{ secrets.STAGING_ZITADEL_APPLICATION_KEY }}
@@ -292,16 +292,17 @@ jobs:
           comment-title: "Staging: redis"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
-
-      - name: Terragrunt plan rds
-        if: steps.filter.outputs.rds == 'true'
-        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
-        with:
-          directory: "env/cloud/rds"
-          comment-delete: "true"
-          comment-title: "Staging: rds"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
+      
+      # Disabled for Serverless v1 -> v2 upgrade
+      # - name: Terragrunt plan rds
+      #   if: steps.filter.outputs.rds == 'true'
+      #   uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
+      #   with:
+      #     directory: "env/cloud/rds"
+      #     comment-delete: "true"
+      #     comment-title: "Staging: rds"
+      #     github-token: "${{ secrets.GITHUB_TOKEN }}"
+      #     terragrunt: "true"
 
       - name: Terragrunt plan idp
         if: steps.filter.outputs.idp == 'true'

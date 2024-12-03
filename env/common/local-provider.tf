@@ -3,7 +3,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "5.70.0"
+      version = "5.78.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -56,6 +56,13 @@ provider "aws" {
     glue           = "http://${var.localstack_host}:4566"
     athena         = "http://${var.localstack_host}:4566"
   }
+
+  default_tags {
+    tags = {
+      (var.billing_tag_key) = var.billing_tag_value
+      Terraform             = true
+    }
+  }
 }
 
 provider "aws" {
@@ -96,6 +103,13 @@ provider "aws" {
     glue           = "http://${var.localstack_host}:4566"
     athena         = "http://${var.localstack_host}:4566"
   }
+
+  default_tags {
+    tags = {
+      (var.billing_tag_key) = var.billing_tag_value
+      Terraform             = true
+    }
+  }
 }
 
 provider "aws" {
@@ -107,6 +121,13 @@ provider "aws" {
   skip_credentials_validation = true
   skip_metadata_api_check     = true
   skip_requesting_account_id  = true
+
+  default_tags {
+    tags = {
+      (var.billing_tag_key) = var.billing_tag_value
+      Terraform             = true
+    }
+  }
 
   endpoints {
     apigateway     = "http://${var.localstack_host}:4566"
