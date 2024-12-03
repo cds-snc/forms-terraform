@@ -55,63 +55,6 @@ resource "aws_wafv2_rule_group" "rate_limiters_group" {
     }
   }
 
-  rule {
-    name     = "PostRequestLimit"
-    priority = 2
-
-    action {
-      block {}
-    }
-
-    statement {
-      rate_based_statement {
-        limit              = 100
-        aggregate_key_type = "IP"
-        scope_down_statement {
-          and_statement {
-            statement {
-              not_statement {
-                statement {
-                  byte_match_statement {
-                    positional_constraint = "EXACTLY"
-                    field_to_match {
-                      single_header {
-                        name = "host"
-                      }
-                    }
-                    search_string = var.domain_api
-                    text_transformation {
-                      priority = 1
-                      type     = "LOWERCASE"
-                    }
-                  }
-                }
-              }
-            }
-            statement {
-              byte_match_statement {
-                positional_constraint = "EXACTLY"
-                field_to_match {
-                  method {}
-                }
-                search_string = "post"
-                text_transformation {
-                  priority = 1
-                  type     = "LOWERCASE"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "PostRequestRateLimit"
-      sampled_requests_enabled   = true
-    }
-  }
   visibility_config {
     cloudwatch_metrics_enabled = true
     metric_name                = "RateLimitersGroup"
