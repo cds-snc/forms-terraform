@@ -54,7 +54,9 @@ dependency "network" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    private_subnet_ids = [""]
+    private_subnet_ids       = ["prv-1", "prv-2"]
+    egress_security_group_id = "sg-1234567890"
+    ecs_security_group_id    = "sg-1234567890"
   }
 }
 
