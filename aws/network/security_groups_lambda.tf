@@ -62,7 +62,7 @@ resource "aws_security_group" "lambda" {
 
 # Internet
 
-resource "aws_vpc_security_group_ingress_rule" "privatelink" {
+resource "aws_vpc_security_group_ingress_rule" "privatelink_lambda" {
   description                  = "Security group rule for Lambda function ingress"
   security_group_id            = aws_security_group.privatelink.id
   referenced_security_group_id = aws_security_group.lambda.id
@@ -72,7 +72,7 @@ resource "aws_vpc_security_group_ingress_rule" "privatelink" {
 
 }
 
-resource "aws_vpc_security_group_egress_rule" "internet" {
+resource "aws_vpc_security_group_egress_rule" "internet_lambda" {
   description       = "Egress to the internet from Nagware Lambda function"
   security_group_id = aws_security_group.lambda.id
   ip_protocol       = "tcp"
@@ -83,7 +83,7 @@ resource "aws_vpc_security_group_egress_rule" "internet" {
 
 
 # Redis
-resource "aws_vpc_security_group_ingress_rule" "redis" {
+resource "aws_vpc_security_group_ingress_rule" "redis_lambda" {
   description                  = "Ingress to Redis from lambda"
   security_group_id            = aws_security_group.forms_redis.id
   referenced_security_group_id = aws_security_group.lambda.id
@@ -94,10 +94,19 @@ resource "aws_vpc_security_group_ingress_rule" "redis" {
 }
 
 # RDS
-resource "aws_vpc_security_group_ingress_rule" "rds" {
+resource "aws_vpc_security_group_ingress_rule" "rds_lambda" {
   description                  = "Ingress to database from lambda"
   security_group_id            = aws_security_group.forms_database.id
   referenced_security_group_id = aws_security_group.lambda.id
+  ip_protocol                  = "tcp"
+  from_port                    = 5432
+  to_port                      = 5432
+}
+
+resource "aws_vpc_security_group_egress_rule" "rds_lambda" {
+  description                  = "Egress from lambda to database"
+  security_group_id            = aws_security_group.lambda.id
+  referenced_security_group_id = aws_security_group.forms_database.id
   ip_protocol                  = "tcp"
   from_port                    = 5432
   to_port                      = 5432
