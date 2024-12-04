@@ -93,6 +93,15 @@ resource "aws_vpc_security_group_ingress_rule" "redis_lambda" {
 
 }
 
+resource "aws_vpc_security_group_egress_rule" "redis_lambda" {
+  description                  = "Egress from lambda to Redis"
+  security_group_id            = aws_security_group.lambda.id
+  referenced_security_group_id = aws_security_group.forms_redis.id
+  ip_protocol                  = "tcp"
+  from_port                    = 6379
+  to_port                      = 6379
+}
+
 # RDS
 resource "aws_vpc_security_group_ingress_rule" "rds_lambda" {
   description                  = "Ingress to database from lambda"
