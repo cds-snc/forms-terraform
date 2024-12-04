@@ -1,3 +1,8 @@
+locals {
+  rds_engine         = "aurora-postgresql"
+  rds_engine_version = "13.12"
+}
+
 resource "random_string" "random" {
   length  = 6
   special = false
@@ -21,9 +26,8 @@ resource "aws_rds_cluster" "forms" {
   // TODO: Implement Encryption using KMS CMKs
 
   cluster_identifier          = "${var.rds_name}-cluster"
-  engine                      = "aurora-postgresql"
-  engine_mode                 = "serverless"
-  engine_version              = "13.12"
+  engine                      = local.rds_engine
+  engine_version              = local.rds_engine_version
   enable_http_endpoint        = true
   database_name               = var.rds_db_name
   deletion_protection         = true
@@ -37,8 +41,7 @@ resource "aws_rds_cluster" "forms" {
   allow_major_version_upgrade = true
   copy_tags_to_snapshot       = true
 
-  scaling_configuration {
-    auto_pause   = false
+  serverlessv2_scaling_configuration {
     max_capacity = 8
     min_capacity = 2
   }
@@ -54,4 +57,25 @@ resource "aws_rds_cluster" "forms" {
       snapshot_identifier
     ]
   }
+}
+
+resource "aws_rds_cluster_instance" "forms" {
+  #checkov:skip=CKV_AWS_118:enhanced monitoring is not required
+  #checkov:skip=CKV_AWS_353:performance insights are not required
+  #checkov:skip=CKV_AWS_354:performance insights are not required 
+  identifier           = "${var.rds_name}-cluster-instance-2"
+  cluster_identifier   = aws_rds_cluster.forms.id
+  instance_class       = "db.serverless"
+  engine               = local.rds_engine
+  engine_version       = local.rds_engine_version
+  db_subnet_group_name = aws_db_subnet_group.forms.name
+
+  auto_minor_version_upgrade = true
+  promotion_tier             = 1
+}
+
+# Remove once migration to prod is complete
+import {
+  to = aws_rds_cluster_instance.forms
+  id = "${var.rds_name}-cluster-instance-2"
 }
