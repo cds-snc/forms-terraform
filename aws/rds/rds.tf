@@ -74,8 +74,11 @@ resource "aws_rds_cluster_instance" "forms" {
   promotion_tier             = 1
 }
 
-# Remove once migration to prod is complete
+# Remove once migration to prod is complete, make sure to also remove the `localstack_hosted` variable used in the import block.
 import {
+  # import block does not support `count` so we need a workaround to make sure no import happens when running in LocalStack
+  for_each = var.localstack_hosted ? toset([]) : toset([1])
+
   to = aws_rds_cluster_instance.forms
   id = "${var.rds_name}-cluster-instance-2"
 }

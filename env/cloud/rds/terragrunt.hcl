@@ -33,6 +33,8 @@ inputs = {
   # Overwritten in GitHub Actions by TFVARS
   rds_db_password           = "chummy" # RDS database password used for local setup
   rds_connector_db_password = ""
+
+  localstack_hosted = local.env == "local" ? true : false
 }
 
 include {
