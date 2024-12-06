@@ -1,3 +1,56 @@
+### Everything below this line needs to be deleted
+resource "aws_security_group" "lambda_nagware" {
+  description = "Lambda Nagware"
+  name        = "lambda_nagware"
+  vpc_id      = aws_vpc.forms.id
+}
+
+# Internet
+resource "aws_security_group_rule" "lambda_nagware_egress_internet" {
+  description       = "Egress to the internet from Nagware Lambda function"
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  security_group_id = aws_security_group.lambda_nagware.id
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
+# PrivateLink
+resource "aws_security_group_rule" "privatelink_lambda_nagware_ingress" {
+  description              = "Security group rule for Nagware Lambda function ingress"
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.privatelink.id
+  source_security_group_id = aws_security_group.lambda_nagware.id
+}
+
+# Redis
+resource "aws_security_group_rule" "redis_ingress_lambda_nagware" {
+  description              = "Ingress to Redis from Nagware Lambda function"
+  type                     = "ingress"
+  from_port                = 6379
+  to_port                  = 6379
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.forms_redis.id
+  source_security_group_id = aws_security_group.lambda_nagware.id
+}
+
+resource "aws_security_group_rule" "lambda_nagware_egress_redis" {
+  description              = "Egress from Nagware Lambda function to Redis"
+  type                     = "egress"
+  from_port                = 6379
+  to_port                  = 6379
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.lambda_nagware.id
+  source_security_group_id = aws_security_group.forms_redis.id
+
+}
+### Everything above this line needs to be deleted
+
+
 #
 # Nagware
 #
@@ -8,47 +61,66 @@ resource "aws_security_group" "lambda" {
 }
 
 # Internet
-resource "aws_security_group_rule" "lambda_egress_internet" {
-  description       = "Egress to the internet from Lambda function"
-  type              = "egress"
+
+resource "aws_vpc_security_group_ingress_rule" "privatelink_lambda" {
+  description                  = "Security group rule for Lambda function ingress"
+  security_group_id            = aws_security_group.privatelink.id
+  referenced_security_group_id = aws_security_group.lambda.id
+  ip_protocol                  = "tcp"
+  from_port                    = 443
+  to_port                      = 443
+
+}
+
+resource "aws_vpc_security_group_egress_rule" "internet_lambda" {
+  description       = "Egress to the internet from Nagware Lambda function"
+  security_group_id = aws_security_group.lambda.id
+  ip_protocol       = "tcp"
   from_port         = 443
   to_port           = 443
-  protocol          = "tcp"
-  security_group_id = aws_security_group.lambda.id
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_ipv4         = "0.0.0.0/0"
 }
 
-# PrivateLink
-resource "aws_security_group_rule" "privatelink_lambda_ingress" {
-  description              = "Security group rule for Lambda function ingress"
-  type                     = "ingress"
-  from_port                = 443
-  to_port                  = 443
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.privatelink.id
-  source_security_group_id = aws_security_group.lambda.id
-}
 
 # Redis
-resource "aws_security_group_rule" "lambda_ingress_redis" {
-  description              = "Ingress to Redis from Lambda function"
-  type                     = "ingress"
-  from_port                = 6379
-  to_port                  = 6379
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.forms_redis.id
-  source_security_group_id = aws_security_group.lambda.id
+resource "aws_vpc_security_group_ingress_rule" "redis_lambda" {
+  description                  = "Ingress to Redis from lambda"
+  security_group_id            = aws_security_group.forms_redis.id
+  referenced_security_group_id = aws_security_group.lambda.id
+  ip_protocol                  = "tcp"
+  from_port                    = 6379
+  to_port                      = 6379
+
 }
 
-resource "aws_security_group_rule" "lambda_ingress_rds" {
-  description              = "Ingress to database from lambda"
-  type                     = "ingress"
-  from_port                = 5432
-  to_port                  = 5432
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.forms_database.id
-  source_security_group_id = aws_security_group.lambda.id
+resource "aws_vpc_security_group_egress_rule" "redis_lambda" {
+  description                  = "Egress from lambda to Redis"
+  security_group_id            = aws_security_group.lambda.id
+  referenced_security_group_id = aws_security_group.forms_redis.id
+  ip_protocol                  = "tcp"
+  from_port                    = 6379
+  to_port                      = 6379
 }
+
+# RDS
+resource "aws_vpc_security_group_ingress_rule" "rds_lambda" {
+  description                  = "Ingress to database from lambda"
+  security_group_id            = aws_security_group.forms_database.id
+  referenced_security_group_id = aws_security_group.lambda.id
+  ip_protocol                  = "tcp"
+  from_port                    = 5432
+  to_port                      = 5432
+}
+
+resource "aws_vpc_security_group_egress_rule" "rds_lambda" {
+  description                  = "Egress from lambda to database"
+  security_group_id            = aws_security_group.lambda.id
+  referenced_security_group_id = aws_security_group.forms_database.id
+  ip_protocol                  = "tcp"
+  from_port                    = 5432
+  to_port                      = 5432
+}
+
 
 #
 # Athena connector

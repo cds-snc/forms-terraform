@@ -44,3 +44,8 @@ variable "rds_security_group_id" {
   description = "The security group used by Redis"
   type        = string
 }
+
+variable "localstack_hosted" {
+  description = "Whether or not the stack is hosted in localstack"
+  type        = bool
+}

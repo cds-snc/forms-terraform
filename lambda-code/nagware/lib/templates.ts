@@ -16,7 +16,7 @@ export async function getTemplateInfo(formID: string): Promise<TemplateInfo> {
       {
         user_name?: string;
         email: string;
-        template_name?: string;
+        template_name: string;
         jsonConfig: Record<string, unknown>;
         isPublished: boolean;
       }[]
@@ -30,7 +30,8 @@ export async function getTemplateInfo(formID: string): Promise<TemplateInfo> {
     if (result.length > 0) {
       const { template_name, jsonConfig, isPublished } = result[0];
 
-      if (!template_name || !jsonConfig || isPublished === undefined) {
+      // Even if we type the result we expect from our Postgres.js request, the properties could still be undefined if they don't exist in the database.
+      if (template_name === undefined || jsonConfig === undefined || isPublished === undefined) {
         throw new Error(
           `Missing required parameters: template name = ${template_name} ; template jsonConfig = ${jsonConfig} ; template isPublished = ${isPublished}.`
         );
