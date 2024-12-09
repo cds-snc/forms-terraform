@@ -63,7 +63,7 @@ resource "aws_cloudwatch_metric_alarm" "api_lb_unhealthy_host_count" {
   namespace           = "AWS/ApplicationELB"
   period              = "60"
   statistic           = "Maximum"
-  treat_missing_data  = "notBreaching"
+  treat_missing_data  = "breaching"
 
   alarm_actions = [var.sns_topic_alert_warning_arn]
   ok_actions    = [var.sns_topic_alert_ok_arn]
@@ -84,7 +84,7 @@ resource "aws_cloudwatch_metric_alarm" "api_lb_healthy_host_count" {
   namespace           = "AWS/ApplicationELB"
   period              = "60"
   statistic           = "Maximum"
-  treat_missing_data  = "notBreaching"
+  treat_missing_data  = "breaching"
   alarm_actions       = [var.sns_topic_alert_warning_arn]
 
   dimensions = {

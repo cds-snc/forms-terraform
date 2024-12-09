@@ -64,7 +64,7 @@ resource "aws_cloudwatch_metric_alarm" "ELB_healthy_hosts" {
   comparison_operator = "LessThanThreshold"
   threshold           = "1"
   evaluation_periods  = "1"
-  treat_missing_data  = "notBreaching"
+  treat_missing_data  = "breaching"
   alarm_actions       = [var.sns_topic_alert_critical_arn]
 
   metric_query {
@@ -111,9 +111,9 @@ resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount-TargetGroup1" {
   evaluation_periods  = "1" # Evaluate once
   metric_name         = "UnHealthyHostCount"
   namespace           = "AWS/ApplicationELB"
-  period              = "60"           # Every minute
-  statistic           = "Maximum"      # the highest value observed during the specified period
-  treat_missing_data  = "notBreaching" # don't alarm if there's no data
+  period              = "60"      # Every minute
+  statistic           = "Maximum" # the highest value observed during the specified period
+  treat_missing_data  = "breaching"
   alarm_actions       = [var.sns_topic_alert_warning_arn]
   dimensions = {
     LoadBalancer = var.lb_arn_suffix
@@ -129,9 +129,9 @@ resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount-TargetGroup2" {
   evaluation_periods  = "1" # Evaluate once
   metric_name         = "UnHealthyHostCount"
   namespace           = "AWS/ApplicationELB"
-  period              = "60"           # Every minute
-  statistic           = "Maximum"      # the highest value observed during the specified period
-  treat_missing_data  = "notBreaching" # don't alarm if there's no data
+  period              = "60"      # Every minute
+  statistic           = "Maximum" # the highest value observed during the specified period
+  treat_missing_data  = "breaching"
   alarm_actions       = [var.sns_topic_alert_warning_arn]
   dimensions = {
     LoadBalancer = var.lb_arn_suffix
