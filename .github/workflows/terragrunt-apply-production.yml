@@ -246,10 +246,9 @@ jobs:
         working-directory: env/cloud/redis
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
-      # Disabled for Serverless v1 -> v2 upgrade
-      # - name: Terragrunt apply rds
-      #   working-directory: env/cloud/rds
-      #   run: terragrunt apply --terragrunt-non-interactive -auto-approve
+      - name: Terragrunt apply rds
+        working-directory: env/cloud/rds
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply idp
         working-directory: env/cloud/idp
