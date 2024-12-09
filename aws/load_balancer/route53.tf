@@ -3,10 +3,11 @@
 #
 
 resource "aws_route53_record" "form_viewer" {
-  count   = length(var.domains)
-  zone_id = var.hosted_zone_ids[count.index]
-  name    = var.domains[count.index]
-  type    = "A"
+  count           = length(var.domains)
+  zone_id         = var.hosted_zone_ids[count.index]
+  name            = var.domains[count.index]
+  type            = "A"
+  health_check_id = aws_route53_health_check.lb_web_app_global_target_group.id
 
   alias {
     name                   = aws_lb.form_viewer.dns_name
