@@ -1,5 +1,37 @@
 # Changelog
 
+## [3.27.0](https://github.com/cds-snc/forms-terraform/compare/v3.26.0...v3.27.0) (2024-12-09)
+
+
+### Features
+
+* Update to latest dynamic IP blocking module ([#892](https://github.com/cds-snc/forms-terraform/issues/892)) ([d14ff31](https://github.com/cds-snc/forms-terraform/commit/d14ff31c704cec2a16375794ab4226a990779596))
+
+
+### Bug Fixes
+
+* Add egress rule from lambda to db ([#914](https://github.com/cds-snc/forms-terraform/issues/914)) ([de7d49d](https://github.com/cds-snc/forms-terraform/commit/de7d49d2f85d6f61b29270cc4837176356e87cfe))
+* Add missing api path check on APP WAF rule ([#901](https://github.com/cds-snc/forms-terraform/issues/901)) ([9adb41d](https://github.com/cds-snc/forms-terraform/commit/9adb41dfaeb2aefecc3f81e2e606df73b229d02d))
+* Inverted privatelink rule ([#913](https://github.com/cds-snc/forms-terraform/issues/913)) ([608d401](https://github.com/cds-snc/forms-terraform/commit/608d4016384937505a1d4210d68c12279624ff13))
+* Nagware should handle form template with empty name ([#915](https://github.com/cds-snc/forms-terraform/issues/915)) ([c841f3a](https://github.com/cds-snc/forms-terraform/commit/c841f3a331600c547a6806ebda7796ad5cf61838))
+* no healthy hosts alarms should treat missing data as breaching ([#918](https://github.com/cds-snc/forms-terraform/issues/918)) ([190752d](https://github.com/cds-snc/forms-terraform/commit/190752d294aefac3467c85f664391d517e2d7ea8))
+* RDS serverless v2 Terraform sync ([#911](https://github.com/cds-snc/forms-terraform/issues/911)) ([d632641](https://github.com/cds-snc/forms-terraform/commit/d632641ad25d1e91e9f18aa566995f8527be7c16))
+* update api cloudwatch filter to catch logMessage style json ([#902](https://github.com/cds-snc/forms-terraform/issues/902)) ([a5d57da](https://github.com/cds-snc/forms-terraform/commit/a5d57da9522e7b58649c8bb55f9064628d937305))
+* WAF rule logic ([#900](https://github.com/cds-snc/forms-terraform/issues/900)) ([11b40f3](https://github.com/cds-snc/forms-terraform/commit/11b40f34be48b7bddf6377fcf6d7f1aca99ebd33))
+
+
+### Miscellaneous Chores
+
+* Comment out OR statement in WAF for now ([#899](https://github.com/cds-snc/forms-terraform/issues/899)) ([59cc5a9](https://github.com/cds-snc/forms-terraform/commit/59cc5a9327d959b60aeb9644120be7ce0c43bde0))
+* Enable dynamic ip block on WAF ([#917](https://github.com/cds-snc/forms-terraform/issues/917)) ([7d9bf12](https://github.com/cds-snc/forms-terraform/commit/7d9bf129f9554b5fa26fc2fbdf016aedf1423024))
+* re-enable TF management of rds module ([#916](https://github.com/cds-snc/forms-terraform/issues/916)) ([8111786](https://github.com/cds-snc/forms-terraform/commit/8111786f747a537d026c9c2bde6d30a7bffe64c9))
+* remove POST request limit ([#909](https://github.com/cds-snc/forms-terraform/issues/909)) ([0db1847](https://github.com/cds-snc/forms-terraform/commit/0db1847bf07e5d48f5a375503614818f3458ae0c))
+* Replace rds data client in reliability and nagware lambdas ([#906](https://github.com/cds-snc/forms-terraform/issues/906)) ([3c0bcff](https://github.com/cds-snc/forms-terraform/commit/3c0bcffbcb1cec2f38f73057bd5064b939ef6cd5))
+* Seperate WAF uri checks contexts between API and App ([#896](https://github.com/cds-snc/forms-terraform/issues/896)) ([116af75](https://github.com/cds-snc/forms-terraform/commit/116af75889071cb865d42df86131fa56f3e35927))
+* temporarily disable `rds` module plan/apply ([#908](https://github.com/cds-snc/forms-terraform/issues/908)) ([1060361](https://github.com/cds-snc/forms-terraform/commit/106036153e3189eca8c6561caaad4517589e930d))
+* Update Lambda network and change RDS Lib in Lambdas ([#912](https://github.com/cds-snc/forms-terraform/issues/912)) ([788b0bc](https://github.com/cds-snc/forms-terraform/commit/788b0bc5a67689e4b36b05db6a73eb1e9837c51b))
+* Update terraform, terragrunt,and AWS provider ([#898](https://github.com/cds-snc/forms-terraform/issues/898)) ([287c6d1](https://github.com/cds-snc/forms-terraform/commit/287c6d1df002201b0541220a4fd7c195f8ca78e8))
+
 ## [3.26.0](https://github.com/cds-snc/forms-terraform/compare/v3.25.3...v3.26.0) (2024-11-20)
 
 
