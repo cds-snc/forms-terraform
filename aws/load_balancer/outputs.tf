@@ -67,3 +67,13 @@ output "waf_ipv4_new_blocked_ip_metric_filter_namespace" {
   description = "WAF ACL IP blocklist CloudWatch Metric Filter namespace"
   value       = module.waf_ip_blocklist.ipv4_new_blocked_ip_metric_filter_namespace
 }
+
+output "unhealthy_host_count_for_target_group_1_alarm_arn" {
+  description = "ARN of unhealthy host count alarm for target group 1"
+  value       = aws_cloudwatch_metric_alarm.UnHealthyHostCount-TargetGroup1.arn
+}
+
+output "unhealthy_host_count_for_target_group_2_alarm_arn" {
+  description = "ARN of unhealthy host count alarm for target group 2"
+  value       = aws_cloudwatch_metric_alarm.UnHealthyHostCount-TargetGroup2.arn
+}
