@@ -46,7 +46,7 @@ locals {
 }
 
 module "idp_ecs" {
-  source = "github.com/cds-snc/terraform-modules//ecs?ref=59a56cd5ae444dd81b21ba4cf34887d05e3475e2" # v9.6.6
+  source = "github.com/cds-snc/terraform-modules//ecs?ref=64b19ecfc23025718cd687e24b7115777fd09666" # v10.2.1
 
   cluster_name   = "idp"
   service_name   = "zitadel"
