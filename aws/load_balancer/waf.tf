@@ -412,7 +412,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     priority = 80
 
     action {
-      count {}
+      block {}
     }
 
     statement {
@@ -661,7 +661,7 @@ resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {
 # that crosses a block threshold will be added to the blocklist.
 #
 module "waf_ip_blocklist" {
-  source = "github.com/cds-snc/terraform-modules//waf_ip_blocklist?ref=756ec2826ca26bcb353ef7420f542dac4828bdc1" # v10.1.0
+  source = "github.com/cds-snc/terraform-modules//waf_ip_blocklist?ref=64b19ecfc23025718cd687e24b7115777fd09666" # v10.2.1
 
   service_name                     = "forms_app"
   athena_database_name             = "access_logs"
