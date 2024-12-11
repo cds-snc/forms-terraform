@@ -18,7 +18,7 @@ data "aws_iam_policy" "admin" {
 # attribute of each role.
 # 
 module "github_workflow_roles" {
-  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=dca686fdd6670f0b3625bc17a5661bec3ea5aa62" #v9.0.3
+  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=64b19ecfc23025718cd687e24b7115777fd09666" # v10.2.1
   billing_tag_value = var.billing_tag_value
   roles = [
     {
