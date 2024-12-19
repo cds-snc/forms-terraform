@@ -1,4 +1,4 @@
-FROM amazon/aws-lambda-python:3.12@sha256:37b95206c4c78331f6d5cb0e8389ef573f39cfea01f73c530f28f3ac6f6493c7
+FROM amazon/aws-lambda-python:3.13@sha256:356eadf91ea8afa08ab2eea32834141a696c4feaae41120b837ebe38258091d1
 
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
