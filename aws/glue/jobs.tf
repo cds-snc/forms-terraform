@@ -54,6 +54,7 @@ resource "aws_glue_job" "rds_glue_job" {
     "--rds_password" = var.rds_db_password
     "--rds_bucket" = var.datalake_bucket_name
   }
+  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 }
 
 # Set the trigger for the job.
@@ -115,4 +116,46 @@ resource "aws_glue_job" "historical_glue_job" {
     "--rds_bucket" = var.datalake_bucket_name
     "--historical_csv" = "s3://${aws_s3_object.historical_csv.bucket}/${aws_s3_object.historical_csv.key}"
   }
+  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
+}
+
+############################################
+# Test Script Glue Job
+############################################
+
+# Define the local file data source
+data "local_file" "testgen_glue_script" {
+  filename = "${path.module}/scripts/generate_tests_etl.py"
+}
+
+# Define the S3 bucket object resource p1
+resource "aws_s3_object" "testgen_glue_script" {
+  bucket = var.etl_bucket_name
+  key    = "generate_tests_etl.py"
+  source = data.local_file.testgen_glue_script.filename
+  etag   = filemd5(data.local_file.testgen_glue_script.filename)
+}
+
+# Define the Glue job resource
+resource "aws_glue_job" "testgen_glue_job" {
+  name     = "testgen_glue_job"
+  role_arn = aws_iam_role.glue_etl.arn
+  command {
+    script_location = "s3://${aws_s3_object.testgen_glue_script.bucket}/${aws_s3_object.testgen_glue_script.key}"
+    python_version  = "3"
+  }
+  default_arguments = {
+    "--continuous-log-logGroup" = aws_cloudwatch_log_group.glue_log_group.name
+    "--continuous-log-logStreamPrefix"   = aws_cloudwatch_log_stream.glue_log_stream.name
+    "--enable-continuous-cloudwatch-log" = "true"
+    "--enable-continuous-log-filter"     = "true"
+    "--enable-metrics"                   = "true"
+    "--enable-observability-metrics"     = "true"
+    "--connection_name" = "rds_connection"
+    "--database_name" = "rds_db_catalog"
+    "--table_name" = "rds_report_processed_data"
+    "--output_s3_path" = "s3://${var.datalake_bucket_name}/test_data/"
+    "--num_partitions" = "1"
+  }
+  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 }
