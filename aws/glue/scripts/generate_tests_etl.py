@@ -1,4 +1,5 @@
 import sys
+import json
 import random
 import string
 import datetime
@@ -82,6 +83,22 @@ def random_timestamp():
     random_seconds = random.randrange(int(delta.total_seconds()))
     return start_datetime + datetime.timedelta(seconds=random_seconds)
 
+def random_jsonConfig():
+    # Generate a random JSON object with a payload size of up to 5mb.
+    max_size = 5 * 1024 * 1024  # 5 MB
+    json_object = {}
+
+    while True:
+        key = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+        value = ''.join(random.choices(string.ascii_letters + string.digits, k=100))
+        json_object[key] = value
+        
+        json_str = json.dumps(json_object)
+        if len(json_str.encode('utf-8')) >= max_size:
+            break
+
+    return json_object
+
 def generate_random_value(field):
     field_name = field.name
     spark_type = field.dataType
@@ -91,6 +108,8 @@ def generate_random_value(field):
         return random.choice(["Protected A", "Unclassified", "Protected B"])
     if field_name == "jsonConfig":
         return random.choice(["{\"key1\": \"value1\", \"key2\": \"value2\"}", "{}"])
+    if field_name == "jsonConfig":
+        return random_jsonConfig()
 
     """Return a random value compatible with the given Spark data type."""
     if isinstance(spark_type, StringType):
@@ -110,7 +129,7 @@ def generate_random_value(field):
 # ----------------------------------------------------------------------------
 # 3. Build random rows by iterating over the schema
 # ----------------------------------------------------------------------------
-NUM_ROWS = 10000
+NUM_ROWS = 1000
 
 data_rows = []
 for _ in range(NUM_ROWS):
