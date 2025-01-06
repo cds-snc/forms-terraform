@@ -107,8 +107,6 @@ def generate_random_value(field):
     if field_name == "securityAttribute":
         return random.choice(["Protected A", "Unclassified", "Protected B"])
     if field_name == "jsonConfig":
-        return random.choice(["{\"key1\": \"value1\", \"key2\": \"value2\"}", "{}"])
-    if field_name == "jsonConfig":
         return random_jsonConfig()
 
     """Return a random value compatible with the given Spark data type."""
