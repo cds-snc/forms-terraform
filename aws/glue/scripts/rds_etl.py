@@ -5,7 +5,8 @@ from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.dynamicframe import DynamicFrame
-from pyspark.sql.functions import col, from_unixtime, date_format, lit, current_timestamp
+from pyspark.sql.functions import col, from_unixtime, date_format, lit, current_timestamp, from_json
+from pyspark.sql.types import StructType, StructField, StringType
 from datetime import datetime
 
 # Initialize Glue context
@@ -43,12 +44,16 @@ redacted_df = redacted_df.withColumn("updated_at", date_format(from_unixtime(col
 # Add a timestamp column for Athena to use as a partition.
 redacted_df = redacted_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
 # Parse the jsonConfig column to extract the values
-redacted_df = (
-    redacted_df
-    .withColumn("titleEn", get_json_object(col("jsonConfig"), '$.titleEn'))
-    .withColumn("titleFr", get_json_object(col("jsonConfig"), '$.titleFr'))
-    .drop("jsonConfig")  # remove this if you want to keep the original json column
-)
+
+json_schema = StructType([
+     StructField("titleEn", StringType(), True),
+     StructField("titleFr", StringType(), True),
+])
+
+redacted_df = redacted_df.withColumn("parsed_json", from_json(col("jsonConfig"), json_schema))
+redacted_df = redacted_df.withColumn("titleEn", col("parsed_json.titleEn"))
+redacted_df = redacted_df.withColumn("titleFr", col("parsed_json.titleFr"))
+redacted_df = redacted_df.drop("jsonConfig", "parsed_json")  # drop json columns
 
 logger.info("Produced Redacted Data Frame")
 
