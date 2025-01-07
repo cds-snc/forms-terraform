@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.27.1](https://github.com/cds-snc/forms-terraform/compare/v3.27.0...v3.27.1) (2024-12-18)
+
+
+### Bug Fixes
+
+* maintenance page not showing up if Web App target group is not healthy but API one still is ([#919](https://github.com/cds-snc/forms-terraform/issues/919)) ([fcb6940](https://github.com/cds-snc/forms-terraform/commit/fcb6940efa8e7ccfab1e9900a1cf99d34f0e3fc4))
+
+
+### Miscellaneous Chores
+
+* add reference name to previously created Route53 health checks ([#922](https://github.com/cds-snc/forms-terraform/issues/922)) ([7030647](https://github.com/cds-snc/forms-terraform/commit/703064752a8bf3d8621a77b595c97468b00077f4))
+* Update core terraform-modules to 10.2.1 ([#921](https://github.com/cds-snc/forms-terraform/issues/921)) ([c2459d3](https://github.com/cds-snc/forms-terraform/commit/c2459d3a0b59f7c0264e78e85a397e69d773e220))
+
+
+### Code Refactoring
+
+* replace use of Status with new Status#CreatedAt attribute when requesting Vault items ([#904](https://github.com/cds-snc/forms-terraform/issues/904)) ([3153f5b](https://github.com/cds-snc/forms-terraform/commit/3153f5bc02909e6e62b5fff2bb82aea8673d9a0f))
+
 ## [3.27.0](https://github.com/cds-snc/forms-terraform/compare/v3.26.0...v3.27.0) (2024-12-09)
 
 
