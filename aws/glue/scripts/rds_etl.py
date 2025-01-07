@@ -42,6 +42,13 @@ redacted_df = redacted_df.withColumn("created_at", date_format(from_unixtime(col
 redacted_df = redacted_df.withColumn("updated_at", date_format(from_unixtime(col("updated_at").cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
 # Add a timestamp column for Athena to use as a partition.
 redacted_df = redacted_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
+# Parse the jsonConfig column to extract the values
+redacted_df = (
+    redacted_df
+    .withColumn("titleEn", get_json_object(col("jsonConfig"), '$.titleEn'))
+    .withColumn("titleFr", get_json_object(col("jsonConfig"), '$.titleFr'))
+    .drop("jsonConfig")  # remove this if you want to keep the original json column
+)
 
 logger.info("Produced Redacted Data Frame")
 
