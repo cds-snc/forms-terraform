@@ -5,8 +5,8 @@ from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.dynamicframe import DynamicFrame
-from pyspark.sql.functions import col, from_unixtime, date_format, lit, current_timestamp, from_json
-from pyspark.sql.types import StructType, StructField, StringType
+from pyspark.sql.functions import col, from_unixtime, date_format, lit, current_timestamp, from_json, explode, explode_outer, sum as spark_sum
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, ArrayType, BooleanType
 from datetime import datetime
 
 # Initialize Glue context
@@ -43,17 +43,97 @@ redacted_df = redacted_df.withColumn("created_at", date_format(from_unixtime(col
 redacted_df = redacted_df.withColumn("updated_at", date_format(from_unixtime(col("updated_at").cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
 # Add a timestamp column for Athena to use as a partition.
 redacted_df = redacted_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
-# Parse the jsonConfig column to extract the values
+
+# ---- Parse the jsonConfig column to extract the values ----
+# Add Substructures
+sub_element_schema = StructType([
+    StructField("id", IntegerType(), True),
+    StructField("type", StringType(), True),
+    StructField("properties", StructType([]), True),
+])
+
+properties_schema = StructType([
+    StructField("subElements", ArrayType(sub_element_schema), True),
+])
+
+element_schema = StructType([
+    StructField("id", IntegerType(), True),
+    StructField("type", StringType(), True),
+    StructField("properties", properties_schema),
+])
 
 json_schema = StructType([
      StructField("titleEn", StringType(), True),
      StructField("titleFr", StringType(), True),
+     StructField("elements", ArrayType(element_schema), True),
 ])
 
+# Perform json parse
 redacted_df = redacted_df.withColumn("parsed_json", from_json(col("jsonConfig"), json_schema))
 redacted_df = redacted_df.withColumn("titleEn", col("parsed_json.titleEn"))
 redacted_df = redacted_df.withColumn("titleFr", col("parsed_json.titleFr"))
-redacted_df = redacted_df.drop("jsonConfig", "parsed_json")  # drop json columns
+
+# handle the array of elements
+elements_df = (
+    redacted_df.select(
+        col("id"),
+        explode(col("parsed_json.elements")).alias("element")
+    )
+)
+top_level_types_df = (
+    elements_df
+    .select(
+        col("id"),
+        col("element.type").alias("element_type")
+    )
+    .withColumn("count_value", lit(1))
+)
+sub_elements_df = (
+    elements_df
+    .select(
+        col("id"),
+        explode_outer(col("element.properties.subElements")).alias("subElement")
+    )
+    # If subElements can be null, consider explode_outer or handle null arrays.
+)
+
+sub_types_df = (
+    sub_elements_df
+    .select(
+        col("id"),
+        col("subElement.type").alias("element_type")
+    )
+    .withColumn("count_value", lit(1))
+)
+
+all_types_df = top_level_types_df.unionByName(sub_types_df)
+
+grouped_counts_df = (
+    all_types_df
+    .groupBy("id", "element_type")
+    .agg(spark_sum("count_value").alias("type_count"))
+)
+
+pivoted_df = (
+    grouped_counts_df
+    .groupBy("id")
+    .pivot("element_type")
+    .sum("type_count")
+    .na.fill(0)  # fill missing type columns with 0
+)
+
+renamed_cols_df = pivoted_df
+for c in renamed_cols_df.columns:
+    if c != "id":
+        renamed_cols_df = renamed_cols_df.withColumnRenamed(c, f"{c}_count")
+
+redacted_df = (
+    redacted_df
+    .join(renamed_cols_df, on="id", how="left")
+)
+
+# drop the jsonConfig and parsed_json columns
+redacted_df = redacted_df.drop("jsonConfig", "parsed_json")
 
 logger.info("Produced Redacted Data Frame")
 
