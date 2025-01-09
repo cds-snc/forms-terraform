@@ -349,24 +349,15 @@ function handleDynamicForm(
 }
 
 function handleArrayResponse(title: string, response: Response, collector: string[]) {
-  if (!Array.isArray(response)) throw new Error("Checkbox responses must be in an array");
-  if (response.length) {
-    if (Array.isArray(response)) {
-      const responses = response
-        .map((item) => {
-          return `-  ${item}`;
-        })
-        .join(String.fromCharCode(13));
-      collector.push(`**${title}**${String.fromCharCode(13)}${responses}`);
-      return;
-    } else {
-      handleTextResponse(title, response, collector);
-      return;
-    }
+  if (Array.isArray(response) && response.length > 0) {
+    const responses = response.map((item) => `-  ${item}`).join(String.fromCharCode(13));
+    collector.push(`**${title}**${String.fromCharCode(13)}${responses}`);
+    return;
   }
+
   // Note the below dash is an em_dash (longer dash). This is a work around for a lone dash being
   // stripped out in an email. Same fore similar cases below.
-  collector.push(`**${title}**${String.fromCharCode(13)}—`); 
+  collector.push(`**${title}**${String.fromCharCode(13)}—`);
 }
 
 function handleTextResponse(title: string, response: Response, collector: string[]) {
