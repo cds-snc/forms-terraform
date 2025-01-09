@@ -35,6 +35,20 @@ datasource0 = glueContext.create_dynamic_frame.from_options(
     transformation_ctx = "datasource0"
 )
 
+deliveryOption_df = glueContext.create_dynamic_frame.from_options(
+    connection_type = "postgresql",
+    connection_options = {
+        "url": f"jdbc:postgresql://{args['rds_endpoint']}:4510/{args['rds_db_name']}",
+        "dbtable": "DeliveryOption",
+        "user": args['rds_username'],
+        "password": args['rds_password']
+    },
+    transformation_ctx = "delivery_option_df"
+).toDF()
+
+# Select only the templateId column to check existence
+deliveryOption_df = deliveryOption_df.select(col("templateId").alias("id")).distinct()
+
 # ------- Step 3 -------
 # Process the data (easy-mode)
 
@@ -43,6 +57,14 @@ current_stamp = current_timestamp()
 
 # Remove Bearer Token
 redacted_df = datasource0.toDF().drop("bearerToken")
+
+# Add delivery option to the redacted_df
+redacted_df = (
+    redacted_df
+    .join(deliveryOption_df.withColumn("deliveryOption", lit(1)), on="id", how="left")  # left join
+    .withColumn("deliveryOption", col("deliveryOption").isNotNull().cast("int"))  # Convert existence to 0 or 1
+)
+
 # Ensure the data types are set to timestamps for Athena.
 redacted_df = redacted_df.withColumn("created_at", date_format(from_unixtime(col("created_at").cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
 redacted_df = redacted_df.withColumn("updated_at", date_format(from_unixtime(col("updated_at").cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
