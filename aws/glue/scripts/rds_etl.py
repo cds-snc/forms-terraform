@@ -110,6 +110,7 @@ all_types_df = top_level_types_df.unionByName(sub_types_df)
 
 grouped_counts_df = (
     all_types_df
+    .filter(col("element_type").isNotNull()) # filter out null types (eg: form subelements and elements that don't have an 'element_type')
     .groupBy("id", "element_type")
     .agg(spark_sum("count_value").alias("type_count"))
 )
