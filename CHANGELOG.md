@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.27.2](https://github.com/cds-snc/forms-terraform/compare/v3.27.1...v3.27.2) (2025-01-09)
+
+
+### Bug Fixes
+
+* handle empty string response for checkbox components ([#925](https://github.com/cds-snc/forms-terraform/issues/925)) ([dab2a51](https://github.com/cds-snc/forms-terraform/commit/dab2a5179f247fc49e8b40a61f4254817245bd37))
+
 ## [3.27.1](https://github.com/cds-snc/forms-terraform/compare/v3.27.0...v3.27.1) (2024-12-18)
 
 
