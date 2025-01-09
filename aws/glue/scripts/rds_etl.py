@@ -5,7 +5,7 @@ from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.dynamicframe import DynamicFrame
-from pyspark.sql.functions import col, from_unixtime, date_format, lit, current_timestamp, from_json, explode, explode_outer, sum as spark_sum
+from pyspark.sql.functions import col, from_unixtime, date_format, lit, current_timestamp, from_json, explode, explode_outer, sum as spark_sum, when
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, ArrayType, BooleanType
 from datetime import datetime
 
@@ -46,8 +46,21 @@ deliveryOption_df = glueContext.create_dynamic_frame.from_options(
     transformation_ctx = "delivery_option_df"
 ).toDF()
 
+apiServiceAccount_df = glueContext.create_dynamic_frame.from_options(
+    connection_type="postgresql",
+    connection_options={
+        "url": f"jdbc:postgresql://{args['rds_endpoint']}:4510/{args['rds_db_name']}",
+        "dbtable": "ApiServiceAccount",
+        "user": args['rds_username'],
+        "password": args['rds_password']
+    },
+    transformation_ctx="api_service_account_df"
+).toDF()
+
+
 # Select only the templateId column to check existence
 deliveryOption_df = deliveryOption_df.select(col("templateId").alias("id")).distinct()
+apiServiceAccount_df = apiServiceAccount_df.select(col("templateId").alias("id")).distinct()
 
 # ------- Step 3 -------
 # Process the data (easy-mode)
@@ -58,12 +71,30 @@ current_stamp = current_timestamp()
 # Remove Bearer Token
 redacted_df = datasource0.toDF().drop("bearerToken")
 
+# ------- Step 3.1 -------
 # Add delivery option to the redacted_df
+
+# Perform left joins to check existence in each table
 redacted_df = (
     redacted_df
-    .join(deliveryOption_df.withColumn("deliveryOption", lit(1)), on="id", how="left")  # left join
-    .withColumn("deliveryOption", col("deliveryOption").isNotNull().cast("int"))  # Convert existence to 0 or 1
+    .join(deliveryOption_df.withColumn("in_delivery_option", lit(1)), on="id", how="left")
+    .join(apiServiceAccount_df.withColumn("in_api_service_account", lit(1)), on="id", how="left")
 )
+
+# Assign deliveryOption based on the join results
+redacted_df = redacted_df.withColumn(
+    "deliveryOption",
+    when(col("in_delivery_option").isNotNull() & col("in_api_service_account").isNotNull(), lit(99))  # Both tables
+    .when(col("in_delivery_option").isNotNull(), lit(1))  # Only in DeliveryOption
+    .when(col("in_api_service_account").isNotNull(), lit(2))  # Only in ApiServiceAccount
+    .otherwise(lit(0))  # None
+)
+
+# Drop intermediate columns
+redacted_df = redacted_df.drop("in_delivery_option", "in_api_service_account")
+
+# ------- Step 3.2 -------
+# the easy stuff
 
 # Ensure the data types are set to timestamps for Athena.
 redacted_df = redacted_df.withColumn("created_at", date_format(from_unixtime(col("created_at").cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
