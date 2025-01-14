@@ -57,6 +57,30 @@ apiServiceAccount_df = glueContext.create_dynamic_frame.from_options(
     transformation_ctx="api_service_account_df"
 ).toDF()
 
+# --- USER Table can't be loaded via dynamic frame due to column names A and B - so we'll use jdbc directly
+# ------ Column Names MUST be lower clase for the dynamic frame to work. :/
+# Define the database connection properties
+jdbc_url = f"jdbc:postgresql://{args['rds_endpoint']}:4510/{args['rds_db_name']}"
+connection_properties = {
+    "user": args['rds_username'],
+    "password": args['rds_password'],
+    "driver": "org.postgresql.Driver"
+}
+
+# Read the data from the database into a DataFrame
+template_to_user_df = spark.read.jdbc(
+    url=jdbc_url,
+    table='(SELECT "A" as a, "B" as b FROM public."_TemplateToUser") as template_to_user_view',
+    properties=connection_properties
+)
+
+# Create a temporary view for the DataFrame
+template_to_user_df.createOrReplaceTempView("template_to_user_view")
+
+# Access the temporary view as a DataFrame
+userToTemplate_df = spark.table("template_to_user_view")
+
+# - Done the User table load...
 
 # Select only the templateId column to check existence
 deliveryOption_df = deliveryOption_df.select(col("templateId").alias("id")).distinct()
@@ -92,6 +116,13 @@ redacted_df = redacted_df.withColumn(
 
 # Drop intermediate columns
 redacted_df = redacted_df.drop("in_delivery_option", "in_api_service_account")
+
+# Add user id.
+redacted_df = (
+    redacted_df.
+    join(userToTemplate_df.withColumn("user_id", col("B")), on=col("id") == col("A"), how="left")
+    .drop("a", "b")
+)
 
 # ------- Step 3.2 -------
 # the easy stuff
