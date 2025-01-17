@@ -3,7 +3,6 @@ import convertMessage from "./markdown.js";
 import { extractFileInputResponses, notifyProcessed } from "./dataLayer.js";
 import { retrieveFilesFromReliabilityStorage } from "./s3FileInput.js";
 import { FormSubmission } from "./types.js";
-import { AxiosError } from "axios";
 import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 
 const client = new SecretsManagerClient();
