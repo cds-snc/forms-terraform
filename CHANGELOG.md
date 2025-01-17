@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.27.3](https://github.com/cds-snc/forms-terraform/compare/v3.27.2...v3.27.3) (2025-01-17)
+
+
+### Bug Fixes
+
+* handle undefined answer for dynamic row question type ([#927](https://github.com/cds-snc/forms-terraform/issues/927)) ([d5910be](https://github.com/cds-snc/forms-terraform/commit/d5910bec75f047e8e074669ba71dacc796951a0e))
+
 ## [3.27.2](https://github.com/cds-snc/forms-terraform/compare/v3.27.1...v3.27.2) (2025-01-09)
 
 
