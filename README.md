@@ -174,19 +174,9 @@ $ ./deploy-lambda-images.sh
 
 ![Vault Table](./readme_images/Vault.png)
 
-#### Archive Global Secondary Index
+#### StatusCreatedAt Global Secondary Index
 
-This Index supports the archiving of Vault responses
-![Archive GSI](./readme_images/GSI_Vault_Archive.png)
-
-#### Status Global Secondary Index
-
-This Index supports the future feature of the Retrieval API. Essentially the ability to retrieve responses without using the Application Interface.
-![Status Index](./readme_images/GSI_Vault_Status.png)
-
-#### Nagware Global Secondary Index
-
-This Index supports the Nagware feature. It gives the ability to retrieve form submissions with a specific status and creation date.
-![Nagware Index](./readme_images/GSI_Vault_Nagware.png)
+This Index supports the future feature of the GCForms API. Essentially the ability to retrieve responses without using the Application Interface.
+![StatusCreatedAt Index](./readme_images/GSI_Vault_StatusCreatedAt.png)
 
 # Traduction en français à venir...
