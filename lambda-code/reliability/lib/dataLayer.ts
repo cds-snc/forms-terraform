@@ -304,7 +304,8 @@ function handleDynamicForm(
   collector: string[],
   language: string
 ) {
-  if (!Array.isArray(response)) throw new Error("Dynamic Row responses must be in an array");
+  if (response === undefined || response === null || Array.isArray(response) === false) return;
+
   const responseCollector = response.map((row, rIndex: number) => {
     const rowCollector: string[] = [];
     question.map((qItem, qIndex) => {
@@ -333,16 +334,24 @@ function handleDynamicForm(
           );
           break;
         case "addressComplete":
-          handleAddressCompleteResponse(qTitle, (row as Record<string, Response>)[qIndex], rowCollector, language, qItem.properties.addressComponents);
+          handleAddressCompleteResponse(
+            qTitle,
+            (row as Record<string, Response>)[qIndex],
+            rowCollector,
+            language,
+            qItem.properties.addressComponents
+          );
           break;
         default:
           // Do not try to handle form elements like richText that do not have responses
           break;
       }
     });
+
     rowCollector.unshift(`${String.fromCharCode(13)}***${rowLabel} ${rIndex + 1}***`);
     return rowCollector.join(String.fromCharCode(13));
   });
+
   responseCollector.unshift(`**${title}**`);
   collector.push(responseCollector.join(String.fromCharCode(13)));
 }
