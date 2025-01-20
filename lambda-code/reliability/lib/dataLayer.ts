@@ -133,7 +133,6 @@ export async function saveToVault(
             FormSubmissionLanguage: language,
             CreatedAt: Number(createdAt),
             SecurityAttribute: securityAttribute,
-            Status: "New",
             "Status#CreatedAt": `New#${Number(createdAt)}`,
             ConfirmationCode: confirmationCode,
             Name: name,
@@ -305,7 +304,8 @@ function handleDynamicForm(
   collector: string[],
   language: string
 ) {
-  if (!Array.isArray(response)) throw new Error("Dynamic Row responses must be in an array");
+  if (response === undefined || response === null || Array.isArray(response) === false) return;
+
   const responseCollector = response.map((row, rIndex: number) => {
     const rowCollector: string[] = [];
     question.map((qItem, qIndex) => {
@@ -334,39 +334,38 @@ function handleDynamicForm(
           );
           break;
         case "addressComplete":
-          handleAddressCompleteResponse(qTitle, (row as Record<string, Response>)[qIndex], rowCollector, language, qItem.properties.addressComponents);
+          handleAddressCompleteResponse(
+            qTitle,
+            (row as Record<string, Response>)[qIndex],
+            rowCollector,
+            language,
+            qItem.properties.addressComponents
+          );
           break;
         default:
           // Do not try to handle form elements like richText that do not have responses
           break;
       }
     });
+
     rowCollector.unshift(`${String.fromCharCode(13)}***${rowLabel} ${rIndex + 1}***`);
     return rowCollector.join(String.fromCharCode(13));
   });
+
   responseCollector.unshift(`**${title}**`);
   collector.push(responseCollector.join(String.fromCharCode(13)));
 }
 
 function handleArrayResponse(title: string, response: Response, collector: string[]) {
-  if (!Array.isArray(response)) throw new Error("Checkbox responses must be in an array");
-  if (response.length) {
-    if (Array.isArray(response)) {
-      const responses = response
-        .map((item) => {
-          return `-  ${item}`;
-        })
-        .join(String.fromCharCode(13));
-      collector.push(`**${title}**${String.fromCharCode(13)}${responses}`);
-      return;
-    } else {
-      handleTextResponse(title, response, collector);
-      return;
-    }
+  if (Array.isArray(response) && response.length > 0) {
+    const responses = response.map((item) => `-  ${item}`).join(String.fromCharCode(13));
+    collector.push(`**${title}**${String.fromCharCode(13)}${responses}`);
+    return;
   }
+
   // Note the below dash is an em_dash (longer dash). This is a work around for a lone dash being
   // stripped out in an email. Same fore similar cases below.
-  collector.push(`**${title}**${String.fromCharCode(13)}—`); 
+  collector.push(`**${title}**${String.fromCharCode(13)}—`);
 }
 
 function handleTextResponse(title: string, response: Response, collector: string[]) {

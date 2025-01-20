@@ -1,5 +1,37 @@
 # Changelog
 
+## [3.27.3](https://github.com/cds-snc/forms-terraform/compare/v3.27.2...v3.27.3) (2025-01-17)
+
+
+### Bug Fixes
+
+* handle undefined answer for dynamic row question type ([#927](https://github.com/cds-snc/forms-terraform/issues/927)) ([d5910be](https://github.com/cds-snc/forms-terraform/commit/d5910bec75f047e8e074669ba71dacc796951a0e))
+
+## [3.27.2](https://github.com/cds-snc/forms-terraform/compare/v3.27.1...v3.27.2) (2025-01-09)
+
+
+### Bug Fixes
+
+* handle empty string response for checkbox components ([#925](https://github.com/cds-snc/forms-terraform/issues/925)) ([dab2a51](https://github.com/cds-snc/forms-terraform/commit/dab2a5179f247fc49e8b40a61f4254817245bd37))
+
+## [3.27.1](https://github.com/cds-snc/forms-terraform/compare/v3.27.0...v3.27.1) (2024-12-18)
+
+
+### Bug Fixes
+
+* maintenance page not showing up if Web App target group is not healthy but API one still is ([#919](https://github.com/cds-snc/forms-terraform/issues/919)) ([fcb6940](https://github.com/cds-snc/forms-terraform/commit/fcb6940efa8e7ccfab1e9900a1cf99d34f0e3fc4))
+
+
+### Miscellaneous Chores
+
+* add reference name to previously created Route53 health checks ([#922](https://github.com/cds-snc/forms-terraform/issues/922)) ([7030647](https://github.com/cds-snc/forms-terraform/commit/703064752a8bf3d8621a77b595c97468b00077f4))
+* Update core terraform-modules to 10.2.1 ([#921](https://github.com/cds-snc/forms-terraform/issues/921)) ([c2459d3](https://github.com/cds-snc/forms-terraform/commit/c2459d3a0b59f7c0264e78e85a397e69d773e220))
+
+
+### Code Refactoring
+
+* replace use of Status with new Status#CreatedAt attribute when requesting Vault items ([#904](https://github.com/cds-snc/forms-terraform/issues/904)) ([3153f5b](https://github.com/cds-snc/forms-terraform/commit/3153f5bc02909e6e62b5fff2bb82aea8673d9a0f))
+
 ## [3.27.0](https://github.com/cds-snc/forms-terraform/compare/v3.26.0...v3.27.0) (2024-12-09)
 
 
