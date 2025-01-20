@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.27.4](https://github.com/cds-snc/forms-terraform/compare/v3.27.3...v3.27.4) (2025-01-20)
+
+
+### Miscellaneous Chores
+
+* remove unused Vault Status global secondary index as well as Status property in Vault table ([#903](https://github.com/cds-snc/forms-terraform/issues/903)) ([259c3f8](https://github.com/cds-snc/forms-terraform/commit/259c3f821ee908192ba30f46f62916a291b542d8))
+
 ## [3.27.3](https://github.com/cds-snc/forms-terraform/compare/v3.27.2...v3.27.3) (2025-01-17)
 
 
