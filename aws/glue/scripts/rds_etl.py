@@ -130,7 +130,7 @@ redacted_df = (
 # Ensure the data types are set to timestamps for Athena.
 redacted_df = redacted_df.withColumn("created_at", date_format(from_unixtime(col("created_at").cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
 redacted_df = redacted_df.withColumn("updated_at", date_format(from_unixtime(col("updated_at").cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
-redacted_df = redacted_df.withColumn("closingDate", date_format(from_unixtime(col("updated_at").cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
+redacted_df = redacted_df.withColumn("closingDate", date_format(from_unixtime(col("closingDate").cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
 
 # Add a timestamp column for Athena to use as a partition.
 redacted_df = redacted_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
