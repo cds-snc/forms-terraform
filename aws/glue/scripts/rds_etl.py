@@ -155,9 +155,14 @@ element_schema = StructType([
     StructField("properties", properties_schema),
 ])
 
+brand_schema = StructType([
+    StructField("name", StringType(), True),
+])
+
 json_schema = StructType([
      StructField("titleEn", StringType(), True),
      StructField("titleFr", StringType(), True),
+     StructField("brand", brand_schema, True),
      StructField("elements", ArrayType(element_schema), True),
 ])
 
@@ -165,6 +170,7 @@ json_schema = StructType([
 redacted_df = redacted_df.withColumn("parsed_json", from_json(col("jsonConfig"), json_schema))
 redacted_df = redacted_df.withColumn("titleEn", col("parsed_json.titleEn"))
 redacted_df = redacted_df.withColumn("titleFr", col("parsed_json.titleFr"))
+redacted_df = redacted_df.withColumn("brand", col("parsed_json.brand.name"))
 
 # ------- Step 4.1 -------
 # handle the array of elements and subElements
