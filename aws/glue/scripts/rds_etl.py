@@ -79,8 +79,17 @@ template_to_user_df.createOrReplaceTempView("template_to_user_view")
 
 # Access the temporary view as a DataFrame
 userToTemplate_df = spark.table("template_to_user_view")
-
 # - Done the User table load...
+userTable_df = glueContext.create_dynamic_frame.from_options(
+    connection_type = "postgresql",
+    connection_options = {
+        "url": f"jdbc:postgresql://{args['rds_endpoint']}:4510/{args['rds_db_name']}",
+        "dbtable": "User",
+        "user": args['rds_username'],
+        "password": args['rds_password']
+    },
+    transformation_ctx = "userTable_df"
+)
 
 # Select only the templateId column to check existence
 deliveryOption_df = deliveryOption_df.select(col("templateId").alias("id")).distinct()
@@ -116,13 +125,6 @@ redacted_df = redacted_df.withColumn(
 
 # Drop intermediate columns
 redacted_df = redacted_df.drop("in_delivery_option", "in_api_service_account")
-
-# Add user id.
-redacted_df = (
-    redacted_df.
-    join(userToTemplate_df.withColumn("user_id", col("B")), on=col("id") == col("A"), how="left")
-    .drop("a", "b")
-)
 
 # ------- Step 3.2 -------
 # the easy stuff
@@ -248,14 +250,37 @@ final_df = DynamicFrame.fromDF(redacted_df, glueContext, "final_df")
 
 logger.info("Produced Final Dynamic Frame")
 
-# ------- Step 6 -------
+# ------ Step 6 -------
+# handle the user and user to template tables.
+redacted_user_df = userTable_df.toDF().drop("image")
+
+# rename user to template table columns (A = templateId, B = userId)
+template_to_user_df = template_to_user_df.withColumnRenamed("A", "templateId").withColumnRenamed("B", "userId")
+
+# ------- Step 7 -------
 # Write the processed data to the target
-datasink4 = glueContext.write_dynamic_frame.from_options(
+templateDataSink = glueContext.write_dynamic_frame.from_options(
     frame = final_df,
     connection_type = "s3",
-    connection_options = {"path": f"s3://{args['rds_bucket']}/processed-data/"},
+    connection_options = {"path": f"s3://{args['rds_bucket']}/processed-data/template/"},
     format = "parquet",
-    transformation_ctx = "datasink4"
+    transformation_ctx = "templateDataSink"
+)
+
+userDataSink = glueContext.write_dynamic_frame.from_options(
+    frame = DynamicFrame.fromDF(redacted_user_df, glueContext, "redacted_user_df"),
+    connection_type = "s3",
+    connection_options = {"path": f"s3://{args['rds_bucket']}/processed-data/user"},
+    format = "parquet",
+    transformation_ctx = "userDataSink"
+)
+
+templateToUserDataSink = glueContext.write_dynamic_frame.from_options(
+    frame = DynamicFrame.fromDF(template_to_user_df, glueContext, "template_to_user_df"),
+    connection_type = "s3",
+    connection_options = {"path": f"s3://{args['rds_bucket']}/processed-data/templateToUser"},
+    format = "parquet",
+    transformation_ctx = "templateToUserDataSink"
 )
 
 logger.info("Data written to S3")

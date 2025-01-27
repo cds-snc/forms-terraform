@@ -31,14 +31,22 @@ resource "aws_glue_crawler" "forms_rds_data" {
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 
   s3_target {
-    path = "s3://${var.datalake_bucket_name}/processed-data"
+    path = "s3://${var.datalake_bucket_name}/processed-data/template/"
+  }
+
+  s3_target {
+    path = "s3://${var.datalake_bucket_name}/processed-data/user/"
+  }
+
+  s3_target {
+    path = "s3://${var.datalake_bucket_name}/processed-data/templateToUser/"
   }
 
   configuration = jsonencode(
     {
       CrawlerOutput = {
         Tables = {
-          TableThreshold = 2
+          TableThreshold = 3
         }
       }
       CreatePartitionIndex = true
