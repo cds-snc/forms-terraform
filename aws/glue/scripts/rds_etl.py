@@ -253,9 +253,13 @@ logger.info("Produced Final Dynamic Frame")
 # ------ Step 6 -------
 # handle the user and user to template tables.
 redacted_user_df = userTable_df.toDF().drop("image")
+# add timestamp
+redacted_user_df = redacted_user_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
 
 # rename user to template table columns (A = templateId, B = userId)
 template_to_user_df = template_to_user_df.withColumnRenamed("A", "templateId").withColumnRenamed("B", "userId")
+# add timestamp
+template_to_user_df = template_to_user_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
 
 # ------- Step 7 -------
 # Write the processed data to the target
