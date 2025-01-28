@@ -19,6 +19,6 @@ inputs = {
   vault_file_storage_id = dependency.s3.outputs.vault_file_storage_id
 }
 
-include {
-  path = find_in_parent_folders()
+include "root" {
+  path = find_in_parent_folders("root.hcl")
 }

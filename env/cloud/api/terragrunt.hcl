@@ -140,6 +140,6 @@ inputs = {
   sqs_api_audit_log_queue_arn = dependency.sqs.outputs.sqs_api_audit_log_queue_arn
 }
 
-include {
-  path = find_in_parent_folders()
+include "root" {
+  path = find_in_parent_folders("root.hcl")
 }

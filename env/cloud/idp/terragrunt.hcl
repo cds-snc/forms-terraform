@@ -72,6 +72,6 @@ inputs = {
   idp_database_max_acu = 4
 }
 
-include {
-  path = find_in_parent_folders()
+include "root" {
+  path = find_in_parent_folders("root.hcl")
 }
