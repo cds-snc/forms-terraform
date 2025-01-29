@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.27.5](https://github.com/cds-snc/forms-terraform/compare/v3.27.4...v3.27.5) (2025-01-29)
+
+
+### Miscellaneous Chores
+
+* update terragrunt et al ([#931](https://github.com/cds-snc/forms-terraform/issues/931)) ([3a4e619](https://github.com/cds-snc/forms-terraform/commit/3a4e619e9f0bd45e36ebc1bff85bbbf40625720f))
+
 ## [3.27.4](https://github.com/cds-snc/forms-terraform/compare/v3.27.3...v3.27.4) (2025-01-21)
 
 
