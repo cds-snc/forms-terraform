@@ -20,32 +20,3 @@ module "athena_bucket" {
     enabled = true
   }
 }
-
-resource "aws_s3_bucket_policy" "athena_bucket" {
-  bucket = module.athena_bucket.s3_bucket_id
-  policy = data.aws_iam_policy_document.athena_bucket.json
-}
-
-data "aws_iam_policy_document" "athena_bucket" {
-  statement {
-    sid    = "SupersetReadWrite"
-    effect = "Allow"
-    principals {
-      type = "AWS"
-      identifiers = [
-
-      ]
-    }
-    actions = [
-      "s3:AbortMultipartUpload",
-      "s3:GetBucketLocation",
-      "s3:GetObject",
-      "s3:ListBucket",
-      "s3:PutObject"
-    ]
-    resources = [
-      module.athena_bucket.s3_bucket_arn,
-      "${module.athena_bucket.s3_bucket_arn}/*"
-    ]
-  }
-}
