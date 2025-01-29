@@ -37,6 +37,6 @@ inputs = {
   localstack_hosted = local.env == "local" ? true : false
 }
 
-include {
-  path = find_in_parent_folders()
+include "root" {
+  path = find_in_parent_folders("root.hcl")
 }
