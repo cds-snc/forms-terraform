@@ -4,7 +4,7 @@
 
 module "lake_bucket" {
   source            = "github.com/cds-snc/terraform-modules//S3?ref=17994187b8628dc5decf74ead84768501378df4c" # ref for v10.0.0
-  bucket_name       = "cds-data-lake-bucket-${var.env}"
+  bucket_name       = "cds-forms-data-lake-bucket-${var.env}"
   billing_tag_value = var.billing_tag_value
 
   logging = {
@@ -24,34 +24,4 @@ module "lake_bucket" {
 
 resource "aws_s3_bucket_policy" "lake_bucket" {
   bucket = module.lake_bucket.s3_bucket_id
-  policy = data.aws_iam_policy_document.lake_bucket.json
-}
-
-#
-# There is a 20kb limit on the size of the policy document
-#
-data "aws_iam_policy_document" "lake_bucket" {
-  statement {
-    sid    = "CostAndUsageReport"
-    effect = "Allow"
-    principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::659087519042:role/BillingExtractTags",
-        "arn:aws:iam::659087519042:role/CostUsageReplicateToDataLake"
-      ]
-    }
-    actions = [
-      "s3:List*",
-      "s3:GetBucketVersioning",
-      "s3:PutBucketVersioning",
-      "s3:PutObject",
-      "s3:ReplicateObject",
-      "s3:ReplicateDelete"
-    ]
-    resources = [
-      module.lake_bucket.s3_bucket_arn,
-      "${module.lake_bucket.s3_bucket_arn}/*"
-    ]
-  }
 }
