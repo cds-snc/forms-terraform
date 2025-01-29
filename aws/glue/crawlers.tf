@@ -24,7 +24,7 @@ resource "aws_glue_security_configuration" "encryption_at_rest" {
 resource "aws_glue_crawler" "forms_rds_data" {
   name          = "RDS Usage Report"
   description   = "Classify the Forms RDS data"
-  database_name = "rds_db_catalog"
+  database_name = aws_glue_catalog_database.rds_db_catalog.name
   table_prefix  = "rds_report_"
 
   role                   = aws_iam_role.glue_crawler.arn
