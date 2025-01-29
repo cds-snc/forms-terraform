@@ -22,7 +22,7 @@ resource "aws_kms_alias" "data_export" {
 data "aws_iam_policy_document" "aws_glue" {
   # checkov:skip=CKV_AWS_109: false-positive,`resources = ["*"]` references KMS key policy is attached to
   # checkov:skip=CKV_AWS_111: false-positive,`resources = ["*"]` references KMS key policy is attached to
-
+  # checkov:skip=CKV_AWS_356: `resources = ["*"]` identifies the KMS key to which the key policy is attached
   # Allow this account to use the key
   statement {
     effect = "Allow"
