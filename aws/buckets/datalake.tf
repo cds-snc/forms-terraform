@@ -21,7 +21,3 @@ module "lake_bucket" {
     enabled = true
   }
 }
-
-resource "aws_s3_bucket_policy" "lake_bucket" {
-  bucket = module.lake_bucket.s3_bucket_id
-}
