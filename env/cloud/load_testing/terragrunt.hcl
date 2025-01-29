@@ -31,6 +31,6 @@ inputs = {
   lambda_submission_function_name        = dependency.lambdas.outputs.lambda_submission_function_name
 }
 
-include {
-  path = find_in_parent_folders()
+include "root" {
+  path = find_in_parent_folders("root.hcl")
 }

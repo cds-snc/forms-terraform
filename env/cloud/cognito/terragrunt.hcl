@@ -44,6 +44,6 @@ inputs = {
   ecr_repository_url_cognito_pre_sign_up_lambda  = dependency.ecr.outputs.ecr_repository_url_cognito_pre_sign_up_lambda
 }
 
-include {
-  path = find_in_parent_folders()
+include "root" {
+  path = find_in_parent_folders("root.hcl")
 }

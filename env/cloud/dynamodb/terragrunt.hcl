@@ -19,6 +19,6 @@ inputs = {
   kms_key_dynamodb_arn = dependency.kms.outputs.kms_key_dynamodb_arn
 }
 
-include {
-  path = find_in_parent_folders()
+include "root" {
+  path = find_in_parent_folders("root.hcl")
 }

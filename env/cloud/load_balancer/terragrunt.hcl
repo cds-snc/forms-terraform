@@ -38,6 +38,6 @@ inputs = {
   vpc_id                = dependency.network.outputs.vpc_id
 }
 
-include {
-  path = find_in_parent_folders()
+include "root" {
+  path = find_in_parent_folders("root.hcl")
 }
