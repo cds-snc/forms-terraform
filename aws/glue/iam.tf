@@ -116,6 +116,17 @@ data "aws_iam_policy_document" "glue_database_connection" {
       "arn:aws:rds:${var.region}:${var.account_id}:db:${var.rds_cluster_instance_identifier}"
     ]
   }
+
+  statement {
+    sid    = "GetRDSConnectorSecret"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+    resources = [
+      var.rds_connector_secret_arn
+    ]
+  }
 }
 
 data "aws_iam_policy_document" "glue_kms" {

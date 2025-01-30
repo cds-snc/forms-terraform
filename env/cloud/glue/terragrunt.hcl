@@ -37,6 +37,7 @@ dependency "rds" {
     rds_cluster_instance_availability_zone = "mock-ca-central-1"
     rds_cluster_instance_identifier        = "mock-forms-database-identifier"
     rds_cluster_instance_subnet_id         = "mock-sg-12345678"
+    rds_connector_secret_arn               = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:mock-rds-connector"
     rds_connector_secret_name              = "mock-rds-connector"
   }
 }
@@ -56,6 +57,7 @@ inputs = {
   rds_cluster_instance_availability_zone = dependency.rds.outputs.rds_cluster_instance_availability_zone
   rds_cluster_instance_identifier        = dependency.rds.outputs.rds_cluster_instance_identifier
   rds_cluster_instance_subnet_id         = dependency.rds.outputs.rds_cluster_instance_subnet_id
+  rds_connector_secret_arn               = dependency.rds.outputs.rds_connector_secret_arn
   rds_connector_secret_name              = dependency.rds.outputs.rds_connector_secret_name
   s3_endpoint                            = local.env == "local" ? "http://127.0.0.1:4566/" : "s3://"
 }

@@ -24,6 +24,11 @@ variable "rds_cluster_instance_subnet_id" {
   type        = string
 }
 
+variable "rds_connector_secret_arn" {
+  description = "The ARN of the RDS secret that contains the database authentication credentials"
+  type        = string
+}
+
 variable "rds_connector_secret_name" {
   description = "The name of the RDS secret that contains the database authentication credentials"
   type        = string

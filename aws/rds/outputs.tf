@@ -43,6 +43,11 @@ output "rds_cluster_instance_subnet_id" {
   )
 }
 
+output "rds_connector_secret_arn" {
+  description = "RDS connector secret ARN"
+  value       = aws_secretsmanager_secret.rds_connector.arn
+}
+
 output "rds_connector_secret_name" {
   description = "RDS connector secret name"
   value       = aws_secretsmanager_secret.rds_connector.name
