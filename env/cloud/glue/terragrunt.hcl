@@ -60,6 +60,6 @@ inputs = {
   s3_endpoint                            = local.env == "local" ? "http://127.0.0.1:4566/" : "s3://"
 }
 
-include {
-  path = find_in_parent_folders()
+include "root" {
+  path = find_in_parent_folders("root.hcl")
 }
