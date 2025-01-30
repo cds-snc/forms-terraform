@@ -20,10 +20,10 @@ dependency "buckets" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    datalake_bucket_arn          = "arn:aws:s3:::mock-datalake-bucket"
-    datalake_bucket_name         = "mock-datalake-bucket"
-    etl_bucket_arn               = "arn:aws:s3:::mock-etl-bucket"
-    etl_bucket_name              = "mock-etl-bucket"
+    lake_bucket_arn  = "arn:aws:s3:::mock-datalake-bucket"
+    lake_bucket_name = "mock-datalake-bucket"
+    etl_bucket_arn   = "arn:aws:s3:::mock-etl-bucket"
+    etl_bucket_name  = "mock-etl-bucket"
   }
 }
 
