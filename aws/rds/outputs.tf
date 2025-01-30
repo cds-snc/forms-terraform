@@ -30,6 +30,11 @@ output "rds_cluster_instance_availability_zone" {
   value       = aws_rds_cluster_instance.forms.availability_zone
 }
 
+output "rds_cluster_instance_identifier" {
+  description = "RDS cluster instance's identifier"
+  value       = aws_rds_cluster_instance.forms.identifier
+}
+
 output "rds_cluster_instance_subnet_id" {
   description = "RDS cluster instance's subnet ID, null if not found"
   value = try(

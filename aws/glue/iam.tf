@@ -113,7 +113,7 @@ data "aws_iam_policy_document" "glue_database_connection" {
       "rds:DescribeDBInstances"
     ]
     resources = [
-      "arn:aws:rds:${var.region}:${var.account_id}:db:${var.rds_db_name}"
+      "arn:aws:rds:${var.region}:${var.account_id}:db:${var.rds_cluster_instance_identifier}"
     ]
   }
 }
