@@ -122,6 +122,7 @@ data "aws_iam_policy_document" "glue_database_connection" {
     effect = "Allow"
     actions = [
       "secretsmanager:GetSecretValue",
+      "secretsmanager:DescribeSecret",
     ]
     resources = [
       var.rds_connector_secret_arn
