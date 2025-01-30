@@ -21,7 +21,8 @@ resource "aws_cloudwatch_log_stream" "glue_log_stream" {
 ############################################
 
 resource "aws_glue_connection" "forms_database" {
-  name = "forms-database"
+  name            = "forms-database"
+  connection_type = "JDBC"
 
   connection_properties = {
     JDBC_CONNECTION_URL = "jdbc:postgresql://${var.rds_cluster_endpoint}:5432/${var.rds_db_name}"

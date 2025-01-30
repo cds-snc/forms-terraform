@@ -15,6 +15,10 @@ app:
   - *common
   - "aws/app/**"
   - "env/cloud/app/**"
+buckets:
+  - *common
+  - "aws/buckets/**"
+  - "env/cloud/buckets/**"
 cognito:
   - *common
   - "aws/cognito/**"
@@ -31,6 +35,10 @@ file_scanning:
   - *common
   - "aws/file_scanning/**"
   - "env/cloud/file_scanning/**"
+glue:
+  - *common
+  - "aws/glue/**"
+  - "env/cloud/glue/**"
 hosted_zone:
   - *common
   - "aws/hosted_zone/**"

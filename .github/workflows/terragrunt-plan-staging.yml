@@ -150,6 +150,16 @@ jobs:
           filters: .github/module-filter.yml
 
       # No dependencies
+      - name: Terragrunt plan buckets
+        if: steps.filter.outputs.buckets == 'true'
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
+        with:
+          directory: "env/cloud/buckets"
+          comment-delete: "true"
+          comment-title: "Staging: buckets"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
       - name: Terragrunt plan ecr
         if: steps.filter.outputs.ecr == 'true'
         uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
@@ -370,5 +380,15 @@ jobs:
           directory: "env/cloud/pr_review"
           comment-delete: "true"
           comment-title: "Staging: pr_review"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan glue
+        if: steps.filter.outputs.glue == 'true'
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
+        with:
+          directory: "env/cloud/glue"
+          comment-delete: "true"
+          comment-title: "Staging: glue"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
