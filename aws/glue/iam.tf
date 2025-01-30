@@ -49,7 +49,7 @@ data "aws_iam_policy_document" "glue_etl_combined" {
   source_policy_documents = [
     data.aws_iam_policy_document.s3_read_data_lake.json,
     data.aws_iam_policy_document.s3_write_data_lake.json,
-    data.aws_iam_policy_document.glue_database_connection,
+    data.aws_iam_policy_document.glue_database_connection.json,
     data.aws_iam_policy_document.glue_kms.json
   ]
 }
