@@ -16,6 +16,24 @@ resource "aws_cloudwatch_log_stream" "glue_log_stream" {
   log_group_name = aws_cloudwatch_log_group.glue_log_group.name
 }
 
+############################################
+# RDS Connection
+############################################
+
+resource "aws_glue_connection" "forms_database" {
+  name = "forms-database"
+
+  connection_properties = {
+    JDBC_CONNECTION_URL = "postgres://${var.rds_cluster_endpoint}:5432/${var.rds_db_name}"
+    SECRET_ID           = var.rds_connector_secret_name
+  }
+
+  physical_connection_requirements {
+    availability_zone      = var.rds_cluster_instance_availability_zone
+    security_group_id_list = [var.glue_job_security_group_id]
+    subnet_id              = var.rds_cluster_instance_subnet_id
+  }
+}
 
 ############################################
 # RDS Read Glue Job
@@ -36,34 +54,34 @@ resource "aws_s3_object" "glue_script" {
 
 # Define the Glue job resource
 resource "aws_glue_job" "rds_glue_job" {
-  name     = "rds_glue_job"
-  role_arn = aws_iam_role.glue_etl.arn
+  name        = "rds_glue_job"
+  role_arn    = aws_iam_role.glue_etl.arn
+  connections = [aws_glue_connection.forms_database.name]
+
   command {
     script_location = "s3://${aws_s3_object.glue_script.bucket}/${aws_s3_object.glue_script.key}"
     python_version  = "3"
   }
+
   default_arguments = {
-    "--continuous-log-logGroup" = aws_cloudwatch_log_group.glue_log_group.name
+    "--continuous-log-logGroup"          = aws_cloudwatch_log_group.glue_log_group.name
     "--continuous-log-logStreamPrefix"   = aws_cloudwatch_log_stream.glue_log_stream.name
     "--enable-continuous-cloudwatch-log" = "true"
     "--enable-continuous-log-filter"     = "true"
     "--enable-metrics"                   = "true"
     "--enable-observability-metrics"     = "true"
-    "--s3_endpoint" = var.s3_endpoint
-    "--rds_endpoint" = var.rds_cluster_endpoint
-    "--rds_db_name"  = var.rds_db_name
-    "--rds_username" = var.rds_db_user
-    "--rds_password" = var.rds_db_password
-    "--rds_bucket" = var.datalake_bucket_name
+    "--s3_endpoint"                      = var.s3_endpoint
+    "--rds_bucket"                       = var.datalake_bucket_name
+    "--rds_connection_name"              = aws_glue_connection.forms_database.name
   }
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 }
 
 # Set the trigger for the job.
 resource "aws_glue_trigger" "rds_glue_trigger" {
-  name   = "rds_glue_trigger"
+  name     = "rds_glue_trigger"
   schedule = "cron(0 0 * * ? *)" # Daily
-  type   = "SCHEDULED"
+  type     = "SCHEDULED"
   actions {
     job_name = aws_glue_job.rds_glue_job.name
   }
@@ -108,15 +126,15 @@ resource "aws_glue_job" "historical_glue_job" {
     python_version  = "3"
   }
   default_arguments = {
-    "--continuous-log-logGroup" = aws_cloudwatch_log_group.glue_log_group.name
+    "--continuous-log-logGroup"          = aws_cloudwatch_log_group.glue_log_group.name
     "--continuous-log-logStreamPrefix"   = aws_cloudwatch_log_stream.glue_log_stream.name
     "--enable-continuous-cloudwatch-log" = "true"
     "--enable-continuous-log-filter"     = "true"
     "--enable-metrics"                   = "true"
     "--enable-observability-metrics"     = "true"
-    "--s3_bucket"  = "s3://${aws_s3_object.glue_script.bucket}/${aws_s3_object.historical_csv.key}"
-    "--rds_bucket" = var.datalake_bucket_name
-    "--historical_csv" = "s3://${aws_s3_object.historical_csv.bucket}/${aws_s3_object.historical_csv.key}"
+    "--s3_bucket"                        = "s3://${aws_s3_object.glue_script.bucket}/${aws_s3_object.historical_csv.key}"
+    "--rds_bucket"                       = var.datalake_bucket_name
+    "--historical_csv"                   = "s3://${aws_s3_object.historical_csv.bucket}/${aws_s3_object.historical_csv.key}"
   }
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 }
@@ -147,17 +165,17 @@ resource "aws_glue_job" "testgen_glue_job" {
     python_version  = "3"
   }
   default_arguments = {
-    "--continuous-log-logGroup" = aws_cloudwatch_log_group.glue_log_group.name
+    "--continuous-log-logGroup"          = aws_cloudwatch_log_group.glue_log_group.name
     "--continuous-log-logStreamPrefix"   = aws_cloudwatch_log_stream.glue_log_stream.name
     "--enable-continuous-cloudwatch-log" = "true"
     "--enable-continuous-log-filter"     = "true"
     "--enable-metrics"                   = "true"
     "--enable-observability-metrics"     = "true"
-    "--connection_name" = "rds_connection"
-    "--database_name" = "rds_db_catalog"
-    "--table_name" = "rds_report_processed_data"
-    "--output_s3_path" = "s3://${var.datalake_bucket_name}/test_data/"
-    "--num_partitions" = "1"
+    "--connection_name"                  = "rds_connection"
+    "--database_name"                    = "rds_db_catalog"
+    "--table_name"                       = "rds_report_processed_data"
+    "--output_s3_path"                   = "s3://${var.datalake_bucket_name}/test_data/"
+    "--num_partitions"                   = "1"
   }
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 }

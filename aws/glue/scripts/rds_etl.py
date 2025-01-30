@@ -11,7 +11,7 @@ from datetime import datetime
 
 # ------- Step 1 -------
 # Initialize Glue context, and logger.
-args = getResolvedOptions(sys.argv, ['JOB_NAME', 'rds_endpoint', 'rds_db_name', 'rds_username', 'rds_password', 'rds_bucket', 's3_endpoint'])
+args = getResolvedOptions(sys.argv, ['JOB_NAME', 'rds_connection_name', 'rds_bucket', 's3_endpoint'])
 sc = SparkContext()
 glueContext = GlueContext(sc)
 spark = glueContext.spark_session
@@ -27,10 +27,8 @@ logger.info("Starting Script for ETL of RDS data")
 datasource0 = glueContext.create_dynamic_frame.from_options(
     connection_type = "postgresql",
     connection_options = {
-        "url": f"jdbc:postgresql://{args['rds_endpoint']}:4510/{args['rds_db_name']}",
+        "connectionName": args['rds_connection_name'],
         "dbtable": "Template",
-        "user": args['rds_username'],
-        "password": args['rds_password']
     },
     transformation_ctx = "datasource0"
 )
@@ -38,10 +36,8 @@ datasource0 = glueContext.create_dynamic_frame.from_options(
 deliveryOption_df = glueContext.create_dynamic_frame.from_options(
     connection_type = "postgresql",
     connection_options = {
-        "url": f"jdbc:postgresql://{args['rds_endpoint']}:4510/{args['rds_db_name']}",
+        "connectionName": args['rds_connection_name'],
         "dbtable": "DeliveryOption",
-        "user": args['rds_username'],
-        "password": args['rds_password']
     },
     transformation_ctx = "delivery_option_df"
 ).toDF()
@@ -49,10 +45,8 @@ deliveryOption_df = glueContext.create_dynamic_frame.from_options(
 apiServiceAccount_df = glueContext.create_dynamic_frame.from_options(
     connection_type="postgresql",
     connection_options={
-        "url": f"jdbc:postgresql://{args['rds_endpoint']}:4510/{args['rds_db_name']}",
+        "connectionName": args['rds_connection_name'],
         "dbtable": "ApiServiceAccount",
-        "user": args['rds_username'],
-        "password": args['rds_password']
     },
     transformation_ctx="api_service_account_df"
 ).toDF()
@@ -83,10 +77,8 @@ userToTemplate_df = spark.table("template_to_user_view")
 userTable_df = glueContext.create_dynamic_frame.from_options(
     connection_type = "postgresql",
     connection_options = {
-        "url": f"jdbc:postgresql://{args['rds_endpoint']}:4510/{args['rds_db_name']}",
+        "connectionName": args['rds_connection_name'],
         "dbtable": "User",
-        "user": args['rds_username'],
-        "password": args['rds_password']
     },
     transformation_ctx = "userTable_df"
 )

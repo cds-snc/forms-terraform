@@ -3,7 +3,16 @@ terraform {
 }
 
 dependencies {
-  paths = ["../buckets", "../rds"]
+  paths = ["../network", "../buckets", "../rds"]
+}
+
+dependency "network" {
+  config_path                             = "../network"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    glue_job_security_group_id = "mock-sg-12345678"
+  }
 }
 
 dependency "buckets" {
@@ -23,10 +32,11 @@ dependency "rds" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    rds_db_name                  = "mock-rds-db-name"
-    rds_db_user                  = "mock-rds-db-user"
-    rds_db_password              = "mock-rds-db-password"
-    rds_cluster_endpoint         = "mock-rds-cluster-endpoint"
+    rds_db_name                            = "mock-rds-db-name"
+    rds_cluster_endpoint                   = "mock-rds-cluster-endpoint"
+    rds_cluster_instance_availability_zone = "mock-ca-central-1"
+    rds_cluster_instance_subnet_id         = "mock-sg-12345678"
+    rds_connector_secret_name              = "mock-rds-connector"
   }
 }
 
@@ -35,15 +45,17 @@ locals {
 }
 
 inputs = {
-  datalake_bucket_arn          = dependency.buckets.outputs.lake_bucket_arn
-  datalake_bucket_name         = dependency.buckets.outputs.lake_bucket_name
-  etl_bucket_arn               = dependency.buckets.outputs.etl_bucket_arn
-  etl_bucket_name              = dependency.buckets.outputs.etl_bucket_name
-  rds_db_name                  = "forms"
-  rds_db_user                  = local.env == "local" ? "localstack_postgres" : "postgres" # We cannot use `postgres` as a username in Localstack
-  rds_db_password              = "chummy" # RDS database password used for local setup TODO: < this.
-  rds_cluster_endpoint         = dependency.rds.outputs.rds_cluster_endpoint
-  s3_endpoint                  = local.env == "local" ? "http://127.0.0.1:4566/" : "s3://"
+  datalake_bucket_arn                    = dependency.buckets.outputs.lake_bucket_arn
+  datalake_bucket_name                   = dependency.buckets.outputs.lake_bucket_name
+  etl_bucket_arn                         = dependency.buckets.outputs.etl_bucket_arn
+  etl_bucket_name                        = dependency.buckets.outputs.etl_bucket_name
+  glue_job_security_group_id             = dependency.network.outputs.glue_job_security_group_id
+  rds_db_name                            = dependency.rds.outputs.rds_db_name
+  rds_cluster_endpoint                   = dependency.rds.outputs.rds_cluster_endpoint
+  rds_cluster_instance_availability_zone = dependency.rds.outputs.rds_cluster_instance_availability_zone
+  rds_cluster_instance_subnet_id         = dependency.rds.outputs.rds_cluster_instance_subnet_id
+  rds_connector_secret_name              = dependency.rds.outputs.rds_connector_secret_name
+  s3_endpoint                            = local.env == "local" ? "http://127.0.0.1:4566/" : "s3://"
 }
 
 include {

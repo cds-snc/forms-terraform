@@ -8,13 +8,18 @@ variable "rds_db_name" {
   type        = string
 }
 
-variable "rds_db_user" {
-  description = "The user of the RDS database"
+variable "rds_cluster_instance_availability_zone" {
+  description = "The RDS cluster instance's availability zone"
   type        = string
 }
 
-variable "rds_db_password" {
-  description = "The password of the RDS database"
+variable "rds_cluster_instance_subnet_id" {
+  description = "The RDS cluster instance's subnet ID"
+  type        = string
+}
+
+variable "rds_connector_secret_name" {
+  description = "The name of the RDS secret that contains the database authentication credentials"
   type        = string
 }
 
@@ -30,6 +35,11 @@ variable "datalake_bucket_name" {
 
 variable "etl_bucket_name" {
   description = "The name of the ETL bucket"
+  type        = string
+}
+
+variable "glue_job_security_group_id" {
+  description = "The security group ID for the Glue job"
   type        = string
 }
 

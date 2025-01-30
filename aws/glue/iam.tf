@@ -49,6 +49,7 @@ data "aws_iam_policy_document" "glue_etl_combined" {
   source_policy_documents = [
     data.aws_iam_policy_document.s3_read_data_lake.json,
     data.aws_iam_policy_document.s3_write_data_lake.json,
+    data.aws_iam_policy_document.glue_database_connection,
     data.aws_iam_policy_document.glue_kms.json
   ]
 }
@@ -88,6 +89,31 @@ data "aws_iam_policy_document" "s3_read_data_lake" {
     ]
     resources = [
       "${var.datalake_bucket_arn}/*"
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "glue_database_connection" {
+  statement {
+    sid    = "GetGlueConnection"
+    effect = "Allow"
+    actions = [
+      "glue:GetConnection",
+      "glue:GetConnections"
+    ]
+    resources = [
+      aws_glue_connection.forms_database.arn
+    ]
+  }
+
+  statement {
+    sid    = "DescribeFormsDBInstances"
+    effect = "Allow"
+    actions = [
+      "rds:DescribeDBInstances"
+    ]
+    resources = [
+      "arn:aws:rds:${var.region}:${var.account_id}:db:${var.rds_db_name}"
     ]
   }
 }
