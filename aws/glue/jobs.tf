@@ -24,7 +24,7 @@ resource "aws_glue_connection" "forms_database" {
   name = "forms-database"
 
   connection_properties = {
-    JDBC_CONNECTION_URL = "postgres://${var.rds_cluster_endpoint}:5432/${var.rds_db_name}"
+    JDBC_CONNECTION_URL = "jdbc:postgresql://${var.rds_cluster_endpoint}:5432/${var.rds_db_name}"
     SECRET_ID           = var.rds_connector_secret_name
   }
 
