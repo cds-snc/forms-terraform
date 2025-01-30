@@ -51,28 +51,15 @@ apiServiceAccount_df = glueContext.create_dynamic_frame.from_options(
     transformation_ctx="api_service_account_df"
 ).toDF()
 
-# --- USER Table can't be loaded via dynamic frame due to column names A and B - so we'll use jdbc directly
-# ------ Column Names MUST be lower clase for the dynamic frame to work. :/
-# Define the database connection properties
-jdbc_url = f"jdbc:postgresql://{args['rds_endpoint']}:4510/{args['rds_db_name']}"
-connection_properties = {
-    "user": args['rds_username'],
-    "password": args['rds_password'],
-    "driver": "org.postgresql.Driver"
-}
+template_to_user_df = glueContext.create_dynamic_frame.from_options(
+    connection_type="postgresql",
+    connection_options={
+        "connectionName": args['rds_connection_name'],
+        "dbtable": "TemplateUserView",
+    },
+    transformation_ctx="api_service_account_df"
+).toDF()
 
-# Read the data from the database into a DataFrame
-template_to_user_df = spark.read.jdbc(
-    url=jdbc_url,
-    table='(SELECT "A" as a, "B" as b FROM public."_TemplateToUser") as template_to_user_view',
-    properties=connection_properties
-)
-
-# Create a temporary view for the DataFrame
-template_to_user_df.createOrReplaceTempView("template_to_user_view")
-
-# Access the temporary view as a DataFrame
-userToTemplate_df = spark.table("template_to_user_view")
 # - Done the User table load...
 userTable_df = glueContext.create_dynamic_frame.from_options(
     connection_type = "postgresql",
@@ -248,8 +235,6 @@ redacted_user_df = userTable_df.toDF().drop("image")
 # add timestamp
 redacted_user_df = redacted_user_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
 
-# rename user to template table columns (A = templateId, B = userId)
-template_to_user_df = template_to_user_df.withColumnRenamed("A", "templateId").withColumnRenamed("B", "userId")
 # add timestamp
 template_to_user_df = template_to_user_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
 
