@@ -29,6 +29,7 @@ datasource0 = glueContext.create_dynamic_frame.from_options(
     connection_options = {
         "connectionName": args['rds_connection_name'],
         "dbtable": "Template",
+        "useConnectionProperties": "true",
     },
     transformation_ctx = "datasource0"
 )
@@ -38,6 +39,7 @@ deliveryOption_df = glueContext.create_dynamic_frame.from_options(
     connection_options = {
         "connectionName": args['rds_connection_name'],
         "dbtable": "DeliveryOption",
+        "useConnectionProperties": "true",
     },
     transformation_ctx = "delivery_option_df"
 ).toDF()
@@ -47,6 +49,7 @@ apiServiceAccount_df = glueContext.create_dynamic_frame.from_options(
     connection_options={
         "connectionName": args['rds_connection_name'],
         "dbtable": "ApiServiceAccount",
+        "useConnectionProperties": "true",
     },
     transformation_ctx="api_service_account_df"
 ).toDF()
@@ -56,6 +59,7 @@ template_to_user_df = glueContext.create_dynamic_frame.from_options(
     connection_options={
         "connectionName": args['rds_connection_name'],
         "dbtable": "TemplateUserView",
+        "useConnectionProperties": "true",
     },
     transformation_ctx="api_service_account_df"
 ).toDF()
@@ -66,6 +70,7 @@ userTable_df = glueContext.create_dynamic_frame.from_options(
     connection_options = {
         "connectionName": args['rds_connection_name'],
         "dbtable": "User",
+        "useConnectionProperties": "true",
     },
     transformation_ctx = "userTable_df"
 )

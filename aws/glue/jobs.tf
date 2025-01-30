@@ -55,9 +55,10 @@ resource "aws_s3_object" "glue_script" {
 
 # Define the Glue job resource
 resource "aws_glue_job" "rds_glue_job" {
-  name        = "rds_glue_job"
-  role_arn    = aws_iam_role.glue_etl.arn
-  connections = [aws_glue_connection.forms_database.name]
+  name         = "rds_glue_job"
+  role_arn     = aws_iam_role.glue_etl.arn
+  connections  = [aws_glue_connection.forms_database.name]
+  glue_version = "5.0"
 
   command {
     script_location = "s3://${aws_s3_object.glue_script.bucket}/${aws_s3_object.glue_script.key}"
@@ -120,12 +121,15 @@ resource "aws_s3_object" "historical_csv" {
 
 # Define the Glue job resource
 resource "aws_glue_job" "historical_glue_job" {
-  name     = "historical_glue_job"
-  role_arn = aws_iam_role.glue_etl.arn
+  name         = "historical_glue_job"
+  role_arn     = aws_iam_role.glue_etl.arn
+  glue_version = "5.0"
+
   command {
     script_location = "s3://${aws_s3_object.historical_glue_script.bucket}/${aws_s3_object.historical_glue_script.key}"
     python_version  = "3"
   }
+
   default_arguments = {
     "--continuous-log-logGroup"          = aws_cloudwatch_log_group.glue_log_group.name
     "--continuous-log-logStreamPrefix"   = aws_cloudwatch_log_stream.glue_log_stream.name
@@ -159,12 +163,15 @@ resource "aws_s3_object" "testgen_glue_script" {
 
 # Define the Glue job resource
 resource "aws_glue_job" "testgen_glue_job" {
-  name     = "testgen_glue_job"
-  role_arn = aws_iam_role.glue_etl.arn
+  name         = "testgen_glue_job"
+  role_arn     = aws_iam_role.glue_etl.arn
+  glue_version = "5.0"
+
   command {
     script_location = "s3://${aws_s3_object.testgen_glue_script.bucket}/${aws_s3_object.testgen_glue_script.key}"
     python_version  = "3"
   }
+
   default_arguments = {
     "--continuous-log-logGroup"          = aws_cloudwatch_log_group.glue_log_group.name
     "--continuous-log-logStreamPrefix"   = aws_cloudwatch_log_stream.glue_log_stream.name
