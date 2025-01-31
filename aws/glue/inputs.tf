@@ -44,6 +44,11 @@ variable "datalake_bucket_name" {
   type        = string
 }
 
+variable "etl_bucket_arn" {
+  description = "The ARN of the ETL bucket"
+  type        = string
+}
+
 variable "etl_bucket_name" {
   description = "The name of the ETL bucket"
   type        = string

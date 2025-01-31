@@ -15,6 +15,16 @@ resource "aws_security_group_rule" "glue_job_egress_internet" {
   cidr_blocks       = ["0.0.0.0/0"]
 }
 
+resource "aws_security_group_rule" "glue_job_ingress_self" {
+  description       = "Ingress to Glue jobs from self on all ports.  This is a requirement for VPC connected Glue jobs."
+  type              = "ingress"
+  to_port           = 65535
+  from_port         = 0
+  protocol          = "tcp"
+  security_group_id = aws_security_group.glue_job.id
+  self              = true
+}
+
 resource "aws_security_group_rule" "forms_db_ingress_glue_job" {
   description              = "Ingress to Forms database from Glue jobs"
   type                     = "ingress"

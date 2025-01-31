@@ -88,7 +88,8 @@ data "aws_iam_policy_document" "s3_read_data_lake" {
       "s3:GetObject",
     ]
     resources = [
-      "${var.datalake_bucket_arn}/*"
+      "${var.datalake_bucket_arn}/*",
+      "${var.etl_bucket_arn}/*"
     ]
   }
 }
