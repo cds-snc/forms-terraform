@@ -149,6 +149,7 @@ jobs:
         with:
           filters: .github/module-filter.yml
 
+      # No dependencies
       - name: Terragrunt plan ecr
         if: steps.filter.outputs.ecr == 'true'
         uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
