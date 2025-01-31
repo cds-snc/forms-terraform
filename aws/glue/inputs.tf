@@ -21,7 +21,6 @@ variable "rds_cluster_instance_availability_zone" {
 variable "rds_cluster_instance_identifier" {
   description = "The RDS cluster instance's identifier"
   type        = string
-
 }
 
 variable "rds_cluster_instance_subnet_id" {

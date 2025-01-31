@@ -221,6 +221,16 @@ jobs:
           terragrunt: "true"
 
       # Depends on S3
+      - name: Terragrunt plan athena
+        if: steps.filter.outputs.athena == 'true'
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
+        with:
+          directory: "env/cloud/athena"
+          comment-delete: "true"
+          comment-title: "Staging: athena"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
       - name: Terragrunt plan file_scanning
         if: steps.filter.outputs.file_scanning == 'true'
         uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0

@@ -15,6 +15,10 @@ app:
   - *common
   - "aws/app/**"
   - "env/cloud/app/**"
+athena:
+  - *common
+  - "aws/athena/**"
+  - "env/cloud/athena/**"
 cognito:
   - *common
   - "aws/cognito/**"
