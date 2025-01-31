@@ -3,6 +3,11 @@ variable "rds_cluster_endpoint" {
   type        = string
 }
 
+variable "rds_port" {
+  description = "The port of the RDS database"
+  type        = string
+}
+
 variable "rds_db_name" {
   description = "The name of the RDS database"
   type        = string

@@ -54,6 +54,7 @@ inputs = {
   glue_job_security_group_id             = dependency.network.outputs.glue_job_security_group_id
   rds_db_name                            = dependency.rds.outputs.rds_db_name
   rds_cluster_endpoint                   = dependency.rds.outputs.rds_cluster_endpoint
+  rds_port                               = local.env == "local" ? "4510" : "5432" # Localstack is accessed on 4510, AWS on 5432
   rds_cluster_instance_availability_zone = dependency.rds.outputs.rds_cluster_instance_availability_zone
   rds_cluster_instance_identifier        = dependency.rds.outputs.rds_cluster_instance_identifier
   rds_cluster_instance_subnet_id         = dependency.rds.outputs.rds_cluster_instance_subnet_id

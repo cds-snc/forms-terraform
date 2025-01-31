@@ -25,7 +25,7 @@ resource "aws_glue_connection" "forms_database" {
   connection_type = "JDBC"
 
   connection_properties = {
-    JDBC_CONNECTION_URL = "jdbc:postgresql://${var.rds_cluster_endpoint}:5432/${var.rds_db_name}"
+    JDBC_CONNECTION_URL = "jdbc:postgresql://${var.rds_cluster_endpoint}:${var.rds_port}/${var.rds_db_name}"
     SECRET_ID           = var.rds_connector_secret_name
   }
 
@@ -58,7 +58,7 @@ resource "aws_glue_job" "rds_glue_job" {
   name         = "rds_glue_job"
   role_arn     = aws_iam_role.glue_etl.arn
   connections  = [aws_glue_connection.forms_database.name]
-  glue_version = "5.0"
+  glue_version = "4.0"
 
   command {
     script_location = "s3://${aws_s3_object.glue_script.bucket}/${aws_s3_object.glue_script.key}"
@@ -123,7 +123,7 @@ resource "aws_s3_object" "historical_csv" {
 resource "aws_glue_job" "historical_glue_job" {
   name         = "historical_glue_job"
   role_arn     = aws_iam_role.glue_etl.arn
-  glue_version = "5.0"
+  glue_version = "4.0"
 
   command {
     script_location = "s3://${aws_s3_object.historical_glue_script.bucket}/${aws_s3_object.historical_glue_script.key}"
@@ -165,7 +165,7 @@ resource "aws_s3_object" "testgen_glue_script" {
 resource "aws_glue_job" "testgen_glue_job" {
   name         = "testgen_glue_job"
   role_arn     = aws_iam_role.glue_etl.arn
-  glue_version = "5.0"
+  glue_version = "4.0"
 
   command {
     script_location = "s3://${aws_s3_object.testgen_glue_script.bucket}/${aws_s3_object.testgen_glue_script.key}"
