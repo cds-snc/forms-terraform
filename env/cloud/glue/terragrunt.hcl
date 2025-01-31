@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../network", "../buckets", "../rds"]
+  paths = ["../network", "../s3", "../rds"]
 }
 
 dependency "network" {
@@ -15,8 +15,8 @@ dependency "network" {
   }
 }
 
-dependency "buckets" {
-  config_path                             = "../buckets"
+dependency "s3" {
+  config_path                             = "../s3"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -47,10 +47,10 @@ locals {
 }
 
 inputs = {
-  datalake_bucket_arn                    = dependency.buckets.outputs.lake_bucket_arn
-  datalake_bucket_name                   = dependency.buckets.outputs.lake_bucket_name
-  etl_bucket_arn                         = dependency.buckets.outputs.etl_bucket_arn
-  etl_bucket_name                        = dependency.buckets.outputs.etl_bucket_name
+  datalake_bucket_arn                    = dependency.s3.outputs.lake_bucket_arn
+  datalake_bucket_name                   = dependency.s3.outputs.lake_bucket_name
+  etl_bucket_arn                         = dependency.s3.outputs.etl_bucket_arn
+  etl_bucket_name                        = dependency.s3.outputs.etl_bucket_name
   glue_job_security_group_id             = dependency.network.outputs.glue_job_security_group_id
   rds_db_name                            = dependency.rds.outputs.rds_db_name
   rds_cluster_endpoint                   = dependency.rds.outputs.rds_cluster_endpoint

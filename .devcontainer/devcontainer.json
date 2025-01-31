@@ -1,14 +1,11 @@
 {
   "name": "forms-terraform",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "iac",
-  "workspaceFolder": "/workspace",
+	"image": "mcr.microsoft.com/devcontainers/base:bullseye",
+	"containerEnv": {
+		"SHELL": "/bin/zsh"
+	},
 
   "features": {
-    "docker-in-docker": {
-      "version": "latest",
-      "moby": true
-    },
     "terraform": {
       "version": "1.10.5",
       "tflint": "latest",
@@ -16,9 +13,6 @@
     },
     "aws-cli": {
       "version": "2.5.6"
-    },
-    "node": {
-      "version": "lts"
     },
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.12",

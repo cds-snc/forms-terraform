@@ -15,10 +15,6 @@ app:
   - *common
   - "aws/app/**"
   - "env/cloud/app/**"
-buckets:
-  - *common
-  - "aws/buckets/**"
-  - "env/cloud/buckets/**"
 cognito:
   - *common
   - "aws/cognito/**"
