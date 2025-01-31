@@ -3,7 +3,7 @@ volumes:
 services:
   localstack:
     container_name: "GCForms_LocalStack"
-    image: localstack/localstack-pro:4
+    image: localstack/localstack-pro:4.1
     ports:
       - "127.0.0.1:4566:4566" # LocalStack Gateway
       - "127.0.0.1:4510-4559:4510-4559" # external services port range
