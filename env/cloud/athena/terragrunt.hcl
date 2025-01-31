@@ -16,7 +16,7 @@ dependency "s3" {
 }
 
 inputs = {
-  athena_bucket_name = dependency.buckets.outputs.athena_bucket_name
+  athena_bucket_name = dependency.s3.outputs.athena_bucket_name
 }
 
 include "root" {
