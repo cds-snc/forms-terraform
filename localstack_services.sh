@@ -83,10 +83,6 @@ printf "${greenColor}...Setting up S3${reset}\n"
 cd $basedir/env/cloud/s3
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
-printf "${greenColor}...Setting up S3 Datalake Buckets${reset}\n"
-cd $basedir/env/cloud/buckets
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
 printf "${greenColor}...Setting up DynamoDB${reset}\n"
 cd $basedir/env/cloud/dynamodb
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
