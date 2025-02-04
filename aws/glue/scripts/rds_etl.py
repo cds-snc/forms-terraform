@@ -224,6 +224,46 @@ redacted_df = (
     .join(renamed_cols_df, on="id", how="left")
 )
 
+# Join with apiServiceAccount_df to get api_created_at and api_id
+redacted_df = redacted_df.join(
+    apiServiceAccount_df.select(
+        col("id").alias("templateId"),
+        col("created_at").alias("api_created_at"),
+        col("api_id").alias("id")
+    ),
+    redacted_df.id == apiServiceAccount_df.id,
+    "left"
+)
+
+# Join with deliveryOption_df to get deliveryEmailDestination
+redacted_df = redacted_df.join(
+    deliveryOption_df.select(
+        col("id").alias("templateId"),
+        col("deliveryEmailDestination")
+    ),
+    redacted_df.id == deliveryOption_df.id,
+    "left"
+)
+
+# Add conditional logic for the new fields based on deliveryOption
+redacted_df = redacted_df.withColumn(
+    "api_created_at",
+    when(col("deliveryOption") == 2, col("api_created_at")).otherwise(lit(None))
+).withColumn(
+    "api_id",
+    when(col("deliveryOption") == 2, col("api_id")).otherwise(lit(None))
+).withColumn(
+    "deliveryEmailDestination",
+    when(col("deliveryOption") == 1, col("deliveryEmailDestination")).otherwise(lit(None))
+)
+
+# Drop any intermediate duplicate columns if created during the joins
+redacted_df = redacted_df.drop("templateId")
+
+# ------- Step 4.4 -------
+# Add api_created_at, api_id, and deliveryEmailDestination based on deliveryOption
+
+
 # ------- Step 5 -------
 # drop the jsonConfig and parsed_json columns
 redacted_df = redacted_df.drop("jsonConfig", "parsed_json")
