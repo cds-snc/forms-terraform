@@ -43,9 +43,10 @@ else
   printf "${yellowColor}=> Detected fresh Localstack instance! Cleaning up Terragrunt caches and Terraform state files...${reset}\n"
 
   for dir in $basedir/env/cloud/*/; do
-    rm -rf $dir/.terragrunt-cache
-    rm -f $dir/terraform.tfstate
-    rm -f $dir/terraform.tfstate.backup
+    rm -rf "${dir}.terragrunt-cache"
+    rm -f "${dir}terraform.tfstate"
+    rm -f "${dir}terraform.tfstate.backup"
+    rm -f "${dir}.terraform.lock.hcl"
   done
 fi
 
