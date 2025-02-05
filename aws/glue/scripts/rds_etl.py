@@ -76,8 +76,13 @@ userTable_df = glueContext.create_dynamic_frame.from_options(
 )
 
 # Select only the templateId column to check existence
-deliveryOption_df = deliveryOption_df.select(col("templateId").alias("id")).distinct()
-apiServiceAccount_df = apiServiceAccount_df.select(col("templateId").alias("id")).distinct()
+deliveryOption_df = deliveryOption_df.select(col("templateId").alias("id"),
+    col("emailAddress").alias("deliveryEmailDestination")).distinct()
+apiServiceAccount_df = apiServiceAccount_df.select(
+    col("templateId").alias("id"),
+    col("created_at").alias("api_created_at"),
+    col("id").alias("api_id")
+).distinct()
 
 # ------- Step 3 -------
 # Process the data (easy-mode)
@@ -222,27 +227,6 @@ for c in renamed_cols_df.columns:
 redacted_df = (
     redacted_df
     .join(renamed_cols_df, on="id", how="left")
-)
-
-# Join with apiServiceAccount_df to get api_created_at and api_id
-redacted_df = redacted_df.join(
-    apiServiceAccount_df.select(
-        col("id").alias("templateId"),
-        col("created_at").alias("api_created_at"),
-        col("api_id").alias("id")
-    ),
-    redacted_df.id == apiServiceAccount_df.id,
-    "left"
-)
-
-# Join with deliveryOption_df to get deliveryEmailDestination
-redacted_df = redacted_df.join(
-    deliveryOption_df.select(
-        col("id").alias("templateId"),
-        col("deliveryEmailDestination")
-    ),
-    redacted_df.id == deliveryOption_df.id,
-    "left"
 )
 
 # Add conditional logic for the new fields based on deliveryOption
