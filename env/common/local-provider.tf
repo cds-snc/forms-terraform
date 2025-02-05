@@ -54,7 +54,6 @@ provider "aws" {
     kms            = "http://${var.localstack_host}:4566"
     ecr            = "http://${var.localstack_host}:4566"
     glue           = "http://${var.localstack_host}:4566"
-    athena         = "http://${var.localstack_host}:4566"
   }
 
   default_tags {
@@ -101,7 +100,6 @@ provider "aws" {
     kms            = "http://${var.localstack_host}:4566"
     ecr            = "http://${var.localstack_host}:4566"
     glue           = "http://${var.localstack_host}:4566"
-    athena         = "http://${var.localstack_host}:4566"
   }
 
   default_tags {
@@ -155,6 +153,5 @@ provider "aws" {
     kms            = "http://${var.localstack_host}:4566"
     ecr            = "http://${var.localstack_host}:4566"
     glue           = "http://${var.localstack_host}:4566"
-    athena         = "http://${var.localstack_host}:4566"
   }
 }

@@ -208,10 +208,6 @@ jobs:
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on S3
-      - name: Terragrunt apply athena
-        working-directory: env/cloud/athena
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve
-
       - name: Terragrunt apply file_scanning
         working-directory: env/cloud/file_scanning
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
