@@ -186,7 +186,7 @@ inputs = {
   token_secret_arn                        = dependency.secrets.outputs.token_secret_arn
   zitadel_administration_key_secret_arn   = dependency.secrets.outputs.zitadel_administration_key_secret_arn
   sentry_api_key_secret_arn               = dependency.secrets.outputs.sentry_api_key_secret_arn
-  hcaptcha_site_verify_key_secret_arn   = dependency.secrets.outputs.hcaptcha_site_verify_key_secret_arn
+  hcaptcha_site_verify_key_secret_arn     = dependency.secrets.outputs.hcaptcha_site_verify_key_secret_arn
 
   vault_file_storage_arn       = dependency.s3.outputs.vault_file_storage_arn
   vault_file_storage_id        = dependency.s3.outputs.vault_file_storage_id
