@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.27.6](https://github.com/cds-snc/forms-terraform/compare/v3.27.5...v3.27.6) (2025-02-06)
+
+
+### Miscellaneous Chores
+
+* Add workflows for Glue in Production ([#939](https://github.com/cds-snc/forms-terraform/issues/939)) ([7d85345](https://github.com/cds-snc/forms-terraform/commit/7d853455b12d4433345d2f103a2a4ab8824951cb))
+* Adds hCaptcha key setup ([#936](https://github.com/cds-snc/forms-terraform/issues/936)) ([0a6844c](https://github.com/cds-snc/forms-terraform/commit/0a6844c755f93452b6444c90180a45f47aa7587a))
+
 ## [3.27.5](https://github.com/cds-snc/forms-terraform/compare/v3.27.4...v3.27.5) (2025-02-06)
 
 
