@@ -114,7 +114,7 @@ dependency "secrets" {
     notify_callback_bearer_token_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_callback_bearer_token_secret"
     zitadel_administration_key_secret_arn   = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:zitadel_administration_key"
     sentry_api_key_secret_arn               = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:sentry_api_key"
-    hcaptcha_site_verify_key_arn            = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:hcaptcha_site_verify_key"
+    hcaptcha_site_verify_key_secret_arn     = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:hcaptcha_site_verify_key"
   }
 }
 
