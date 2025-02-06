@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "forms_secrets_manager" {
       var.freshdesk_api_key_secret_arn,
       var.zitadel_administration_key_secret_arn,
       var.sentry_api_key_secret_arn,
-      var.hcaptcha_site_verify_key_arn
+      var.hcaptcha_site_verify_key_secret_arn
     ]
   }
 }

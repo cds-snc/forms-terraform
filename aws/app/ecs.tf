@@ -46,7 +46,7 @@ data "template_file" "form_viewer_task" {
     zitadel_provider                = var.zitadel_provider
     zitadel_administration_key      = var.zitadel_administration_key_secret_arn
     sentry_api_key                  = var.sentry_api_key_secret_arn
-    hcaptcha_site_verify_key        = var.hcaptcha_site_verify_key
+    hcaptcha_site_verify_key        = var.hcaptcha_site_verify_key_secret_arn
   }
 }
 
