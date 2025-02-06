@@ -106,6 +106,7 @@ resource "aws_vpc_endpoint" "monitoring" {
 
 
 }
+
 resource "aws_vpc_endpoint" "rds" {
   vpc_id              = aws_vpc.forms.id
   vpc_endpoint_type   = "Interface"
@@ -118,6 +119,18 @@ resource "aws_vpc_endpoint" "rds" {
 
 
 }
+
+resource "aws_vpc_endpoint" "glue" {
+  vpc_id              = aws_vpc.forms.id
+  vpc_endpoint_type   = "Interface"
+  service_name        = "com.amazonaws.${var.region}.glue"
+  private_dns_enabled = true
+  security_group_ids = [
+    aws_security_group.privatelink.id,
+  ]
+  subnet_ids = aws_subnet.forms_private.*.id
+}
+
 
 resource "aws_vpc_endpoint" "dynamodb" {
   vpc_id            = aws_vpc.forms.id

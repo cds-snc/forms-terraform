@@ -271,6 +271,10 @@ jobs:
         working-directory: env/cloud/pr_review
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Terragrunt apply glue
+        working-directory: env/cloud/glue
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
   update-lambda-function-image:
     needs: [detect-lambda-changes, terragrunt-apply-all-modules]
     if: ${{ needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]' && !failure() && !cancelled() }}

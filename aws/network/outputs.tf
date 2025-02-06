@@ -18,6 +18,11 @@ output "egress_security_group_id" {
   value       = aws_security_group.forms_egress.id
 }
 
+output "glue_job_security_group_id" {
+  description = "AWS Glue job security group ID"
+  value       = aws_security_group.glue_job.id
+}
+
 output "idp_db_security_group_id" {
   description = "IdP database security group ID"
   value       = aws_security_group.idp_db.id

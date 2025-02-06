@@ -372,3 +372,13 @@ jobs:
           comment-title: "Staging: pr_review"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
+
+      - name: Terragrunt plan glue
+        if: steps.filter.outputs.glue == 'true'
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
+        with:
+          directory: "env/cloud/glue"
+          comment-delete: "true"
+          comment-title: "Staging: glue"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
