@@ -89,3 +89,8 @@ resource "aws_secretsmanager_secret_version" "zitadel_application_key" {
   secret_id     = aws_secretsmanager_secret.zitadel_application_key.id
   secret_string = var.zitadel_application_key
 }
+
+resource "aws_secretsmanager_secret_version" "hcaptcha_site_verify_key" {
+  secret_id     = aws_secretsmanager_secret.hcaptcha_site_verify_key.id
+  secret_string = var.hcaptcha_site_verify_key
+}
