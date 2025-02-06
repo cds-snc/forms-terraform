@@ -94,3 +94,8 @@ resource "aws_secretsmanager_secret_version" "hcaptcha_site_verify_key" {
   secret_id     = aws_secretsmanager_secret.hcaptcha_site_verify_key.id
   secret_string = var.hcaptcha_site_verify_key
 }
+
+resource "aws_secretsmanager_secret" "hcaptcha_site_verify_key" {
+  name                    = "hcaptcha_site_verify_key"
+  recovery_window_in_days = 0
+}
