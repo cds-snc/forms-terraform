@@ -1,4 +1,4 @@
-variable "rds_cluster_endpoint" {
+variable "rds_cluster_reader_endpoint" {
   description = "The endpoint of the RDS database"
   type        = string
 }
