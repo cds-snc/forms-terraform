@@ -38,7 +38,7 @@ output "rds_cluster_instance_identifier" {
 output "rds_cluster_instance_subnet_id" {
   description = "RDS cluster instance's subnet ID, null if not found"
   value = try(
-    [for subnet in data.aws_subnet.private : subnet.id if subnet.availability_zone == aws_rds_cluster_instance.forms.availability_zone],
+    [for subnet in data.aws_subnet.private : subnet.id if subnet.availability_zone == aws_rds_cluster_instance.forms.availability_zone][0],
     null
   )
 }
