@@ -28,7 +28,7 @@ historical_df = spark.read.csv(args['s3_bucket'], header=True)
 datasink4 = glueContext.write_dynamic_frame.from_options(
     frame = DynamicFrame.fromDF(historical_df, glueContext, "historical_df"),
     connection_type = "s3",
-    connection_options = {"path": f"s3://{args['rds_bucket']}/historical-data/"},
+    connection_options = {"path": f"s3://{args['rds_bucket']}/platform/gc-forms/historical-data/"},
     format = "parquet",
     transformation_ctx = "datasink4"
 )
