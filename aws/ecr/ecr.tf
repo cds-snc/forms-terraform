@@ -105,19 +105,19 @@ resource "aws_ecr_registry_policy" "cross_account_read" {
       Version = "2012-10-17",
       Statement = [
         {
-          "Sid"       = "AllowCrossAccountPull",
-          "Effect"    = "Allow",
-          "Principal" = "*",
-          "Action" = [
+          Sid       = "AllowCrossAccountPull",
+          Effect    = "Allow",
+          Principal = "*",
+          Action = [
             "ecr:BatchCheckLayerAvailability",
             "ecr:BatchGetImage",
             "ecr:DescribeImages",
             "ecr:DescribeRepositories",
             "ecr:GetDownloadUrlForLayer"
           ],
-          "Resource" = "arn:aws:ecr:${var.region}:${var.account_id}:repository/*"
-          "Condition" : {
-            "StringEquals" : { "aws:PrincipalOrgID" : ["${var.cds_org_id}"] }
+          Resource = "arn:aws:ecr:${var.region}:${var.account_id}:repository/*"
+          Condition : {
+            StringEquals : { "aws:PrincipalOrgID" : ["${var.cds_org_id}"] }
           }
         }
       ]
