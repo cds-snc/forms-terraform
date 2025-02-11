@@ -65,3 +65,6 @@ idp/docker/*.key
 # Python
 *.pyc
 __pychache__
+
+# VPN configuration
+*.ovpn
