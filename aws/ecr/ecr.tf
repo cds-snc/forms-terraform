@@ -101,7 +101,6 @@ resource "aws_ecr_lifecycle_policy" "api" {
 resource "aws_ecr_registry_policy" "cross_account_read" {
   count = var.env == "staging" ? 1 : 0
   policy = jsonencode({
-    policyText = jsonencode({
       Version = "2012-10-17",
       Statement = [
         {
@@ -122,5 +121,4 @@ resource "aws_ecr_registry_policy" "cross_account_read" {
         }
       ]
     })
-  })
 }
