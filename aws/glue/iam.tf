@@ -177,3 +177,68 @@ data "aws_iam_policy_document" "s3_write_data_lake" {
     ]
   }
 }
+
+#
+# Replicate the data to the Platform Data Lake
+#
+resource "aws_iam_role" "forms_s3_replicate" {
+  name               = "FormsS3ReplicatePlatformDataLake"
+  assume_role_policy = data.aws_iam_policy_document.s3_replicate_assume.json
+}
+
+resource "aws_iam_policy" "forms_s3_replicate" {
+  name   = "FormsS3ReplicatePlatformDataLake"
+  policy = data.aws_iam_policy_document.forms_s3_replicate.json
+}
+
+resource "aws_iam_role_policy_attachment" "forms_s3_replicate" {
+  role       = aws_iam_role.forms_s3_replicate.name
+  policy_arn = aws_iam_policy.forms_s3_replicate.arn
+}
+
+data "aws_iam_policy_document" "s3_replicate_assume" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type = "Service"
+      identifiers = [
+        "s3.amazonaws.com"
+      ]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "forms_s3_replicate" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetReplicationConfiguration",
+      "s3:ListBucket"
+    ]
+    resources = [
+      var.datalake_bucket_arn
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetObjectVersion",
+      "s3:GetObjectVersionAcl"
+    ]
+    resources = [
+      "${var.datalake_bucket_arn}/*"
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:ObjectOwnerOverrideToBucketOwner",
+      "s3:ReplicateObject",
+      "s3:ReplicateDelete"
+    ]
+    resources = [
+      "${local.platform_data_lake_raw_s3_bucket_arn}/*"
+    ]
+  }
+}

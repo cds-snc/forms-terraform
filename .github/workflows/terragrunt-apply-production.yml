@@ -271,6 +271,10 @@ jobs:
         working-directory: env/cloud/alarms
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Terragrunt apply glue
+        working-directory: env/cloud/glue
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
   update-lambda-function-image:
     needs: [get-version, generate-lambda-functions-matrix, terragrunt-apply-all-modules]
     if: ${{ !failure() && !cancelled() }}

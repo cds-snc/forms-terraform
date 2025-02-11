@@ -46,3 +46,9 @@ variable "zitadel_application_key" {
   type        = string
   sensitive   = true
 }
+
+variable "hcaptcha_site_verify_key" {
+  description = "The hCaptcha site verify key secret used for forms"
+  type        = string
+  sensitive   = true
+}

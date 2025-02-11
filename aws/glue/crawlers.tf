@@ -31,15 +31,15 @@ resource "aws_glue_crawler" "forms_rds_data" {
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 
   s3_target {
-    path = "s3://${var.datalake_bucket_name}/processed-data/template/"
+    path = "s3://${var.datalake_bucket_name}/platform/gc-forms/processed-data/template/"
   }
 
   s3_target {
-    path = "s3://${var.datalake_bucket_name}/processed-data/user/"
+    path = "s3://${var.datalake_bucket_name}/platform/gc-forms/processed-data/user/"
   }
 
   s3_target {
-    path = "s3://${var.datalake_bucket_name}/processed-data/templateToUser/"
+    path = "s3://${var.datalake_bucket_name}/platform/gc-forms/processed-data/templateToUser/"
   }
 
   configuration = jsonencode(
@@ -67,7 +67,7 @@ resource "aws_glue_crawler" "forms_historical_data" {
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 
   s3_target {
-    path = "s3://${var.datalake_bucket_name}/historical-data"
+    path = "s3://${var.datalake_bucket_name}/platform/gc-forms/historical-data"
   }
 
   configuration = jsonencode(
