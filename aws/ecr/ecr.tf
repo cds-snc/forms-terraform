@@ -97,3 +97,39 @@ resource "aws_ecr_lifecycle_policy" "api" {
   repository = aws_ecr_repository.api.name
   policy     = file("${path.module}/policy/lifecycle.json")
 }
+
+resource "aws_ecr_registry_policy" "cross_account_read" {
+  count  = var.env == "staging" ? 1 : 0
+  policy = data.aws_iam_policy_document.ecr_cross_account_read.json
+}
+
+data "aws_iam_policy_document" "ecr_cross_account_read" {
+  statement {
+    sid    = "AllowCrossAccountPull"
+    effect = "Allow"
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:BatchGetImage",
+      "ecr:DescribeImages",
+      "ecr:DescribeRepositories",
+      "ecr:GetDownloadUrlForLayer"
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalOrgID"
+
+      values = [
+        var.cds_org_id,
+      ]
+    }
+
+    resources = ["arn:aws:ecr:${var.region}:${var.account_id}:repository/*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+  }
+
+}
