@@ -97,28 +97,3 @@ resource "aws_ecr_lifecycle_policy" "api" {
   repository = aws_ecr_repository.api.name
   policy     = file("${path.module}/policy/lifecycle.json")
 }
-
-resource "aws_ecr_registry_policy" "cross_account_read" {
-  count = var.env == "staging" ? 1 : 0
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        "Sid"       = "AllowCrossAccountPull",
-        "Effect"    = "Allow",
-        "Principal" = "*",
-        "Action" = [
-          "ecr:BatchCheckLayerAvailability",
-          "ecr:BatchGetImage",
-          "ecr:DescribeImages",
-          "ecr:DescribeRepositories",
-          "ecr:GetDownloadUrlForLayer"
-        ],
-        "Resource" = "arn:aws:ecr:${var.region}:${var.account_id}:repository/*"
-        "Condition" : {
-          "StringEquals" : { "aws:PrincipalOrgID" : ["${var.cds_org_id}"] }
-        }
-      }
-    ]
-  })
-}
