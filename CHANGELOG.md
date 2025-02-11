@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.28.0](https://github.com/cds-snc/forms-terraform/compare/v3.27.6...v3.28.0) (2025-02-11)
+
+
+### Features
+
+* update the processed and historical data paths ([#941](https://github.com/cds-snc/forms-terraform/issues/941)) ([f8d245b](https://github.com/cds-snc/forms-terraform/commit/f8d245b6556eacc8525b8c07cdf5689a522f4fa9))
+
 ## [3.27.6](https://github.com/cds-snc/forms-terraform/compare/v3.27.5...v3.27.6) (2025-02-06)
 
 
