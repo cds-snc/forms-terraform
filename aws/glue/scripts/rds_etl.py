@@ -272,7 +272,7 @@ template_to_user_df = template_to_user_df.withColumn("timestamp", date_format(fr
 templateDataSink = glueContext.write_dynamic_frame.from_options(
     frame = final_df,
     connection_type = "s3",
-    connection_options = {"path": f"s3://{args['rds_bucket']}/processed-data/template/"},
+    connection_options = {"path": f"s3://{args['rds_bucket']}/platform/gc-forms/processed-data/template/"},
     format = "parquet",
     transformation_ctx = "templateDataSink"
 )
@@ -280,7 +280,7 @@ templateDataSink = glueContext.write_dynamic_frame.from_options(
 userDataSink = glueContext.write_dynamic_frame.from_options(
     frame = DynamicFrame.fromDF(redacted_user_df, glueContext, "redacted_user_df"),
     connection_type = "s3",
-    connection_options = {"path": f"s3://{args['rds_bucket']}/processed-data/user"},
+    connection_options = {"path": f"s3://{args['rds_bucket']}/platform/gc-forms/processed-data/user"},
     format = "parquet",
     transformation_ctx = "userDataSink"
 )
@@ -288,7 +288,7 @@ userDataSink = glueContext.write_dynamic_frame.from_options(
 templateToUserDataSink = glueContext.write_dynamic_frame.from_options(
     frame = DynamicFrame.fromDF(template_to_user_df, glueContext, "template_to_user_df"),
     connection_type = "s3",
-    connection_options = {"path": f"s3://{args['rds_bucket']}/processed-data/templateToUser"},
+    connection_options = {"path": f"s3://{args['rds_bucket']}/platform/gc-forms/processed-data/templateToUser"},
     format = "parquet",
     transformation_ctx = "templateToUserDataSink"
 )
