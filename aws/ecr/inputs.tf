@@ -3,3 +3,8 @@ variable "cds_org_id" {
   type        = string
   sensitive   = true
 }
+
+variable "account_id" {
+  description = "The account ID to create resources in"
+  type        = string
+}

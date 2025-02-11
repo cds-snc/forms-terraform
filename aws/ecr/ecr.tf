@@ -98,10 +98,6 @@ resource "aws_ecr_lifecycle_policy" "api" {
   policy     = file("${path.module}/policy/lifecycle.json")
 }
 
-data "aws_caller_identity" "current" {}
-
-data "aws_partition" "current" {}
-
 resource "aws_ecr_registry_policy" "cross_account_read" {
   count = var.env == "staging" ? 1 : 0
   policy = jsonencode({
@@ -119,7 +115,7 @@ resource "aws_ecr_registry_policy" "cross_account_read" {
             "ecr:DescribeRepositories",
             "ecr:GetDownloadUrlForLayer"
           ],
-          Resource = "arn:${data.aws_partition.current.partition}:ecr:${var.region}:${data.aws_caller_identity.current.account_id}:repository/*"
+          Resource = "arn:aws:ecr:${var.region}:${var.account_id}:repository/*"
           Condition : {
             StringEquals : { "aws:PrincipalOrgID" : ["${var.cds_org_id}"] }
           }
