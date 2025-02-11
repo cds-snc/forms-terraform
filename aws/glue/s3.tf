@@ -4,7 +4,7 @@ resource "aws_s3_bucket_replication_configuration" "forms_s3_replicate_to_platfo
 
   rule {
     id       = "send-to-platform-data-lake"
-    status   = "Enabled"
+    status   = var.env == "production" ? "Enabled" : "Disabled"
     priority = 10
 
     destination {
