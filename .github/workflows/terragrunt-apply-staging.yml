@@ -60,6 +60,8 @@ env:
   TF_VAR_zitadel_database_user_password: ${{ secrets.STAGING_ZITADEL_DATABASE_USER_PASSWORD }}
   TF_VAR_zitadel_database_user_username: ${{ secrets.STAGING_ZITADEL_DATABASE_USER_USERNAME }}
   TF_VAR_zitadel_secret_key: ${{ secrets.STAGING_ZITADEL_SECRET_KEY }}
+  # ECR
+  TF_VAR_cds_org_id: ${{ secrets.STAGING_CDS_ORG_ID }}
 
 jobs:
   # We deploy ECR first to make sure it is available for the 'build-tag-push-lambda-images' job which will be run in parallel with `terragrunt-apply-all-modules`
