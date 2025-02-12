@@ -31,4 +31,6 @@ locals {
       }
     ]
   }
+  # Use account ID instead of environment name when in local development
+  env = var.env == "development" ? var.account_id : var.env 
 }

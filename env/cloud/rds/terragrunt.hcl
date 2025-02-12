@@ -24,17 +24,16 @@ inputs = {
   private_subnet_ids    = dependency.network.outputs.private_subnet_ids
   rds_security_group_id = dependency.network.outputs.rds_security_group_id
 
-  rds_connector_db_user    = local.env == "local" ? "localstack_postgres" : "rds_connector_read"
-  rds_db_user              = local.env == "local" ? "localstack_postgres" : "postgres" # We cannot use `postgres` as a username in Localstack
+  rds_connector_db_user    = local.env == "development" ? "postgres" : "rds_connector_read"
+  rds_db_user              = "postgres"
   rds_db_name              = "forms"
   rds_name                 = local.env == "staging" ? "forms-staging-db" : "forms-db"
   rds_db_subnet_group_name = local.env == "staging" ? "forms-staging-db" : "forms-db"
 
   # Overwritten in GitHub Actions by TFVARS
-  rds_db_password           = "chummy" # RDS database password used for local setup
-  rds_connector_db_password = "chummy"
+  rds_db_password           = "chummy000" # RDS database password used for local setup
+  rds_connector_db_password = "chummy000"
 
-  localstack_hosted = local.env == "local" ? true : false
 }
 
 include "root" {

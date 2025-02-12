@@ -3,8 +3,10 @@
 #
 module "etl_bucket" {
   source            = "github.com/cds-snc/terraform-modules//S3?ref=17994187b8628dc5decf74ead84768501378df4c" # ref for v10.0.0
-  bucket_name       = "cds-forms-data-etl-bucket-${var.env}"
+  bucket_name       = "cds-forms-data-etl-bucket-${local.env}"
   billing_tag_value = var.billing_tag_value
+  force_destroy = var.env == "development" ? true : false
+  
 
   logging = {
     target_bucket = module.log_bucket.s3_bucket_id
@@ -25,8 +27,9 @@ module "etl_bucket" {
 #
 module "lake_bucket" {
   source            = "github.com/cds-snc/terraform-modules//S3?ref=17994187b8628dc5decf74ead84768501378df4c" # ref for v10.0.0
-  bucket_name       = "cds-forms-data-lake-bucket-${var.env}"
+  bucket_name       = "cds-forms-data-lake-bucket-${local.env}"
   billing_tag_value = var.billing_tag_value
+  force_destroy = var.env == "development" ? true : false
 
   logging = {
     target_bucket = module.log_bucket.s3_bucket_id
@@ -48,8 +51,9 @@ module "lake_bucket" {
 #
 module "log_bucket" {
   source            = "github.com/cds-snc/terraform-modules//S3_log_bucket?ref=17994187b8628dc5decf74ead84768501378df4c" # ref for v10.0.0
-  bucket_name       = "cds-forms-data-lake-bucket-logs-${var.env}"
+  bucket_name       = "cds-forms-data-lake-bucket-logs-${local.env}"
   versioning_status = "Enabled"
+  force_destroy = var.env == "development" ? true : false
 
   lifecycle_rule = [
     local.lifecycle_expire_all,
