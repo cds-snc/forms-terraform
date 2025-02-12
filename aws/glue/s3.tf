@@ -5,7 +5,6 @@ resource "aws_s3_bucket_replication_configuration" "forms_s3_replicate_to_platfo
   rule {
     id       = "send-to-platform-data-lake"
     status   = "Disabled" # Temporarily disabled until testing is complete
-    priority = 10
 
     destination {
       bucket = local.platform_data_lake_raw_s3_bucket_arn
