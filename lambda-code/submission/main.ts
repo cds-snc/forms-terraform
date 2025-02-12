@@ -46,7 +46,7 @@ export const handler: Handler = async (submission: AnyObject) => {
       })
     );
 
-    return { status: true };
+    return { status: true, submissionId };
   } catch (error) {
     console.error(
       JSON.stringify({
@@ -59,7 +59,7 @@ export const handler: Handler = async (submission: AnyObject) => {
       })
     );
 
-    return { status: false };
+    return { status: false, submissionId };
   }
 };
 
