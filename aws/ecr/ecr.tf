@@ -100,7 +100,7 @@ resource "aws_ecr_lifecycle_policy" "api" {
 
 resource "aws_ecr_registry_policy" "cross_account_read" {
   count  = var.env == "staging" ? 1 : 0
-  policy = data.aws_iam_policy_document.ecr_cross_account_read.json
+  policy = sensitive(data.aws_iam_policy_document.ecr_cross_account_read.json)
 }
 
 data "aws_iam_policy_document" "ecr_cross_account_read" {
