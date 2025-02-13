@@ -1,9 +1,9 @@
 terraform {
-  required_version = "1.9.8"
+  required_version = "1.10.5"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "5.78.0"
+      version = "5.84.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -53,6 +53,7 @@ provider "aws" {
     sts            = "http://${var.localstack_host}:4566"
     kms            = "http://${var.localstack_host}:4566"
     ecr            = "http://${var.localstack_host}:4566"
+    glue           = "http://${var.localstack_host}:4566"
   }
 
   default_tags {
@@ -98,6 +99,7 @@ provider "aws" {
     sts            = "http://${var.localstack_host}:4566"
     kms            = "http://${var.localstack_host}:4566"
     ecr            = "http://${var.localstack_host}:4566"
+    glue           = "http://${var.localstack_host}:4566"
   }
 
   default_tags {
@@ -150,5 +152,6 @@ provider "aws" {
     sts            = "http://${var.localstack_host}:4566"
     kms            = "http://${var.localstack_host}:4566"
     ecr            = "http://${var.localstack_host}:4566"
+    glue           = "http://${var.localstack_host}:4566"
   }
 }

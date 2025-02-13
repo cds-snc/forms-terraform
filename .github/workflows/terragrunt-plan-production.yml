@@ -20,8 +20,8 @@ env:
   AWS_ACCOUNT_ID: ${{ vars.PRODUCTION_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
   CONFTEST_VERSION: 0.46.0
-  TERRAFORM_VERSION: 1.9.8
-  TERRAGRUNT_VERSION: 0.69.2
+  TERRAFORM_VERSION: 1.10.5
+  TERRAGRUNT_VERSION: 0.72.5
   TF_INPUT: false
   # API
   TF_VAR_zitadel_application_key: ${{ secrets.PRODUCTION_ZITADEL_APPLICATION_KEY }}
@@ -348,5 +348,14 @@ jobs:
           directory: "env/cloud/alarms"
           comment-delete: "true"
           comment-title: "Production: alarms"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan glue
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
+        with:
+          directory: "env/cloud/glue"
+          comment-delete: "true"
+          comment-title: "Production: glue"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"

@@ -22,8 +22,8 @@ fi
 
 # Set proper terraform and terragrunt versions
 
-tgswitch 0.69.2
-tfswitch 1.9.8
+tgswitch 0.72.5
+tfswitch 1.10.5
 
 basedir=$(pwd)
 
@@ -43,9 +43,10 @@ else
   printf "${yellowColor}=> Detected fresh Localstack instance! Cleaning up Terragrunt caches and Terraform state files...${reset}\n"
 
   for dir in $basedir/env/cloud/*/; do
-    rm -rf $dir/.terragrunt-cache
-    rm -f $dir/terraform.tfstate
-    rm -f $dir/terraform.tfstate.backup
+    rm -rf "${dir}.terragrunt-cache"
+    rm -f "${dir}terraform.tfstate"
+    rm -f "${dir}terraform.tfstate.backup"
+    rm -f "${dir}.terraform.lock.hcl"
   done
 fi
 
@@ -85,6 +86,10 @@ terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-lev
 
 printf "${greenColor}...Setting up DynamoDB${reset}\n"
 cd $basedir/env/cloud/dynamodb
+terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+
+printf "${greenColor}...Setting up AWS Glue${reset}\n"
+cd $basedir/env/cloud/glue
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "${greenColor}...Setting up ECR${reset}\n"

@@ -1,5 +1,5 @@
 locals {
-  account_id       = get_env("AWS_ACCOUNT_ID", "")
+  account_id       = get_env("AWS_ACCOUNT_ID", "000000000000")
   env              = get_env("APP_ENV", "local")
   domain_api       = get_env("API_DOMAIN", "localhost:3001") 
   domain_idp       = get_env("IDP_DOMAIN", "localhost:8080")
@@ -30,7 +30,7 @@ terraform {
     bucket         = "forms-${local.env}-tfstate"
     dynamodb_table = "tfstate-lock"
     region         = "ca-central-1"
-    key            = "${path_relative_to_include()}/terraform.tfstate"
+    key            = "${path_relative_to_include("root")}/terraform.tfstate"
   }
 }
 EOF
@@ -43,7 +43,7 @@ disable = local.env != "local"
   contents = <<EOF
 terraform {
   backend "local" {
-    path = "${get_parent_terragrunt_dir()}/${path_relative_to_include()}/terraform.tfstate"
+    path = "${get_parent_terragrunt_dir("root")}/${path_relative_to_include("root")}/terraform.tfstate"
   }
 }
 EOF

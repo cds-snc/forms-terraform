@@ -37,3 +37,8 @@ output "zitadel_application_key_secret_arn" {
   description = "ARN of zitadel_application_key secret"
   value       = aws_secretsmanager_secret_version.zitadel_application_key.arn
 }
+
+output "hcaptcha_site_verify_key_secret_arn" {
+  description = "The hCaptcha site verify key secret used for forms"
+  value       = aws_secretsmanager_secret_version.hcaptcha_site_verify_key.arn
+}

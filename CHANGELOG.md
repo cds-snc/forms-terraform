@@ -1,5 +1,35 @@
 # Changelog
 
+## [3.28.0](https://github.com/cds-snc/forms-terraform/compare/v3.27.6...v3.28.0) (2025-02-11)
+
+
+### Features
+
+* update the processed and historical data paths ([#941](https://github.com/cds-snc/forms-terraform/issues/941)) ([f8d245b](https://github.com/cds-snc/forms-terraform/commit/f8d245b6556eacc8525b8c07cdf5689a522f4fa9))
+
+## [3.27.6](https://github.com/cds-snc/forms-terraform/compare/v3.27.5...v3.27.6) (2025-02-06)
+
+
+### Miscellaneous Chores
+
+* Add workflows for Glue in Production ([#939](https://github.com/cds-snc/forms-terraform/issues/939)) ([7d85345](https://github.com/cds-snc/forms-terraform/commit/7d853455b12d4433345d2f103a2a4ab8824951cb))
+* Adds hCaptcha key setup ([#936](https://github.com/cds-snc/forms-terraform/issues/936)) ([0a6844c](https://github.com/cds-snc/forms-terraform/commit/0a6844c755f93452b6444c90180a45f47aa7587a))
+
+## [3.27.5](https://github.com/cds-snc/forms-terraform/compare/v3.27.4...v3.27.5) (2025-02-06)
+
+
+### Bug Fixes
+
+* Set output of RDS subnet id to string ([#937](https://github.com/cds-snc/forms-terraform/issues/937)) ([29b33ba](https://github.com/cds-snc/forms-terraform/commit/29b33bae75231ff279a77ad366bbc386eac8083e))
+
+
+### Miscellaneous Chores
+
+* delete .lock.hcl file when running clean up step ([#933](https://github.com/cds-snc/forms-terraform/issues/933)) ([e6656f6](https://github.com/cds-snc/forms-terraform/commit/e6656f62e82c9404ef3c8c46f45207a06fb2f243))
+* IDP waf dynamic Ip now blocks ([#935](https://github.com/cds-snc/forms-terraform/issues/935)) ([40b30f8](https://github.com/cds-snc/forms-terraform/commit/40b30f824009d9c86c883721ecd2d9ccdc837667))
+* update terragrunt et al ([#931](https://github.com/cds-snc/forms-terraform/issues/931)) ([3a4e619](https://github.com/cds-snc/forms-terraform/commit/3a4e619e9f0bd45e36ebc1bff85bbbf40625720f))
+* Use RDS reader endpoint for non-app use ([#938](https://github.com/cds-snc/forms-terraform/issues/938)) ([8738d66](https://github.com/cds-snc/forms-terraform/commit/8738d6656918d8d9dc7ebec12630a8e4b35408a5))
+
 ## [3.27.4](https://github.com/cds-snc/forms-terraform/compare/v3.27.3...v3.27.4) (2025-01-21)
 
 
