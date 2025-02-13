@@ -59,7 +59,7 @@ export const handler: Handler = async (submission: AnyObject) => {
       })
     );
 
-    return { status: false, submissionId };
+    return { status: false };
   }
 };
 
