@@ -105,7 +105,7 @@ resource "aws_ecr_registry_policy" "cross_account_read" {
 
 data "aws_iam_policy_document" "ecr_cross_account_read" {
   statement {
-    sid    = "AllowCrossAccountPull"
+    sid    = "AllowCrossAccountPullOrg"
     effect = "Allow"
     actions = [
       "ecr:BatchCheckLayerAvailability",
@@ -131,5 +131,30 @@ data "aws_iam_policy_document" "ecr_cross_account_read" {
       identifiers = ["*"]
     }
   }
+  statement {
+    sid    = "AllowCrossAccountPullLambda"
+    effect = "Allow"
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:BatchGetImage",
+      "ecr:DescribeImages",
+      "ecr:DescribeRepositories",
+      "ecr:GetDownloadUrlForLayer"
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:sourceAccount"
+      values   = var.aws_development_accounts
+    }
+
+    resources = ["arn:aws:ecr:${var.region}:${var.account_id}:repository/*"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+  }
 
 }
+
