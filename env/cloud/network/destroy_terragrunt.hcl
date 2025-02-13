@@ -3,5 +3,5 @@ include "root" {
 }
 
 terraform {
-  source = "../../../local_dev_scripts//destroy//tf"
+  source = "../../../local_dev_files//tf"
 }
