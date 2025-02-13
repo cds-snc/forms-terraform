@@ -40,7 +40,7 @@ resource "aws_lambda_function" "submission" {
 # Allow ECS to invoke Submission Lambda
 
 resource "aws_lambda_permission" "submission" {
-  count = var.env == "develoment" ? 0 : 1
+  count = var.env == "development" ? 0 : 1
   statement_id  = "AllowInvokeECS"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.submission.function_name

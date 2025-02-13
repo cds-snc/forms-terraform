@@ -198,19 +198,9 @@ inputs = {
   audit_logs_archive_storage_id  = dependency.s3.outputs.audit_logs_archive_storage_id
   audit_logs_archive_storage_arn = dependency.s3.outputs.audit_logs_archive_storage_arn
 
-  # ecr_repository_url_audit_logs_lambda               = dependency.ecr.outputs.ecr_repository_url_audit_logs_lambda
-  # ecr_repository_url_audit_logs_archiver_lambda      = dependency.ecr.outputs.ecr_repository_url_audit_logs_archiver_lambda
-  # ecr_repository_url_form_archiver_lambda            = dependency.ecr.outputs.ecr_repository_url_form_archiver_lambda
-  # ecr_repository_url_nagware_lambda                  = dependency.ecr.outputs.ecr_repository_url_nagware_lambda
-  # ecr_repository_url_reliability_lambda              = dependency.ecr.outputs.ecr_repository_url_reliability_lambda
-  # ecr_repository_url_reliability_dlq_consumer_lambda = dependency.ecr.outputs.ecr_repository_url_reliability_dlq_consumer_lambda
-  # ecr_repository_url_response_archiver_lambda        = dependency.ecr.outputs.ecr_repository_url_response_archiver_lambda
-  # ecr_repository_url_submission_lambda               = dependency.ecr.outputs.ecr_repository_url_submission_lambda
-  # ecr_repository_url_vault_integrity_lambda          = dependency.ecr.outputs.ecr_repository_url_vault_integrity_lambda
-
   ecr_repository_lambda_urls = dependency.ecr.outputs.ecr_repository_lambda_urls
 
-  ecs_iam_role_arn = local.env == "local" ? "arn:aws:iam:ca-central-1:000000000000:forms_iam" : dependency.app.outputs.ecs_iam_role_arn
+  ecs_iam_role_arn = local.env == "development" ? null : dependency.app.outputs.ecs_iam_role_arn
 
   localstack_hosted = local.env == "local" ? true : false
 

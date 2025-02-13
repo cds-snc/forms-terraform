@@ -66,13 +66,13 @@ fi
 
 printf "${greenColor}=> Creating AWS services${reset}\n"
 
-printf "${greenColor}...Setting up KMS${reset}\n"
-cd $basedir/env/cloud/kms
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+# printf "${greenColor}...Setting up KMS${reset}\n"
+# cd $basedir/env/cloud/kms
+# terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
-printf "${greenColor}...Setting up Network${reset}\n"
-cd $basedir/env/cloud/network
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn 
+# printf "${greenColor}...Setting up Network${reset}\n"
+# cd $basedir/env/cloud/network
+# terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn 
 
 # printf "${greenColor}...Setting up Secrets Manager${reset}\n"
 # cd $basedir/env/cloud/secrets
@@ -115,8 +115,8 @@ terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-lev
 # ./deps.sh install
 #./deploy-lambda-images.sh
 
-# printf "${greenColor}...Setting up Lambdas${reset}\n"
-# cd $basedir/env/cloud/lambdas
-# terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+printf "${greenColor}...Setting up Lambdas${reset}\n"
+cd $basedir/env/cloud/lambdas
+terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "${greenColor}All infratructure initialized: Ready for requests${reset}\n"
