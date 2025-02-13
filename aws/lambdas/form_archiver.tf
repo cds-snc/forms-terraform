@@ -4,7 +4,7 @@
 
 resource "aws_lambda_function" "form_archiver" {
   function_name = "form-archiver"
-  image_uri     = "${var.ecr_repository_url_form_archiver_lambda}:latest"
+  image_uri     = "${var.ecr_repository_lambda_urls["form-archiver-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
   timeout       = 300

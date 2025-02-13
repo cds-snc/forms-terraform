@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "reliability" {
   function_name = "reliability"
-  image_uri     = "${var.ecr_repository_url_reliability_lambda}:latest"
+  image_uri     = "${var.ecr_repository_lambda_urls["reliability-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
   timeout       = 300

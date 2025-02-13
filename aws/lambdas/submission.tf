@@ -10,7 +10,7 @@
 
 resource "aws_lambda_function" "submission" {
   function_name = "Submission"
-  image_uri     = "${var.ecr_repository_url_submission_lambda}:latest"
+  image_uri     = "${var.ecr_repository_lambda_urls["submission-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
   timeout       = 60
@@ -40,6 +40,7 @@ resource "aws_lambda_function" "submission" {
 # Allow ECS to invoke Submission Lambda
 
 resource "aws_lambda_permission" "submission" {
+  count = var.env == "develoment" ? 0 : 1
   statement_id  = "AllowInvokeECS"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.submission.function_name

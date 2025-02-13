@@ -4,7 +4,7 @@
 
 resource "aws_lambda_function" "vault_integrity" {
   function_name = "vault-integrity"
-  image_uri     = "${var.ecr_repository_url_vault_integrity_lambda}:latest"
+  image_uri     = "${var.ecr_repository_lambda_urls["vault-integrity-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
   timeout       = 60

@@ -5,7 +5,7 @@
 
 resource "aws_lambda_function" "reliability_dlq_consumer" {
   function_name = "reliability-dlq-consumer"
-  image_uri     = "${var.ecr_repository_url_reliability_dlq_consumer_lambda}:latest"
+  image_uri     = "${var.ecr_repository_lambda_urls["reliability-dlq-consumer-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
   timeout       = 300

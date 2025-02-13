@@ -173,14 +173,23 @@ resource "aws_security_group_rule" "privatelink_connector_db_ingress" {
   source_security_group_id = aws_security_group.connector_db.id
 }
 
+##
+# VPC Endpoints do not exist in development environment
+##
+
+data "aws_vpc_endpoint" "s3_lambda" {
+  count = var.env == "development" ? 0 : 1
+  vpc_id       = aws_vpc.forms.id
+  service_name = "com.amazonaws.${var.region}.s3"
+}
+
 resource "aws_security_group_rule" "s3_gateway_connector_db_egress" {
+  count = var.env == "development" ? 0 : 1
   description       = "Security group rule for Lambda RDS Connector S3 egress through VPC endpoints"
   type              = "egress"
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
   security_group_id = aws_security_group.connector_db.id
-  prefix_list_ids = [
-    aws_vpc_endpoint.s3.prefix_list_id
-  ]
+  prefix_list_ids = [data.aws_vpc_endpoint.s3_lambda[0].prefix_list_id]
 }

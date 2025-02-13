@@ -159,49 +159,54 @@ variable "audit_logs_archive_storage_arn" {
   type        = string
 }
 
-variable "ecr_repository_url_audit_logs_lambda" {
-  description = "URL of the Audit Logs Lambda ECR"
-  type        = string
-}
+# variable "ecr_repository_url_audit_logs_lambda" {
+#   description = "URL of the Audit Logs Lambda ECR"
+#   type        = string
+# }
 
-variable "ecr_repository_url_audit_logs_archiver_lambda" {
-  description = "URL of the Audit Logs Archiver Lambda ECR"
-  type        = string
-}
+# variable "ecr_repository_url_audit_logs_archiver_lambda" {
+#   description = "URL of the Audit Logs Archiver Lambda ECR"
+#   type        = string
+# }
 
-variable "ecr_repository_url_form_archiver_lambda" {
-  description = "URL of the Form Archiver Lambda ECR"
-  type        = string
-}
+# variable "ecr_repository_url_form_archiver_lambda" {
+#   description = "URL of the Form Archiver Lambda ECR"
+#   type        = string
+# }
 
-variable "ecr_repository_url_nagware_lambda" {
-  description = "URL of the Nagware Lambda ECR"
-  type        = string
-}
+# variable "ecr_repository_url_nagware_lambda" {
+#   description = "URL of the Nagware Lambda ECR"
+#   type        = string
+# }
 
-variable "ecr_repository_url_reliability_lambda" {
-  description = "URL of the Reliability Lambda ECR"
-  type        = string
-}
+# variable "ecr_repository_url_reliability_lambda" {
+#   description = "URL of the Reliability Lambda ECR"
+#   type        = string
+# }
 
-variable "ecr_repository_url_reliability_dlq_consumer_lambda" {
-  description = "URL of the Reliability DLQ Consumer Lambda ECR"
-  type        = string
-}
+# variable "ecr_repository_url_reliability_dlq_consumer_lambda" {
+#   description = "URL of the Reliability DLQ Consumer Lambda ECR"
+#   type        = string
+# }
 
-variable "ecr_repository_url_response_archiver_lambda" {
-  description = "URL of the Response Archiver Lambda ECR"
-  type        = string
-}
+# variable "ecr_repository_url_response_archiver_lambda" {
+#   description = "URL of the Response Archiver Lambda ECR"
+#   type        = string
+# }
 
-variable "ecr_repository_url_submission_lambda" {
-  description = "URL of the Submission Lambda ECR"
-  type        = string
-}
+# variable "ecr_repository_url_submission_lambda" {
+#   description = "URL of the Submission Lambda ECR"
+#   type        = string
+# }
 
-variable "ecr_repository_url_vault_integrity_lambda" {
-  description = "URL of the Vault Integrity Lambda ECR"
-  type        = string
+# variable "ecr_repository_url_vault_integrity_lambda" {
+#   description = "URL of the Vault Integrity Lambda ECR"
+#   type        = string
+# }
+
+variable "ecr_repository_lambda_urls" {
+  description = "URLs of the Lambda ECRs"
+  type        = map(string)
 }
 
 variable "lambda_security_group_id" {
