@@ -4,7 +4,7 @@ import {
   copyFilesFromReliabilityToVaultStorage,
   removeFilesFromReliabilityStorage,
 } from "./s3FileInput.js";
-import { FormSubmission, Responses } from "./types.js";
+import { FormSubmission } from "./types.js";
 
 export default async (
   submissionID: string,

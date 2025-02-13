@@ -13,7 +13,6 @@ import {
   Responses,
   Response,
   DateFormat,
-  DateObject,
   AddressElements,
   AddressCompleteProps,
 } from "./types.js";
