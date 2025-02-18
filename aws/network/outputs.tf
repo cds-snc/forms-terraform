@@ -45,7 +45,7 @@ output "lambda_security_group_id" {
 
 output "public_subnet_ids" {
   description = "List of the VPC's public subnet IDs"
-  value       =  aws_subnet.forms_public.*.id 
+  value       = aws_subnet.forms_public.*.id
 }
 
 output "private_subnet_ids" {

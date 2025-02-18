@@ -189,7 +189,7 @@ resource "aws_security_group" "forms_redis" {
 }
 
 resource "aws_security_group_rule" "forms_redis_ingress" {
-  description              = "Security group rule for Forms Database ingress"
+  description              = "Security group rule for Forms Redis ingress"
   type                     = "ingress"
   from_port                = 6379
   to_port                  = 6379

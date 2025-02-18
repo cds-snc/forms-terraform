@@ -64,12 +64,12 @@ resource "aws_rds_cluster_instance" "forms" {
   #checkov:skip=CKV_AWS_353:performance insights are not required
   #checkov:skip=CKV_AWS_354:performance insights are not required 
 
-  identifier           = "${var.rds_name}-cluster-instance-2"
-  cluster_identifier   = aws_rds_cluster.forms.id
-  instance_class       = "db.serverless"
-  engine               = local.rds_engine
-  engine_version       = local.rds_engine_version
-  db_subnet_group_name = aws_db_subnet_group.forms.name
+  identifier                 = "${var.rds_name}-cluster-instance-2"
+  cluster_identifier         = aws_rds_cluster.forms.id
+  instance_class             = "db.serverless"
+  engine                     = local.rds_engine
+  engine_version             = local.rds_engine_version
+  db_subnet_group_name       = aws_db_subnet_group.forms.name
   auto_minor_version_upgrade = true
   promotion_tier             = 1
 }

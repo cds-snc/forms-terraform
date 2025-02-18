@@ -42,10 +42,6 @@ dependency "rds" {
   }
 }
 
-locals {
-  env = get_env("APP_ENV", "local")
-}
-
 inputs = {
   datalake_bucket_arn                    = dependency.s3.outputs.lake_bucket_arn
   datalake_bucket_name                   = dependency.s3.outputs.lake_bucket_name
@@ -54,13 +50,13 @@ inputs = {
   glue_job_security_group_id             = dependency.network.outputs.glue_job_security_group_id
   rds_db_name                            = dependency.rds.outputs.rds_db_name
   rds_cluster_reader_endpoint            = dependency.rds.outputs.rds_cluster_reader_endpoint
-  rds_port                               = local.env == "local" ? "4510" : "5432" # Localstack is accessed on 4510, AWS on 5432
+  rds_port                               = "5432"
   rds_cluster_instance_availability_zone = dependency.rds.outputs.rds_cluster_instance_availability_zone
   rds_cluster_instance_identifier        = dependency.rds.outputs.rds_cluster_instance_identifier
   rds_cluster_instance_subnet_id         = dependency.rds.outputs.rds_cluster_instance_subnet_id
   rds_connector_secret_arn               = dependency.rds.outputs.rds_connector_secret_arn
   rds_connector_secret_name              = dependency.rds.outputs.rds_connector_secret_name
-  s3_endpoint                            = local.env == "local" ? "http://127.0.0.1:4566/" : "s3://"
+  s3_endpoint                            = "s3://"
 }
 
 include "root" {

@@ -1,6 +1,6 @@
 locals {
   account_id       = get_env("AWS_ACCOUNT_ID", "000000000000")
-  env              = get_env("APP_ENV", "local")
+  env              = get_env("APP_ENV", "development")
   domain_api       = get_env("API_DOMAIN", "localhost:3001") 
   domain_idp       = get_env("IDP_DOMAIN", "localhost:8080")
   domains          = get_env("APP_DOMAINS", "[\"localhost:3000\"]")
@@ -19,7 +19,6 @@ inputs = {
 }
 
 generate "backend_remote_state" {
-disable     = local.env == "local"
   path      = "backend.tf"
   if_exists = "overwrite"
   contents  = <<EOF
@@ -28,22 +27,9 @@ terraform {
     encrypt        = true
     use_path_style = true
     bucket         = "forms-${local.env}-tfstate"
-    dynamodb_table = "tfstate-lock"
+    dynamodb_table = "development-tfstate-lock"
     region         = "ca-central-1"
     key            = "${path_relative_to_include("root")}/terraform.tfstate"
-  }
-}
-EOF
-}
-
-generate "backend_local_state" {
-disable = local.env != "local"
-  path      = "backend.tf"
-  if_exists = "overwrite"
-  contents = <<EOF
-terraform {
-  backend "local" {
-    path = "${get_parent_terragrunt_dir("root")}/${path_relative_to_include("root")}/terraform.tfstate"
   }
 }
 EOF
@@ -52,7 +38,7 @@ EOF
 generate "provider" {
   path      = "provider.tf"
   if_exists = "overwrite"
-  contents  = local.env == "local" ? file("./common/local-provider.tf") : file("./common/provider.tf")
+  contents  = file("./common/provider.tf")
 }
 
 generate "common_variables" {

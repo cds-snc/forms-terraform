@@ -17,7 +17,8 @@ dependency "network" {
 }
 
 locals {
-  env = get_env("APP_ENV", "local")
+  env = get_env("APP_ENV", "development")
+  db_pw = "chummy000"
 }
 
 inputs = {
@@ -31,8 +32,8 @@ inputs = {
   rds_db_subnet_group_name = local.env == "staging" ? "forms-staging-db" : "forms-db"
 
   # Overwritten in GitHub Actions by TFVARS
-  rds_db_password           = "chummy000" # RDS database password used for local setup
-  rds_connector_db_password = "chummy000"
+  rds_db_password           = local.db_pw # RDS database password used for local setup
+  rds_connector_db_password = local.db_pw
 
 }
 

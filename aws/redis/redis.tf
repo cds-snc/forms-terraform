@@ -9,8 +9,8 @@ resource "aws_elasticache_replication_group" "redis" {
   replication_group_id       = "gcforms-redis-rep-group"
   description                = "Redis cluster for GCForms"
   node_type                  = "cache.t2.micro"
-  num_cache_clusters         = var.env == "development" ? 1 : 2       
-  engine_version             =  "6.x"
+  num_cache_clusters         = var.env == "development" ? 1 : 2
+  engine_version             = "6.x"
   parameter_group_name       = "default.redis6.x"
   port                       = 6379
   multi_az_enabled           = var.env == "development" ? false : true

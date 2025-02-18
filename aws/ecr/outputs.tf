@@ -36,9 +36,9 @@ output "ecr_repository_url_api" {
 
 output "ecr_repository_lambda_urls" {
   description = "URL Map of the Lambda's ECR"
-  value = var.env == "development" ?   {
+  value = var.env == "development" ? {
     for lambda_name, ecr_repository in aws_ecr_repository.lambda : lambda_name => replace(ecr_repository.repository_url, var.account_id, var.staging_account_id)
-  }  : {
+    } : {
     for lambda_name, ecr_repository in aws_ecr_repository.lambda : lambda_name => ecr_repository.respository_url
   }
 }

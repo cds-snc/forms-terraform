@@ -12,7 +12,7 @@ dependencies {
 }
 
 locals {
-  env = get_env("APP_ENV", "local")
+  env = get_env("APP_ENV", "development")
 }
 
 dependency "app" {
@@ -141,16 +141,7 @@ dependency "ecr" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    # ecr_repository_url_audit_logs_lambda               = ""
-    # ecr_repository_url_audit_logs_archiver_lambda      = ""
-    # ecr_repository_url_form_archiver_lambda            = ""
-    # ecr_repository_url_nagware_lambda                  = ""
-    # ecr_repository_url_reliability_lambda              = ""
-    # ecr_repository_url_reliability_dlq_consumer_lambda = ""
-    # ecr_repository_url_response_archiver_lambda        = ""
-    # ecr_repository_url_submission_lambda               = ""
-    # ecr_repository_url_vault_integrity_lambda          = ""
-    ecr_repository_lambda_urls = [{"test": null}]
+    ecr_repository_lambda_urls = [{ "test" : null }]
   }
 }
 
@@ -201,8 +192,6 @@ inputs = {
   ecr_repository_lambda_urls = dependency.ecr.outputs.ecr_repository_lambda_urls
 
   ecs_iam_role_arn = local.env == "development" ? null : dependency.app.outputs.ecs_iam_role_arn
-
-  localstack_hosted = local.env == "local" ? true : false
 
   # Overwritten in GitHub Actions by TFVARS
   gc_template_id = "8d597a1b-a1d6-4e3c-8421-042a2b4158b7" # GC Notify template ID used for local setup

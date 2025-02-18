@@ -33,21 +33,13 @@ Pull Requests in this repository require all commits to be signed before they ca
 
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 
-- awslocal (if you want to deploy the infrastructure locally):
+- [OpenVPN](https://community.openvpn.net/openvpn/wiki/Openvpn24ManPage)
 
-  ```shell
-  $ brew install awscli-local
-  ```
+```shell
+$ brew install openvpn
+```
 
-  (source https://formulae.brew.sh/formula/awscli-local)
-
-  OR
-
-  ```shell
-  $ pip install awscli-local
-  ```
-
-  (source https://github.com/localstack/awscli-local)
+In `.zprofile` add bin to Path: `export PATH="/usr/local/opt/openvpn/sbin:$PATH"`
 
 ### If using Colima
 

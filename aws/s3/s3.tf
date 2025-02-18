@@ -6,7 +6,7 @@ resource "aws_s3_bucket" "reliability_file_storage" {
   # checkov:skip=CKV_AWS_18: Access logging not required
   # checkov:skip=CKV_AWS_21: Versioning not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
-  bucket = "forms-${local.env}-reliability-file-storage"
+  bucket        = "forms-${local.env}-reliability-file-storage"
   force_destroy = var.env == "development" ? true : false
 }
 
@@ -59,7 +59,7 @@ resource "aws_s3_bucket" "vault_file_storage" {
   # checkov:skip=CKV_AWS_21: Versioning not required
   # checkov:skip=CKV2_AWS_61: Lifecycle configuration not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
-  bucket = "forms-${local.env}-vault-file-storage"
+  bucket        = "forms-${local.env}-vault-file-storage"
   force_destroy = var.env == "development" ? true : false
 }
 
@@ -97,7 +97,7 @@ resource "aws_s3_bucket" "archive_storage" {
   # checkov:skip=CKV_AWS_18: Access logging not required
   # checkov:skip=CKV_AWS_21: Versioning not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
-  bucket = "forms-${local.env}-archive-storage"
+  bucket        = "forms-${local.env}-archive-storage"
   force_destroy = var.env == "development" ? true : false
 }
 
@@ -149,7 +149,7 @@ resource "aws_s3_bucket" "audit_logs_archive_storage" {
   # checkov:skip=CKV_AWS_18: Access logging not required
   # checkov:skip=CKV_AWS_21: Versioning not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
-  bucket = "forms-${local.env}-audit-logs-archive-storage"
+  bucket        = "forms-${local.env}-audit-logs-archive-storage"
   force_destroy = var.env == "development" ? true : false
 }
 

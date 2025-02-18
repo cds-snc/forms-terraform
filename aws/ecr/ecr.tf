@@ -35,21 +35,21 @@ resource "aws_ecr_lifecycle_policy" "form_viewer_policy" {
 #
 
 locals {
-  ecr_names = toset([
+  ecr_names = toset(compact([
     "audit-logs-lambda",
     "audit-logs-archiver-lambda",
     "cognito-email-sender-lambda",
     "cognito-pre-sign-up-lambda",
     "form-archiver-lambda",
-    "load-testing-lambda",
     "nagware-lambda",
     "notify-slack-lambda",
     "reliability-lambda",
     "reliability-dlq-consumer-lambda",
     "response-archiver-lambda",
     "submission-lambda",
-    "vault-integrity-lambda"
-  ])
+    "vault-integrity-lambda",
+    var.env == "staging" ? "load-testing-lambda" : null
+  ]))
 }
 
 resource "aws_ecr_repository" "lambda" {

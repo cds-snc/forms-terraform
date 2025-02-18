@@ -3,7 +3,7 @@ terraform {
 }
 
 locals {
-  env              = get_env("APP_ENV", "development")
+  env = get_env("APP_ENV", "development")
 }
 
 
@@ -17,7 +17,7 @@ include "root" {
 }
 
 generate "network" {
-  path      = "network.tf}"
+  path      = "network.tf"
   if_exists = "overwrite"
   contents  = local.env == "development" ? file("../../../aws/network/development_env/network_dev.tf") : file("../../../aws/network/network.tf")
 }

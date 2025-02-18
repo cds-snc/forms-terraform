@@ -9,13 +9,13 @@ resource "aws_security_group" "glue_job" {
 ##
 
 data "aws_vpc_endpoint" "s3_glue" {
-  count = var.env == "development" ? 0 : 1
+  count        = var.env == "development" ? 0 : 1
   vpc_id       = aws_vpc.forms.id
   service_name = "com.amazonaws.${var.region}.s3"
 }
 
 resource "aws_security_group_rule" "glue_job_egress_s3" {
-  count = var.env == "development" ? 0 : 1
+  count             = var.env == "development" ? 0 : 1
   description       = "Egress from Glue jobs to S3"
   type              = "egress"
   to_port           = 443
