@@ -1,5 +1,28 @@
 # Changelog
 
+## [3.29.0](https://github.com/cds-snc/forms-terraform/compare/v3.28.0...v3.29.0) (2025-02-13)
+
+
+### Features
+
+* Add cross acount policy for ECR in Staging only ([#943](https://github.com/cds-snc/forms-terraform/issues/943)) ([f026963](https://github.com/cds-snc/forms-terraform/commit/f0269635fe44efe62da950e59afab9773d5efcf3))
+* add S3 replicate rule to Platform data lake ([#944](https://github.com/cds-snc/forms-terraform/issues/944)) ([a0b34ef](https://github.com/cds-snc/forms-terraform/commit/a0b34ef9ed90e2f8f74c4ce768a10925fd3c7863))
+* ecr policy to allow cross acoutn sharing ([#948](https://github.com/cds-snc/forms-terraform/issues/948)) ([b7a810b](https://github.com/cds-snc/forms-terraform/commit/b7a810b31652910b8b5399025d1bed6136afe2bf))
+* replicate prod data to the Platform data lake ([#950](https://github.com/cds-snc/forms-terraform/issues/950)) ([b4d0d95](https://github.com/cds-snc/forms-terraform/commit/b4d0d954e86a2315cb7c6f4bc5eb55c22113f056))
+
+
+### Bug Fixes
+
+* add missing quotes in ecr policy ([#947](https://github.com/cds-snc/forms-terraform/issues/947)) ([5e56fec](https://github.com/cds-snc/forms-terraform/commit/5e56fec086add7ba294345cb887b72b398da2031))
+
+
+### Miscellaneous Chores
+
+* Add submissionId to handler ([#952](https://github.com/cds-snc/forms-terraform/issues/952)) ([9a8074a](https://github.com/cds-snc/forms-terraform/commit/9a8074a88da417509795aa27b4387f6d9d36303c))
+* revert failing ecr policy ([#949](https://github.com/cds-snc/forms-terraform/issues/949)) ([734f2b6](https://github.com/cds-snc/forms-terraform/commit/734f2b6686503bdfe88f01089f6608cc44f868d3))
+* temporarily disable data replication to data lake ([#951](https://github.com/cds-snc/forms-terraform/issues/951)) ([58c666e](https://github.com/cds-snc/forms-terraform/commit/58c666e65541f970f58a8b18a2450423ef6b6621))
+* Use explicit accounts ids as org id does not work ([#954](https://github.com/cds-snc/forms-terraform/issues/954)) ([fd29a08](https://github.com/cds-snc/forms-terraform/commit/fd29a08fc6fd3d00c69819ae2b59b105b29ef1cf))
+
 ## [3.28.0](https://github.com/cds-snc/forms-terraform/compare/v3.27.6...v3.28.0) (2025-02-11)
 
 
