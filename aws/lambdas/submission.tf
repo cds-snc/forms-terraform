@@ -23,7 +23,6 @@ resource "aws_lambda_function" "submission" {
     variables = {
       REGION     = var.region
       SQS_URL    = var.sqs_reliability_queue_id
-      LOCALSTACK = var.localstack_hosted
     }
   }
 

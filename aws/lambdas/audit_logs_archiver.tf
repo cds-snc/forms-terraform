@@ -12,7 +12,6 @@ resource "aws_lambda_function" "audit_logs_archiver" {
   environment {
     variables = {
       REGION                               = var.region
-      LOCALSTACK                           = var.localstack_hosted
       AUDIT_LOGS_DYNAMODB_TABLE_NAME       = var.dynamodb_app_audit_logs_table_name
       AUDIT_LOGS_ARCHIVE_STORAGE_S3_BUCKET = var.audit_logs_archive_storage_id
     }

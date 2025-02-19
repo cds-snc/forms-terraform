@@ -15,7 +15,7 @@ output "ecr_repository_url_cognito_pre_sign_up_lambda" {
 
 output "ecr_repository_url_load_testing_lambda" {
   description = "URL of the Load Testing Lambda ECR"
-  value       = aws_ecr_repository.lambda["load-testing-lambda"].repository_url
+  value       = try(aws_ecr_repository.lambda["load-testing-lambda"].repository_url, null)
 }
 
 

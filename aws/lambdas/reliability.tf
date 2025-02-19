@@ -22,7 +22,6 @@ resource "aws_lambda_function" "reliability" {
       NOTIFY_API_KEY = var.notify_api_key_secret_arn
       TEMPLATE_ID    = var.gc_template_id
       DB_URL         = var.database_url_secret_arn
-      LOCALSTACK     = var.localstack_hosted
     }
   }
 

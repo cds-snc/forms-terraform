@@ -20,7 +20,6 @@ resource "aws_lambda_function" "reliability_dlq_consumer" {
       SQS_DEAD_LETTER_QUEUE_URL           = var.sqs_reliability_dead_letter_queue_id
       SQS_SUBMISSION_PROCESSING_QUEUE_URL = var.sqs_reliability_queue_id
       SNS_ERROR_TOPIC_ARN                 = var.sns_topic_alert_critical_arn
-      LOCALSTACK                          = var.localstack_hosted
     }
   }
 

@@ -16,13 +16,44 @@ if ! command -v openvpn > /dev/null; then
   exit 1
 fi
 
-# Get VPN endpoint
+# Check if Endpoint exists
+
+num_of_endpoints=$(aws ec2 describe-client-vpn-endpoints --query "length(ClientVpnEndpoints)")
+
+if [[ "$num_of_endpoints" -eq 0 ]]; then
+  printf "${redColor}=> VPN endpoint does not exist. Please build development environment with 'make build_dev'.${reset}\n"
+  exit 1
+fi
+
+if [[ "$num_of_endpoints" -gt 1 ]]; then
+  printf "${redColor}=> Mulitiple VPN endpoints exist. Please build development environment with 'make build_dev'.${reset}\n"
+  exit 1
+fi
+
+
+# Check if VPN endpoint has subnet associations
+vpn_endpoint_id=$(aws ec2 describe-client-vpn-endpoints --query "ClientVpnEndpoints[0].ClientVpnEndpointId" --output text)
+num_of_associations=$(aws ec2 describe-client-vpn-target-networks --client-vpn-endpoint-id $vpn_endpoint_id --query "length(ClientVpnTargetNetworks)")
+if [[ "$num_of_associations" -eq 0 ]]; then
+  printf "${yellowColor}=> VPN endpoint does not have subnet associations.${reset}\n"
+  printf "${greenColor}=> Running VPN terraform module.${reset}\n"
+  # Build Lambda Scheduler
+  cd $basedir/aws/vpn/lambda/code
+  yarn build && yarn postbuild
+  # Apply VPN terraform module
+  cd $basedir/env/cloud/vpn
+  terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+fi
+
+# Get VPN endpoint DNS name
 
 vpn_endpoint=$(aws ec2 describe-client-vpn-endpoints --query "ClientVpnEndpoints[0].DnsName" --output text | cut -c 3-)
 
 printf "${greenColor}=> Connecting to VPN endpoint: $vpn_endpoint${reset}\n"
 
-sudo openvpn --remote $vpn_endpoint 443 --config $basedir/local_dev_files/certificates/client-config.ovpn \
+sudo openvpn --remote $vpn_endpoint 443 \
+  --connect-retry-max 2 \
+  --config $basedir/local_dev_files/certificates/client-config.ovpn \
   --ca $basedir/local_dev_files/certificates/ca.crt \
   --cert $basedir/local_dev_files/certificates/client.development.aws.crt \
   --key $basedir/local_dev_files/certificates/client.development.aws.key

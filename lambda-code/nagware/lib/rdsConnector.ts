@@ -10,10 +10,6 @@ const getConnectionString = async (): Promise<string> => {
       if (secretUrl === undefined) {
         throw new Error("RDS Conneciton URL is undefined");
       }
-
-      if (process.env.LOCALSTACK === "true") {
-        return secretUrl.replace("5432", "4510");
-      }
       return secretUrl;
     });
   } catch (error) {

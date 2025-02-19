@@ -1,6 +1,6 @@
 locals {
   rds_engine         = "aurora-postgresql"
-  rds_engine_version = "13.12"
+  rds_engine_version = var.env == "development" ? "16.4" : "13.12"
 }
 
 resource "random_string" "random" {
@@ -40,10 +40,11 @@ resource "aws_rds_cluster" "forms" {
   storage_encrypted           = true
   allow_major_version_upgrade = true
   copy_tags_to_snapshot       = true
+  apply_immediately           = var.env == "development" ? true : false
 
   serverlessv2_scaling_configuration {
     max_capacity = var.env == "development" ? 2 : 8
-    min_capacity = var.env == "development" ? 0.5 : 2
+    min_capacity = var.env == "development" ? 0 : 2
   }
 
   vpc_security_group_ids = [var.rds_security_group_id]
@@ -72,4 +73,5 @@ resource "aws_rds_cluster_instance" "forms" {
   db_subnet_group_name       = aws_db_subnet_group.forms.name
   auto_minor_version_upgrade = true
   promotion_tier             = 1
+  apply_immediately           = var.env == "development" ? true : false
 }

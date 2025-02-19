@@ -115,7 +115,17 @@ cd $basedir/env/cloud/lambdas
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "${greenColor}...Setting up VPN Client${reset}\n"
+
+cd $basedir/aws/vpn/lambda/code
+yarn build && yarn postbuild
+
 cd $basedir/env/cloud/vpn
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "${greenColor}All infratructure initialized: Ready for requests${reset}\n"
+
+DB_SECRET_ARN=$(aws secretsmanager list-secrets --filter Key="name",Values="server-database-url" --query "SecretList[0].ARN" --output text)
+DATABASE_URL=$(aws secretsmanager get-secret-value --secret-id $DB_SECRET_ARN --query "SecretString" --output text)
+REDIS_URL=$(aws elasticache describe-cache-clusters --show-cache-node-info --query "CacheClusters[0].CacheNodes[0].Endpoint.Address" --output text)
+RELIABILITY_FILE_STORAGE="forms-${AWS_ACCOUNT_ID}-reliability-file-storage"
+printf "${greenColor}=> Please copy the following to your app .env file:${reset}\nDATABASE_URL=${DATABASE_URL}\nREDIS_URL=${REDIS_URL}:6379\nRELIABILITY_FILE_STORAGE=${RELIABILITY_FILE_STORAGE}\n"

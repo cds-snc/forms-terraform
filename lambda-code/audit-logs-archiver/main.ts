@@ -4,14 +4,13 @@ import { BatchWriteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 const REGION = process.env.REGION;
-const LOCALSTACK = process.env.LOCALSTACK;
 const AUDIT_LOGS_DYNAMODB_TABLE_NAME = process.env.AUDIT_LOGS_DYNAMODB_TABLE_NAME;
 const AUDIT_LOGS_ARCHIVE_STORAGE_S3_BUCKET = process.env.AUDIT_LOGS_ARCHIVE_STORAGE_S3_BUCKET;
 const PROCESSING_CHUNK_SIZE = 100;
 
 interface AuditLog {
-  "UserID": string;
-  "TimeStamp": number;
+  UserID: string;
+  TimeStamp: number;
   "Event#SubjectID#TimeStamp": string;
   [key: string]: any;
 }
@@ -20,17 +19,10 @@ export const handler: Handler = async () => {
   try {
     const dynamodbClient = new DynamoDBClient({
       region: REGION ?? "ca-central-1",
-      ...(LOCALSTACK === "true" && {
-        endpoint: "http://host.docker.internal:4566",
-      }),
     });
 
     const s3Client = new S3Client({
       region: REGION ?? "ca-central-1",
-      ...(LOCALSTACK === "true" && {
-        endpoint: "http://host.docker.internal:4566",
-        forcePathStyle: true,
-      }),
     });
 
     await archiveAuditLogs(dynamodbClient, s3Client);
@@ -52,7 +44,10 @@ async function archiveAuditLogs(dynamodbClient: DynamoDBClient, s3Client: S3Clie
   let lastEvaluatedKey = null;
 
   while (lastEvaluatedKey !== undefined) {
-    const archivableAuditLogs = await retrieveArchivableAuditLogs(dynamodbClient, lastEvaluatedKey ?? undefined);
+    const archivableAuditLogs = await retrieveArchivableAuditLogs(
+      dynamodbClient,
+      lastEvaluatedKey ?? undefined
+    );
 
     if (archivableAuditLogs.auditLogs.length > 0) {
       const auditLogsToDelete = await putAuditLogsInS3(s3Client, archivableAuditLogs.auditLogs);
@@ -66,7 +61,7 @@ async function archiveAuditLogs(dynamodbClient: DynamoDBClient, s3Client: S3Clie
 async function retrieveArchivableAuditLogs(
   dynamodbClient: DynamoDBClient,
   lastEvaluatedKey?: Record<string, any>
-): Promise<{ auditLogs: AuditLog[], lastEvaluatedKey?: Record<string, any> }> {
+): Promise<{ auditLogs: AuditLog[]; lastEvaluatedKey?: Record<string, any> }> {
   const archiveDate = ((d) => d.setMonth(d.getMonth() - 1))(new Date()); // Archive after 1 month
 
   try {
@@ -80,7 +75,7 @@ async function retrieveArchivableAuditLogs(
         KeyConditionExpression: "#status = :status AND #timestamp < :timestamp",
         ExpressionAttributeNames: {
           "#status": "Status",
-          "#timestamp": "TimeStamp"
+          "#timestamp": "TimeStamp",
         },
         ExpressionAttributeValues: {
           ":status": "Archivable",
@@ -91,7 +86,7 @@ async function retrieveArchivableAuditLogs(
 
     return {
       auditLogs: (queryCommandResponse.Items ?? []) as AuditLog[],
-      lastEvaluatedKey: queryCommandResponse.LastEvaluatedKey
+      lastEvaluatedKey: queryCommandResponse.LastEvaluatedKey,
     };
   } catch (error) {
     throw new Error(
@@ -101,13 +96,15 @@ async function retrieveArchivableAuditLogs(
 }
 
 async function putAuditLogsInS3(s3Client: S3Client, auditLogs: AuditLog[]): Promise<AuditLog[]> {
-  const putRequests = auditLogs.map(async auditLog => {
+  const putRequests = auditLogs.map(async (auditLog) => {
     try {
       await s3Client.send(
         new PutObjectCommand({
           Bucket: AUDIT_LOGS_ARCHIVE_STORAGE_S3_BUCKET,
           Body: JSON.stringify(auditLog),
-          Key: `${auditLog.UserID}/${new Date(auditLog.TimeStamp).toISOString().slice(0, 10)}/${auditLog["Event#SubjectID#TimeStamp"]}.json`,
+          Key: `${auditLog.UserID}/${new Date(auditLog.TimeStamp).toISOString().slice(0, 10)}/${
+            auditLog["Event#SubjectID#TimeStamp"]
+          }.json`,
         })
       );
       return auditLog;
@@ -124,14 +121,17 @@ async function putAuditLogsInS3(s3Client: S3Client, auditLogs: AuditLog[]): Prom
     }
   });
 
-  return (await Promise.all(putRequests)).filter(r => r !== undefined) as AuditLog[];
+  return (await Promise.all(putRequests)).filter((r) => r !== undefined) as AuditLog[];
 }
 
-async function deleteAuditLogsFromDynamoDB(dynamodbClient: DynamoDBClient, auditLogs: AuditLog[]): Promise<void[]> {
+async function deleteAuditLogsFromDynamoDB(
+  dynamodbClient: DynamoDBClient,
+  auditLogs: AuditLog[]
+): Promise<void[]> {
   /**
    * The `BatchWriteCommand` can only take up to 25 `DeleteRequest` at a time.
    */
-  const chunksOfDeleteRequests = chunkArray(auditLogs, 25).map(chunk => {
+  const chunksOfDeleteRequests = chunkArray(auditLogs, 25).map((chunk) => {
     return async () => {
       try {
         await dynamodbClient.send(
@@ -163,7 +163,7 @@ async function deleteAuditLogsFromDynamoDB(dynamodbClient: DynamoDBClient, audit
           })
         );
       }
-    }
+    };
   });
 
   return runPromisesSynchronously(chunksOfDeleteRequests);

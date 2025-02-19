@@ -17,7 +17,6 @@ resource "aws_lambda_function" "audit_logs" {
   environment {
     variables = {
       REGION                 = var.region
-      LOCALSTACK             = var.localstack_hosted
       APP_AUDIT_LOGS_SQS_ARN = var.sqs_app_audit_log_queue_arn
       API_AUDIT_LOGS_SQS_ARN = var.sqs_api_audit_log_queue_arn
     }

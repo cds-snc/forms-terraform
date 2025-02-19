@@ -144,11 +144,6 @@ variable "archive_storage_id" {
   type        = string
 }
 
-variable "localstack_hosted" {
-  description = "Whether or not the stack is hosted in localstack"
-  type        = bool
-}
-
 variable "audit_logs_archive_storage_id" {
   description = "S3 bucket ID for audit logs archive storage"
   type        = string
