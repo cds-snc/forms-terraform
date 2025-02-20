@@ -37,22 +37,28 @@ export const handler: Handler = async () => {
       );
     });
 
-  // Get VPN Connections for each VPN Endpoint
-  const vpnConnectionsPromises = vpnEndpoints.map((vpnEndpoint) => {
-    return ec2Client.send(
-      new DescribeClientVpnConnectionsCommand({ ClientVpnEndpointId: vpnEndpoint.vpnEndpointId })
-    );
+  console.info(`Found ${vpnEndpoints.length} VPN Endpoints`);
+  vpnEndpoints.forEach((vpnEndpoint) => {
+    console.info(`VPN Endpoint data:`, vpnEndpoint);
   });
 
   // GMT time is 4 hours ahead of EST time
-  // 06h to 20h EST is 10h to 00h GMT
+  // 20h to 06h EST is 00h to 10h GMT
   // Outside of this time range, the VPN connections should be terminated
-  if (isCurrentTimeBetween("10:00", "23:59")) {
+  if (isCurrentTimeBetween("00:00", "10:00")) {
     // After normal working hours, the VPN connections should be terminated
-    await disassociateVpnEndpoint(vpnEndpoints, ec2Client);
+    await disassociateVpnEndpoints(vpnEndpoints, ec2Client);
   } else {
     // Get VPN Connections for each VPN Endpoint
-    const vpnConnections = await Promise.all(vpnConnectionsPromises)
+    const vpnConnections = await Promise.all(
+      vpnEndpoints.map((vpnEndpoint) => {
+        return ec2Client.send(
+          new DescribeClientVpnConnectionsCommand({
+            ClientVpnEndpointId: vpnEndpoint.vpnEndpointId,
+          })
+        );
+      })
+    )
       .then((responses) => responses.map((response) => response.Connections))
       .then((connections) => connections.flat());
     // Check if there are any active connections
@@ -61,10 +67,10 @@ export const handler: Handler = async () => {
     );
 
     if (activeVpnConnections.length > 0) {
-      console.log("Active VPN connections found. Not removing VPN Endpoint.");
+      console.log("Active VPN connections found. Not removing VPN Endpoint associations.");
     } else {
-      console.log("No active VPN connections found. Removing VPN Endpoint.");
-      await disassociateVpnEndpoint(vpnEndpoints, ec2Client);
+      console.log("No active VPN connections found. Removing VPN Endpoint associations.");
+      await disassociateVpnEndpoints(vpnEndpoints, ec2Client);
     }
   }
 };
@@ -83,7 +89,7 @@ function isCurrentTimeBetween(startTime: string, endTime: string): boolean {
   return currentTime >= start && currentTime <= end;
 }
 
-async function disassociateVpnEndpoint(
+async function disassociateVpnEndpoints(
   vpnEndpoints: {
     vpnEndpointId?: string;
     vpcId?: string;
@@ -91,24 +97,31 @@ async function disassociateVpnEndpoint(
   }[],
   ec2Client: EC2Client
 ) {
-  return Promise.all(
-    vpnEndpoints.map((vpnEndpoint) => {
-      if (vpnEndpoint.networkAssociations && vpnEndpoint.networkAssociations.length > 0) {
-        console.info(
-          `Disassociating VPN Endpoint ${vpnEndpoint.vpnEndpointId} from VPC ${vpnEndpoint.vpcId}`
-        );
-        // Dissociate the VPN Endpoint from the VPC
-        return vpnEndpoint.networkAssociations.map((associationId) =>
+  const disassociationPromises = vpnEndpoints.flatMap(async (vpnEndpoint) => {
+    console.info(
+      `Processing VPN Endpoint ${vpnEndpoint.vpnEndpointId} with ${vpnEndpoint.networkAssociations?.length} network associations`
+    );
+    if (vpnEndpoint.networkAssociations && vpnEndpoint.networkAssociations.length > 0) {
+      console.info(
+        `Disassociating VPN Endpoint association ${vpnEndpoint.vpnEndpointId} from VPC ${vpnEndpoint.vpcId}`
+      );
+      //Dissociate the VPN Endpoint from the VPC
+      return await Promise.all(
+        vpnEndpoint.networkAssociations.map((associationId) =>
           ec2Client.send(
             new DisassociateClientVpnTargetNetworkCommand({
               AssociationId: associationId,
               ClientVpnEndpointId: vpnEndpoint.vpnEndpointId,
             })
           )
-        );
-      } else {
-        console.info(`No network associations found for VPN Endpoint ${vpnEndpoint.vpnEndpointId}`);
-      }
-    })
-  );
+        )
+      );
+    } else {
+      console.info(`No network associations found for VPN Endpoint ${vpnEndpoint.vpnEndpointId}`);
+    }
+  });
+  const results = await Promise.all(disassociationPromises);
+  results.forEach((result) => {
+    console.info("Disassociation result:", result);
+  });
 }

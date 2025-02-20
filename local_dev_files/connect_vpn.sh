@@ -30,7 +30,6 @@ if [[ "$num_of_endpoints" -gt 1 ]]; then
   exit 1
 fi
 
-
 # Check if VPN endpoint has subnet associations
 vpn_endpoint_id=$(aws ec2 describe-client-vpn-endpoints --query "ClientVpnEndpoints[0].ClientVpnEndpointId" --output text)
 num_of_associations=$(aws ec2 describe-client-vpn-target-networks --client-vpn-endpoint-id $vpn_endpoint_id --query "length(ClientVpnTargetNetworks)")
@@ -45,6 +44,8 @@ if [[ "$num_of_associations" -eq 0 ]]; then
   terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 fi
 
+printf "${greenColor}=> VPN endpoint ${vpn_endpoint_id} has ${num_of_associations} subnet associations.${reset}\n"
+
 # Get VPN endpoint DNS name
 
 vpn_endpoint=$(aws ec2 describe-client-vpn-endpoints --query "ClientVpnEndpoints[0].DnsName" --output text | cut -c 3-)
@@ -52,7 +53,9 @@ vpn_endpoint=$(aws ec2 describe-client-vpn-endpoints --query "ClientVpnEndpoints
 printf "${greenColor}=> Connecting to VPN endpoint: $vpn_endpoint${reset}\n"
 
 sudo openvpn --remote $vpn_endpoint 443 \
-  --connect-retry-max 2 \
+  --inactive 3600 \
+  --ping 10 \
+  --ping-exit 60 \
   --config $basedir/local_dev_files/certificates/client-config.ovpn \
   --ca $basedir/local_dev_files/certificates/ca.crt \
   --cert $basedir/local_dev_files/certificates/client.development.aws.crt \

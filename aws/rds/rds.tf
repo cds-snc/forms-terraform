@@ -43,7 +43,7 @@ resource "aws_rds_cluster" "forms" {
   apply_immediately           = var.env == "development" ? true : false
 
   serverlessv2_scaling_configuration {
-    max_capacity = var.env == "development" ? 2 : 8
+    max_capacity = var.env == "development" ? 4 : 8
     min_capacity = var.env == "development" ? 0 : 2
   }
 
