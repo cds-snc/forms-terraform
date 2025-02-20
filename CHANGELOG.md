@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.29.1](https://github.com/cds-snc/forms-terraform/compare/v3.29.0...v3.29.1) (2025-02-20)
+
+
+### Bug Fixes
+
+* revert localstack detection when initializing Postgres connector ([#956](https://github.com/cds-snc/forms-terraform/issues/956)) ([5cd34ff](https://github.com/cds-snc/forms-terraform/commit/5cd34ffa3f1b39f38489cb1fece76b7d15e4cc1c))
+
+
+### Code Refactoring
+
+* leverage new connectors package ([#953](https://github.com/cds-snc/forms-terraform/issues/953)) ([570a7e0](https://github.com/cds-snc/forms-terraform/commit/570a7e027813529cad34938a8db8c93893ec9952))
+
 ## [3.29.0](https://github.com/cds-snc/forms-terraform/compare/v3.28.0...v3.29.0) (2025-02-13)
 
 
