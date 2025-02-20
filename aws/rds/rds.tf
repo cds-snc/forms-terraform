@@ -45,6 +45,8 @@ resource "aws_rds_cluster" "forms" {
   serverlessv2_scaling_configuration {
     max_capacity = var.env == "development" ? 4 : 8
     min_capacity = var.env == "development" ? 0 : 2
+    # Pause DB after 30 minutes of inactivity in development environment
+    seconds_until_auto_pause = var.env == "development" ? 1800 : null
   }
 
   vpc_security_group_ids = [var.rds_security_group_id]

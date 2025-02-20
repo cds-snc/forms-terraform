@@ -6,8 +6,15 @@ yellowColor='\033[0;33m'
 redColor='\033[0;31m'
 reset='\033[0m' # No Color
 
+if test -f .env
+then
+  set -o allexport
+  source .env
+  set +o allexport
+  printf "${greenColor}=> Environment variables loaded from .env${reset}\n"
+fi
 
-export AWS_PROFILE="development"
+
 
 basedir=$(pwd)
 
@@ -32,7 +39,9 @@ fi
 
 # Check if VPN endpoint has subnet associations
 vpn_endpoint_id=$(aws ec2 describe-client-vpn-endpoints --query "ClientVpnEndpoints[0].ClientVpnEndpointId" --output text)
-num_of_associations=$(aws ec2 describe-client-vpn-target-networks --client-vpn-endpoint-id $vpn_endpoint_id --query "length(ClientVpnTargetNetworks)")
+num_of_associations=$(aws ec2 describe-client-vpn-target-networks \
+  --client-vpn-endpoint-id $vpn_endpoint_id \
+  --query "length(ClientVpnTargetNetworks[?Status.Code=='associated'])")
 if [[ "$num_of_associations" -eq 0 ]]; then
   printf "${yellowColor}=> VPN endpoint does not have subnet associations.${reset}\n"
   printf "${greenColor}=> Running VPN terraform module.${reset}\n"
