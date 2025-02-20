@@ -15,7 +15,7 @@ export async function getTemplateInfo(formID: string): Promise<TemplateInfo | nu
     const postgresConnector =
       await PostgresConnector.defaultUsingPostgresConnectionUrlFromAwsSecret(
         process.env.DB_URL ?? "",
-        process.env.LOCALSTACK === "true"
+        Boolean(process.env.LOCALSTACK)
       );
 
     const templates = await postgresConnector.executeSqlStatement()<
