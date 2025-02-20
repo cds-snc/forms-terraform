@@ -1,20 +1,8 @@
-import { GCNotifyClient } from "./gc-notify-client.js";
+import { GCNotifyConnector } from "@gcforms/connectors";
 import convertMessage from "./markdown.js";
 import { extractFileInputResponses, notifyProcessed } from "./dataLayer.js";
 import { retrieveFilesFromReliabilityStorage } from "./s3FileInput.js";
 import { FormSubmission } from "./types.js";
-import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
-
-const client = new SecretsManagerClient();
-const command = new GetSecretValueCommand({ SecretId: process.env.NOTIFY_API_KEY });
-console.log("Retrieving Notify API Key from Secrets Manager");
-const notifyApiKey = await client.send(command);
-
-if (notifyApiKey.SecretString === undefined) {
-  throw new Error("GCNotify API key is undefined");
-}
-
-const gcNotifyClient = GCNotifyClient.default(notifyApiKey.SecretString);
 
 export default async (
   submissionID: string,
@@ -61,7 +49,9 @@ export default async (
         ? formSubmission.deliveryOption.emailSubjectEn
         : formSubmission.form.titleEn;
 
-    await gcNotifyClient.sendEmail(
+    const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(process.env.NOTIFY_API_KEY ?? "");
+
+    await gcNotifyConnector.sendEmail(
       formSubmission.deliveryOption.emailAddress,
       templateId,
       {
