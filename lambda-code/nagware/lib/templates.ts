@@ -1,4 +1,4 @@
-import { DatabaseConnectorClient } from "./rdsConnector.js";
+import { PostgresConnector } from "@gcforms/connectors";
 
 export type TemplateInfo = {
   formName: string;
@@ -11,8 +11,14 @@ export type TemplateInfo = {
 
 export async function getTemplateInfo(formID: string): Promise<TemplateInfo> {
   try {
+    const postgresConnector =
+      await PostgresConnector.defaultUsingPostgresConnectionUrlFromAwsSecret(
+        process.env.DB_URL ?? "",
+        Boolean(process.env.LOCALSTACK)
+      );
+
     // Due to Localstack limitations we have to define aliases for fields that have the same name
-    const result = await DatabaseConnectorClient<
+    const result = await postgresConnector.executeSqlStatement()<
       {
         user_name?: string;
         email: string;
@@ -24,8 +30,7 @@ export async function getTemplateInfo(formID: string): Promise<TemplateInfo> {
       FROM "User" usr
       JOIN "_TemplateToUser" ttu ON usr."id" = ttu."B"
       JOIN "Template" tem ON tem."id" = ttu."A"
-      WHERE ttu."A" = ${formID}
-    `;
+      WHERE ttu."A" = ${formID}`;
 
     if (result.length > 0) {
       const { template_name, jsonConfig, isPublished } = result[0];

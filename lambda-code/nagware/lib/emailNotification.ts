@@ -1,17 +1,4 @@
-import { GCNotifyClient } from "./gc-notify-client.js";
-import { AxiosError } from "axios";
-import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
-
-const client = new SecretsManagerClient();
-const command = new GetSecretValueCommand({ SecretId: process.env.NOTIFY_API_KEY });
-console.log("Retrieving Notify API Key from Secrets Manager");
-const notifyApiKey = await client.send(command);
-
-if (notifyApiKey.SecretString === undefined) {
-  throw new Error("GCNotify API key is undefined");
-}
-
-const gcNotifyClient = GCNotifyClient.default(notifyApiKey.SecretString);
+import { GCNotifyConnector } from "@gcforms/connectors";
 
 export async function notifyFormOwner(
   formID: string,
@@ -19,6 +6,10 @@ export async function notifyFormOwner(
   formOwnerEmailAddress: string
 ) {
   try {
+    const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
+      process.env.NOTIFY_API_KEY ?? ""
+    );
+    
     const templateId = process.env.TEMPLATE_ID;
 
     if (templateId === undefined) {
@@ -27,7 +18,7 @@ export async function notifyFormOwner(
 
     const baseUrl = `http://${process.env.DOMAIN}`;
 
-    await gcNotifyClient.sendEmail(formOwnerEmailAddress, templateId, {
+    await gcNotifyConnector.sendEmail(formOwnerEmailAddress, templateId, {
       subject: "Overdue form responses - Réponses de formulaire non traitées",
       formResponse: `
 **GC Forms Notification**

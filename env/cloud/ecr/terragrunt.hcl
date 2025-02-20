@@ -15,4 +15,6 @@ locals {
 inputs = {
   cds_org_id         = local.cds_org_id
   staging_account_id = local.staging_account_id
+  aws_development_accounts = ["123456789012"]
 }
+

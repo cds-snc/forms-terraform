@@ -1,7 +1,6 @@
 import encryptionSDK from "@aws-crypto/client-node";
 import { Handler } from "aws-lambda";
-import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
-import { GCNotifyClient } from "./lib/gc-notify-client.js";
+import { GCNotifyConnector } from "@gcforms/connectors";
 
 const KEY_ARN = process.env.KEY_ARN;
 const KEY_ALIAS = process.env.KEY_ALIAS;
@@ -14,17 +13,6 @@ if (!KEY_ARN || !KEY_ALIAS || !TEMPLATE_ID) {
     }`
   );
 }
-
-const client = new SecretsManagerClient();
-const command = new GetSecretValueCommand({ SecretId: process.env.NOTIFY_API_KEY });
-console.log("Retrieving Notify API Key from Secrets Manager");
-const notifyApiKey = await client.send(command);
-
-if (notifyApiKey.SecretString === undefined) {
-  throw new Error("GCNotify API key is undefined");
-}
-
-const gcNotifyClient = GCNotifyClient.default(notifyApiKey.SecretString);
 
 export const handler: Handler = async (event) => {
   // setup the encryptionSDK's key ring
@@ -65,7 +53,9 @@ export const handler: Handler = async (event) => {
   ) {
     // attempt to send the code to the user through Notify
     try {
-      await gcNotifyClient.sendEmail(userEmail, TEMPLATE_ID, {
+      const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(process.env.NOTIFY_API_KEY ?? "");
+
+      await gcNotifyConnector.sendEmail(userEmail, TEMPLATE_ID, {
         passwordReset: event.triggerSource === "CustomEmailSender_ForgotPassword",
         // Keeping `accountVerification` and `resendCode` variables in case we need them in the future. They were removed when we implemented 2FA.
         accountVerification: false,
@@ -77,12 +67,12 @@ export const handler: Handler = async (event) => {
       console.error(
         JSON.stringify({
           level: "error",
-          msg: `Failed to send password reset email to ${userEmail}`,
+          msg: `Failed to send password reset email to ${userEmail}.`,
           error: (error as Error).message,
         })
       );
 
-      throw new Error("Notify failed to send the code");
+      throw new Error(`Failed to send password reset email to ${userEmail}.`);
     }
   }
 };

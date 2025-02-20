@@ -1,5 +1,5 @@
 import { FormProperties } from "./types.js";
-import { DatabaseConnectorClient } from "./rdsConnector.js";
+import { PostgresConnector } from "@gcforms/connectors";
 
 export type TemplateInfo = {
   formConfig: FormProperties;
@@ -12,7 +12,13 @@ export type TemplateInfo = {
 
 export async function getTemplateInfo(formID: string): Promise<TemplateInfo | null> {
   try {
-    const templates = await DatabaseConnectorClient<
+    const postgresConnector =
+      await PostgresConnector.defaultUsingPostgresConnectionUrlFromAwsSecret(
+        process.env.DB_URL ?? "",
+        Boolean(process.env.LOCALSTACK)
+      );
+
+    const templates = await postgresConnector.executeSqlStatement()<
       {
         jsonConfig?: Record<string, unknown>;
         emailAddress?: string;
@@ -22,8 +28,7 @@ export async function getTemplateInfo(formID: string): Promise<TemplateInfo | nu
     >`SELECT  t."jsonConfig", deli."emailAddress", deli."emailSubjectEn", deli."emailSubjectFr"
       FROM "Template" t
       LEFT JOIN "DeliveryOption" deli ON t.id = deli."templateId"
-      WHERE t.id = ${formID}
- `;
+      WHERE t.id = ${formID}`;
 
     if (templates.length === 1) {
       const { jsonConfig, emailAddress, emailSubjectEn, emailSubjectFr } = templates[0];
