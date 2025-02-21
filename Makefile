@@ -1,3 +1,14 @@
+include .env
+export $(shell sed 's/=.*//' .env)
+export AWS_PROFILE=development
+export APP_ENV=development
+
+guard-%:
+	@ if [ "${${*}}" = "" ]; then \
+	echo "Environment variable $* not set"; \
+	exit 1; \
+	fi
+
 default: help
 
 help:
@@ -29,6 +40,19 @@ create_dev_certs: 	## Create Development certificates
 
 connect_dev: 	## Connect to Development environment
 	./local_dev_files/connect_vpn.sh
+
+lambda: ## Build specific lambda image and deploy to local environment
+	echo Building lambda $(name)
+	./local_dev_files/import_envs.sh
+	./local_dev_files/build_and_deploy_lambda.sh $(name)
+
+lambdas: ## Build all lambda images and deploy to local environment
+	echo Building all lambdas
+	./local_dev_files/build_and_deploy_lambda.sh
+
+lambda lambdas connect_dev create_dev_certs destroy_dev build_dev: guard-AWS_ACCOUNT_ID
+
+build_dev: guard-STAGING_AWS_ACCOUNT_ID
 
 
 .PHONY: \

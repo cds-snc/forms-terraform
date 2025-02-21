@@ -16,12 +16,16 @@ dependency "kms" {
   }
 }
 
+locals {
+  aws_account_id = get_env("AWS_ACCOUNT_ID", "000000000000")
+}
+
 dependency "secrets" {
   config_path                             = "../secrets"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    notify_api_key_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_api_key"
+    notify_api_key_secret_arn = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:notify_api_key"
   }
 }
 

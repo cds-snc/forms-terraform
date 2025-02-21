@@ -13,6 +13,7 @@ dependencies {
 
 locals {
   env = get_env("APP_ENV", "development")
+  aws_account_id = get_env("AWS_ACCOUNT_ID", "000000000000")
 }
 
 dependency "app" {
@@ -21,7 +22,7 @@ dependency "app" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    ecs_iam_role_arn = "arn:aws:iam::123456789012:role/form-viewer"
+    ecs_iam_role_arn = "arn:aws:iam::${local.aws_account_id}:role/form-viewer"
   }
 }
 
@@ -62,12 +63,12 @@ dependency "sqs" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    sqs_reliability_queue_arn            = "arn:aws:sqs:ca-central-1:000000000000:reliability_queue"
-    sqs_reliability_queue_id             = "https://localhost.localstack.cloud:4566/000000000000/submission_processing.fifo"
-    sqs_reprocess_submission_queue_arn   = "arn:aws:sqs:ca-central-1:000000000000:reprocess_submission_queue.fifo"
-    sqs_reliability_dead_letter_queue_id = "https://localhost.localstack.cloud:4566/000000000000/reliability_deadletter_queue.fifo"
-    sqs_app_audit_log_queue_arn          = "arn:aws:sqs:ca-central-1:000000000000:audit_log_queue"
-    sqs_api_audit_log_queue_arn          = "arn:aws:sqs:ca-central-1:000000000000:api_audit_log_queue"
+    sqs_reliability_queue_arn            = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reliability_queue"
+    sqs_reliability_queue_id             = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/submission_processing.fifo"
+    sqs_reprocess_submission_queue_arn   = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reprocess_submission_queue.fifo"
+    sqs_reliability_dead_letter_queue_id = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/reliability_deadletter_queue.fifo"
+    sqs_app_audit_log_queue_arn          = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:audit_log_queue"
+    sqs_api_audit_log_queue_arn          = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:api_audit_log_queue"
   }
 }
 
@@ -97,14 +98,14 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_relability_queue_arn      = "arn:aws:dynamodb:ca-central-1:123456789012:table/ReliabilityQueue"
-    dynamodb_vault_arn                 = "arn:aws:dynamodb:ca-central-1:123456789012:table/Vault"
+    dynamodb_relability_queue_arn      = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ReliabilityQueue"
+    dynamodb_vault_arn                 = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault"
     dynamodb_vault_table_name          = "Vault"
-    dynamodb_vault_stream_arn          = "arn:aws:dynamodb:ca-central-1:123456789012:table/Vault/stream/2023-03-14T15:54:31.086"
+    dynamodb_vault_stream_arn          = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault/stream/2023-03-14T15:54:31.086"
     dynamodb_app_audit_logs_table_name = "AuditLogs"
-    dynamodb_app_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:123456789012:table/AuditLogs"
+    dynamodb_app_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/AuditLogs"
     dynamodb_api_audit_logs_table_name = "ApiAuditLogs"
-    dynamodb_api_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:123456789012:table/ApiAuditLogs"
+    dynamodb_api_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ApiAuditLogs"
   }
 }
 
@@ -113,11 +114,11 @@ dependency "secrets" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    notify_api_key_secret_arn               = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_api_key"
-    freshdesk_api_key_secret_arn            = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:freshdesk_api_key_secret"
-    token_secret_arn                        = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:token_secret"
-    recaptcha_secret_arn                    = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:recaptcha_secret"
-    notify_callback_bearer_token_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_callback_bearer_token_secret"
+    notify_api_key_secret_arn               = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:notify_api_key"
+    freshdesk_api_key_secret_arn            = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:freshdesk_api_key_secret"
+    token_secret_arn                        = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:token_secret"
+    recaptcha_secret_arn                    = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:recaptcha_secret"
+    notify_callback_bearer_token_secret_arn = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:notify_callback_bearer_token_secret"
   }
 }
 

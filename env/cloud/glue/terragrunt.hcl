@@ -6,6 +6,10 @@ dependencies {
   paths = ["../network", "../s3", "../rds"]
 }
 
+locals {
+  aws_account_id = get_env("AWS_ACCOUNT_ID", "000000000000")
+}
+
 dependency "network" {
   config_path                             = "../network"
   mock_outputs_merge_strategy_with_state  = "shallow"
@@ -37,7 +41,7 @@ dependency "rds" {
     rds_cluster_instance_availability_zone = "mock-ca-central-1"
     rds_cluster_instance_identifier        = "mock-forms-database-identifier"
     rds_cluster_instance_subnet_id         = "mock-sg-12345678"
-    rds_connector_secret_arn               = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:mock-rds-connector"
+    rds_connector_secret_arn               = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:mock-rds-connector"
     rds_connector_secret_name              = "mock-rds-connector"
   }
 }

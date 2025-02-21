@@ -83,10 +83,10 @@ dependency "sqs" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    sqs_reprocess_submission_queue_arn = "arn:aws:sqs:ca-central-1:000000000000:reprocess_submission_queue.fifo"
-    sqs_app_audit_log_queue_arn        = "arn:aws:sqs:ca-central-1:000000000000:audit_log_queue"
-    sqs_app_audit_log_queue_id         = "http://sqs.ca-central-1.localhost.localstack.cloud:4566/000000000000/audit_log_queue"
-    sqs_reprocess_submission_queue_id  = "https://localhost.localstack.cloud:4566/000000000000/reprocess_submission_queue.fifo"
+    sqs_reprocess_submission_queue_arn = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reprocess_submission_queue.fifo"
+    sqs_app_audit_log_queue_arn        = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:audit_log_queue"
+    sqs_app_audit_log_queue_id         = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/audit_log_queue"
+    sqs_reprocess_submission_queue_id  = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/reprocess_submission_queue.fifo"
   }
 }
 
@@ -107,14 +107,14 @@ dependency "secrets" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    notify_api_key_secret_arn               = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_api_key"
-    freshdesk_api_key_secret_arn            = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:freshdesk_api_key_secret"
-    token_secret_arn                        = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:token_secret"
-    recaptcha_secret_arn                    = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:recaptcha_secret"
-    notify_callback_bearer_token_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:notify_callback_bearer_token_secret"
-    zitadel_administration_key_secret_arn   = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:zitadel_administration_key"
-    sentry_api_key_secret_arn               = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:sentry_api_key"
-    hcaptcha_site_verify_key_secret_arn     = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:hcaptcha_site_verify_key"
+    notify_api_key_secret_arn               = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:notify_api_key"
+    freshdesk_api_key_secret_arn            = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:freshdesk_api_key_secret"
+    token_secret_arn                        = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:token_secret"
+    recaptcha_secret_arn                    = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:recaptcha_secret"
+    notify_callback_bearer_token_secret_arn = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:notify_callback_bearer_token_secret"
+    zitadel_administration_key_secret_arn   = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:zitadel_administration_key"
+    sentry_api_key_secret_arn               = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:sentry_api_key"
+    hcaptcha_site_verify_key_secret_arn     = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:hcaptcha_site_verify_key"
   }
 }
 
@@ -132,6 +132,7 @@ dependency "s3" {
 
 locals {
   zitadel_provider = get_env("ZITADEL_PROVIDER", "https://localhost")
+  aws_account_id   = get_env("AWS_ACCOUNT_ID", "000000000000")
 }
 
 inputs = {
