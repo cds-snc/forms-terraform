@@ -9,17 +9,6 @@ yellowColor='\033[0;33m'
 redColor='\033[0;31m'
 reset='\033[0m' # No Color
 
-if test -f .env
-then
-  set -o allexport
-  source .env
-  set +o allexport
-  printf "${greenColor}=> Environment variables loaded from .env${reset}\n"
-else
-  # In case developers have not set up their .env file (can be removed in the future)
-  export APP_ENV="development"
-fi
-
 # Set proper terraform and terragrunt versions
 
 tgswitch 0.72.5
@@ -71,13 +60,11 @@ terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-lev
 
 printf "${greenColor}...Destroying Network${reset}\n"
 cd $basedir/env/cloud/network
-# terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn 
+# terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn --terragrunt-config destroy_terragrunt.hcl
 
 printf "${greenColor}...Destroying KMS${reset}\n"
 cd $basedir/env/cloud/kms
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn --terragrunt-config destroy_terragrunt.hcl
-
-
 
 printf "${greenColor}All infratructure destroyed${reset}\n"

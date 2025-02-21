@@ -6,19 +6,9 @@ yellowColor='\033[0;33m'
 redColor='\033[0;31m'
 reset='\033[0m' # No Color
 
-if test -f .env
-then
-  set -o allexport
-  source .env
-  set +o allexport
-  printf "${greenColor}=> Environment variables loaded from .env${reset}\n"
-fi
-
-
-
 basedir=$(pwd)
 
-if ! command -v openvpn > /dev/null; then
+if ! command -v openvpn >/dev/null; then
   printf "${redColor}=> This script requires 'openvpn' to be installed. See 'Prerequisites' section in the README file.${reset}\n"
   exit 1
 fi

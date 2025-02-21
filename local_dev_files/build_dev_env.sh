@@ -8,24 +8,12 @@ greenColor='\033[0;32m'
 yellowColor='\033[0;33m'
 redColor='\033[0;31m'
 reset='\033[0m' # No Color
-
-if test -f .env
-then
-  set -o allexport
-  source .env
-  set +o allexport
-  printf "${greenColor}=> Environment variables loaded from .env${reset}\n"
-else
-  # In case developers have not set up their .env file (can be removed in the future)
-  export APP_ENV="development"
-fi
+basedir=$(pwd)
 
 # Set proper terraform and terragrunt versions
 
 tgswitch 0.72.5
 tfswitch 1.10.5
-
-basedir=$(pwd)
 
 if aws s3api list-buckets | grep -q "forms-development-tfstate"; then
   printf "${yellowColor}=> Terraform State Bucket exists...${reset}\n"
@@ -43,7 +31,7 @@ else
     --bucket forms-development-tfstate \
     --region ca-central-1 \
     --create-bucket-configuration LocationConstraint=ca-central-1
-    # encrypt the bucket
+  # encrypt the bucket
   aws s3api put-bucket-encryption \
     --bucket forms-development-tfstate \
     --server-side-encryption-configuration "{\"Rules\": [{\"ApplyServerSideEncryptionByDefault\":{\"SSEAlgorithm\": \"AES256\"}}]}"
@@ -60,7 +48,7 @@ else
     --key-schema AttributeName=LockID,KeyType=HASH \
     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
 
-  printf "${yellowColor}=> Detected fresh Localstack instance! Cleaning up Terragrunt caches and Terraform state files...${reset}\n"
+  printf "${yellowColor}=> Detected fresh AWS instance! Cleaning up Terragrunt caches and Terraform state files...${reset}\n"
 
   for dir in $basedir/env/cloud/*/; do
     rm -rf "${dir}.terragrunt-cache"
@@ -76,7 +64,7 @@ terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-lev
 
 printf "${greenColor}...Setting up Network${reset}\n"
 cd $basedir/env/cloud/network
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn 
+terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
 printf "${greenColor}...Setting up Secrets Manager${reset}\n"
 cd $basedir/env/cloud/secrets
