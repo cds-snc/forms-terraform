@@ -26,7 +26,9 @@ export const handler: Handler = async () => {
               })
             )
             .then((response) =>
-              response.ClientVpnTargetNetworks?.map((network) => network.AssociationId)
+              response.ClientVpnTargetNetworks?.filter(
+                (network) => network.Status?.Code === "associated"
+              ).map((network) => network.AssociationId)
             );
           return {
             vpnEndpointId: vpnEndpoint.ClientVpnEndpointId,
@@ -70,7 +72,9 @@ export const handler: Handler = async () => {
       console.log("Active VPN connections found. Not removing VPN Endpoint associations.");
     } else {
       console.log("No active VPN connections found. Removing VPN Endpoint associations.");
-      await disassociateVpnEndpoints(vpnEndpoints, ec2Client);
+      // Logging only for now to see how often this is triggered
+      // await disassociateVpnEndpoints(vpnEndpoints, ec2Client);
+      console.warn("VPN Endpoint associations would have been removed during working hours.");
     }
   }
 };
