@@ -18,10 +18,6 @@ validate:           ## Terragrunt validate all resources
 	cd env/
 	terragrunt run-all validate
 
-terragrunt:         ## Create localstack resources
-	./aws/app/lambda/deps.sh delete
-	.devcontainer/scripts/terraform_apply_localstack.sh
-
 build_dev: 	    ## Build Development environment
 	./local_dev_files/build_dev_env.sh
 

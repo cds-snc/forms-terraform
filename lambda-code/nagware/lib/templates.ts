@@ -14,10 +14,9 @@ export async function getTemplateInfo(formID: string): Promise<TemplateInfo> {
     const postgresConnector =
       await PostgresConnector.defaultUsingPostgresConnectionUrlFromAwsSecret(
         process.env.DB_URL ?? "",
-        Boolean(process.env.LOCALSTACK)
+        false
       );
 
-    // Due to Localstack limitations we have to define aliases for fields that have the same name
     const result = await postgresConnector.executeSqlStatement()<
       {
         user_name?: string;
