@@ -146,6 +146,4 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_endpoint_type = "Gateway"
   service_name      = "com.amazonaws.${var.region}.s3"
   route_table_ids   = [aws_vpc.forms.main_route_table_id]
-
-
 }
