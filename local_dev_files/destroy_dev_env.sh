@@ -67,4 +67,22 @@ printf "${greenColor}...Destroying KMS${reset}\n"
 cd $basedir/env/cloud/kms
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn --terragrunt-config destroy_terragrunt.hcl
 
+# Remove all the terraform state and lock components
+printf "${greenColor}=> Destroying DynamoDB terraform lock table${reset}\n"
+dynamodb_tables=$(aws dynamodb list-tables --query "TableNames[?contains(@,'tfstate')]" --output json | jq -r '.[] | @sh' | tr -d \'\")
+for table in $dynamodb_tables; do
+    printf "${greenColor}=> Destroying DynamoDB table: $table${reset}\n"
+    aws dynamodb delete-table --table-name $table
+done
+
+printf "${greenColor}=> Destroying S3 terraform state${reset}\n"
+s3_buckets=$(aws s3api list-buckets --query "Buckets[?contains(@.Name,'tfstate')].Name" --output json | jq -r '.[] | @sh' | tr -d \'\")
+for bucket in $s3_buckets; do
+    printf "${greenColor}=> Destroying S3 bucket: $bucket${reset}\n"
+    # remove all objects from the bucket
+    aws s3 rm s3://$bucket --recursive
+    # delete the bucket
+    aws s3api delete-bucket --bucket $bucket --region ca-central-1
+done
+
 printf "${greenColor}All infratructure destroyed${reset}\n"

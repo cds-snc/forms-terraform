@@ -15,41 +15,43 @@ basedir=$(pwd)
 tgswitch 0.72.5
 tfswitch 1.10.5
 
-if aws s3api list-buckets | grep -q "forms-development-tfstate"; then
+fresh_instance=false
+
+if aws s3api list-buckets | grep -q "forms-${AWS_ACCOUNT_ID}-tfstate"; then
   printf "${yellowColor}=> Terraform State Bucket exists...${reset}\n"
 else
 
-  printf "${yellowColor}=> Detected fresh AWS account instance.  Clearing local files...${reset}\n"
-  for dir in $basedir/env/cloud/*/; do
-    rm -rf "${dir}.terragrunt-cache"
-    rm -f "${dir}.terraform.lock.hcl"
-  done
+  fresh_instance=true
 
   printf "${yellowColor}=> Detected fresh AWS account instance.  Setting up backend S3...${reset}\n"
   # create S3 bucket for Terraform state files
   aws s3api create-bucket \
-    --bucket forms-development-tfstate \
+    --bucket forms-${AWS_ACCOUNT_ID}-tfstate \
     --region ca-central-1 \
     --create-bucket-configuration LocationConstraint=ca-central-1
   # encrypt the bucket
   aws s3api put-bucket-encryption \
-    --bucket forms-development-tfstate \
+    --bucket forms-${AWS_ACCOUNT_ID}-tfstate \
     --server-side-encryption-configuration "{\"Rules\": [{\"ApplyServerSideEncryptionByDefault\":{\"SSEAlgorithm\": \"AES256\"}}]}"
 fi
 
-if aws dynamodb list-tables | grep -q "development-tfstate-lock"; then
+if aws dynamodb list-tables | grep -q "tfstate-lock"; then
   printf "${yellowColor}=> Terraform Lock DynamoDB table exists...${reset}\n"
 else
   printf "${yellowColor}=> Detected fresh AWS account instance.  Setting up Terraform Lock table...${reset}\n"
+
+  fresh_instance=true
+
   # create DynamoDB table for Terraform state locking
   aws dynamodb create-table \
-    --table-name development-tfstate-lock \
+    --table-name tfstate-lock \
     --attribute-definitions AttributeName=LockID,AttributeType=S \
     --key-schema AttributeName=LockID,KeyType=HASH \
     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+fi
 
-  printf "${yellowColor}=> Detected fresh AWS instance! Cleaning up Terragrunt caches and Terraform state files...${reset}\n"
-
+if [ "$fresh_instance" = true ]; then
+  printf "${yellowColor}=> Detected fresh AWS account instance.  Clearing local files...${reset}\n"
   for dir in $basedir/env/cloud/*/; do
     rm -rf "${dir}.terragrunt-cache"
     rm -f "${dir}.terraform.lock.hcl"
