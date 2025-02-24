@@ -26,8 +26,8 @@ terraform {
   backend "s3" {
     encrypt        = true
     use_path_style = true
-    bucket         = "forms-${local.env}-tfstate"
-    dynamodb_table = "development-tfstate-lock"
+    bucket         = "forms-${local.env == "development" ? local.account_id : local.env}-tfstate"
+    dynamodb_table = "tfstate-lock"
     region         = "ca-central-1"
     key            = "${path_relative_to_include("root")}/terraform.tfstate"
   }
