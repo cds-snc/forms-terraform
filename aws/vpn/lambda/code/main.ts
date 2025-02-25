@@ -52,6 +52,7 @@ export const handler: Handler = async () => {
     await disassociateVpnEndpoints(vpnEndpoints, ec2Client);
   } else {
     // Get VPN Connections for each VPN Endpoint
+    // All connections within the last hour are listed
     const vpnConnections = await Promise.all(
       vpnEndpoints.map((vpnEndpoint) => {
         return ec2Client.send(
@@ -63,15 +64,11 @@ export const handler: Handler = async () => {
     )
       .then((responses) => responses.map((response) => response.Connections))
       .then((connections) => connections.flat());
-    // Check if there are any active connections
-    const activeVpnConnections = vpnConnections.filter(
-      (vpnConnection) => vpnConnection?.Status?.Code === "active"
-    );
 
-    if (activeVpnConnections.length > 0) {
-      console.log("Active VPN connections found. Not removing VPN Endpoint associations.");
+    if (vpnConnections.length > 0) {
+      console.log("VPN connections found. Not removing VPN Endpoint associations.");
     } else {
-      console.log("No active VPN connections found. Removing VPN Endpoint associations.");
+      console.log("No VPN connections found. Removing VPN Endpoint associations.");
       // Logging only for now to see how often this is triggered
       // await disassociateVpnEndpoints(vpnEndpoints, ec2Client);
       console.warn("VPN Endpoint associations would have been removed during working hours.");

@@ -29,16 +29,16 @@ validate:           ## Terragrunt validate all resources
 	cd env/
 	terragrunt run-all validate
 
-build_dev: 	    ## Build Development environment
+build_env: 	    ## Build Development environment
 	./local_dev_files/build_dev_env.sh
 
-destroy_dev: 	## Destroy Development environment
+destroy_env: 	## Destroy Development environment
 	./local_dev_files/destroy_dev_env.sh
 
-create_dev_certs: 	## Create Development certificates
+create_certs: 	## Create Development certificates
 	./local_dev_files/create_vpn_certs.sh
 
-connect_dev: 	## Connect to Development environment
+connect_env: 	## Connect to Development environment
 	./local_dev_files/connect_vpn.sh
 
 lambda: ## Build specific lambda image and deploy to local environment
@@ -52,7 +52,7 @@ lambdas: ## Build all lambda images and deploy to local environment
 
 lambda lambdas connect_dev create_dev_certs destroy_dev build_dev: guard-AWS_ACCOUNT_ID
 
-build_dev: guard-STAGING_AWS_ACCOUNT_ID
+build_env: guard-STAGING_AWS_ACCOUNT_ID
 
 
 .PHONY: \
