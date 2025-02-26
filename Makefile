@@ -43,12 +43,13 @@ connect_env: 	## Connect to Development environment
 
 lambda: ## Build specific lambda image and deploy to local environment
 	echo Building lambda $(name)
-	./local_dev_files/import_envs.sh
 	./local_dev_files/build_and_deploy_lambda.sh $(name)
 
 lambdas: ## Build all lambda images and deploy to local environment
 	echo Building all lambdas
 	./local_dev_files/build_and_deploy_lambda.sh
+
+# Dependency guards
 
 lambda lambdas connect_dev create_dev_certs destroy_dev build_dev: guard-AWS_ACCOUNT_ID
 
