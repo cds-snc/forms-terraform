@@ -8,6 +8,8 @@ data "aws_availability_zones" "available" {
 }
 
 resource "aws_vpc" "forms" {
+  # checkov:skip=CKV2_AWS_12: False positive.  The default security group is modified in `security_groups_app.tf`
+  # checkov:skip=CKV2_AWS_11: This is a development environment, no need to VPC flow logging
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
 

@@ -47,6 +47,8 @@ resource "aws_iam_policy" "lambda_vpc" {
 }
 
 data "aws_iam_policy_document" "lambda_vpc" {
+  # checkov:skip=CKV2_AWS_111: This is a development environment, no need to restrict the lambda permissions
+  # checkov:skip=CKV2_AWS_356: This is a development environment, no need to restrict the lambda permissions
   statement {
     effect = "Allow"
 
@@ -88,6 +90,10 @@ resource "aws_lambda_function" "vpn_lambda" {
   source_code_hash = data.archive_file.vpn_lambda.output_base64sha256
 
   runtime = "nodejs18.x"
+
+  tracing_config {
+    mode = "PassThrough"
+  }
 }
 
 resource "aws_lambda_permission" "vpn-scheduler" {
