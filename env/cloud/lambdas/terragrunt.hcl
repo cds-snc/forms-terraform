@@ -144,7 +144,19 @@ dependency "ecr" {
   mock_outputs = {
     ecr_repository_lambda_urls = {
       type = "map",
-      test = "test_url"
+      audit-logs-lambda = "test_url",
+      audit-logs-archiver-lambda = "test_url",
+      cognito-email-sender-lambda = "test_url",
+      cognito-pre-sign-up-lambda = "test_url",
+      form-archiver-lambda = "test_url",
+      nagware-lambda = "test_url",
+      notify-slack-lambda = "test_url",
+      reliability-lambda = "test_url",
+      reliability-dlq-consumer-lambda = "test_url",
+      response-archiver-lambda = "test_url",
+      submission-lambda = "test_url",
+      vault-integrity-lambda = "test_url",
+      load-testing-lambda = "test_url"
     }
   }
 }
