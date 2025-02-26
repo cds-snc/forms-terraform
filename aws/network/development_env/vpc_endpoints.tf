@@ -1,4 +1,4 @@
-locals{
+locals {
   private_subnet_ids = [aws_subnet.forms_private[0].id]
 }
 

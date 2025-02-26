@@ -75,5 +75,5 @@ resource "aws_rds_cluster_instance" "forms" {
   db_subnet_group_name       = aws_db_subnet_group.forms.name
   auto_minor_version_upgrade = true
   promotion_tier             = 1
-  apply_immediately           = var.env == "development" ? true : false
+  apply_immediately          = var.env == "development" ? true : false
 }
