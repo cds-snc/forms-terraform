@@ -39,6 +39,6 @@ output "ecr_repository_lambda_urls" {
   value = var.env == "development" ? {
     for lambda_name, ecr_repository in aws_ecr_repository.lambda : lambda_name => replace(ecr_repository.repository_url, var.account_id, var.staging_account_id)
     } : {
-    for lambda_name, ecr_repository in aws_ecr_repository.lambda : lambda_name => ecr_repository.respository_url
+    for lambda_name, ecr_repository in aws_ecr_repository.lambda : lambda_name => tostring(ecr_repository.repository_url)
   }
 }
