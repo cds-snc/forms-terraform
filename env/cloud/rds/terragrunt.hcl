@@ -17,7 +17,7 @@ dependency "network" {
 }
 
 locals {
-  env = get_env("APP_ENV", "development")
+  env   = get_env("APP_ENV", "development")
   db_pw = "chummy000"
 }
 

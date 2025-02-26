@@ -7,8 +7,8 @@ dependencies {
 }
 
 locals {
-  domain = jsondecode(get_env("APP_DOMAINS", "[\"localhost:3000\"]"))
-  aws_account_id   = get_env("AWS_ACCOUNT_ID", "${local.aws_account_id}")
+  domain         = jsondecode(get_env("APP_DOMAINS", "[\"localhost:3000\"]"))
+  aws_account_id = get_env("AWS_ACCOUNT_ID", "000000000000")
 }
 
 dependency "hosted_zone" {
