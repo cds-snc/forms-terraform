@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.30.0](https://github.com/cds-snc/forms-terraform/compare/v3.29.0...v3.30.0) (2025-02-26)
+
+
+### Features
+
+* forms app legacy ECR ([#957](https://github.com/cds-snc/forms-terraform/issues/957)) ([6a3a79a](https://github.com/cds-snc/forms-terraform/commit/6a3a79ab86445726cb01496a0a29619f0f54f353))
+
+
+### Bug Fixes
+
+* revert localstack detection when initializing Postgres connector ([#956](https://github.com/cds-snc/forms-terraform/issues/956)) ([5cd34ff](https://github.com/cds-snc/forms-terraform/commit/5cd34ffa3f1b39f38489cb1fece76b7d15e4cc1c))
+
+
+### Code Refactoring
+
+* leverage new connectors package ([#953](https://github.com/cds-snc/forms-terraform/issues/953)) ([570a7e0](https://github.com/cds-snc/forms-terraform/commit/570a7e027813529cad34938a8db8c93893ec9952))
+
 ## [3.29.0](https://github.com/cds-snc/forms-terraform/compare/v3.28.0...v3.29.0) (2025-02-13)
 
 
