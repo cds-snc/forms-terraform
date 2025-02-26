@@ -155,6 +155,37 @@ data "aws_iam_policy_document" "ecr_cross_account_read" {
       identifiers = ["lambda.amazonaws.com"]
     }
   }
-
 }
 
+#
+# Holds the Forms app images used by the Rainbow deployment service
+#
+resource "aws_ecr_repository" "forms_app_legacy_repository" {
+  name                 = "forms_app_legacy"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_lifecycle_policy" "forms_app_legacy_policy" {
+  repository = aws_ecr_repository.forms_app_legacy_repository.name
+  policy = jsonencode({
+    rules = [{
+      rulePriority = 1
+      description  = "Keep last 30 images"
+
+      selection = {
+        tagStatus     = "tagged"
+        tagPrefixList = ["v"]
+        countType     = "imageCountMoreThan"
+        countNumber   = 30
+      }
+
+      action = {
+        type = "expire"
+      }
+    }]
+  })
+}
