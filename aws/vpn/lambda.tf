@@ -47,8 +47,8 @@ resource "aws_iam_policy" "lambda_vpc" {
 }
 
 data "aws_iam_policy_document" "lambda_vpc" {
-  # checkov:skip=CKV2_AWS_111: This is a development environment, no need to restrict the lambda permissions
-  # checkov:skip=CKV2_AWS_356: This is a development environment, no need to restrict the lambda permissions
+  # checkov:skip=CKV_AWS_111: This is a development environment, no need to restrict the lambda permissions
+  # checkov:skip=CKV_AWS_356: This is a development environment, no need to restrict the lambda permissions
   statement {
     effect = "Allow"
 
