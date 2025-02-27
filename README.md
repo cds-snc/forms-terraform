@@ -52,7 +52,7 @@ Pull Requests in this repository require all commits to be signed before they ca
   1. `brew install warrensbox/tap/tgswitch`
   1. `tgswitch 0.72.5`
 
-- Yarn (chance are you already have this if working on the app):
+- Yarn (chances are you already have this if working on the app):
 
   ```shell
   $ brew install yarn
