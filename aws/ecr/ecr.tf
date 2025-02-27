@@ -4,7 +4,7 @@
 resource "aws_ecr_repository" "viewer_repository" {
   name                 = "form_viewer_${var.env}"
   image_tag_mutability = "MUTABLE"
-  force_delete         = var.env == "development" ? true : false
+  force_delete         = var.env == "development"
 
   image_scanning_configuration {
     scan_on_push = true
@@ -58,7 +58,7 @@ resource "aws_ecr_repository" "lambda" {
 
   name                 = each.key
   image_tag_mutability = "MUTABLE"
-  force_delete         = var.env == "development" ? true : false
+  force_delete         = var.env == "development"
 
   image_scanning_configuration {
     scan_on_push = true
@@ -75,7 +75,7 @@ resource "aws_ecr_lifecycle_policy" "lambda" {
 resource "aws_ecr_repository" "idp" {
   name                 = "idp/zitadel"
   image_tag_mutability = "MUTABLE"
-  force_delete         = var.env == "development" ? true : false
+  force_delete         = var.env == "development"
 
   image_scanning_configuration {
     scan_on_push = true
@@ -90,7 +90,7 @@ resource "aws_ecr_lifecycle_policy" "idp" {
 resource "aws_ecr_repository" "api" {
   name                 = "forms/api"
   image_tag_mutability = "MUTABLE"
-  force_delete         = var.env == "development" ? true : false
+  force_delete         = var.env == "development"
 
   image_scanning_configuration {
     scan_on_push = true

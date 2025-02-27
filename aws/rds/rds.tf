@@ -30,7 +30,7 @@ resource "aws_rds_cluster" "forms" {
   engine_version              = local.rds_engine_version
   enable_http_endpoint        = true
   database_name               = var.rds_db_name
-  deletion_protection         = var.env == "development" ? false : true
+  deletion_protection         = var.env  != "development"
   final_snapshot_identifier   = "server-${random_string.random.result}"
   master_username             = var.rds_db_user
   master_password             = var.rds_db_password
@@ -40,7 +40,7 @@ resource "aws_rds_cluster" "forms" {
   storage_encrypted           = true
   allow_major_version_upgrade = true
   copy_tags_to_snapshot       = true
-  apply_immediately           = var.env == "development" ? true : false
+  apply_immediately           = var.env == "development"
 
   serverlessv2_scaling_configuration {
     max_capacity = var.env == "development" ? 4 : 8
@@ -75,5 +75,5 @@ resource "aws_rds_cluster_instance" "forms" {
   db_subnet_group_name       = aws_db_subnet_group.forms.name
   auto_minor_version_upgrade = true
   promotion_tier             = 1
-  apply_immediately          = var.env == "development" ? true : false
+  apply_immediately          = var.env == "development"
 }

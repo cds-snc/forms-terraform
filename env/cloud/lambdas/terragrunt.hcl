@@ -17,7 +17,7 @@ locals {
 }
 
 dependency "app" {
-  enabled                                 = local.env == "development" ? false : true
+  enabled                                 = local.env != "development"
   config_path                             = "../app"
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
