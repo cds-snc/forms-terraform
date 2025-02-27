@@ -23,6 +23,7 @@ resource "aws_db_subnet_group" "forms" {
 resource "aws_rds_cluster" "forms" {
   # checkov:skip=CKV_AWS_324: RDS Cluster log capture not required
   # checkov:skip=CKV_AWS_327: Encryption using KMS CMKs not required
+  # checkov:skip=CKV_AWS_139: RDS Cluster has deletion protection enabled in staging and production
   // TODO: Implement Encryption using KMS CMKs
 
   cluster_identifier          = "${var.rds_name}-cluster"
