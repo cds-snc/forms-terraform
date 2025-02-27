@@ -31,7 +31,7 @@ resource "aws_rds_cluster" "forms" {
   engine_version              = local.rds_engine_version
   enable_http_endpoint        = true
   database_name               = var.rds_db_name
-  deletion_protection         = var.env  != "development"
+  deletion_protection         = var.env != "development"
   final_snapshot_identifier   = "server-${random_string.random.result}"
   master_username             = var.rds_db_user
   master_password             = var.rds_db_password

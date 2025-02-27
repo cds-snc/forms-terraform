@@ -64,7 +64,7 @@ resource "aws_dynamodb_table" "vault" {
   }
 
   point_in_time_recovery {
-    enabled = var.env  != "development"
+    enabled = var.env != "development"
   }
 }
 
@@ -74,7 +74,7 @@ resource "aws_dynamodb_table" "audit_logs" {
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "UserID"
   range_key                   = "Event#SubjectID#TimeStamp"
-  deletion_protection_enabled = var.env  != "development"
+  deletion_protection_enabled = var.env != "development"
   stream_enabled              = false # Can be removed in the future when this gets applied to production
 
   attribute {
@@ -117,7 +117,7 @@ resource "aws_dynamodb_table" "audit_logs" {
   }
 
   point_in_time_recovery {
-    enabled = var.env  != "development"
+    enabled = var.env != "development"
   }
 }
 
@@ -127,7 +127,7 @@ resource "aws_dynamodb_table" "api_audit_logs" {
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "UserID"
   range_key                   = "Event#SubjectID#TimeStamp"
-  deletion_protection_enabled = var.env  != "development"
+  deletion_protection_enabled = var.env != "development"
   stream_enabled              = false # Can be removed in the future when this gets applied to production
 
   attribute {
@@ -170,7 +170,7 @@ resource "aws_dynamodb_table" "api_audit_logs" {
   }
 
   point_in_time_recovery {
-    enabled = var.env  != "development"
+    enabled = var.env != "development"
   }
 }
 
