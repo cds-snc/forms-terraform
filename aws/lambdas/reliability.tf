@@ -5,11 +5,13 @@ resource "aws_lambda_function" "reliability" {
   role          = aws_iam_role.lambda.arn
   timeout       = 300
 
-  vpc_config {
-    security_group_ids = [var.lambda_security_group_id]
-    subnet_ids         = var.private_subnet_ids
+  dynamic "vpc_config" {
+    for_each = local.vpc_config
+    content {
+      security_group_ids = vpc_config.value.security_group_ids
+      subnet_ids         = vpc_config.value.subnets
+    }
   }
-
 
   lifecycle {
     ignore_changes = [image_uri]

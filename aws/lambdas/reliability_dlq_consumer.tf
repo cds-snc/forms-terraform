@@ -14,6 +14,14 @@ resource "aws_lambda_function" "reliability_dlq_consumer" {
     ignore_changes = [image_uri]
   }
 
+  dynamic "vpc_config" {
+    for_each = local.vpc_config
+    content {
+      security_group_ids = vpc_config.value.security_group_ids
+      subnet_ids         = vpc_config.value.subnets
+    }
+  }
+
   environment {
     variables = {
       REGION                              = var.region
