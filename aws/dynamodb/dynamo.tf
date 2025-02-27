@@ -2,7 +2,7 @@ resource "aws_dynamodb_table" "reliability_queue" {
   name                        = "ReliabilityQueue"
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "SubmissionID"
-  deletion_protection_enabled = var.env == "development" ? false : true
+  deletion_protection_enabled = var.env != "development"
 
   attribute {
     name = "SubmissionID"
