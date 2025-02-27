@@ -1,4 +1,5 @@
 resource "aws_dynamodb_table" "reliability_queue" {
+  # checkov:skip=CKV_AWS_28: 'point in time recovery' is set to true for staging and production
   name                        = "ReliabilityQueue"
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "SubmissionID"
@@ -25,6 +26,7 @@ resource "aws_dynamodb_table" "reliability_queue" {
 }
 
 resource "aws_dynamodb_table" "vault" {
+  # checkov:skip=CKV_AWS_28: 'point in time recovery' is set to true for staging and production
   name                        = "Vault"
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "FormID"
@@ -67,6 +69,7 @@ resource "aws_dynamodb_table" "vault" {
 }
 
 resource "aws_dynamodb_table" "audit_logs" {
+  # checkov:skip=CKV_AWS_28: 'point in time recovery' is set to true for staging and production
   name                        = "AuditLogs"
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "UserID"
@@ -119,6 +122,7 @@ resource "aws_dynamodb_table" "audit_logs" {
 }
 
 resource "aws_dynamodb_table" "api_audit_logs" {
+  # checkov:skip=CKV_AWS_28: 'point in time recovery' is set to true for staging and production
   name                        = "ApiAuditLogs"
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "UserID"

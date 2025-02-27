@@ -5,6 +5,7 @@
 
 resource "aws_elasticache_replication_group" "redis" {
   # checkov:skip=CKV_AWS_191: KMS encryption using customer managed key not required
+  # checkov:skip=CKV2_AWS_50: Multi AZ is enabled in staging and production
   automatic_failover_enabled = var.env  != "development"
   replication_group_id       = "gcforms-redis-rep-group"
   description                = "Redis cluster for GCForms"
