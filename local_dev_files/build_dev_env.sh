@@ -110,7 +110,7 @@ terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-lev
 printf "${greenColor}...Setting up VPN Client${reset}\n"
 
 cd $basedir/aws/vpn/lambda/code
-yarn build && yarn postbuild
+yarn install && yarn build && yarn postbuild
 
 cd $basedir/env/cloud/vpn
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
