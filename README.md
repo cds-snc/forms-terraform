@@ -129,6 +129,7 @@ Copy the variables at the end of the output, as seen below, into your applicatio
 ```shell
 All infratructure initialized: Ready for requests
 => Please copy the following to your app .env file:
+AWS_PROFILE=development
 DATABASE_URL=postgres://postgres:*********@forms-db-cluster.cluster-************.ca-central-1.rds.amazonaws.com:5432/forms?connect_timeout=60
 REDIS_URL=gcforms-redis-rep-group-001.******.0001.cac1.cache.amazonaws.com:6379
 RELIABILITY_FILE_STORAGE=forms-************-reliability-file-storage

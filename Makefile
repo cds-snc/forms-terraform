@@ -49,6 +49,9 @@ lambdas: ## Build all lambda images and deploy to local environment
 	echo Building all lambdas
 	./local_dev_files/build_and_deploy_lambda.sh
 
+clear_terragrunt_cache: ## Clear Terragrunt cache
+	./local_dev_files/clean_terragrunt.sh
+
 # Dependency guards
 
 lambda lambdas connect_dev create_dev_certs destroy_dev build_dev: guard-AWS_ACCOUNT_ID
@@ -67,4 +70,5 @@ build_env: guard-STAGING_AWS_ACCOUNT_ID
 	build_dev \
 	destroy_dev \
 	create_dev_certs \
-	connect_dev
+	connect_dev \
+	clear_terragrunt_cache

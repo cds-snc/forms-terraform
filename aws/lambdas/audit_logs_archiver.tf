@@ -13,7 +13,7 @@ resource "aws_lambda_function" "audit_logs_archiver" {
     for_each = local.vpc_config
     content {
       security_group_ids = vpc_config.value.security_group_ids
-      subnet_ids         = vpc_config.value.subnets
+      subnet_ids         = vpc_config.value.subnet_ids
     }
   }
 
