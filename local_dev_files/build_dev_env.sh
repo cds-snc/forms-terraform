@@ -28,11 +28,13 @@ else
   aws s3api create-bucket \
     --bucket forms-${AWS_ACCOUNT_ID}-tfstate \
     --region ca-central-1 \
-    --create-bucket-configuration LocationConstraint=ca-central-1
+    --create-bucket-configuration LocationConstraint=ca-central-1 \
+    >/dev/null
   # encrypt the bucket
   aws s3api put-bucket-encryption \
     --bucket forms-${AWS_ACCOUNT_ID}-tfstate \
-    --server-side-encryption-configuration "{\"Rules\": [{\"ApplyServerSideEncryptionByDefault\":{\"SSEAlgorithm\": \"AES256\"}}]}"
+    --server-side-encryption-configuration "{\"Rules\": [{\"ApplyServerSideEncryptionByDefault\":{\"SSEAlgorithm\": \"AES256\"}}]}" \
+    >/dev/null
 fi
 
 if aws dynamodb list-tables | grep -q "tfstate-lock"; then
@@ -47,7 +49,8 @@ else
     --table-name tfstate-lock \
     --attribute-definitions AttributeName=LockID,AttributeType=S \
     --key-schema AttributeName=LockID,KeyType=HASH \
-    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    >/dev/null
 fi
 
 if [ "$fresh_instance" = true ]; then
