@@ -55,9 +55,9 @@ dependency "rds" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    rds_cluster_identifier = "forms-mock-db-cluster"
-    rds_cluster_reader_endpoint   = "localhost"
-    rds_db_name            = "default"
+    rds_cluster_identifier      = "forms-mock-db-cluster"
+    rds_cluster_reader_endpoint = "localhost"
+    rds_db_name                 = "default"
   }
 }
 
@@ -250,7 +250,7 @@ inputs = {
 
   private_subnet_ids          = dependency.network.outputs.private_subnet_ids
   connector_security_group_id = dependency.network.outputs.connector_security_group_id
-  rds_cluster_reader_endpoint        = dependency.rds.outputs.rds_cluster_reader_endpoint
+  rds_cluster_reader_endpoint = dependency.rds.outputs.rds_cluster_reader_endpoint
   rds_db_name                 = dependency.rds.outputs.rds_db_name
 
 }
