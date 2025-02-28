@@ -162,7 +162,7 @@ $ cd lambda-code/
 $ ./deps.sh install
 ```
 
-Once you have changed the code in one or multiple Lambda packages, you can leverage the `make lambdas` or `make lambda [name]` commands. They will build, tag and push either all Lambda images or a specific image to your ECR as well as letting the Lambda service know that a new version of the code should be used.
+Once you have changed the code in one or multiple Lambda packages, you can leverage the `make lambdas` or `make lambda name=LAMBDA_NAME` commands. They will build, tag and push either all Lambda images or a specific image to your ECR as well as letting the Lambda service know that a new version of the code should be used.
 
 ## Dynamo Database Table Schemas
 
