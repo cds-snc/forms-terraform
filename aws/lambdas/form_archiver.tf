@@ -4,13 +4,21 @@
 
 resource "aws_lambda_function" "form_archiver" {
   function_name = "form-archiver"
-  image_uri     = "${var.ecr_repository_url_form_archiver_lambda}:latest"
+  image_uri     = "${var.ecr_repository_lambda_urls["form-archiver-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
   timeout       = 300
 
   lifecycle {
     ignore_changes = [image_uri]
+  }
+
+  dynamic "vpc_config" {
+    for_each = local.vpc_config
+    content {
+      security_group_ids = vpc_config.value.security_group_ids
+      subnet_ids         = vpc_config.value.subnet_ids
+    }
   }
 
   environment {

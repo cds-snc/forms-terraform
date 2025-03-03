@@ -8,9 +8,6 @@ import { NodeJsClient } from "@smithy/types";
 
 const awsProperties = {
   region: process.env.REGION ?? "ca-central-1",
-  ...(process.env.LOCALSTACK === "true" && {
-    endpoint: "http://host.docker.internal:4566",
-  }),
 };
 
 const s3Client = new S3Client({

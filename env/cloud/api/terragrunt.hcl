@@ -22,7 +22,7 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_vault_arn = "arn:aws:dynamodb:ca-central-1:123456789012:table/Vault"
+    dynamodb_vault_arn = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault"
   }
 }
 
@@ -32,7 +32,7 @@ dependency "ecr" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    ecr_repository_url_api = "123456789012.dkr.ecr.ca-central-1.amazonaws.com/forms/api"
+    ecr_repository_url_api = "${local.aws_account_id}.dkr.ecr.ca-central-1.amazonaws.com/forms/api"
   }
 }
 
@@ -41,7 +41,7 @@ dependency "kms" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    kms_key_dynamodb_arn = "arn:aws:kms:ca-central-1:123456789012:key/12345678-796a-461b-9f69-b0e0c40f5d0a"
+    kms_key_dynamodb_arn = "arn:aws:kms:ca-central-1:${local.aws_account_id}:key/12345678-796a-461b-9f69-b0e0c40f5d0a"
   }
 }
 
@@ -50,7 +50,7 @@ dependency "load_balancer" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    lb_target_group_api_arn = "arn:aws:elasticloadbalancing:ca-central-1:123456789012:targetgroup/forms-api/1234567890abcdef"
+    lb_target_group_api_arn = "arn:aws:elasticloadbalancing:ca-central-1:${local.aws_account_id}:targetgroup/forms-api/1234567890abcdef"
   }
 }
 
@@ -88,8 +88,8 @@ dependency "secrets" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    zitadel_application_key_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:zitadel_application_key"
-    freshdesk_api_key_secret_arn       = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:freshdesk_api_key_secret"
+    zitadel_application_key_secret_arn = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:zitadel_application_key"
+    freshdesk_api_key_secret_arn       = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:freshdesk_api_key_secret"
   }
 }
 
@@ -98,7 +98,7 @@ dependency "rds" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    database_url_secret_arn = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:database_url"
+    database_url_secret_arn = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:database_url"
   }
 }
 
@@ -107,12 +107,13 @@ dependency "sqs" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    sqs_api_audit_log_queue_arn = "arn:aws:sqs:ca-central-1:000000000000:api_audit_log_queue"
+    sqs_api_audit_log_queue_arn = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:api_audit_log_queue"
   }
 }
 
 locals {
   zitadel_domain = get_env("ZITADEL_PROVIDER", "https://localhost")
+  aws_account_id = get_env("AWS_ACCOUNT_ID", "000000000000")
 }
 
 inputs = {

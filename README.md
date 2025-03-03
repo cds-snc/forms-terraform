@@ -8,7 +8,36 @@ Pull Requests in this repository require all commits to be signed before they ca
 
 ## Prerequisites:
 
-- [Docker Hub](https://docs.docker.com/desktop/mac/install/) or [Colima](https://github.com/abiosoft/colima)
+- [Colima](https://github.com/abiosoft/colima)
+
+  1. Install Docker
+     - `brew install docker docker-compose docker-credential-helper`
+  1. Modify the docker config file to use mac os keychain as `credStore`
+
+     ```shell
+     nano ~/.docker/config.json
+
+     {
+     ...
+     "credsStore": "osxkeychain",
+     ...
+     }
+     ```
+
+  1. Install Colima: `brew install colima`
+  1. Add symlink to `/var/run`
+
+     ```shell
+
+     # as /var/ is a protected directory, we will need sudo
+     sudo ln ~/.colima/default/docker.sock /var/run
+
+     # we can verify this has worked by running
+     ls /var/run
+     # and confirming that docker.sock is now in the directory
+     ```
+
+  1. Colima can be set as a service to start on login: `brew services start colima`
 
 - Homebrew:
 
@@ -23,130 +52,106 @@ Pull Requests in this repository require all commits to be signed before they ca
   1. `brew install warrensbox/tap/tgswitch`
   1. `tgswitch 0.72.5`
 
-- Yarn (if you want to deploy the infrastructure locally):
+- Yarn (chances are you already have this if working on the app):
 
   ```shell
   $ brew install yarn
   ```
 
-  (source https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable)
-
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 
-- awslocal (if you want to deploy the infrastructure locally):
+  1. Install AWS CLI
 
   ```shell
-  $ brew install awscli-local
+    curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+  sudo installer -pkg AWSCLIV2.pkg -target /
   ```
 
-  (source https://formulae.brew.sh/formula/awscli-local)
+- [OpenVPN](https://community.openvpn.net/openvpn/wiki/Openvpn24ManPage):
 
-  OR
-
-  ```shell
-  $ pip install awscli-local
-  ```
-
-  (source https://github.com/localstack/awscli-local)
-
-### If using Colima
-
-- Docker: `brew install docker docker-compose docker-credential-helper`
-
-Modify the docker config file to use mac os keychain as `credStore`
-
-```shell
-nano ~/.docker/config.json
-
-{
-    ...
-    "credsStore": "osxkeychain",
-    ...
-}
-```
-
-- Colima: `brew install colima`
-
-```shell
-# as /var/ is a protected directory, we will need sudo
-sudo ln ~/.colima/default/docker.sock /var/run
-
-# we can verify this has worked by running
-ls /var/run
-# and confirming that docker.sock is now in the directory
-```
-
-Colima can be set as a service to start on login: `brew services start colima`
-
-## Request Localstack Pro license
-
-You will need to create a Localstack account using your CDS email address [here](https://app.localstack.cloud/sign-in) and then ask your supervisor to assign you a Pro license license.
+  - `$ brew install openvpn`
+  - In `.zprofile` add bin to Path: `export PATH="/usr/local/opt/openvpn/sbin:$PATH"`
 
 ## Set your environment variables
 
 Create an `.env` file at the root of the project and use the `.env.example` as a template. You can find some of the values in 1Password > Local Development .ENV secure note.
-The `LOCALSTACK_AUTH_TOKEN` value will be accessible [here](https://app.localstack.cloud/workspace/auth-token) once you have been assigned a Pro license.
-
-## Start Localstack
 
 ```shell
-$ docker-compose up
+AWS_ACCOUNT_ID=YOUR_AWS_SCRATCH_ACCOUNT_ID
+STAGING_AWS_ACCOUNTID=CURRENT_STAGING_ACCOUNT_ID
 ```
 
-<details>
-<summary>See expected console output</summary>
+## AWS CLI Crendentials
+
+Add the following configuration to your `~/.aws/config` file
+
+- The `sso_start_url` value can be found by asking one or your colleages
+- The `sso_account_id` is your AWS Scratch Account ID
+
+```
+[sso-session CDS]
+sso_start_url = https://***********.awsapps.com/start#
+sso_region = ca-central-1
+sso_registration_scopes = sso:account:access
+[profile development]
+sso_session = CDS
+sso_account_id = ************
+sso_role_name = AWSAdministratorAccess
+region = ca-central-1
+output = json
+```
+
+Once the configuration above is entered into the AWS CLI configuration a developer can generate credentials for the terminal by running:
+`aws sso login --profile development`
+
+This will open a browser window and ask you to go through the regular AWS Console login process. Once completed, or if you have already logged in that day, you will be presented with a message notifying you that the credentials have been supplied to the CLI.
+
+## Building the Development Environment
+
+### Creating VPN certificates
+
+The first time you set up the development environment you will need to create PKI certificates in order to connect into the AWS VPC. This step is only needed the first time you build the environment or you delete the certificate folders.
 
 ```shell
-[+] Building 0.0s (0/0)
-[+] Running 2/2
- ✔ Network forms-terraform_default  Created                                                                               0.1s
- ✔ Container GCForms_LocalStack     Created                                                                               0.1s
-Attaching to GCForms_LocalStack
-GCForms_LocalStack  |
-GCForms_LocalStack  | LocalStack version: 3.2.1.dev20240306170817
-GCForms_LocalStack  | LocalStack Docker container id: 00e39dc6785e
-GCForms_LocalStack  | LocalStack build date: 2024-03-06
-GCForms_LocalStack  | LocalStack build git hash: 93fc329
-GCForms_LocalStack  |
-GCForms_LocalStack  | 2024-03-27T14:11:56.175  INFO --- [  MainThread] l.bootstrap.licensingv2    : Successfully requested and activated new license <license_identifier>:pro 🔑✅
-GCForms_LocalStack  | 2024-03-27T14:11:58.611  INFO --- [  MainThread] l.p.snapshot.plugins       : registering ON_STARTUP load strategy
-GCForms_LocalStack  | 2024-03-27T14:11:59.649  INFO --- [  MainThread] l.p.snapshot.plugins       : registering SCHEDULED save strategy
-GCForms_LocalStack  | 2024-03-27T14:11:59.713  INFO --- [  MainThread] l.extensions.platform      : loaded 0 extensions
-GCForms_LocalStack  | 2024-03-27T14:12:00.097  INFO --- [-functhread4] hypercorn.error            : Running on https://0.0.0.0:4566 (CTRL + C to quit)
-GCForms_LocalStack  | 2024-03-27T14:12:00.097  INFO --- [-functhread4] hypercorn.error            : Running on https://0.0.0.0:4566 (CTRL + C to quit)
-GCForms_LocalStack  | 2024-03-27T14:12:00.098  INFO --- [-functhread4] hypercorn.error            : Running on https://0.0.0.0:443 (CTRL + C to quit)
-GCForms_LocalStack  | 2024-03-27T14:12:00.098  INFO --- [-functhread4] hypercorn.error            : Running on https://0.0.0.0:443 (CTRL + C to quit)
-GCForms_LocalStack  | 2024-03-27T14:12:00.316  INFO --- [  MainThread] localstack.utils.bootstrap : Execution of "start_runtime_components" took 602.48ms
-GCForms_LocalStack  | Ready.
-GCForms_LocalStack  | 2024-03-27T14:12:03.093  INFO --- [  MainThread] l.p.snapshot.plugins       : restoring state of all services on startup
+$ make create_certs
 ```
 
-</details>
+### Deploying infrastructure as code into your scratch account
 
-Once Localstack is ready to use you should be able to interact with local AWS services using the [Localstack web application](https://app.localstack.cloud/inst/default/resources).
-
-**If the Localstack web application is not able to connect to the instance you just started you may have to add `127.0.0.1 localhost.localstack.cloud` to your `/etc/hosts`.**
-
-## Deploy infrastructure
-
-Now that we have localstack up and running it's time to deploy our local AWS services to mimic our cloud environments.
+Please ensure you have run `aws sso login --profile development` before continuing.
 
 ```shell
-$ ./localstack_services.sh
+$ make build_env
 ```
 
-**Please note that if you stop Localstack you don't need to run this script again.**
-**Localstack Pro offers automatic persistence for all deployed services. This is enabled by default and can be tweaked through your `.env` file.**
-
-Congratulations! You should now have all the necessary infrastructure configured on Localstack to support all the web applications functions completely locally without needing an AWS account.
-
-## How to manually invoke a Lambda function
+Copy the variables at the end of the output, as seen below, into your application folder's `.env` file.
 
 ```shell
-$ awslocal lambda invoke --function-name <name_of_the_function> output.txt
+All infratructure initialized: Ready for requests
+=> Please copy the following to your app .env file:
+AWS_PROFILE=development
+DATABASE_URL=postgres://postgres:*********@forms-db-cluster.cluster-************.ca-central-1.rds.amazonaws.com:5432/forms?connect_timeout=60
+REDIS_URL=gcforms-redis-rep-group-001.******.0001.cac1.cache.amazonaws.com:6379
+RELIABILITY_FILE_STORAGE=forms-************-reliability-file-storage
 ```
 
-In case you want to invoke a function that expects a specific payload you can pass it using the `--payload '{}'` argument.
+### Connecting your local development GCForms app
+
+The following command creates a vpn tunnel from your local machine into the VPC of the scratch account. This allows your local development environment to connect to backend services like RDS, SQS, Lambdas, and all the other AWS services the GCForms app leverages.
+
+```shell
+$ make connect_env
+```
+
+### Destroying infrastructure as code in your scratch account
+
+To remove all infrastructure as code that was deployed you can simply run the following:
+
+```shell
+$ make destroy_env
+```
+
+This will remove all infrastructure created by terraform as well as terraform state and terraform lock resources. This will not remove any resources created by click ops in the AWS Console.
 
 ## Containerized Lambda functions
 
@@ -157,14 +162,7 @@ $ cd lambda-code/
 $ ./deps.sh install
 ```
 
-Once you have changed the code in one or multiple Lambda packages, you can call the `deploy-lambda-images.sh`. It will build, tag and push all Lambda images to ECR as well as letting the Lambda service know that a new version of the code should be used.
-
-```shell
-$ cd lambda-code/
-$ ./deploy-lambda-images.sh
-```
-
-**There is a `skip` argument you can pass to that script if you only want to deploy the Lambda images for which you have made changes. It uses the `git diff HEAD .` command in every single Lambda folder to know whether the image should be deployed or skipped**
+Once you have changed the code in one or multiple Lambda packages, you can leverage the `make lambdas` or `make lambda name=LAMBDA_NAME` commands. They will build, tag and push either all Lambda images or a specific image to your ECR as well as letting the Lambda service know that a new version of the code should be used.
 
 ## Dynamo Database Table Schemas
 

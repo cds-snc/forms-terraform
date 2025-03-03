@@ -11,9 +11,6 @@ const DYNAMODB_VAULT_TABLE_NAME = process.env.DYNAMODB_VAULT_TABLE_NAME ?? "";
 
 const dynamodbClient = new DynamoDBClient({
   region: process.env.REGION ?? "ca-central-1",
-  ...(process.env.LOCALSTACK === "true" && {
-    endpoint: "http://host.docker.internal:4566",
-  }),
 });
 
 export async function retrieveNewOrDownloadedFormResponsesOver28DaysOld() {

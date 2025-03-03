@@ -20,9 +20,6 @@ import { getFormattedDateFromObject } from "./utils.js";
 
 const awsProperties = {
   region: process.env.REGION ?? "ca-central-1",
-  ...(process.env.LOCALSTACK === "true" && {
-    endpoint: "http://host.docker.internal:4566",
-  }),
 };
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient(awsProperties));
@@ -273,7 +270,14 @@ function handleType(
       break;
     case "dynamicRow":
       if (!question.properties.subElements) throw new Error("Dynamic Row must have sub elements");
-      handleDynamicForm(qTitle, qRowLabel, response, question.properties.subElements, collector, language);
+      handleDynamicForm(
+        qTitle,
+        qRowLabel,
+        response,
+        question.properties.subElements,
+        collector,
+        language
+      );
       break;
     case "fileInput":
       handleFileInputResponse(qTitle, response, collector);
@@ -287,7 +291,13 @@ function handleType(
       );
       break;
     case "addressComplete":
-      handleAddressCompleteResponse(qTitle, response, collector, language, question.properties.addressComponents);
+      handleAddressCompleteResponse(
+        qTitle,
+        response,
+        collector,
+        language,
+        question.properties.addressComponents
+      );
       break;
     default:
       // Do not try to handle form elements like richText that do not have responses
@@ -373,7 +383,7 @@ function handleTextResponse(title: string, response: Response, collector: string
     return;
   }
 
-  collector.push(`**${title}**${String.fromCharCode(13)}—`); 
+  collector.push(`**${title}**${String.fromCharCode(13)}—`);
 }
 
 function handleFileInputResponse(title: string, response: Response, collector: string[]) {
@@ -405,16 +415,42 @@ function handleFormattedDateResponse(
   collector.push(`**${title}**${String.fromCharCode(13)}—`);
 }
 
-function handleAddressCompleteResponse(title: string, response: Response, collector: string[], language: string, adddressComponents?: AddressCompleteProps) {
+function handleAddressCompleteResponse(
+  title: string,
+  response: Response,
+  collector: string[],
+  language: string,
+  adddressComponents?: AddressCompleteProps
+) {
   if (response !== undefined && response !== null && response !== "") {
     const address = JSON.parse(response as string) as AddressElements;
     if (adddressComponents?.splitAddress) {
-      collector.push(`**${title} - ${language === "fr" ? "Adresse municipale" : "Street Address"}**${String.fromCharCode(13)}${address.streetAddress}`);
-      collector.push(`**${title} - ${language === "fr" ? "City or Town" : "Ville ou communauté"} **${String.fromCharCode(13)}${address.city}`);
-      collector.push(`**${title} - ${language === "fr" ? "Province, territoire ou état " : "Province, territory or state"}**${String.fromCharCode(13)}${address.province}`);
-      collector.push(`**${title} - ${language === "fr" ? "Code postal ou zip" : "Postal Code or zip"}**${String.fromCharCode(13)}${address.postalCode}`);
+      collector.push(
+        `**${title} - ${
+          language === "fr" ? "Adresse municipale" : "Street Address"
+        }**${String.fromCharCode(13)}${address.streetAddress}`
+      );
+      collector.push(
+        `**${title} - ${
+          language === "fr" ? "City or Town" : "Ville ou communauté"
+        } **${String.fromCharCode(13)}${address.city}`
+      );
+      collector.push(
+        `**${title} - ${
+          language === "fr" ? "Province, territoire ou état " : "Province, territory or state"
+        }**${String.fromCharCode(13)}${address.province}`
+      );
+      collector.push(
+        `**${title} - ${
+          language === "fr" ? "Code postal ou zip" : "Postal Code or zip"
+        }**${String.fromCharCode(13)}${address.postalCode}`
+      );
       if (!adddressComponents.canadianOnly) {
-        collector.push(`**${title} - ${language === "fr" ? "Pays" : "Country"}**${String.fromCharCode(13)}${address.country}`);
+        collector.push(
+          `**${title} - ${language === "fr" ? "Pays" : "Country"}**${String.fromCharCode(13)}${
+            address.country
+          }`
+        );
       }
     } else {
       const addressString = `${address.streetAddress}, ${address.city}, ${address.province}, ${address.postalCode}`;
@@ -423,7 +459,7 @@ function handleAddressCompleteResponse(title: string, response: Response, collec
       }
       collector.push(`**${title}**${String.fromCharCode(13)}${addressString}`);
     }
-    
+
     return;
   }
 

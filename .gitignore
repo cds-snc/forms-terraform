@@ -65,3 +65,9 @@ idp/docker/*.key
 # Python
 *.pyc
 __pychache__
+
+# VPN configuration
+local_dev_files/certificates/*
+local_dev_files/easyrsa
+!local_dev_files/certificates/client-config.ovpn
+aws/vpn/certificates
