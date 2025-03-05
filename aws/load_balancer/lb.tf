@@ -147,7 +147,7 @@ resource "aws_lb_listener" "form_viewer_http" {
 
 resource "aws_alb_listener_rule" "forms_api" {
   listener_arn = aws_lb_listener.form_viewer_https.arn
-  priority     = 100
+  priority     = 49999
 
   action {
     type             = "forward"
