@@ -6,9 +6,9 @@ resource "aws_lambda_function" "reliability" {
   timeout       = 300
 
 
-// Even in development mode this lambda should be attached to the VPC in order to connecto the DB
-// In development mode the lambda cannot sent emails as there is no internet access
-  vpc_config     {
+  // Even in development mode this lambda should be attached to the VPC in order to connecto the DB
+  // In development mode the lambda cannot sent emails as there is no internet access
+  vpc_config {
     security_group_ids = [var.lambda_security_group_id]
     subnet_ids         = var.private_subnet_ids
   }

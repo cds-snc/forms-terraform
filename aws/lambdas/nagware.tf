@@ -9,8 +9,8 @@ resource "aws_lambda_function" "nagware" {
   role          = aws_iam_role.lambda.arn
   timeout       = 900
 
-// Even in development mode this lambda should be attached to the VPC in order to connecto the DB
-   vpc_config     {
+  // Even in development mode this lambda should be attached to the VPC in order to connecto the DB
+  vpc_config {
     security_group_ids = [var.lambda_security_group_id]
     subnet_ids         = var.private_subnet_ids
   }

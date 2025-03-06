@@ -9,15 +9,15 @@ resource "aws_lambda_function" "prisma_migration" {
     ignore_changes = [image_uri]
   }
 
-// Even in development mode this lambda should be attached to the VPC in order to connecto the DB
-  vpc_config     {
+  // Even in development mode this lambda should be attached to the VPC in order to connecto the DB
+  vpc_config {
     security_group_ids = [var.lambda_security_group_id]
     subnet_ids         = var.private_subnet_ids
   }
-  
+
   environment {
     variables = {
-      DB_URL_SECRET_ARN         = var.database_url_secret_arn
+      DB_URL_SECRET_ARN     = var.database_url_secret_arn
       PRISMA_S3_BUCKET_NAME = var.prisma_migration_storage_id
     }
   }
