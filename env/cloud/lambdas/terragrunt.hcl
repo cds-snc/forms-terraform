@@ -134,12 +134,14 @@ dependency "s3" {
     archive_storage_id             = "forms-staging-archive-storage"
     audit_logs_archive_storage_id  = "forms-staging-audit-logs-archive-storage"
     audit_logs_archive_storage_arn = "arn:aws:s3:::forms-staging-audit-logs-archive-storage"
+    prisma_migration_storage_id    = "forms-staging-prisma-migration-storage"
+    prisma_migration_storage_arn   = "arn:aws:s3:::forms-staging-prisma-migration-storage"
   }
 }
 
 dependency "ecr" {
   config_path                             = "../ecr"
-  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_merge_strategy_with_state  = "deep_map_only"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
     ecr_repository_lambda_urls = {
@@ -156,7 +158,8 @@ dependency "ecr" {
       response-archiver-lambda        = "test_url",
       submission-lambda               = "test_url",
       vault-integrity-lambda          = "test_url",
-      load-testing-lambda             = "test_url"
+      load-testing-lambda             = "test_url",
+      prisma-migration-lambda         = "test_url"
     }
   }
 }
@@ -204,6 +207,8 @@ inputs = {
   archive_storage_id             = dependency.s3.outputs.archive_storage_id
   audit_logs_archive_storage_id  = dependency.s3.outputs.audit_logs_archive_storage_id
   audit_logs_archive_storage_arn = dependency.s3.outputs.audit_logs_archive_storage_arn
+  prisma_migration_storage_id    = dependency.s3.outputs.prisma_migration_storage_id
+  prisma_migration_storage_arn   = dependency.s3.outputs.prisma_migration_storage_arn
 
   ecr_repository_lambda_urls = dependency.ecr.outputs.ecr_repository_lambda_urls
 

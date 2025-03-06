@@ -3,6 +3,8 @@
 # Exit on any error
 set -e
 
+MODULE_NAME=$1
+
 # Text colors
 greenColor='\033[0;32m'
 yellowColor='\033[0;33m'
@@ -59,9 +61,16 @@ if [ "$fresh_instance" = true ]; then
     rm -rf "${dir}.terragrunt-cache"
     rm -f "${dir}.terraform.lock.hcl"
   done
+else
+  if [ -z "$MODULE_NAME" ]; then
+    printf "${greenColor}=> Building All Terragrung Modules${reset}\n"
+  else
+    printf "${greenColor}=> Only building ${MODULE_NAME} Terragrunt Module${reset}\n"
+    cd $basedir/env/cloud/$MODULE_NAME
+    terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+    exit 0
+  fi
 fi
-
-printf "${greenColor}=> Creating AWS services${reset}\n"
 
 printf "${greenColor}...Setting up KMS${reset}\n"
 cd $basedir/env/cloud/kms

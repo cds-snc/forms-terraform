@@ -32,6 +32,9 @@ validate:           ## Terragrunt validate all resources
 build_env: 	    ## Build Development environment
 	./local_dev_files/build_dev_env.sh
 
+build_module: 	## Build specific module
+	./local_dev_files/build_dev_env.sh $(name)
+
 destroy_env: 	## Destroy Development environment
 	./local_dev_files/destroy_dev_env.sh
 
@@ -54,9 +57,9 @@ clear_terragrunt_cache: ## Clear Terragrunt cache
 
 # Dependency guards
 
-lambda lambdas connect_dev create_dev_certs destroy_dev build_dev: guard-AWS_ACCOUNT_ID
+lambda lambdas connect_dev create_dev_certs destroy_dev build_dev build_module: guard-AWS_ACCOUNT_ID
 
-build_env: guard-STAGING_AWS_ACCOUNT_ID
+build_env build_module: guard-STAGING_AWS_ACCOUNT_ID
 
 
 .PHONY: \

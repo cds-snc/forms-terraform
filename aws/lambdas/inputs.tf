@@ -149,6 +149,16 @@ variable "audit_logs_archive_storage_id" {
   type        = string
 }
 
+variable "prisma_migration_storage_id" {
+  description = "S3 bucket ID for prisma migration storage"
+  type        = string
+}
+
+variable "prisma_migration_storage_arn" {
+  description = "S3 bucket ARN for prisma migration storage"
+  type        = string
+}
+
 variable "audit_logs_archive_storage_arn" {
   description = "S3 bucket ARN for audit logs archive storage"
   type        = string
