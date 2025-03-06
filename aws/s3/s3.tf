@@ -201,6 +201,7 @@ resource "aws_s3_bucket" "prisma_migration_storage" {
   # checkov:skip=CKV_AWS_18: Access logging not required
   # checkov:skip=CKV_AWS_21: Versioning not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
+  # checkov:skip=CKV2_AWS_61: Lifecycle configuration not required
   bucket        = "forms-${local.env}-prisma-migration-storage"
   force_destroy = var.env == "development"
 }
