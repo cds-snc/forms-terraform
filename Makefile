@@ -55,9 +55,13 @@ lambdas: ## Build all lambda images and deploy to local environment
 clear_terragrunt_cache: ## Clear Terragrunt cache
 	./local_dev_files/clean_terragrunt.sh
 
+sso_login: ## Login to AWS SSO
+	./local_dev_files/sso_login.sh $(profile)
+
 # Dependency guards
 
-lambda lambdas connect_dev create_dev_certs destroy_dev build_dev build_module: guard-AWS_ACCOUNT_ID
+lambda lambdas connect_env create_certs destroy_env build_env build_module: guard-AWS_ACCOUNT_ID
+lambda lambdas connect_env destroy_env build_env build_module: sso_login
 
 build_env build_module: guard-STAGING_AWS_ACCOUNT_ID
 
@@ -74,4 +78,5 @@ build_env build_module: guard-STAGING_AWS_ACCOUNT_ID
 	destroy_dev \
 	create_dev_certs \
 	connect_dev \
-	clear_terragrunt_cache
+	clear_terragrunt_cache \
+	sso_login
