@@ -22,7 +22,13 @@ dependency "app" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    ecs_iam_role_arn = "arn:aws:iam::${local.aws_account_id}:role/form-viewer"
+    ecs_iam_role_arn                         = "arn:aws:iam::${local.aws_account_id}:role/form-viewer"
+    ecs_iam_forms_secrets_manager_policy_arn = null
+    ecs_iam_forms_kms_policy_arn             = null
+    ecs_iam_forms_s3_policy_arn              = null
+    ecs_iam_forms_dynamodb_policy_arn        = null
+    ecs_iam_forms_sqs_policy_arn             = null
+    ecs_iam_forms_cognito_policy_arn         = null
   }
 }
 
@@ -162,6 +168,14 @@ dependency "ecr" {
 }
 
 inputs = {
+  ecs_iam_role_arn                         = local.env == "development" ? null : dependency.app.outputs.ecs_iam_role_arn
+  ecs_iam_forms_secrets_manager_policy_arn = dependency.app.outputs.ecs_iam_forms_secrets_manager_policy_arn
+  ecs_iam_forms_kms_policy_arn             = dependency.app.outputs.ecs_iam_forms_kms_policy_arn
+  ecs_iam_forms_s3_policy_arn              = dependency.app.outputs.ecs_iam_forms_s3_policy_arn
+  ecs_iam_forms_dynamodb_policy_arn        = dependency.app.outputs.ecs_iam_forms_dynamodb_policy_arn
+  ecs_iam_forms_sqs_policy_arn             = dependency.app.outputs.ecs_iam_forms_sqs_policy_arn
+  ecs_iam_forms_cognito_policy_arn         = dependency.app.outputs.ecs_iam_forms_cognito_policy_arn
+
   lambda_security_group_id = dependency.network.outputs.lambda_security_group_id
   private_subnet_ids       = dependency.network.outputs.private_subnet_ids
 
@@ -206,8 +220,6 @@ inputs = {
   audit_logs_archive_storage_arn = dependency.s3.outputs.audit_logs_archive_storage_arn
 
   ecr_repository_lambda_urls = dependency.ecr.outputs.ecr_repository_lambda_urls
-
-  ecs_iam_role_arn = local.env == "development" ? null : dependency.app.outputs.ecs_iam_role_arn
 
   # Overwritten in GitHub Actions by TFVARS
   gc_template_id = "8d597a1b-a1d6-4e3c-8421-042a2b4158b7" # GC Notify template ID used for local setup

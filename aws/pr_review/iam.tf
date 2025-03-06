@@ -1,21 +1,4 @@
-resource "aws_iam_role" "forms_lambda_client" {
-  name               = "forms-lambda-client"
-  assume_role_policy = data.aws_iam_policy_document.forms_lambda_client.json
-}
 
-data "aws_iam_policy_document" "forms_lambda_client" {
-  statement {
-    actions = ["sts:AssumeRole"]
-    effect  = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
-    }
-  }
-}
-
-# This is only used by the PR review environment so it only applies to Staging
 data "aws_iam_policy_document" "forms_lambda_parameter_store" {
   count = var.env == "staging" ? 1 : 0
 
@@ -28,7 +11,6 @@ data "aws_iam_policy_document" "forms_lambda_parameter_store" {
   }
 }
 
-# This is only used by the PR review environment so it only applies to Staging
 resource "aws_iam_policy" "forms_lambda_parameter_store" {
   count = var.env == "staging" ? 1 : 0
 
@@ -37,45 +19,9 @@ resource "aws_iam_policy" "forms_lambda_parameter_store" {
   policy = data.aws_iam_policy_document.forms_lambda_parameter_store[0].json
 }
 
-# This is only used by the PR review environment so it only applies to Staging
 resource "aws_iam_role_policy_attachment" "forms_lambda_parameter_store" {
   count = var.env == "staging" ? 1 : 0
 
-  role       = aws_iam_role.forms_lambda_client.name
+  role       = var.forms_lambda_client_iam_role_name
   policy_arn = aws_iam_policy.forms_lambda_parameter_store[0].arn
-}
-
-resource "aws_iam_role_policy_attachment" "secrets_manager_forms_lambda_client" {
-  role       = aws_iam_role.forms_lambda_client.name
-  policy_arn = var.ecs_iam_forms_secrets_manager_policy_arn
-}
-
-resource "aws_iam_role_policy_attachment" "kms_forms_lambda_client" {
-  role       = aws_iam_role.forms_lambda_client.name
-  policy_arn = var.ecs_iam_forms_kms_policy_arn
-}
-
-resource "aws_iam_role_policy_attachment" "s3_forms_lambda_client" {
-  role       = aws_iam_role.forms_lambda_client.name
-  policy_arn = var.ecs_iam_forms_s3_policy_arn
-}
-
-resource "aws_iam_role_policy_attachment" "dynamodb_forms_lambda_client" {
-  role       = aws_iam_role.forms_lambda_client.name
-  policy_arn = var.ecs_iam_forms_dynamodb_policy_arn
-}
-
-resource "aws_iam_role_policy_attachment" "sqs_forms_lambda_client" {
-  role       = aws_iam_role.forms_lambda_client.name
-  policy_arn = var.ecs_iam_forms_sqs_policy_arn
-}
-
-resource "aws_iam_role_policy_attachment" "cognito_forms_lambda_client" {
-  role       = aws_iam_role.forms_lambda_client.name
-  policy_arn = var.ecs_iam_forms_cognito_policy_arn
-}
-
-resource "aws_iam_role_policy_attachment" "forms_lambda_client_vpc_access" {
-  role       = aws_iam_role.forms_lambda_client.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
