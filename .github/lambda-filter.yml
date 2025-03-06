@@ -37,3 +37,6 @@ submission:
 vault-integrity:
   - "lambda-code/vault-integrity/**"
   - "lambda-code/force-deploy-images.txt"
+prisma-migration:
+  - "lambda-code/prisma-migration/**"
+  - "lambda-code/force-deploy-images.txt"
