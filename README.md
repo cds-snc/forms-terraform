@@ -78,7 +78,7 @@ Create an `.env` file at the root of the project and use the `.env.example` as a
 
 ```shell
 AWS_ACCOUNT_ID=YOUR_AWS_SCRATCH_ACCOUNT_ID
-STAGING_AWS_ACCOUNTID=CURRENT_STAGING_ACCOUNT_ID
+STAGING_AWS_ACCOUNT_ID=CURRENT_STAGING_ACCOUNT_ID
 ```
 
 ## AWS CLI Crendentials
