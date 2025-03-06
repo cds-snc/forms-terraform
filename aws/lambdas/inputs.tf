@@ -188,3 +188,33 @@ variable "redis_url" {
   description = "Redis URL used by the Nagware function.  This should not include the protocol or port."
   type        = string
 }
+
+variable "ecs_iam_forms_secrets_manager_policy_arn" {
+  description = "IAM policy for access to Secrets Manager"
+  type        = string
+}
+
+variable "ecs_iam_forms_kms_policy_arn" {
+  description = "IAM policy for access to KMS"
+  type        = string
+}
+
+variable "ecs_iam_forms_s3_policy_arn" {
+  description = "IAM policy access to S3"
+  type        = string
+}
+
+variable "ecs_iam_forms_dynamodb_policy_arn" {
+  description = "IAM policy for access to DynamoDB"
+  type        = string
+}
+
+variable "ecs_iam_forms_sqs_policy_arn" {
+  description = "IAM policy for access to SQS"
+  type        = string
+}
+
+variable "ecs_iam_forms_cognito_policy_arn" {
+  description = "IAM policy for access to Cognito"
+  type        = string
+}
