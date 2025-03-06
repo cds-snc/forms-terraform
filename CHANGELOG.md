@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.30.0](https://github.com/cds-snc/forms-terraform/compare/v3.29.0...v3.30.0) (2025-03-06)
+
+
+### Features
+
+* forms app legacy ECR ([#957](https://github.com/cds-snc/forms-terraform/issues/957)) ([6a3a79a](https://github.com/cds-snc/forms-terraform/commit/6a3a79ab86445726cb01496a0a29619f0f54f353))
+* Lambda prisma migration ([#962](https://github.com/cds-snc/forms-terraform/issues/962)) ([3d8a504](https://github.com/cds-snc/forms-terraform/commit/3d8a504aef92b1a85b51d6c238c0710eeaf14a4f))
+* Local development using scratch accounts ([#958](https://github.com/cds-snc/forms-terraform/issues/958)) ([40a9919](https://github.com/cds-snc/forms-terraform/commit/40a99195ad8a6bd7fa6510df9775c5e6360f41fb))
+* sso login script ([#964](https://github.com/cds-snc/forms-terraform/issues/964)) ([2697bba](https://github.com/cds-snc/forms-terraform/commit/2697bbac5aa8008ccc92971d06a105a50ac76bb5))
+
+
+### Bug Fixes
+
+* add prisma lambda to filter for build ([#963](https://github.com/cds-snc/forms-terraform/issues/963)) ([ff27fa2](https://github.com/cds-snc/forms-terraform/commit/ff27fa28879b3dd6204432251db475c6e0827522))
+* revert localstack detection when initializing Postgres connector ([#956](https://github.com/cds-snc/forms-terraform/issues/956)) ([5cd34ff](https://github.com/cds-snc/forms-terraform/commit/5cd34ffa3f1b39f38489cb1fece76b7d15e4cc1c))
+
+
+### Code Refactoring
+
+* leverage new connectors package ([#953](https://github.com/cds-snc/forms-terraform/issues/953)) ([570a7e0](https://github.com/cds-snc/forms-terraform/commit/570a7e027813529cad34938a8db8c93893ec9952))
+
 ## [3.29.0](https://github.com/cds-snc/forms-terraform/compare/v3.28.0...v3.29.0) (2025-02-13)
 
 
