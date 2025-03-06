@@ -158,7 +158,8 @@ dependency "ecr" {
       response-archiver-lambda        = "test_url",
       submission-lambda               = "test_url",
       vault-integrity-lambda          = "test_url",
-      load-testing-lambda             = "test_url"
+      load-testing-lambda             = "test_url",
+      prisma-migration-lambda         = "test_url"
     }
   }
 }
