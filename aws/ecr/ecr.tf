@@ -49,6 +49,7 @@ locals {
     "response-archiver-lambda",
     "submission-lambda",
     "vault-integrity-lambda",
+    "prisma-migration-lambda",
     var.env == "staging" ? "load-testing-lambda" : null
   ]))
 }

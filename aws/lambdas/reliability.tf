@@ -5,12 +5,12 @@ resource "aws_lambda_function" "reliability" {
   role          = aws_iam_role.lambda.arn
   timeout       = 300
 
-  dynamic "vpc_config" {
-    for_each = local.vpc_config
-    content {
-      security_group_ids = vpc_config.value.security_group_ids
-      subnet_ids         = vpc_config.value.subnet_ids
-    }
+
+// Even in development mode this lambda should be attached to the VPC in order to connecto the DB
+// In development mode the lambda cannot sent emails as there is no internet access
+  vpc_config     {
+    security_group_ids = [var.lambda_security_group_id]
+    subnet_ids         = var.private_subnet_ids
   }
 
   lifecycle {

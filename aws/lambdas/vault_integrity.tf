@@ -9,6 +9,9 @@ resource "aws_lambda_function" "vault_integrity" {
   role          = aws_iam_role.lambda.arn
   timeout       = 60
 
+  // This lambda does not need to be connected to the VPC
+  // It is a read-only operation that is invoked securely through the Lambda Private Link Endpoint
+
   lifecycle {
     ignore_changes = [image_uri]
   }
