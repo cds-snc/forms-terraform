@@ -1,15 +1,17 @@
 resource "aws_lambda_function" "reliability" {
   function_name = "reliability"
-  image_uri     = "${var.ecr_repository_url_reliability_lambda}:latest"
+  image_uri     = "${var.ecr_repository_lambda_urls["reliability-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
   timeout       = 300
 
+
+  // Even in development mode this lambda should be attached to the VPC in order to connecto the DB
+  // In development mode the lambda cannot sent emails as there is no internet access
   vpc_config {
     security_group_ids = [var.lambda_security_group_id]
     subnet_ids         = var.private_subnet_ids
   }
-
 
   lifecycle {
     ignore_changes = [image_uri]
@@ -22,7 +24,6 @@ resource "aws_lambda_function" "reliability" {
       NOTIFY_API_KEY = var.notify_api_key_secret_arn
       TEMPLATE_ID    = var.gc_template_id
       DB_URL         = var.database_url_secret_arn
-      LOCALSTACK     = var.localstack_hosted
     }
   }
 

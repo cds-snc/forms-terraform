@@ -7,7 +7,8 @@ dependencies {
 }
 
 locals {
-  domain = jsondecode(get_env("APP_DOMAINS", "[\"localhost:3000\"]"))
+  domain         = jsondecode(get_env("APP_DOMAINS", "[\"localhost:3000\"]"))
+  aws_account_id = get_env("AWS_ACCOUNT_ID", "000000000000")
 }
 
 dependency "hosted_zone" {
@@ -67,9 +68,9 @@ dependency "sqs" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    sqs_reliability_deadletter_queue_arn   = "arn:aws:sqs:ca-central-1:000000000000:reliability_deadletter_queue.fifo"
-    sqs_app_audit_log_deadletter_queue_arn = "arn:aws:sqs:ca-central-1:000000000000:audit_log_deadletter_queue"
-    sqs_api_audit_log_deadletter_queue_arn = "arn:aws:sqs:ca-central-1:000000000000:api_audit_log_deadletter_queue"
+    sqs_reliability_deadletter_queue_arn   = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reliability_deadletter_queue.fifo"
+    sqs_app_audit_log_deadletter_queue_arn = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:audit_log_deadletter_queue"
+    sqs_api_audit_log_deadletter_queue_arn = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:api_audit_log_deadletter_queue"
   }
 }
 
@@ -164,7 +165,7 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_app_audit_logs_arn = "arn:aws:dynamodb:ca-central-1:123456789012:table/AuditLogs"
+    dynamodb_app_audit_logs_arn = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/AuditLogs"
   }
 }
 

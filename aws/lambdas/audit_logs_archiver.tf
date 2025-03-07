@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "audit_logs_archiver" {
   function_name = "audit-logs-archiver"
-  image_uri     = "${var.ecr_repository_url_audit_logs_archiver_lambda}:latest"
+  image_uri     = "${var.ecr_repository_lambda_urls["audit-logs-archiver-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
   timeout       = 900
@@ -9,10 +9,17 @@ resource "aws_lambda_function" "audit_logs_archiver" {
     ignore_changes = [image_uri]
   }
 
+  dynamic "vpc_config" {
+    for_each = local.vpc_config
+    content {
+      security_group_ids = vpc_config.value.security_group_ids
+      subnet_ids         = vpc_config.value.subnet_ids
+    }
+  }
+
   environment {
     variables = {
       REGION                               = var.region
-      LOCALSTACK                           = var.localstack_hosted
       AUDIT_LOGS_DYNAMODB_TABLE_NAME       = var.dynamodb_app_audit_logs_table_name
       AUDIT_LOGS_ARCHIVE_STORAGE_S3_BUCKET = var.audit_logs_archive_storage_id
     }

@@ -38,6 +38,16 @@ output "audit_logs_archive_storage_arn" {
   value       = aws_s3_bucket.audit_logs_archive_storage.arn
 }
 
+output "prisma_migration_storage_id" {
+  description = "S3 bucket ID for prisma migration storage"
+  value       = aws_s3_bucket.prisma_migration_storage.id
+}
+
+output "prisma_migration_storage_arn" {
+  description = "S3 bucket ARN for prisma migration storage"
+  value       = aws_s3_bucket.prisma_migration_storage.arn
+}
+
 output "lake_bucket_arn" {
   description = "ARN of the S3 Raw data bucket."
   value       = module.lake_bucket.s3_bucket_arn

@@ -4,15 +4,25 @@ resource "aws_security_group" "glue_job" {
   name        = "glue_job"
   vpc_id      = aws_vpc.forms.id
 }
+##
+# VPC Endpoints do not exist in development environment
+##
+
+data "aws_vpc_endpoint" "s3_glue" {
+  count        = var.env == "development" ? 0 : 1
+  vpc_id       = aws_vpc.forms.id
+  service_name = "com.amazonaws.${var.region}.s3"
+}
 
 resource "aws_security_group_rule" "glue_job_egress_s3" {
+  count             = var.env == "development" ? 0 : 1
   description       = "Egress from Glue jobs to S3"
   type              = "egress"
   to_port           = 443
   from_port         = 443
   protocol          = "tcp"
   security_group_id = aws_security_group.glue_job.id
-  prefix_list_ids   = [aws_vpc_endpoint.s3.prefix_list_id]
+  prefix_list_ids   = [data.aws_vpc_endpoint.s3_glue[0].prefix_list_id]
 }
 
 resource "aws_security_group_rule" "glue_job_egress_self" {

@@ -3,7 +3,7 @@
 # Capture network traffic over the VPC
 #
 resource "aws_flow_log" "vpc_flow_logs" {
-  count                = var.env == "local" ? 0 : 1
+  count                = var.env == "development" ? 0 : 1
   log_destination      = "arn:aws:s3:::${var.cbs_satellite_bucket_name}/vpc_flow_logs/"
   log_destination_type = "s3"
   traffic_type         = "ALL"

@@ -5,7 +5,7 @@
 
 resource "aws_lambda_function" "reliability_dlq_consumer" {
   function_name = "reliability-dlq-consumer"
-  image_uri     = "${var.ecr_repository_url_reliability_dlq_consumer_lambda}:latest"
+  image_uri     = "${var.ecr_repository_lambda_urls["reliability-dlq-consumer-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
   timeout       = 300
@@ -14,13 +14,20 @@ resource "aws_lambda_function" "reliability_dlq_consumer" {
     ignore_changes = [image_uri]
   }
 
+  dynamic "vpc_config" {
+    for_each = local.vpc_config
+    content {
+      security_group_ids = vpc_config.value.security_group_ids
+      subnet_ids         = vpc_config.value.subnet_ids
+    }
+  }
+
   environment {
     variables = {
       REGION                              = var.region
       SQS_DEAD_LETTER_QUEUE_URL           = var.sqs_reliability_dead_letter_queue_id
       SQS_SUBMISSION_PROCESSING_QUEUE_URL = var.sqs_reliability_queue_id
       SNS_ERROR_TOPIC_ARN                 = var.sns_topic_alert_critical_arn
-      LOCALSTACK                          = var.localstack_hosted
     }
   }
 

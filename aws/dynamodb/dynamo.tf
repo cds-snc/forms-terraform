@@ -1,8 +1,9 @@
 resource "aws_dynamodb_table" "reliability_queue" {
+  # checkov:skip=CKV_AWS_28: 'point in time recovery' is set to true for staging and production
   name                        = "ReliabilityQueue"
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "SubmissionID"
-  deletion_protection_enabled = true
+  deletion_protection_enabled = var.env != "development"
 
   attribute {
     name = "SubmissionID"
@@ -20,18 +21,19 @@ resource "aws_dynamodb_table" "reliability_queue" {
   }
 
   point_in_time_recovery {
-    enabled = var.env == "local" ? false : true
+    enabled = var.env != "development"
   }
 }
 
 resource "aws_dynamodb_table" "vault" {
+  # checkov:skip=CKV_AWS_28: 'point in time recovery' is set to true for staging and production
   name                        = "Vault"
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "FormID"
   range_key                   = "NAME_OR_CONF"
   stream_enabled              = true
   stream_view_type            = "NEW_AND_OLD_IMAGES"
-  deletion_protection_enabled = true
+  deletion_protection_enabled = var.env != "development"
 
   attribute {
     name = "FormID"
@@ -62,16 +64,17 @@ resource "aws_dynamodb_table" "vault" {
   }
 
   point_in_time_recovery {
-    enabled = var.env == "local" ? false : true
+    enabled = var.env != "development"
   }
 }
 
 resource "aws_dynamodb_table" "audit_logs" {
+  # checkov:skip=CKV_AWS_28: 'point in time recovery' is set to true for staging and production
   name                        = "AuditLogs"
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "UserID"
   range_key                   = "Event#SubjectID#TimeStamp"
-  deletion_protection_enabled = true
+  deletion_protection_enabled = var.env != "development"
   stream_enabled              = false # Can be removed in the future when this gets applied to production
 
   attribute {
@@ -114,16 +117,17 @@ resource "aws_dynamodb_table" "audit_logs" {
   }
 
   point_in_time_recovery {
-    enabled = var.env == "local" ? false : true
+    enabled = var.env != "development"
   }
 }
 
 resource "aws_dynamodb_table" "api_audit_logs" {
+  # checkov:skip=CKV_AWS_28: 'point in time recovery' is set to true for staging and production
   name                        = "ApiAuditLogs"
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "UserID"
   range_key                   = "Event#SubjectID#TimeStamp"
-  deletion_protection_enabled = true
+  deletion_protection_enabled = var.env != "development"
   stream_enabled              = false # Can be removed in the future when this gets applied to production
 
   attribute {
@@ -166,7 +170,7 @@ resource "aws_dynamodb_table" "api_audit_logs" {
   }
 
   point_in_time_recovery {
-    enabled = var.env == "local" ? false : true
+    enabled = var.env != "development"
   }
 }
 

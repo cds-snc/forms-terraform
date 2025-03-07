@@ -7,7 +7,6 @@ include "root" {
 }
 
 locals {
-  env                          = get_env("APP_ENV", "local")
   ecs_secret_token             = get_env("ECS_SECRET_TOKEN", "I_am_not_a_secret_token")
   recaptcha_secret             = get_env("RECAPTCHA_SECRET", "I_am_not_a_secret_token")
   notify_callback_bearer_token = get_env("NOTIFY_CALLBACK_BEARER_TOKEN", "I_am_not_a_secret_token")

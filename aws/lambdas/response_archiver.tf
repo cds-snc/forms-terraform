@@ -5,7 +5,7 @@
 
 resource "aws_lambda_function" "response_archiver" {
   function_name = "response-archiver"
-  image_uri     = "${var.ecr_repository_url_response_archiver_lambda}:latest"
+  image_uri     = "${var.ecr_repository_lambda_urls["response-archiver-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
   timeout       = 900
@@ -14,13 +14,20 @@ resource "aws_lambda_function" "response_archiver" {
     ignore_changes = [image_uri]
   }
 
+  dynamic "vpc_config" {
+    for_each = local.vpc_config
+    content {
+      security_group_ids = vpc_config.value.security_group_ids
+      subnet_ids         = vpc_config.value.subnet_ids
+    }
+  }
+
   environment {
     variables = {
       REGION                       = var.region
       DYNAMODB_VAULT_TABLE_NAME    = var.dynamodb_vault_table_name
       ARCHIVING_S3_BUCKET          = var.archive_storage_id
       VAULT_FILE_STORAGE_S3_BUCKET = var.vault_file_storage_id
-      LOCALSTACK                   = var.localstack_hosted
     }
   }
 

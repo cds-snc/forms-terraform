@@ -6,6 +6,10 @@ dependencies {
   paths = ["../network", "../s3", "../rds"]
 }
 
+locals {
+  aws_account_id = get_env("AWS_ACCOUNT_ID", "000000000000")
+}
+
 dependency "network" {
   config_path                             = "../network"
   mock_outputs_merge_strategy_with_state  = "shallow"
@@ -37,13 +41,9 @@ dependency "rds" {
     rds_cluster_instance_availability_zone = "mock-ca-central-1"
     rds_cluster_instance_identifier        = "mock-forms-database-identifier"
     rds_cluster_instance_subnet_id         = "mock-sg-12345678"
-    rds_connector_secret_arn               = "arn:aws:secretsmanager:ca-central-1:123456789012:secret:mock-rds-connector"
+    rds_connector_secret_arn               = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:mock-rds-connector"
     rds_connector_secret_name              = "mock-rds-connector"
   }
-}
-
-locals {
-  env = get_env("APP_ENV", "local")
 }
 
 inputs = {
@@ -54,13 +54,13 @@ inputs = {
   glue_job_security_group_id             = dependency.network.outputs.glue_job_security_group_id
   rds_db_name                            = dependency.rds.outputs.rds_db_name
   rds_cluster_reader_endpoint            = dependency.rds.outputs.rds_cluster_reader_endpoint
-  rds_port                               = local.env == "local" ? "4510" : "5432" # Localstack is accessed on 4510, AWS on 5432
+  rds_port                               = "5432"
   rds_cluster_instance_availability_zone = dependency.rds.outputs.rds_cluster_instance_availability_zone
   rds_cluster_instance_identifier        = dependency.rds.outputs.rds_cluster_instance_identifier
   rds_cluster_instance_subnet_id         = dependency.rds.outputs.rds_cluster_instance_subnet_id
   rds_connector_secret_arn               = dependency.rds.outputs.rds_connector_secret_arn
   rds_connector_secret_name              = dependency.rds.outputs.rds_connector_secret_name
-  s3_endpoint                            = local.env == "local" ? "http://127.0.0.1:4566/" : "s3://"
+  s3_endpoint                            = "s3://"
 }
 
 include "root" {

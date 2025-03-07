@@ -12,7 +12,6 @@ const SQS_SUBMISSION_PROCESSING_QUEUE_URL = process.env.SQS_SUBMISSION_PROCESSIN
 export async function handler() {
   const sqsClient = new SQSClient({
     region: REGION,
-    ...(process.env.LOCALSTACK === "true" && { endpoint: "http://host.docker.internal:4566" }),
   });
   const receiveMessageCommandInput = {
     QueueUrl: SQS_DEAD_LETTER_QUEUE_URL,
