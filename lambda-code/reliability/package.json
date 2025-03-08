@@ -11,11 +11,11 @@
     "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cd ./dist && yarn install --production"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "3.667.0",
-    "@aws-sdk/client-lambda": "3.667.0",
-    "@aws-sdk/client-s3": "3.667.0",
-    "@aws-sdk/client-sqs": "3.667.0",
-    "@aws-sdk/lib-dynamodb": "3.667.0",
+    "@aws-sdk/client-dynamodb": "3.758.0",
+    "@aws-sdk/client-lambda": "3.758.0",
+    "@aws-sdk/client-s3": "3.758.0",
+    "@aws-sdk/client-sqs": "3.758.0",
+    "@aws-sdk/lib-dynamodb": "3.758.0",
     "@gcforms/connectors": "^1.0.0",
     "json2md": "^1.10.0",
     "uuid": "^8.3.2"
