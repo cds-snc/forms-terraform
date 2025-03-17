@@ -1,5 +1,5 @@
 #!/bin/bash
-
+SECONDS=0
 # Exit on any error
 set -e
 
@@ -124,7 +124,8 @@ yarn install && yarn build && yarn postbuild
 cd $basedir/env/cloud/vpn
 terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
 
-printf "${greenColor}All infratructure initialized: Ready for requests${reset}\n"
+t=$SECONDS
+printf "${greenColor}All infratructure initialized in %d minutes\nReady for requests${reset}\n" "$((t / 60 - 1440 * (t / 86400)))"
 
 DB_SECRET_ARN=$(aws secretsmanager list-secrets --filter Key="name",Values="server-database-url" --query "SecretList[0].ARN" --output text)
 DATABASE_URL=$(aws secretsmanager get-secret-value --secret-id $DB_SECRET_ARN --query "SecretString" --output text)

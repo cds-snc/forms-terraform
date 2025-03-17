@@ -1,5 +1,5 @@
 #!/bin/bash
-
+SECONDS=0
 # Exit on any error
 set -e
 
@@ -85,4 +85,6 @@ for bucket in $s3_buckets; do
     aws s3api delete-bucket --bucket $bucket --region ca-central-1 >/dev/null
 done
 
-printf "${greenColor}All infratructure destroyed${reset}\n"
+t=$SECONDS
+
+printf "${greenColor}All infratructure destroyed in %d minutes${reset}\n" "$((t / 60 - 1440 * (t / 86400)))"
