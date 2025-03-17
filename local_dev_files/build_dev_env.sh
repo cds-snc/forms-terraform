@@ -14,8 +14,10 @@ basedir=$(pwd)
 
 # Set proper terraform and terragrunt versions
 
-tgswitch 0.72.5
-tfswitch 1.10.5
+tgswitch 0.75.10
+tfswitch 1.11.2
+
+export TG_PROVIDER_CACHE=1
 
 fresh_instance=false
 
@@ -55,74 +57,45 @@ else
     >/dev/null
 fi
 
+# Build VPN lambda dependencies
+printf "${greenColor}=> Building VPN Lambda dependencies${reset}\n"
+cd $basedir/aws/vpn/lambda/code
+yarn install && yarn build && yarn postbuild
+
 if [ "$fresh_instance" = true ]; then
   printf "${yellowColor}=> Detected fresh AWS account instance.  Clearing local files...${reset}\n"
   for dir in $basedir/env/cloud/*/; do
     rm -rf "${dir}.terragrunt-cache"
     rm -f "${dir}.terraform.lock.hcl"
   done
-else
-  if [ -z "$MODULE_NAME" ]; then
-    printf "${greenColor}=> Building All Terragrung Modules${reset}\n"
-  else
-    printf "${greenColor}=> Only building ${MODULE_NAME} Terragrunt Module${reset}\n"
-    cd $basedir/env/cloud/$MODULE_NAME
-    terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-    exit 0
-  fi
 fi
 
-printf "${greenColor}...Setting up KMS${reset}\n"
-cd $basedir/env/cloud/kms
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+if [ -z "$MODULE_NAME" ]; then
+  printf "${greenColor}=> Building All Terragrunt Modules${reset}\n"
+  terragrunt run-all apply \
+    --non-interactive --log-level info \
+    --queue-strict-include \
+    --working-dir $basedir/env \
+    --queue-include-dir $basedir/env/cloud/kms \
+    --queue-include-dir $basedir/env/cloud/network \
+    --queue-include-dir $basedir/env/cloud/secrets \
+    --queue-include-dir $basedir/env/cloud/sqs \
+    --queue-include-dir $basedir/env/cloud/s3 \
+    --queue-include-dir $basedir/env/cloud/ecr \
+    --queue-include-dir $basedir/env/cloud/sns \
+    --queue-include-dir $basedir/env/cloud/redis \
+    --queue-include-dir $basedir/env/cloud/rds \
+    --queue-include-dir $basedir/env/cloud/dynamodb \
+    --queue-include-dir $basedir/env/cloud/lambdas \
+    --queue-include-dir $basedir/env/cloud/vpn
+else
+  printf "${greenColor}=> Only building ${MODULE_NAME} Terragrunt Module${reset}\n"
+  cd $basedir/env/cloud/$MODULE_NAME
+  terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+  exit 0
+fi
 
-printf "${greenColor}...Setting up Network${reset}\n"
-cd $basedir/env/cloud/network
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${greenColor}...Setting up Secrets Manager${reset}\n"
-cd $basedir/env/cloud/secrets
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${greenColor}...Creating SQS queue${reset}\n"
-cd $basedir/env/cloud/sqs
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${greenColor}...Creating SNS queue${reset}\n"
-cd $basedir/env/cloud/sns
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${greenColor}...Setting up Redis${reset}\n"
-cd $basedir/env/cloud/redis
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${greenColor}...Setting up RDS${reset}\n"
-cd $basedir/env/cloud/rds
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${greenColor}...Setting up S3${reset}\n"
-cd $basedir/env/cloud/s3
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${greenColor}...Setting up DynamoDB${reset}\n"
-cd $basedir/env/cloud/dynamodb
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${greenColor}...Setting up ECR${reset}\n"
-cd $basedir/env/cloud/ecr
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${greenColor}...Setting up Lambdas${reset}\n"
-cd $basedir/env/cloud/lambdas
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-
-printf "${greenColor}...Setting up VPN Client${reset}\n"
-
-cd $basedir/aws/vpn/lambda/code
-yarn install && yarn build && yarn postbuild
-
-cd $basedir/env/cloud/vpn
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+# Print out the time it took to initialize the infrastructure
 
 t=$SECONDS
 printf "${greenColor}All infratructure initialized in %d minutes\nReady for requests${reset}\n" "$((t / 60 - 1440 * (t / 86400)))"
