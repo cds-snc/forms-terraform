@@ -8,6 +8,11 @@ reset='\033[0m' # No Color
 
 basedir=$(pwd)
 
+# Set proper terraform and terragrunt versions
+
+tgswitch 0.75.10
+tfswitch 1.11.2
+
 if ! command -v openvpn >/dev/null; then
   printf "${redColor}=> This script requires 'openvpn' to be installed. See 'Prerequisites' section in the README file.${reset}\n"
   exit 1
@@ -40,7 +45,7 @@ if [[ "$num_of_associations" -eq 0 ]]; then
   yarn build && yarn postbuild
   # Apply VPN terraform module
   cd $basedir/env/cloud/vpn
-  terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
+  terragrunt apply --non-interactive -auto-approve --log-level warn
 fi
 
 printf "${greenColor}=> VPN endpoint ${vpn_endpoint_id} has ${num_of_associations} subnet associations.${reset}\n"
