@@ -8,6 +8,8 @@ reset='\033[0m' # No Color
 
 basedir=$(pwd)
 
+export TG_PROVIDER_CACHE=1
+
 # Set proper terraform and terragrunt versions
 
 tgswitch 0.75.10
