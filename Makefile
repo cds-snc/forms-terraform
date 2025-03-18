@@ -74,9 +74,12 @@ build_env build_module: guard-STAGING_AWS_ACCOUNT_ID
 	help \
 	terragrunt \
 	validate \
-	build_dev \
-	destroy_dev \
-	create_dev_certs \
-	connect_dev \
+	build_env \
+	build_module \
+	destroy_env \
+	create_certs \
+	connect_env \
 	clear_terragrunt_cache \
-	sso_login
+	sso_login \
+	lambda \
+	lambdas 

@@ -9,63 +9,33 @@ yellowColor='\033[0;33m'
 redColor='\033[0;31m'
 reset='\033[0m' # No Color
 
+export TG_PROVIDER_CACHE=1
+
 # Set proper terraform and terragrunt versions
 
-tgswitch 0.72.5
-tfswitch 1.10.5
+tgswitch 0.75.10
+tfswitch 1.11.2
 
 basedir=$(pwd)
 
 printf "${greenColor}=> Destroying AWS services${reset}\n"
 
-printf "${greenColor}...Destroying VPN${reset}\n"
-cd $basedir/env/cloud/vpn
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn --terragrunt-config destroy_terragrunt.hcl
-
-printf "${greenColor}...Destroying Lambdas${reset}\n"
-cd $basedir/env/cloud/lambdas
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn --terragrunt-config destroy_terragrunt.hcl
-
-printf "${greenColor}...Destroying ECR${reset}\n"
-cd $basedir/env/cloud/ecr
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn --terragrunt-config destroy_terragrunt.hcl
-
-printf "${greenColor}...Destroying DynamoDB${reset}\n"
-cd $basedir/env/cloud/dynamodb
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn --terragrunt-config destroy_terragrunt.hcl
-
-printf "${greenColor}...Destroying S3${reset}\n"
-cd $basedir/env/cloud/s3
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn --terragrunt-config destroy_terragrunt.hcl
-
-printf "${greenColor}...Destroying RDS${reset}\n"
-cd $basedir/env/cloud/rds
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn --terragrunt-config destroy_terragrunt.hcl
-
-printf "${greenColor}...Destroying Redis${reset}\n"
-cd $basedir/env/cloud/redis
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn --terragrunt-config destroy_terragrunt.hcl
-
-printf "${greenColor}...Creating SNS queue${reset}\n"
-cd $basedir/env/cloud/sns
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn --terragrunt-config destroy_terragrunt.hcl
-
-printf "${greenColor}...Creating SQS queue${reset}\n"
-cd $basedir/env/cloud/sqs
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn --terragrunt-config destroy_terragrunt.hcl
-
-printf "${greenColor}...Destroying Secrets Manager${reset}\n"
-cd $basedir/env/cloud/secrets
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn --terragrunt-config destroy_terragrunt.hcl
-
-printf "${greenColor}...Destroying Network${reset}\n"
-cd $basedir/env/cloud/network
-# terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn --terragrunt-config destroy_terragrunt.hcl
-
-printf "${greenColor}...Destroying KMS${reset}\n"
-cd $basedir/env/cloud/kms
-terragrunt apply --terragrunt-non-interactive -auto-approve --terragrunt-log-level warn --terragrunt-config destroy_terragrunt.hcl
+terragrunt run-all destroy \
+    --non-interactive --log-level warn \
+    --queue-strict-include \
+    --working-dir $basedir/env \
+    --queue-include-dir $basedir/env/cloud/kms \
+    --queue-include-dir $basedir/env/cloud/network \
+    --queue-include-dir $basedir/env/cloud/secrets \
+    --queue-include-dir $basedir/env/cloud/sqs \
+    --queue-include-dir $basedir/env/cloud/s3 \
+    --queue-include-dir $basedir/env/cloud/ecr \
+    --queue-include-dir $basedir/env/cloud/sns \
+    --queue-include-dir $basedir/env/cloud/redis \
+    --queue-include-dir $basedir/env/cloud/rds \
+    --queue-include-dir $basedir/env/cloud/dynamodb \
+    --queue-include-dir $basedir/env/cloud/lambdas \
+    --queue-include-dir $basedir/env/cloud/vpn
 
 # Remove all the terraform state and lock components
 printf "${greenColor}=> Destroying DynamoDB terraform lock table${reset}\n"

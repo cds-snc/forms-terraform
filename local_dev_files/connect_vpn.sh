@@ -18,12 +18,12 @@ fi
 num_of_endpoints=$(aws ec2 describe-client-vpn-endpoints --query "length(ClientVpnEndpoints)")
 
 if [[ "$num_of_endpoints" -eq 0 ]]; then
-  printf "${redColor}=> VPN endpoint does not exist. Please build development environment with 'make build_dev'.${reset}\n"
+  printf "${redColor}=> VPN endpoint does not exist. Please build development environment with 'make build_env'.${reset}\n"
   exit 1
 fi
 
 if [[ "$num_of_endpoints" -gt 1 ]]; then
-  printf "${redColor}=> Mulitiple VPN endpoints exist. Please build development environment with 'make build_dev'.${reset}\n"
+  printf "${redColor}=> Mulitiple VPN endpoints exist. Please build development environment with 'make build_env'.${reset}\n"
   exit 1
 fi
 
