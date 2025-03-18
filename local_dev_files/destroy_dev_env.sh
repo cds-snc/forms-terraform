@@ -45,7 +45,7 @@ for table in $dynamodb_tables; do
     aws dynamodb delete-table --table-name $table >/dev/null
 done
 
-# printf "${greenColor}=> Destroying S3 terraform state${reset}\n"
+printf "${greenColor}=> Destroying S3 terraform state${reset}\n"
 s3_buckets=$(aws s3api list-buckets --query "Buckets[?contains(@.Name,'tfstate')].Name" --output json | jq -r '.[] | @sh' | tr -d \'\")
 for bucket in $s3_buckets; do
     printf "${greenColor}=> Destroying S3 bucket: $bucket${reset}\n"
