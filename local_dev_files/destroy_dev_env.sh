@@ -23,6 +23,7 @@ printf "${greenColor}=> Destroying AWS services${reset}\n"
 terragrunt run-all destroy \
     --non-interactive --log-level warn \
     --queue-strict-include \
+    -auto-approve \
     --working-dir $basedir/env \
     --queue-include-dir $basedir/env/cloud/kms \
     --queue-include-dir $basedir/env/cloud/network \

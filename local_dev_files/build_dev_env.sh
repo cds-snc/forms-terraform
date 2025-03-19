@@ -73,8 +73,7 @@ fi
 if [ -z "$MODULE_NAME" ]; then
   printf "${greenColor}=> Building All Terragrunt Modules${reset}\n"
   terragrunt run-all apply \
-    --non-interactive --log-level info \
-    --queue-strict-include \
+    --non-interactive --log-level info -auto-approve --queue-strict-include \
     --working-dir $basedir/env \
     --queue-include-dir $basedir/env/cloud/kms \
     --queue-include-dir $basedir/env/cloud/network \
@@ -91,7 +90,7 @@ if [ -z "$MODULE_NAME" ]; then
 else
   printf "${greenColor}=> Only building ${MODULE_NAME} Terragrunt Module${reset}\n"
   cd $basedir/env/cloud/$MODULE_NAME
-  terragrunt apply --non-interactive --log-level warn
+  terragrunt apply --non-interactive --log-level info -auto-approve
   exit 0
 fi
 
