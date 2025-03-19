@@ -72,7 +72,6 @@ build_env build_module: guard-STAGING_AWS_ACCOUNT_ID
 	fmt \
 	hclfmt \
 	help \
-	terragrunt \
 	validate \
 	build_env \
 	build_module \

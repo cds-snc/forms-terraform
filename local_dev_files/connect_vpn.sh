@@ -47,7 +47,7 @@ if [[ "$num_of_associations" -eq 0 ]]; then
   yarn build && yarn postbuild
   # Apply VPN terraform module
   cd $basedir/env/cloud/vpn
-  terragrunt apply --non-interactive --log-level warn
+  terragrunt apply --non-interactive --log-level warn -auto-approve
 fi
 
 printf "${greenColor}=> VPN endpoint ${vpn_endpoint_id} has ${num_of_associations} subnet associations.${reset}\n"
