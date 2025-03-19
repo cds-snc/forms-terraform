@@ -90,7 +90,7 @@ if [ -z "$MODULE_NAME" ]; then
 else
   printf "${greenColor}=> Only building ${MODULE_NAME} Terragrunt Module${reset}\n"
   cd $basedir/env/cloud/$MODULE_NAME
-  terragrunt apply --non-interactive --log-level warn -auto-approve
+  terragrunt apply --non-interactive --log-level info -auto-approve
   exit 0
 fi
 
