@@ -1,5 +1,39 @@
 # Changelog
 
+## [3.30.0](https://github.com/cds-snc/forms-terraform/compare/v3.29.0...v3.30.0) (2025-03-20)
+
+
+### Features
+
+* forms app legacy ECR ([#957](https://github.com/cds-snc/forms-terraform/issues/957)) ([6a3a79a](https://github.com/cds-snc/forms-terraform/commit/6a3a79ab86445726cb01496a0a29619f0f54f353))
+* Lambda prisma migration ([#962](https://github.com/cds-snc/forms-terraform/issues/962)) ([3d8a504](https://github.com/cds-snc/forms-terraform/commit/3d8a504aef92b1a85b51d6c238c0710eeaf14a4f))
+* Local development using scratch accounts ([#958](https://github.com/cds-snc/forms-terraform/issues/958)) ([40a9919](https://github.com/cds-snc/forms-terraform/commit/40a99195ad8a6bd7fa6510df9775c5e6360f41fb))
+* sso login script ([#964](https://github.com/cds-snc/forms-terraform/issues/964)) ([2697bba](https://github.com/cds-snc/forms-terraform/commit/2697bbac5aa8008ccc92971d06a105a50ac76bb5))
+
+
+### Bug Fixes
+
+* add back auto-approve ([#973](https://github.com/cds-snc/forms-terraform/issues/973)) ([a25e994](https://github.com/cds-snc/forms-terraform/commit/a25e994b65d7f5cef235189fbeffe73c8082e9e4))
+* add prisma lambda to filter for build ([#963](https://github.com/cds-snc/forms-terraform/issues/963)) ([ff27fa2](https://github.com/cds-snc/forms-terraform/commit/ff27fa28879b3dd6204432251db475c6e0827522))
+* missing permissions to copy S3 object with tags ([#966](https://github.com/cds-snc/forms-terraform/issues/966)) ([997e577](https://github.com/cds-snc/forms-terraform/commit/997e5775bfe53033505af563b4071c3d6018db6a))
+* remove old terragrunt flag ([#969](https://github.com/cds-snc/forms-terraform/issues/969)) ([67c718a](https://github.com/cds-snc/forms-terraform/commit/67c718ad2b6117e78580cf06e4435267c4a3935a))
+* revert localstack detection when initializing Postgres connector ([#956](https://github.com/cds-snc/forms-terraform/issues/956)) ([5cd34ff](https://github.com/cds-snc/forms-terraform/commit/5cd34ffa3f1b39f38489cb1fece76b7d15e4cc1c))
+* update connect_env to use latest tf and tg version ([#968](https://github.com/cds-snc/forms-terraform/issues/968)) ([710fa86](https://github.com/cds-snc/forms-terraform/commit/710fa86bb2e63d6231ce64b800b72c87b38e39f4))
+
+
+### Miscellaneous Chores
+
+* add timers to run scripts ([#965](https://github.com/cds-snc/forms-terraform/issues/965)) ([5d95785](https://github.com/cds-snc/forms-terraform/commit/5d95785f7d9ba15dcc7f7461d040da9108fc44a3))
+* hcaptcha prod ([#959](https://github.com/cds-snc/forms-terraform/issues/959)) ([07f6b83](https://github.com/cds-snc/forms-terraform/commit/07f6b83d023cf0ee13cbbf28ebc85a05c0efda88))
+* re-enable Staging data replication to Data Lake ([#974](https://github.com/cds-snc/forms-terraform/issues/974)) ([965e67c](https://github.com/cds-snc/forms-terraform/commit/965e67ce4081d521e0c48852fab20f019ac6a453))
+* script clean up ([#970](https://github.com/cds-snc/forms-terraform/issues/970)) ([5ebe30a](https://github.com/cds-snc/forms-terraform/commit/5ebe30a12894869bc63dafb033b998a59a052e56))
+* speed up launch of dev environment ([#967](https://github.com/cds-snc/forms-terraform/issues/967)) ([c1b4919](https://github.com/cds-snc/forms-terraform/commit/c1b4919e9882b343e89a2ff95b1529ccfccb0111))
+
+
+### Code Refactoring
+
+* leverage new connectors package ([#953](https://github.com/cds-snc/forms-terraform/issues/953)) ([570a7e0](https://github.com/cds-snc/forms-terraform/commit/570a7e027813529cad34938a8db8c93893ec9952))
+
 ## [3.29.0](https://github.com/cds-snc/forms-terraform/compare/v3.28.0...v3.29.0) (2025-02-13)
 
 
