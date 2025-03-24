@@ -17,3 +17,8 @@ variable "forms_redis_security_group_id" {
   description = "Security group ID for the redis"
   type        = string
 }
+
+variable "forms_lambda_client_iam_role_name" {
+  description = "IAM role name for forms client Lambda"
+  type        = string
+}

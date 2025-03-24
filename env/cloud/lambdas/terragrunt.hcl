@@ -2,11 +2,6 @@ terraform {
   source = "../../../aws//lambdas"
 }
 
-include "root" {
-  path = find_in_parent_folders("root.hcl")
-}
-
-
 dependencies {
   paths = ["../network", "../rds", "../redis", "../sqs", "../sns", "../kms", "../dynamodb", "../secrets", "../app", "../s3", "../ecr"]
 }
@@ -17,17 +12,26 @@ locals {
 }
 
 dependency "app" {
-  enabled                                 = local.env != "development"
-  config_path                             = "../app"
+  enabled = local.env != "development"
+
+  config_path = "../app"
+
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    ecs_iam_role_arn = "arn:aws:iam::${local.aws_account_id}:role/form-viewer"
+    ecs_iam_role_arn                         = "arn:aws:iam::${local.aws_account_id}:role/form-viewer"
+    ecs_iam_forms_secrets_manager_policy_arn = null
+    ecs_iam_forms_kms_policy_arn             = null
+    ecs_iam_forms_s3_policy_arn              = null
+    ecs_iam_forms_dynamodb_policy_arn        = null
+    ecs_iam_forms_sqs_policy_arn             = null
+    ecs_iam_forms_cognito_policy_arn         = null
   }
 }
 
 dependency "network" {
-  config_path                             = "../network"
+  config_path = "../network"
+
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -37,7 +41,8 @@ dependency "network" {
 }
 
 dependency "rds" {
-  config_path                             = "../rds"
+  config_path = "../rds"
+
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -49,7 +54,8 @@ dependency "rds" {
 }
 
 dependency "redis" {
-  config_path                             = "../redis"
+  config_path = "../redis"
+
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -59,7 +65,8 @@ dependency "redis" {
 }
 
 dependency "sqs" {
-  config_path                             = "../sqs"
+  config_path = "../sqs"
+
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -83,7 +90,8 @@ dependency "sns" {
 }
 
 dependency "kms" {
-  config_path                             = "../kms"
+  config_path = "../kms"
+
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -110,7 +118,8 @@ dependency "dynamodb" {
 }
 
 dependency "secrets" {
-  config_path                             = "../secrets"
+  config_path = "../secrets"
+
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -123,7 +132,8 @@ dependency "secrets" {
 }
 
 dependency "s3" {
-  config_path                             = "../s3"
+  config_path = "../s3"
+
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -140,7 +150,8 @@ dependency "s3" {
 }
 
 dependency "ecr" {
-  config_path                             = "../ecr"
+  config_path = "../ecr"
+
   mock_outputs_merge_strategy_with_state  = "deep_map_only"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -165,6 +176,14 @@ dependency "ecr" {
 }
 
 inputs = {
+  ecs_iam_role_arn                         = local.env == "development" ? null : dependency.app.outputs.ecs_iam_role_arn
+  ecs_iam_forms_secrets_manager_policy_arn = dependency.app.outputs.ecs_iam_forms_secrets_manager_policy_arn
+  ecs_iam_forms_kms_policy_arn             = dependency.app.outputs.ecs_iam_forms_kms_policy_arn
+  ecs_iam_forms_s3_policy_arn              = dependency.app.outputs.ecs_iam_forms_s3_policy_arn
+  ecs_iam_forms_dynamodb_policy_arn        = dependency.app.outputs.ecs_iam_forms_dynamodb_policy_arn
+  ecs_iam_forms_sqs_policy_arn             = dependency.app.outputs.ecs_iam_forms_sqs_policy_arn
+  ecs_iam_forms_cognito_policy_arn         = dependency.app.outputs.ecs_iam_forms_cognito_policy_arn
+
   lambda_security_group_id = dependency.network.outputs.lambda_security_group_id
   private_subnet_ids       = dependency.network.outputs.private_subnet_ids
 
@@ -199,7 +218,6 @@ inputs = {
 
   notify_api_key_secret_arn = dependency.secrets.outputs.notify_api_key_secret_arn
 
-
   reliability_file_storage_arn   = dependency.s3.outputs.reliability_file_storage_arn
   vault_file_storage_arn         = dependency.s3.outputs.vault_file_storage_arn
   vault_file_storage_id          = dependency.s3.outputs.vault_file_storage_id
@@ -212,8 +230,10 @@ inputs = {
 
   ecr_repository_lambda_urls = dependency.ecr.outputs.ecr_repository_lambda_urls
 
-  ecs_iam_role_arn = local.env == "development" ? null : dependency.app.outputs.ecs_iam_role_arn
-
   # Overwritten in GitHub Actions by TFVARS
   gc_template_id = "8d597a1b-a1d6-4e3c-8421-042a2b4158b7" # GC Notify template ID used for local setup
+}
+
+include "root" {
+  path = find_in_parent_folders("root.hcl")
 }
