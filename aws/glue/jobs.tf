@@ -143,3 +143,43 @@ resource "aws_glue_job" "historical_glue_job" {
   }
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 }
+
+############################################
+# Submissions Glue Job Trigger
+############################################
+# Define the local file data source
+data "local_file" "submissions_glue_script" {
+  filename = "${path.module}/scripts/submissions_etl.py"
+}
+
+# Define the S3 bucket object resource p1
+resource "aws_s3_object" "submissions_glue_script" {
+  bucket = var.etl_bucket_name
+  key    = "submissions_etl.py"
+  source = data.local_file.submissions_glue_script.filename
+  etag   = filemd5(data.local_file.submissions_glue_script.filename)
+}
+
+# Define the Glue job resource
+resource "aws_glue_job" "submissions_glue_job" {
+  name         = "submissions_glue_job"
+  role_arn     = aws_iam_role.glue_etl.arn
+  glue_version = "4.0"
+
+  command {
+    script_location = "s3://${aws_s3_object.submissions_glue_script.bucket}/${aws_s3_object.submissions_glue_script.key}"
+    python_version  = "3"
+  }
+
+  default_arguments = {
+    "--continuous-log-logGroup"          = aws_cloudwatch_log_group.glue_log_group.name
+    "--continuous-log-logStreamPrefix"   = aws_cloudwatch_log_stream.glue_log_stream.name
+    "--enable-continuous-cloudwatch-log" = "true"
+    "--enable-continuous-log-filter"     = "true"
+    "--enable-metrics"                   = "true"
+    "--enable-observability-metrics"     = "true"
+    "--s3_endpoint"                      = var.datalake_bucket_name
+    "--cloudwatch_endpoint"              = var.submission_cloudwatch_endpoint
+  }
+  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
+}

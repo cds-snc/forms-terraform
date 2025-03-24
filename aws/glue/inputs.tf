@@ -67,3 +67,8 @@ variable "s3_endpoint" {
   description = "The S3 endpoint"
   type        = string
 }
+
+variable "submission_cloudwatch_endpoint" {
+  description = "The name of the CloudWatch log group that handles submissions"
+  type        = string
+}
