@@ -5,7 +5,7 @@ from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.dynamicframe import DynamicFrame
-from pyspark.sql.functions import col, from_unixtime, date_format, lit, current_timestamp, from_json, explode, explode_outer, sum as spark_sum, when
+from pyspark.sql.functions import regexp_extract, col, from_unixtime, date_format, lit, current_timestamp, from_json, explode, explode_outer, sum as spark_sum, when
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, ArrayType, BooleanType
 from datetime import datetime
 
@@ -31,15 +31,24 @@ cloudwatch_logs = glueContext.create_dynamic_frame.from_options(
 )
 
 # ------- Step 3 -------
-# Look for the submission logs : Response submitted for Form ID: 123456
-# Extract the form ID and the response status
-cloudwatch_logs = cloudwatch_logs.toDF()
-cloudwatch_logs = cloudwatch_logs.withColumn("form_id", col("message").substr(31, 6))
-cloudwatch_logs = cloudwatch_logs.withColumn("status", when(col("message").contains("Response submitted"), "Submitted").otherwise("Failed"))
+# Extract the form ID and the submission ID.
+# Example Message Format:
+# {
+#    "level": "info",
+#    "msg": "MD5 hash 0a2eaa6f198e444f3fbeb272afb445e5 was calculated for submission e8064d77-715e-4f2c-89e0-a1bed2b6c0eb (formId: cm8omd5bs0006qir3hsosi0af)."
+# }
 
-# ------- Step 4 -------
-# Aggregate the data by form ID and status
-cloudwatch_logs = cloudwatch_logs.groupBy("form_id", "status").count()
+cloudwatch_logs = cloudwatch_logs.toDF()
+print(cloudwatch_logs.show())
+
+cloudwatch_logs = cloudwatch_logs.withColumn(
+    "submission_id",
+    when(col("msg").isNotNull(), regexp_extract(col("msg"), r"submission ([a-zA-Z0-9-]+)", 1))
+)
+cloudwatch_logs = cloudwatch_logs.withColumn(
+    "form_id",
+    when(col("msg").isNotNull(), regexp_extract(col("msg"), r"\(formId:\s*([a-zA-Z0-9-]+)\)", 1))
+)
 
 # ------- Step 5 -------
 # Write the data to the S3 bucket
