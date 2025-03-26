@@ -67,3 +67,8 @@ output "lambda_vault_integrity_function_name" {
   description = "Vault integrity Lambda function name"
   value       = aws_lambda_function.vault_integrity.function_name
 }
+
+output "forms_lambda_client_iam_role_name" {
+  description = "IAM role name for forms client Lambda"
+  value       = try(aws_iam_role.forms_lambda_client[0].name, null)
+}
