@@ -169,7 +169,7 @@ data "aws_iam_policy_document" "ecr_push_image" {
 #
 
 resource "aws_iam_policy" "forms_db_migration" {
-  name   = platform_forms_client_db_migration
+  name   = local.platform_forms_client_db_migration
   path   = "/"
   policy = data.aws_iam_policy_document.forms_db_migration.json
 }
