@@ -84,7 +84,7 @@ resource "aws_iam_role_policy_attachment" "platform_forms_client_release" {
 resource "aws_iam_role_policy_attachment" "platform_forms_db_migration_staging" {
   count      = var.env == "staging" ? 1 : 0
   role       = "${local.platform_forms_client_db_migration}-staging"
-  policy_arn = aws_iam_policy.platform_forms_client_db_migration.arn
+  policy_arn = aws_iam_policy.forms_db_migration.arn
   depends_on = [
     module.github_workflow_roles
   ]
@@ -93,7 +93,7 @@ resource "aws_iam_role_policy_attachment" "platform_forms_db_migration_staging" 
 resource "aws_iam_role_policy_attachment" "platform_forms_db_migration_production" {
   count      = var.env == "production" ? 1 : 0
   role       = "${local.platform_forms_client_db_migration}-production"
-  policy_arn = aws_iam_policy.platform_forms_client_db_migration.arn
+  policy_arn = aws_iam_policy.forms_db_migration.arn
   depends_on = [
     module.github_workflow_roles
   ]
