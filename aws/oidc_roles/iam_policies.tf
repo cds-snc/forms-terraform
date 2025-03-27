@@ -162,3 +162,45 @@ data "aws_iam_policy_document" "ecr_push_image" {
     resources = ["*"]
   }
 }
+
+
+#
+# Upload to S3 and invoke Lambda
+#
+
+resource "aws_iam_policy" "forms_db_migration" {
+  name   = platform_forms_client_db_migration
+  path   = "/"
+  policy = data.aws_iam_policy_document.forms_db_migration.json
+}
+
+data "aws_iam_policy_document" "forms_db_migration" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:ListBucket",
+      "s3:GetObjectTagging",
+      "s3:PutObjectTagging"
+    ]
+
+    resources = [
+      "arn:aws:s3:::forms-${var.env}-prisma-migration-storage",
+      "arn:aws:s3:::forms-${var.env}-prisma-migration-storage/*"
+    ]
+  }
+
+  statement {
+
+    effect = "Allow"
+    actions = [
+      "lambda:InvokeFunction",
+    ]
+    resources = [
+      "arn:aws:lambda:${var.region}:${var.account_id}:function:prisma-migration",
+    ]
+  }
+}
