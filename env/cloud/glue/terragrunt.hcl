@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../network", "../s3", "../rds"]
+  paths = ["../network", "../s3", "../rds", "../lambdas"]
 }
 
 locals {
@@ -46,6 +46,15 @@ dependency "rds" {
   }
 }
 
+dependency "lambdas" {
+  config_path                             = "../lambdas"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    lambda_submission_log_group_name = "/aws/lambda/mock-submission"
+  }
+}
+
 inputs = {
   datalake_bucket_arn                    = dependency.s3.outputs.lake_bucket_arn
   datalake_bucket_name                   = dependency.s3.outputs.lake_bucket_name
@@ -61,6 +70,7 @@ inputs = {
   rds_connector_secret_arn               = dependency.rds.outputs.rds_connector_secret_arn
   rds_connector_secret_name              = dependency.rds.outputs.rds_connector_secret_name
   s3_endpoint                            = "s3://"
+  submission_cloudwatch_endpoint         = dependency.lambdas.outputs.lambda_submission_log_group_name
 }
 
 include "root" {
