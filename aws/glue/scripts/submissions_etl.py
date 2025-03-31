@@ -5,8 +5,7 @@ from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.dynamicframe import DynamicFrame
-from pyspark.sql.functions import regexp_extract, col, from_unixtime, date_format, lit, current_timestamp, from_json, explode, explode_outer, sum as spark_sum, when
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, ArrayType, BooleanType
+from pyspark.sql.functions import regexp_extract, col, from_unixtime, date_format, current_timestamp, when
 from datetime import datetime
 import boto3
 import json
@@ -62,13 +61,22 @@ cloudwatch_df = cloudwatch_df.withColumn(
     when(col("msg").isNotNull(), regexp_extract(col("msg"), r"\(formId:\s*([a-zA-Z0-9-]+)\)", 1))
 )
 
+# Drop the msg column as it's no longer needed.
+cloudwatch_df = cloudwatch_df.drop("msg")
+
+# Get current timestamp
+current_stamp = current_timestamp()
+
+# Add a timestamp column for Athena to use as a partition.
+cloudwatch_df = cloudwatch_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
+
 # ------- Final Step -------
 # Write the data to the S3 bucket
 cloudwatch_logs = DynamicFrame.fromDF(cloudwatch_df, glueContext, "cloudwatch_logs")
 glueContext.write_dynamic_frame.from_options(
     frame = cloudwatch_logs,
     connection_type = "s3",
-    connection_options = {"path": f"s3://{args['rds_bucket']}/platform/gc-forms/processed-data/submissions"},
+    connection_options = {"path": f"s3://{args['s3_endpoint']}/platform/gc-forms/processed-data/submissions"},
     format = "parquet"
 )
 
