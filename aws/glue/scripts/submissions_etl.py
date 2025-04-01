@@ -58,7 +58,7 @@ cloudwatch_df = cloudwatch_df.withColumn(
 )
 cloudwatch_df = cloudwatch_df.withColumn(
     "form_id",
-    when(col("msg").isNotNull(), regexp_extract(col("msg"), r"\(formId:\s*([a-zA-Z0-9-]+)\)", 1))
+    when(col("msg").isNotNull(), regexp_extract(col("msg"), r"(?i)\(formId:\s*([a-zA-Z0-9-]+)\)", 1))
 )
 
 # Drop the msg column as it's no longer needed.
