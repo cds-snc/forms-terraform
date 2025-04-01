@@ -198,6 +198,7 @@ data "aws_iam_policy_document" "forms_db_migration" {
     effect = "Allow"
     actions = [
       "lambda:InvokeFunction",
+      "lambda:GetFunction"
     ]
     resources = [
       "arn:aws:lambda:${var.region}:${var.account_id}:function:prisma-migration",
