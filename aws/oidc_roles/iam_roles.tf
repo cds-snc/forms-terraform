@@ -77,7 +77,7 @@ resource "aws_iam_role_policy_attachment" "platform_forms_client_release" {
 }
 
 resource "aws_iam_role_policy_attachment" "platform_forms_db_migration" {
-  role       = "${local.platform_forms_client_db_migration}"
+  role       = local.platform_forms_client_db_migration
   policy_arn = aws_iam_policy.forms_db_migration.arn
   depends_on = [
     module.github_workflow_roles
