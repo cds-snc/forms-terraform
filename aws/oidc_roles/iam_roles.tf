@@ -2,6 +2,7 @@ locals {
   forms_api_release                   = "forms-api-release"
   platform_forms_client_pr_review_env = "platform-forms-client-pr-review-env"
   platform_forms_client_release       = "platform-forms-client-release"
+  platform_forms_client_db_migration  = "platform-forms-client-db-migration"
 }
 
 # 
@@ -35,6 +36,11 @@ module "github_workflow_roles" {
       name      = local.platform_forms_client_release
       repo_name = "platform-forms-client"
       claim     = "ref:refs/tags/v*"
+    },
+    {
+      name      = "${local.platform_forms_client_db_migration}"
+      repo_name = "platform-forms-client"
+      claim     = var.env == "staging" ? "ref:refs/heads/main" : "ref:refs/tags/v*"
     }
   ]
 }
@@ -69,3 +75,12 @@ resource "aws_iam_role_policy_attachment" "platform_forms_client_release" {
     module.github_workflow_roles
   ]
 }
+
+resource "aws_iam_role_policy_attachment" "platform_forms_db_migration" {
+  role       = local.platform_forms_client_db_migration
+  policy_arn = aws_iam_policy.forms_db_migration.arn
+  depends_on = [
+    module.github_workflow_roles
+  ]
+}
+
