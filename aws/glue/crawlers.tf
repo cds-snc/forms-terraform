@@ -50,7 +50,7 @@ resource "aws_glue_crawler" "forms_rds_data" {
     {
       CrawlerOutput = {
         Tables = {
-          TableThreshold = 3
+          TableThreshold = 4
         }
       }
       CreatePartitionIndex = true
