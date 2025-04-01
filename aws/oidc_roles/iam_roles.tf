@@ -38,14 +38,9 @@ module "github_workflow_roles" {
       claim     = "ref:refs/tags/v*"
     },
     {
-      name      = "${local.platform_forms_client_db_migration}-staging"
+      name      = "${local.platform_forms_client_db_migration}"
       repo_name = "platform-forms-client"
-      claim     = "ref:refs/heads/main"
-    },
-    {
-      name      = "${local.platform_forms_client_db_migration}-production"
-      repo_name = "platform-forms-client"
-      claim     = "ref:refs/tags/v*"
+      claim     = var.env == "staging" ? "ref:refs/heads/main" : "ref:refs/tags/v*"
     }
   ]
 }
@@ -81,20 +76,11 @@ resource "aws_iam_role_policy_attachment" "platform_forms_client_release" {
   ]
 }
 
-resource "aws_iam_role_policy_attachment" "platform_forms_db_migration_staging" {
-  count      = var.env == "staging" ? 1 : 0
-  role       = "${local.platform_forms_client_db_migration}-staging"
+resource "aws_iam_role_policy_attachment" "platform_forms_db_migration" {
+  role       = "${local.platform_forms_client_db_migration}"
   policy_arn = aws_iam_policy.forms_db_migration.arn
   depends_on = [
     module.github_workflow_roles
   ]
 }
 
-resource "aws_iam_role_policy_attachment" "platform_forms_db_migration_production" {
-  count      = var.env == "production" ? 1 : 0
-  role       = "${local.platform_forms_client_db_migration}-production"
-  policy_arn = aws_iam_policy.forms_db_migration.arn
-  depends_on = [
-    module.github_workflow_roles
-  ]
-}
