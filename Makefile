@@ -31,12 +31,14 @@ validate:           ## Terragrunt validate all resources
 
 build_env: 	    ## Build Development environment
 	./local_dev_files/build_dev_env.sh
+	$(if $(findstring glue,$(MAKECMDGOALS)), ./local_dev_files/build_dev_env.sh glue)
 
 build_module: 	## Build specific module
 	./local_dev_files/build_dev_env.sh $(name)
 
 destroy_env: 	## Destroy Development environment
 	./local_dev_files/destroy_dev_env.sh
+	$(if $(findstring glue,$(MAKECMDGOALS)), ./local_dev_files/destroy_env.sh glue)
 
 create_certs: 	## Create Development certificates
 	./local_dev_files/create_vpn_certs.sh
@@ -81,4 +83,8 @@ build_env build_module: guard-STAGING_AWS_ACCOUNT_ID
 	clear_terragrunt_cache \
 	sso_login \
 	lambda \
-	lambdas 
+	lambdas \
+	glue
+
+glue:
+    @:

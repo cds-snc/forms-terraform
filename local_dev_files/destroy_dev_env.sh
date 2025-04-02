@@ -36,8 +36,7 @@ terragrunt run-all destroy \
     --queue-include-dir $basedir/env/cloud/rds \
     --queue-include-dir $basedir/env/cloud/dynamodb \
     --queue-include-dir $basedir/env/cloud/lambdas \
-    --queue-include-dir $basedir/env/cloud/vpn \
-    --queue-include-dir $basedir/env/cloud/glue
+    --queue-include-dir $basedir/env/cloud/vpn
 
 # Remove all the terraform state and lock components
 printf "${greenColor}=> Destroying DynamoDB terraform lock table${reset}\n"
