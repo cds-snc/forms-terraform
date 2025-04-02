@@ -45,15 +45,6 @@ resource "aws_iam_policy" "glue_etl" {
   policy = data.aws_iam_policy_document.glue_etl_combined.json
 }
 
-data "aws_iam_policy_document" "glue_etl_combined" {
-  source_policy_documents = [
-    data.aws_iam_policy_document.s3_read_data_lake.json,
-    data.aws_iam_policy_document.s3_write_data_lake.json,
-    data.aws_iam_policy_document.glue_database_connection.json,
-    data.aws_iam_policy_document.glue_kms.json
-  ]
-}
-
 resource "aws_iam_role_policy_attachment" "glue_etl" {
   policy_arn = aws_iam_policy.glue_etl.arn
   role       = aws_iam_role.glue_etl.name
@@ -241,4 +232,28 @@ data "aws_iam_policy_document" "forms_s3_replicate" {
       "${local.platform_data_lake_raw_s3_bucket_arn}/*"
     ]
   }
+}
+
+# Submissions Log Policy
+data "aws_iam_policy_document" "cloudwatch_logs" {
+  statement {
+    sid    = "AllowFilterLogEvents"
+    effect = "Allow"
+    actions = [
+      "logs:FilterLogEvents",
+    ]
+    resources = [
+      "arn:aws:logs:${var.region}:${var.account_id}:log-group:${var.submission_cloudwatch_endpoint}:*",
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "glue_etl_combined" {
+  source_policy_documents = [
+    data.aws_iam_policy_document.s3_read_data_lake.json,
+    data.aws_iam_policy_document.s3_write_data_lake.json,
+    data.aws_iam_policy_document.glue_database_connection.json,
+    data.aws_iam_policy_document.glue_kms.json,
+    data.aws_iam_policy_document.cloudwatch_logs.json,
+  ]
 }

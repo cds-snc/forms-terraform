@@ -81,4 +81,4 @@ build_env build_module: guard-STAGING_AWS_ACCOUNT_ID
 	clear_terragrunt_cache \
 	sso_login \
 	lambda \
-	lambdas 
+	lambdas
