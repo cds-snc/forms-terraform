@@ -82,6 +82,3 @@ build_env build_module: guard-STAGING_AWS_ACCOUNT_ID
 	sso_login \
 	lambda \
 	lambdas
-
-glue:
-    @:
