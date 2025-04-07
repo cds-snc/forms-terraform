@@ -13,8 +13,7 @@ export async function getTemplateInfo(formID: string): Promise<TemplateInfo> {
   try {
     const postgresConnector =
       await PostgresConnector.defaultUsingPostgresConnectionUrlFromAwsSecret(
-        process.env.DB_URL ?? "",
-        false
+        process.env.DB_URL ?? ""
       );
 
     const result = await postgresConnector.executeSqlStatement()<

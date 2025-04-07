@@ -984,10 +984,10 @@
   dependencies:
     tslib "^2.3.1"
 
-"@gcforms/connectors@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@gcforms/connectors/-/connectors-1.0.0.tgz#e34b66e0cc268de52634a06d7fd0b55190687f91"
-  integrity sha512-mnSgNflpoBIzzOt43+uho1Fc3TjuZefL5qCPONGyv7pQXYVjrEtS5R5t6SgWO+Y9RX0rrlKQZfmmFOyw2Y2c8g==
+"@gcforms/connectors@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@gcforms/connectors/-/connectors-2.0.0.tgz#24dea38dc27ee017951797875863537ef08de62b"
+  integrity sha512-PvF/kG1Ss56N9AOoMMn1xEyVp+/g3N2kCmyt+g9X7P+38PFaMEAvwAzRc8F9+JoA1rvox9SCoNVZarmaU2VLkw==
   dependencies:
     "@aws-sdk/client-secrets-manager" "^3.750.0"
     axios "^1.7.9"
