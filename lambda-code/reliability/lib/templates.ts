@@ -14,8 +14,7 @@ export async function getTemplateInfo(formID: string): Promise<TemplateInfo | nu
   try {
     const postgresConnector =
       await PostgresConnector.defaultUsingPostgresConnectionUrlFromAwsSecret(
-        process.env.DB_URL ?? "",
-        false
+        process.env.DB_URL ?? ""
       );
 
     const templates = await postgresConnector.executeSqlStatement()<
