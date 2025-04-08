@@ -1,5 +1,50 @@
 # Changelog
 
+## [3.30.0](https://github.com/cds-snc/forms-terraform/compare/v3.29.0...v3.30.0) (2025-04-07)
+
+
+### Features
+
+* Add Submissions from cloudwatch to Data Lake ([#978](https://github.com/cds-snc/forms-terraform/issues/978)) ([05bd7d3](https://github.com/cds-snc/forms-terraform/commit/05bd7d3fd635ee65579575993169f38df0f8bda2))
+* Create new oidc roles for github actions ([#981](https://github.com/cds-snc/forms-terraform/issues/981)) ([03ba5a6](https://github.com/cds-snc/forms-terraform/commit/03ba5a6fc794e40431ab1bd471004a705c8f3b5a))
+* create PR review/Rainbow environment shared resources ([#977](https://github.com/cds-snc/forms-terraform/issues/977)) ([24cdcac](https://github.com/cds-snc/forms-terraform/commit/24cdcac1ef3c2f697dded673140514d1e861af82))
+* destroy PR review environment resources that will be shared with Rainbow deployment feature ([#976](https://github.com/cds-snc/forms-terraform/issues/976)) ([fdc8665](https://github.com/cds-snc/forms-terraform/commit/fdc8665b23c5acaf30bbf94d46b7af6eecb99a34))
+* enable data lake replication from production ([#980](https://github.com/cds-snc/forms-terraform/issues/980)) ([e6bb913](https://github.com/cds-snc/forms-terraform/commit/e6bb9133f99876de419ddff02d3e159b7163d0c7))
+* forms app legacy ECR ([#957](https://github.com/cds-snc/forms-terraform/issues/957)) ([6a3a79a](https://github.com/cds-snc/forms-terraform/commit/6a3a79ab86445726cb01496a0a29619f0f54f353))
+* Lambda prisma migration ([#962](https://github.com/cds-snc/forms-terraform/issues/962)) ([3d8a504](https://github.com/cds-snc/forms-terraform/commit/3d8a504aef92b1a85b51d6c238c0710eeaf14a4f))
+* Local development using scratch accounts ([#958](https://github.com/cds-snc/forms-terraform/issues/958)) ([40a9919](https://github.com/cds-snc/forms-terraform/commit/40a99195ad8a6bd7fa6510df9775c5e6360f41fb))
+* rainbow deployment ([#961](https://github.com/cds-snc/forms-terraform/issues/961)) ([132246a](https://github.com/cds-snc/forms-terraform/commit/132246a1a8c06f8005999781dab4c8de0faf3c52))
+* sso login script ([#964](https://github.com/cds-snc/forms-terraform/issues/964)) ([2697bba](https://github.com/cds-snc/forms-terraform/commit/2697bbac5aa8008ccc92971d06a105a50ac76bb5))
+
+
+### Bug Fixes
+
+* add back auto-approve ([#973](https://github.com/cds-snc/forms-terraform/issues/973)) ([a25e994](https://github.com/cds-snc/forms-terraform/commit/a25e994b65d7f5cef235189fbeffe73c8082e9e4))
+* add lambda get function to prisma role ([#983](https://github.com/cds-snc/forms-terraform/issues/983)) ([7b40983](https://github.com/cds-snc/forms-terraform/commit/7b4098315ed92d9d80c92124ed4391fd94861bcc))
+* add prisma lambda to filter for build ([#963](https://github.com/cds-snc/forms-terraform/issues/963)) ([ff27fa2](https://github.com/cds-snc/forms-terraform/commit/ff27fa28879b3dd6204432251db475c6e0827522))
+* Boost lambda memory ([#984](https://github.com/cds-snc/forms-terraform/issues/984)) ([1d56c40](https://github.com/cds-snc/forms-terraform/commit/1d56c400a05872d7fcd1c3496cbe488f1f289dfe))
+* missing permissions to copy S3 object with tags ([#966](https://github.com/cds-snc/forms-terraform/issues/966)) ([997e577](https://github.com/cds-snc/forms-terraform/commit/997e5775bfe53033505af563b4071c3d6018db6a))
+* remove old terragrunt flag ([#969](https://github.com/cds-snc/forms-terraform/issues/969)) ([67c718a](https://github.com/cds-snc/forms-terraform/commit/67c718ad2b6117e78580cf06e4435267c4a3935a))
+* revert localstack detection when initializing Postgres connector ([#956](https://github.com/cds-snc/forms-terraform/issues/956)) ([5cd34ff](https://github.com/cds-snc/forms-terraform/commit/5cd34ffa3f1b39f38489cb1fece76b7d15e4cc1c))
+* skip lambda IAM role creation in scratch account ([#979](https://github.com/cds-snc/forms-terraform/issues/979)) ([6ea93b9](https://github.com/cds-snc/forms-terraform/commit/6ea93b9be09ee9dbfd5c3788792c4fee7ec79426))
+* update connect_env to use latest tf and tg version ([#968](https://github.com/cds-snc/forms-terraform/issues/968)) ([710fa86](https://github.com/cds-snc/forms-terraform/commit/710fa86bb2e63d6231ce64b800b72c87b38e39f4))
+
+
+### Miscellaneous Chores
+
+* add timers to run scripts ([#965](https://github.com/cds-snc/forms-terraform/issues/965)) ([5d95785](https://github.com/cds-snc/forms-terraform/commit/5d95785f7d9ba15dcc7f7461d040da9108fc44a3))
+* bump connectors package from v1 to v2 ([#985](https://github.com/cds-snc/forms-terraform/issues/985)) ([84eba3c](https://github.com/cds-snc/forms-terraform/commit/84eba3ce0cd43ea3ae9d41c71993a9ee47152e13))
+* hcaptcha prod ([#959](https://github.com/cds-snc/forms-terraform/issues/959)) ([07f6b83](https://github.com/cds-snc/forms-terraform/commit/07f6b83d023cf0ee13cbbf28ebc85a05c0efda88))
+* re-enable Staging data replication to Data Lake ([#974](https://github.com/cds-snc/forms-terraform/issues/974)) ([965e67c](https://github.com/cds-snc/forms-terraform/commit/965e67ce4081d521e0c48852fab20f019ac6a453))
+* reduce the number of oidc roles created ([#982](https://github.com/cds-snc/forms-terraform/issues/982)) ([8f6e24a](https://github.com/cds-snc/forms-terraform/commit/8f6e24a74e6f937578863126c3304a90bd6f017d))
+* script clean up ([#970](https://github.com/cds-snc/forms-terraform/issues/970)) ([5ebe30a](https://github.com/cds-snc/forms-terraform/commit/5ebe30a12894869bc63dafb033b998a59a052e56))
+* speed up launch of dev environment ([#967](https://github.com/cds-snc/forms-terraform/issues/967)) ([c1b4919](https://github.com/cds-snc/forms-terraform/commit/c1b4919e9882b343e89a2ff95b1529ccfccb0111))
+
+
+### Code Refactoring
+
+* leverage new connectors package ([#953](https://github.com/cds-snc/forms-terraform/issues/953)) ([570a7e0](https://github.com/cds-snc/forms-terraform/commit/570a7e027813529cad34938a8db8c93893ec9952))
+
 ## [3.29.0](https://github.com/cds-snc/forms-terraform/compare/v3.28.0...v3.29.0) (2025-02-13)
 
 
