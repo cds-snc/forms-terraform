@@ -166,6 +166,22 @@ Once you have changed the code in one or multiple Lambda packages, you can lever
 
 ## Dynamo Database Table Schemas
 
+
+
+## [Optional] Glue ETL Job Tasks for Data Lake Extract
+
+As it's generally unnecessary for Glue ETL Jobs to be running passively on Dev accounts, the service isn't built by default.
+
+To build in the dev environment, build the environment as usual, then run :
+
+```shell
+make build_module name=glue
+```
+
+This will setup the Glue scripts to be run. They can then be accessed via the AWS Dashboard.
+
+For more details see [Datalake Documentation](/docs/datalake.md)
+
 ### Vault Table
 
 #### Table
