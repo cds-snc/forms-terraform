@@ -13,7 +13,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "3.667.0",
     "@aws-sdk/lib-dynamodb": "3.667.0",
-    "@gcforms/connectors": "^2.0.0",
+    "@gcforms/connectors": "^2.0.2",
     "redis": "^4.7.0"
   },
   "devDependencies": {
