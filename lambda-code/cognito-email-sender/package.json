@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@aws-crypto/client-node": "4.0.0",
-    "@gcforms/connectors": "^2.0.0"
+    "@gcforms/connectors": "^2.0.2"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.126",
