@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.30.1](https://github.com/cds-snc/forms-terraform/compare/v3.30.0...v3.30.1) (2025-04-09)
+
+
+### Miscellaneous Chores
+
+* update connectors package to version 2.0.2 in order to pull Axios 1.8.4 update ([#986](https://github.com/cds-snc/forms-terraform/issues/986)) ([fa5e4dc](https://github.com/cds-snc/forms-terraform/commit/fa5e4dc096cf628d76f8db27518b8d158d838674))
+
 ## [3.30.0](https://github.com/cds-snc/forms-terraform/compare/v3.29.0...v3.30.0) (2025-04-07)
 
 
