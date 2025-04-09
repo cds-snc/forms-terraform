@@ -4,6 +4,8 @@ Internal Documentation can be found (here)[https://docs.google.com/document/d/1v
 
 Setup and initialization instructions are detailed in the base repository README file.
 
+Platform's Data Lake Technical Specifications can be found (here)[https://github.com/cds-snc/data-lake/blob/main/docs/data/pipelines/platform/gc-forms/templates.md].
+
 ## AWS Glue
 
 Forms leverages (AWS Glue)[https://docs.aws.amazon.com/glue/latest/dg/what-is-glue.html] for ETL (Extract, Transform, Load) jobs. Glue provides scalable data processing capabilities with Apache Spark under the hood, allowing for efficient large-scale data manipulation.
@@ -17,44 +19,7 @@ In case of a future migration away from AWS Glue, Lambda functions can serve as 
 
 ## Data Elements Extracted
 
-* Form
-** id
-** isPublished
-** created_at
-** updated_at
-** name
-** securityAttribute
-** closingDate
-** formPurpose
-** publishDesc
-** publishFormType
-** publishReason
-** timestamp
-** [elementType]_count
-** ttl
-** closedDetails
-** titleEn
-** titleFr
-** brand
-** deliveryoption
-
-* Form to User
-** userId
-** templateId
-
-* User
-** id
-** name
-** email
-** lastLogin
-** active
-** createdAt
-** timestamp
-
-* Submissions
-** Form ID
-** Submission ID
-** timestamp
+See : https://github.com/cds-snc/data-lake/blob/main/docs/data/catalog/platform/gc-forms/templates.md
 
 ## ETL Scripts
 
