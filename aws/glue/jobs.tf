@@ -180,7 +180,7 @@ resource "aws_glue_job" "submissions_glue_job" {
     "--enable-observability-metrics"     = "true"
     "--s3_endpoint"                      = var.datalake_bucket_name
     "--cloudwatch_endpoint"              = var.submission_cloudwatch_endpoint
-    "--batch_size"                       = "full" # full or daily
+    "--batch_size"                       = "daily" # full or daily
   }
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 }
