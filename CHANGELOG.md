@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.30.1](https://github.com/cds-snc/forms-terraform/compare/v3.30.0...v3.30.1) (2025-04-14)
+
+
+### Bug Fixes
+
+* Add a mode toggle for submissions so it can just be done easy peasy. ([#989](https://github.com/cds-snc/forms-terraform/issues/989)) ([6aca153](https://github.com/cds-snc/forms-terraform/commit/6aca153aeb638698d00fbd8fbe41672a2da24c64))
+
+
+### Miscellaneous Chores
+
+* disable Nagware Slack notifications ([#990](https://github.com/cds-snc/forms-terraform/issues/990)) ([94687e2](https://github.com/cds-snc/forms-terraform/commit/94687e2697d3c3c896eb269f0e9fa22852027d34))
+* update connectors package to version 2.0.2 in order to pull Axios 1.8.4 update ([#986](https://github.com/cds-snc/forms-terraform/issues/986)) ([fa5e4dc](https://github.com/cds-snc/forms-terraform/commit/fa5e4dc096cf628d76f8db27518b8d158d838674))
+
 ## [3.30.0](https://github.com/cds-snc/forms-terraform/compare/v3.29.0...v3.30.0) (2025-04-07)
 
 
