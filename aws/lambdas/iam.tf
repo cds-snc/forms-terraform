@@ -223,8 +223,8 @@ data "aws_iam_policy_document" "lambda_s3" {
       "${var.archive_storage_arn}/*",
       var.audit_logs_archive_storage_arn,
       "${var.audit_logs_archive_storage_arn}/*",
-      var.prisma_migration_storage_arn,
-      "${var.prisma_migration_storage_arn}/*"
+      var.deployment_script_storage_arn,
+      "${var.deployment_script_storage_arn}/*"
     ]
   }
 }

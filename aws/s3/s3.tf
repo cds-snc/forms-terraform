@@ -194,28 +194,28 @@ resource "aws_s3_bucket_lifecycle_configuration" "audit_logs_archive_storage" {
 }
 
 #
-# Prisma Migration storage
+# Deployment Script Storage
 #
 
-resource "aws_s3_bucket" "prisma_migration_storage" {
+resource "aws_s3_bucket" "deployment_script_storage" {
   # checkov:skip=CKV_AWS_18: Access logging not required
   # checkov:skip=CKV_AWS_21: Versioning not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
   # checkov:skip=CKV2_AWS_61: Lifecycle configuration not required
-  bucket        = "forms-${local.env}-prisma-migration-storage"
+  bucket        = "forms-${local.env}-deployment-script-storage"
   force_destroy = var.env == "development"
 }
 
-resource "aws_s3_bucket_ownership_controls" "prisma_migration_storage" {
-  bucket = aws_s3_bucket.prisma_migration_storage.id
+resource "aws_s3_bucket_ownership_controls" "deployment_script_storage" {
+  bucket = aws_s3_bucket.deployment_script_storage.id
 
   rule {
     object_ownership = "BucketOwnerEnforced"
   }
 }
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "prisma_migration_storage" {
-  bucket = aws_s3_bucket.prisma_migration_storage.id
+resource "aws_s3_bucket_server_side_encryption_configuration" "deployment_script_storage" {
+  bucket = aws_s3_bucket.deployment_script_storage.id
 
   rule {
     apply_server_side_encryption_by_default {
@@ -224,8 +224,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "prisma_migration_
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "prisma_migration_storage" {
-  bucket                  = aws_s3_bucket.prisma_migration_storage.id
+resource "aws_s3_bucket_public_access_block" "deployment_script_storage" {
+  bucket                  = aws_s3_bucket.deployment_script_storage.id
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true

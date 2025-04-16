@@ -38,14 +38,14 @@ output "audit_logs_archive_storage_arn" {
   value       = aws_s3_bucket.audit_logs_archive_storage.arn
 }
 
-output "prisma_migration_storage_id" {
-  description = "S3 bucket ID for prisma migration storage"
-  value       = aws_s3_bucket.prisma_migration_storage.id
+output "deployment_script_storage_id" {
+  description = "S3 bucket ID for deployment script storage"
+  value       = aws_s3_bucket.deployment_script_storage.id
 }
 
-output "prisma_migration_storage_arn" {
-  description = "S3 bucket ARN for prisma migration storage"
-  value       = aws_s3_bucket.prisma_migration_storage.arn
+output "deployment_script_storage_arn" {
+  description = "S3 bucket ARN for deployment script storage"
+  value       = aws_s3_bucket.deployment_script_storage.arn
 }
 
 output "lake_bucket_arn" {

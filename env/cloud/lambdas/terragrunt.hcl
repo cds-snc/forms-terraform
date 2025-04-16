@@ -144,8 +144,8 @@ dependency "s3" {
     archive_storage_id             = "forms-staging-archive-storage"
     audit_logs_archive_storage_id  = "forms-staging-audit-logs-archive-storage"
     audit_logs_archive_storage_arn = "arn:aws:s3:::forms-staging-audit-logs-archive-storage"
-    prisma_migration_storage_id    = "forms-staging-prisma-migration-storage"
-    prisma_migration_storage_arn   = "arn:aws:s3:::forms-staging-prisma-migration-storage"
+    deployment_script_storage_id    = "forms-staging-deployment-script-storage"
+    deployment_script_storage_arn   = "arn:aws:s3:::forms-staging-deployment-script-storage"
   }
 }
 
@@ -225,8 +225,8 @@ inputs = {
   archive_storage_id             = dependency.s3.outputs.archive_storage_id
   audit_logs_archive_storage_id  = dependency.s3.outputs.audit_logs_archive_storage_id
   audit_logs_archive_storage_arn = dependency.s3.outputs.audit_logs_archive_storage_arn
-  prisma_migration_storage_id    = dependency.s3.outputs.prisma_migration_storage_id
-  prisma_migration_storage_arn   = dependency.s3.outputs.prisma_migration_storage_arn
+  deployment_script_storage_id    = dependency.s3.outputs.deployment_script_storage_id
+  deployment_script_storage_arn   = dependency.s3.outputs.deployment_script_storage_arn
 
   ecr_repository_lambda_urls = dependency.ecr.outputs.ecr_repository_lambda_urls
 

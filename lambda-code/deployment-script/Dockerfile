@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/nodejs:22
+FROM --platform=linux/amd64 public.ecr.aws/lambda/nodejs:22
 
 WORKDIR /var/task
 
@@ -17,7 +17,7 @@ RUN export PATH="$(yarn global bin):$PATH"
 RUN yarn global add prisma@6 tsx@4
 
 # Install Prisma Seeding dependencies to current directory
-RUN yarn add @prisma/client@6 prisma@6 ts-command-line-args@2 typescript@5
+RUN yarn add @prisma/client@6 ts-command-line-args@2 typescript@5 ioredis@5
 
 # Download correct Prisma engines for runtime
 COPY base_schema.prisma ${LAMBDA_TASK_ROOT}
@@ -27,12 +27,9 @@ RUN rm -f base_schema.prisma
 # Copy custom runtime bootstrap
 COPY bootstrap ${LAMBDA_RUNTIME_DIR}
 # Copy function code
-COPY prisma.sh ${LAMBDA_TASK_ROOT}
+COPY deployment.sh ${LAMBDA_TASK_ROOT}
 
-RUN chmod +x ${LAMBDA_TASK_ROOT}/prisma.sh ${LAMBDA_RUNTIME_DIR}/bootstrap
-
-
-
+RUN chmod +x ${LAMBDA_TASK_ROOT}/deployment.sh ${LAMBDA_RUNTIME_DIR}/bootstrap
 
 # Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
-CMD [ "prisma.handler" ]
+CMD [ "deployment.handler" ]
