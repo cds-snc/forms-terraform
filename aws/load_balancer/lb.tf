@@ -81,7 +81,7 @@ resource "aws_lb_target_group" "forms_api" {
 
   health_check {
     enabled             = true
-    interval            = 10
+    interval            = 20
     port                = 3001
     path                = "/status"
     matcher             = "200"
