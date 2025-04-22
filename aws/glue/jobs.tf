@@ -184,3 +184,13 @@ resource "aws_glue_job" "submissions_glue_job" {
   }
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 }
+
+# Set the trigger for the job.
+resource "aws_glue_trigger" "submissions_glue_trigger" {
+  name     = "submissions_glue_trigger"
+  schedule = "cron(0 0 * * ? *)" # Daily
+  type     = "SCHEDULED"
+  actions {
+    job_name = aws_glue_job.submissions_glue_job.name
+  }
+}

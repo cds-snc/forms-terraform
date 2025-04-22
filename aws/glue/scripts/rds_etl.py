@@ -5,7 +5,7 @@ from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.dynamicframe import DynamicFrame
-from pyspark.sql.functions import col, from_unixtime, date_format, lit, current_timestamp, from_json, explode, explode_outer, sum as spark_sum, when
+from pyspark.sql.functions import broadcast, col, from_unixtime, date_format, lit, current_timestamp, from_json, explode, explode_outer, sum as spark_sum, when
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, ArrayType, BooleanType
 from datetime import datetime
 
@@ -83,6 +83,28 @@ apiServiceAccount_df = apiServiceAccount_df.select(
     col("created_at").alias("api_created_at"),
     col("id").alias("api_id")
 ).distinct()
+
+# Get user privleges
+
+privTable_df = glueContext.create_dynamic_frame.from_options(
+    connection_type = "postgresql",
+    connection_options = {
+        "connectionName": args['rds_connection_name'],
+        "dbtable": "Privilege",
+        "useConnectionProperties": "true",
+    },
+    transformation_ctx = "privTable_df"
+).toDF()
+
+privUserTable_df = glueContext.create_dynamic_frame.from_options(
+    connection_type = "postgresql",
+    connection_options = {
+        "connectionName": args['rds_connection_name'],
+        "dbtable": "_PrivilegeToUser",
+        "useConnectionProperties": "true",
+    },
+    transformation_ctx = "privUserTable_df"
+).toDF()
 
 # ------- Step 3 -------
 # Process the data (easy-mode)
@@ -245,8 +267,25 @@ redacted_df = redacted_df.withColumn(
 redacted_df = redacted_df.drop("templateId")
 
 # ------- Step 4.4 -------
-# Add api_created_at, api_id, and deliveryEmailDestination based on deliveryOption
+# Add the privilege column
 
+# Determine which users have the "PublishForms" privilege.
+# Adjust join keys if your schema differs.
+publish_priv_users = (
+    privUserTable_df.alias("pu")
+    .join(privTable_df.alias("p"), col("pu.B") == col("p.id"), "inner")
+    .filter(col("p.name") == "PublishForms")
+    .select(col("pu.A").alias("user_id"))
+    .distinct()
+)
+
+# Convert the original dynamic frame to a DataFrame if not already done.
+user_df = userTable_df.toDF()
+
+# Join with publish_priv_users to add the CanPublish flag.
+user_df = user_df.join(publish_priv_users, user_df.id == publish_priv_users.user_id, "left") \
+    .withColumn("CanPublish", when(col("user_id").isNotNull(), lit(True)).otherwise(lit(False))) \
+    .drop("user_id")
 
 # ------- Step 5 -------
 # drop the jsonConfig and parsed_json columns
@@ -260,7 +299,7 @@ logger.info("Produced Final Dynamic Frame")
 
 # ------ Step 6 -------
 # handle the user and user to template tables.
-redacted_user_df = userTable_df.toDF().drop("image")
+redacted_user_df = user_df.toDF().drop("image")
 # add timestamp
 redacted_user_df = redacted_user_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
 
