@@ -6,13 +6,13 @@ from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.dynamicframe import DynamicFrame
 from pyspark.sql.functions import regexp_extract, col, from_unixtime, date_format, current_timestamp, when
-from datetime import datetime
+from datetime import datetime, timedelta
 import boto3
 import json
 
 # ------- Step 1 -------
 # Initialize Glue context, and logger.
-args = getResolvedOptions(sys.argv, ['JOB_NAME', 'cloudwatch_endpoint', 's3_endpoint'])
+args = getResolvedOptions(sys.argv, ['JOB_NAME', 'cloudwatch_endpoint', 's3_endpoint', 'batch_size'])
 
 # Create a Glue context
 sc = SparkContext()
@@ -32,10 +32,22 @@ job.init(args['JOB_NAME'], args)
 log_group = args.get('cloudwatch_endpoint')
 
 client = boto3.client('logs')
-response = client.filter_log_events(
-    logGroupName=log_group,
-    filterPattern='calculated for submission'
-)
+
+if args.get('batch_size') == 'daily':
+    # Get the current time and 24 hours ago in milliseconds.
+    end_time = int(datetime.utcnow().timestamp() * 1000)
+    start_time = int((datetime.utcnow() - timedelta(days=1)).timestamp() * 1000)
+    response = client.filter_log_events(
+        logGroupName=log_group,
+        filterPattern='calculated for submission',
+        startTime=start_time,
+        endTime=end_time
+    )
+else:
+    response = client.filter_log_events(
+        logGroupName=log_group,
+        filterPattern='calculated for submission'
+    )
 
 # Extract the events; each event is expected to have a 'message' field.
 log_entries = []

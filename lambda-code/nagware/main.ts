@@ -24,12 +24,11 @@ export const handler: Handler = async () => {
     const oldestFormResponseByFormID = await findOldestFormResponseByFormID();
 
     const dayOfWeek = new Date().getDay();
-    const isSunday = dayOfWeek == 0;
     const isTuesdayOrThursday = dayOfWeek == 2 || dayOfWeek == 4;
 
     await nagOrDelete(oldestFormResponseByFormID, {
       shouldSendEmail: isTuesdayOrThursday,
-      shouldSendSlackNotification: isSunday,
+      shouldSendSlackNotification: false,
     });
 
     await setOverdueResponseCache(oldestFormResponseByFormID);
