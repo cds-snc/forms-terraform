@@ -299,7 +299,7 @@ logger.info("Produced Final Dynamic Frame")
 
 # ------ Step 6 -------
 # handle the user and user to template tables.
-redacted_user_df = user_df.toDF().drop("image")
+redacted_user_df = user_df.drop("image")
 # add timestamp
 redacted_user_df = redacted_user_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
 
