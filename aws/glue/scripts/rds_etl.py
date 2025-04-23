@@ -273,9 +273,9 @@ redacted_df = redacted_df.drop("templateId")
 # Adjust join keys if your schema differs.
 publish_priv_users = (
     privUserTable_df.alias("pu")
-    .join(privTable_df.alias("p"), col("pu.B") == col("p.id"), "inner")
+    .join(privTable_df.alias("p"), col("pu.A") == col("p.id"), "inner")
     .filter(col("p.name") == "PublishForms")
-    .select(col("pu.A").alias("user_id"))
+    .select(col("pu.B").alias("user_id"))
     .distinct()
 )
 
