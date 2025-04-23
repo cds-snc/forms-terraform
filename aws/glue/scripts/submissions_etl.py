@@ -10,6 +10,29 @@ from datetime import datetime, timedelta
 import boto3
 import json
 
+# Collect all log events, handling pagination
+def get_all_log_events(client, log_group, filter_pattern, start_time=None, end_time=None):
+    kwargs = {
+        "logGroupName": log_group,
+        "filterPattern": filter_pattern
+    }
+    if start_time is not None and end_time is not None:
+        kwargs["startTime"] = start_time
+        kwargs["endTime"] = end_time
+
+    all_events = []
+    next_token = None
+
+    while True:
+        if next_token:
+            kwargs["nextToken"] = next_token
+        response = client.filter_log_events(**kwargs)
+        all_events.extend(response.get('events', []))
+        next_token = response.get('nextToken')
+        if not next_token:
+            break
+    return all_events
+
 # ------- Step 1 -------
 # Initialize Glue context, and logger.
 args = getResolvedOptions(sys.argv, ['JOB_NAME', 'cloudwatch_endpoint', 's3_endpoint', 'batch_size'])
@@ -34,26 +57,26 @@ log_group = args.get('cloudwatch_endpoint')
 client = boto3.client('logs')
 
 if args.get('batch_size') == 'daily':
-    # Get the current time and 24 hours ago in milliseconds.
     end_time = int(datetime.utcnow().timestamp() * 1000)
     start_time = int((datetime.utcnow() - timedelta(days=1)).timestamp() * 1000)
-    response = client.filter_log_events(
-        logGroupName=log_group,
-        filterPattern='calculated for submission',
-        startTime=start_time,
-        endTime=end_time
+    events = get_all_log_events(
+        client,
+        log_group,
+        'calculated for submission',
+        start_time,
+        end_time
     )
 else:
-    response = client.filter_log_events(
-        logGroupName=log_group,
-        filterPattern='calculated for submission'
+    events = get_all_log_events(
+        client,
+        log_group,
+        'calculated for submission'
     )
 
 # Extract the events; each event is expected to have a 'message' field.
 log_entries = []
-for event in response.get('events', []):
+for event in events:
     message = event.get('message', '')
-    # If the log is in JSON format, attempt to parse it.
     try:
         parsed = json.loads(message)
     except Exception:
