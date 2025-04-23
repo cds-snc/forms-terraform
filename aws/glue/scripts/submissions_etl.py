@@ -43,6 +43,9 @@ glueContext = GlueContext(sc)
 spark = glueContext.spark_session
 job = Job(glueContext)
 job.init(args['JOB_NAME'], args)
+logger = glueContext.get_logger()
+
+logger.info("Starting Script for ETL of Submissions Cloudwatch data")
 
 # Our goal is to:
 # Extract the form ID and the submission ID.
@@ -73,6 +76,8 @@ else:
         'calculated for submission'
     )
 
+logger.info("Completed fetching log events from CloudWatch")
+
 # Extract the events; each event is expected to have a 'message' field.
 log_entries = []
 for event in events:
@@ -82,6 +87,8 @@ for event in events:
     except Exception:
         parsed = {"msg": message}
     log_entries.append(parsed)
+
+logger.info("Completed parsing log events")
 
 # Create a Spark DataFrame from the list of logs.
 cloudwatch_df = spark.createDataFrame(log_entries)
@@ -105,6 +112,8 @@ current_stamp = current_timestamp()
 # Add a timestamp column for Athena to use as a partition.
 cloudwatch_df = cloudwatch_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
 
+logger.info("Completed extracting submission_id and form_id")
+
 # ------- Final Step -------
 # Write the data to the S3 bucket
 cloudwatch_logs = DynamicFrame.fromDF(cloudwatch_df, glueContext, "cloudwatch_logs")
@@ -114,5 +123,7 @@ glueContext.write_dynamic_frame.from_options(
     connection_options = {"path": f"s3://{args['s3_endpoint']}/platform/gc-forms/processed-data/submissions"},
     format = "parquet"
 )
+
+logger.info("Completed writing data to S3")
 
 job.commit()
