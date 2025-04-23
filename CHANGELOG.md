@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.30.2](https://github.com/cds-snc/forms-terraform/compare/v3.30.1...v3.30.2) (2025-04-23)
+
+
+### Bug Fixes
+
+* Submission Cron Job / Pagination & Ability to Publish Status for Users ([#994](https://github.com/cds-snc/forms-terraform/issues/994)) ([835042c](https://github.com/cds-snc/forms-terraform/commit/835042c5b1a0575a319180145580ca1cf2eecc95))
+
+
+### Documentation
+
+* Update docs for datalake. ([#988](https://github.com/cds-snc/forms-terraform/issues/988)) ([3467115](https://github.com/cds-snc/forms-terraform/commit/34671154f8ff488e9ff6a3cfa8e09701c3e9673c))
+
 ## [3.30.1](https://github.com/cds-snc/forms-terraform/compare/v3.30.0...v3.30.1) (2025-04-14)
 
 
