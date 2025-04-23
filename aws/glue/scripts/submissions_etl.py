@@ -70,10 +70,15 @@ if args.get('batch_size') == 'daily':
         end_time
     )
 else:
+    end_time = int(datetime.utcnow().timestamp() * 1000)
+    # set start time as Jan 25, 2024, to avoid a bug with fetching the events prior to this date (they don't have claculated for submission)
+    start_time = int(datetime(2024, 1, 25).timestamp() * 1000)
     events = get_all_log_events(
         client,
         log_group,
-        'calculated for submission'
+        'calculated for submission',
+        start_time,
+        end_time
     )
 
 logger.info("Completed fetching log events from CloudWatch")
