@@ -89,6 +89,7 @@ data "aws_iam_policy_document" "api_ecs_dynamodb_vault" {
       "dynamodb:BatchWriteItem",
       "dynamodb:BatchGetItem",
       "dynamodb:Query",
+      "dynamodb:Scan",
     ]
 
     resources = [
