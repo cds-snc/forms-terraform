@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.31.0](https://github.com/cds-snc/forms-terraform/compare/v3.30.2...v3.31.0) (2025-04-24)
+
+
+### Features
+
+* replaced out of country alarm by WAF header injection for detection within the web application ([#996](https://github.com/cds-snc/forms-terraform/issues/996)) ([b056fac](https://github.com/cds-snc/forms-terraform/commit/b056fac26ae40e7ec92acbbf2c45ef82eaa3f124))
+
+
+### Bug Fixes
+
+* add missing Scan permission on DynamoDB for the API service ([#999](https://github.com/cds-snc/forms-terraform/issues/999)) ([7957d7f](https://github.com/cds-snc/forms-terraform/commit/7957d7ffd27165f8fcbc55eda04049f77be2bfd4))
+
+
+### Miscellaneous Chores
+
+* forward request to /debug/ready endpoint to IdP HTTP 1 target group ([#991](https://github.com/cds-snc/forms-terraform/issues/991)) ([d5415d2](https://github.com/cds-snc/forms-terraform/commit/d5415d2623ed82b72458f642c9911deff43a28b5))
+* Nagware lambda use a single Postgres connector instance ([#998](https://github.com/cds-snc/forms-terraform/issues/998)) ([199d30d](https://github.com/cds-snc/forms-terraform/commit/199d30d14644ca0fa28a81d54b8a0816a9034e15))
+
 ## [3.30.2](https://github.com/cds-snc/forms-terraform/compare/v3.30.1...v3.30.2) (2025-04-23)
 
 
