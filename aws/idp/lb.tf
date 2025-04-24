@@ -112,7 +112,7 @@ resource "aws_alb_listener_rule" "idp_protocol_version" {
 
   condition {
     path_pattern {
-      values = ["/*/v?/*", "/.well-known/openid-configuration"] # REST API endpoints
+      values = ["/*/v?/*", "/.well-known/openid-configuration", "/debug/ready"] # REST API endpoints
     }
   }
 }
