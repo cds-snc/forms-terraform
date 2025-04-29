@@ -1,14 +1,15 @@
 #
 # ECS resource usage alarms
 #
+
 resource "aws_cloudwatch_metric_alarm" "api_cpu_utilization_high_warn" {
   alarm_name          = "API-CpuUtilizationWarn"
   alarm_description   = "API ECS Warning - High CPU usage has been detected."
   comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "2"
+  evaluation_periods  = 2
   metric_name         = "CPUUtilization"
   namespace           = "AWS/ECS"
-  period              = "120"
+  period              = 120
   statistic           = "Maximum"
   threshold           = var.threshold_ecs_cpu_utilization_high
   treat_missing_data  = "notBreaching"
@@ -29,7 +30,7 @@ resource "aws_cloudwatch_metric_alarm" "api_memory_utilization_high_warn" {
   evaluation_periods  = 2
   metric_name         = "MemoryUtilization"
   namespace           = "AWS/ECS"
-  period              = "120"
+  period              = 120
   statistic           = "Maximum"
   threshold           = var.threshold_ecs_memory_utilization_high
   treat_missing_data  = "notBreaching"
@@ -57,11 +58,11 @@ resource "aws_cloudwatch_metric_alarm" "api_lb_unhealthy_host_count" {
   alarm_name          = "API-UnhealthyHostCount"
   alarm_description   = "API LB Warning - unhealthy host count >= 1 in a 1 minute period"
   comparison_operator = "GreaterThanOrEqualToThreshold"
-  threshold           = "1"
-  evaluation_periods  = "1"
+  threshold           = 1
+  evaluation_periods  = 1
   metric_name         = "UnHealthyHostCount"
   namespace           = "AWS/ApplicationELB"
-  period              = "60"
+  period              = 60
   statistic           = "Maximum"
   treat_missing_data  = "breaching"
 
@@ -75,14 +76,14 @@ resource "aws_cloudwatch_metric_alarm" "api_lb_unhealthy_host_count" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "api_lb_healthy_host_count" {
-  alarm_name          = "API-HealthyHostCount" # TODO: bump to SEV1 once this is in production
+  alarm_name          = "API-HealthyHostCount-SEV1" # SEV1 will prompt the on-call team to respond.
   alarm_description   = "API LB Critical - no healthy hosts in a 1 minute period"
   comparison_operator = "LessThanThreshold"
-  threshold           = "1"
-  evaluation_periods  = "1"
+  threshold           = 1
+  evaluation_periods  = 1
   metric_name         = "HealthyHostCount"
   namespace           = "AWS/ApplicationELB"
-  period              = "60"
+  period              = 60
   statistic           = "Maximum"
   treat_missing_data  = "breaching"
   alarm_actions       = [var.sns_topic_alert_warning_arn]
@@ -97,8 +98,8 @@ resource "aws_cloudwatch_metric_alarm" "api_response_time_warn" {
   alarm_name          = "API-ResponseTimeWarn"
   alarm_description   = "API LB Warning - The latency of response times from the API are abnormally high."
   comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "5"
-  datapoints_to_alarm = "2"
+  evaluation_periods  = 5
+  datapoints_to_alarm = 2
   threshold           = var.threshold_lb_response_time
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_topic_alert_warning_arn]
@@ -123,11 +124,12 @@ resource "aws_cloudwatch_metric_alarm" "api_response_time_warn" {
 #
 # Audit Log Dead Letter Queue
 #
+
 resource "aws_cloudwatch_metric_alarm" "api_audit_log_dead_letter_queue_warn" {
   alarm_name          = "ApiAuditLogDeadLetterQueueWarn"
   comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "1"
-  threshold           = "0"
+  evaluation_periods  = 1
+  threshold           = 0
   alarm_description   = "Detect when a message is sent to the API Audit Log Dead Letter Queue"
   alarm_actions       = [var.sns_topic_alert_warning_arn]
 
