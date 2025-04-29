@@ -493,7 +493,7 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
 
   # Static Pages
   regular_expression {
-    regex_string = "^\\/(?:en|fr)?\\/?(?:(sla|terms-and-conditions|terms-of-use|unsupported-browser|javascript-disabled|404)(?:\\/[\\w-]+)?)(?:\\/.*)?$"
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(sla|terms-and-conditions|terms-of-use|404|unsupported-browser.html|javascript-disabled.html)(?:\\/[\\w-]+)?)(?:\\/.*)?$"
   }
 
   # Files
