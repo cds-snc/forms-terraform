@@ -14,6 +14,8 @@ dependency "dynamodb" {
   mock_outputs = {
     dynamodb_relability_queue_arn = null
     dynamodb_vault_arn            = null
+    dynamodb_app_audit_logs_arn   = null
+    dynamodb_api_audit_logs_arn   = null
   }
 }
 
@@ -152,6 +154,8 @@ inputs = {
 
   dynamodb_relability_queue_arn = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
   dynamodb_vault_arn            = dependency.dynamodb.outputs.dynamodb_vault_arn
+  dynamodb_app_audit_logs_arn   = dependency.dynamodb.outputs.dynamodb_app_audit_logs_arn
+  dynamodb_api_audit_logs_arn   = dependency.dynamodb.outputs.dynamodb_api_audit_logs_arn
 
   ecr_repository_url_form_viewer = dependency.ecr.outputs.ecr_repository_url_form_viewer
 
