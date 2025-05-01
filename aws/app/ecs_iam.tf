@@ -215,7 +215,7 @@ resource "aws_iam_policy" "forms_audit_logs" {
   name        = "forms_audit_logs"
   path        = "/"
   description = "IAM policy for allowing access for Forms ECS task to read the Audit Logs"
-  policy      = data.aws_iam_policy_document.forms_dynamodb.json
+  policy      = data.aws_iam_policy_document.forms_audit_logs.json
 }
 
 data "aws_iam_policy_document" "forms_audit_logs" {
