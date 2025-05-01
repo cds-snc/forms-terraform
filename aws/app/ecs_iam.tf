@@ -112,6 +112,11 @@ resource "aws_iam_role_policy_attachment" "dynamodb_forms" {
   policy_arn = aws_iam_policy.forms_dynamodb.arn
 }
 
+resource "aws_iam_role_policy_attachment" "audit_logs_forms" {
+  role       = aws_iam_role.forms.name
+  policy_arn = aws_iam_policy.forms_audit_logs.arn
+}
+
 resource "aws_iam_role_policy_attachment" "sqs_forms" {
   role       = aws_iam_role.forms.name
   policy_arn = aws_iam_policy.forms_sqs.arn
@@ -203,6 +208,31 @@ data "aws_iam_policy_document" "forms_dynamodb" {
       var.dynamodb_relability_queue_arn,
       var.dynamodb_vault_arn,
       "${var.dynamodb_vault_arn}/index/*"
+    ]
+  }
+}
+resource "aws_iam_policy" "forms_audit_logs" {
+  name        = "forms_audit_logs"
+  path        = "/"
+  description = "IAM policy for allowing access for Forms ECS task to read the Audit Logs"
+  policy      = data.aws_iam_policy_document.forms_dynamodb.json
+}
+
+data "aws_iam_policy_document" "forms_audit_logs" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "dynamodb:GetItem",
+      "dynamodb:BatchGetItem",
+      "dynamodb:Query",
+    ]
+
+    resources = [
+      var.dynamodb_api_audit_logs_arn,
+      var.dynamodb_app_audit_logs_arn,
+      "${var.dynamodb_api_audit_logs_arn}/index/*",
+      "${var.dynamodb_app_audit_logs_arn}/index/*"
     ]
   }
 }

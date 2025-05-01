@@ -23,6 +23,16 @@ variable "dynamodb_vault_arn" {
   type        = string
 }
 
+variable "dynamodb_api_audit_logs_arn" {
+  description = "API Audit logs DynamodDB table ARN"
+  type        = string
+}
+
+variable "dynamodb_app_audit_logs_arn" {
+  description = "App Audit Logs DynamodDB table ARN"
+  type        = string
+}
+
 variable "ecs_autoscale_enabled" {
   description = "Should memory/CPU threshold ECS task scaling be enabled"
   type        = bool
