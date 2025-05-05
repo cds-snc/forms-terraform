@@ -67,9 +67,11 @@ module "api_ecs" {
   ]
 
   # Networking
-  lb_target_group_arn = var.lb_target_group_arn_api_ecs
-  subnet_ids          = var.private_subnet_ids
-  security_group_ids  = [var.security_group_id_api_ecs]
+  lb_target_group_arn            = var.lb_target_group_arn_api_ecs
+  subnet_ids                     = var.private_subnet_ids
+  security_group_ids             = [var.security_group_id_api_ecs]
+  service_discovery_enabled      = true
+  service_discovery_namespace_id = var.service_discovery_private_dns_namespace_ecs_local_id
 
   billing_tag_key   = var.billing_tag_key
   billing_tag_value = var.billing_tag_value

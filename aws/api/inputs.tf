@@ -80,3 +80,7 @@ variable "sqs_api_audit_log_queue_arn" {
   type        = string
 }
 
+variable "service_discovery_private_dns_namespace_ecs_local_id" {
+  description = "Local ECS service discovery private DNS namespace ID"
+  type        = string
+}

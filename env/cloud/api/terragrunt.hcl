@@ -59,8 +59,9 @@ dependency "network" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    api_ecs_security_group_id = "sg-1234567890"
-    private_subnet_ids        = ["prv-1", "prv-2"]
+    api_ecs_security_group_id                            = "sg-1234567890"
+    private_subnet_ids                                   = ["prv-1", "prv-2"]
+    service_discovery_private_dns_namespace_ecs_local_id = ""
   }
 }
 
@@ -120,9 +121,11 @@ inputs = {
   api_image_tag               = "latest"
   api_image_ecr_url           = dependency.ecr.outputs.ecr_repository_url_api
   ecs_cluster_name            = dependency.app.outputs.ecs_cluster_name
-  security_group_id_api_ecs   = dependency.network.outputs.api_ecs_security_group_id
   lb_target_group_arn_api_ecs = dependency.load_balancer.outputs.lb_target_group_api_arn
-  private_subnet_ids          = dependency.network.outputs.private_subnet_ids
+
+  security_group_id_api_ecs                            = dependency.network.outputs.api_ecs_security_group_id
+  private_subnet_ids                                   = dependency.network.outputs.private_subnet_ids
+  service_discovery_private_dns_namespace_ecs_local_id = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_id
 
   kms_key_dynamodb_arn      = dependency.kms.outputs.kms_key_dynamodb_arn
   dynamodb_vault_arn        = dependency.dynamodb.outputs.dynamodb_vault_arn
