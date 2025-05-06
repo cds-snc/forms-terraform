@@ -218,3 +218,46 @@ variable "ecs_iam_forms_cognito_policy_arn" {
   description = "IAM policy for access to Cognito"
   type        = string
 }
+
+// API end to end test
+
+variable "idp_project_identifier" {
+  description = "Project identifier of the identity provider"
+  type        = string
+}
+
+variable "api_end_to_end_test_form_identifier" {
+  description = "Identifier of the form used for the API end to end test"
+  type        = string
+}
+
+variable "api_end_to_end_test_form_api_private_key" {
+  description = "Private key of the form used for the API end to end test"
+  type        = string
+  sensitive   = true
+}
+
+variable "service_discovery_private_dns_namespace_ecs_local_name" {
+  description = "Local ECS service discovery private DNS namespace name"
+  type        = string
+}
+
+variable "ecs_idp_service_name" {
+  description = "IdP's ECS service name"
+  type        = string
+}
+
+variable "ecs_idp_service_port" {
+  description = "IdP's ECS service port"
+  type        = number
+}
+
+variable "ecs_api_service_name" {
+  description = "API's ECS service name"
+  type        = string
+}
+
+variable "ecs_api_service_port" {
+  description = "API's ECS service port"
+  type        = number
+}

@@ -14,7 +14,7 @@ reset='\033[0m' # No Color
 basedir=$(pwd)
 
 ecrRepositoryAddress="${AWS_ACCOUNT_ID}.dkr.ecr.ca-central-1.amazonaws.com"
-lambdasToSkip=("cognito-email-sender" "cognito-pre-sign-up" "notify-slack" "load-testing")
+lambdasToSkip=("cognito-email-sender" "cognito-pre-sign-up" "notify-slack" "load-testing", "api-end-to-end-test")
 basedir="$(pwd)/lambda-code"
 
 if ! command -v aws >/dev/null; then

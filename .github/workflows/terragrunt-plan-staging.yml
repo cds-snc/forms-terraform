@@ -65,6 +65,10 @@ env:
   # ECR
   TF_VAR_aws_development_accounts: ${{ vars.AWS_DEVELOPMENT_ACCOUNTS }}
   TF_VAR_cds_org_id: ${{ secrets.STAGING_CDS_ORG_ID }}
+  # API END TO END TEST
+  TF_VAR_idp_project_identifier: "275372254274006635"
+  TF_VAR_api_end_to_end_test_form_identifier: "cmacoc5ga0001yk01zgn888l9"
+  TF_VAR_api_end_to_end_test_form_api_private_key: ${{ secrets.STAGING_API_END_TO_END_TEST_FORM_API_PRIVATE_KEY }}
 
 jobs:
   detect-lambda-changes:

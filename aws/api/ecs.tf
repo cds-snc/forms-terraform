@@ -27,7 +27,7 @@ locals {
 }
 
 module "api_ecs" {
-  source = "github.com/cds-snc/terraform-modules//ecs?ref=64b19ecfc23025718cd687e24b7115777fd09666" # v10.2.1
+  source = "github.com/cds-snc/terraform-modules//ecs?ref=374e397485ef4888d455e2a3c6237376a45179cb" # v10.4.4
 
   create_cluster = false
   cluster_name   = var.ecs_cluster_name
