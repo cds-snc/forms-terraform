@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.32.1](https://github.com/cds-snc/forms-terraform/compare/v3.32.0...v3.32.1) (2025-05-06)
+
+
+### Bug Fixes
+
+* aurora postgresql version ([#1005](https://github.com/cds-snc/forms-terraform/issues/1005)) ([693eff5](https://github.com/cds-snc/forms-terraform/commit/693eff5cda8d0b50cfd0774dcf1974a7ce4dbdee))
+
 ## [3.32.0](https://github.com/cds-snc/forms-terraform/compare/v3.31.0...v3.32.0) (2025-05-01)
 
 
