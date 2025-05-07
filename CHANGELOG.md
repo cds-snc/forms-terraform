@@ -1,5 +1,30 @@
 # Changelog
 
+## [3.32.1](https://github.com/cds-snc/forms-terraform/compare/v3.32.0...v3.32.1) (2025-05-06)
+
+
+### Bug Fixes
+
+* aurora postgresql version ([#1005](https://github.com/cds-snc/forms-terraform/issues/1005)) ([693eff5](https://github.com/cds-snc/forms-terraform/commit/693eff5cda8d0b50cfd0774dcf1974a7ce4dbdee))
+
+## [3.32.0](https://github.com/cds-snc/forms-terraform/compare/v3.31.0...v3.32.0) (2025-05-01)
+
+
+### Features
+
+* bump healthy host count alarm to SEV1 ([#992](https://github.com/cds-snc/forms-terraform/issues/992)) ([f2a1249](https://github.com/cds-snc/forms-terraform/commit/f2a1249d42974f079df10c883ccf2ca445e2b1e7))
+
+
+### Bug Fixes
+
+* both unsupported browser and javascript disabled pages are blocked by WAF because of missing HTML extension ([#1000](https://github.com/cds-snc/forms-terraform/issues/1000)) ([a7b8f70](https://github.com/cds-snc/forms-terraform/commit/a7b8f70eb1fcba45c5832245b1bbd584a832c5e3))
+
+
+### Miscellaneous Chores
+
+* Allow ECS task to access Audit Logs for APP and API ([#1003](https://github.com/cds-snc/forms-terraform/issues/1003)) ([d8f6909](https://github.com/cds-snc/forms-terraform/commit/d8f6909bc7ba65113accddd52a2dfa0ae336ae89))
+* switch to CDS Release Bot ([#1002](https://github.com/cds-snc/forms-terraform/issues/1002)) ([0a1062d](https://github.com/cds-snc/forms-terraform/commit/0a1062d055334f5322aaec7134b09f9e2cada642))
+
 ## [3.31.0](https://github.com/cds-snc/forms-terraform/compare/v3.30.2...v3.31.0) (2025-04-24)
 
 
