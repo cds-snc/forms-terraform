@@ -53,11 +53,6 @@ variable "security_group_id_api_ecs" {
   type        = string
 }
 
-variable "zitadel_provider" {
-  description = "The Zitadel provider endpoint used by the ECS task"
-  type        = string
-}
-
 variable "zitadel_application_key_secret_arn" {
   description = "The Zitadel application key secret used by the ECS task"
   type        = string
@@ -83,4 +78,19 @@ variable "sqs_api_audit_log_queue_arn" {
 variable "service_discovery_private_dns_namespace_ecs_local_id" {
   description = "Local ECS service discovery private DNS namespace ID"
   type        = string
+}
+
+variable "service_discovery_private_dns_namespace_ecs_local_name" {
+  description = "Local ECS service discovery private DNS namespace name"
+  type        = string
+}
+
+variable "ecs_idp_service_name" {
+  description = "IdP's ECS service name"
+  type        = string
+}
+
+variable "ecs_idp_service_port" {
+  description = "IdP's ECS service port"
+  type        = number
 }

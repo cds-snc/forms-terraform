@@ -2,7 +2,7 @@ locals {
   container_env = [
     {
       name  = "ZITADEL_DOMAIN"
-      value = var.zitadel_provider
+      value = "http://${var.ecs_idp_service_name}.${var.service_discovery_private_dns_namespace_ecs_local_name}:${var.ecs_idp_service_port}"
     },
     {
       name  = "ENVIRONMENT_MODE"
