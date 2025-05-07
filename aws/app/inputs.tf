@@ -253,11 +253,6 @@ variable "vault_file_storage_arn" {
   type        = string
 }
 
-variable "zitadel_provider" {
-  description = "The Zitadel provider endpoint used by the ECS task"
-  type        = string
-}
-
 variable "zitadel_administration_key_secret_arn" {
   description = "The Zitadel administration key secret used by the ECS task"
   type        = string
@@ -274,4 +269,19 @@ variable "hcaptcha_site_verify_key_secret_arn" {
   description = "The hCaptcha site verify key secret used for forms"
   type        = string
   sensitive   = true
+}
+
+variable "service_discovery_private_dns_namespace_ecs_local_name" {
+  description = "Local ECS service discovery private DNS namespace name"
+  type        = string
+}
+
+variable "ecs_idp_service_name" {
+  description = "IdP's ECS service name"
+  type        = string
+}
+
+variable "ecs_idp_service_port" {
+  description = "IdP's ECS service port"
+  type        = number
 }

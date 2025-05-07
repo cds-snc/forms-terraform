@@ -12,3 +12,8 @@ output "ecs_api_service_name" {
   description = "API's ECS service name"
   value       = module.api_ecs.service_name
 }
+
+output "ecs_api_service_port" {
+  description = "API's ECS service port"
+  value       = module.api_ecs.service_port
+}

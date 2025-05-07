@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "lib": ["es2023"],
+    "module": "NodeNext",
+    "target": "ESNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "NodeNext",
+    "typeRoots": ["src/types", "node_modules/@types"],
+    "preserveConstEnums": true,
+    "sourceMap": false,
+    "isolatedModules": true,
+    "outDir": "dist",
+    "baseUrl": "./",
+    "paths": {
+      "@lib/*": ["src/lib/*"],
+      "@tests/*": ["src/tests/*"]
+    }
+  },
+  "inlineSource": true,
+  "sourceMap": true,
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}

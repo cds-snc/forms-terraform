@@ -110,3 +110,8 @@ variable "vpc_id" {
   description = "The VPC ID to create the resources in."
   type        = string
 }
+
+variable "service_discovery_private_dns_namespace_ecs_local_id" {
+  description = "Local ECS service discovery private DNS namespace ID"
+  type        = string
+}

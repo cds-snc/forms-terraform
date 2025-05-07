@@ -50,6 +50,7 @@ locals {
     "submission-lambda",
     "vault-integrity-lambda",
     "prisma-migration-lambda",
+    "api-end-to-end-test-lambda",
     var.env == "staging" ? "load-testing-lambda" : null
   ]))
 }

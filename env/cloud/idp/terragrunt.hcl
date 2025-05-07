@@ -25,12 +25,13 @@ dependency "network" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    idp_db_security_group_id  = "sg-db"
-    idp_ecs_security_group_id = "sg-ecs"
-    idp_lb_security_group_id  = "sg-lb"
-    private_subnet_ids        = ["prv-1", "prv-2"]
-    public_subnet_ids         = ["pub-1", "pub-2"]
-    vpc_id                    = "vpc-id"
+    idp_db_security_group_id                             = "sg-db"
+    idp_ecs_security_group_id                            = "sg-ecs"
+    idp_lb_security_group_id                             = "sg-lb"
+    private_subnet_ids                                   = ["prv-1", "prv-2"]
+    public_subnet_ids                                    = ["pub-1", "pub-2"]
+    vpc_id                                               = "vpc-id"
+    service_discovery_private_dns_namespace_ecs_local_id = ""
   }
 }
 
@@ -58,12 +59,13 @@ dependency "load_balancer" {
 inputs = {
   hosted_zone_ids = dependency.hosted_zone.outputs.hosted_zone_ids
 
-  private_subnet_ids        = dependency.network.outputs.private_subnet_ids
-  public_subnet_ids         = dependency.network.outputs.public_subnet_ids
-  security_group_idp_db_id  = dependency.network.outputs.idp_db_security_group_id
-  security_group_idp_ecs_id = dependency.network.outputs.idp_ecs_security_group_id
-  security_group_idp_lb_id  = dependency.network.outputs.idp_lb_security_group_id
-  vpc_id                    = dependency.network.outputs.vpc_id
+  private_subnet_ids                                   = dependency.network.outputs.private_subnet_ids
+  public_subnet_ids                                    = dependency.network.outputs.public_subnet_ids
+  security_group_idp_db_id                             = dependency.network.outputs.idp_db_security_group_id
+  security_group_idp_ecs_id                            = dependency.network.outputs.idp_ecs_security_group_id
+  security_group_idp_lb_id                             = dependency.network.outputs.idp_lb_security_group_id
+  vpc_id                                               = dependency.network.outputs.vpc_id
+  service_discovery_private_dns_namespace_ecs_local_id = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_id
 
   zitadel_image_ecr_url = dependency.ecr.outputs.ecr_repository_url_idp
   zitadel_image_tag     = "latest" # TODO: pin to specific tag for prod

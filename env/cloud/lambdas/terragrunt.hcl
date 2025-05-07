@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../network", "../rds", "../redis", "../sqs", "../sns", "../kms", "../dynamodb", "../secrets", "../app", "../s3", "../ecr"]
+  paths = ["../network", "../rds", "../redis", "../sqs", "../sns", "../kms", "../dynamodb", "../secrets", "../app", "../s3", "../ecr", "../idp", "../api"]
 }
 
 locals {
@@ -35,8 +35,9 @@ dependency "network" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    lambda_security_group_id = "sg-1234"
-    private_subnet_ids       = ["prv-1", "prv-2"]
+    lambda_security_group_id                               = "sg-1234"
+    private_subnet_ids                                     = ["prv-1", "prv-2"]
+    service_discovery_private_dns_namespace_ecs_local_name = "ecs.local"
   }
 }
 
@@ -170,8 +171,29 @@ dependency "ecr" {
       submission-lambda               = "test_url",
       vault-integrity-lambda          = "test_url",
       load-testing-lambda             = "test_url",
-      prisma-migration-lambda         = "test_url"
+      prisma-migration-lambda         = "test_url",
+      api-end-to-end-test-lambda      = "test_url"
     }
+  }
+}
+
+dependency "idp" {
+  config_path                             = "../idp"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    ecs_idp_service_name = "zitadel"
+    ecs_idp_service_port = 8080
+  }
+}
+
+dependency "api" {
+  config_path                             = "../api"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    ecs_api_service_name = "forms-api"
+    ecs_api_service_port = 3001
   }
 }
 
@@ -184,8 +206,9 @@ inputs = {
   ecs_iam_forms_sqs_policy_arn             = dependency.app.outputs.ecs_iam_forms_sqs_policy_arn
   ecs_iam_forms_cognito_policy_arn         = dependency.app.outputs.ecs_iam_forms_cognito_policy_arn
 
-  lambda_security_group_id = dependency.network.outputs.lambda_security_group_id
-  private_subnet_ids       = dependency.network.outputs.private_subnet_ids
+  lambda_security_group_id                               = dependency.network.outputs.lambda_security_group_id
+  private_subnet_ids                                     = dependency.network.outputs.private_subnet_ids
+  service_discovery_private_dns_namespace_ecs_local_name = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_name
 
   dynamodb_relability_queue_arn      = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
   dynamodb_vault_arn                 = dependency.dynamodb.outputs.dynamodb_vault_arn
@@ -230,8 +253,17 @@ inputs = {
 
   ecr_repository_lambda_urls = dependency.ecr.outputs.ecr_repository_lambda_urls
 
+  ecs_idp_service_name = dependency.idp.outputs.ecs_idp_service_name
+  ecs_idp_service_port = dependency.idp.outputs.ecs_idp_service_port
+
+  ecs_api_service_name = dependency.api.outputs.ecs_api_service_name
+  ecs_api_service_port = dependency.api.outputs.ecs_api_service_port
+
   # Overwritten in GitHub Actions by TFVARS
-  gc_template_id = "8d597a1b-a1d6-4e3c-8421-042a2b4158b7" # GC Notify template ID used for local setup
+  gc_template_id                           = "8d597a1b-a1d6-4e3c-8421-042a2b4158b7" # GC Notify template ID used for local setup
+  idp_project_identifier                   = "" # IdP project identifier used by API end to end test
+  api_end_to_end_test_form_identifier      = "" # Form identifier used by API end to end test
+  api_end_to_end_test_form_api_private_key = "" # Form API private key used by API end to end test
 }
 
 include "root" {

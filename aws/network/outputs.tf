@@ -77,3 +77,13 @@ output "connector_security_group_id" {
   description = "Connector security group ID"
   value       = aws_security_group.connector_db.id
 }
+
+output "service_discovery_private_dns_namespace_ecs_local_id" {
+  description = "Local ECS service discovery private DNS namespace ID"
+  value       = aws_service_discovery_private_dns_namespace.ecs_local.id
+}
+
+output "service_discovery_private_dns_namespace_ecs_local_name" {
+  description = "Local ECS service discovery private DNS namespace name"
+  value       = aws_service_discovery_private_dns_namespace.ecs_local.name
+}
