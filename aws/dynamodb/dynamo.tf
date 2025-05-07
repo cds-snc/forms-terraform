@@ -97,6 +97,11 @@ resource "aws_dynamodb_table" "audit_logs" {
     type = "S"
   }
 
+  attribute {
+    name = "Subject"
+    type = "S"
+  }
+
   global_secondary_index {
     name            = "UserByTime"
     hash_key        = "UserID"
@@ -109,6 +114,13 @@ resource "aws_dynamodb_table" "audit_logs" {
     hash_key        = "Status"
     range_key       = "TimeStamp"
     projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "SubjectByTimestamp"
+    hash_key        = "Subject"
+    range_key       = "TimeStamp"
+    projection_type = "KEYS_ONLY"
   }
 
   server_side_encryption {
@@ -150,6 +162,11 @@ resource "aws_dynamodb_table" "api_audit_logs" {
     type = "S"
   }
 
+  attribute {
+    name = "Subject"
+    type = "S"
+  }
+
   global_secondary_index {
     name            = "UserByTime"
     hash_key        = "UserID"
@@ -163,6 +180,15 @@ resource "aws_dynamodb_table" "api_audit_logs" {
     range_key       = "TimeStamp"
     projection_type = "ALL"
   }
+
+
+  global_secondary_index {
+    name            = "SubjectByTimestamp"
+    hash_key        = "Subject"
+    range_key       = "TimeStamp"
+    projection_type = "KEYS_ONLY"
+  }
+
 
   server_side_encryption {
     enabled     = true
