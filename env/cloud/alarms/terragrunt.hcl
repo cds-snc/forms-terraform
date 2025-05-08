@@ -105,6 +105,7 @@ dependency "lambdas" {
     lambda_submission_log_group_name               = "/aws/lambda/Submission"
     lambda_vault_integrity_log_group_name          = "/aws/lambda/Vault_Data_Integrity_Check"
     lambda_vault_integrity_function_name           = "vault-integrity"
+    lambda_api_end_to_end_test_log_group_name      = "/aws/lambda/API_End_To_End_Test"
   }
 }
 
@@ -223,6 +224,7 @@ inputs = {
   lambda_submission_log_group_name               = dependency.lambdas.outputs.lambda_submission_log_group_name
   lambda_vault_integrity_log_group_name          = dependency.lambdas.outputs.lambda_vault_integrity_log_group_name
   lambda_vault_integrity_function_name           = dependency.lambdas.outputs.lambda_vault_integrity_function_name
+  lambda_api_end_to_end_test_log_group_name      = dependency.lambdas.outputs.lambda_api_end_to_end_test_log_group_name
 
   rds_cluster_identifier = dependency.rds.outputs.rds_cluster_identifier
 

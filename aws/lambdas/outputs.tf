@@ -68,6 +68,11 @@ output "lambda_vault_integrity_function_name" {
   value       = aws_lambda_function.vault_integrity.function_name
 }
 
+output "lambda_api_end_to_end_test_log_group_name" {
+  description = "API end to end test Lambda CloudWatch log group name"
+  value       = aws_cloudwatch_log_group.api_end_to_end_test.name
+}
+
 output "forms_lambda_client_iam_role_name" {
   description = "IAM role name for forms client Lambda"
   value       = try(aws_iam_role.forms_lambda_client[0].name, null)

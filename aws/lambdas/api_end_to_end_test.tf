@@ -28,9 +28,20 @@ resource "aws_lambda_function" "api_end_to_end_test" {
     }
   }
 
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/API_End_To_End_Test"
+  }
+
   tracing_config {
     mode = "PassThrough"
   }
+}
+
+resource "aws_cloudwatch_log_group" "api_end_to_end_test" {
+  name              = "/aws/lambda/API_End_To_End_Test"
+  kms_key_id        = var.kms_key_cloudwatch_arn
+  retention_in_days = 731
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_run_api_end_to_end_test_lambda" {
