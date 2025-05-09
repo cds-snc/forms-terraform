@@ -178,7 +178,10 @@ dependency "ecr" {
 }
 
 dependency "idp" {
-  config_path                             = "../idp"
+  enabled = local.env != "development"
+
+  config_path = "../idp"
+
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
@@ -188,7 +191,10 @@ dependency "idp" {
 }
 
 dependency "api" {
-  config_path                             = "../api"
+  enabled = local.env != "development"
+
+  config_path = "../api"
+
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {

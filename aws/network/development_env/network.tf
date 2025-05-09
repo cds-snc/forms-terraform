@@ -82,4 +82,8 @@ data "aws_subnets" "lambda_endpoint_available" {
   depends_on = [aws_subnet.forms_private]
 }
 
-
+resource "aws_service_discovery_private_dns_namespace" "ecs_local" {
+  name        = "ecs.local"
+  description = "DNS namespace used to provide service discovery for ECS services to allow for local communication (within VPC)"
+  vpc         = aws_vpc.forms.id
+}
