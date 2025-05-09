@@ -295,3 +295,12 @@ resource "aws_iam_role_policy_attachment" "lambda_sns" {
   role       = aws_iam_role.lambda.name
   policy_arn = aws_iam_policy.lambda_sns.arn
 }
+
+// This is required by the API end to end test lambda function
+
+resource "aws_lambda_permission" "allow_submission_lambda_invoke" {
+  statement_id  = "AllowSubmissionInvokeFromLambda"
+  action        = "lambda:InvokeFunction"
+  principal     = aws_iam_role.lambda.arn
+  function_name = aws_lambda_function.submission.function_name
+}

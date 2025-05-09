@@ -5,6 +5,7 @@ import { SubmissionGenerator } from "@lib/submissionGenerator.js";
 import { CommonUseCaseTest } from "@tests/commonUseCaseTest.js";
 import { RateLimiterTest } from "@tests/rateLimiterTest.js";
 
+const IDP_TRUSTED_DOMAIN: string = process.env.IDP_TRUSTED_DOMAIN ?? "";
 const IDP_URL: string = process.env.IDP_URL ?? "";
 const IDP_PROJECT_IDENTIFIER: string = process.env.IDP_PROJECT_IDENTIFIER ?? "";
 const API_URL: string = process.env.API_URL ?? "";
@@ -17,7 +18,12 @@ export const handler: Handler = async () => {
 
     const privateApiKey = JSON.parse(API_PRIVATE_KEY) as PrivateApiKey;
 
-    const idpClient = new IdpClient(IDP_URL, IDP_PROJECT_IDENTIFIER, privateApiKey);
+    const idpClient = new IdpClient(
+      IDP_TRUSTED_DOMAIN,
+      IDP_URL,
+      IDP_PROJECT_IDENTIFIER,
+      privateApiKey
+    );
 
     const apiAccessToken = await idpClient.generateAccessToken();
 
