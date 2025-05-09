@@ -44,6 +44,7 @@ tf.plan
 
 # Ignore lambda builds
 **/dist
+**/build
 
 # Ignore Mac OS file types
 .DS_Store

@@ -5,10 +5,8 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "prebuild": "rm -rf dist",
-    "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
-    "build:dev": "tsc --project tsconfig.json --watch",
-    "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cd ./dist && yarn install --production"
+    "build": "rm -rf build && tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
+    "build:dev": "tsc --project tsconfig.json --watch"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "3.799.0",
