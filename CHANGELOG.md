@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.33.0](https://github.com/cds-snc/forms-terraform/compare/v3.32.1...v3.33.0) (2025-05-09)
+
+
+### Features
+
+* API end to end test ([#1004](https://github.com/cds-snc/forms-terraform/issues/1004)) ([b815a45](https://github.com/cds-snc/forms-terraform/commit/b815a4575e736b06796dfc1086aa70c900337945))
+
+
+### Bug Fixes
+
+* API end to end test NodeJS app + container was not properly built ([#1011](https://github.com/cds-snc/forms-terraform/issues/1011)) ([075d928](https://github.com/cds-snc/forms-terraform/commit/075d9282975968d19e29d2f2f6261e881d45fc79))
+* missing service discovery resource in development mode ([#1010](https://github.com/cds-snc/forms-terraform/issues/1010)) ([466f79b](https://github.com/cds-snc/forms-terraform/commit/466f79b9bb2b8034a3bf11706b064a9139f665d9))
+
+
+### Miscellaneous Chores
+
+* Add index for subject tracing ([#1007](https://github.com/cds-snc/forms-terraform/issues/1007)) ([643d7a6](https://github.com/cds-snc/forms-terraform/commit/643d7a6950c21ef3a64990a595d658a1cf9d2afe))
+
 ## [3.32.1](https://github.com/cds-snc/forms-terraform/compare/v3.32.0...v3.32.1) (2025-05-06)
 
 
