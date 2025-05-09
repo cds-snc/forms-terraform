@@ -119,3 +119,14 @@ resource "aws_security_group_rule" "idp_db_egress_privatelink" {
   security_group_id        = aws_security_group.idp_db.id
   source_security_group_id = aws_security_group.privatelink.id
 }
+
+// Allow API end to end test local communication from Lambda to IdP
+
+resource "aws_vpc_security_group_ingress_rule" "local_lambda_to_idp" {
+  description                  = "Ingress to IdP from Lambda for local communication"
+  security_group_id            = aws_security_group.idp_ecs.id
+  referenced_security_group_id = aws_security_group.lambda.id
+  ip_protocol                  = "tcp"
+  from_port                    = 8080
+  to_port                      = 8080
+}

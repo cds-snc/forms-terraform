@@ -87,3 +87,14 @@ resource "aws_security_group_rule" "api_ecs_egress_redis" {
   security_group_id        = aws_security_group.api_ecs.id
   source_security_group_id = aws_security_group.forms_redis.id
 }
+
+// Allow API end to end test local communication from Lambda to API
+
+resource "aws_vpc_security_group_ingress_rule" "local_lambda_to_api" {
+  description                  = "Ingress to API from Lambda for local communication"
+  security_group_id            = aws_security_group.api_ecs.id
+  referenced_security_group_id = aws_security_group.lambda.id
+  ip_protocol                  = "tcp"
+  from_port                    = 3001
+  to_port                      = 3001
+}
