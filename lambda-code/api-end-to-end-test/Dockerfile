@@ -1,11 +1,11 @@
-FROM public.ecr.aws/lambda/nodejs:22 as builder
+FROM public.ecr.aws/lambda/nodejs:22 as build
 
 WORKDIR /usr/app
 
 RUN npm install -g yarn
 RUN yarn set version stable
 
-COPY package.json yarn.lock ./
+COPY .yarnrc.yml package.json yarn.lock ./
 
 RUN yarn install --frozen-lockfile
 
@@ -18,6 +18,8 @@ FROM public.ecr.aws/lambda/nodejs:22
 
 WORKDIR ${LAMBDA_TASK_ROOT}
 
-COPY --from=builder /usr/app/dist/ ./
+COPY package.json ./
+COPY --from=build /usr/app/node_modules ./node_modules
+COPY --from=build /usr/app/build ./
 
 CMD ["main.handler"]
