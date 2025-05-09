@@ -27,7 +27,7 @@ locals {
 }
 
 module "api_ecs" {
-  source = "github.com/cds-snc/terraform-modules//ecs?ref=64b19ecfc23025718cd687e24b7115777fd09666" # v10.2.1
+  source = "github.com/cds-snc/terraform-modules//ecs?ref=374e397485ef4888d455e2a3c6237376a45179cb" # v10.4.4
 
   create_cluster = false
   cluster_name   = var.ecs_cluster_name
@@ -67,9 +67,11 @@ module "api_ecs" {
   ]
 
   # Networking
-  lb_target_group_arn = var.lb_target_group_arn_api_ecs
-  subnet_ids          = var.private_subnet_ids
-  security_group_ids  = [var.security_group_id_api_ecs]
+  lb_target_group_arn            = var.lb_target_group_arn_api_ecs
+  subnet_ids                     = var.private_subnet_ids
+  security_group_ids             = [var.security_group_id_api_ecs]
+  service_discovery_enabled      = true
+  service_discovery_namespace_id = var.service_discovery_private_dns_namespace_ecs_local_id
 
   billing_tag_key   = var.billing_tag_key
   billing_tag_value = var.billing_tag_value

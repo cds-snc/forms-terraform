@@ -160,3 +160,9 @@ resource "aws_route_table_association" "forms_private_route" {
   subnet_id      = aws_subnet.forms_private.*.id[count.index]
   route_table_id = aws_route_table.forms_private_subnet.*.id[count.index]
 }
+
+resource "aws_service_discovery_private_dns_namespace" "ecs_local" {
+  name        = "ecs.local"
+  description = "DNS namespace used to provide service discovery for ECS services to allow for local communication (within VPC)"
+  vpc         = aws_vpc.forms.id
+}

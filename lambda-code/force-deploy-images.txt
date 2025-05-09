@@ -1,4 +1,0 @@
-If the content of this file is being changed then the dorny/paths-filter Github workflow step will detect it 
-and force a new build, tag, push and deploy step when the Terraform apply workflow is executed.
-
-You can put anything here :)

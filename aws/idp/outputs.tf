@@ -13,6 +13,11 @@ output "ecs_idp_service_name" {
   value       = module.idp_ecs.service_name
 }
 
+output "ecs_idp_service_port" {
+  description = "IdP's ECS service port"
+  value       = module.idp_ecs.service_port
+}
+
 output "lb_idp_arn_suffix" {
   description = "IdP's load balancer ARN suffix"
   value       = aws_lb.idp.arn_suffix
