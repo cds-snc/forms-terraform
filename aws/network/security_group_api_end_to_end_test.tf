@@ -15,7 +15,7 @@ resource "aws_vpc_security_group_egress_rule" "local_lambda_to_idp" {
 
 // Using aws_security_group_rule instead of aws_vpc_security_group_egress_rule
 // due to warning on https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule
-resource "aws_security_group_rule" "local_lambda_to_api_ingress" {
+resource "aws_security_group_rule" "local_lambda_to_idp_ingress" {
   description              = "Ingress to IdP from Lambda for local communication"
   type                     = "ingress"
   security_group_id        = aws_security_group.idp_ecs.id
