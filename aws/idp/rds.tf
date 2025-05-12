@@ -7,7 +7,7 @@ module "idp_database" {
 
   database_name           = var.zitadel_database_name
   engine                  = "aurora-postgresql"
-  engine_version          = "16.2"
+  engine_version          = "16.6"
   instances               = 1 # TODO: increase for prod loads
   instance_class          = "db.serverless"
   serverless_min_capacity = var.idp_database_min_acu
