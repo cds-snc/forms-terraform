@@ -4,7 +4,7 @@ resource "aws_security_group" "api_end_to_end_test_lambda" {
   vpc_id      = aws_vpc.forms.id
 }
 
-resource "aws_security_group_rule" "local_lambda_to_idp" {
+resource "aws_security_group_rule" "local_lambda_to_idp_egress" {
   description              = "Egress from Lambda to IdP for local communication"
   type                     = "egress"
   security_group_id        = aws_security_group.api_end_to_end_test_lambda.id
@@ -14,7 +14,7 @@ resource "aws_security_group_rule" "local_lambda_to_idp" {
   to_port                  = 8080
 }
 
-resource "aws_security_group_rule" "local_lambda_to_api" {
+resource "aws_security_group_rule" "local_lambda_to_api_ingress" {
   description              = "Ingress to IdP from Lambda for local communication"
   type                     = "ingress"
   security_group_id        = aws_security_group.idp_ecs.id
@@ -24,7 +24,7 @@ resource "aws_security_group_rule" "local_lambda_to_api" {
   to_port                  = 8080
 }
 
-resource "aws_security_group_rule" "local_lambda_to_api" {
+resource "aws_security_group_rule" "local_lambda_to_api_egress" {
   description              = "Egress from Lambda to API for local communication"
   type                     = "egress"
   security_group_id        = aws_security_group.api_end_to_end_test_lambda.id
@@ -34,7 +34,7 @@ resource "aws_security_group_rule" "local_lambda_to_api" {
   to_port                  = 3001
 }
 
-resource "aws_security_group_rule" "local_lambda_to_api" {
+resource "aws_security_group_rule" "local_lambda_to_api_ingress" {
   description              = "Ingress to API from Lambda for local communication"
   type                     = "ingress"
   security_group_id        = aws_security_group.api_ecs.id
