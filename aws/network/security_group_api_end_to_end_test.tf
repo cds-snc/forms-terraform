@@ -14,7 +14,7 @@ resource "aws_security_group_rule" "local_lambda_to_idp_egress" {
   to_port                  = 8080
 }
 
-resource "aws_security_group_rule" "local_lambda_to_api_ingress" {
+resource "aws_security_group_rule" "local_lambda_to_idp_ingress" {
   description              = "Ingress to IdP from Lambda for local communication"
   type                     = "ingress"
   security_group_id        = aws_security_group.idp_ecs.id
