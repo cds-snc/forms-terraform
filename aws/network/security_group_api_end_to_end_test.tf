@@ -48,7 +48,7 @@ resource "aws_security_group_rule" "local_lambda_to_api_ingress" {
 
 // This allows the API end to end test lambda to invoke the Submission lambda
 resource "aws_vpc_security_group_egress_rule" "https_from_api_end_to_end_test_to_private_link" {
-  description       = "Egress to privatelink security group for HTTPS communication"
+  description       = "Egress to the internet for HTTPS communication"
   security_group_id = aws_security_group.api_end_to_end_test_lambda.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "tcp"
