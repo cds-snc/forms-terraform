@@ -261,3 +261,8 @@ variable "ecs_api_service_port" {
   description = "API's ECS service port"
   type        = number
 }
+
+variable "api_end_to_end_test_lambda_security_group_id" {
+  description = "API end to end test Lambda security group ID"
+  type        = string
+}

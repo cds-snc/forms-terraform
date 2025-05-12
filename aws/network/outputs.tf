@@ -87,3 +87,8 @@ output "service_discovery_private_dns_namespace_ecs_local_name" {
   description = "Local ECS service discovery private DNS namespace name"
   value       = aws_service_discovery_private_dns_namespace.ecs_local.name
 }
+
+output "api_end_to_end_test_lambda_security_group_id" {
+  description = "API end to end test Lambda security group ID"
+  value       = aws_security_group.api_end_to_end_test_lambda.id
+}

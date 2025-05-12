@@ -38,6 +38,7 @@ dependency "network" {
     lambda_security_group_id                               = "sg-1234"
     private_subnet_ids                                     = ["prv-1", "prv-2"]
     service_discovery_private_dns_namespace_ecs_local_name = "ecs.local"
+    api_end_to_end_test_lambda_security_group_id           = "sg-1235"
   }
 }
 
@@ -215,6 +216,7 @@ inputs = {
   lambda_security_group_id                               = dependency.network.outputs.lambda_security_group_id
   private_subnet_ids                                     = dependency.network.outputs.private_subnet_ids
   service_discovery_private_dns_namespace_ecs_local_name = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_name
+  api_end_to_end_test_lambda_security_group_id           = dependency.network.outputs.api_end_to_end_test_lambda_security_group_id
 
   dynamodb_relability_queue_arn      = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
   dynamodb_vault_arn                 = dependency.dynamodb.outputs.dynamodb_vault_arn
