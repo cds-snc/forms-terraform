@@ -10,7 +10,7 @@ resource "aws_lambda_function" "api_end_to_end_test" {
   timeout       = 300
 
   vpc_config {
-    security_group_ids = [var.lambda_security_group_id]
+    security_group_ids = [var.api_end_to_end_test_lambda_security_group_id]
     subnet_ids         = var.private_subnet_ids
   }
 

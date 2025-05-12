@@ -140,23 +140,3 @@ resource "aws_security_group_rule" "s3_gateway_connector_db_egress" {
   security_group_id = aws_security_group.connector_db.id
   prefix_list_ids   = [data.aws_vpc_endpoint.s3_lambda[0].prefix_list_id]
 }
-
-// Allow API end to end test local communication from Lambda to IdP and API
-
-resource "aws_vpc_security_group_egress_rule" "local_lambda_to_idp" {
-  description                  = "Egress from Lambda to IdP for local communication"
-  security_group_id            = aws_security_group.lambda.id
-  referenced_security_group_id = aws_security_group.idp_ecs.id
-  ip_protocol                  = "tcp"
-  from_port                    = 8080
-  to_port                      = 8080
-}
-
-resource "aws_vpc_security_group_egress_rule" "local_lambda_to_api" {
-  description                  = "Egress from Lambda to API for local communication"
-  security_group_id            = aws_security_group.lambda.id
-  referenced_security_group_id = aws_security_group.api_ecs.id
-  ip_protocol                  = "tcp"
-  from_port                    = 3001
-  to_port                      = 3001
-}
