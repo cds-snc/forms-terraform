@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.33.1](https://github.com/cds-snc/forms-terraform/compare/v3.33.0...v3.33.1) (2025-05-13)
+
+
+### Bug Fixes
+
+* add api end to end test lambda to list of production lambdas ([#1017](https://github.com/cds-snc/forms-terraform/issues/1017)) ([02d4be3](https://github.com/cds-snc/forms-terraform/commit/02d4be396a4f2e69fdedd2e048207295f58cc930))
+
 ## [3.33.0](https://github.com/cds-snc/forms-terraform/compare/v3.32.1...v3.33.0) (2025-05-12)
 
 
