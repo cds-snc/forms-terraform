@@ -4,6 +4,7 @@
 
 resource "aws_lambda_function" "api_end_to_end_test" {
   function_name = "api-end-to-end-test"
+  architectures = ["arm64"]
   image_uri     = "${var.ecr_repository_lambda_urls["api-end-to-end-test-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn

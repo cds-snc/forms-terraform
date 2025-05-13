@@ -4,6 +4,7 @@
 
 resource "aws_lambda_function" "form_archiver" {
   function_name = "form-archiver"
+  architectures = ["arm64"]
   image_uri     = "${var.ecr_repository_lambda_urls["form-archiver-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn

@@ -1,5 +1,6 @@
 resource "aws_lambda_function" "audit_logs_archiver" {
   function_name = "audit-logs-archiver"
+  architectures = ["arm64"]
   image_uri     = "${var.ecr_repository_lambda_urls["audit-logs-archiver-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn

@@ -5,6 +5,7 @@
 #tfsec:ignore:aws-lambda-enable-tracing
 resource "aws_lambda_function" "notify_slack" {
   function_name = "notify-slack"
+  architectures = ["arm64"]
   image_uri     = "${var.ecr_repository_url_notify_slack_lambda}:latest"
   package_type  = "Image"
   role          = aws_iam_role.notify_slack_lambda.arn

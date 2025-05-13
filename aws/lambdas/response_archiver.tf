@@ -5,6 +5,7 @@
 
 resource "aws_lambda_function" "response_archiver" {
   function_name = "response-archiver"
+  architectures = ["arm64"]
   image_uri     = "${var.ecr_repository_lambda_urls["response-archiver-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn

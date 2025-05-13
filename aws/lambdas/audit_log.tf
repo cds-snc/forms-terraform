@@ -5,6 +5,7 @@
 
 resource "aws_lambda_function" "audit_logs" {
   function_name = "audit-logs"
+  architectures = ["arm64"]
   image_uri     = "${var.ecr_repository_lambda_urls["audit-logs-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn

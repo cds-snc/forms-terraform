@@ -4,6 +4,7 @@
 
 resource "aws_lambda_function" "cognito_email_sender" {
   function_name = "cognito-email-sender"
+  architectures = ["arm64"]
   image_uri     = "${var.ecr_repository_url_cognito_email_sender_lambda}:latest"
   package_type  = "Image"
   role          = aws_iam_role.cognito_lambda.arn
@@ -49,6 +50,7 @@ resource "aws_cloudwatch_log_group" "cognito_email_sender" {
 
 resource "aws_lambda_function" "cognito_pre_sign_up" {
   function_name = "cognito-pre-sign-up"
+  architectures = ["arm64"]
   image_uri     = "${var.ecr_repository_url_cognito_pre_sign_up_lambda}:latest"
   package_type  = "Image"
   role          = aws_iam_role.cognito_lambda.arn

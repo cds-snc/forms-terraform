@@ -4,6 +4,7 @@
 
 resource "aws_lambda_function" "nagware" {
   function_name = "nagware"
+  architectures = ["arm64"]
   image_uri     = "${var.ecr_repository_lambda_urls["nagware-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
