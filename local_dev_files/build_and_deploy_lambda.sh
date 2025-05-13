@@ -42,7 +42,6 @@ for lambdaFolderPath in $basedir/*/; do
   lambdaName=$(basename $lambdaFolderPath)
 
   if [[ ! " ${lambdasToSkip[@]} " =~ " ${lambdaName} " ]]; then
-
     cd $lambdaFolderPath
 
     printf "${greenColor}=> Building new ${lambdaName} image${reset}\n"
@@ -61,7 +60,6 @@ for lambdaFolderPath in $basedir/*/; do
     aws lambda update-function-code --function-name $functionName --image-uri $ecrRepositoryAddress/$repositoryName:latest >/dev/null || continue
   else
     printf "${yellowColor}=> Skipping $lambdaName Lambda as the associated resource was not requested.${reset}\n"
-    continue
   fi
 done
 
