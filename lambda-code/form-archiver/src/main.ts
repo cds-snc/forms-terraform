@@ -1,4 +1,4 @@
-import { deleteFormTemplatesMarkedAsArchived } from "./lib/templates.js";
+import { deleteFormTemplatesMarkedAsArchived } from "@lib/templates.js";
 import { Handler } from "aws-lambda";
 
 export const handler: Handler = async () => {
