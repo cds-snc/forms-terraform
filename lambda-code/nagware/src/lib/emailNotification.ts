@@ -9,7 +9,7 @@ export async function notifyFormOwner(
     const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
       process.env.NOTIFY_API_KEY ?? ""
     );
-    
+
     const templateId = process.env.TEMPLATE_ID;
 
     if (templateId === undefined) {
