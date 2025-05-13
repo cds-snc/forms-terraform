@@ -49,7 +49,9 @@ export default async (
         ? formSubmission.deliveryOption.emailSubjectEn
         : formSubmission.form.titleEn;
 
-    const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(process.env.NOTIFY_API_KEY ?? "");
+    const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
+      process.env.NOTIFY_API_KEY ?? ""
+    );
 
     await gcNotifyConnector.sendEmail(
       formSubmission.deliveryOption.emailAddress,

@@ -1,8 +1,8 @@
 import { Handler, SQSEvent } from "aws-lambda";
-import sendToNotify from "./lib/notifyProcessing.js";
-import sendToVault from "./lib/vaultProcessing.js";
-import { getTemplateInfo } from "./lib/templates.js";
-import { getSubmission } from "./lib/dataLayer.js";
+import sendToNotify from "@lib/notifyProcessing.js";
+import sendToVault from "@lib/vaultProcessing.js";
+import { getTemplateInfo } from "@lib/templates.js";
+import { getSubmission } from "@lib/dataLayer.js";
 
 export const handler: Handler = async (event: SQSEvent) => {
   const message = JSON.parse(event.Records[0].body);
