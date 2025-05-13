@@ -53,7 +53,9 @@ export const handler: Handler = async (event) => {
   ) {
     // attempt to send the code to the user through Notify
     try {
-      const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(process.env.NOTIFY_API_KEY ?? "");
+      const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
+        process.env.NOTIFY_API_KEY ?? ""
+      );
 
       await gcNotifyConnector.sendEmail(userEmail, TEMPLATE_ID, {
         passwordReset: event.triggerSource === "CustomEmailSender_ForgotPassword",
