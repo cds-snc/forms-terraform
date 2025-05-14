@@ -1,5 +1,34 @@
 # Changelog
 
+## [3.33.1](https://github.com/cds-snc/forms-terraform/compare/v3.33.0...v3.33.1) (2025-05-13)
+
+
+### Bug Fixes
+
+* add api end to end test lambda to list of production lambdas ([#1017](https://github.com/cds-snc/forms-terraform/issues/1017)) ([02d4be3](https://github.com/cds-snc/forms-terraform/commit/02d4be396a4f2e69fdedd2e048207295f58cc930))
+
+## [3.33.0](https://github.com/cds-snc/forms-terraform/compare/v3.32.1...v3.33.0) (2025-05-12)
+
+
+### Features
+
+* API end to end test ([#1004](https://github.com/cds-snc/forms-terraform/issues/1004)) ([b815a45](https://github.com/cds-snc/forms-terraform/commit/b815a4575e736b06796dfc1086aa70c900337945))
+
+
+### Bug Fixes
+
+* API end to end test NodeJS app + container was not properly built ([#1011](https://github.com/cds-snc/forms-terraform/issues/1011)) ([075d928](https://github.com/cds-snc/forms-terraform/commit/075d9282975968d19e29d2f2f6261e881d45fc79))
+* api end to end test security group can egress to the whole internet ([#1015](https://github.com/cds-snc/forms-terraform/issues/1015)) ([6c23ba5](https://github.com/cds-snc/forms-terraform/commit/6c23ba56077060f749d92bf3da0e5352cb58ca56))
+* API end to end test security group is missing connection with private link one ([#1014](https://github.com/cds-snc/forms-terraform/issues/1014)) ([2bcde35](https://github.com/cds-snc/forms-terraform/commit/2bcde35517747fb4c38009f478530470e75e6f1e))
+* aurora postgresql version for IdP RDS cluster ([#1013](https://github.com/cds-snc/forms-terraform/issues/1013)) ([62a3ba4](https://github.com/cds-snc/forms-terraform/commit/62a3ba4e15b9595ad2f3b11b3c4b3e6f29a3409d))
+* local communication issues between API end to end test lambda and IdP + API services ([#1012](https://github.com/cds-snc/forms-terraform/issues/1012)) ([23ac1d4](https://github.com/cds-snc/forms-terraform/commit/23ac1d475d82a9089eb4c359b1b3441b8862c674))
+* missing service discovery resource in development mode ([#1010](https://github.com/cds-snc/forms-terraform/issues/1010)) ([466f79b](https://github.com/cds-snc/forms-terraform/commit/466f79b9bb2b8034a3bf11706b064a9139f665d9))
+
+
+### Miscellaneous Chores
+
+* Add index for subject tracing ([#1007](https://github.com/cds-snc/forms-terraform/issues/1007)) ([643d7a6](https://github.com/cds-snc/forms-terraform/commit/643d7a6950c21ef3a64990a595d658a1cf9d2afe))
+
 ## [3.32.1](https://github.com/cds-snc/forms-terraform/compare/v3.32.0...v3.32.1) (2025-05-06)
 
 
