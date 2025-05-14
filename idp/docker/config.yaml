@@ -2,29 +2,27 @@
 # https://zitadel.com/docs/self-hosting/manage/configure#runtime-configuration-file
 
 Log:
-  Level: 'info'
+  Level: "info"
 
 Port: 8080
-ExternalPort: 443
-ExternalSecure: true
+ExternalPort: 8080
+ExternalSecure: false
 TLS:
-  Enabled: true
-  KeyPath: '/app/private.key'
-  CertPath: '/app/certificate.crt'
+  Enabled: false
 
 Database:
   postgres:
     Port: 5432
     User:
       SSL:
-        Mode: 'require'
+        Mode: "require"
     Admin:
       SSL:
-        Mode: 'require'
+        Mode: "require"
     MaxOpenConns: 25
     MaxIdleConns: 10
-    MaxConnLifetime: '30m'
-    MaxConnIdleTime: '5m'
+    MaxConnLifetime: "30m"
+    MaxConnIdleTime: "5m"
 
 DefaultInstance:
   LoginPolicy:
@@ -32,13 +30,13 @@ DefaultInstance:
     ForceMFA: true
     HidePasswordReset: true
   OIDCSettings:
-    AccessTokenLifetime: '0.5h'
-    IdTokenLifetime: '0.5h'
-    RefreshTokenIdleExpiration: '720h'
-    RefreshTokenExpiration: '2160h'
+    AccessTokenLifetime: "0.5h"
+    IdTokenLifetime: "0.5h"
+    RefreshTokenIdleExpiration: "720h"
+    RefreshTokenExpiration: "2160h"
 
 OIDC:
-  DefaultAccessTokenLifetime: '0.5h'
-  DefaultIdTokenLifetime: '0.5h'
-  DefaultRefreshTokenIdleExpiration: '720h'
-  DefaultRefreshTokenExpiration: '2160h'
+  DefaultAccessTokenLifetime: "0.5h"
+  DefaultIdTokenLifetime: "0.5h"
+  DefaultRefreshTokenIdleExpiration: "720h"
+  DefaultRefreshTokenExpiration: "2160h"
