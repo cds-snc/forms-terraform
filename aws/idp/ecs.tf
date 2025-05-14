@@ -64,7 +64,7 @@ module "idp_ecs" {
 
   # Task definition
   container_image       = "${var.zitadel_image_ecr_url}:${var.zitadel_image_tag}"
-  container_command     = ["start-from-init", "--masterkeyFromEnv", "--tlsMode", "disabled", "--config", "/app/config.yaml", "--steps", "/app/steps.yaml"] # TODO: update to `start` command only for prod
+  container_command     = ["start-from-init", "--masterkeyFromEnv", "--tlsMode", "external", "--config", "/app/config.yaml", "--steps", "/app/steps.yaml"] # TODO: update to `start` command only for prod
   container_host_port   = 8080
   container_port        = 8080
   container_environment = local.container_env
