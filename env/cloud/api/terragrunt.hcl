@@ -114,8 +114,6 @@ dependency "sqs" {
 }
 
 dependency "idp" {
-  enabled = local.env != "development"
-
   config_path = "../idp"
 
   mock_outputs_merge_strategy_with_state  = "shallow"
