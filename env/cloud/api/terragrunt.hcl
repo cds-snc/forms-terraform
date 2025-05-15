@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms", "../network", "../dynamodb", "../load_balancer", "../ecr", "../redis", "../s3", "../app", "../secrets", "../rds", "../sqs"]
+  paths = ["../kms", "../network", "../dynamodb", "../load_balancer", "../ecr", "../redis", "../s3", "../app", "../secrets", "../rds", "../sqs", "../idp"]
 }
 
 dependency "app" {
@@ -59,9 +59,10 @@ dependency "network" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    api_ecs_security_group_id                            = "sg-1234567890"
-    private_subnet_ids                                   = ["prv-1", "prv-2"]
-    service_discovery_private_dns_namespace_ecs_local_id = ""
+    api_ecs_security_group_id                              = "sg-1234567890"
+    private_subnet_ids                                     = ["prv-1", "prv-2"]
+    service_discovery_private_dns_namespace_ecs_local_id   = ""
+    service_discovery_private_dns_namespace_ecs_local_name = "ecs.local"
   }
 }
 
@@ -112,6 +113,17 @@ dependency "sqs" {
   }
 }
 
+dependency "idp" {
+  config_path = "../idp"
+
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    ecs_idp_service_name = "zitadel"
+    ecs_idp_service_port = 8080
+  }
+}
+
 locals {
   zitadel_domain = get_env("ZITADEL_PROVIDER", "https://localhost")
   aws_account_id = get_env("AWS_ACCOUNT_ID", "000000000000")
@@ -123,9 +135,10 @@ inputs = {
   ecs_cluster_name            = dependency.app.outputs.ecs_cluster_name
   lb_target_group_arn_api_ecs = dependency.load_balancer.outputs.lb_target_group_api_arn
 
-  security_group_id_api_ecs                            = dependency.network.outputs.api_ecs_security_group_id
-  private_subnet_ids                                   = dependency.network.outputs.private_subnet_ids
-  service_discovery_private_dns_namespace_ecs_local_id = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_id
+  security_group_id_api_ecs                              = dependency.network.outputs.api_ecs_security_group_id
+  private_subnet_ids                                     = dependency.network.outputs.private_subnet_ids
+  service_discovery_private_dns_namespace_ecs_local_id   = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_id
+  service_discovery_private_dns_namespace_ecs_local_name = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_name
 
   kms_key_dynamodb_arn      = dependency.kms.outputs.kms_key_dynamodb_arn
   dynamodb_vault_arn        = dependency.dynamodb.outputs.dynamodb_vault_arn
@@ -142,6 +155,9 @@ inputs = {
   rds_connection_url_secret_arn = dependency.rds.outputs.database_url_secret_arn
 
   sqs_api_audit_log_queue_arn = dependency.sqs.outputs.sqs_api_audit_log_queue_arn
+
+  ecs_idp_service_name = dependency.idp.outputs.ecs_idp_service_name
+  ecs_idp_service_port = dependency.idp.outputs.ecs_idp_service_port
 }
 
 include "root" {
