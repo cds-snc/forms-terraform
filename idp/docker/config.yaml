@@ -19,9 +19,9 @@ Database:
     Admin:
       SSL:
         Mode: "require"
-    MaxOpenConns: 25
+    MaxOpenConns: 15
     MaxIdleConns: 10
-    MaxConnLifetime: "30m"
+    MaxConnLifetime: "1h"
     MaxConnIdleTime: "5m"
 
 DefaultInstance:
