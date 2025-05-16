@@ -2,7 +2,7 @@
 # https://zitadel.com/docs/self-hosting/manage/configure#runtime-configuration-file
 
 Log:
-  Level: "debug"
+  Level: "info"
 
 Metrics:
   Type: none
