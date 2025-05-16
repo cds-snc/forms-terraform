@@ -54,7 +54,7 @@ Notifications:
   # Notifications can be processed by either a sequential mode (legacy) or a new parallel mode.
   # The parallel mode is currently only recommended for Postgres databases.
   # If legacy mode is enabled, the worker config below is ignored.
-  LegacyEnabled: false
+  LegacyEnabled: true
   # The amount of workers processing the notification request events.
   # If set to 0, no notification request events will be handled. This can be useful when running in
   # multi binary / pod setup and allowing only certain executables to process the events.
