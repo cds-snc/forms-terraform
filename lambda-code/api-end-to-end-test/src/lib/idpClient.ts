@@ -1,11 +1,6 @@
 import { createPrivateKey } from "node:crypto";
 import { SignJWT } from "jose";
 import axios from "axios";
-import https from "https";
-
-const noSslHttpsAgent = new https.Agent({
-  rejectUnauthorized: false,
-});
 
 export class IdpClient {
   private identityProviderTrustedDomain: string;
@@ -33,7 +28,7 @@ export class IdpClient {
       .setIssuedAt()
       .setIssuer(this.privateApiKey.userId)
       .setSubject(this.privateApiKey.userId)
-      .setAudience(`https://${this.identityProviderTrustedDomain}`) // To bypass JWT Audience check from IdP
+      .setAudience(`https://${this.identityProviderTrustedDomain}`) // Expected audience for the JWT token is the IdP external domain
       .setExpirationTime("1 minute");
 
     return jsonWebTokenSigner
@@ -47,9 +42,8 @@ export class IdpClient {
             scope: `openid profile urn:zitadel:iam:org:project:id:${this.projectIdentifier}:aud`,
           },
           {
-            httpsAgent: noSslHttpsAgent, // To bypass self signed SSL certificate barrier
             headers: {
-              Host: this.identityProviderTrustedDomain, // To bypass HTTP Host check from IdP
+              Host: this.identityProviderTrustedDomain, // This is required by Zitadel to accept requests. See https://zitadel.com/docs/self-hosting/manage/custom-domain#standard-config
               "Content-Type": "application/x-www-form-urlencoded",
             },
           }

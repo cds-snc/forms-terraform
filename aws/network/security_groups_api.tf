@@ -87,3 +87,25 @@ resource "aws_security_group_rule" "api_ecs_egress_redis" {
   security_group_id        = aws_security_group.api_ecs.id
   source_security_group_id = aws_security_group.forms_redis.id
 }
+
+# Local communication with IdP
+
+resource "aws_security_group_rule" "local_api_to_idp_egress" {
+  description              = "Allow API to communicate with IdP on port 8080"
+  type                     = "egress"
+  security_group_id        = aws_security_group.api_ecs.id
+  source_security_group_id = aws_security_group.idp_ecs.id
+  protocol                 = "tcp"
+  from_port                = 8080
+  to_port                  = 8080
+}
+
+resource "aws_security_group_rule" "local_api_to_idp_ingress" {
+  description              = "Allow IdP to receive communication from API on port 8080"
+  type                     = "ingress"
+  security_group_id        = aws_security_group.idp_ecs.id
+  source_security_group_id = aws_security_group.api_ecs.id
+  protocol                 = "tcp"
+  from_port                = 8080
+  to_port                  = 8080
+}
