@@ -2123,10 +2123,10 @@ indento@^1.1.13:
   resolved "https://registry.yarnpkg.com/indento/-/indento-1.1.13.tgz#751331b327c04740eeb7be40c5606e6e255c9e36"
   integrity sha512-YZWk3mreBEM7sBPddsiQnW9Z8SGg/gNpFfscJq00HCDS7pxcQWWWMSVKJU7YkTRyDu1Zv2s8zaK8gQWKmCXHlg==
 
-json2md@^1.10.0:
-  version "1.13.0"
-  resolved "https://registry.yarnpkg.com/json2md/-/json2md-1.13.0.tgz#aad7eabf6715cde30d40269d78f548b8ddac78e5"
-  integrity sha512-AhMhiz0fE1nmAzqJ042zt/d2wtTmd8cWZyTvBidfOQJvPRu5HPVQxC1lCehW26+XiDTQQ4H904FIRP4PAUHXHg==
+json2md@^2.0.0:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/json2md/-/json2md-2.0.3.tgz#f03eecb9a6e19de9c63a4744bab9cccf7b416cec"
+  integrity sha512-ZPzh6Djvqz8grJMxKllfCHo0p+p7BsbZ1J95KcCJgvvfdoy7myuKrrkUp80Kpy+wGauykC0dYljLqLY0kENaOw==
   dependencies:
     indento "^1.1.13"
 
