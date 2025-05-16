@@ -4,8 +4,17 @@
 Log:
   Level: "info"
 
+Metrics:
+  Type: none
+Tracing:
+  Type: none
+Profiler:
+  Type: none
+Telemetry:
+  Enabled: false
+
 Port: 8080
-ExternalPort: 8080
+ExternalPort: 443
 ExternalSecure: false
 TLS:
   Enabled: false
@@ -19,9 +28,9 @@ Database:
     Admin:
       SSL:
         Mode: "require"
-    MaxOpenConns: 15
+    MaxOpenConns: 20
     MaxIdleConns: 10
-    MaxConnLifetime: "1h"
+    MaxConnLifetime: "30m"
     MaxConnIdleTime: "5m"
 
 DefaultInstance:
