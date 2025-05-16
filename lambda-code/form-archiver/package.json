@@ -9,7 +9,7 @@
     "build:dev": "tsc --project tsconfig.json --watch"
   },
   "dependencies": {
-    "@aws-sdk/client-rds-data": "3.799.0"
+    "@aws-sdk/client-rds-data": "3.806.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.149",
