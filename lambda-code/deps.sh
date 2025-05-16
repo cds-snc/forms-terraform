@@ -15,12 +15,12 @@ for LAMBDA_DIR in "$SCRIPT_DIR"/*/; do
         echo "⚡ $LAMBDA_DIR $ACTION"
         if [ "$ACTION" = "delete" ]; then
             rm -rf "$LAMBDA_DIR/node_modules"
-            rm -rf "$LAMBDA_DIR/dist" || true
+            rm -rf "$LAMBDA_DIR/build" || true
         else
-            yarn --cwd "$LAMBDA_DIR" install
+            (cd "$LAMBDA_DIR" && yarn install)
             if test -f "$LAMBDA_DIR/tsconfig.json"; then
                 echo "⚡ $LAMBDA_DIR Building TypeScript"
-                yarn --cwd "$LAMBDA_DIR" build      
+                (cd "$LAMBDA_DIR" && yarn build)
             fi      
         fi
     fi
