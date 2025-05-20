@@ -1,5 +1,5 @@
-import * as notify_slack from "../main.js";
-import * as utils from "../utils.js";
+import * as notify_slack from "../src/main.js";
+import * as utils from "../src/utils.js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import * as zlib from "zlib";
 

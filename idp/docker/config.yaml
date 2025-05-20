@@ -2,29 +2,36 @@
 # https://zitadel.com/docs/self-hosting/manage/configure#runtime-configuration-file
 
 Log:
-  Level: 'info'
+  Level: "info"
+
+Metrics:
+  Type: none
+Tracing:
+  Type: none
+Profiler:
+  Type: none
+Telemetry:
+  Enabled: false
 
 Port: 8080
 ExternalPort: 443
-ExternalSecure: true
+ExternalSecure: false
 TLS:
-  Enabled: true
-  KeyPath: '/app/private.key'
-  CertPath: '/app/certificate.crt'
+  Enabled: false
 
 Database:
   postgres:
     Port: 5432
     User:
       SSL:
-        Mode: 'require'
+        Mode: "require"
     Admin:
       SSL:
-        Mode: 'require'
-    MaxOpenConns: 25
+        Mode: "require"
+    MaxOpenConns: 20
     MaxIdleConns: 10
-    MaxConnLifetime: '30m'
-    MaxConnIdleTime: '5m'
+    MaxConnLifetime: "30m"
+    MaxConnIdleTime: "5m"
 
 DefaultInstance:
   LoginPolicy:
@@ -32,13 +39,29 @@ DefaultInstance:
     ForceMFA: true
     HidePasswordReset: true
   OIDCSettings:
-    AccessTokenLifetime: '0.5h'
-    IdTokenLifetime: '0.5h'
-    RefreshTokenIdleExpiration: '720h'
-    RefreshTokenExpiration: '2160h'
+    AccessTokenLifetime: "0.5h"
+    IdTokenLifetime: "0.5h"
+    RefreshTokenIdleExpiration: "720h"
+    RefreshTokenExpiration: "2160h"
 
 OIDC:
-  DefaultAccessTokenLifetime: '0.5h'
-  DefaultIdTokenLifetime: '0.5h'
-  DefaultRefreshTokenIdleExpiration: '720h'
-  DefaultRefreshTokenExpiration: '2160h'
+  DefaultAccessTokenLifetime: "0.5h"
+  DefaultIdTokenLifetime: "0.5h"
+  DefaultRefreshTokenIdleExpiration: "720h"
+  DefaultRefreshTokenExpiration: "2160h"
+
+Notifications:
+  # Notifications can be processed by either a sequential mode (legacy) or a new parallel mode.
+  # The parallel mode is currently only recommended for Postgres databases.
+  # If legacy mode is enabled, the worker config below is ignored.
+  LegacyEnabled: false
+  # The amount of workers processing the notification request events.
+  # If set to 0, no notification request events will be handled. This can be useful when running in
+  # multi binary / pod setup and allowing only certain executables to process the events.
+  Workers: 1
+  # The maximum duration a job can do it's work before it is considered as failed.
+  TransactionDuration: 10s
+  # Automatically cancel the notification after the amount of failed attempts
+  MaxAttempts: 3
+  # Automatically cancel the notification if it cannot be handled within a specific time
+  MaxTtl: 5m

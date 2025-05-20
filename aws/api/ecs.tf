@@ -1,8 +1,17 @@
 locals {
   container_env = [
     {
+      # This variable should be removed once we have the new API build that relies on ZITADEL_TRUSTED_DOMAIN and ZITADEL_URL
       name  = "ZITADEL_DOMAIN"
       value = var.zitadel_provider
+    },
+    {
+      name  = "ZITADEL_TRUSTED_DOMAIN"
+      value = var.domain_idp
+    },
+    {
+      name  = "ZITADEL_URL"
+      value = "http://${var.ecs_idp_service_name}.${var.service_discovery_private_dns_namespace_ecs_local_name}:${var.ecs_idp_service_port}"
     },
     {
       name  = "ENVIRONMENT_MODE"

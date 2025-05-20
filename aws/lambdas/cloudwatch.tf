@@ -28,8 +28,8 @@ resource "aws_cloudwatch_event_rule" "form_archiver_lambda_trigger" {
 
 resource "aws_cloudwatch_event_rule" "api_end_to_end_test_lambda_trigger" {
   name                = "api-end-to-end-test-lambda-trigger"
-  description         = "Fires every day at 9 AM UTC"
-  schedule_expression = "cron(0 9 * * ? *)" # 4 AM EST / 5 AM EDT
+  description         = "Fires every hour"
+  schedule_expression = "rate(1 hour)"
 }
 
 resource "aws_cloudwatch_event_rule" "nagware_lambda_trigger" {
