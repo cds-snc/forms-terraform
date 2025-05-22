@@ -19,7 +19,7 @@ resource "aws_lambda_function" "reliability" {
 
   environment {
     variables = {
-      ENVIRONMENT    = var.env
+      ENVIRONMENT    = local.env
       REGION         = var.region
       NOTIFY_API_KEY = var.notify_api_key_secret_arn
       TEMPLATE_ID    = var.gc_template_id

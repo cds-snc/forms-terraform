@@ -86,6 +86,7 @@ if [ -z "$MODULE_NAME" ]; then
     --queue-include-dir $basedir/env/cloud/rds \
     --queue-include-dir $basedir/env/cloud/dynamodb \
     --queue-include-dir $basedir/env/cloud/lambdas \
+    --queue-include-dir $basedir/env/cloud/file_scanning \
     --queue-include-dir $basedir/env/cloud/vpn
 else
   printf "${greenColor}=> Only building ${MODULE_NAME} Terragrunt Module${reset}\n"
