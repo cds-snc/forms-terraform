@@ -21,7 +21,7 @@ resource "aws_lambda_function" "nagware" {
 
   environment {
     variables = {
-      ENVIRONMENT               = var.env
+      ENVIRONMENT               = local.env
       REGION                    = var.region
       DOMAIN                    = var.domains[0]
       DYNAMODB_VAULT_TABLE_NAME = var.dynamodb_vault_table_name
