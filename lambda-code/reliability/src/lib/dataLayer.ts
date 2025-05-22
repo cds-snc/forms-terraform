@@ -89,7 +89,7 @@ export async function notifyProcessed(submissionID: string) {
   }
 }
 
-const generateRandomString = (length: number = 4) => {
+const generateRandomString = (length: number = 5) => {
   const letters = "abcdefghijklmnopqrstuvwxyz";
   const characters = letters + "0123456789";
   let result = "";
@@ -103,9 +103,9 @@ const generateRandomString = (length: number = 4) => {
 
   // Shuffle result to avoid always starting with a letter
   return result
-    .split('')
+    .split("")
     .sort(() => 0.5 - Math.random())
-    .join('');
+    .join("");
 };
 
 export async function saveToVault(
@@ -130,11 +130,7 @@ export async function saveToVault(
       const name = `${("0" + submissionDate.getDate()).slice(-2)}-${(
         "0" +
         (submissionDate.getMonth() + 1)
-      ).slice(-2)}-${
-        duplicateFound
-          ? generateRandomString(4)
-          : submissionID.substring(0, 4)
-      }`;
+      ).slice(-2)}-${duplicateFound ? generateRandomString() : submissionID.substring(0, 5)}`;
 
       const PutSubmission = {
         Put: {
