@@ -89,6 +89,25 @@ export async function notifyProcessed(submissionID: string) {
   }
 }
 
+const generateRandomString = (length: number = 4) => {
+  const letters = "abcdefghijklmnopqrstuvwxyz";
+  const characters = letters + "0123456789";
+  let result = "";
+
+  // Ensure at least one letter
+  result += letters.charAt(Math.floor(Math.random() * letters.length));
+
+  for (let i = 1; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+
+  // Shuffle result to avoid always starting with a letter
+  return result
+    .split('')
+    .sort(() => 0.5 - Math.random())
+    .join('');
+};
+
 export async function saveToVault(
   submissionID: string,
   formResponse: Responses,
@@ -113,7 +132,7 @@ export async function saveToVault(
         (submissionDate.getMonth() + 1)
       ).slice(-2)}-${
         duplicateFound
-          ? Math.floor(1000 + Math.random() * 9000).toString()
+          ? generateRandomString(4)
           : submissionID.substring(0, 4)
       }`;
 
