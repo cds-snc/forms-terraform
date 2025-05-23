@@ -275,3 +275,18 @@ variable "hcaptcha_site_verify_key_secret_arn" {
   type        = string
   sensitive   = true
 }
+
+variable "service_discovery_private_dns_namespace_ecs_local_name" {
+  description = "Local ECS service discovery private DNS namespace name"
+  type        = string
+}
+
+variable "ecs_idp_service_name" {
+  description = "IdP's ECS service name"
+  type        = string
+}
+
+variable "ecs_idp_service_port" {
+  description = "IdP's ECS service port"
+  type        = number
+}

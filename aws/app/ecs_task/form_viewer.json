@@ -93,6 +93,14 @@
       {
         "name": "ZITADEL_PROVIDER",
         "value": "${zitadel_provider}"
+      },
+      {
+        "name": "ZITADEL_URL",
+        "value": "${zitadel_url}"
+      },
+      {
+        "name": "ZITADEL_TRUSTED_DOMAIN",
+        "value": "${zitadel_trusted_domain}"
       }
     ],
     "secrets": [

@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../cognito", "../secrets", "../s3"]
+  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../cognito", "../secrets", "../s3", "../idp"]
 }
 
 dependency "dynamodb" {
@@ -56,9 +56,10 @@ dependency "network" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    private_subnet_ids       = ["prv-1", "prv-2"]
-    egress_security_group_id = "sg-1234567890"
-    ecs_security_group_id    = "sg-1234567890"
+    private_subnet_ids                                     = ["prv-1", "prv-2"]
+    egress_security_group_id                               = "sg-1234567890"
+    ecs_security_group_id                                  = "sg-1234567890"
+    service_discovery_private_dns_namespace_ecs_local_name = "ecs.local"
   }
 }
 
@@ -132,6 +133,17 @@ dependency "s3" {
   }
 }
 
+dependency "idp" {
+  config_path = "../idp"
+
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    ecs_idp_service_name = "zitadel"
+    ecs_idp_service_port = 8080
+  }
+}
+
 locals {
   zitadel_provider = get_env("ZITADEL_PROVIDER", "https://localhost")
   aws_account_id   = get_env("AWS_ACCOUNT_ID", "000000000000")
@@ -167,9 +179,10 @@ inputs = {
   lb_target_group_1_name = dependency.load_balancer.outputs.lb_target_group_1_name
   lb_target_group_2_name = dependency.load_balancer.outputs.lb_target_group_2_name
 
-  ecs_security_group_id    = dependency.network.outputs.ecs_security_group_id
-  egress_security_group_id = dependency.network.outputs.egress_security_group_id
-  private_subnet_ids       = dependency.network.outputs.private_subnet_ids
+  ecs_security_group_id                                  = dependency.network.outputs.ecs_security_group_id
+  egress_security_group_id                               = dependency.network.outputs.egress_security_group_id
+  private_subnet_ids                                     = dependency.network.outputs.private_subnet_ids
+  service_discovery_private_dns_namespace_ecs_local_name = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_name
 
   redis_url = dependency.redis.outputs.redis_url
 
@@ -197,6 +210,9 @@ inputs = {
   vault_file_storage_id        = dependency.s3.outputs.vault_file_storage_id
   reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
   reliability_file_storage_id  = dependency.s3.outputs.reliability_file_storage_id
+
+  ecs_idp_service_name = dependency.idp.outputs.ecs_idp_service_name
+  ecs_idp_service_port = dependency.idp.outputs.ecs_idp_service_port
 
   zitadel_provider = local.zitadel_provider
 }
