@@ -306,28 +306,28 @@ jobs:
           lambda-name: ${{ matrix.image }}
           image-tag: ${{ env.VERSION }}
 
-  update-idp-ecs-service-image:
-    needs: [get-version, terragrunt-apply-all-modules]
-    if: ${{ !failure() && !cancelled() }}
-    runs-on: ubuntu-latest
-    env:
-      VERSION: ${{ needs.get-version.outputs.version }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          ref: ${{ env.VERSION }}
+  # update-idp-ecs-service-image:
+  #   needs: [get-version, terragrunt-apply-all-modules]
+  #   if: ${{ !failure() && !cancelled() }}
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     VERSION: ${{ needs.get-version.outputs.version }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+  #       with:
+  #         ref: ${{ env.VERSION }}
 
-      - name: Update IdP ESC service to use new image
-        uses: ./.github/workflows/request-ecs-service-to-use-new-image
-        with:
-          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
-          aws-role-session-name: TFApply
-          aws-region: ${{ env.AWS_REGION }}
-          ecs-cluster-name: idp
-          ecs-service-name: zitadel
-          ecs-task-def-name: zitadel
-          image-tag: "idp/zitadel:${{ env.VERSION }}"
+  #     - name: Update IdP ESC service to use new image
+  #       uses: ./.github/workflows/request-ecs-service-to-use-new-image
+  #       with:
+  #         aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
+  #         aws-role-session-name: TFApply
+  #         aws-region: ${{ env.AWS_REGION }}
+  #         ecs-cluster-name: idp
+  #         ecs-service-name: zitadel
+  #         ecs-task-def-name: zitadel
+  #         image-tag: "idp/zitadel:${{ env.VERSION }}"
 
   notify-on-error:
     needs: [
@@ -337,7 +337,7 @@ jobs:
         # build-tag-push-idp-image,
         terragrunt-apply-all-modules,
         update-lambda-function-image,
-        update-idp-ecs-service-image,
+        # update-idp-ecs-service-image,
       ]
     if: ${{ failure() && !cancelled() }}
     runs-on: ubuntu-latest
