@@ -145,7 +145,6 @@ dependency "idp" {
 }
 
 locals {
-  zitadel_provider = get_env("ZITADEL_PROVIDER", "https://localhost")
   aws_account_id   = get_env("AWS_ACCOUNT_ID", "000000000000")
 }
 
@@ -213,8 +212,6 @@ inputs = {
 
   ecs_idp_service_name = dependency.idp.outputs.ecs_idp_service_name
   ecs_idp_service_port = dependency.idp.outputs.ecs_idp_service_port
-
-  zitadel_provider = local.zitadel_provider
 }
 
 include "root" {
