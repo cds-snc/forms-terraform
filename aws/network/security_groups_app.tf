@@ -246,3 +246,25 @@ resource "aws_default_network_acl" "forms" {
     ignore_changes = [subnet_ids]
   }
 }
+
+# Local communication with IdP
+
+resource "aws_security_group_rule" "local_app_to_idp_egress" {
+  description              = "Allow App to communicate with IdP on port 8080"
+  type                     = "egress"
+  security_group_id        = aws_security_group.forms.id
+  source_security_group_id = aws_security_group.idp_ecs.id
+  protocol                 = "tcp"
+  from_port                = 8080
+  to_port                  = 8080
+}
+
+resource "aws_security_group_rule" "local_app_to_idp_ingress" {
+  description              = "Allow IdP to receive communication from App on port 8080"
+  type                     = "ingress"
+  security_group_id        = aws_security_group.idp_ecs.id
+  source_security_group_id = aws_security_group.forms.id
+  protocol                 = "tcp"
+  from_port                = 8080
+  to_port                  = 8080
+}
