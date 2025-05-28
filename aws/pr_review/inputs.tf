@@ -22,3 +22,8 @@ variable "forms_lambda_client_iam_role_name" {
   description = "IAM role name for forms client Lambda"
   type        = string
 }
+
+variable "idp_ecs_security_group_id" {
+  description = "IdP ECS task security group ID"
+  type        = string
+}
