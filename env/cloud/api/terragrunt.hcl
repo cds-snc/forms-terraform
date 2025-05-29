@@ -125,7 +125,6 @@ dependency "idp" {
 }
 
 locals {
-  zitadel_domain = get_env("ZITADEL_PROVIDER", "https://localhost")
   aws_account_id = get_env("AWS_ACCOUNT_ID", "000000000000")
 }
 
@@ -147,7 +146,6 @@ inputs = {
   redis_port = dependency.redis.outputs.redis_port
   redis_url  = dependency.redis.outputs.redis_url
 
-  zitadel_domain                     = local.zitadel_domain
   zitadel_application_key_secret_arn = dependency.secrets.outputs.zitadel_application_key_secret_arn
 
   freshdesk_api_key_secret_arn = dependency.secrets.outputs.freshdesk_api_key_secret_arn
