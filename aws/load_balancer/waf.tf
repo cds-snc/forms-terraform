@@ -518,7 +518,7 @@ resource "aws_wafv2_regex_pattern_set" "valid_api_uri_paths" {
   description = "Regex to match the api valid urls"
 
   regular_expression {
-    regex_string = "^(?:\\/v(\\d{1,2}))?\\/forms\\/(?:(\\w{25}))\\/(?:(template|(?:(submission\\/(?:(new|(?:(\\d{2}-\\d{2}-\\w{4})\\/?(?:(confirm\\/\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}|problem)?))))))))(?:\\/)?$"
+    regex_string = "^(?:\\/v(\\d{1,2}))?\\/forms\\/(?:(\\w{25}))\\/(?:(template|(?:(submission\\/(?:(new|(?:(\\d{2}-\\d{2}-\\w{4,5})\\/?(?:(confirm\\/\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}|problem)?))))))))(?:\\/)?$"
   }
 }
 
