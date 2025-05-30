@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.35.0](https://github.com/cds-snc/forms-terraform/compare/v3.34.0...v3.35.0) (2025-05-30)
+
+
+### Features
+
+* enable communication between Web App and IdP through PR review environment ([#1039](https://github.com/cds-snc/forms-terraform/issues/1039)) ([a5334b3](https://github.com/cds-snc/forms-terraform/commit/a5334b3abf866963a54c2b0864292faaef9f5003))
+
+
+### Miscellaneous Chores
+
+* Update API WAF allowed URL paths ([#1040](https://github.com/cds-snc/forms-terraform/issues/1040)) ([08a071d](https://github.com/cds-snc/forms-terraform/commit/08a071debcde3b4487c30fd97272f25e3b21bad3))
+* update submission id for response download ([#1032](https://github.com/cds-snc/forms-terraform/issues/1032)) ([371d49c](https://github.com/cds-snc/forms-terraform/commit/371d49c6fc7d7f1f83de3ad6e87fc1bad9e2c0e5))
+
 ## [3.34.0](https://github.com/cds-snc/forms-terraform/compare/v3.33.1...v3.34.0) (2025-05-27)
 
 
