@@ -43,7 +43,7 @@ resource "aws_lambda_event_source_mapping" "reliability" {
   enabled          = true
 
   scaling_config {
-    maximum_concurrency = 500
+    maximum_concurrency = 150
   }
 }
 
@@ -54,7 +54,7 @@ resource "aws_lambda_event_source_mapping" "reprocess_submission" {
   enabled          = true
 
   scaling_config {
-    maximum_concurrency = 500
+    maximum_concurrency = 150
   }
 }
 
