@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.35.1](https://github.com/cds-snc/forms-terraform/compare/v3.35.0...v3.35.1) (2025-06-04)
+
+
+### Miscellaneous Chores
+
+* set reliability lambda concurrency to 150 ([#1041](https://github.com/cds-snc/forms-terraform/issues/1041)) ([dac07b1](https://github.com/cds-snc/forms-terraform/commit/dac07b17f9aed7fa3b14b1f1a548ee9119393b26))
+
 ## [3.35.0](https://github.com/cds-snc/forms-terraform/compare/v3.34.0...v3.35.0) (2025-05-30)
 
 
