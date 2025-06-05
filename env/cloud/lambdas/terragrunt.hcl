@@ -73,9 +73,9 @@ dependency "sqs" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
     sqs_reliability_queue_arn            = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reliability_queue"
-    sqs_reliability_queue_id             = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/submission_processing.fifo"
-    sqs_reprocess_submission_queue_arn   = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reprocess_submission_queue.fifo"
-    sqs_reliability_dead_letter_queue_id = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/reliability_deadletter_queue.fifo"
+    sqs_reliability_queue_id             = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/submission_processing"
+    sqs_reprocess_submission_queue_arn   = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reprocess_submission_queue"
+    sqs_reliability_dead_letter_queue_id = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/reliability_deadletter_queue"
     sqs_app_audit_log_queue_arn          = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:audit_log_queue"
     sqs_api_audit_log_queue_arn          = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:api_audit_log_queue"
   }
