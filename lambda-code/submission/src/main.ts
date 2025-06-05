@@ -73,7 +73,7 @@ const enqueueReliabilityProcessingRequest = async (
           submissionID: submissionId,
         }),
         // Helps ensure the file scanning job is processed first
-        DelaySeconds: requiresFileScanning ? 60 : 5,
+        DelaySeconds: requiresFileScanning ? 30 : 5,
         QueueUrl: process.env.SQS_URL,
       })
     );
