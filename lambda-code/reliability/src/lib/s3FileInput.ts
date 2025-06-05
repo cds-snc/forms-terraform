@@ -1,6 +1,7 @@
 import {
   S3Client,
   GetObjectCommand,
+  GetObjectTaggingCommand,
   CopyObjectCommand,
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
@@ -104,3 +105,29 @@ export async function removeFilesFromReliabilityStorage(filePaths: string[]) {
     throw new Error(`Failed to remove files from reliability storage: ${filePaths.toString()}`);
   }
 }
+
+export const getFileMetaData = async (filePath: string) => {
+  try {
+    const commandInput = {
+      Bucket: reliabilityBucketName,
+      Key: filePath,
+    };
+
+    const response = await s3Client.send(
+      new GetObjectTaggingCommand({
+        Bucket: commandInput.Bucket,
+        Key: commandInput.Key,
+      })
+    );
+    const metadata = response.TagSet;
+
+    if (!metadata) {
+      throw new Error(`No metadata found for file: ${filePath}`);
+    }
+
+    return metadata;
+  } catch (error) {
+    console.error(JSON.stringify(error));
+    throw new Error(`Failed to retrieve metadata for file: ${filePath}`);
+  }
+};

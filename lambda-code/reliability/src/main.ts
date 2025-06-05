@@ -3,6 +3,7 @@ import sendToNotify from "@lib/notifyProcessing.js";
 import sendToVault from "@lib/vaultProcessing.js";
 import { getTemplateInfo } from "@lib/templates.js";
 import { getSubmission } from "@lib/dataLayer.js";
+import { verifyFileScanCompletion, FileScanningCompletionError } from "@lib/file_scanning.js";
 
 export const handler: Handler = async (event: SQSEvent) => {
   const message = JSON.parse(event.Records[0].body);
@@ -71,6 +72,15 @@ export const handler: Handler = async (event: SQSEvent) => {
       );
       throw new Error(`No associated form template (ID: ${formID}) exist in the database.`);
     }
+
+    // Verify if file scanning is required and if it has been completed
+    await verifyFileScanCompletion(formSubmission).then((isCompleted) => {
+      if (!isCompleted) {
+        throw new FileScanningCompletionError(
+          `File scanning for submission ID ${submissionID} is not completed.`
+        );
+      }
+    });
 
     /*
      Process submission to vault or Notify
