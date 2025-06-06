@@ -72,12 +72,12 @@ dependency "sqs" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    sqs_reliability_queue_arn            = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reliability_queue"
-    sqs_reliability_queue_id             = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/submission_processing"
-    sqs_reprocess_submission_queue_arn   = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reprocess_submission_queue"
-    sqs_reliability_dead_letter_queue_id = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/reliability_deadletter_queue"
-    sqs_app_audit_log_queue_arn          = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:audit_log_queue"
-    sqs_api_audit_log_queue_arn          = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:api_audit_log_queue"
+    sqs_reliability_queue_arn              = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reliability_queue"
+    sqs_reliability_queue_id               = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/submission_processing"
+    sqs_reliability_reprocessing_queue_arn = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reprocess_submission_queue"
+    sqs_reliability_dead_letter_queue_id   = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/reliability_deadletter_queue"
+    sqs_app_audit_log_queue_arn            = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:audit_log_queue"
+    sqs_api_audit_log_queue_arn            = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:api_audit_log_queue"
   }
 }
 
@@ -238,12 +238,12 @@ inputs = {
   redis_port = dependency.redis.outputs.redis_port
   redis_url  = dependency.redis.outputs.redis_url
 
-  sqs_reliability_queue_arn            = dependency.sqs.outputs.sqs_reliability_queue_arn
-  sqs_reliability_queue_id             = dependency.sqs.outputs.sqs_reliability_queue_id
-  sqs_reprocess_submission_queue_arn   = dependency.sqs.outputs.sqs_reprocess_submission_queue_arn
-  sqs_reliability_dead_letter_queue_id = dependency.sqs.outputs.sqs_reliability_dead_letter_queue_id
-  sqs_app_audit_log_queue_arn          = dependency.sqs.outputs.sqs_app_audit_log_queue_arn
-  sqs_api_audit_log_queue_arn          = dependency.sqs.outputs.sqs_api_audit_log_queue_arn
+  sqs_reliability_queue_arn              = dependency.sqs.outputs.sqs_reliability_queue_arn
+  sqs_reliability_queue_id               = dependency.sqs.outputs.sqs_reliability_queue_id
+  sqs_reliability_reprocessing_queue_arn = dependency.sqs.outputs.sqs_reliability_reprocessing_queue_arn
+  sqs_reliability_dead_letter_queue_id   = dependency.sqs.outputs.sqs_reliability_dead_letter_queue_id
+  sqs_app_audit_log_queue_arn            = dependency.sqs.outputs.sqs_app_audit_log_queue_arn
+  sqs_api_audit_log_queue_arn            = dependency.sqs.outputs.sqs_api_audit_log_queue_arn
 
   sns_topic_alert_critical_arn = dependency.sns.outputs.sns_topic_alert_critical_arn
 
@@ -269,9 +269,9 @@ inputs = {
 
   # Overwritten in GitHub Actions by TFVARS
   gc_template_id                           = "8d597a1b-a1d6-4e3c-8421-042a2b4158b7" # GC Notify template ID used for local setup
-  idp_project_identifier                   = "" # IdP project identifier used by API end to end test
-  api_end_to_end_test_form_identifier      = "" # Form identifier used by API end to end test
-  api_end_to_end_test_form_api_private_key = "" # Form API private key used by API end to end test
+  idp_project_identifier                   = ""                                     # IdP project identifier used by API end to end test
+  api_end_to_end_test_form_identifier      = ""                                     # Form identifier used by API end to end test
+  api_end_to_end_test_form_api_private_key = ""                                     # Form API private key used by API end to end test
 }
 
 include "root" {

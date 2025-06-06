@@ -13,12 +13,12 @@ output "sqs_reliability_queue_arn" {
   value       = aws_sqs_queue.reliability_queue.arn
 }
 
-output "sqs_reprocess_submission_queue_arn" {
+output "sqs_reliability_reprocessing_queue_arn" {
   description = "SQS reprocess submission queue ARN"
   value       = aws_sqs_queue.reprocess_submission_queue.arn
 }
 
-output "sqs_reprocess_submission_queue_id" {
+output "sqs_reliability_reprocessing_queue_id" {
   description = "SQS reprocess submission queue URL"
   value       = aws_sqs_queue.reprocess_submission_queue.id
 }

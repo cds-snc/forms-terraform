@@ -32,7 +32,7 @@ resource "aws_sqs_queue" "reliability_deadletter_queue" {
   kms_data_key_reuse_period_seconds = 300
 }
 
-resource "aws_sqs_queue" "reprocess_submission_queue" {
+resource "aws_sqs_queue" "reliability_reprocessing_queue" {
   name                       = "reliability_reprocessing_queue"
   delay_seconds              = 900 // 15 minutes
   max_message_size           = 262144
