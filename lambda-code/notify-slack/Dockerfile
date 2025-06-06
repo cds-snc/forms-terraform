@@ -2,6 +2,8 @@ FROM public.ecr.aws/lambda/nodejs:22 as build
 
 WORKDIR /usr/app
 
+RUN corepack enable
+
 RUN npm install -g yarn
 RUN yarn set version stable
 
