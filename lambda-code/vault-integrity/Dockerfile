@@ -3,7 +3,7 @@ FROM public.ecr.aws/lambda/nodejs:22 as build
 WORKDIR /usr/app
 
 RUN npm install -g yarn
-RUN yarn set version stable
+RUN yarn set version 4.9.1
 
 COPY .yarnrc.yml package.json yarn.lock ./
 
@@ -13,7 +13,7 @@ COPY src ./src
 COPY tsconfig.json ./
 
 RUN yarn build
-    
+
 FROM public.ecr.aws/lambda/nodejs:22
 
 WORKDIR ${LAMBDA_TASK_ROOT}
