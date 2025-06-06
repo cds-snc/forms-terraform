@@ -3,12 +3,12 @@
 # New Standard Reliability and dead letter queues
 #
 resource "aws_sqs_queue" "reliability_queue" {
-  name                        = "reliability_queue"
-  delay_seconds               = 5
-  max_message_size            = 262144
-  message_retention_seconds   = 345600
-  receive_wait_time_seconds   = 0
-  visibility_timeout_seconds  = 1800
+  name                       = "reliability_queue"
+  delay_seconds              = 5
+  max_message_size           = 262144
+  message_retention_seconds  = 345600
+  receive_wait_time_seconds  = 0
+  visibility_timeout_seconds = 1800
   # https://aws.amazon.com/premiumsupport/knowledge-center/lambda-function-process-sqs-messages/
   # The SQS visibility timeout must be at least six times the total of the function timeout and the batch window timeout.
   # Lambda function timeout is 300.
@@ -23,22 +23,22 @@ resource "aws_sqs_queue" "reliability_queue" {
 }
 
 resource "aws_sqs_queue" "reliability_deadletter_queue" {
-  name                        = "reliability_deadletter_queue"
-  delay_seconds               = 60
-  max_message_size            = 262144
-  message_retention_seconds   = 1209600
-  receive_wait_time_seconds   = 20
+  name                              = "reliability_deadletter_queue"
+  delay_seconds                     = 60
+  max_message_size                  = 262144
+  message_retention_seconds         = 1209600
+  receive_wait_time_seconds         = 20
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
 }
 
 resource "aws_sqs_queue" "reprocess_submission_queue" {
-  name                        = "reliability_reprocessing_queue"
-  delay_seconds               = 900 // 15 minutes
-  max_message_size            = 262144
-  message_retention_seconds   = 172800 // 2 days
-  receive_wait_time_seconds   = 0
-  visibility_timeout_seconds  = 1800
+  name                       = "reliability_reprocessing_queue"
+  delay_seconds              = 900 // 15 minutes
+  max_message_size           = 262144
+  message_retention_seconds  = 172800 // 2 days
+  receive_wait_time_seconds  = 0
+  visibility_timeout_seconds = 1800
   # https://aws.amazon.com/premiumsupport/knowledge-center/lambda-function-process-sqs-messages/
   # The SQS visibility timeout must be at least six times the total of the function timeout and the batch window timeout.
   # Lambda function timeout is 300.
