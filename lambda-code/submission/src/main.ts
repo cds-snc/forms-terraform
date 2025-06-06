@@ -30,7 +30,9 @@ export const handler: Handler = async (submission: AnyObject) => {
   try {
     await saveSubmission(submissionId, submission);
 
-    const receiptId = await enqueueReliabilityProcessingRequest(submissionId);
+    const needsFileScanning = submission.containsFiles ?? false;
+
+    const receiptId = await enqueueReliabilityProcessingRequest(submissionId, needsFileScanning);
 
     await updateReceiptIdForSubmission(submissionId, receiptId);
 
@@ -60,15 +62,18 @@ export const handler: Handler = async (submission: AnyObject) => {
   }
 };
 
-const enqueueReliabilityProcessingRequest = async (submissionId: string): Promise<string> => {
+const enqueueReliabilityProcessingRequest = async (
+  submissionId: string,
+  requiresFileScanning: boolean
+): Promise<string> => {
   try {
     const sendMessageCommandOutput = await sqs.send(
       new SendMessageCommand({
         MessageBody: JSON.stringify({
           submissionID: submissionId,
         }),
-        MessageDeduplicationId: submissionId,
-        MessageGroupId: "Group-" + submissionId,
+        // Helps ensure the file scanning job is processed first
+        DelaySeconds: requiresFileScanning ? 30 : 5,
         QueueUrl: process.env.SQS_URL,
       })
     );

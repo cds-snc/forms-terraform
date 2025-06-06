@@ -35,6 +35,10 @@ glue:
   - *common
   - "aws/glue/**"
   - "env/cloud/glue/**"
+guardduty:
+  - *common
+  - "aws/guard_duty/**"
+  - "env/cloud/guard_duty/**"
 hosted_zone:
   - *common
   - "aws/hosted_zone/**"
