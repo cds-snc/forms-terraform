@@ -108,15 +108,10 @@ export async function removeFilesFromReliabilityStorage(filePaths: string[]) {
 
 export const getFileMetaData = async (filePath: string) => {
   try {
-    const commandInput = {
-      Bucket: reliabilityBucketName,
-      Key: filePath,
-    };
-
     const response = await s3Client.send(
       new GetObjectTaggingCommand({
-        Bucket: commandInput.Bucket,
-        Key: commandInput.Key,
+        Bucket: reliabilityBucketName,
+        Key: filePath,
       })
     );
     const metadata = response.TagSet;
