@@ -253,11 +253,6 @@ variable "vault_file_storage_arn" {
   type        = string
 }
 
-variable "zitadel_provider" {
-  description = "The Zitadel provider endpoint used by the ECS task"
-  type        = string
-}
-
 variable "zitadel_administration_key_secret_arn" {
   description = "The Zitadel administration key secret used by the ECS task"
   type        = string
