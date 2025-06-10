@@ -81,6 +81,7 @@ dependency "s3" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
+    vault_file_storage_id  = "forms-environment-vault-file-storage"
     vault_file_storage_arn = "arn:aws:s3:::forms-mock-vault-file-storage"
   }
 }
@@ -139,8 +140,10 @@ inputs = {
   service_discovery_private_dns_namespace_ecs_local_id   = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_id
   service_discovery_private_dns_namespace_ecs_local_name = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_name
 
-  kms_key_dynamodb_arn      = dependency.kms.outputs.kms_key_dynamodb_arn
-  dynamodb_vault_arn        = dependency.dynamodb.outputs.dynamodb_vault_arn
+  kms_key_dynamodb_arn = dependency.kms.outputs.kms_key_dynamodb_arn
+  dynamodb_vault_arn   = dependency.dynamodb.outputs.dynamodb_vault_arn
+
+  vault_file_storage_id     = dependency.s3.outputs.vault_file_storage_id
   s3_vault_file_storage_arn = dependency.s3.outputs.vault_file_storage_arn
 
   redis_port = dependency.redis.outputs.redis_port

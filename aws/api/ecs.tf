@@ -15,6 +15,10 @@ locals {
     {
       name  = "REDIS_URL"
       value = "redis://${var.redis_url}:${var.redis_port}"
+    },
+    {
+      name  = "VAULT_FILE_STORAGE_BUCKET_NAME"
+      value = var.vault_file_storage_id
     }
   ]
 
