@@ -1,19 +1,11 @@
 
-// Create IAM role to access S3 bucket for GuardDuty
-// Need to scan and add tags
+module "guard_duty"{
+  source="github.com/cds-snc/terraform-modules//guardduty_malware_s3?ref=08f883bf79388eeef2afc01f4618c47ebb641fb4" # v10.5.1"
 
-resource "aws_guardduty_malware_protection_plan" "reliability_queue_storage" {
-  role = aws_iam_role.guard_duty.arn
 
-  protected_resource {
-    s3_bucket {
-      bucket_name = var.reliability_storage_id
-    }
-  }
+  s3_bucket_name     = var.reliability_storage_id
+  tagging_status     = "ENABLED"
 
-  actions {
-    tagging {
-      status = "ENABLED"
-    }
-  }
+
+  billing_tag_value = "GCForms-${var.environment}"
 }
