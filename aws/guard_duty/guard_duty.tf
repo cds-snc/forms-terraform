@@ -7,5 +7,5 @@ module "guard_duty"{
   tagging_status     = "ENABLED"
 
 
-  billing_tag_value = "GCForms-${var.environment}"
+  billing_tag_value = "GCForms-${var.env}"
 }
