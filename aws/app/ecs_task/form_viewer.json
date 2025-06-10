@@ -91,10 +91,6 @@
         "value": "${audit_log_queue_url}"
       },
       {
-        "name": "ZITADEL_PROVIDER",
-        "value": "${zitadel_provider}"
-      },
-      {
         "name": "ZITADEL_URL",
         "value": "${zitadel_url}"
       },

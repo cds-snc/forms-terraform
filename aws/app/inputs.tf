@@ -173,12 +173,12 @@ variable "redis_url" {
   type        = string
 }
 
-variable "sqs_reprocess_submission_queue_arn" {
+variable "sqs_reliability_reprocessing_queue_arn" {
   description = "SQS reprocess submission queue ARN"
   type        = string
 }
 
-variable "sqs_reprocess_submission_queue_id" {
+variable "sqs_reliability_reprocessing_queue_id" {
   description = "SQS reprocess submission queue URL"
   type        = string
 }
@@ -250,11 +250,6 @@ variable "reliability_file_storage_arn" {
 
 variable "vault_file_storage_arn" {
   description = "arn of the vault file storage bucket"
-  type        = string
-}
-
-variable "zitadel_provider" {
-  description = "The Zitadel provider endpoint used by the ECS task"
   type        = string
 }
 

@@ -86,10 +86,10 @@ dependency "sqs" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    sqs_reprocess_submission_queue_arn = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reprocess_submission_queue.fifo"
-    sqs_app_audit_log_queue_arn        = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:audit_log_queue"
-    sqs_app_audit_log_queue_id         = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/audit_log_queue"
-    sqs_reprocess_submission_queue_id  = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/reprocess_submission_queue.fifo"
+    sqs_reliability_reprocessing_queue_arn = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reprocess_submission_queue.fifo"
+    sqs_app_audit_log_queue_arn            = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:audit_log_queue"
+    sqs_app_audit_log_queue_id             = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/audit_log_queue"
+    sqs_reliability_reprocessing_queue_id  = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/reprocess_submission_queue.fifo"
   }
 }
 
@@ -145,7 +145,6 @@ dependency "idp" {
 }
 
 locals {
-  zitadel_provider = get_env("ZITADEL_PROVIDER", "https://localhost")
   aws_account_id   = get_env("AWS_ACCOUNT_ID", "000000000000")
 }
 
@@ -188,10 +187,10 @@ inputs = {
 
   database_url_secret_arn = dependency.rds.outputs.database_url_secret_arn
 
-  sqs_reprocess_submission_queue_arn = dependency.sqs.outputs.sqs_reprocess_submission_queue_arn
-  sqs_app_audit_log_queue_arn        = dependency.sqs.outputs.sqs_app_audit_log_queue_arn
-  sqs_app_audit_log_queue_id         = dependency.sqs.outputs.sqs_app_audit_log_queue_id
-  sqs_reprocess_submission_queue_id  = dependency.sqs.outputs.sqs_reprocess_submission_queue_id
+  sqs_reliability_reprocessing_queue_arn = dependency.sqs.outputs.sqs_reliability_reprocessing_queue_arn
+  sqs_app_audit_log_queue_arn            = dependency.sqs.outputs.sqs_app_audit_log_queue_arn
+  sqs_app_audit_log_queue_id             = dependency.sqs.outputs.sqs_app_audit_log_queue_id
+  sqs_reliability_reprocessing_queue_id  = dependency.sqs.outputs.sqs_reliability_reprocessing_queue_id
 
   cognito_endpoint_url  = dependency.cognito.outputs.cognito_endpoint_url
   cognito_client_id     = dependency.cognito.outputs.cognito_client_id
@@ -213,8 +212,6 @@ inputs = {
 
   ecs_idp_service_name = dependency.idp.outputs.ecs_idp_service_name
   ecs_idp_service_port = dependency.idp.outputs.ecs_idp_service_port
-
-  zitadel_provider = local.zitadel_provider
 }
 
 include "root" {

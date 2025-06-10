@@ -41,9 +41,8 @@ data "template_file" "form_viewer_task" {
     cognito_client_id               = var.cognito_client_id
     email_address_contact_us        = var.email_address_contact_us
     email_address_support           = var.email_address_support
-    reprocess_submission_queue      = var.sqs_reprocess_submission_queue_id
+    reprocess_submission_queue      = var.sqs_reliability_reprocessing_queue_id
     audit_log_queue_url             = var.sqs_app_audit_log_queue_id
-    zitadel_provider                = var.zitadel_provider # This variable should be removed once we have the new Web App build that relies on ZITADEL_URL and ZITADEL_TRUSTED_DOMAIN only
     zitadel_url                     = "http://${var.ecs_idp_service_name}.${var.service_discovery_private_dns_namespace_ecs_local_name}:${var.ecs_idp_service_port}"
     zitadel_trusted_domain          = var.domain_idp
     zitadel_administration_key      = var.zitadel_administration_key_secret_arn
