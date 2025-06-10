@@ -44,7 +44,7 @@ variable "sqs_reliability_queue_arn" {
   type        = string
 }
 
-variable "sqs_reprocess_submission_queue_arn" {
+variable "sqs_reliability_reprocessing_queue_arn" {
   description = "SQS reprocess submission queue ARN"
   type        = string
 }

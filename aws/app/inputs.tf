@@ -173,12 +173,12 @@ variable "redis_url" {
   type        = string
 }
 
-variable "sqs_reprocess_submission_queue_arn" {
+variable "sqs_reliability_reprocessing_queue_arn" {
   description = "SQS reprocess submission queue ARN"
   type        = string
 }
 
-variable "sqs_reprocess_submission_queue_id" {
+variable "sqs_reliability_reprocessing_queue_id" {
   description = "SQS reprocess submission queue URL"
   type        = string
 }

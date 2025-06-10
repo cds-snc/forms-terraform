@@ -244,6 +244,15 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
+      - name: Terragrunt plan guard_duty
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
+        with:
+          directory: "env/cloud/guard_duty"
+          comment-delete: "true"
+          comment-title: "Production: guard_duty"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
       # Depends on kms
       - name: Terragrunt plan sns
         uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0

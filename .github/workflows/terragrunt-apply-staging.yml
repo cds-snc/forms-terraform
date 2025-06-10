@@ -219,6 +219,10 @@ jobs:
         working-directory: env/cloud/file_scanning
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Terragrunt apply guard_duty
+        working-directory: env/cloud/guard_duty
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
       # Depends on kms
       - name: Terragrunt apply sns
         working-directory: env/cloud/sns
