@@ -1,5 +1,48 @@
 # Changelog
 
+## [3.35.0](https://github.com/cds-snc/forms-terraform/compare/v3.34.0...v3.35.0) (2025-05-30)
+
+
+### Features
+
+* enable communication between Web App and IdP through PR review environment ([#1039](https://github.com/cds-snc/forms-terraform/issues/1039)) ([a5334b3](https://github.com/cds-snc/forms-terraform/commit/a5334b3abf866963a54c2b0864292faaef9f5003))
+
+
+### Miscellaneous Chores
+
+* Update API WAF allowed URL paths ([#1040](https://github.com/cds-snc/forms-terraform/issues/1040)) ([08a071d](https://github.com/cds-snc/forms-terraform/commit/08a071debcde3b4487c30fd97272f25e3b21bad3))
+* update submission id for response download ([#1032](https://github.com/cds-snc/forms-terraform/issues/1032)) ([371d49c](https://github.com/cds-snc/forms-terraform/commit/371d49c6fc7d7f1f83de3ad6e87fc1bad9e2c0e5))
+
+## [3.34.0](https://github.com/cds-snc/forms-terraform/compare/v3.33.1...v3.34.0) (2025-05-27)
+
+
+### Features
+
+* adds new environment variables to the API ECS task for new API build in order to enable local communication with Zitadel ([#1024](https://github.com/cds-snc/forms-terraform/issues/1024)) ([370af93](https://github.com/cds-snc/forms-terraform/commit/370af93665a8499bdb995f5239febd4aa8c1b07f))
+* enables local communication between Web app and Zitadel ([#1034](https://github.com/cds-snc/forms-terraform/issues/1034)) ([99b9ee3](https://github.com/cds-snc/forms-terraform/commit/99b9ee310fb72d472fd4a607f903b617353524c3))
+
+
+### Bug Fixes
+
+* API end to end test does not need custom httpAgent to bypass TLS certificate verification ([#1023](https://github.com/cds-snc/forms-terraform/issues/1023)) ([9be405c](https://github.com/cds-snc/forms-terraform/commit/9be405c8d32eab37e457c4731e9ad4a3483ab119))
+* opens local communication between API and IdP through security groups ([#1025](https://github.com/cds-snc/forms-terraform/issues/1025)) ([e226349](https://github.com/cds-snc/forms-terraform/commit/e226349dbf6d238ebdd6140341861e595874131d))
+* WAF ignore 404 from LB and Dynamic IP Rule ([#1037](https://github.com/cds-snc/forms-terraform/issues/1037)) ([3753660](https://github.com/cds-snc/forms-terraform/commit/3753660ccbe931b368afb547c420b5059f8e28c9))
+
+
+### Miscellaneous Chores
+
+* change from debug to info level for Zitadel ([#1030](https://github.com/cds-snc/forms-terraform/issues/1030)) ([b2ceedc](https://github.com/cds-snc/forms-terraform/commit/b2ceedc0f59c91a24b4d8846b27c5d0558c27862))
+* Change log level to debug and enable Notifcation worker ([#1029](https://github.com/cds-snc/forms-terraform/issues/1029)) ([06b57a8](https://github.com/cds-snc/forms-terraform/commit/06b57a829e39f686c1b082ef00612746890a5b7b))
+* disable Zitadel TLS traffic enforcement ([#1022](https://github.com/cds-snc/forms-terraform/issues/1022)) ([b9cacfa](https://github.com/cds-snc/forms-terraform/commit/b9cacfa6dbbb540a5c9fb791f5e55f7200df2dcd))
+* Enable file scanning for local development ([#1031](https://github.com/cds-snc/forms-terraform/issues/1031)) ([606b1d3](https://github.com/cds-snc/forms-terraform/commit/606b1d3aa919aa7aae6be50814c77597804d2892))
+* increase API end to end test frequency ([#1021](https://github.com/cds-snc/forms-terraform/issues/1021)) ([37ccbe0](https://github.com/cds-snc/forms-terraform/commit/37ccbe08f8f8b223145287c402a70e944ab089d9))
+* Modify github release to hold back zitadel update ([#1033](https://github.com/cds-snc/forms-terraform/issues/1033)) ([aea4b59](https://github.com/cds-snc/forms-terraform/commit/aea4b5978cdb751726d7ead7519da3a81e750dbb))
+* Tweak to IDP database connection config ([#1026](https://github.com/cds-snc/forms-terraform/issues/1026)) ([9bd7908](https://github.com/cds-snc/forms-terraform/commit/9bd790841a5ed5cbef4e6a4397342f6787100384))
+* update all lambdas ([#1019](https://github.com/cds-snc/forms-terraform/issues/1019)) ([5346a33](https://github.com/cds-snc/forms-terraform/commit/5346a336d5b2a929c29ee89d60d7d539ee5e65e7))
+* upgrade zitadel image to 3.0.4 ([#1016](https://github.com/cds-snc/forms-terraform/issues/1016)) ([7a88ad3](https://github.com/cds-snc/forms-terraform/commit/7a88ad360d41b16c602a403ad46739130c39e9b6))
+* Zitadel config ([#1027](https://github.com/cds-snc/forms-terraform/issues/1027)) ([290a021](https://github.com/cds-snc/forms-terraform/commit/290a021341ba933a092389d0289f244b8272566c))
+* Zitadel switch to legacy for notifications ([#1028](https://github.com/cds-snc/forms-terraform/issues/1028)) ([aeaa07e](https://github.com/cds-snc/forms-terraform/commit/aeaa07e045906ee75a61c751b6c5ae2f072bf339))
+
 ## [3.33.1](https://github.com/cds-snc/forms-terraform/compare/v3.33.0...v3.33.1) (2025-05-13)
 
 

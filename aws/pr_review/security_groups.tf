@@ -105,3 +105,29 @@ resource "aws_security_group_rule" "redis_lambda_client_ingress" {
   security_group_id        = var.forms_redis_security_group_id
   source_security_group_id = aws_security_group.lambda_client_pr_review[0].id
 }
+
+# Local communication with IdP
+
+resource "aws_security_group_rule" "local_pr_review_env_to_idp_egress" {
+  count = var.env == "staging" ? 1 : 0
+
+  description              = "Allow PR review environment to communicate with IdP on port 8080"
+  type                     = "egress"
+  security_group_id        = aws_security_group.lambda_client_pr_review[0].id
+  source_security_group_id = var.idp_ecs_security_group_id
+  protocol                 = "tcp"
+  from_port                = 8080
+  to_port                  = 8080
+}
+
+resource "aws_security_group_rule" "local_pr_review_env_to_idp_ingress" {
+  count = var.env == "staging" ? 1 : 0
+
+  description              = "Allow IdP to receive communication from PR review environment on port 8080"
+  type                     = "ingress"
+  security_group_id        = var.idp_ecs_security_group_id
+  source_security_group_id = aws_security_group.lambda_client_pr_review[0].id
+  protocol                 = "tcp"
+  from_port                = 8080
+  to_port                  = 8080
+}

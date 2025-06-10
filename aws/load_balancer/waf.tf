@@ -518,7 +518,7 @@ resource "aws_wafv2_regex_pattern_set" "valid_api_uri_paths" {
   description = "Regex to match the api valid urls"
 
   regular_expression {
-    regex_string = "^(?:\\/v(\\d{1,2}))?\\/forms\\/(?:(\\w{25}))\\/(?:(template|(?:(submission\\/(?:(new|(?:(\\d{2}-\\d{2}-\\w{4})\\/?(?:(confirm\\/\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}|problem)?))))))))(?:\\/)?$"
+    regex_string = "^(?:\\/v(\\d{1,2}))?\\/forms\\/(?:(\\w{25}))\\/(?:(template|(?:(submission\\/(?:(new|(?:(\\d{2}-\\d{2}-\\w{4,5})\\/?(?:(confirm\\/\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}|problem)?))))))))(?:\\/)?$"
   }
 }
 
@@ -668,14 +668,15 @@ resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {
 # that crosses a block threshold will be added to the blocklist.
 #
 module "waf_ip_blocklist" {
-  source = "github.com/cds-snc/terraform-modules//waf_ip_blocklist?ref=64b19ecfc23025718cd687e24b7115777fd09666" # v10.2.1
+  source = "github.com/cds-snc/terraform-modules//waf_ip_blocklist?ref=7341e0355a0a346574828da97863af2f552d05ed" # v10.4.6
 
   service_name                     = "forms_app"
   athena_database_name             = "access_logs"
   athena_query_results_bucket      = "forms-${var.env}-athena-bucket"
   athena_query_source_bucket       = var.cbs_satellite_bucket_name
   athena_workgroup_name            = "primary"
-  waf_rule_ids_skip                = ["BlockLargeRequests", "RateLimitersRuleGroup"]
+  waf_rule_ids_skip                = ["BlockLargeRequests", "RateLimitersRuleGroup", "BlockedIPv4"]
+  lb_status_code_skip              = ["404"]
   athena_lb_table_name             = "lb_logs"
   query_lb                         = true
   query_waf                        = false
