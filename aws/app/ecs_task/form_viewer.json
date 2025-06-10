@@ -63,10 +63,6 @@
         "value": "${gc_template_id}"
       },
       {
-        "name": "VAULT_FILE_STORAGE",
-        "value": "${vault_file_storage}"
-      },
-      {
         "name": "COGNITO_ENDPOINT_URL",
         "value": "${cognito_endpoint_url}"
       },
