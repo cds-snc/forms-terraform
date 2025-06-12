@@ -104,4 +104,5 @@ DB_SECRET_ARN=$(aws secretsmanager list-secrets --filter Key="name",Values="serv
 DATABASE_URL=$(aws secretsmanager get-secret-value --secret-id $DB_SECRET_ARN --query "SecretString" --output text)
 REDIS_URL=$(aws elasticache describe-cache-clusters --show-cache-node-info --query "CacheClusters[0].CacheNodes[0].Endpoint.Address" --output text)
 RELIABILITY_FILE_STORAGE="forms-${AWS_ACCOUNT_ID}-reliability-file-storage"
-printf "${greenColor}=> Please copy the following to your app .env file:${reset}\nAWS_PROFILE=${AWS_PROFILE}\nDATABASE_URL=${DATABASE_URL}?connect_timeout=30&pool_timeout=30\nREDIS_URL=${REDIS_URL}:6379\nRELIABILITY_FILE_STORAGE=${RELIABILITY_FILE_STORAGE}\n"
+VAULT_FILE_STORAGE_BUCKET_NAME="forms-${AWS_ACCOUNT_ID}-vault-file-storage"
+printf "${greenColor}=> Please copy the following to your app .env file:${reset}\nAWS_PROFILE=${AWS_PROFILE}\nDATABASE_URL=${DATABASE_URL}?connect_timeout=30&pool_timeout=30\nREDIS_URL=${REDIS_URL}:6379\nRELIABILITY_FILE_STORAGE=${RELIABILITY_FILE_STORAGE}\nVAULT_FILE_STORAGE_BUCKET_NAME=${VAULT_FILE_STORAGE_BUCKET_NAME}\n"

@@ -133,6 +133,7 @@ AWS_PROFILE=development
 DATABASE_URL=postgres://postgres:*********@forms-db-cluster.cluster-************.ca-central-1.rds.amazonaws.com:5432/forms?connect_timeout=60
 REDIS_URL=gcforms-redis-rep-group-001.******.0001.cac1.cache.amazonaws.com:6379
 RELIABILITY_FILE_STORAGE=forms-************-reliability-file-storage
+VAULT_FILE_STORAGE_BUCKET_NAME=forms-************-vault-file-storage
 ```
 
 ### Connecting your local development GCForms app
@@ -165,8 +166,6 @@ $ ./deps.sh install
 Once you have changed the code in one or multiple Lambda packages, you can leverage the `make lambdas` or `make lambda name=LAMBDA_NAME` commands. They will build, tag and push either all Lambda images or a specific image to your ECR as well as letting the Lambda service know that a new version of the code should be used.
 
 ## Dynamo Database Table Schemas
-
-
 
 ## [Optional] Glue ETL Job Tasks for Data Lake Extract
 

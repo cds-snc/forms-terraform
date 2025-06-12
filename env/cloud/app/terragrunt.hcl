@@ -126,7 +126,6 @@ dependency "s3" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    vault_file_storage_id        = "forms-staging-vault-file-storage"
     vault_file_storage_arn       = "arn:aws:s3:::forms-staging-vault-file-storage"
     reliability_file_storage_id  = "forms-staging-reliability-file-storage"
     reliability_file_storage_arn = "arn:aws:s3:::forms-staging-reliability-file-storage"
@@ -206,7 +205,6 @@ inputs = {
   hcaptcha_site_verify_key_secret_arn     = dependency.secrets.outputs.hcaptcha_site_verify_key_secret_arn
 
   vault_file_storage_arn       = dependency.s3.outputs.vault_file_storage_arn
-  vault_file_storage_id        = dependency.s3.outputs.vault_file_storage_id
   reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
   reliability_file_storage_id  = dependency.s3.outputs.reliability_file_storage_id
 
