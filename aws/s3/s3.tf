@@ -42,6 +42,17 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "reliability_file_
   }
 }
 
+resource "aws_s3_bucket_cors_configuration" "reliability_file_storage" {
+  bucket = aws_s3_bucket.reliability_file_storage.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["POST"]
+    allowed_origins = ["*"]
+    max_age_seconds = 3000
+  }
+}
+
 resource "aws_s3_bucket_public_access_block" "reliability_file_storage" {
   bucket                  = aws_s3_bucket.reliability_file_storage.id
   block_public_acls       = true
