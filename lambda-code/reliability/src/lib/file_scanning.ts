@@ -12,10 +12,10 @@ export type SubmissionAttachmentWithScanStatus = {
   scanStatus: string | undefined;
 };
 
-export function getAllSubmissionAttachmentScanStatuses(
+export async function getAllSubmissionAttachmentScanStatuses(
   attachmentPaths: string[]
 ): Promise<SubmissionAttachmentWithScanStatus[]> {
-  const submissionAttachmentScanStatusQueries = attachmentPaths.map((path) => {
+  const submissionAttachmentScanStatusQueries = attachmentPaths.map(async (path) => {
     return getSubmissionAttachmentScanStatus(path).then((status) => {
       console.info(`File ${path} / Scan status: ${JSON.stringify(status)}`);
       return { attachmentPath: path, scanStatus: status };
@@ -27,11 +27,13 @@ export function getAllSubmissionAttachmentScanStatuses(
 
 export function haveAllSubmissionAttachmentsBeenScanned(
   attachmentsWithScanStatuses: SubmissionAttachmentWithScanStatus[]
-) {
+): boolean {
   return attachmentsWithScanStatuses.every((item) => item.scanStatus !== undefined);
 }
 
-function getSubmissionAttachmentScanStatus(attachmentPath: string): Promise<string | undefined> {
+async function getSubmissionAttachmentScanStatus(
+  attachmentPath: string
+): Promise<string | undefined> {
   return getFileMetaData(attachmentPath)
     .then((tags) => {
       return tags.find((tag) => tag.Key === "GuardDutyMalwareScanStatus")?.Value;
