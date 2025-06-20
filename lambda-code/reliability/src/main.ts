@@ -2,8 +2,12 @@ import { Handler, SQSEvent } from "aws-lambda";
 import sendToNotify from "@lib/notifyProcessing.js";
 import sendToVault from "@lib/vaultProcessing.js";
 import { getTemplateInfo } from "@lib/templates.js";
-import { getSubmission } from "@lib/dataLayer.js";
-import { verifyFileScanCompletion, FileScanningCompletionError } from "@lib/file_scanning.js";
+import { extractFileInputResponses, getSubmission } from "@lib/dataLayer.js";
+import {
+  haveAllSubmissionAttachmentsBeenScanned,
+  FileScanningCompletionError,
+  getAllSubmissionAttachmentScanStatuses,
+} from "@lib/file_scanning.js";
 
 export const handler: Handler = async (event: SQSEvent) => {
   const message = JSON.parse(event.Records[0].body);
@@ -73,14 +77,21 @@ export const handler: Handler = async (event: SQSEvent) => {
       throw new Error(`No associated form template (ID: ${formID}) exist in the database.`);
     }
 
+    const submissionAttachmentPaths = extractFileInputResponses(formSubmission);
+    const submissionAttachmentsWithScanStatuses = await getAllSubmissionAttachmentScanStatuses(
+      submissionAttachmentPaths
+    );
+
     // Verify if file scanning is required and if it has been completed
-    await verifyFileScanCompletion(formSubmission).then((isCompleted) => {
-      if (!isCompleted) {
+    if (submissionAttachmentsWithScanStatuses.length > 0) {
+      if (
+        haveAllSubmissionAttachmentsBeenScanned(submissionAttachmentsWithScanStatuses) === false
+      ) {
         throw new FileScanningCompletionError(
           `File scanning for submission ID ${submissionID} is not completed.`
         );
       }
-    });
+    }
 
     /*
      Process submission to vault or Notify
@@ -93,12 +104,20 @@ export const handler: Handler = async (event: SQSEvent) => {
     */
 
     if (formSubmission.deliveryOption) {
-      return await sendToNotify(submissionID, sendReceipt, formSubmission, language, createdAt);
+      return await sendToNotify(
+        submissionID,
+        sendReceipt,
+        formSubmission,
+        submissionAttachmentPaths,
+        language,
+        createdAt
+      );
     } else {
       return await sendToVault(
         submissionID,
         sendReceipt,
         formSubmission,
+        submissionAttachmentsWithScanStatuses,
         formID,
         language,
         createdAt,

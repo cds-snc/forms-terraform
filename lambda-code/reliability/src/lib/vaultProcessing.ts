@@ -1,5 +1,5 @@
-import { saveToVault, extractFileInputResponses, removeSubmission } from "./dataLayer.js";
-
+import { saveToVault, removeSubmission } from "./dataLayer.js";
+import { SubmissionAttachmentWithScanStatus } from "./file_scanning.js";
 import {
   copyFilesFromReliabilityToVaultStorage,
   removeFilesFromReliabilityStorage,
@@ -10,20 +10,42 @@ export default async (
   submissionID: string,
   sendReceipt: string,
   formSubmission: FormSubmission,
+  submissionAttachmentsWithScanStatuses: SubmissionAttachmentWithScanStatus[],
   formID: string,
   language: string,
   createdAt: string,
   securityAttribute: string,
   formSubmissionHash: string
 ) => {
-  let fileInputPaths = [];
+  const submissionAttachmentPaths = submissionAttachmentsWithScanStatuses.map(
+    (item) => item.attachmentPath
+  );
+
+  const submissionAttachments = submissionAttachmentsWithScanStatuses.map((item) => {
+    if (item.scanStatus === undefined) {
+      // This should never happen since we verified earlier whether file scanning has completed
+      throw new Error(`Detected undefined scan status for file path ${item.attachmentPath}`);
+    }
+
+    const attachmentName = item.attachmentPath.split("/").pop();
+
+    if (attachmentName === undefined) {
+      throw new Error(`Attachment name is undefined. File path: ${item.attachmentPath}.`);
+    }
+
+    return {
+      name: attachmentName,
+      path: item.attachmentPath,
+      scanStatus: item.scanStatus,
+    };
+  });
 
   try {
-    fileInputPaths = extractFileInputResponses(formSubmission);
-    await copyFilesFromReliabilityToVaultStorage(fileInputPaths);
+    await copyFilesFromReliabilityToVaultStorage(submissionAttachmentPaths);
     await saveToVault(
       submissionID,
       formSubmission.responses,
+      JSON.stringify(submissionAttachments),
       formID,
       language,
       createdAt,
@@ -46,7 +68,7 @@ export default async (
 
   try {
     await Promise.all([
-      removeFilesFromReliabilityStorage(fileInputPaths),
+      removeFilesFromReliabilityStorage(submissionAttachmentPaths),
       removeSubmission(submissionID),
     ]);
 

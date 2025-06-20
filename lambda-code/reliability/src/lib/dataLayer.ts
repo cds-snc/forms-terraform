@@ -111,6 +111,7 @@ const generateRandomString = (length: number = 5) => {
 export async function saveToVault(
   submissionID: string,
   formResponse: Responses,
+  submissionAttachments: string,
   formID: string,
   language: string,
   createdAt: string,
@@ -148,6 +149,7 @@ export async function saveToVault(
             ConfirmationCode: confirmationCode,
             Name: name,
             FormSubmissionHash: formSubmissionHash,
+            SubmissionAttachments: submissionAttachments,
           },
         },
       };

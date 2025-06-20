@@ -1,6 +1,4 @@
-import { extractFileInputResponses } from "./dataLayer.js";
 import { getFileMetaData } from "./s3FileInput.js";
-import { FormSubmission } from "./types.js";
 
 export class FileScanningCompletionError extends Error {
   constructor(message: string) {
@@ -9,26 +7,39 @@ export class FileScanningCompletionError extends Error {
   }
 }
 
-export const verifyFileScanCompletion = async (formSubmission: FormSubmission) => {
-  const fileInputPaths = extractFileInputResponses(formSubmission);
-  const fileMetaDataPromises = fileInputPaths.map((filePath) => getFileMetaData(filePath));
+export type SubmissionAttachmentWithScanStatus = {
+  attachmentPath: string;
+  scanStatus: string | undefined;
+};
 
-  const fileMetaData = await Promise.allSettled(fileMetaDataPromises).then((results) => {
-    return results.map((result) => {
-      if (result.status === "fulfilled") {
-        return result.value;
-      } else {
-        console.error(`Error retrieving metadata for file: ${result.reason}`);
-        return undefined;
-      }
+export async function getAllSubmissionAttachmentScanStatuses(
+  attachmentPaths: string[]
+): Promise<SubmissionAttachmentWithScanStatus[]> {
+  const submissionAttachmentScanStatusQueries = attachmentPaths.map(async (path) => {
+    return getSubmissionAttachmentScanStatus(path).then((status) => {
+      console.info(`File ${path} / Scan status: ${JSON.stringify(status)}`);
+      return { attachmentPath: path, scanStatus: status };
     });
   });
 
-  fileMetaData.forEach((meta, index) => {
-    console.info(`File ${fileInputPaths[index]} Metadata: ${JSON.stringify(meta)}`);
-  });
+  return Promise.all(submissionAttachmentScanStatusQueries);
+}
 
-  return fileMetaData.every((meta) =>
-    meta?.some((tag) => tag.Key === "GuardDutyMalwareScanStatus")
-  );
-};
+export function haveAllSubmissionAttachmentsBeenScanned(
+  attachmentsWithScanStatuses: SubmissionAttachmentWithScanStatus[]
+): boolean {
+  return attachmentsWithScanStatuses.every((item) => item.scanStatus !== undefined);
+}
+
+async function getSubmissionAttachmentScanStatus(
+  attachmentPath: string
+): Promise<string | undefined> {
+  return getFileMetaData(attachmentPath)
+    .then((tags) => {
+      return tags.find((tag) => tag.Key === "GuardDutyMalwareScanStatus")?.Value;
+    })
+    .catch((error) => {
+      console.error(`Error retrieving scan status for file: ${(error as Error).message}`);
+      return undefined;
+    });
+}

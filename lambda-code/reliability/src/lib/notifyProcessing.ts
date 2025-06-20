@@ -1,6 +1,6 @@
 import { GCNotifyConnector } from "@gcforms/connectors";
 import convertMessage from "./markdown.js";
-import { extractFileInputResponses, notifyProcessed } from "./dataLayer.js";
+import { notifyProcessed } from "./dataLayer.js";
 import { retrieveFilesFromReliabilityStorage } from "./s3FileInput.js";
 import { FormSubmission } from "./types.js";
 
@@ -8,6 +8,7 @@ export default async (
   submissionID: string,
   sendReceipt: string,
   formSubmission: FormSubmission,
+  submissionAttachmentPaths: string[],
   language: string,
   createdAt: string
 ) => {
@@ -20,9 +21,8 @@ export default async (
       throw Error("Email address is missing or empty.");
     }
 
-    const fileInputPaths = extractFileInputResponses(formSubmission);
-    const files = await retrieveFilesFromReliabilityStorage(fileInputPaths);
-    const attachFileParameters = fileInputPaths.reduce((acc, current, index) => {
+    const files = await retrieveFilesFromReliabilityStorage(submissionAttachmentPaths);
+    const attachFileParameters = submissionAttachmentPaths.reduce((acc, current, index) => {
       return {
         [`file${index}`]: {
           file: files[index],
