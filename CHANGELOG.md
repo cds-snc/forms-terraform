@@ -1,5 +1,28 @@
 # Changelog
 
+## [3.36.0](https://github.com/cds-snc/forms-terraform/compare/v3.35.0...v3.36.0) (2025-06-21)
+
+
+### Features
+
+* add new submission attachments property to Vault ([#1045](https://github.com/cds-snc/forms-terraform/issues/1045)) ([3715727](https://github.com/cds-snc/forms-terraform/commit/37157279841d28506547f5427dec8ca88b086fc7))
+* restrict HTTP/1 access to IdP to limited number of paths ([#1035](https://github.com/cds-snc/forms-terraform/issues/1035)) ([2b98379](https://github.com/cds-snc/forms-terraform/commit/2b9837973aebf16e8708d366e99c5389febb5d44))
+* submission attachments support for the API ([#1044](https://github.com/cds-snc/forms-terraform/issues/1044)) ([2cb55a8](https://github.com/cds-snc/forms-terraform/commit/2cb55a8a5d8f4756d30d360d5709d9dcc7111484))
+
+
+### Bug Fixes
+
+* formatting in guard_duty file ([#1047](https://github.com/cds-snc/forms-terraform/issues/1047)) ([0fd3c41](https://github.com/cds-snc/forms-terraform/commit/0fd3c41ddfe56aaaf9ba9e9fd1d090fc20f87f4b))
+
+
+### Miscellaneous Chores
+
+* Change file scanning engine and change SQS queue types ([#1043](https://github.com/cds-snc/forms-terraform/issues/1043)) ([b8ff37a](https://github.com/cds-snc/forms-terraform/commit/b8ff37a9d00c0798a59253f18aa0b5080b3c806d))
+* **deps:** update dependency cryptography to v44 [security] ([#946](https://github.com/cds-snc/forms-terraform/issues/946)) ([a8cfcf1](https://github.com/cds-snc/forms-terraform/commit/a8cfcf1454be2e5169fdf72f4d3b546272c3567a))
+* remove unnecessary environment variables ([#1036](https://github.com/cds-snc/forms-terraform/issues/1036)) ([579ceef](https://github.com/cds-snc/forms-terraform/commit/579ceef4588bcc0b43f6f9d7add73e085c6aa92e))
+* set reliability lambda concurrency to 150 ([#1041](https://github.com/cds-snc/forms-terraform/issues/1041)) ([dac07b1](https://github.com/cds-snc/forms-terraform/commit/dac07b17f9aed7fa3b14b1f1a548ee9119393b26))
+* synced file(s) with cds-snc/site-reliability-engineering ([#924](https://github.com/cds-snc/forms-terraform/issues/924)) ([ae6fffd](https://github.com/cds-snc/forms-terraform/commit/ae6fffd45c6535c3f38124cdcb062224457d7677))
+
 ## [3.35.0](https://github.com/cds-snc/forms-terraform/compare/v3.34.0...v3.35.0) (2025-05-30)
 
 
