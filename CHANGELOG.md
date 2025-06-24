@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.36.1](https://github.com/cds-snc/forms-terraform/compare/v3.36.0...v3.36.1) (2025-06-24)
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#907](https://github.com/cds-snc/forms-terraform/issues/907)) ([92d8bb8](https://github.com/cds-snc/forms-terraform/commit/92d8bb86d4331067aceeda87df7e2d99a8827442))
+* **deps:** update vitest monorepo to v3 (major) ([#877](https://github.com/cds-snc/forms-terraform/issues/877)) ([98f77c0](https://github.com/cds-snc/forms-terraform/commit/98f77c0ebad4fabe08af9c0e4ca0db1ca111fff1))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1048](https://github.com/cds-snc/forms-terraform/issues/1048)) ([f44754d](https://github.com/cds-snc/forms-terraform/commit/f44754d2bdfc4780b438834c55c0785fe9d07c2b))
+
 ## [3.36.0](https://github.com/cds-snc/forms-terraform/compare/v3.35.0...v3.36.0) (2025-06-21)
 
 
