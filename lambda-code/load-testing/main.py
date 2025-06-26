@@ -26,6 +26,7 @@ os.environ["FORM_ID"] = params["/load-testing/form-id"]
 os.environ["FORM_PRIVATE_KEY"] = params["/load-testing/form-private-key"]
 os.environ["ZITADEL_APP_PRIVATE_KEY"] = params["/load-testing/zitadel-app-private-key"]
 
+
 def handler(event=None, context=None):
 
     # Check for required environment variables
