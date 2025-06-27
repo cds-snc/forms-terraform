@@ -15,6 +15,7 @@
     "@aws-sdk/client-sqs": "3.799.0",
     "@aws-sdk/lib-dynamodb": "3.799.0",
     "@gcforms/connectors": "^2.0.2",
+    "aws-xray-sdk-core": "^3.10.3",
     "json2md": "^2.0.3",
     "uuid": "^11.1.0"
   },

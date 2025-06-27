@@ -17,12 +17,15 @@ import {
   AddressCompleteProps,
 } from "./types.js";
 import { getFormattedDateFromObject } from "./utils.js";
+import AWSXRay from "aws-xray-sdk-core";
 
 const awsProperties = {
   region: process.env.REGION ?? "ca-central-1",
 };
 
-const db = DynamoDBDocumentClient.from(new DynamoDBClient(awsProperties));
+const db = AWSXRay.captureAWSv3Client(
+  DynamoDBDocumentClient.from(new DynamoDBClient(awsProperties))
+);
 
 export async function getSubmission(message: Record<string, unknown>) {
   const DBParams = {
