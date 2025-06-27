@@ -1,6 +1,6 @@
 import AWSXRay from "aws-xray-sdk-core";
 // Need to wrap the http module globally before importing it
-// to ensure that all HTTP requests are captured by AWS X-Ray.
+// to ensure that all outgoing HTTP requests are captured by AWS X-Ray.
 AWSXRay.captureHTTPsGlobal(require("http"));
 
 import util from "util";
