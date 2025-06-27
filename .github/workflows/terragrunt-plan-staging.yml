@@ -228,16 +228,6 @@ jobs:
           terragrunt: "true"
 
       # Depends on S3
-      - name: Terragrunt plan file_scanning
-        if: steps.filter.outputs.file_scanning == 'true'
-        uses: cds-snc/terraform-plan@e710cb1446e5dfe69a0182603fb06b5282d7eb07 # v3.4.3
-        with:
-          directory: "env/cloud/file_scanning"
-          comment-delete: "true"
-          comment-title: "Staging: file_scanning"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
       - name: Terragrunt plan guard_duty
         if: steps.filter.outputs.guard_duty == 'true'
         uses: cds-snc/terraform-plan@e710cb1446e5dfe69a0182603fb06b5282d7eb07 # v3.4.3

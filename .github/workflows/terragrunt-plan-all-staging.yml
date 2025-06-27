@@ -128,13 +128,6 @@ jobs:
           terragrunt: "true"
 
       # Depends on S3
-      - name: Terragrunt plan file_scanning
-        uses: cds-snc/terraform-plan@e710cb1446e5dfe69a0182603fb06b5282d7eb07 # v3.4.3
-        with:
-          directory: "env/cloud/file_scanning"
-          comment: "false"
-          terragrunt: "true"
-
       - name: Terragrunt plan guard_duty
         uses: cds-snc/terraform-plan@e710cb1446e5dfe69a0182603fb06b5282d7eb07 # v3.4.3
         with:
