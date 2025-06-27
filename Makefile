@@ -58,10 +58,13 @@ clear_terragrunt_cache: ## Clear Terragrunt cache
 sso_login: ## Login to AWS SSO
 	./local_dev_files/sso_login.sh $(profile)
 
+upgrade_env:  ## Update existing state to new provider version
+	./local_dev_files/upgrade_dev_env.sh
+
 # Dependency guards
 
-lambda lambdas connect_env create_certs destroy_env build_env build_module: guard-AWS_ACCOUNT_ID
-lambda lambdas connect_env destroy_env build_env build_module: sso_login
+lambda lambdas connect_env create_certs destroy_env build_env build_module upgrade_env: guard-AWS_ACCOUNT_ID
+lambda lambdas connect_env destroy_env build_env build_module upgrade_env: sso_login
 
 build_env build_module: guard-STAGING_AWS_ACCOUNT_ID
 
@@ -81,4 +84,5 @@ build_env build_module: guard-STAGING_AWS_ACCOUNT_ID
 	clear_terragrunt_cache \
 	sso_login \
 	lambda \
-	lambdas
+	lambdas \
+	upgrade_env
