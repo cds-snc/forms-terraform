@@ -50,7 +50,7 @@ Pull Requests in this repository require all commits to be signed before they ca
   1. `brew install warrensbox/tap/tfswitch`
   1. `tfswitch 1.12.2`
   1. `brew install warrensbox/tap/tgswitch`
-  1. `tgswitch 0.81.10`
+  1. `tgswitch 0.82.3`
 
 - Yarn (chances are you already have this if working on the app):
 
