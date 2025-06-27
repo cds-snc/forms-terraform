@@ -1,11 +1,22 @@
 [
   {
+    "name": "xray-daemon",
+    "image": "amazon/aws-xray-daemon",
+    "cpu": 32,
+    "memoryReservation": 256,
+    "portMappings": [
+      {
+        "containerPort": 2000,
+        "protocol": "udp"
+      }
+    ]
+  },
+  {
     "name": "form_viewer",
     "image": "${image}",
     "portMappings": [
       {
         "containerPort": 3000,
-        "hostPort": 3000,
         "protocol": "tcp"
       }
     ],
