@@ -296,6 +296,13 @@ resource "aws_iam_role_policy_attachment" "lambda_sns" {
   policy_arn = aws_iam_policy.lambda_sns.arn
 }
 
+resource "aws_iam_role_policy_attachment" "lambda_xray" {
+  role       = aws_iam_role.lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+}
+
+
+
 // This is required by the API end to end test lambda function
 
 resource "aws_lambda_permission" "allow_submission_lambda_invoke" {
