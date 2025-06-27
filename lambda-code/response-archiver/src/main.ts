@@ -8,6 +8,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { Handler } from "aws-lambda";
 import { FileAttachement, getFileAttachments } from "./lib/fileAttachments.js";
+import AWSXRay from "aws-xray-sdk-core";
 
 const DYNAMODB_VAULT_TABLE_NAME = process.env.DYNAMODB_VAULT_TABLE_NAME ?? "";
 const ARCHIVING_S3_BUCKET = process.env.ARCHIVING_S3_BUCKET;
@@ -24,16 +25,20 @@ interface FormResponse {
   confirmationCode: string;
 }
 
+const s3Client = AWSXRay.captureAWSv3Client(
+  new S3Client({
+    region: process.env.REGION ?? "ca-central-1",
+  })
+);
+
+const dynamodbClient = AWSXRay.captureAWSv3Client(
+  new DynamoDBClient({
+    region: process.env.REGION ?? "ca-central-1",
+  })
+);
+
 export const handler: Handler = async () => {
   try {
-    const dynamodbClient = new DynamoDBClient({
-      region: process.env.REGION ?? "ca-central-1",
-    });
-
-    const s3Client = new S3Client({
-      region: process.env.REGION ?? "ca-central-1",
-    });
-
     await archiveResponses(dynamodbClient, s3Client);
 
     console.log(
