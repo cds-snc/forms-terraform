@@ -2,6 +2,7 @@ import { Handler } from "aws-lambda";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { BatchWriteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import AWSXRay from "aws-xray-sdk-core";
 
 const REGION = process.env.REGION;
 const AUDIT_LOGS_DYNAMODB_TABLE_NAME = process.env.AUDIT_LOGS_DYNAMODB_TABLE_NAME;
@@ -15,16 +16,20 @@ interface AuditLog {
   [key: string]: any;
 }
 
+const dynamodbClient = AWSXRay.captureAWSv3Client(
+  new DynamoDBClient({
+    region: REGION ?? "ca-central-1",
+  })
+);
+
+const s3Client = AWSXRay.captureAWSv3Client(
+  new S3Client({
+    region: REGION ?? "ca-central-1",
+  })
+);
+
 export const handler: Handler = async () => {
   try {
-    const dynamodbClient = new DynamoDBClient({
-      region: REGION ?? "ca-central-1",
-    });
-
-    const s3Client = new S3Client({
-      region: REGION ?? "ca-central-1",
-    });
-
     await archiveAuditLogs(dynamodbClient, s3Client);
   } catch (error) {
     // Error message will be sent to slack
