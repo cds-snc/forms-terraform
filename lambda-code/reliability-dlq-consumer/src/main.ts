@@ -4,15 +4,19 @@ import {
   SendMessageCommand,
   DeleteMessageCommand,
 } from "@aws-sdk/client-sqs";
+import AWSXRay from "aws-xray-sdk-core";
 
 const REGION = process.env.REGION;
 const SQS_DEAD_LETTER_QUEUE_URL = process.env.SQS_DEAD_LETTER_QUEUE_URL;
 const SQS_SUBMISSION_PROCESSING_QUEUE_URL = process.env.SQS_SUBMISSION_PROCESSING_QUEUE_URL;
 
-export async function handler() {
-  const sqsClient = new SQSClient({
+const sqsClient = AWSXRay.captureAWSv3Client(
+  new SQSClient({
     region: REGION,
-  });
+  })
+);
+
+export async function handler() {
   const receiveMessageCommandInput = {
     QueueUrl: SQS_DEAD_LETTER_QUEUE_URL,
   };

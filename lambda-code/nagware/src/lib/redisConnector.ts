@@ -1,3 +1,8 @@
+import AWSXRay from "aws-xray-sdk-core";
+// Need to wrap the http module globally before importing it
+// to ensure that all outgoing HTTP requests are captured by AWS X-Ray.
+AWSXRay.captureHTTPsGlobal(require("http"));
+
 import { type RedisClientType, createClient } from "redis";
 
 const REDIS_URL = process.env.REDIS_URL ?? "redis://localhost:6379";

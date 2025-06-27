@@ -127,6 +127,13 @@ resource "aws_iam_role_policy_attachment" "cognito_forms" {
   policy_arn = aws_iam_policy.cognito.arn
 }
 
+resource "aws_iam_role_policy_attachment" "lambda_xray" {
+  role       = aws_iam_role.forms.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+}
+
+
+
 #
 # IAM - SQS
 #
