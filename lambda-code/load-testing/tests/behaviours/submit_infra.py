@@ -11,7 +11,7 @@ from utils.jwt_generator import JwtGenerator
 from utils.task_set import SequentialTaskSetWithFailure
 
 
-class FormSubmitBehaviour(SequentialTaskSetWithFailure):
+class FormSubmitThroughInfraBehaviour(SequentialTaskSetWithFailure):
     def __init__(self, parent: HttpUser) -> None:
         super().__init__(parent)
         self.access_token = None

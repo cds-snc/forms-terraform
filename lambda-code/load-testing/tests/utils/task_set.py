@@ -13,6 +13,7 @@ class SequentialTaskSetWithFailure(SequentialTaskSet):
     def __init__(self, parent) -> None:
         super().__init__(parent)
         parsed_url = urlparse(parent.host)
+        self.client_url = parent.host
         self.api_url = f"{parsed_url.scheme}://api.{parsed_url.netloc}"
         self.idp_url = f"{parsed_url.scheme}://auth.{parsed_url.netloc}"
         self.idp_project_id = os.getenv("IDP_PROJECT_ID", "275372254274006635")

@@ -20,11 +20,15 @@ params = get_ssm_parameters(
         "/load-testing/form-id",
         "/load-testing/form-private-key",
         "/load-testing/zitadel-app-private-key",
+        "/load-testing/submit-form-server-action-id",
     ],
 )
 os.environ["FORM_ID"] = params["/load-testing/form-id"]
 os.environ["FORM_PRIVATE_KEY"] = params["/load-testing/form-private-key"]
 os.environ["ZITADEL_APP_PRIVATE_KEY"] = params["/load-testing/zitadel-app-private-key"]
+os.environ["SUBMIT_FORM_SERVER_ACTION_ID"] = params[
+    "/load-testing/submit-form-server-action-id"
+]
 
 
 def handler(event=None, context=None):
@@ -34,6 +38,7 @@ def handler(event=None, context=None):
         "FORM_ID",
         "FORM_PRIVATE_KEY",
         "ZITADEL_APP_PRIVATE_KEY",
+        "SUBMIT_FORM_SERVER_ACTION_ID",
     ]
     for env_var in required_env_vars:
         if env_var not in os.environ:
