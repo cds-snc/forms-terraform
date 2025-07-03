@@ -1,6 +1,8 @@
 import os
 import json
 import random
+import base64
+import string
 from typing import Any, Dict, List, Union
 from botocore.config import Config
 from boto3 import client
@@ -64,6 +66,8 @@ class FormSubmissionGenerator:
             ]:
                 choices = question["properties"]["choices"]
                 response[question_id] = random.choice(choices)[language]
+            elif question_type == "fileInput":
+                response[question_id] = self.generate_random_submission_attachment()
             else:
                 raise ValueError("Unsupported question type")
 
@@ -72,6 +76,20 @@ class FormSubmissionGenerator:
     def lipsum(self, length: int) -> str:
         """Generate a random string of lorem ipsum."""
         return " ".join(random.choices(self.lipsum_words, k=length)).capitalize()
+
+    def generate_random_submission_attachment(self):
+        size_in_bytes = random.randint(
+            1048576, 2097152
+        )  # 1 MB to 2 MB. Encoding it in Base64 will increase each file size by 33%.
+        filename = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
+        raw_bytes = os.urandom(size_in_bytes)
+        encoded_content = base64.b64encode(raw_bytes).decode("utf-8")
+
+        return {
+            "name": f"{filename}.txt",
+            "size": size_in_bytes,
+            "based64EncodedFile": encoded_content,
+        }
 
     def submit_response(self) -> None:
         """Submit a response to the Lambda Submission function."""

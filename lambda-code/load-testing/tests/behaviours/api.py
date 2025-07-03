@@ -62,7 +62,7 @@ class RetrieveResponseBehaviour(SequentialTaskSetWithFailure):
         submission = self.form_new_submissions.pop()
         response = self.request_with_failure_check(
             "get",
-            f"{self.api_url}/forms/{self.form_id}/submission/{submission["name"]}",
+            f"{self.api_url}/forms/{self.form_id}/submission/{submission['name']}",
             200,
             headers=self.headers,
             name=f"/forms/submission/retrieve",
