@@ -4,6 +4,8 @@ import os
 import boto3
 import json
 
+from invokust.aws_lambda import get_lambda_runtime_info
+
 logging.basicConfig(level=logging.INFO)
 
 ssm_client = boto3.client("ssm")
@@ -56,4 +58,8 @@ def handler(event=None, context=None):
     except Exception as e:
         logging.error("Exception running locust tests {0}".format(repr(e)))
     else:
-        return json.dumps(loadtest.stats())
+        locust_stats = loadtest.stats()
+        lambda_runtime_info = get_lambda_runtime_info(context)
+        loadtest_results = locust_stats.copy()
+        loadtest_results.update(lambda_runtime_info)
+        return json.dumps(loadtest_results)
