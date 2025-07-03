@@ -2,6 +2,7 @@ import invokust
 import logging
 import os
 import boto3
+import json
 
 logging.basicConfig(level=logging.INFO)
 
@@ -55,4 +56,4 @@ def handler(event=None, context=None):
     except Exception as e:
         logging.error("Exception running locust tests {0}".format(repr(e)))
     else:
-        return loadtest.stats()
+        return json.dumps(loadtest.stats())
