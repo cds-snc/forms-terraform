@@ -27,4 +27,5 @@ resource "aws_ssm_parameter" "load_testing_submit_form_server_action_id_key" {
   name        = "/load-testing/submit-form-server-action-id"
   description = "NextJS server action identifier associated to 'submitForm' function."
   type        = "SecureString"
+  value       = "TBD"
 }
