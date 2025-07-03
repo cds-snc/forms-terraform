@@ -21,3 +21,10 @@ resource "aws_ssm_parameter" "load_testing_zitadel_app_private_key" {
   type        = "SecureString"
   value       = var.load_testing_zitadel_app_private_key
 }
+
+resource "aws_ssm_parameter" "load_testing_submit_form_server_action_id_key" {
+  # checkov:skip=CKV_AWS_337: default service encryption key is acceptable
+  name        = "/load-testing/submit-form-server-action-id"
+  description = "NextJS server action identifier associated to 'submitForm' function."
+  type        = "SecureString"
+}
