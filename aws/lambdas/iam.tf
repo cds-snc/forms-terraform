@@ -251,6 +251,36 @@ data "aws_iam_policy_document" "lambda_sns" {
   }
 }
 
+resource "aws_iam_policy" "lambda_xray" {
+  name        = "lambda_xray"
+  path        = "/"
+  description = "IAM policy for allowing X-Ray tracing"
+  policy = data.aws_iam_policy_document.lambda_xray.json
+}
+
+data "aws_iam_policy_document" "lambda_xray" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+            "logs:PutLogEvents",
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:DescribeLogStreams",
+                "logs:DescribeLogGroups",
+                "logs:PutRetentionPolicy",
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
+                "xray:GetSamplingStatisticSummaries",
+                "ssm:GetParameters"
+    ]
+
+    resources = ["*"]
+  }
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_secrets" {
   role       = aws_iam_role.lambda.name
   policy_arn = aws_iam_policy.lambda_secrets.arn
@@ -298,7 +328,7 @@ resource "aws_iam_role_policy_attachment" "lambda_sns" {
 
 resource "aws_iam_role_policy_attachment" "lambda_xray" {
   role       = aws_iam_role.lambda.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+  policy_arn = aws_iam_policy.lambda_xray.arn
 }
 
 
