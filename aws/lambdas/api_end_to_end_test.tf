@@ -35,7 +35,7 @@ resource "aws_lambda_function" "api_end_to_end_test" {
   }
 
   tracing_config {
-    mode = "PassThrough"
+    mode = "Active"
   }
 }
 

@@ -197,6 +197,8 @@ const buildTransactionItems = (
   );
 };
 
+const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient(awsProperties));
+
 export const handler: Handler = async (event: SQSEvent) => {
   try {
     const logEvents = event.Records.map((record) => {
@@ -220,8 +222,6 @@ export const handler: Handler = async (event: SQSEvent) => {
     );
 
     const { apiAuditLogTransactions, appAuditLogTransactions } = buildTransactionItems(logEvents);
-
-    const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient(awsProperties));
 
     const { UnprocessedItems } = await dynamoDb.send(
       new BatchWriteCommand({

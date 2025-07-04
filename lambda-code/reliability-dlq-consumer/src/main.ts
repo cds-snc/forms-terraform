@@ -9,10 +9,11 @@ const REGION = process.env.REGION;
 const SQS_DEAD_LETTER_QUEUE_URL = process.env.SQS_DEAD_LETTER_QUEUE_URL;
 const SQS_SUBMISSION_PROCESSING_QUEUE_URL = process.env.SQS_SUBMISSION_PROCESSING_QUEUE_URL;
 
+const sqsClient = new SQSClient({
+  region: REGION,
+});
+
 export async function handler() {
-  const sqsClient = new SQSClient({
-    region: REGION,
-  });
   const receiveMessageCommandInput = {
     QueueUrl: SQS_DEAD_LETTER_QUEUE_URL,
   };
