@@ -1,11 +1,9 @@
 import { RDSDataClient, ExecuteStatementCommand } from "@aws-sdk/client-rds-data";
-import AWSXRay from "aws-xray-sdk-core";
-
 /**
  * Delete all form templates that have been marked as archived (has an TTL value that is not null)
  */
 
-const rdsDataClient = AWSXRay.captureAWSv3Client(new RDSDataClient({ region: process.env.REGION }));
+const rdsDataClient = new RDSDataClient({ region: process.env.REGION });
 
 export const deleteFormTemplatesMarkedAsArchived = async () => {
   try {

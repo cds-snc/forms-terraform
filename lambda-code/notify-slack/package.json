@@ -18,8 +18,5 @@
     "typescript": "^5.8.3",
     "vitest": "^3.0.0"
   },
-  "packageManager": "yarn@4.9.1",
-  "dependencies": {
-    "aws-xray-sdk-core": "^3.10.3"
-  }
+  "packageManager": "yarn@4.9.1"
 }

@@ -5,8 +5,6 @@ import { Handler } from "aws-lambda";
 import { v4 } from "uuid";
 import { createHash } from "crypto";
 
-import AWSXRay from "aws-xray-sdk-core";
-
 type AnyObject = {
   [key: string]: any;
 };
@@ -15,9 +13,9 @@ const awsProperties = {
   region: process.env.REGION ?? "ca-central-1",
 };
 
-const dynamodb = AWSXRay.captureAWSv3Client(new DynamoDBClient(awsProperties));
+const dynamodb = new DynamoDBClient(awsProperties);
 
-const sqs = AWSXRay.captureAWSv3Client(new SQSClient(awsProperties));
+const sqs = new SQSClient(awsProperties);
 
 /*
 Params:

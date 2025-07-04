@@ -7,15 +7,11 @@ import {
   ScanCommandOutput,
 } from "@aws-sdk/lib-dynamodb";
 
-import AWSXRay from "aws-xray-sdk-core";
-
 const DYNAMODB_VAULT_TABLE_NAME = process.env.DYNAMODB_VAULT_TABLE_NAME ?? "";
 
-const dynamodbClient = AWSXRay.captureAWSv3Client(
-  new DynamoDBClient({
-    region: process.env.REGION ?? "ca-central-1",
-  })
-);
+const dynamodbClient = new DynamoDBClient({
+  region: process.env.REGION ?? "ca-central-1",
+});
 
 export async function retrieveNewOrDownloadedFormResponsesOver28DaysOld() {
   try {

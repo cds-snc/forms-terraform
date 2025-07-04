@@ -2,7 +2,6 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
 import { Handler, SQSEvent } from "aws-lambda";
 import type { BatchWriteCommandOutput } from "@aws-sdk/lib-dynamodb";
-import AWSXRay from "aws-xray-sdk-core";
 
 type LogEvent = {
   userId: string;
@@ -198,9 +197,8 @@ const buildTransactionItems = (
   );
 };
 
-const dynamoDb = AWSXRay.captureAWSv3Client(
-  DynamoDBDocumentClient.from(new DynamoDBClient(awsProperties))
-);
+const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient(awsProperties));
+
 export const handler: Handler = async (event: SQSEvent) => {
   try {
     const logEvents = event.Records.map((record) => {

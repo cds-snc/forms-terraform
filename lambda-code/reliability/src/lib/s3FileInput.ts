@@ -6,18 +6,15 @@ import {
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { NodeJsClient } from "@smithy/types";
-import AWSXRay from "aws-xray-sdk-core";
 
 const awsProperties = {
   region: process.env.REGION ?? "ca-central-1",
 };
 
-const s3Client = AWSXRay.captureAWSv3Client(
-  new S3Client({
-    ...awsProperties,
-    forcePathStyle: true,
-  })
-) as NodeJsClient<S3Client>;
+const s3Client = new S3Client({
+  ...awsProperties,
+  forcePathStyle: true,
+}) as NodeJsClient<S3Client>;
 
 const environment = process.env.ENVIRONMENT;
 const reliabilityBucketName = `forms-${environment}-reliability-file-storage`;
