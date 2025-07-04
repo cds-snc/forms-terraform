@@ -1,15 +1,25 @@
 [
   {
-    "name": "xray-daemon",
-    "image": "amazon/aws-xray-daemon",
-    "cpu": 32,
-    "memoryReservation": 256,
-    "portMappings": [
-      {
-        "containerPort": 2000,
-        "protocol": "udp"
+    "name": "aws-otel-collector",
+    "image": "amazon/aws-otel-collector",
+    "command": ["--config=/etc/ecs/ecs-default-config.yaml"],
+    "essential": true,
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/ecs-aws-otel-sidecar-collector",
+        "awslogs-region": "${awslogs-region}",
+        "awslogs-stream-prefix": "ecs",
+        "awslogs-create-group": "True"
       }
-    ]
+    },
+    "healthCheck": {
+      "command": ["/healthcheck"],
+      "interval": 5,
+      "timeout": 6,
+      "retries": 5,
+      "startPeriod": 1
+    }
   },
   {
     "name": "form_viewer",
@@ -22,6 +32,12 @@
     ],
     "cpu": 0,
     "essential": true,
+    "dependsOn": [
+      {
+        "containerName": "aws-otel-collector",
+        "condition": "START"
+      }
+    ],
     "linuxParameters": {
       "capabilities": {
         "add": [],
