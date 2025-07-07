@@ -4,6 +4,10 @@ import { notifyProcessed } from "./dataLayer.js";
 import { retrieveFilesFromReliabilityStorage } from "./s3FileInput.js";
 import { FormSubmission } from "./types.js";
 
+const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
+  process.env.NOTIFY_API_KEY ?? ""
+);
+
 export default async (
   submissionID: string,
   sendReceipt: string,
@@ -48,10 +52,6 @@ export default async (
         : formSubmission.deliveryOption.emailSubjectEn
         ? formSubmission.deliveryOption.emailSubjectEn
         : formSubmission.form.titleEn;
-
-    const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
-      process.env.NOTIFY_API_KEY ?? ""
-    );
 
     await gcNotifyConnector.sendEmail(
       formSubmission.deliveryOption.emailAddress,

@@ -7,12 +7,8 @@ import {
 } from "@aws-sdk/client-s3";
 import { NodeJsClient } from "@smithy/types";
 
-const awsProperties = {
-  region: process.env.REGION ?? "ca-central-1",
-};
-
 const s3Client = new S3Client({
-  ...awsProperties,
+  region: process.env.REGION ?? "ca-central-1",
   forcePathStyle: true,
 }) as NodeJsClient<S3Client>;
 

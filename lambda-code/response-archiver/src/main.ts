@@ -24,16 +24,16 @@ interface FormResponse {
   confirmationCode: string;
 }
 
+const dynamodbClient = new DynamoDBClient({
+  region: process.env.REGION ?? "ca-central-1",
+});
+
+const s3Client = new S3Client({
+  region: process.env.REGION ?? "ca-central-1",
+});
+
 export const handler: Handler = async () => {
   try {
-    const dynamodbClient = new DynamoDBClient({
-      region: process.env.REGION ?? "ca-central-1",
-    });
-
-    const s3Client = new S3Client({
-      region: process.env.REGION ?? "ca-central-1",
-    });
-
     await archiveResponses(dynamodbClient, s3Client);
 
     console.log(
