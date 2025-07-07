@@ -2,21 +2,32 @@
 Tests the API's retrieval of new and specific responses.
 """
 
-import os
 import json
-
 from locust import HttpUser, task
-
-from utils.data_structures import EncryptedFormSubmission
-from utils.form_submission_decrypter import FormSubmissionDecrypter
+from tests.utils.config import (
+    get_idp_project_id,
+    get_idp_url_from_target_host,
+    get_api_url_from_target_host,
+    load_test_configuration,
+)
+from utils.form_submission_decrypter import (
+    EncryptedFormSubmission,
+    FormSubmissionDecrypter,
+)
 from utils.jwt_generator import JwtGenerator
-from utils.task_set import SequentialTaskSetWithFailure
+from tests.utils.sequential_task_set_with_failure import SequentialTaskSetWithFailure
 
 
 class RetrieveResponseBehaviour(SequentialTaskSetWithFailure):
     def __init__(self, parent: HttpUser) -> None:
         super().__init__(parent)
-        self.form_id = os.getenv("FORM_ID")
+        test_configuration = load_test_configuration()
+        random_test_form = test_configuration.get_random_test_form()
+        self.form_id = random_test_form.id
+        self.form_private_key = random_test_form.apiPrivateKey
+        self.idp_project_id = get_idp_project_id()
+        self.idp_url = get_idp_url_from_target_host(self.parent.host)
+        self.api_url = get_api_url_from_target_host(self.parent.host)
         self.form_decrypted_submissions = {}
         self.form_new_submissions = None
         self.headers = None

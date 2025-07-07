@@ -4,13 +4,14 @@ import argparse
 import logging
 import sys
 import json
-import numpy
-
 from custom_results_aggregator import custom_results_aggregator
 from invokust.aws_lambda import LambdaLoadTest
+from pathlib import Path
 
 
-def print_stat(type, name, req_count, median, avg, min, max, rps, p55, p65, p75, p85, p95, p99):
+def print_stat(
+    type, name, req_count, median, avg, min, max, rps, p55, p65, p75, p85, p95, p99
+):
     return "%-7s %-40s %10s %9s %9s %9s %9s %10s %7s %7s %7s %7s %7s %7s" % (
         type,
         name,
@@ -81,7 +82,20 @@ def print_stats_exit(load_test_state):
     )
     logging.info(
         print_stat(
-            "TYPE", "NAME", "#REQUESTS", "MEDIAN", "AVERAGE", "MIN", "MAX", "#REQS/SEC", "P55", "P65", "P75", "P85", "P95", "P99"
+            "TYPE",
+            "NAME",
+            "#REQUESTS",
+            "MEDIAN",
+            "AVERAGE",
+            "MIN",
+            "MAX",
+            "#REQS/SEC",
+            "P55",
+            "P65",
+            "P75",
+            "P85",
+            "P95",
+            "P99",
         )
     )
     logging.info(
@@ -125,16 +139,25 @@ if __name__ == "__main__":
         format="%(asctime)s %(levelname)-6s %(threadName)-11s %(message)s",
     )
 
+    if not Path("test_configuration.json").exists():
+        raise Exception("Missing test_configuration.json file")
+    
+    with open("test_configuration.json") as file:
+        test_configuration = json.load(file)
+
     # AWS Lambda has a maximum execution time ("timeout"). We limit the execution time to 3 minutes if the overall
     # load test time is longer, to make sure the lambda will not exceed the timeout.
 
     lambda_runtime = f"{args.time_limit}s" if args.time_limit < 180 else "3m"
     lambda_payload = {
-        "locustfile": args.locust_file,
-        "host": args.locust_host,
-        "num_users": args.locust_users,
-        "spawn_rate": 10,
-        "run_time": lambda_runtime,
+        "testConfiguration": test_configuration,
+        "locustConfiguration": {
+            "locustfile": args.locust_file,
+            "host": args.locust_host,
+            "num_users": args.locust_users,
+            "spawn_rate": 10,
+            "run_time": lambda_runtime,
+        },
     }
 
     load_test_state = LambdaLoadTest(
