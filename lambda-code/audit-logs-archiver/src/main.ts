@@ -15,16 +15,16 @@ interface AuditLog {
   [key: string]: any;
 }
 
+const dynamodbClient = new DynamoDBClient({
+  region: REGION ?? "ca-central-1",
+});
+
+const s3Client = new S3Client({
+  region: REGION ?? "ca-central-1",
+});
+
 export const handler: Handler = async () => {
   try {
-    const dynamodbClient = new DynamoDBClient({
-      region: REGION ?? "ca-central-1",
-    });
-
-    const s3Client = new S3Client({
-      region: REGION ?? "ca-central-1",
-    });
-
     await archiveAuditLogs(dynamodbClient, s3Client);
   } catch (error) {
     // Error message will be sent to slack

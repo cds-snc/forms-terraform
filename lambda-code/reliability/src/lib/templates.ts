@@ -10,13 +10,12 @@ export type TemplateInfo = {
   };
 };
 
+const postgresConnector = await PostgresConnector.defaultUsingPostgresConnectionUrlFromAwsSecret(
+  process.env.DB_URL ?? ""
+);
+
 export async function getTemplateInfo(formID: string): Promise<TemplateInfo | null> {
   try {
-    const postgresConnector =
-      await PostgresConnector.defaultUsingPostgresConnectionUrlFromAwsSecret(
-        process.env.DB_URL ?? ""
-      );
-
     const templates = await postgresConnector.executeSqlStatement()<
       {
         jsonConfig?: Record<string, unknown>;

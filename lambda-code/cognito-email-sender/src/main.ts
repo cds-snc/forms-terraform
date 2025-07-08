@@ -14,6 +14,10 @@ if (!KEY_ARN || !KEY_ALIAS || !TEMPLATE_ID) {
   );
 }
 
+const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
+  process.env.NOTIFY_API_KEY ?? ""
+);
+
 export const handler: Handler = async (event) => {
   // setup the encryptionSDK's key ring
   const { decrypt } = encryptionSDK.buildDecrypt(
@@ -53,10 +57,6 @@ export const handler: Handler = async (event) => {
   ) {
     // attempt to send the code to the user through Notify
     try {
-      const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
-        process.env.NOTIFY_API_KEY ?? ""
-      );
-
       await gcNotifyConnector.sendEmail(userEmail, TEMPLATE_ID, {
         passwordReset: event.triggerSource === "CustomEmailSender_ForgotPassword",
         // Keeping `accountVerification` and `resendCode` variables in case we need them in the future. They were removed when we implemented 2FA.

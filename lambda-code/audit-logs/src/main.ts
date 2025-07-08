@@ -25,9 +25,11 @@ type TransactionRequest = {
   };
 };
 
-const awsProperties = {
-  region: process.env.REGION ?? "ca-central-1",
-};
+const dynamoDb = DynamoDBDocumentClient.from(
+  new DynamoDBClient({
+    region: process.env.REGION ?? "ca-central-1",
+  })
+);
 
 const AppAuditLogArn = process.env.APP_AUDIT_LOGS_SQS_ARN;
 const ApiAuditLogArn = process.env.API_AUDIT_LOGS_SQS_ARN;
@@ -220,8 +222,6 @@ export const handler: Handler = async (event: SQSEvent) => {
     );
 
     const { apiAuditLogTransactions, appAuditLogTransactions } = buildTransactionItems(logEvents);
-
-    const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient(awsProperties));
 
     const { UnprocessedItems } = await dynamoDb.send(
       new BatchWriteCommand({
