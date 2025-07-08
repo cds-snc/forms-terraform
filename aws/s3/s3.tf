@@ -25,6 +25,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "reliability_file_storage" {
   rule {
     id     = "Clear Reliability Queue after 30 days"
     status = "Enabled"
+    filter {}
 
     expiration {
       days = 30
@@ -137,6 +138,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "archive_storage" {
   rule {
     id     = "Clear Archive Storage after 30 days"
     status = "Enabled"
+    filter {}
 
     expiration {
       days = 30
@@ -197,6 +199,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "audit_logs_archive_storage" {
   rule {
     id     = "Clear Audit Logs Archive Storage after 1 year and 11 months"
     status = "Enabled"
+    filter {}
 
     expiration {
       days = 700
