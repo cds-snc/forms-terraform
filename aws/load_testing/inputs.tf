@@ -8,18 +8,6 @@ variable "lambda_submission_function_name" {
   type        = string
 }
 
-variable "load_testing_form_id" {
-  description = "Form ID that will be used to generate, retrieve and confirm responses."
-  type        = string
-  sensitive   = true
-}
-
-variable "load_testing_form_private_key" {
-  description = "Private key JSON of the form that will be used to authenticate the API requests.  This must be a key from the `var.load_testing_form_id` form."
-  type        = string
-  sensitive   = true
-}
-
 variable "load_testing_zitadel_app_private_key" {
   description = "Private key JSON of the Zitadel application to perform access token introspection requests."
   type        = string

@@ -15,16 +15,6 @@ resource "aws_lambda_function" "load_testing" {
     ignore_changes = [image_uri]
   }
 
-  environment {
-    variables = {
-      LOCUST_RUN_TIME   = "3m"
-      LOCUST_LOCUSTFILE = "./tests/locust_test_file.py"
-      LOCUST_HOST       = "https://${var.domains[0]}"
-      LOCUST_SPAWN_RATE = "1"
-      LOCUST_NUM_USERS  = "1"
-    }
-  }
-
   tracing_config {
     mode = "PassThrough"
   }
@@ -76,10 +66,7 @@ data "aws_iam_policy_document" "load_test_lambda" {
       "ssm:GetParameters",
     ]
     resources = [
-      aws_ssm_parameter.load_testing_form_id.arn,
-      aws_ssm_parameter.load_testing_form_private_key.arn,
       aws_ssm_parameter.load_testing_zitadel_app_private_key.arn,
-      aws_ssm_parameter.load_testing_submit_form_server_action_id_key.arn,
     ]
   }
 
