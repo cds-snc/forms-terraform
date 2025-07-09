@@ -4,7 +4,7 @@ Tests the API's retrieval of new and specific responses.
 
 import json
 from locust import HttpUser, task
-from tests.utils.config import (
+from utils.config import (
     get_idp_project_id,
     get_idp_url_from_target_host,
     get_api_url_from_target_host,
@@ -15,7 +15,7 @@ from utils.form_submission_decrypter import (
     FormSubmissionDecrypter,
 )
 from utils.jwt_generator import JwtGenerator
-from tests.utils.sequential_task_set_with_failure import SequentialTaskSetWithFailure
+from utils.sequential_task_set_with_failure import SequentialTaskSetWithFailure
 
 
 class RetrieveResponseBehaviour(SequentialTaskSetWithFailure):

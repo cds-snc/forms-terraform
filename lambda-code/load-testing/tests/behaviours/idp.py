@@ -3,14 +3,14 @@ Tests the IdP's access token generation and introspection endpoints.
 """
 
 from locust import HttpUser, task
-from tests.utils.config import (
+from utils.config import (
     get_zitadel_app_private_key,
     get_idp_project_id,
     get_idp_url_from_target_host,
     load_test_configuration,
 )
 from utils.jwt_generator import JwtGenerator
-from tests.utils.sequential_task_set_with_failure import SequentialTaskSetWithFailure
+from utils.sequential_task_set_with_failure import SequentialTaskSetWithFailure
 
 
 class AccessTokenBehaviour(SequentialTaskSetWithFailure):

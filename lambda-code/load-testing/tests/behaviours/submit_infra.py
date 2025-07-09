@@ -4,8 +4,8 @@ Tests the Form submission flow through the reliability queue
 
 import json
 from locust import HttpUser, task
-from tests.utils.config import load_test_configuration
-from tests.utils.sequential_task_set_with_failure import SequentialTaskSetWithFailure
+from utils.config import load_test_configuration
+from utils.sequential_task_set_with_failure import SequentialTaskSetWithFailure
 from utils.form_submission_generator import FormSubmissionGenerator
 from botocore.config import Config
 from boto3 import client
