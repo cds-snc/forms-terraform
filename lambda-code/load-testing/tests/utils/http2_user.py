@@ -1,15 +1,12 @@
 import re
 import time
-
 from locust import User
 from locust.exception import LocustError
 import httpx
 from httpx import Request, Response
 from requests.auth import HTTPBasicAuth
 from httpx import InvalidURL, RequestError
-
 from urllib.parse import urlparse, urlunparse
-
 from locust.exception import CatchResponseError, ResponseError
 
 absolute_http_url_regexp = re.compile(r"^https?://", re.I)

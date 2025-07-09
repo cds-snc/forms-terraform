@@ -4,8 +4,8 @@ Tests the Form submission flow through the client
 
 import json
 from locust import HttpUser, task
-from tests.utils.config import get_client_url_from_target_host, load_test_configuration
-from tests.utils.sequential_task_set_with_failure import SequentialTaskSetWithFailure
+from utils.config import get_client_url_from_target_host, load_test_configuration
+from utils.sequential_task_set_with_failure import SequentialTaskSetWithFailure
 from utils.form_submission_generator import FormSubmissionGenerator
 
 
