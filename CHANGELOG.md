@@ -1,5 +1,34 @@
 # Changelog
 
+## [3.37.0](https://github.com/cds-snc/forms-terraform/compare/v3.36.0...v3.37.0) (2025-07-09)
+
+
+### Features
+
+* add submit-form-server-action-id in AWS System manager for load testing lambda function ([#1052](https://github.com/cds-snc/forms-terraform/issues/1052)) ([c5e150f](https://github.com/cds-snc/forms-terraform/commit/c5e150f5678d7d530c15948abdb984ac0ea509df))
+* load test code improvements ([#1057](https://github.com/cds-snc/forms-terraform/issues/1057)) ([0c45278](https://github.com/cds-snc/forms-terraform/commit/0c4527883b4737ffb53bb41306cddec4ea678c9e))
+* load testing submission attachments API ([#1051](https://github.com/cds-snc/forms-terraform/issues/1051)) ([0e982d1](https://github.com/cds-snc/forms-terraform/commit/0e982d1007e04cd5c653eddfdd13cf8f2c9e03af))
+* output percentiles once load test has completed ([#1055](https://github.com/cds-snc/forms-terraform/issues/1055)) ([e20d044](https://github.com/cds-snc/forms-terraform/commit/e20d044be4963a5740d7206dc3d1edb29f96eee7))
+
+
+### Bug Fixes
+
+* add missing lambda context information to load test lambda output ([#1054](https://github.com/cds-snc/forms-terraform/issues/1054)) ([f5e0451](https://github.com/cds-snc/forms-terraform/commit/f5e0451aaecb25409f7362d7738dd97834b39023))
+* return JSON string with load testing results ([#1053](https://github.com/cds-snc/forms-terraform/issues/1053)) ([f4b22d0](https://github.com/cds-snc/forms-terraform/commit/f4b22d07d1c6188c24c6ea45d0f964a14aaae6f0))
+* rework load test lambda payload to comply with Invokust library ([#1060](https://github.com/cds-snc/forms-terraform/issues/1060)) ([97f4f9e](https://github.com/cds-snc/forms-terraform/commit/97f4f9e66ea6340eb5bb480a61dd20a82cdca907))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#907](https://github.com/cds-snc/forms-terraform/issues/907)) ([92d8bb8](https://github.com/cds-snc/forms-terraform/commit/92d8bb86d4331067aceeda87df7e2d99a8827442))
+* **deps:** update vitest monorepo to v3 (major) ([#877](https://github.com/cds-snc/forms-terraform/issues/877)) ([98f77c0](https://github.com/cds-snc/forms-terraform/commit/98f77c0ebad4fabe08af9c0e4ca0db1ca111fff1))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1048](https://github.com/cds-snc/forms-terraform/issues/1048)) ([f44754d](https://github.com/cds-snc/forms-terraform/commit/f44754d2bdfc4780b438834c55c0785fe9d07c2b))
+
+
+### Code Refactoring
+
+* instantiate clients outside of functions ([#1058](https://github.com/cds-snc/forms-terraform/issues/1058)) ([201bd45](https://github.com/cds-snc/forms-terraform/commit/201bd452675e342e6e7c569a691353a2a05163d1))
+
 ## [3.36.0](https://github.com/cds-snc/forms-terraform/compare/v3.35.0...v3.36.0) (2025-06-21)
 
 
