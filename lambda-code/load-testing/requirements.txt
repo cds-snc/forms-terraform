@@ -5,3 +5,4 @@ httpx[http2]==0.27.2
 invokust==0.77
 locust==2.31.7
 PyJWT==2.9.0
+pydantic==2.11.7

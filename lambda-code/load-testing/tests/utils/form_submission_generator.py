@@ -1,16 +1,12 @@
 import os
-import json
 import random
 import base64
 import string
 from typing import Any, Dict, List, Union
-from botocore.config import Config
-from boto3 import client
+
 
 Response = Union[str, List[str], int, List[Dict[str, Any]], Dict[str, Any]]
 SubmissionRequestBody = Dict[int, Response]
-
-AWS_REGION = os.getenv("AWS_REGION", "ca-central-1")
 
 
 class FormSubmissionGenerator:
@@ -28,11 +24,6 @@ class FormSubmissionGenerator:
     def __init__(self, form_id: str, form_template: Dict[str, Any]) -> None:
         self.form_id = form_id
         self.form_template = form_template
-        self.lambda_client = client(
-            "lambda",
-            region_name=AWS_REGION,
-            config=Config(retries={"max_attempts": 10}),
-        )
 
     def generate_response(self) -> SubmissionRequestBody:
         """Generate a response based on the form template."""
@@ -90,21 +81,3 @@ class FormSubmissionGenerator:
             "size": size_in_bytes,
             "based64EncodedFile": encoded_content,
         }
-
-    def submit_response(self) -> None:
-        """Submit a response to the Lambda Submission function."""
-        submission = {
-            "FunctionName": "Submission",
-            "Payload": json.dumps(
-                {
-                    "formID": self.form_id,
-                    "responses": self.generate_response(),
-                    "language": "en",
-                    "securityAttribute": "Protected A",
-                }
-            ).encode("utf-8"),
-        }
-        result = self.lambda_client.invoke(**submission)
-        payload = json.loads(result["Payload"].read().decode())
-        if result.get("FunctionError") or not payload.get("status"):
-            raise ValueError("Submission Lambda could not process form response")
