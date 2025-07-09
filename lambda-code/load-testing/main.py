@@ -39,11 +39,12 @@ def handler(event: dict[str, any], context=None):
             raise ValueError(f"Missing required environment variable: {env_var}")
 
     try:
-        with open("/tmp/test_configuration.json", "w") as file:
-            json.dump(event["testConfiguration"], file)
+        test_configuration = event.pop("testConfiguration")
 
-        locust_config = event["locustConfiguration"]
-        loadtest = invokust.LocustLoadTest(invokust.create_settings(**locust_config))
+        with open("/tmp/test_configuration.json", "w") as file:
+            json.dump(test_configuration, file)
+
+        loadtest = invokust.LocustLoadTest(invokust.create_settings(**event))
         loadtest.run()
     except Exception as e:
         logging.error("Exception running locust tests {0}".format(repr(e)))

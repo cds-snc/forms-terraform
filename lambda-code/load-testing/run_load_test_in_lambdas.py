@@ -141,7 +141,7 @@ if __name__ == "__main__":
 
     if not Path("test_configuration.json").exists():
         raise Exception("Missing test_configuration.json file")
-    
+
     with open("test_configuration.json") as file:
         test_configuration = json.load(file)
 
@@ -151,13 +151,11 @@ if __name__ == "__main__":
     lambda_runtime = f"{args.time_limit}s" if args.time_limit < 180 else "3m"
     lambda_payload = {
         "testConfiguration": test_configuration,
-        "locustConfiguration": {
-            "locustfile": args.locust_file,
-            "host": args.locust_host,
-            "num_users": args.locust_users,
-            "spawn_rate": 10,
-            "run_time": lambda_runtime,
-        },
+        "locustfile": args.locust_file,
+        "host": args.locust_host,
+        "num_users": args.locust_users,
+        "spawn_rate": 10,
+        "run_time": lambda_runtime,
     }
 
     load_test_state = LambdaLoadTest(
