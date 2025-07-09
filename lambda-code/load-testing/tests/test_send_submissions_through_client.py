@@ -3,7 +3,6 @@ from locust import HttpUser, between
 from behaviours.submit_client import FormSubmitThroughClientBehaviour
 
 
-class SubmitThroughClientWithFileUploadUser(HttpUser):
+class SendSubmissionsThroughClientUser(HttpUser):
     tasks = [FormSubmitThroughClientBehaviour]
     wait_time = between(1, 5)
-    weight = 1
