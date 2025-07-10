@@ -4,6 +4,7 @@ import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 import { Handler } from "aws-lambda";
 import { v4 } from "uuid";
 import { createHash } from "crypto";
+import { generateFileURLs } from "./lib/fileUpload.js";
 
 type AnyObject = {
   [key: string]: any;
@@ -28,11 +29,15 @@ export const handler: Handler = async (submission: AnyObject) => {
   const submissionId = v4();
 
   try {
-    await saveSubmission(submissionId, submission);
+    const { fileKeys, fileURLMap } = await generateFileURLs(submissionId, submission);
+    await saveSubmission(submissionId, submission, fileKeys);
 
-    const needsFileScanning = submission.containsFiles ?? false;
+    // If we have files we return the file keys so that the client can upload them to S3
+    if (fileKeys.length > 0) {
+      return { status: true, submissionId, fileURLMap };
+    }
 
-    const receiptId = await enqueueReliabilityProcessingRequest(submissionId, needsFileScanning);
+    const receiptId = await enqueueReliabilityProcessingRequest(submissionId);
 
     await updateReceiptIdForSubmission(submissionId, receiptId);
 
@@ -62,10 +67,7 @@ export const handler: Handler = async (submission: AnyObject) => {
   }
 };
 
-const enqueueReliabilityProcessingRequest = async (
-  submissionId: string,
-  requiresFileScanning: boolean
-): Promise<string> => {
+const enqueueReliabilityProcessingRequest = async (submissionId: string): Promise<string> => {
   try {
     const sendMessageCommandOutput = await sqs.send(
       new SendMessageCommand({
@@ -73,7 +75,7 @@ const enqueueReliabilityProcessingRequest = async (
           submissionID: submissionId,
         }),
         // Helps ensure the file scanning job is processed first
-        DelaySeconds: requiresFileScanning ? 30 : 5,
+        DelaySeconds: 5,
         QueueUrl: process.env.SQS_URL,
       })
     );
@@ -88,7 +90,11 @@ const enqueueReliabilityProcessingRequest = async (
   }
 };
 
-const saveSubmission = async (submissionId: string, formData: AnyObject): Promise<void> => {
+const saveSubmission = async (
+  submissionId: string,
+  formData: AnyObject,
+  fileKeys: string[]
+): Promise<void> => {
   try {
     const securityAttribute = formData.securityAttribute ?? "Protected A";
     delete formData.securityAttribute;
@@ -98,6 +104,9 @@ const saveSubmission = async (submissionId: string, formData: AnyObject): Promis
     const alteredFormDataAsString = JSON.stringify(formData);
 
     const formResponsesAsString = JSON.stringify(formData.responses);
+
+    const fileKeysAsString = JSON.stringify(fileKeys);
+
     const formResponsesAsHash = createHash("md5").update(formResponsesAsString).digest("hex"); // We use MD5 here because it is faster to generate and it will only be used as a checksum.
 
     console.log(
@@ -119,6 +128,7 @@ const saveSubmission = async (submissionId: string, formData: AnyObject): Promis
           CreatedAt: timeStamp,
           SecurityAttribute: securityAttribute,
           FormSubmissionHash: formResponsesAsHash,
+          FileKeys: fileKeysAsString,
         },
       })
     );
