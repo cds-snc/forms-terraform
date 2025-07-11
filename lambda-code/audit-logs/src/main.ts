@@ -25,9 +25,11 @@ type TransactionRequest = {
   };
 };
 
-const awsProperties = {
-  region: process.env.REGION ?? "ca-central-1",
-};
+const dynamoDb = DynamoDBDocumentClient.from(
+  new DynamoDBClient({
+    region: process.env.REGION ?? "ca-central-1",
+  })
+);
 
 const AppAuditLogArn = process.env.APP_AUDIT_LOGS_SQS_ARN;
 const ApiAuditLogArn = process.env.API_AUDIT_LOGS_SQS_ARN;

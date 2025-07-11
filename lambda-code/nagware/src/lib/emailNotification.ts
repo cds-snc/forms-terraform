@@ -1,15 +1,15 @@
 import { GCNotifyConnector } from "@gcforms/connectors";
 
+const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
+  process.env.NOTIFY_API_KEY ?? ""
+);
+
 export async function notifyFormOwner(
   formID: string,
   formName: string,
   formOwnerEmailAddress: string
 ) {
   try {
-    const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
-      process.env.NOTIFY_API_KEY ?? ""
-    );
-
     const templateId = process.env.TEMPLATE_ID;
 
     if (templateId === undefined) {

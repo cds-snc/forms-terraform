@@ -1,3 +1,4 @@
+import global_setup  # This line ensures global setup runs before the test and creates the test_configuration file in /tmp
 from locust import HttpUser, between
 from tests.behaviours.submit_client import FormSubmitThroughClientBehaviour
 

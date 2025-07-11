@@ -24,11 +24,11 @@ interface FormResponse {
   confirmationCode: string;
 }
 
-const s3Client = new S3Client({
+const dynamodbClient = new DynamoDBClient({
   region: process.env.REGION ?? "ca-central-1",
 });
 
-const dynamodbClient = new DynamoDBClient({
+const s3Client = new S3Client({
   region: process.env.REGION ?? "ca-central-1",
 });
 

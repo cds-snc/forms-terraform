@@ -18,11 +18,11 @@ import {
 } from "./types.js";
 import { getFormattedDateFromObject } from "./utils.js";
 
-const awsProperties = {
-  region: process.env.REGION ?? "ca-central-1",
-};
-
-const db = DynamoDBDocumentClient.from(new DynamoDBClient(awsProperties));
+const db = DynamoDBDocumentClient.from(
+  new DynamoDBClient({
+    region: process.env.REGION ?? "ca-central-1",
+  })
+);
 
 export async function getSubmission(message: Record<string, unknown>) {
   const DBParams = {
