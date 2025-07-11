@@ -199,6 +199,8 @@ const buildTransactionItems = (
   );
 };
 
+const dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient(awsProperties));
+
 export const handler: Handler = async (event: SQSEvent) => {
   try {
     const logEvents = event.Records.map((record) => {
