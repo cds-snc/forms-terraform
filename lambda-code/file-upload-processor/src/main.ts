@@ -129,9 +129,6 @@ const saveSubmission = async (
           SecurityAttribute: securityAttribute,
           FormSubmissionHash: formResponsesAsHash,
           FileKeys: fileKeysAsString,
-          ...(fileKeys.length > 0 && { TTL: Math.floor(Date.now() / 1000) + 14400 // expire after 4 hours}),
-          // ADD TTL if there are files associated with the response.
-          // Pick up here tomorrow
         },
       })
     );

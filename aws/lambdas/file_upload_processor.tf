@@ -1,0 +1,67 @@
+#
+# Form File Upload API processing
+#
+
+/*
+ * For the submission Lambda, when working on https://github.com/cds-snc/forms-terraform/pull/626, we decided to not rename the function name
+ * to avoid any service disruption when releasing to Production. This is due to the web application directly calling the Submission (with a capital S) Lambda.
+ * All the others Lambda functions have lowercase names.
+ */
+
+resource "aws_lambda_function" "file_upload" {
+  function_name = "File-Upload-Processing"
+  image_uri     = "${var.ecr_repository_lambda_urls["file-upload-processor-lambda"]}:latest"
+  package_type  = "Image"
+  role          = aws_iam_role.lambda.arn
+  timeout       = 60
+
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
+
+  dynamic "vpc_config" {
+    for_each = local.vpc_config
+    content {
+      security_group_ids = vpc_config.value.security_group_ids
+      subnet_ids         = vpc_config.value.subnet_ids
+    }
+  }
+
+  environment {
+    variables = {
+      ENVIRONMENT = local.env
+      REGION      = var.region
+      SQS_URL     = var.sqs_reliability_queue_id
+    }
+  }
+
+  logging_config {
+    log_format = "Text"
+    log_group  = "/aws/lambda/File-Upload"
+  }
+
+  tracing_config {
+    mode = "Active"
+  }
+}
+
+# Allow ECS to invoke Submission Lambda
+
+resource "aws_lambda_permission" "file_upload" {
+  count         = var.env == "development" ? 0 : 1
+  statement_id  = "AllowInvokeECS"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.file_upload.function_name
+  principal     = var.ecs_iam_role_arn
+}
+
+/*
+ * When implementing containerized Lambda we had to rename some of the functions.
+ * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
+ */
+
+resource "aws_cloudwatch_log_group" "file_upload" {
+  name              = "/aws/lambda/File-Upload"
+  kms_key_id        = var.kms_key_cloudwatch_arn
+  retention_in_days = 731
+}

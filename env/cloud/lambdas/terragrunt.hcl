@@ -173,7 +173,8 @@ dependency "ecr" {
       vault-integrity-lambda          = "test_url",
       load-testing-lambda             = "test_url",
       prisma-migration-lambda         = "test_url",
-      api-end-to-end-test-lambda      = "test_url"
+      api-end-to-end-test-lambda      = "test_url",
+      file-upload-processing-lambda   = "test_url"
     }
   }
 }
