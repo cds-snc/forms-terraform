@@ -1,10 +1,10 @@
 import { RDSDataClient, ExecuteStatementCommand } from "@aws-sdk/client-rds-data";
-
-const rdsDataClient = new RDSDataClient({ region: process.env.REGION });
-
 /**
  * Delete all form templates that have been marked as archived (has an TTL value that is not null)
  */
+
+const rdsDataClient = new RDSDataClient({ region: process.env.REGION });
+
 export const deleteFormTemplatesMarkedAsArchived = async () => {
   try {
     const executeStatementCommand = new ExecuteStatementCommand({
