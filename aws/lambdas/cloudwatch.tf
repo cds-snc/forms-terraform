@@ -67,29 +67,3 @@ resource "aws_cloudwatch_event_target" "nagware_lambda_trigger" {
   rule = aws_cloudwatch_event_rule.nagware_lambda_trigger.name
   arn  = aws_lambda_function.nagware.arn
 }
-
-
-# Application Insights
-
-resource "aws_applicationinsights_application" "lambda" {
-  resource_group_name = aws_resourcegroups_group.lambda.name
-   auto_config_enabled = true
-   auto_create = true
-   cwe_monitor_enabled = true  
-}
-
-resource "aws_resourcegroups_group" "lambda" {
-  name = "lambdas"
-  resource_query {
-    query = jsonencode({
-      ResourceTypeFilters = [
-        "AWS::Lambda::Function"
-      ]
-
-      TagFilters = [{
-        Key   = var.billing_tag_key
-        Values = ["*"]
-      }]
-    })
-  }
-}
