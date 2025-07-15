@@ -9,7 +9,7 @@
  */
 
 resource "aws_lambda_function" "file_upload" {
-  function_name = "File-Upload-Processing"
+  function_name = "file-upload-processor"
   image_uri     = "${var.ecr_repository_lambda_urls["file-upload-processor-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
@@ -37,7 +37,7 @@ resource "aws_lambda_function" "file_upload" {
 
   logging_config {
     log_format = "Text"
-    log_group  = "/aws/lambda/File-Upload"
+    log_group  = "/aws/lambda/file-upload-processor"
   }
 
   tracing_config {
@@ -45,23 +45,28 @@ resource "aws_lambda_function" "file_upload" {
   }
 }
 
-# Allow ECS to invoke Submission Lambda
+resource "aws_s3_bucket_notification" "file_upload" {
+  bucket = var.reliability_file_storage_id
 
-resource "aws_lambda_permission" "file_upload" {
-  count         = var.env == "development" ? 0 : 1
-  statement_id  = "AllowInvokeECS"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.file_upload.function_name
-  principal     = var.ecs_iam_role_arn
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.file_upload.arn
+    events              = ["s3:ObjectCreated:*"]
+  }
+
+  depends_on = [aws_lambda_permission.file_upload]
 }
 
-/*
- * When implementing containerized Lambda we had to rename some of the functions.
- * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
- */
+resource "aws_lambda_permission" "file_upload" {
+  statement_id  = "AllowExecutionFromS3Bucket"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.file_upload.arn
+  principal     = "s3.amazonaws.com"
+  source_arn    = var.reliability_file_storage_arn
+}
+
 
 resource "aws_cloudwatch_log_group" "file_upload" {
-  name              = "/aws/lambda/File-Upload"
+  name              = "/aws/lambda/file-upload-processor"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
 }

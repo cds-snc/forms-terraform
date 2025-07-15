@@ -119,6 +119,12 @@ variable "ecs_iam_role_arn" {
   type        = string
 }
 
+variable "reliability_file_storage_id" {
+  description = "S3 bucket id for reliability file storage"
+  type        = string
+}
+
+
 variable "reliability_file_storage_arn" {
   description = "S3 bucket arn for reliability file storage"
   type        = string

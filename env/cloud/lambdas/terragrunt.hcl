@@ -140,6 +140,7 @@ dependency "s3" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
     reliability_file_storage_arn   = "arn:aws:s3:::forms-staging-reliability-file-storage"
+    reliability_file_storage_id    = "forms-staging-reliability-file-storage"
     vault_file_storage_arn         = "arn:aws:s3:::forms-staging-vault-file-storage"
     vault_file_storage_id          = "forms-staging-vault-file-storage"
     archive_storage_arn            = "arn:aws:s3:::forms-staging-archive-storage"
@@ -259,6 +260,7 @@ inputs = {
   audit_logs_archive_storage_arn = dependency.s3.outputs.audit_logs_archive_storage_arn
   prisma_migration_storage_id    = dependency.s3.outputs.prisma_migration_storage_id
   prisma_migration_storage_arn   = dependency.s3.outputs.prisma_migration_storage_arn
+  reliability_file_storage_id    = dependency.s3.outputs.reliability_file_storage_id
 
   ecr_repository_lambda_urls = dependency.ecr.outputs.ecr_repository_lambda_urls
 
