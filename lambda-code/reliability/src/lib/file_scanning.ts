@@ -15,6 +15,8 @@ export type SubmissionAttachmentWithScanStatus = {
 export async function getAllSubmissionAttachmentScanStatuses(
   attachmentPaths: string[]
 ): Promise<SubmissionAttachmentWithScanStatus[]> {
+  console.log("Attachment Paths");
+  console.info(attachmentPaths);
   const submissionAttachmentScanStatusQueries = attachmentPaths.map(async (path) => {
     return getSubmissionAttachmentScanStatus(path).then((status) => {
       console.info(`File ${path} / Scan status: ${JSON.stringify(status)}`);

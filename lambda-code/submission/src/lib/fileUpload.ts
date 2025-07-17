@@ -86,5 +86,8 @@ export const generateFileURLs = async (submissionId: string, submission: Record<
     fileURLMap[fileRef.id] = await generateSignedUrl(fileKey);
     fileKeys.push(fileKey); // Collect the file keys
   }
+  console.info(
+    `Generated ${Object.keys(fileRefs).length} signed urls for submission ${submissionId} `
+  );
   return { fileKeys, fileURLMap };
 };
