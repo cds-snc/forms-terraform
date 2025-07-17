@@ -84,8 +84,13 @@ variable "dynamodb_vault_stream_arn" {
   type        = string
 }
 
-variable "dynamodb_relability_queue_arn" {
+variable "dynamodb_reliability_queue_arn" {
   description = "Reliability queue DynamodDB table ARN"
+  type        = string
+}
+
+variable "dynamodb_reliability_stream_arn" {
+  description = "Reliability DynamodDB stream ARN"
   type        = string
 }
 

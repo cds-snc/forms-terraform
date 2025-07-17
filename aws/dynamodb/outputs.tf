@@ -1,7 +1,13 @@
-output "dynamodb_relability_queue_arn" {
+output "dynamodb_reliability_queue_arn" {
   description = "Reliability queue DynamodDB table ARN"
   value       = aws_dynamodb_table.reliability_queue.arn
 }
+
+output "dynamodb_reliability_stream_arn" {
+  description = "Reliability queue DynamodDB stream ARN"
+  value       = aws_dynamodb_table.reliability_queue.stream_arn
+}
+
 
 output "dynamodb_vault_arn" {
   description = "Vault DynamodDB table ARN"
