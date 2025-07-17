@@ -17,7 +17,9 @@ class FormSubmitThroughInfraBehaviour(SequentialTaskSetWithFailure):
         test_configuration = load_test_configuration()
         random_test_form = test_configuration.get_random_test_form()
         self.form_id = random_test_form.id
-        self.form_template = random_test_form.template
+        self.form_template = test_configuration.get_form_template(
+            random_test_form.usedTemplate
+        )
         self.form_submission_generator = None
 
     def on_start(self) -> None:

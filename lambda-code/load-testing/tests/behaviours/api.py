@@ -24,7 +24,12 @@ class RetrieveResponseBehaviour(SequentialTaskSetWithFailure):
         test_configuration = load_test_configuration()
         random_test_form = test_configuration.get_random_test_form()
         self.form_id = random_test_form.id
-        self.form_private_key = random_test_form.apiPrivateKey
+
+        if random_test_form.apiKey is None:
+            raise Exception("Test requires form API key")
+
+        self.form_private_key = random_test_form.apiKey
+
         self.idp_project_id = get_idp_project_id()
         self.idp_url = get_idp_url_from_target_host(self.parent.host)
         self.api_url = get_api_url_from_target_host(self.parent.host)

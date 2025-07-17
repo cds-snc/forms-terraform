@@ -15,7 +15,9 @@ class FormSubmitThroughClientBehaviour(SequentialTaskSetWithFailure):
         test_configuration = load_test_configuration()
         random_test_form = test_configuration.get_random_test_form()
         self.form_id = random_test_form.id
-        self.form_template = random_test_form.template
+        self.form_template = test_configuration.get_form_template(
+            random_test_form.usedTemplate
+        )
         self.client_url = get_client_url_from_target_host(self.parent.host)
         self.submit_form_server_action_id = (
             test_configuration.submitFormServerActionIdentifier

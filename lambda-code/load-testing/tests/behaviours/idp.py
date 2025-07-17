@@ -17,7 +17,13 @@ class AccessTokenBehaviour(SequentialTaskSetWithFailure):
     def __init__(self, parent: HttpUser) -> None:
         super().__init__(parent)
         test_configuration = load_test_configuration()
-        self.form_private_key = test_configuration.get_random_test_form().apiPrivateKey
+        random_test_form = test_configuration.get_random_test_form()
+
+        if random_test_form.apiKey is None:
+            raise Exception("Test requires form API key")
+
+        self.form_private_key = random_test_form.apiKey
+
         self.idp_url = get_idp_url_from_target_host(self.parent.host)
         self.idp_project_id = get_idp_project_id()
         self.zitadel_app_private_key = get_zitadel_app_private_key()
