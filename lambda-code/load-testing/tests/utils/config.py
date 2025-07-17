@@ -6,6 +6,20 @@ from pydantic import BaseModel
 from urllib.parse import urlparse
 
 
+class EvenDistributor:
+    def __init__(self, items):
+        self.items = items
+        self.index = 0
+
+    def next_item(self):
+        item = self.items[self.index]
+        self.index = (self.index + 1) % len(self.items)
+        return item
+
+
+shared_test_forms_distributor: Optional[EvenDistributor] = None
+
+
 class PrivateKey(BaseModel):
     keyId: str
     key: str
@@ -25,7 +39,11 @@ class TestConfiguration(BaseModel):
     submitFormServerActionIdentifier: str
 
     def get_random_test_form(self) -> TestForm:
-        return random.choice(self.testForms)
+        global shared_test_forms_distributor
+        if shared_test_forms_distributor is None:
+            shared_test_forms_distributor = EvenDistributor(self.testForms)
+
+        return shared_test_forms_distributor.next_item()
 
     def get_form_template(self, template_name: str) -> Dict[str, Any]:
         return self.templates[template_name]
