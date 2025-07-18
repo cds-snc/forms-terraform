@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.38.0](https://github.com/cds-snc/forms-terraform/compare/v3.37.0...v3.38.0) (2025-07-18)
+
+
+### Features
+
+* revamp API load testing scenario ([#1062](https://github.com/cds-snc/forms-terraform/issues/1062)) ([f7be090](https://github.com/cds-snc/forms-terraform/commit/f7be0902ca9af4a5b9c37079e40ac7bc701cc0f7))
+
 ## [3.37.0](https://github.com/cds-snc/forms-terraform/compare/v3.36.0...v3.37.0) (2025-07-09)
 
 
