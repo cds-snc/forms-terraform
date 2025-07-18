@@ -1,10 +1,8 @@
 import jwt
 import time
-
-from dataclasses import dataclass
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
-from tests.utils.config import PrivateKey
+from utils.config import PrivateKey
 
 
 class JwtGenerator:

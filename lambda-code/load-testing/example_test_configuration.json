@@ -1,9 +1,12 @@
 {
+  "templates": {
+    "basicForm": "{\"titleEn\":\"test\",\"titleFr\":\"test\",\"introduction\":{\"descriptionEn\":\"\",\"descriptionFr\":\"\"},\"privacyPolicy\":{\"descriptionEn\":\"test\",\"descriptionFr\":\"test\"},\"confirmation\":{\"descriptionEn\":\"test\",\"descriptionFr\":\"test\",\"referrerUrlEn\":\"\",\"referrerUrlFr\":\"\"},\"layout\":[1],\"elements\":[{\"id\":1,\"type\":\"textField\",\"properties\":{\"questionId\":\"\",\"tags\":[],\"subElements\":[],\"choices\":[{\"en\":\"\",\"fr\":\"\"}],\"titleEn\":\"Q1\",\"titleFr\":\"test\",\"validation\":{\"required\":false},\"descriptionEn\":\"\",\"descriptionFr\":\"\",\"placeholderEn\":\"\",\"placeholderFr\":\"\"},\"uuid\":\"f3969a91-863a-499e-9dfd-cfd043ebab55\"}],\"groups\":{\"start\":{\"name\":\"Start\",\"titleEn\":\"Start page\",\"titleFr\":\"Page de départ\",\"elements\":[\"1\"],\"nextAction\":\"review\"},\"review\":{\"name\":\"Review\",\"titleEn\":\"End (Review page and Confirmation)\",\"titleFr\":\"Fin (Page récapitulative et confirmation)\",\"elements\":[],\"nextAction\":\"end\"},\"end\":{\"name\":\"End\",\"titleEn\":\"Confirmation page\",\"titleFr\":\"Page de confirmation\",\"elements\":[]}},\"groupsLayout\":[],\"lastGeneratedElementId\":1}"
+  },
   "testForms": [
     {
-      "id": "",
-      "template": "",
-      "apiPrivateKey": ""
+      "id": "...",
+      "usedTemplate": "basicForm",
+      "apiKey": "..."
     }
   ],
   "submitFormServerActionIdentifier": ""
