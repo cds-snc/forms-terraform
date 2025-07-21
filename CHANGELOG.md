@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.38.0](https://github.com/cds-snc/forms-terraform/compare/v3.37.0...v3.38.0) (2025-07-21)
+
+
+### Features
+
+* revamp API load testing scenario ([#1062](https://github.com/cds-snc/forms-terraform/issues/1062)) ([f7be090](https://github.com/cds-snc/forms-terraform/commit/f7be0902ca9af4a5b9c37079e40ac7bc701cc0f7))
+
+
+### Miscellaneous Chores
+
+* **deps:** update aws-actions/amazon-ecs-render-task-definition action to v1.7.4 ([#1056](https://github.com/cds-snc/forms-terraform/issues/1056)) ([4e4d15d](https://github.com/cds-snc/forms-terraform/commit/4e4d15dffe0f23488761136fd1e9039135562469))
+
 ## [3.37.0](https://github.com/cds-snc/forms-terraform/compare/v3.36.0...v3.37.0) (2025-07-09)
 
 
