@@ -138,5 +138,22 @@ resource "aws_sqs_queue" "file_upload_queue" {
   # The SQS visibility timeout must be at least six times the total of the function timeout and the batch window timeout.
   # Lambda function timeout is 300.
 
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.file_upload_deadletter_queue.arn
+    maxReceiveCount     = 5
+  })
+
+  redrive_allow_policy = jsonencode({
+    redrivePermission = "byQueue",
+    sourceQueueArns   = [aws_sqs_queue.file_upload_deadletter_queue.arn]
+  })
+}
+
+resource "aws_sqs_queue" "file_upload_deadletter_queue" {
+  name                      = "file_upload_deadletter_queue"
+  delay_seconds             = 60
+  max_message_size          = 262144
+  message_retention_seconds = 1209600
+  receive_wait_time_seconds = 5
 
 }
