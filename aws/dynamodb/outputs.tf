@@ -1,4 +1,4 @@
-output "dynamodb_relability_queue_arn" {
+output "dynamodb_reliability_queue_arn" {
   description = "Reliability queue DynamodDB table ARN"
   value       = aws_dynamodb_table.reliability_queue.arn
 }

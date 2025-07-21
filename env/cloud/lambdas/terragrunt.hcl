@@ -74,6 +74,7 @@ dependency "sqs" {
   mock_outputs = {
     sqs_reliability_queue_arn              = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reliability_queue"
     sqs_reliability_queue_id               = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/submission_processing"
+    sqs_file_upload_queue_arn              = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:file_upload_queue"
     sqs_reliability_reprocessing_queue_arn = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reprocess_submission_queue"
     sqs_reliability_dead_letter_queue_id   = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/reliability_deadletter_queue"
     sqs_app_audit_log_queue_arn            = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:audit_log_queue"
@@ -108,7 +109,7 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_relability_queue_arn      = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ReliabilityQueue"
+    dynamodb_reliability_queue_arn     = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ReliabilityQueue"
     dynamodb_vault_arn                 = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault"
     dynamodb_vault_table_name          = "Vault"
     dynamodb_vault_stream_arn          = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault/stream/2023-03-14T15:54:31.086"
@@ -140,6 +141,7 @@ dependency "s3" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
     reliability_file_storage_arn   = "arn:aws:s3:::forms-staging-reliability-file-storage"
+    reliability_file_storage_id    = "forms-staging-reliability-file-storage"
     vault_file_storage_arn         = "arn:aws:s3:::forms-staging-vault-file-storage"
     vault_file_storage_id          = "forms-staging-vault-file-storage"
     archive_storage_arn            = "arn:aws:s3:::forms-staging-archive-storage"
@@ -171,9 +173,11 @@ dependency "ecr" {
       response-archiver-lambda        = "test_url",
       submission-lambda               = "test_url",
       vault-integrity-lambda          = "test_url",
-      load-testing-lambda             = "test_url",
       prisma-migration-lambda         = "test_url",
-      api-end-to-end-test-lambda      = "test_url"
+      api-end-to-end-test-lambda      = "test_url",
+      file-upload-processor-lambda    = "test_url",
+      file-upload-cleanup-lambda      = "test_url",
+      load-testing-lambda             = "test_url"
     }
   }
 }
@@ -218,7 +222,7 @@ inputs = {
   service_discovery_private_dns_namespace_ecs_local_name = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_name
   api_end_to_end_test_lambda_security_group_id           = dependency.network.outputs.api_end_to_end_test_lambda_security_group_id
 
-  dynamodb_relability_queue_arn      = dependency.dynamodb.outputs.dynamodb_relability_queue_arn
+  dynamodb_reliability_queue_arn     = dependency.dynamodb.outputs.dynamodb_reliability_queue_arn
   dynamodb_vault_arn                 = dependency.dynamodb.outputs.dynamodb_vault_arn
   dynamodb_vault_table_name          = dependency.dynamodb.outputs.dynamodb_vault_table_name
   dynamodb_vault_stream_arn          = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
@@ -240,6 +244,7 @@ inputs = {
 
   sqs_reliability_queue_arn              = dependency.sqs.outputs.sqs_reliability_queue_arn
   sqs_reliability_queue_id               = dependency.sqs.outputs.sqs_reliability_queue_id
+  sqs_file_upload_queue_arn              = dependency.sqs.outputs.sqs_file_upload_queue_arn
   sqs_reliability_reprocessing_queue_arn = dependency.sqs.outputs.sqs_reliability_reprocessing_queue_arn
   sqs_reliability_dead_letter_queue_id   = dependency.sqs.outputs.sqs_reliability_dead_letter_queue_id
   sqs_app_audit_log_queue_arn            = dependency.sqs.outputs.sqs_app_audit_log_queue_arn
@@ -258,6 +263,7 @@ inputs = {
   audit_logs_archive_storage_arn = dependency.s3.outputs.audit_logs_archive_storage_arn
   prisma_migration_storage_id    = dependency.s3.outputs.prisma_migration_storage_id
   prisma_migration_storage_arn   = dependency.s3.outputs.prisma_migration_storage_arn
+  reliability_file_storage_id    = dependency.s3.outputs.reliability_file_storage_id
 
   ecr_repository_lambda_urls = dependency.ecr.outputs.ecr_repository_lambda_urls
 

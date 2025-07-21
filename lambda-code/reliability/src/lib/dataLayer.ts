@@ -31,7 +31,7 @@ export async function getSubmission(message: Record<string, unknown>) {
       SubmissionID: message.submissionID,
     },
     ProjectExpression:
-      "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt,SecurityAttribute,NotifyProcessed",
+      "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt,SecurityAttribute,NotifyProcessed,FileKeys",
   };
 
   return await db.send(new GetCommand(DBParams));
@@ -196,60 +196,6 @@ export async function saveToVault(
       }
     }
   }
-}
-
-// Email submission data manipulation
-
-export function extractFileInputResponses(submission: FormSubmission) {
-  const fileInputElements: string[] = submission.form.elements
-    .filter((element) => element.type === "fileInput")
-    .map((element) => submission.responses[element.id] as string)
-    .filter((response) => response !== "");
-
-  const dynamicRowElementsIncludingFileInputComponents = submission.form.elements
-    // Filter down to only dynamicRow elements
-    .filter((element) => element.type === "dynamicRow")
-    // Filter down to only dynamicRow elements that contain fileInputs
-    .filter(
-      (element) =>
-        element.properties.subElements?.filter((subElement) => subElement.type === "fileInput") ??
-        false
-    )
-    .map((element) => {
-      return (
-        element.properties.subElements?.reduce(
-          (acc: string[], current: FormElement, currentIndex: number) => {
-            if (current.type === "fileInput") {
-              const response = submission.responses[element.id];
-              const subElementFiles: string[] = [];
-              if (Array.isArray(response)) {
-                response.forEach((element) => {
-                  // @ts-expect-error
-                  const answer = element[currentIndex];
-                  if (
-                    answer &&
-                    answer !== "" &&
-                    typeof answer === "string" &&
-                    answer.startsWith("form_attachments")
-                  ) {
-                    subElementFiles.push(answer);
-                  }
-                });
-                return [...acc, ...subElementFiles];
-              }
-
-              return [...acc];
-            } else {
-              return acc;
-            }
-          },
-          []
-        ) ?? []
-      );
-    })
-    .flat();
-
-  return [...fileInputElements, ...dynamicRowElementsIncludingFileInputComponents];
 }
 
 export function extractFormData(submission: FormSubmission, language: string) {

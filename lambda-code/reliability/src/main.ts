@@ -2,7 +2,7 @@ import { Handler, SQSEvent } from "aws-lambda";
 import sendToNotify from "@lib/notifyProcessing.js";
 import sendToVault from "@lib/vaultProcessing.js";
 import { getTemplateInfo } from "@lib/templates.js";
-import { extractFileInputResponses, getSubmission } from "@lib/dataLayer.js";
+import { getSubmission } from "@lib/dataLayer.js";
 import {
   haveAllSubmissionAttachmentsBeenScanned,
   FileScanningCompletionError,
@@ -31,6 +31,7 @@ export const handler: Handler = async (event: SQSEvent) => {
     const notifyProcessed = messageData.Item?.NotifyProcessed ?? false;
     sendReceipt = messageData.Item?.SendReceipt ?? null;
     const formSubmissionHash = messageData.Item?.FormSubmissionHash ?? null;
+    const fileKeys = messageData.Item?.FileKeys ? JSON.parse(messageData.Item?.FileKeys) : [];
 
     // Check if form data exists or was already processed.
     if (formSubmission === null || notifyProcessed) {
@@ -77,9 +78,8 @@ export const handler: Handler = async (event: SQSEvent) => {
       throw new Error(`No associated form template (ID: ${formID}) exist in the database.`);
     }
 
-    const submissionAttachmentPaths = extractFileInputResponses(formSubmission);
     const submissionAttachmentsWithScanStatuses = await getAllSubmissionAttachmentScanStatuses(
-      submissionAttachmentPaths
+      fileKeys
     );
 
     // Verify if file scanning is required and if it has been completed
@@ -108,7 +108,7 @@ export const handler: Handler = async (event: SQSEvent) => {
         submissionID,
         sendReceipt,
         formSubmission,
-        submissionAttachmentPaths,
+        fileKeys,
         language,
         createdAt
       );

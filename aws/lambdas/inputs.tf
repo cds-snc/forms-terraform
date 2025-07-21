@@ -34,6 +34,11 @@ variable "sqs_reliability_queue_id" {
   type        = string
 }
 
+variable "sqs_file_upload_queue_arn" {
+  description = "SQS File Upload ARN"
+  type        = string
+}
+
 variable "sqs_reliability_dead_letter_queue_id" {
   description = "SQS Reliability dead letter queue URL"
   type        = string
@@ -84,7 +89,7 @@ variable "dynamodb_vault_stream_arn" {
   type        = string
 }
 
-variable "dynamodb_relability_queue_arn" {
+variable "dynamodb_reliability_queue_arn" {
   description = "Reliability queue DynamodDB table ARN"
   type        = string
 }
@@ -118,6 +123,12 @@ variable "ecs_iam_role_arn" {
   description = "ECS IAM role ARN"
   type        = string
 }
+
+variable "reliability_file_storage_id" {
+  description = "S3 bucket id for reliability file storage"
+  type        = string
+}
+
 
 variable "reliability_file_storage_arn" {
   description = "S3 bucket arn for reliability file storage"

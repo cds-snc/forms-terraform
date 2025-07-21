@@ -1,0 +1,24 @@
+{
+  "name": "file-upload-processor",
+  "version": "1.0.0",
+  "main": "main.js",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "rm -rf build && tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
+    "build:dev": "tsc --project tsconfig.json --watch"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.799.0",
+    "@aws-sdk/client-s3": "^3.844.0",
+    "@aws-sdk/client-sqs": "3.799.0",
+    "@aws-sdk/lib-dynamodb": "3.799.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.149",
+    "@types/node": "^22.15.3",
+    "tsc-alias": "^1.8.15",
+    "typescript": "^5.8.3"
+  },
+  "packageManager": "yarn@4.9.1"
+}

@@ -51,6 +51,8 @@ locals {
     "vault-integrity-lambda",
     "prisma-migration-lambda",
     "api-end-to-end-test-lambda",
+    "file-upload-processor-lambda",
+    "file-upload-cleanup-lambda",
     var.env == "staging" ? "load-testing-lambda" : null
   ]))
 }
