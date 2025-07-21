@@ -1,8 +1,8 @@
+import global_setup  # This line ensures global setup runs before the test and creates the test_configuration file in /tmp
 from locust import HttpUser, between
-
 from behaviours.api import RetrieveResponseBehaviour
 from behaviours.idp import AccessTokenBehaviour
-from tests.behaviours.submit_infra import FormSubmitThroughInfraBehaviour
+from behaviours.submit_infra import FormSubmitThroughInfraBehaviour
 from utils.http2_user import Http2User
 
 

@@ -3,13 +3,30 @@ Tests the IdP's access token generation and introspection endpoints.
 """
 
 from locust import HttpUser, task
+from utils.config import (
+    get_zitadel_app_private_key,
+    get_idp_project_id,
+    get_idp_url_from_target_host,
+    load_test_configuration,
+)
 from utils.jwt_generator import JwtGenerator
-from utils.task_set import SequentialTaskSetWithFailure
+from utils.sequential_task_set_with_failure import SequentialTaskSetWithFailure
 
 
 class AccessTokenBehaviour(SequentialTaskSetWithFailure):
     def __init__(self, parent: HttpUser) -> None:
         super().__init__(parent)
+        test_configuration = load_test_configuration()
+        random_test_form = test_configuration.get_random_test_form()
+
+        if random_test_form.apiKey is None:
+            raise Exception("Test requires form API key")
+
+        self.form_private_key = random_test_form.apiKey
+
+        self.idp_url = get_idp_url_from_target_host(self.parent.host)
+        self.idp_project_id = get_idp_project_id()
+        self.zitadel_app_private_key = get_zitadel_app_private_key()
         self.jwt_app = None
         self.jwt_form = None
         self.access_token = None
