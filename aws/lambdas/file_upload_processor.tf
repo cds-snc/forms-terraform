@@ -5,8 +5,7 @@
 
 resource "aws_lambda_function" "file_upload" {
   function_name = "file-upload-processor"
-  # image_uri     = "${var.ecr_repository_lambda_urls["file-upload-processor-lambda"]}:latest"
-  image_uri    = "730335263169.dkr.ecr.ca-central-1.amazonaws.com/file-upload-processor-lambda:latest"
+  image_uri     = "${var.ecr_repository_lambda_urls["file-upload-processor-lambda"]}:latest"
   package_type = "Image"
   role         = aws_iam_role.lambda.arn
   timeout      = 300

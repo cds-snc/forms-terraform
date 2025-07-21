@@ -110,7 +110,6 @@ dependency "dynamodb" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     dynamodb_reliability_queue_arn     = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ReliabilityQueue"
-    dynamodb_reliability_stream_arn    = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ReliabilityQueue/stream/2023-03-14T15:54:31.086"
     dynamodb_vault_arn                 = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault"
     dynamodb_vault_table_name          = "Vault"
     dynamodb_vault_stream_arn          = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault/stream/2023-03-14T15:54:31.086"
@@ -177,7 +176,8 @@ dependency "ecr" {
       load-testing-lambda             = "test_url",
       prisma-migration-lambda         = "test_url",
       api-end-to-end-test-lambda      = "test_url",
-      file-upload-processing-lambda   = "test_url"
+      file-upload-processing-lambda   = "test_url",
+      file-upload-cleanup-lambda      = "test_url"
     }
   }
 }
@@ -223,7 +223,6 @@ inputs = {
   api_end_to_end_test_lambda_security_group_id           = dependency.network.outputs.api_end_to_end_test_lambda_security_group_id
 
   dynamodb_reliability_queue_arn     = dependency.dynamodb.outputs.dynamodb_reliability_queue_arn
-  dynamodb_reliability_stream_arn    = dependency.dynamodb.outputs.dynamodb_reliability_stream_arn
   dynamodb_vault_arn                 = dependency.dynamodb.outputs.dynamodb_vault_arn
   dynamodb_vault_table_name          = dependency.dynamodb.outputs.dynamodb_vault_table_name
   dynamodb_vault_stream_arn          = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
