@@ -27,10 +27,6 @@ ecr:
   - *common
   - "aws/ecr/**"
   - "env/cloud/ecr/**"
-file_scanning:
-  - *common
-  - "aws/file_scanning/**"
-  - "env/cloud/file_scanning/**"
 glue:
   - *common
   - "aws/glue/**"

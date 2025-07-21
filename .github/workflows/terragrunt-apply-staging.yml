@@ -23,8 +23,8 @@ env:
   IDP_DOMAIN: ${{ vars.STAGING_IDP_DOMAIN }}
   AWS_ACCOUNT_ID: ${{ vars.STAGING_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
-  TERRAFORM_VERSION: 1.11.2
-  TERRAGRUNT_VERSION: 0.75.10
+  TERRAFORM_VERSION: 1.12.2
+  TERRAGRUNT_VERSION: 0.82.3
   TF_INPUT: false
   # API
   TF_VAR_zitadel_application_key: ${{ secrets.STAGING_ZITADEL_APPLICATION_KEY }}
@@ -213,10 +213,6 @@ jobs:
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       # Depends on S3
-      - name: Terragrunt apply file_scanning
-        working-directory: env/cloud/file_scanning
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve
-
       - name: Terragrunt apply guard_duty
         working-directory: env/cloud/guard_duty
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
