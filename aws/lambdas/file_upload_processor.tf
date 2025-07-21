@@ -6,9 +6,9 @@
 resource "aws_lambda_function" "file_upload" {
   function_name = "file-upload-processor"
   image_uri     = "${var.ecr_repository_lambda_urls["file-upload-processor-lambda"]}:latest"
-  package_type = "Image"
-  role         = aws_iam_role.lambda.arn
-  timeout      = 300
+  package_type  = "Image"
+  role          = aws_iam_role.lambda.arn
+  timeout       = 300
   # Only allow a single instance to run at a time
   reserved_concurrent_executions = 1
 

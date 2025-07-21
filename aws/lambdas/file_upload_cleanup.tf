@@ -5,9 +5,9 @@
 resource "aws_lambda_function" "file_upload_cleanup" {
   function_name = "file-upload-cleanup"
   image_uri     = "${var.ecr_repository_lambda_urls["file-upload-cleanup-lambda"]}:latest"
-  package_type = "Image"
-  role         = aws_iam_role.lambda.arn
-  timeout      = 300
+  package_type  = "Image"
+  role          = aws_iam_role.lambda.arn
+  timeout       = 300
 
   // This lambda does not need to be connected to the VPC
   // It is a read-only operation that is invoked securely through the Lambda Private Link Endpoint

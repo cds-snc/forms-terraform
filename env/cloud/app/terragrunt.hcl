@@ -12,10 +12,10 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_reliability_queue_arn = null
-    dynamodb_vault_arn             = null
-    dynamodb_app_audit_logs_arn    = null
-    dynamodb_api_audit_logs_arn    = null
+    dynamodb_reliability_queue_arn = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ReliabilityQueue"
+    dynamodb_vault_arn             = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault"
+    dynamodb_app_audit_logs_arn    = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/AuditLogs"
+    dynamodb_api_audit_logs_arn    = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ApiAuditLogs"
   }
 }
 

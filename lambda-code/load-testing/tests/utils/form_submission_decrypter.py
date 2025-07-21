@@ -4,17 +4,35 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.hashes import SHA256
-from utils.data_structures import PrivateApiKey, EncryptedFormSubmission
+from utils.config import PrivateKey
+from dataclasses import dataclass
+
+
+@dataclass
+class EncryptedFormSubmission:
+    encrypted_responses: str
+    encrypted_key: str
+    encrypted_nonce: str
+    encrypted_auth_tag: str
+
+    @staticmethod
+    def from_json(json_object: dict) -> "EncryptedFormSubmission":
+        return EncryptedFormSubmission(
+            encrypted_responses=json_object["encryptedResponses"],
+            encrypted_key=json_object["encryptedKey"],
+            encrypted_nonce=json_object["encryptedNonce"],
+            encrypted_auth_tag=json_object["encryptedAuthTag"],
+        )
 
 
 class FormSubmissionDecrypter:
 
     def decrypt(
-        encrypted_submission: EncryptedFormSubmission, private_api_key: PrivateApiKey
+        encrypted_submission: EncryptedFormSubmission, private_key: PrivateKey
     ) -> str:
         try:
-            private_key = serialization.load_pem_private_key(
-                private_api_key.key.encode(), password=None, backend=default_backend()
+            pem_key = serialization.load_pem_private_key(
+                private_key.key.encode(), password=None, backend=default_backend()
             )
 
             oaep_padding = padding.OAEP(
@@ -23,17 +41,17 @@ class FormSubmissionDecrypter:
                 label=None,
             )
 
-            decrypted_key = private_key.decrypt(
+            decrypted_key = pem_key.decrypt(
                 base64.b64decode(encrypted_submission.encrypted_key),
                 oaep_padding,
             )
 
-            decrypted_nonce = private_key.decrypt(
+            decrypted_nonce = pem_key.decrypt(
                 base64.b64decode(encrypted_submission.encrypted_nonce),
                 oaep_padding,
             )
 
-            decrypted_auth_tag = private_key.decrypt(
+            decrypted_auth_tag = pem_key.decrypt(
                 base64.b64decode(encrypted_submission.encrypted_auth_tag),
                 oaep_padding,
             )
