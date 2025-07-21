@@ -4,7 +4,6 @@ resource "aws_dynamodb_table" "reliability_queue" {
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "SubmissionID"
   deletion_protection_enabled = var.env != "development"
-  stream_view_type            = "OLD_IMAGE"
 
   attribute {
     name = "SubmissionID"
