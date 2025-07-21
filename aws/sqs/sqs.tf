@@ -129,6 +129,7 @@ resource "aws_sqs_queue" "api_audit_log_deadletter_queue" {
 
 # File Upload Verification Queue
 resource "aws_sqs_queue" "file_upload_queue" {
+  # checkov:skip=CKV_AWS_27: Encrytion not Required and difficult to support with S3 notification source
   name                       = "file_upload_queue"
   delay_seconds              = 0
   max_message_size           = 262144
@@ -150,6 +151,7 @@ resource "aws_sqs_queue" "file_upload_queue" {
 }
 
 resource "aws_sqs_queue" "file_upload_deadletter_queue" {
+  # checkov:skip=CKV_AWS_27: Encrytion not Required and difficult to support with S3 notification source
   name                      = "file_upload_deadletter_queue"
   delay_seconds             = 60
   max_message_size          = 262144
