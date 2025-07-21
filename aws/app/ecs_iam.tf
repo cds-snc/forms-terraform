@@ -205,7 +205,7 @@ data "aws_iam_policy_document" "forms_dynamodb" {
     ]
 
     resources = [
-      var.dynamodb_relability_queue_arn,
+      var.dynamodb_reliability_queue_arn,
       var.dynamodb_vault_arn,
       "${var.dynamodb_vault_arn}/index/*"
     ]
