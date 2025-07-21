@@ -34,10 +34,7 @@ export const getFileKeysForSubmission = async (submissionId: string): Promise<st
   );
 
   // If SendReceipt exists it has already been processed
-  if (result.Item?.SendReceipt) {
-    console.info(
-      `Submission ${submissionId} has already been processed into the reliability queue`
-    );
+  if (result.Item?.SendReceipt !== "unknown") {
     return [];
   }
 
@@ -65,11 +62,7 @@ export const verifyIfAllFilesExist = async (fileKeys: string[], bucket: string) 
       })
   );
   const results = await Promise.all(s3Promises);
-  console.info(
-    results
-      .map((result, index) => `\nfile key: ${fileKeys[index]} / uploaded: ${result}`)
-      .join("\n")
-  );
+
   return results.reduce((prev, curr) => prev && curr, true);
 };
 

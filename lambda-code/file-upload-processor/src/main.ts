@@ -62,6 +62,7 @@ export const handler: Handler = async (sqsMessages: SQSEvent) => {
             details: JSON.stringify(error),
           })
         );
+        throw error;
       }
     })
   );

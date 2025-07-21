@@ -54,7 +54,7 @@ export const getSubmissionsToVerify = async (): Promise<CleanupRecord[]> => {
         IndexName: "FileKeysCreatedAt",
         FilterExpression: `CreatedAt <= :createdAt`,
         ExpressionAttributeValues: {
-          ":createdAt": Date.now() - cleanupMaxAge, // 2419200000 milliseconds = 28 days
+          ":createdAt": Date.now() - cleanupMaxAge,
         },
         ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey }),
       })
@@ -103,7 +103,7 @@ export const cleanupFailedUploads = async (items: CleanupRecord[]) => {
               submissionId: submissionId,
               msg: "Possible issue with Reliability Queue processing",
               details: `Submission ${submissionId} has been sent into the Reliabilty Queue but has not been processed in over ${Math.floor(
-                (Date.now() - createdAt) / 3600
+                (Date.now() - createdAt) / 3600000
               )} hours`,
             })
           );
@@ -116,7 +116,7 @@ export const cleanupFailedUploads = async (items: CleanupRecord[]) => {
               submissionId: submissionId,
               msg: "Possible issue with File Upload processing",
               details: `Submission ${submissionId} has been successfully uploaded but not processed by the File Processing lambda in over ${Math.floor(
-                (Date.now() - createdAt) / 3600
+                (Date.now() - createdAt) / 3600000
               )} hours`,
             })
           );

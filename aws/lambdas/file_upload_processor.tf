@@ -47,8 +47,8 @@ resource "aws_lambda_function" "file_upload" {
 resource "aws_lambda_event_source_mapping" "file_upload" {
   event_source_arn                   = var.sqs_file_upload_queue_arn
   function_name                      = aws_lambda_function.file_upload.arn
-  batch_size                         = 50
-  maximum_batching_window_in_seconds = 60
+  batch_size                         = 10
+  maximum_batching_window_in_seconds = 30
   enabled                            = true
 
 }
