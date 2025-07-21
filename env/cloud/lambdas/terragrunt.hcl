@@ -74,6 +74,7 @@ dependency "sqs" {
   mock_outputs = {
     sqs_reliability_queue_arn              = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reliability_queue"
     sqs_reliability_queue_id               = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/submission_processing"
+    sqs_file_upload_queue_arn              = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:file_upload_queue"
     sqs_reliability_reprocessing_queue_arn = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reprocess_submission_queue"
     sqs_reliability_dead_letter_queue_id   = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/reliability_deadletter_queue"
     sqs_app_audit_log_queue_arn            = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:audit_log_queue"
@@ -108,8 +109,8 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_reliability_queue_arn      = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ReliabilityQueue"
-    dynamodb_reliability_stream_arn     = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ReliabilityQueue/stream/2023-03-14T15:54:31.086"
+    dynamodb_reliability_queue_arn     = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ReliabilityQueue"
+    dynamodb_reliability_stream_arn    = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ReliabilityQueue/stream/2023-03-14T15:54:31.086"
     dynamodb_vault_arn                 = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault"
     dynamodb_vault_table_name          = "Vault"
     dynamodb_vault_stream_arn          = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault/stream/2023-03-14T15:54:31.086"
@@ -221,8 +222,8 @@ inputs = {
   service_discovery_private_dns_namespace_ecs_local_name = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_name
   api_end_to_end_test_lambda_security_group_id           = dependency.network.outputs.api_end_to_end_test_lambda_security_group_id
 
-  dynamodb_reliability_queue_arn      = dependency.dynamodb.outputs.dynamodb_reliability_queue_arn
-  dynamodb_reliability_stream_arn     = dependency.dynamodb.outputs.dynamodb.reliability_stream_arn
+  dynamodb_reliability_queue_arn     = dependency.dynamodb.outputs.dynamodb_reliability_queue_arn
+  dynamodb_reliability_stream_arn    = dependency.dynamodb.outputs.dynamodb_reliability_stream_arn
   dynamodb_vault_arn                 = dependency.dynamodb.outputs.dynamodb_vault_arn
   dynamodb_vault_table_name          = dependency.dynamodb.outputs.dynamodb_vault_table_name
   dynamodb_vault_stream_arn          = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
@@ -244,6 +245,7 @@ inputs = {
 
   sqs_reliability_queue_arn              = dependency.sqs.outputs.sqs_reliability_queue_arn
   sqs_reliability_queue_id               = dependency.sqs.outputs.sqs_reliability_queue_id
+  sqs_file_upload_queue_arn              = dependency.sqs.outputs.sqs_file_upload_queue_arn
   sqs_reliability_reprocessing_queue_arn = dependency.sqs.outputs.sqs_reliability_reprocessing_queue_arn
   sqs_reliability_dead_letter_queue_id   = dependency.sqs.outputs.sqs_reliability_dead_letter_queue_id
   sqs_app_audit_log_queue_arn            = dependency.sqs.outputs.sqs_app_audit_log_queue_arn

@@ -105,8 +105,6 @@ const saveSubmission = async (
 
     const formResponsesAsString = JSON.stringify(formData.responses);
 
-    const fileKeysAsString = JSON.stringify(fileKeys);
-
     const formResponsesAsHash = createHash("md5").update(formResponsesAsString).digest("hex"); // We use MD5 here because it is faster to generate and it will only be used as a checksum.
 
     console.log(
@@ -128,10 +126,7 @@ const saveSubmission = async (
           CreatedAt: timeStamp,
           SecurityAttribute: securityAttribute,
           FormSubmissionHash: formResponsesAsHash,
-          FileKeys: fileKeysAsString,
-          ...(fileKeys.length > 0 && { TTL: Math.floor(Date.now() / 1000) + 14400 }), // expire after 4 hours,
-          // ADD TTL if there are files associated with the response.
-          // Pick up here tomorrow
+          ...(fileKeys.length > 0 && { FileKeys: JSON.stringify(fileKeys) }),
         },
       })
     );

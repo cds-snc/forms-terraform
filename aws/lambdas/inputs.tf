@@ -34,6 +34,11 @@ variable "sqs_reliability_queue_id" {
   type        = string
 }
 
+variable "sqs_file_upload_queue_arn" {
+  description = "SQS File Upload ARN"
+  type        = string
+}
+
 variable "sqs_reliability_dead_letter_queue_id" {
   description = "SQS Reliability dead letter queue URL"
   type        = string

@@ -1,6 +1,6 @@
 import { S3EventRecord } from "aws-lambda";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { UpdateCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
+import { UpdateCommand, GetCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 import { S3Client, HeadObjectCommand } from "@aws-sdk/client-s3";
 
@@ -8,7 +8,7 @@ const awsProperties = {
   region: process.env.REGION ?? "ca-central-1",
 };
 
-const dynamodb = new DynamoDBClient(awsProperties);
+const dynamodb = DynamoDBDocumentClient.from(new DynamoDBClient(awsProperties));
 
 const sqs = new SQSClient(awsProperties);
 
@@ -29,10 +29,19 @@ export const getFileKeysForSubmission = async (submissionId: string): Promise<st
       Key: {
         SubmissionID: submissionId,
       },
-      ProjectionExpression: "FileKeys",
+      ProjectionExpression: "FileKeys,SendReceipt",
     })
   );
-  return JSON.parse(result.Item?.FileKeys) ?? [];
+
+  // If SendReceipt exists it has already been processed
+  if (result.Item?.SendReceipt) {
+    console.info(
+      `Submission ${submissionId} has already been processed into the reliability queue`
+    );
+    return [];
+  }
+
+  return JSON.parse(result.Item?.FileKeys);
 };
 
 export const verifyIfAllFilesExist = async (fileKeys: string[], bucket: string) => {
@@ -44,7 +53,7 @@ export const verifyIfAllFilesExist = async (fileKeys: string[], bucket: string) 
           Key: fileKey,
         })
       )
-      .then((result) => {
+      .then(() => {
         return true;
       })
       .catch((err) => {
@@ -57,7 +66,9 @@ export const verifyIfAllFilesExist = async (fileKeys: string[], bucket: string) 
   );
   const results = await Promise.all(s3Promises);
   console.info(
-    results.map((result, index) => `file key: ${fileKeys[index]} / uploaded: ${result}`).join("\n")
+    results
+      .map((result, index) => `\nfile key: ${fileKeys[index]} / uploaded: ${result}`)
+      .join("\n")
   );
   return results.reduce((prev, curr) => prev && curr, true);
 };

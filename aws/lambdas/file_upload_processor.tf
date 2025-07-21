@@ -6,10 +6,12 @@
 resource "aws_lambda_function" "file_upload" {
   function_name = "file-upload-processor"
   # image_uri     = "${var.ecr_repository_lambda_urls["file-upload-processor-lambda"]}:latest"
-  image_uri     = "730335263169.dkr.ecr.ca-central-1.amazonaws.com/file-upload-processor-lambda:latest"
-  package_type  = "Image"
-  role          = aws_iam_role.lambda.arn
-  timeout       = 60
+  image_uri    = "730335263169.dkr.ecr.ca-central-1.amazonaws.com/file-upload-processor-lambda:latest"
+  package_type = "Image"
+  role         = aws_iam_role.lambda.arn
+  timeout      = 300
+  # Only allow a single instance to run at a time
+  reserved_concurrent_executions = 1
 
   lifecycle {
     ignore_changes = [image_uri]
@@ -41,25 +43,15 @@ resource "aws_lambda_function" "file_upload" {
   }
 }
 
-resource "aws_s3_bucket_notification" "file_upload" {
-  bucket = var.reliability_file_storage_id
 
-  lambda_function {
-    lambda_function_arn = aws_lambda_function.file_upload.arn
-    events              = ["s3:ObjectCreated:*"]
-  }
+resource "aws_lambda_event_source_mapping" "file_upload" {
+  event_source_arn                   = var.sqs_file_upload_queue_arn
+  function_name                      = aws_lambda_function.file_upload.arn
+  batch_size                         = 50
+  maximum_batching_window_in_seconds = 60
+  enabled                            = true
 
-  depends_on = [aws_lambda_permission.file_upload]
 }
-
-resource "aws_lambda_permission" "file_upload" {
-  statement_id  = "AllowExecutionFromS3Bucket"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.file_upload.arn
-  principal     = "s3.amazonaws.com"
-  source_arn    = var.reliability_file_storage_arn
-}
-
 
 resource "aws_cloudwatch_log_group" "file_upload" {
   name              = "/aws/lambda/file-upload-processor"

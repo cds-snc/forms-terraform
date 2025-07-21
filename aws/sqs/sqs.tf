@@ -127,3 +127,16 @@ resource "aws_sqs_queue" "api_audit_log_deadletter_queue" {
   kms_data_key_reuse_period_seconds = 300
 }
 
+# File Upload Verification Queue
+resource "aws_sqs_queue" "file_upload_queue" {
+  name                       = "file_upload_queue"
+  delay_seconds              = 0
+  max_message_size           = 262144
+  message_retention_seconds  = 172800 // 2 days
+  visibility_timeout_seconds = 1960
+  # https://aws.amazon.com/premiumsupport/knowledge-center/lambda-function-process-sqs-messages/
+  # The SQS visibility timeout must be at least six times the total of the function timeout and the batch window timeout.
+  # Lambda function timeout is 300.
+
+
+}

@@ -1,4 +1,4 @@
-import { Handler, S3Event } from "aws-lambda";
+import { Handler, S3Event, SQSEvent } from "aws-lambda";
 import {
   retrieveSubmissionId,
   enqueueReliabilityProcessingRequest,
@@ -7,39 +7,62 @@ import {
   verifyIfAllFilesExist,
 } from "@lib/utils.js";
 
-export const handler: Handler = async (uploadEvent: S3Event) => {
-  try {
-    // get the submisison Id from the object key
-    const { submissionId, bucketName } = retrieveSubmissionId(uploadEvent.Records[0]);
+export const handler: Handler = async (sqsMessages: SQSEvent) => {
+  const s3Events = sqsMessages.Records.flatMap(
+    (sqsMessage) => (JSON.parse(sqsMessage.body) as S3Event).Records
+  );
 
-    const expectedFileKeys = await getFileKeysForSubmission(submissionId);
+  const eventMap = new Map<string, { submissionId: string; bucketName: string }>();
 
-    const allProcessed = await verifyIfAllFilesExist(expectedFileKeys, bucketName);
-
-    if (allProcessed) {
-      const receiptId = await enqueueReliabilityProcessingRequest(submissionId);
-
-      await updateReceiptIdForSubmission(submissionId, receiptId);
-
-      console.log(
-        JSON.stringify({
-          level: "info",
-          status: "success",
-          sqsMessage: receiptId,
-          submissionId: submissionId,
-        })
-      );
+  // Only verify each submissionID once
+  s3Events.forEach((event) => {
+    // Sometimes S3 will send a test event and this protects the lambda from throwing a type error
+    if (event) {
+      const { submissionId, bucketName } = retrieveSubmissionId(event);
+      eventMap.set(submissionId, { submissionId, bucketName });
     }
-  } catch (error) {
-    console.error(
-      JSON.stringify({
-        level: "error",
-        severity: 1, // this will trigger an alert to on-call team
-        status: "failed",
-        submissionId: uploadEvent.Records[0].s3.object.key,
-        msg: (error as Error).message,
-        details: JSON.stringify(error),
-      })
-    );
-  }
+  });
+
+  const eventArray = Array.from(eventMap.values());
+
+  await Promise.all(
+    eventArray.map(async ({ submissionId, bucketName }) => {
+      try {
+        const expectedFileKeys = await getFileKeysForSubmission(submissionId);
+
+        // If there are no files to verify or the submission has already been processed return early
+        if (expectedFileKeys.length === 0) {
+          return;
+        }
+
+        const allProcessed = await verifyIfAllFilesExist(expectedFileKeys, bucketName);
+
+        if (allProcessed) {
+          const receiptId = await enqueueReliabilityProcessingRequest(submissionId);
+
+          await updateReceiptIdForSubmission(submissionId, receiptId);
+
+          console.log(
+            JSON.stringify({
+              level: "info",
+              status: "success",
+              sqsMessage: receiptId,
+              submissionId: submissionId,
+            })
+          );
+        }
+      } catch (error) {
+        console.error(
+          JSON.stringify({
+            level: "error",
+            severity: 2,
+            status: "failed",
+            submissionId: submissionId,
+            msg: (error as Error).message,
+            details: JSON.stringify(error),
+          })
+        );
+      }
+    })
+  );
 };

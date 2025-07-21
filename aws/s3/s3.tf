@@ -60,6 +60,57 @@ resource "aws_s3_bucket_public_access_block" "reliability_file_storage" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
+
+}
+
+## File Upload - send notifications to SQS
+# The policy is in the S3 module because adding it to the SQS module would cause a circular dependency.
+
+resource "aws_s3_bucket_notification" "file_upload" {
+  bucket      = aws_s3_bucket.reliability_file_storage.id
+  eventbridge = false
+
+  queue {
+    queue_arn = var.sqs_file_upload_arn
+    events    = ["s3:ObjectCreated:Post"]
+  }
+
+  depends_on = [aws_sqs_queue_policy.file_upload]
+}
+
+data "aws_iam_policy_document" "s3_to_sqs" {
+
+  statement {
+    sid    = "file_processing_s3_to_sqs"
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["s3.amazonaws.com"]
+    }
+
+    resources = [var.sqs_file_upload_arn]
+
+    actions = [
+      "sqs:SendMessage",
+    ]
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_s3_bucket.reliability_file_storage.arn]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [var.account_id]
+    }
+
+  }
+}
+
+resource "aws_sqs_queue_policy" "file_upload" {
+  queue_url = var.sqs_file_upload_id
+  policy    = data.aws_iam_policy_document.s3_to_sqs.json
 }
 
 #

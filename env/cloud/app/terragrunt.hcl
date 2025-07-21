@@ -13,9 +13,9 @@ dependency "dynamodb" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     dynamodb_reliability_queue_arn = null
-    dynamodb_vault_arn            = null
-    dynamodb_app_audit_logs_arn   = null
-    dynamodb_api_audit_logs_arn   = null
+    dynamodb_vault_arn             = null
+    dynamodb_app_audit_logs_arn    = null
+    dynamodb_api_audit_logs_arn    = null
   }
 }
 
@@ -144,7 +144,7 @@ dependency "idp" {
 }
 
 locals {
-  aws_account_id   = get_env("AWS_ACCOUNT_ID", "000000000000")
+  aws_account_id = get_env("AWS_ACCOUNT_ID", "000000000000")
 }
 
 inputs = {
@@ -163,9 +163,9 @@ inputs = {
   tracer_provider                             = "stdout"
 
   dynamodb_reliability_queue_arn = dependency.dynamodb.outputs.dynamodb_reliability_queue_arn
-  dynamodb_vault_arn            = dependency.dynamodb.outputs.dynamodb_vault_arn
-  dynamodb_app_audit_logs_arn   = dependency.dynamodb.outputs.dynamodb_app_audit_logs_arn
-  dynamodb_api_audit_logs_arn   = dependency.dynamodb.outputs.dynamodb_api_audit_logs_arn
+  dynamodb_vault_arn             = dependency.dynamodb.outputs.dynamodb_vault_arn
+  dynamodb_app_audit_logs_arn    = dependency.dynamodb.outputs.dynamodb_app_audit_logs_arn
+  dynamodb_api_audit_logs_arn    = dependency.dynamodb.outputs.dynamodb_api_audit_logs_arn
 
   ecr_repository_url_form_viewer = dependency.ecr.outputs.ecr_repository_url_form_viewer
 

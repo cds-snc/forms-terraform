@@ -4,10 +4,23 @@ resource "aws_dynamodb_table" "reliability_queue" {
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "SubmissionID"
   deletion_protection_enabled = var.env != "development"
+  stream_view_type            = "OLD_IMAGE"
 
   attribute {
     name = "SubmissionID"
     type = "S"
+  }
+
+  attribute {
+    name = "FileKeys"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name               = "FileKeysCreatedAt"
+    hash_key           = "FileKeys"
+    projection_type    = "INCLUDE"
+    non_key_attributes = ["SubmissionID", "CreatedAt", "SendReceipt", "NotifyProcessed"]
   }
 
   ttl {
