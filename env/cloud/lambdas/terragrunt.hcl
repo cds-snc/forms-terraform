@@ -173,11 +173,11 @@ dependency "ecr" {
       response-archiver-lambda        = "test_url",
       submission-lambda               = "test_url",
       vault-integrity-lambda          = "test_url",
-      load-testing-lambda             = "test_url",
       prisma-migration-lambda         = "test_url",
       api-end-to-end-test-lambda      = "test_url",
-      file-upload-processing-lambda   = "test_url",
-      file-upload-cleanup-lambda      = "test_url"
+      file-upload-processor-lambda    = "test_url",
+      file-upload-cleanup-lambda      = "test_url",
+      load-testing-lambda             = "test_url"
     }
   }
 }
