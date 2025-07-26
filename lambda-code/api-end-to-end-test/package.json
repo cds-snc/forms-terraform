@@ -9,9 +9,9 @@
     "build:dev": "tsc --project tsconfig.json --watch"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "3.799.0",
-    "@aws-sdk/client-lambda": "3.799.0",
-    "@aws-sdk/lib-dynamodb": "3.799.0",
+    "@aws-sdk/client-dynamodb": "3.848.0",
+    "@aws-sdk/client-lambda": "3.848.0",
+    "@aws-sdk/lib-dynamodb": "3.848.0",
     "axios": "^1.9.0",
     "jose": "^6.0.10"
   },
