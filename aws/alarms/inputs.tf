@@ -226,6 +226,11 @@ variable "sqs_api_audit_log_deadletter_queue_arn" {
   type        = string
 }
 
+variable "sqs_file_upload_deadletter_queue_arn" {
+  description = "File upload dead-letter queue ARN"
+  type        = string
+}
+
 variable "threshold_ecs_cpu_utilization_high" {
   description = "ECS cluster CPU average use threshold, above which an alarm is triggered (4 minute period)"
   type        = string

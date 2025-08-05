@@ -71,6 +71,7 @@ dependency "sqs" {
     sqs_reliability_deadletter_queue_arn   = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:reliability_deadletter_queue.fifo"
     sqs_app_audit_log_deadletter_queue_arn = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:audit_log_deadletter_queue"
     sqs_api_audit_log_deadletter_queue_arn = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:api_audit_log_deadletter_queue"
+    sqs_file_upload_deadletter_queue_arn   = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:file_upload_deadletter_queue"
   }
 }
 
@@ -206,6 +207,7 @@ inputs = {
   sqs_reliability_deadletter_queue_arn   = dependency.sqs.outputs.sqs_reliability_deadletter_queue_arn
   sqs_app_audit_log_deadletter_queue_arn = dependency.sqs.outputs.sqs_app_audit_log_deadletter_queue_arn
   sqs_api_audit_log_deadletter_queue_arn = dependency.sqs.outputs.sqs_api_audit_log_deadletter_queue_arn
+  sqs_file_upload_deadletter_queue_arn   = dependency.sqs.outputs.sqs_file_upload_deadletter_queue_arn
 
   ecs_cloudwatch_log_group_name = dependency.app.outputs.ecs_cloudwatch_log_group_name
   ecs_cluster_name              = dependency.app.outputs.ecs_cluster_name

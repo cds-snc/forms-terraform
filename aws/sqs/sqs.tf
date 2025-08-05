@@ -157,5 +157,4 @@ resource "aws_sqs_queue" "file_upload_deadletter_queue" {
   max_message_size          = 262144
   message_retention_seconds = 1209600
   receive_wait_time_seconds = 5
-
 }
