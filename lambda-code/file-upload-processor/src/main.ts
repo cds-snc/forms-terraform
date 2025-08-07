@@ -1,43 +1,65 @@
-import { Handler, S3Event, SQSEvent } from "aws-lambda";
+import { Handler, S3Event, S3EventRecord, SQSEvent } from "aws-lambda";
 import {
-  retrieveSubmissionId,
+  extractSubmissionIdFromObjectKey,
   enqueueReliabilityProcessingRequest,
   updateReceiptIdForSubmission,
-  getFileKeysForSubmission,
+  retrieveSubmission,
   verifyIfAllFilesExist,
 } from "@lib/utils.js";
 
-export const handler: Handler = async (sqsMessages: SQSEvent) => {
-  const s3Events = sqsMessages.Records.flatMap(
-    (sqsMessage) => (JSON.parse(sqsMessage.body) as S3Event).Records
-  );
+export const handler: Handler = async (event: SQSEvent) => {
+  try {
+    const s3ObjectCreatedEvents = event.Records.flatMap((sqsRecord) => {
+      return (JSON.parse(sqsRecord.body) as S3Event).Records;
+    }).filter((s3Record) => s3Record.eventName === "ObjectCreated:Post"); // Sometimes S3 will send a "TestEvent" and this protects the lambda from throwing a type error
 
-  const eventMap = new Map<string, { submissionId: string; bucketName: string }>();
+    const submissionIdsToProcess =
+      getUniqueSubmissionIdsFromS3ObjectCreatedEvents(s3ObjectCreatedEvents);
 
-  // Only verify each submissionID once
-  s3Events.forEach((event) => {
-    // Sometimes S3 will send a test event and this protects the lambda from throwing a type error
-    if (event) {
-      const { submissionId, bucketName } = retrieveSubmissionId(event);
-      eventMap.set(submissionId, { submissionId, bucketName });
-    }
-  });
+    await requestSubmissionProcessingWhenAllFilesAreAvailable(submissionIdsToProcess);
+  } catch (error) {
+    console.error(
+      JSON.stringify({
+        level: "error",
+        msg: "Failed to run file upload processor",
+        error: (error as Error).message,
+      })
+    );
 
-  const eventArray = Array.from(eventMap.values());
+    throw error;
+  }
+};
 
-  await Promise.all(
-    eventArray.map(async ({ submissionId, bucketName }) => {
+function getUniqueSubmissionIdsFromS3ObjectCreatedEvents(events: S3EventRecord[]): string[] {
+  /**
+   * Creating a Set of submission identifiers from the array of events in order to exclude duplicate values and make sure we are not processing the same submission twice during the lambda execution.
+   * This can happen if, in the batch of events we received, we have multiple ones associated to the same submission.
+   */
+  return new Set(events.map((event) => extractSubmissionIdFromObjectKey(event.s3.object.key)))
+    .values()
+    .toArray();
+}
+
+async function requestSubmissionProcessingWhenAllFilesAreAvailable(
+  submissionIds: string[]
+): Promise<void> {
+  const requestSubmissionProcessingWhenAllFilesAreAvailableOperations = submissionIds.map(
+    async (submissionId) => {
       try {
-        const expectedFileKeys = await getFileKeysForSubmission(submissionId);
+        const submission = await retrieveSubmission(submissionId);
 
-        // If there are no files to verify or the submission has already been processed return early
-        if (expectedFileKeys.length === 0) {
+        // If there are no files to verify or the submission has already been processed (sendReceipt != unknown) return early
+        if (
+          submission.sendReceipt !== "unknown" ||
+          submission.fileKeys === undefined ||
+          submission.fileKeys.length === 0
+        ) {
           return;
         }
 
-        const allProcessed = await verifyIfAllFilesExist(expectedFileKeys, bucketName);
+        const didReceiveAllAttachedFiles = await verifyIfAllFilesExist(submission.fileKeys);
 
-        if (allProcessed) {
+        if (didReceiveAllAttachedFiles) {
           const receiptId = await enqueueReliabilityProcessingRequest(submissionId);
 
           await updateReceiptIdForSubmission(submissionId, receiptId);
@@ -62,8 +84,11 @@ export const handler: Handler = async (sqsMessages: SQSEvent) => {
             details: JSON.stringify(error),
           })
         );
+
         throw error;
       }
-    })
+    }
   );
-};
+
+  await Promise.all(requestSubmissionProcessingWhenAllFilesAreAvailableOperations);
+}
