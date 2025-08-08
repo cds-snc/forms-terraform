@@ -103,66 +103,25 @@ resource "aws_cloudwatch_metric_alarm" "ELB_healthy_hosts" {
   }
 }
 
-#
-# Submissions Dead Letter Queue
-#
-resource "aws_cloudwatch_metric_alarm" "reliability_dead_letter_queue_warn" {
-  alarm_name          = "ReliabilityDeadLetterQueueWarn"
-  comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "1"
-  threshold           = "0"
-  alarm_description   = "Detect when a message is sent to the Reliability Dead Letter Queue"
-  alarm_actions       = [var.sns_topic_alert_warning_arn]
+// Dead letter queue message detector
 
-  metric_query {
-    id          = "e1"
-    expression  = "RATE(m2+m1)"
-    label       = "Error Rate"
-    return_data = "true"
-  }
-
-  metric_query {
-    id = "m1"
-
-    metric {
-      metric_name = "ApproximateNumberOfMessagesVisible"
-      namespace   = "AWS/SQS"
-      period      = "60"
-      stat        = "Sum"
-      unit        = "Count"
-
-      dimensions = {
-        QueueName = var.sqs_reliability_deadletter_queue_arn
-      }
-    }
-  }
-
-  metric_query {
-    id = "m2"
-
-    metric {
-      metric_name = "ApproximateNumberOfMessagesNotVisible"
-      namespace   = "AWS/SQS"
-      period      = "60"
-      stat        = "Sum"
-      unit        = "Count"
-
-      dimensions = {
-        QueueName = var.sqs_reliability_deadletter_queue_arn
-      }
-    }
+locals {
+  map_of_sqs_dead_letter_queues = {
+    reliability   = var.sqs_reliability_deadletter_queue_arn,
+    app_audit_log = var.sqs_app_audit_log_deadletter_queue_arn,
+    api_audit_log = var.sqs_api_audit_log_deadletter_queue_arn,
+    file_upload   = var.sqs_file_upload_deadletter_queue_arn
   }
 }
 
-#
-# Audit Log Dead Letter Queue
-#
-resource "aws_cloudwatch_metric_alarm" "audit_log_dead_letter_queue_warn" {
-  alarm_name          = "AuditLogDeadLetterQueueWarn"
+resource "aws_cloudwatch_metric_alarm" "dlq_message_detector" {
+  for_each = local.map_of_sqs_dead_letter_queues
+
+  alarm_name          = "${each.key}DeadLetterQueueWarn"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
   threshold           = "0"
-  alarm_description   = "Detect when a message is sent to the Audit Log Dead Letter Queue"
+  alarm_description   = "Detect when a message is sent to the ${each.key} Dead Letter Queue"
   alarm_actions       = [var.sns_topic_alert_warning_arn]
 
   metric_query {
@@ -183,7 +142,7 @@ resource "aws_cloudwatch_metric_alarm" "audit_log_dead_letter_queue_warn" {
       unit        = "Count"
 
       dimensions = {
-        QueueName = var.sqs_app_audit_log_deadletter_queue_arn
+        QueueName = each.value
       }
     }
   }
@@ -199,7 +158,7 @@ resource "aws_cloudwatch_metric_alarm" "audit_log_dead_letter_queue_warn" {
       unit        = "Count"
 
       dimensions = {
-        QueueName = var.sqs_app_audit_log_deadletter_queue_arn
+        QueueName = each.value
       }
     }
   }
@@ -448,7 +407,9 @@ locals {
     response_archiver        = var.lambda_response_archiver_log_group_name,
     submission               = var.lambda_submission_log_group_name,
     vault_integrity          = var.lambda_vault_integrity_log_group_name,
-    api_end_to_end_test      = var.lambda_api_end_to_end_test_log_group_name
+    api_end_to_end_test      = var.lambda_api_end_to_end_test_log_group_name,
+    file_upload_processor    = var.lambda_file_upload_processor_log_group_name,
+    file_upload_cleanup      = var.lambda_file_upload_cleanup_log_group_name
   }
 }
 

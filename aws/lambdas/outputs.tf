@@ -73,6 +73,16 @@ output "lambda_api_end_to_end_test_log_group_name" {
   value       = aws_cloudwatch_log_group.api_end_to_end_test.name
 }
 
+output "lambda_file_upload_processor_log_group_name" {
+  description = "File upload processor Lambda CloudWatch log group name"
+  value       = aws_cloudwatch_log_group.file_upload.name
+}
+
+output "lambda_file_upload_cleanup_log_group_name" {
+  description = "File upload cleanup Lambda CloudWatch log group name"
+  value       = aws_cloudwatch_log_group.file_upload_cleanup.name
+}
+
 output "forms_lambda_client_iam_role_name" {
   description = "IAM role name for forms client Lambda"
   value       = try(aws_iam_role.forms_lambda_client[0].name, null)

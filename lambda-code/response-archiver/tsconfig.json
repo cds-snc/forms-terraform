@@ -6,9 +6,6 @@
     "moduleResolution": "NodeNext",
     "target": "ESNext",
     "baseUrl": "./",
-    "paths": {
-      "@lib/*": ["src/lib/*"]
-    },
     "outDir": "build"
   },
   "include": ["src/**/*"],

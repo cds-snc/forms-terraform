@@ -7,7 +7,6 @@ import {
   DeleteObjectsCommand,
 } from "@aws-sdk/client-s3";
 import { Handler } from "aws-lambda";
-import { FileAttachement, getFileAttachments } from "./lib/fileAttachments.js";
 
 const DYNAMODB_VAULT_TABLE_NAME = process.env.DYNAMODB_VAULT_TABLE_NAME ?? "";
 const ARCHIVING_S3_BUCKET = process.env.ARCHIVING_S3_BUCKET;
@@ -15,14 +14,20 @@ const VAULT_FILE_STORAGE_S3_BUCKET = process.env.VAULT_FILE_STORAGE_S3_BUCKET;
 
 const PROCESSING_CHUNK_SIZE = 100;
 
-interface FormResponse {
+type Attachment = {
+  name: string;
+  path: string;
+};
+
+type FormResponse = {
   formId: string;
   name: string;
   submissionId: string;
   responsesAsJson: string;
   createdAt: number;
   confirmationCode: string;
-}
+  submissionAttachments: Attachment[];
+};
 
 const dynamodbClient = new DynamoDBClient({
   region: process.env.REGION ?? "ca-central-1",
@@ -74,17 +79,15 @@ async function archiveResponses(dynamodbClient: DynamoDBClient, s3Client: S3Clie
       lastEvaluatedKey ?? undefined
     );
 
-    let fileAttachmentsToDelete: FileAttachement[] = [];
+    let fileAttachmentsToDelete: Attachment[] = [];
 
     for (const response of archivableResponses.responses) {
       try {
-        const fileAttachments = getFileAttachments(response.responsesAsJson);
-
         await archiveFileAttachments(
           s3Client,
           response.formId,
           response.submissionId,
-          fileAttachments
+          response.submissionAttachments
         );
 
         await archiveResponsesAsJson(
@@ -94,7 +97,7 @@ async function archiveResponses(dynamodbClient: DynamoDBClient, s3Client: S3Clie
           response.responsesAsJson
         );
 
-        fileAttachmentsToDelete = fileAttachmentsToDelete.concat(fileAttachments);
+        fileAttachmentsToDelete = fileAttachmentsToDelete.concat(response.submissionAttachments);
       } catch (error) {
         // Warn Message will be sent to slack
         console.warn(
@@ -128,7 +131,8 @@ async function retrieveArchivableResponses(
         ExclusiveStartKey: lastEvaluatedKey,
         FilterExpression:
           "begins_with(NAME_OR_CONF, :nameOrConfPrefix) AND RemovalDate <= :removalDate",
-        ProjectionExpression: "FormID,#name,SubmissionID,FormSubmission,CreatedAt,ConfirmationCode",
+        ProjectionExpression:
+          "FormID,#name,SubmissionID,FormSubmission,CreatedAt,ConfirmationCode,SubmissionAttachments",
         ExpressionAttributeNames: {
           "#name": "Name",
         },
@@ -148,6 +152,7 @@ async function retrieveArchivableResponses(
           responsesAsJson: item.FormSubmission,
           createdAt: item.CreatedAt,
           confirmationCode: item.ConfirmationCode,
+          submissionAttachments: JSON.parse(item.SubmissionAttachments ?? "[]"), // Legacy submissions don't have SubmissionAttachments in their data set
         })) ?? [],
       lastEvaluatedKey: scanResults.LastEvaluatedKey,
     };
@@ -162,7 +167,7 @@ async function archiveFileAttachments(
   s3Client: S3Client,
   formId: string,
   submissionId: string,
-  fileAttachments: FileAttachement[]
+  fileAttachments: Attachment[]
 ): Promise<void> {
   try {
     const copyObjectRequests = fileAttachments.map((attachment) => {
@@ -215,7 +220,7 @@ async function archiveResponsesAsJson(
   }
 }
 
-async function deleteFileAttachments(s3Client: S3Client, fileAttachments: FileAttachement[]) {
+async function deleteFileAttachments(s3Client: S3Client, fileAttachments: Attachment[]) {
   if (fileAttachments.length === 0) return;
 
   try {

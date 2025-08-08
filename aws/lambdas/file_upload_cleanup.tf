@@ -18,9 +18,9 @@ resource "aws_lambda_function" "file_upload_cleanup" {
 
   environment {
     variables = {
-      ENVIRONMENT              = local.env
-      REGION                   = var.region
-      RELIABILITY_FILE_STORAGE = var.reliability_file_storage_id
+      ENVIRONMENT                             = local.env
+      REGION                                  = var.region
+      S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME = var.reliability_file_storage_id
     }
   }
 
