@@ -9,9 +9,9 @@
     "build:dev": "tsc --project tsconfig.json --watch"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "3.799.0",
-    "@aws-sdk/client-sqs": "3.799.0",
-    "@aws-sdk/lib-dynamodb": "3.799.0",
+    "@aws-sdk/client-dynamodb": "3.859.0",
+    "@aws-sdk/client-sqs": "3.859.0",
+    "@aws-sdk/lib-dynamodb": "3.859.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
