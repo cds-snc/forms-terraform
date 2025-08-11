@@ -8,21 +8,6 @@ export type Submission = {
   fileKeys?: string[];
 };
 
-const S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME = process.env.S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME;
-
-if (!S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME) {
-  console.error(
-    JSON.stringify({
-      level: "warn",
-      severity: 3,
-      status: "failed",
-      msg: "File upload processor lambda does not have environment variable for Reliability File Storage S3 bucket name",
-    })
-  );
-
-  throw new Error("Missing environment variable for S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME");
-}
-
 const awsProperties = {
   region: process.env.REGION ?? "ca-central-1",
 };
@@ -61,12 +46,12 @@ export const retrieveSubmission = async (submissionId: string): Promise<Submissi
     });
 };
 
-export const verifyIfAllFilesExist = async (fileKeys: string[]) => {
+export const verifyIfAllFilesExist = async (fileKeys: string[], bucketName: string) => {
   const s3Promises = fileKeys.map(async (fileKey) =>
     s3Client
       .send(
         new HeadObjectCommand({
-          Bucket: S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME,
+          Bucket: bucketName,
           Key: fileKey,
         })
       )

@@ -11,12 +11,16 @@ export const handler: Handler = async (event: SQSEvent) => {
   try {
     const s3ObjectCreatedEvents = event.Records.flatMap((sqsRecord) => {
       return (JSON.parse(sqsRecord.body) as S3Event).Records;
-    }).filter((s3Record) => s3Record.eventName === "ObjectCreated:Post"); // Sometimes S3 will send a "TestEvent" and this protects the lambda from throwing a type error
+    }).filter((s3Record) => s3Record.eventName === "ObjectCreated:Post"); // Sometimes S3 will send an event named "TestEvent" and this protects the lambda from throwing a type error
 
-    const submissionIdsToProcess =
-      getUniqueSubmissionIdsFromS3ObjectCreatedEvents(s3ObjectCreatedEvents);
+    const submissionIdsWithAssociatedBucketNameToProcess =
+      getUniqueSubmissionIdsWithAssociatedBucketNameFromS3ObjectCreatedEvents(
+        s3ObjectCreatedEvents
+      );
 
-    await requestSubmissionProcessingWhenAllFilesAreAvailable(submissionIdsToProcess);
+    await requestSubmissionProcessingWhenAllFilesAreAvailable(
+      submissionIdsWithAssociatedBucketNameToProcess
+    );
   } catch (error) {
     console.error(
       JSON.stringify({
@@ -30,21 +34,30 @@ export const handler: Handler = async (event: SQSEvent) => {
   }
 };
 
-function getUniqueSubmissionIdsFromS3ObjectCreatedEvents(events: S3EventRecord[]): string[] {
+function getUniqueSubmissionIdsWithAssociatedBucketNameFromS3ObjectCreatedEvents(
+  events: S3EventRecord[]
+): { submissionId: string; bucketName: string }[] {
   /**
-   * Creating a Set of submission identifiers from the array of events in order to exclude duplicate values and make sure we are not processing the same submission twice during the lambda execution.
+   * Using a Map in the reduce function to enforce submission identifier uniqueness so that we are not processing the same submission twice during the lambda execution.
    * This can happen if, in the batch of events we received, we have multiple ones associated to the same submission.
    */
-  return new Set(events.map((event) => extractSubmissionIdFromObjectKey(event.s3.object.key)))
-    .values()
+  return events
+    .reduce((acc, currentEvent) => {
+      return acc.set(
+        extractSubmissionIdFromObjectKey(currentEvent.s3.object.key),
+        currentEvent.s3.bucket.name
+      );
+    }, new Map<string, string>())
+    .entries()
+    .map((entry) => ({ submissionId: entry[0], bucketName: entry[1] }))
     .toArray();
 }
 
 async function requestSubmissionProcessingWhenAllFilesAreAvailable(
-  submissionIds: string[]
+  submissionIdsWithAssociatedBucketName: { submissionId: string; bucketName: string }[]
 ): Promise<void> {
-  const requestSubmissionProcessingWhenAllFilesAreAvailableOperations = submissionIds.map(
-    async (submissionId) => {
+  const requestSubmissionProcessingWhenAllFilesAreAvailableOperations =
+    submissionIdsWithAssociatedBucketName.map(async ({ submissionId, bucketName }) => {
       try {
         const submission = await retrieveSubmission(submissionId);
 
@@ -57,7 +70,10 @@ async function requestSubmissionProcessingWhenAllFilesAreAvailable(
           return;
         }
 
-        const didReceiveAllAttachedFiles = await verifyIfAllFilesExist(submission.fileKeys);
+        const didReceiveAllAttachedFiles = await verifyIfAllFilesExist(
+          submission.fileKeys,
+          bucketName
+        );
 
         if (didReceiveAllAttachedFiles) {
           const receiptId = await enqueueReliabilityProcessingRequest(submissionId);
@@ -87,8 +103,7 @@ async function requestSubmissionProcessingWhenAllFilesAreAvailable(
 
         throw error;
       }
-    }
-  );
+    });
 
   await Promise.all(requestSubmissionProcessingWhenAllFilesAreAvailableOperations);
 }

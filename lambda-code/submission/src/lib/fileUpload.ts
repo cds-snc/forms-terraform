@@ -22,7 +22,7 @@ if (!S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME) {
 }
 
 const S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES = 10485760; // S3 signed URL allows users to upload file up to 10 MB
-const S3_SIGNED_URL_LIFETIME_IN_SECONDS = 600; // S3 signed URL gives users 10 minutes to upload a file
+const S3_SIGNED_URL_LIFETIME_IN_SECONDS = 600; // S3 signed URL gives users 10 minutes to begin uploading a file
 
 const s3Client = new S3Client({
   region: process.env.REGION ?? "ca-central-1",

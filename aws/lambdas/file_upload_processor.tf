@@ -26,10 +26,9 @@ resource "aws_lambda_function" "file_upload" {
 
   environment {
     variables = {
-      ENVIRONMENT                             = local.env
-      REGION                                  = var.region
-      SQS_URL                                 = var.sqs_reliability_queue_id
-      S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME = var.reliability_file_storage_id
+      ENVIRONMENT = local.env
+      REGION      = var.region
+      SQS_URL     = var.sqs_reliability_queue_id
     }
   }
 
