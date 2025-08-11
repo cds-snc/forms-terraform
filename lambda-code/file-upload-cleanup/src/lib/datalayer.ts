@@ -1,16 +1,34 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import {
-  ScanCommandOutput,
-  DeleteCommand,
-  ScanCommand,
-  DynamoDBDocument,
-} from "@aws-sdk/lib-dynamodb";
-import {
-  DeleteObjectsCommand,
-  S3Client,
-  HeadObjectCommand,
-  DeleteObjectCommand,
-} from "@aws-sdk/client-s3";
+import { DeleteCommand, ScanCommand, DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
+import { DeleteObjectsCommand, S3Client, HeadObjectCommand } from "@aws-sdk/client-s3";
+
+export enum ReasonBehindUnprocessedSubmission {
+  SubmissionIsInReliabilityQueue,
+  SubmissionHasAllAttachedFiles,
+  SubmissionIsMissingAttachedFiles,
+}
+
+type UnprocessedSubmission = {
+  submissionId: string;
+  fileKeys: string[];
+  createdAt: number;
+  sendReceipt: string;
+};
+
+const S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME = process.env.S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME;
+
+if (!S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME) {
+  console.error(
+    JSON.stringify({
+      level: "warn",
+      severity: 3,
+      status: "failed",
+      msg: "File upload cleanup lambda does not have environment variable for Reliability File Storage S3 bucket name",
+    })
+  );
+
+  throw new Error("Missing environment variable for S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME");
+}
 
 export const awsProperties = {
   region: process.env.REGION ?? "ca-central-1",
@@ -22,126 +40,87 @@ const dynamodb = DynamoDBDocument.from(new DynamoDBClient(awsProperties));
 
 const s3Client = new S3Client(awsProperties);
 
-const reliabilityFileStorage = process.env.RELIABILITY_FILE_STORAGE;
-if (!reliabilityFileStorage) {
-  console.error(
-    JSON.stringify({
-      level: "warn",
-      severity: 3,
-      status: "failed",
-      msg: "File Cleanup Lambda does not have environment variable for Reliability File Storage",
-    })
-  );
-}
-
-type CleanupRecord = {
-  submissionId: string;
-  fileKeys: string[];
-  createdAt: number;
-  sendReceipt: string;
-  notifyProcessed?: boolean;
-};
-
-export const getSubmissionsToVerify = async (): Promise<CleanupRecord[]> => {
-  let lastEvaluatedKey: Record<string, any> | undefined = undefined;
-  let operationComplete = false;
-  const recordsToVerify: CleanupRecord[] = [];
-
-  while (!operationComplete) {
-    const result: ScanCommandOutput = await dynamodb.send(
+export async function getUnprocessedSubmissions(lastEvaluatedKey?: Record<string, any>): Promise<{
+  unprocessedSubmissions: UnprocessedSubmission[];
+  lastEvaluatedKey?: Record<string, any>;
+}> {
+  return dynamodb
+    .send(
       new ScanCommand({
         TableName: "ReliabilityQueue",
         IndexName: "FileKeysCreatedAt",
-        FilterExpression: `CreatedAt <= :createdAt`,
+        FilterExpression: `CreatedAt <= :createdAt AND attribute_not_exists(NotifyProcessed)`, // Ignore submissions that will be delivered through GC Notify. They will be automatically deleted after 30 days.
+        Limit: 50,
+        ExclusiveStartKey: lastEvaluatedKey,
         ExpressionAttributeValues: {
           ":createdAt": Date.now() - cleanupMaxAge,
         },
-        ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey }),
       })
-    );
-
-    if (result.Items) {
-      recordsToVerify.push(
-        ...result.Items.map((item) => ({
-          submissionId: item.SubmissionID,
-          fileKeys: JSON.parse(item.FileKeys),
-          createdAt: item.CreatedAt,
-          sendReceipt: item.SendReceipt,
-          notifyProcessed: item.NotifyProcessed,
-        }))
+    )
+    .then((results) => {
+      return {
+        unprocessedSubmissions:
+          results.Items?.map((item) => ({
+            submissionId: item.SubmissionID,
+            fileKeys: JSON.parse(item.FileKeys),
+            createdAt: item.CreatedAt,
+            sendReceipt: item.SendReceipt,
+          })) ?? [],
+        lastEvaluatedKey: results.LastEvaluatedKey,
+      };
+    })
+    .catch((error) => {
+      throw new Error(
+        `Failed to retrieve unprocessed submissions. Reason: ${(error as Error).message}.`
       );
-    }
+    });
+}
 
-    if (result.LastEvaluatedKey) {
-      lastEvaluatedKey = result.LastEvaluatedKey;
+export async function decideIfUnprocessedSubmissionShouldBeDeleted(
+  unprocessedSubmissions: UnprocessedSubmission
+): Promise<{ shouldDelete: boolean; reason: ReasonBehindUnprocessedSubmission }> {
+  const areAllFilesUploaded = await verifyIfAllFilesExist(unprocessedSubmissions.fileKeys);
+
+  if (areAllFilesUploaded) {
+    if (unprocessedSubmissions.sendReceipt !== "unknown") {
+      return {
+        shouldDelete: false,
+        reason: ReasonBehindUnprocessedSubmission.SubmissionIsInReliabilityQueue,
+      };
     } else {
-      operationComplete = true;
+      return {
+        shouldDelete: false,
+        reason: ReasonBehindUnprocessedSubmission.SubmissionHasAllAttachedFiles,
+      };
     }
   }
 
-  return recordsToVerify;
-};
+  return {
+    shouldDelete: true,
+    reason: ReasonBehindUnprocessedSubmission.SubmissionIsMissingAttachedFiles,
+  };
+}
 
-export const cleanupFailedUploads = async (items: CleanupRecord[]) => {
-  return Promise.allSettled(
-    items.map(async (item) => {
-      const { submissionId, fileKeys, createdAt, sendReceipt, notifyProcessed } = item;
-
-      // Do not cleanup files with email delivery.  They will automatically delete after 30 days.
-      if (notifyProcessed !== undefined) {
-        return;
-      }
-
-      const areAllFilesUploaded = await verifyIfAllFilesExist(fileKeys);
-
-      if (areAllFilesUploaded) {
-        if (sendReceipt !== "unknown") {
-          console.error(
-            JSON.stringify({
-              level: "error",
-              severity: 2,
-              submissionId: submissionId,
-              msg: "Possible issue with Reliability Queue processing",
-              details: `Submission ${submissionId} has been sent into the Reliabilty Queue but has not been processed in over ${Math.floor(
-                (Date.now() - createdAt) / 3600000
-              )} hours`,
-            })
-          );
-          return;
-        } else {
-          console.error(
-            JSON.stringify({
-              level: "error",
-              severity: 2,
-              submissionId: submissionId,
-              msg: "Possible issue with File Upload processing",
-              details: `Submission ${submissionId} has been successfully uploaded but not processed by the File Processing lambda in over ${Math.floor(
-                (Date.now() - createdAt) / 3600000
-              )} hours`,
-            })
-          );
-          return;
-        }
-      }
-
-      // Remove partially uploaded file responses
-      await deleteFiles(fileKeys);
-      // Ensure files are removed before removing form submission from reliability storage
-      await deleteFormResponse(submissionId);
-
-      console.info(
-        `Deleted partially completed submission ID ${submissionId} and associated Files`
+export async function deleteUnprocessedSubmission(
+  unprocessedSubmissions: UnprocessedSubmission
+): Promise<void> {
+  return deleteFiles(unprocessedSubmissions.fileKeys)
+    .then(() => deleteFormResponse(unprocessedSubmissions.submissionId))
+    .catch((error) => {
+      throw new Error(
+        `Failed to delete unprocessed submission ${unprocessedSubmissions.submissionId}. Reason: ${
+          (error as Error).message
+        }.`
       );
-    })
-  );
-};
+    });
+}
 
 const verifyIfAllFilesExist = async (fileKeys: string[]) => {
   const s3Promises = fileKeys.map(async (fileKey) =>
     s3Client
       .send(
         new HeadObjectCommand({
-          Bucket: reliabilityFileStorage,
+          Bucket: S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME,
           Key: fileKey,
         })
       )
@@ -170,7 +149,7 @@ const deleteFiles = async (fileKeys: string[]) => {
   const response = await s3Client
     .send(
       new DeleteObjectsCommand({
-        Bucket: reliabilityFileStorage,
+        Bucket: S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME,
         Delete: {
           Objects: batchDeleteInput,
           Quiet: true,

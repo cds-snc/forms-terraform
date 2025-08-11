@@ -1,8 +1,12 @@
-import { S3EventRecord } from "aws-lambda";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { UpdateCommand, GetCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 import { S3Client, HeadObjectCommand } from "@aws-sdk/client-s3";
+
+export type Submission = {
+  sendReceipt: string;
+  fileKeys?: string[];
+};
 
 const awsProperties = {
   region: process.env.REGION ?? "ca-central-1",
@@ -14,39 +18,40 @@ const sqs = new SQSClient(awsProperties);
 
 const s3Client = new S3Client(awsProperties);
 
-export const retrieveSubmissionId = (event: S3EventRecord) => {
+export const extractSubmissionIdFromObjectKey = (objectKey: string) => {
   // key = form_attachements/05-05-2025/submissionId/fileRefId/filename
-
-  const submissionId = decodeURIComponent(event.s3.object.key.replace(/\+/g, " ")).split("/", 4)[2];
-  const bucketName = event.s3.bucket.name;
-  return { submissionId, bucketName };
+  return decodeURIComponent(objectKey.replace(/\+/g, " ")).split("/", 4)[2];
 };
 
-export const getFileKeysForSubmission = async (submissionId: string): Promise<string[]> => {
-  const result = await dynamodb.send(
-    new GetCommand({
-      TableName: "ReliabilityQueue",
-      Key: {
-        SubmissionID: submissionId,
-      },
-      ProjectionExpression: "FileKeys,SendReceipt",
-    })
-  );
+export const retrieveSubmission = async (submissionId: string): Promise<Submission> => {
+  return dynamodb
+    .send(
+      new GetCommand({
+        TableName: "ReliabilityQueue",
+        Key: {
+          SubmissionID: submissionId,
+        },
+        ProjectionExpression: "FileKeys,SendReceipt",
+      })
+    )
+    .then((result) => {
+      if (result.Item === undefined) {
+        throw new Error(`Failed to retrieve submission ${submissionId}`);
+      }
 
-  // If SendReceipt exists it has already been processed
-  if (result.Item?.SendReceipt !== "unknown") {
-    return [];
-  }
-
-  return JSON.parse(result.Item?.FileKeys);
+      return {
+        sendReceipt: result.Item.SendReceipt,
+        ...(result.Item.FileKeys && { fileKeys: JSON.parse(result.Item.FileKeys) }),
+      } as Submission;
+    });
 };
 
-export const verifyIfAllFilesExist = async (fileKeys: string[], bucket: string) => {
+export const verifyIfAllFilesExist = async (fileKeys: string[], bucketName: string) => {
   const s3Promises = fileKeys.map(async (fileKey) =>
     s3Client
       .send(
         new HeadObjectCommand({
-          Bucket: bucket,
+          Bucket: bucketName,
           Key: fileKey,
         })
       )
@@ -62,7 +67,6 @@ export const verifyIfAllFilesExist = async (fileKeys: string[], bucket: string) 
       })
   );
   const results = await Promise.all(s3Promises);
-
   return results.reduce((prev, curr) => prev && curr, true);
 };
 
