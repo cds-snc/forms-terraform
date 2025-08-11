@@ -1,1 +1,0 @@
-# Needed so that the directory is not empty and terraform destroys all resources.

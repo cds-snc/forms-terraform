@@ -98,6 +98,16 @@ variable "lambda_api_end_to_end_test_log_group_name" {
   type        = string
 }
 
+variable "lambda_file_upload_processor_log_group_name" {
+  description = "File upload processor Lambda CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_file_upload_cleanup_log_group_name" {
+  description = "File upload cleanup Lambda CloudWatch log group name"
+  type        = string
+}
+
 variable "ecs_cluster_name" {
   description = "ECS cluster name, used by CPU/memory threshold alarms"
   type        = string
@@ -213,6 +223,11 @@ variable "sqs_app_audit_log_deadletter_queue_arn" {
 
 variable "sqs_api_audit_log_deadletter_queue_arn" {
   description = "ARN of the API Audit Log queue's SQS Dead Letter Queue"
+  type        = string
+}
+
+variable "sqs_file_upload_deadletter_queue_arn" {
+  description = "File upload dead-letter queue ARN"
   type        = string
 }
 

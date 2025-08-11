@@ -10,6 +10,18 @@ resource "aws_dynamodb_table" "reliability_queue" {
     type = "S"
   }
 
+  attribute {
+    name = "FileKeys"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name               = "FileKeysCreatedAt"
+    hash_key           = "FileKeys"
+    projection_type    = "INCLUDE"
+    non_key_attributes = ["SubmissionID", "CreatedAt", "SendReceipt", "NotifyProcessed"]
+  }
+
   ttl {
     enabled        = true
     attribute_name = "TTL"

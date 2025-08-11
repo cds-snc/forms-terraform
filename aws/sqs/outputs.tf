@@ -57,3 +57,18 @@ output "sqs_api_audit_log_deadletter_queue_arn" {
   description = "API Audit Log queues dead-letter queue ARN"
   value       = aws_sqs_queue.api_audit_log_deadletter_queue.arn
 }
+
+output "sqs_file_upload_queue_arn" {
+  description = "File Upload queue ARN"
+  value       = aws_sqs_queue.file_upload_queue.arn
+}
+
+output "sqs_file_upload_queue_id" {
+  description = "File Upload queue URL"
+  value       = aws_sqs_queue.file_upload_queue.id
+}
+
+output "sqs_file_upload_deadletter_queue_arn" {
+  description = "File upload dead-letter queue ARN"
+  value       = aws_sqs_queue.file_upload_deadletter_queue.arn
+}

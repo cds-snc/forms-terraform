@@ -4,6 +4,10 @@ import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 import { Handler } from "aws-lambda";
 import { v4 } from "uuid";
 import { createHash } from "crypto";
+import {
+  findAttachedFileReferencesInSubmissionResponses,
+  generateFileAccessKeysAndUploadURLs,
+} from "./lib/fileUpload.js";
 
 type AnyObject = {
   [key: string]: any;
@@ -28,11 +32,37 @@ export const handler: Handler = async (submission: AnyObject) => {
   const submissionId = v4();
 
   try {
+    const attachedFileReferences = findAttachedFileReferencesInSubmissionResponses(
+      submission.responses
+    );
+
+    /**
+     * If we found file references in the response we bypass the regular submission flow
+     * in order to generate and return upload URLs for the client to send us files attached to the submission.
+     */
+    if (attachedFileReferences.length > 0) {
+      const { fileAccessKeys, fileUploadURLs } = await generateFileAccessKeysAndUploadURLs(
+        submissionId,
+        attachedFileReferences
+      );
+
+      await saveSubmission(submissionId, submission, fileAccessKeys);
+
+      console.log(
+        JSON.stringify({
+          level: "info",
+          status: "success",
+          submissionId: submissionId,
+          details: `Sent back ${fileAccessKeys.length} signed URLs to the client in order to upload files attached to submission ${submissionId}`,
+        })
+      );
+
+      return { status: true, submissionId, fileURLMap: fileUploadURLs };
+    }
+
     await saveSubmission(submissionId, submission);
 
-    const needsFileScanning = submission.containsFiles ?? false;
-
-    const receiptId = await enqueueReliabilityProcessingRequest(submissionId, needsFileScanning);
+    const receiptId = await enqueueReliabilityProcessingRequest(submissionId);
 
     await updateReceiptIdForSubmission(submissionId, receiptId);
 
@@ -62,10 +92,7 @@ export const handler: Handler = async (submission: AnyObject) => {
   }
 };
 
-const enqueueReliabilityProcessingRequest = async (
-  submissionId: string,
-  requiresFileScanning: boolean
-): Promise<string> => {
+const enqueueReliabilityProcessingRequest = async (submissionId: string): Promise<string> => {
   try {
     const sendMessageCommandOutput = await sqs.send(
       new SendMessageCommand({
@@ -73,7 +100,7 @@ const enqueueReliabilityProcessingRequest = async (
           submissionID: submissionId,
         }),
         // Helps ensure the file scanning job is processed first
-        DelaySeconds: requiresFileScanning ? 30 : 5,
+        DelaySeconds: 5,
         QueueUrl: process.env.SQS_URL,
       })
     );
@@ -88,7 +115,11 @@ const enqueueReliabilityProcessingRequest = async (
   }
 };
 
-const saveSubmission = async (submissionId: string, formData: AnyObject): Promise<void> => {
+const saveSubmission = async (
+  submissionId: string,
+  formData: AnyObject,
+  fileKeys?: string[]
+): Promise<void> => {
   try {
     const securityAttribute = formData.securityAttribute ?? "Protected A";
     delete formData.securityAttribute;
@@ -98,6 +129,7 @@ const saveSubmission = async (submissionId: string, formData: AnyObject): Promis
     const alteredFormDataAsString = JSON.stringify(formData);
 
     const formResponsesAsString = JSON.stringify(formData.responses);
+
     const formResponsesAsHash = createHash("md5").update(formResponsesAsString).digest("hex"); // We use MD5 here because it is faster to generate and it will only be used as a checksum.
 
     console.log(
@@ -119,6 +151,7 @@ const saveSubmission = async (submissionId: string, formData: AnyObject): Promis
           CreatedAt: timeStamp,
           SecurityAttribute: securityAttribute,
           FormSubmissionHash: formResponsesAsHash,
+          ...(fileKeys !== undefined && { FileKeys: JSON.stringify(fileKeys) }),
         },
       })
     );

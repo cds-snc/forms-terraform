@@ -13,8 +13,8 @@ export TG_PROVIDER_CACHE=1
 
 # Set proper terraform and terragrunt versions
 
-tgswitch 0.75.10
-tfswitch 1.11.2
+tgswitch 0.83.0
+tfswitch 1.12.2
 
 basedir=$(pwd)
 
@@ -28,16 +28,16 @@ terragrunt run-all destroy \
     --queue-include-dir $basedir/env/cloud/kms \
     --queue-include-dir $basedir/env/cloud/network \
     --queue-include-dir $basedir/env/cloud/secrets \
-    --queue-include-dir $basedir/env/cloud/sqs \
     --queue-include-dir $basedir/env/cloud/s3 \
     --queue-include-dir $basedir/env/cloud/ecr \
-    --queue-include-dir $basedir/env/cloud/sns \
-    --queue-include-dir $basedir/env/cloud/redis \
-    --queue-include-dir $basedir/env/cloud/rds \
+    --queue-include-dir $basedir/env/cloud/sqs \
     --queue-include-dir $basedir/env/cloud/dynamodb \
-    --queue-include-dir $basedir/env/cloud/lambdas \
+    --queue-include-dir $basedir/env/cloud/guard_duty \
+    --queue-include-dir $basedir/env/cloud/rds \
+    --queue-include-dir $basedir/env/cloud/redis \
+    --queue-include-dir $basedir/env/cloud/sns \
     --queue-include-dir $basedir/env/cloud/vpn \
-    --queue-include-dir $basedir/env/cloud/guard_duty
+    --queue-include-dir $basedir/env/cloud/lambdas
 
 # Remove all the terraform state and lock components
 printf "${greenColor}=> Destroying DynamoDB terraform lock table${reset}\n"
