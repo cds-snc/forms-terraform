@@ -9,9 +9,13 @@ import {
 
 export const handler: Handler = async (event: SQSEvent) => {
   try {
-    const s3ObjectCreatedEvents = event.Records.flatMap((sqsRecord) => {
-      return (JSON.parse(sqsRecord.body) as S3Event).Records;
-    }).filter((s3Record) => s3Record.eventName === "ObjectCreated:Post"); // Sometimes S3 will send an event named "TestEvent" and this protects the lambda from throwing a type error
+    const s3ObjectCreatedEvents = event.Records.map(
+      (r) => JSON.parse(r.body) as Record<string, unknown>
+    )
+      // Sometimes S3 will send a "TestEvent" and this protects the lambda from not being able to handle it (see https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html#notification-content-structure-examples)
+      .filter((parsedBody) => parsedBody["Records"] !== undefined)
+      .flatMap((parsedBody) => parsedBody["Records"] as S3EventRecord[])
+      .filter((s3Record) => s3Record.eventName === "ObjectCreated:Post");
 
     const submissionIdsWithAssociatedBucketNameToProcess =
       getUniqueSubmissionIdsWithAssociatedBucketNameFromS3ObjectCreatedEvents(
