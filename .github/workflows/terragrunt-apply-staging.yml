@@ -24,7 +24,7 @@ env:
   AWS_ACCOUNT_ID: ${{ vars.STAGING_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
   TERRAFORM_VERSION: 1.12.2
-  TERRAGRUNT_VERSION: 0.82.3
+  TERRAGRUNT_VERSION: 0.83.0
   TF_INPUT: false
   # API
   TF_VAR_zitadel_application_key: ${{ secrets.STAGING_ZITADEL_APPLICATION_KEY }}
@@ -45,8 +45,6 @@ env:
   TF_VAR_cognito_code_template_id: 12a18f84-062c-4a67-8310-bf114af051ea
   TF_VAR_email_address_contact_us: ${{ vars.STAGING_CONTACT_US_EMAIL }}
   TF_VAR_email_address_support: ${{ vars.STAGING_SUPPORT_EMAIL }}
-  TF_VAR_load_testing_form_id: ${{ secrets.STAGING_LOAD_TESTING_FORM_ID }}
-  TF_VAR_load_testing_form_private_key: ${{ secrets.STAGING_LOAD_TESTING_FORM_PRIVATE_KEY }}
   TF_VAR_load_testing_zitadel_app_private_key: ${{ secrets.STAGING_ZITADEL_APPLICATION_KEY }}
   TF_VAR_zitadel_administration_key: ${{ secrets.STAGING_ZITADEL_ADMINISTRATION_KEY }}
   TF_VAR_hcaptcha_site_verify_key: ${{ secrets.STAGING_HCAPTCHA_SITE_VERIFY_KEY }}

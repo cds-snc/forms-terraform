@@ -127,3 +127,34 @@ resource "aws_sqs_queue" "api_audit_log_deadletter_queue" {
   kms_data_key_reuse_period_seconds = 300
 }
 
+# File Upload Verification Queue
+resource "aws_sqs_queue" "file_upload_queue" {
+  # checkov:skip=CKV_AWS_27: Encrytion not Required and difficult to support with S3 notification source
+  name                       = "file_upload_queue"
+  delay_seconds              = 0
+  max_message_size           = 262144
+  message_retention_seconds  = 172800 // 2 days
+  visibility_timeout_seconds = 1960
+  # https://aws.amazon.com/premiumsupport/knowledge-center/lambda-function-process-sqs-messages/
+  # The SQS visibility timeout must be at least six times the total of the function timeout and the batch window timeout.
+  # Lambda function timeout is 300.
+
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.file_upload_deadletter_queue.arn
+    maxReceiveCount     = 5
+  })
+
+  redrive_allow_policy = jsonencode({
+    redrivePermission = "byQueue",
+    sourceQueueArns   = [aws_sqs_queue.file_upload_deadletter_queue.arn]
+  })
+}
+
+resource "aws_sqs_queue" "file_upload_deadletter_queue" {
+  # checkov:skip=CKV_AWS_27: Encrytion not Required and difficult to support with S3 notification source
+  name                      = "file_upload_deadletter_queue"
+  delay_seconds             = 60
+  max_message_size          = 262144
+  message_retention_seconds = 1209600
+  receive_wait_time_seconds = 5
+}

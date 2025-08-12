@@ -4,8 +4,8 @@ Tests the Form submission flow through the reliability queue
 
 import json
 from locust import HttpUser, task
-from tests.utils.config import load_test_configuration
-from tests.utils.sequential_task_set_with_failure import SequentialTaskSetWithFailure
+from utils.config import load_test_configuration
+from utils.sequential_task_set_with_failure import SequentialTaskSetWithFailure
 from utils.form_submission_generator import FormSubmissionGenerator
 from botocore.config import Config
 from boto3 import client
@@ -17,7 +17,9 @@ class FormSubmitThroughInfraBehaviour(SequentialTaskSetWithFailure):
         test_configuration = load_test_configuration()
         random_test_form = test_configuration.get_random_test_form()
         self.form_id = random_test_form.id
-        self.form_template = random_test_form.template
+        self.form_template = test_configuration.get_form_template(
+            random_test_form.usedTemplate
+        )
         self.form_submission_generator = None
 
     def on_start(self) -> None:

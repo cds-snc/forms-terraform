@@ -6,6 +6,20 @@ from pydantic import BaseModel
 from urllib.parse import urlparse
 
 
+class EvenDistributor:
+    def __init__(self, items):
+        self.items = items
+        self.index = 0
+
+    def next_item(self):
+        item = self.items[self.index]
+        self.index = (self.index + 1) % len(self.items)
+        return item
+
+
+shared_test_forms_distributor: Optional[EvenDistributor] = None
+
+
 class PrivateKey(BaseModel):
     keyId: str
     key: str
@@ -15,16 +29,24 @@ class PrivateKey(BaseModel):
 
 class TestForm(BaseModel):
     id: str
-    template: Dict[str, Any]
-    apiPrivateKey: PrivateKey
+    usedTemplate: str
+    apiKey: Optional[PrivateKey] = None
 
 
 class TestConfiguration(BaseModel):
+    templates: Dict[str, Dict[str, Any]]
     testForms: list[TestForm]
     submitFormServerActionIdentifier: str
 
     def get_random_test_form(self) -> TestForm:
-        return random.choice(self.testForms)
+        global shared_test_forms_distributor
+        if shared_test_forms_distributor is None:
+            shared_test_forms_distributor = EvenDistributor(self.testForms)
+
+        return shared_test_forms_distributor.next_item()
+
+    def get_form_template(self, template_name: str) -> Dict[str, Any]:
+        return self.templates[template_name]
 
 
 def get_client_url_from_target_host(target_host: str) -> str:
@@ -64,11 +86,14 @@ def load_test_configuration() -> TestConfiguration:
         with open("/tmp/test_configuration.json") as file:
             data = json.load(file)
 
+        data["templates"] = {
+            key: json.loads(str(value).replace("\n", "\\n"))
+            for key, value in dict(data["templates"]).items()
+        }
+
         for form in data["testForms"]:
-            form["template"] = json.loads(str(form["template"]).replace("\n", "\\n"))
-            form["apiPrivateKey"] = json.loads(
-                str(form["apiPrivateKey"]).replace("\n", "\\n")
-            )
+            if "apiKey" in form and form["apiKey"] is not None:
+                form["apiKey"] = json.loads(str(form["apiKey"]).replace("\n", "\\n"))
 
         return TestConfiguration(**data)
     except Exception as exception:

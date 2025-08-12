@@ -28,3 +28,7 @@ prisma-migration:
   - "lambda-code/prisma-migration/**"
 api-end-to-end-test:
   - "lambda-code/api-end-to-end-test/**"
+file-upload-processor:
+  - "lambda-code/file-upload-processor/**"
+file-upload-cleanup:
+  - "lambda-code/file-upload-cleanup/**"
