@@ -65,12 +65,20 @@ async function requestSubmissionProcessingWhenAllFilesAreAvailable(
       try {
         const submission = await retrieveSubmission(submissionId);
 
-        // If there are no files to verify or the submission has already been processed (sendReceipt != unknown) return early
         if (
+          submission === undefined ||
           submission.sendReceipt !== "unknown" ||
           submission.fileKeys === undefined ||
           submission.fileKeys.length === 0
         ) {
+          console.info(
+            JSON.stringify({
+              level: "info",
+              message:
+                "Skipping processing of file attachments because submission either does not exist or has already been processed or has no attached files",
+              submission: submission ?? "undefined",
+            })
+          );
           return;
         }
 
