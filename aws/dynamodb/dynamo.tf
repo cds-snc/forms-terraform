@@ -11,15 +11,21 @@ resource "aws_dynamodb_table" "reliability_queue" {
   }
 
   attribute {
-    name = "FileKeys"
-    type = "S"
+    name = "HasFileKeys"
+    type = "N"
+  }
+
+  attribute {
+    name = "CreatedAt"
+    type = "N"
   }
 
   global_secondary_index {
-    name               = "FileKeysCreatedAt"
-    hash_key           = "FileKeys"
+    name               = "HasFileKeysByCreatedAt"
+    hash_key           = "HasFileKeys"
+    range_key          = "CreatedAt"
     projection_type    = "INCLUDE"
-    non_key_attributes = ["SubmissionID", "CreatedAt", "SendReceipt", "NotifyProcessed"]
+    non_key_attributes = ["SubmissionID", "SendReceipt", "NotifyProcessed", "FileKeys"]
   }
 
   ttl {
