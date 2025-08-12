@@ -1,5 +1,5 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DeleteCommand, ScanCommand, DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, DynamoDBDocument, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { DeleteObjectsCommand, S3Client, HeadObjectCommand } from "@aws-sdk/client-s3";
 
 export enum ReasonBehindUnprocessedSubmission {
@@ -34,7 +34,7 @@ export const awsProperties = {
   region: process.env.REGION ?? "ca-central-1",
 };
 
-const cleanupMaxAge = 60 * 60 * 2; // 2 hours
+const SUBMISSION_MAX_AGE_IN_HOURS = 2;
 
 const dynamodb = DynamoDBDocument.from(new DynamoDBClient(awsProperties));
 
@@ -46,14 +46,17 @@ export async function getUnprocessedSubmissions(lastEvaluatedKey?: Record<string
 }> {
   return dynamodb
     .send(
-      new ScanCommand({
+      new QueryCommand({
         TableName: "ReliabilityQueue",
-        IndexName: "FileKeysCreatedAt",
-        FilterExpression: `CreatedAt <= :createdAt AND attribute_not_exists(NotifyProcessed)`, // Ignore submissions that will be delivered through GC Notify. They will be automatically deleted after 30 days.
+        IndexName: "HasFileKeysByCreatedAt",
         Limit: 50,
         ExclusiveStartKey: lastEvaluatedKey,
+        ScanIndexForward: true, // Querying from oldest to newest
+        KeyConditionExpression: "HasFileKeys = :hasFileKeys AND CreatedAt <= :createdAt",
+        FilterExpression: "attribute_not_exists(NotifyProcessed)", // Ignore submissions that will be delivered through GC Notify. They will be automatically deleted after 30 days.
         ExpressionAttributeValues: {
-          ":createdAt": Date.now() - cleanupMaxAge,
+          ":hasFileKeys": 1,
+          ":createdAt": Date.now() - SUBMISSION_MAX_AGE_IN_HOURS * 60 * 60 * 1000, // Convert SUBMISSION_MAX_AGE_IN_HOURS to milliseconds
         },
       })
     )
