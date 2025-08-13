@@ -74,8 +74,7 @@ async function requestSubmissionProcessingWhenAllFilesAreAvailable(
           console.info(
             JSON.stringify({
               level: "info",
-              message:
-                "Skipping processing of file attachments because submission either does not exist or has already been processed or has no attached files",
+              message: `Skipping processing of file attachments because submission ${submissionId} either does not exist, has already been processed or has no attached files`,
               submission: submission ?? "undefined",
             })
           );
