@@ -1,12 +1,21 @@
-import os
+from dataclasses import dataclass
 import random
-import base64
 import string
 from typing import Any, Dict, List, Union
+import uuid
+from collections import namedtuple
 
 
 Response = Union[str, List[str], int, List[Dict[str, Any]], Dict[str, Any]]
-SubmissionRequestBody = Dict[int, Response]
+ResponseData = Dict[int, Response]
+Attachment = namedtuple("Attachment", "name, size")
+Attachments = Dict[str, Attachment]
+
+
+@dataclass
+class GeneratedResponse:
+    response_data: ResponseData
+    attachments: Attachments
 
 
 class FormSubmissionGenerator:
@@ -25,9 +34,10 @@ class FormSubmissionGenerator:
         self.form_id = form_id
         self.form_template = form_template
 
-    def generate_response(self) -> SubmissionRequestBody:
+    def generate_response(self) -> GeneratedResponse:
         """Generate a response based on the form template."""
-        response: SubmissionRequestBody = {}
+        response_data: ResponseData = {}
+        attachments: Attachments = {}
         language: str = random.choice(["en", "fr"])
 
         # For each question in the form template, generate a random response
@@ -45,9 +55,9 @@ class FormSubmissionGenerator:
 
             question_type: str = question["type"]
             if question_type == "textField":
-                response[question_id] = self.lipsum(random.randint(5, 10))
+                response_data[question_id] = self.lipsum(random.randint(5, 10))
             elif question_type in ["textArea", "richText"]:
-                response[question_id] = self.lipsum(random.randint(10, 20))
+                response_data[question_id] = self.lipsum(random.randint(10, 20))
             elif question_type in [
                 "dropdown",
                 "radio",
@@ -56,28 +66,26 @@ class FormSubmissionGenerator:
                 "combobox",
             ]:
                 choices = question["properties"]["choices"]
-                response[question_id] = random.choice(choices)[language]
+                response_data[question_id] = random.choice(choices)[language]
             elif question_type == "fileInput":
-                response[question_id] = self.generate_random_submission_attachment()
+                generated_attachment = self.generate_random_submission_attachment()
+                response_data[question_id] = generated_attachment
+                attachments[generated_attachment["id"]] = Attachment(
+                    generated_attachment["name"], generated_attachment["size"]
+                )
             else:
                 raise ValueError("Unsupported question type")
 
-        return response
+        return GeneratedResponse(response_data, attachments)
 
     def lipsum(self, length: int) -> str:
         """Generate a random string of lorem ipsum."""
         return " ".join(random.choices(self.lipsum_words, k=length)).capitalize()
 
     def generate_random_submission_attachment(self):
-        size_in_bytes = random.randint(
-            1048576, 2097152
-        )  # 1 MB to 2 MB. Encoding it in Base64 will increase each file size by 33%.
+        id = uuid.uuid4()
         filename = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
-        raw_bytes = os.urandom(size_in_bytes)
-        encoded_content = base64.b64encode(raw_bytes).decode("utf-8")
-
-        return {
-            "name": f"{filename}.txt",
-            "size": size_in_bytes,
-            "based64EncodedFile": encoded_content,
-        }
+        size_in_bytes = random.randint(
+            1 * 1048576, 5 * 1048576
+        )  # Between 1 MB and 5 MB
+        return {"id": str(id), "name": f"{filename}.txt", "size": size_in_bytes}
