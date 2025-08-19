@@ -40,6 +40,9 @@ def handler(event: dict[str, any], context=None):
 
     try:
         test_configuration = event.pop("testConfiguration")
+        thread_id = event.pop("thread_id")
+
+        os.environ["THREAD_ID"] = thread_id
 
         with open("/tmp/test_configuration.json", "w") as file:
             json.dump(test_configuration, file)
