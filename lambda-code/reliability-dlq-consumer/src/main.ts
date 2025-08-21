@@ -36,8 +36,6 @@ export async function handler() {
           MessageBody: JSON.stringify({
             submissionID: submissionID,
           }),
-          MessageDeduplicationId: submissionID,
-          MessageGroupId: "Group-" + submissionID,
         };
 
         await sqsClient.send(new SendMessageCommand(sendMessageCommandInput));

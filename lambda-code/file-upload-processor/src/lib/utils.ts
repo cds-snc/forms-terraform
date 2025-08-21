@@ -23,7 +23,7 @@ export const extractSubmissionIdFromObjectKey = (objectKey: string) => {
   return decodeURIComponent(objectKey.replace(/\+/g, " ")).split("/", 4)[2];
 };
 
-export const retrieveSubmission = async (submissionId: string): Promise<Submission> => {
+export const retrieveSubmission = async (submissionId: string): Promise<Submission | undefined> => {
   return dynamodb
     .send(
       new GetCommand({
@@ -36,13 +36,18 @@ export const retrieveSubmission = async (submissionId: string): Promise<Submissi
     )
     .then((result) => {
       if (result.Item === undefined) {
-        throw new Error(`Failed to retrieve submission ${submissionId}`);
+        return undefined;
       }
 
       return {
         sendReceipt: result.Item.SendReceipt,
         ...(result.Item.FileKeys && { fileKeys: JSON.parse(result.Item.FileKeys) }),
       } as Submission;
+    })
+    .catch((error) => {
+      throw new Error(
+        `Failed to retrieve submission ${submissionId}. Reason: ${(error as Error).message}`
+      );
     });
 };
 
