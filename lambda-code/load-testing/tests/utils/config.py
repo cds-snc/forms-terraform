@@ -36,7 +36,20 @@ class TestForm(BaseModel):
 class TestConfiguration(BaseModel):
     templates: Dict[str, Dict[str, Any]]
     testForms: list[TestForm]
+    assignTestFormBasedOnThreadId: bool
     submitFormServerActionIdentifier: str
+
+    def get_test_form_based_on_thread_id(self) -> TestForm:
+        try:
+            thread_id = int(os.environ["THREAD_ID"])
+
+            return self.testForms[
+                thread_id - 1
+            ]  # thread_id starts at 1 so first index in list should be 0
+        except Exception as exception:
+            raise Exception(
+                "Failed to assign test form based on thread id. This could be because you are not running the load test through Invokust. You can disable this behaviour in the test_configuration.json file with the 'assignTestFormBasedOnThreadId' property."
+            ) from exception
 
     def get_random_test_form(self) -> TestForm:
         global shared_test_forms_distributor

@@ -5,7 +5,7 @@ import logging
 import sys
 import json
 from custom_results_aggregator import custom_results_aggregator
-from invokust.aws_lambda import LambdaLoadTest
+from custom_lambda_load_test import LambdaLoadTest
 from pathlib import Path
 
 
