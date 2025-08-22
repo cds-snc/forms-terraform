@@ -30,7 +30,7 @@ Database:
         Mode: "require"
     MaxOpenConns: 20
     MaxIdleConns: 10
-    MaxConnLifetime: "30m"
+    MaxConnLifetime: "20m"
     MaxConnIdleTime: "5m"
 
 DefaultInstance:
