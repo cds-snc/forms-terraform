@@ -22,7 +22,11 @@ class RetrieveResponseBehaviour(SequentialTaskSetWithFailure):
     def __init__(self, parent: HttpUser) -> None:
         super().__init__(parent)
         test_configuration = load_test_configuration()
-        random_test_form = test_configuration.get_random_test_form()
+        random_test_form = (
+            test_configuration.get_test_form_based_on_thread_id()
+            if test_configuration.assignTestFormBasedOnThreadId
+            else test_configuration.get_random_test_form()
+        )
         self.form_id = random_test_form.id
 
         if random_test_form.apiKey is None:
@@ -69,6 +73,11 @@ class RetrieveResponseBehaviour(SequentialTaskSetWithFailure):
             new_submission = form_new_submissions.pop(0)
             new_submission_name = new_submission["name"]
             submission = self.get_submission_by_name(new_submission_name)
+
+            if "attachments" in submission:
+                for attachment in submission["attachments"]:
+                    self.download_submission_attachment(attachment["downloadLink"])
+
             self.confirm_submission(new_submission_name, submission["confirmationCode"])
 
     def get_form_template(self) -> None:
@@ -103,4 +112,9 @@ class RetrieveResponseBehaviour(SequentialTaskSetWithFailure):
             200,
             headers=self.headers,
             name=f"/forms/submission/confirm",
+        )
+
+    def download_submission_attachment(self, download_link: str) -> None:
+        self.request_with_failure_check(
+            "get", download_link, 200, name="submission-attachment-download"
         )

@@ -151,6 +151,7 @@ const saveSubmission = async (
           CreatedAt: timeStamp,
           SecurityAttribute: securityAttribute,
           FormSubmissionHash: formResponsesAsHash,
+          HasFileKeys: fileKeys !== undefined ? 1 : 0,
           ...(fileKeys !== undefined && { FileKeys: JSON.stringify(fileKeys) }),
         },
       })

@@ -33,5 +33,5 @@ Once the variables are set, you can start the tests like so:
 ```sh
 make install
 
-locust -f tests/test_submit_through_client_with_file_upload.py --host=https://forms-staging.cdssandbox.xyz
+locust -f tests/test_send_submissions_through_client.py --host=https://forms-staging.cdssandbox.xyz
 ```
