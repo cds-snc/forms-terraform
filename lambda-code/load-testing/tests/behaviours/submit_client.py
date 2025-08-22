@@ -7,7 +7,10 @@ import os
 import re
 from typing import Any, Dict
 from locust import HttpUser, task
-from utils.config import get_client_url_from_target_host, load_test_configuration
+from utils.config import (
+    get_client_url_from_target_host,
+    load_test_configuration,
+)
 from utils.sequential_task_set_with_failure import SequentialTaskSetWithFailure
 from utils.form_submission_generator import Attachments, FormSubmissionGenerator
 
@@ -16,7 +19,11 @@ class FormSubmitThroughClientBehaviour(SequentialTaskSetWithFailure):
     def __init__(self, parent: HttpUser) -> None:
         super().__init__(parent)
         test_configuration = load_test_configuration()
-        random_test_form = test_configuration.get_random_test_form()
+        random_test_form = (
+            test_configuration.get_test_form_based_on_thread_id()
+            if test_configuration.assignTestFormBasedOnThreadId
+            else test_configuration.get_random_test_form()
+        )
         self.form_id = random_test_form.id
         self.form_template = test_configuration.get_form_template(
             random_test_form.usedTemplate
@@ -51,7 +58,9 @@ class FormSubmitThroughClientBehaviour(SequentialTaskSetWithFailure):
             )
 
             signed_url_policy_match = re.findall(
-                r"(\d+):T700,(.*?)(?=1:\{|\d:T700,)", str(response), re.DOTALL
+                r"(\d+):[A-Z]\d{3},(.*?)(?=1:\{|\d:[A-Z]\d{3},)",
+                str(response),
+                re.DOTALL,
             )
 
             response_str = ""

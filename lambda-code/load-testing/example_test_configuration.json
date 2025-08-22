@@ -9,5 +9,6 @@
       "apiKey": "..."
     }
   ],
+  "assignTestFormBasedOnThreadId": false,
   "submitFormServerActionIdentifier": ""
 }

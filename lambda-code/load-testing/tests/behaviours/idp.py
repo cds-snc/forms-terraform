@@ -17,7 +17,11 @@ class AccessTokenBehaviour(SequentialTaskSetWithFailure):
     def __init__(self, parent: HttpUser) -> None:
         super().__init__(parent)
         test_configuration = load_test_configuration()
-        random_test_form = test_configuration.get_random_test_form()
+        random_test_form = (
+            test_configuration.get_test_form_based_on_thread_id()
+            if test_configuration.assignTestFormBasedOnThreadId
+            else test_configuration.get_random_test_form()
+        )
 
         if random_test_form.apiKey is None:
             raise Exception("Test requires form API key")

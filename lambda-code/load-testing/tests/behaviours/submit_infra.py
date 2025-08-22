@@ -6,7 +6,9 @@ import json
 import os
 from typing import Any, Dict
 from locust import HttpUser, task
-from utils.config import load_test_configuration
+from utils.config import (
+    load_test_configuration,
+)
 from utils.sequential_task_set_with_failure import SequentialTaskSetWithFailure
 from utils.form_submission_generator import Attachments, FormSubmissionGenerator
 from botocore.config import Config
@@ -17,7 +19,11 @@ class FormSubmitThroughInfraBehaviour(SequentialTaskSetWithFailure):
     def __init__(self, parent: HttpUser) -> None:
         super().__init__(parent)
         test_configuration = load_test_configuration()
-        random_test_form = test_configuration.get_random_test_form()
+        random_test_form = (
+            test_configuration.get_test_form_based_on_thread_id()
+            if test_configuration.assignTestFormBasedOnThreadId
+            else test_configuration.get_random_test_form()
+        )
         self.form_id = random_test_form.id
         self.form_template = test_configuration.get_form_template(
             random_test_form.usedTemplate
