@@ -92,7 +92,7 @@ resource "aws_iam_policy" "ecs_xray" {
   name        = "ecs_xray"
   path        = "/"
   description = "IAM policy for allowing X-Ray tracing"
-  policy = data.aws_iam_policy_document.ecs_xray.json
+  policy      = data.aws_iam_policy_document.ecs_xray.json
 }
 
 data "aws_iam_policy_document" "ecs_xray" {
@@ -100,18 +100,18 @@ data "aws_iam_policy_document" "ecs_xray" {
     effect = "Allow"
 
     actions = [
-            "logs:PutLogEvents",
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:DescribeLogStreams",
-                "logs:DescribeLogGroups",
-                "logs:PutRetentionPolicy",
-                "xray:PutTraceSegments",
-                "xray:PutTelemetryRecords",
-                "xray:GetSamplingRules",
-                "xray:GetSamplingTargets",
-                "xray:GetSamplingStatisticSummaries",
-                "ssm:GetParameters"
+      "logs:PutLogEvents",
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:DescribeLogStreams",
+      "logs:DescribeLogGroups",
+      "logs:PutRetentionPolicy",
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+      "xray:GetSamplingRules",
+      "xray:GetSamplingTargets",
+      "xray:GetSamplingStatisticSummaries",
+      "ssm:GetParameters"
     ]
 
     resources = ["*"]
