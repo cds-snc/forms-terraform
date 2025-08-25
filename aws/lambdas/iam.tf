@@ -262,6 +262,7 @@ resource "aws_iam_policy" "lambda_xray" {
 data "aws_iam_policy_document" "lambda_xray" {
   # checkov:skip=CKV_AWS_111: IAM policy recommended by AWS
   # checkov:skip=CKV_AWS_356: IAM policy recommended by AWS
+  # checkov:skip=CKV_AWS_108: IAM policy recommended by AWS
   statement {
     effect = "Allow"
 
