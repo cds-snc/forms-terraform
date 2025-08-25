@@ -33,7 +33,8 @@ export const handler: Handler = async (submission: AnyObject) => {
 
   try {
     const attachedFileReferences = findAttachedFileReferencesInSubmissionResponses(
-      submission.responses
+      submission.responses,
+      submissionId
     );
 
     /**
