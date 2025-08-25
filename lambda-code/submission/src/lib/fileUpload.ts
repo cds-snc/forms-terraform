@@ -35,10 +35,21 @@ interface FileInput {
 }
 
 export function findAttachedFileReferencesInSubmissionResponses(
-  responses: Record<string, unknown>
+  responses: Record<string, unknown>,
+  submissionId: string
 ): FileReference[] {
   const fileInputs = extractFileInputs(responses);
-  return fileInputs.map((f) => ({ id: f.id, name: f.name }));
+
+  // Log and transform
+  return fileInputs.map((f) => {
+    console.log(
+      JSON.stringify({
+        level: "info",
+        msg: `File input detected for submission ${submissionId}: fileID=${f.id}, fileSize=${f.size} bytes.`,
+      })
+    );
+    return { id: f.id, name: f.name };
+  });
 }
 
 export async function generateFileAccessKeysAndUploadURLs(
@@ -112,7 +123,7 @@ const generateSignedUrl = async (key: string) => {
     },
     Conditions: [["content-length-range", 0, S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES]],
     Expires: S3_SIGNED_URL_LIFETIME_IN_SECONDS,
-  }).catch((error) => {
+  }).catch((error: unknown) => {
     throw new Error(`Failed to generate signed URL. Reason: ${(error as Error).message}.`);
   });
 };
