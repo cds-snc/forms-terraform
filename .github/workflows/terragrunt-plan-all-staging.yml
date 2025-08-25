@@ -46,8 +46,6 @@ env:
   TF_VAR_zitadel_admin_password: ${{ secrets.STAGING_ZITADEL_ADMIN_PASSWORD }}
   TF_VAR_zitadel_admin_username: ${{ secrets.STAGING_ZITADEL_ADMIN_USERNAME }}
   TF_VAR_zitadel_database_name: ${{ secrets.STAGING_ZITADEL_DATABASE_NAME }}
-  TF_VAR_zitadel_database_user_password: ${{ secrets.STAGING_ZITADEL_DATABASE_USER_PASSWORD }}
-  TF_VAR_zitadel_database_user_username: ${{ secrets.STAGING_ZITADEL_DATABASE_USER_USERNAME }}
   TF_VAR_zitadel_secret_key: ${{ secrets.STAGING_ZITADEL_SECRET_KEY }}
   # ECR
   TF_VAR_aws_development_accounts: ${{ vars.AWS_DEVELOPMENT_ACCOUNTS }}
