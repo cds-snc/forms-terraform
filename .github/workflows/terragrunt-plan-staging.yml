@@ -359,17 +359,18 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Terragrunt plan load_testing
-        if: steps.filter.outputs.load_testing == 'true'
+      - name: Terragrunt plan glue
+        if: steps.filter.outputs.glue == 'true'
         uses: cds-snc/terraform-plan@e710cb1446e5dfe69a0182603fb06b5282d7eb07 # v3.4.3
         with:
-          directory: "env/cloud/load_testing"
+          directory: "env/cloud/glue"
           comment-delete: "true"
-          comment-title: "Staging: load_testing"
+          comment-title: "Staging: glue"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
       - name: Terragrunt plan pr_review
+        if: steps.filter.outputs.pr_review == 'true'
         uses: cds-snc/terraform-plan@e710cb1446e5dfe69a0182603fb06b5282d7eb07 # v3.4.3
         with:
           directory: "env/cloud/pr_review"
@@ -378,12 +379,12 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Terragrunt plan glue
-        if: steps.filter.outputs.glue == 'true'
+      - name: Terragrunt plan load_testing
+        if: steps.filter.outputs.load_testing == 'true'
         uses: cds-snc/terraform-plan@e710cb1446e5dfe69a0182603fb06b5282d7eb07 # v3.4.3
         with:
-          directory: "env/cloud/glue"
+          directory: "env/cloud/load_testing"
           comment-delete: "true"
-          comment-title: "Staging: glue"
+          comment-title: "Staging: load_testing"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
