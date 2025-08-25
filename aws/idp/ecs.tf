@@ -15,6 +15,14 @@ locals {
       "valueFrom" = aws_ssm_parameter.zitadel_database_host.arn
     },
     {
+      "name"      = "ZITADEL_DATABASE_POSTGRES_USER_USERNAME"
+      "valueFrom" = aws_ssm_parameter.idp_database_cluster_admin_username.arn
+    },
+    {
+      "name"      = "ZITADEL_DATABASE_POSTGRES_USER_PASSWORD"
+      "valueFrom" = aws_ssm_parameter.idp_database_cluster_admin_password.arn
+    },
+    {
       "name"      = "ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME"
       "valueFrom" = aws_ssm_parameter.idp_database_cluster_admin_username.arn
     },
