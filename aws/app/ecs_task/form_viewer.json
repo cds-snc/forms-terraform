@@ -1,16 +1,43 @@
 [
   {
+    "name": "aws-otel-collector",
+    "image": "amazon/aws-otel-collector",
+    "command": ["--config=/etc/ecs/ecs-default-config.yaml"],
+    "essential": true,
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/ecs-aws-otel-sidecar-collector",
+        "awslogs-region": "${awslogs-region}",
+        "awslogs-stream-prefix": "ecs-otel",
+        "awslogs-create-group": "True"
+      }
+    },
+    "healthCheck": {
+      "command": ["/healthcheck"],
+      "interval": 5,
+      "timeout": 6,
+      "retries": 5,
+      "startPeriod": 1
+    }
+  },
+  {
     "name": "form_viewer",
     "image": "${image}",
     "portMappings": [
       {
         "containerPort": 3000,
-        "hostPort": 3000,
         "protocol": "tcp"
       }
     ],
     "cpu": 0,
     "essential": true,
+    "dependsOn": [
+      {
+        "containerName": "aws-otel-collector",
+        "condition": "START"
+      }
+    ],
     "linuxParameters": {
       "capabilities": {
         "add": [],

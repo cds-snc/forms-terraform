@@ -87,6 +87,40 @@ data "aws_iam_policy_document" "forms_s3" {
   }
 }
 
+
+resource "aws_iam_policy" "ecs_xray" {
+  name        = "ecs_xray"
+  path        = "/"
+  description = "IAM policy for allowing X-Ray tracing"
+  policy      = data.aws_iam_policy_document.ecs_xray.json
+}
+
+data "aws_iam_policy_document" "ecs_xray" {
+  # checkov:skip=CKV_AWS_111: IAM policy recommended by AWS
+  # checkov:skip=CKV_AWS_356: IAM policy recommended by AWS
+  # checkov:skip=CKV_AWS_108: IAM policy recommended by AWS
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:PutLogEvents",
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:DescribeLogStreams",
+      "logs:DescribeLogGroups",
+      "logs:PutRetentionPolicy",
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+      "xray:GetSamplingRules",
+      "xray:GetSamplingTargets",
+      "xray:GetSamplingStatisticSummaries",
+      "ssm:GetParameters"
+    ]
+
+    resources = ["*"]
+  }
+}
+
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_forms" {
   role       = aws_iam_role.forms.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
@@ -126,6 +160,13 @@ resource "aws_iam_role_policy_attachment" "cognito_forms" {
   role       = aws_iam_role.forms.name
   policy_arn = aws_iam_policy.cognito.arn
 }
+
+resource "aws_iam_role_policy_attachment" "ecs_xray" {
+  role       = aws_iam_role.forms.name
+  policy_arn = aws_iam_policy.ecs_xray.arn
+}
+
+
 
 #
 # IAM - SQS

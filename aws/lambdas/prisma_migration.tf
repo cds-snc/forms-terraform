@@ -29,7 +29,7 @@ resource "aws_lambda_function" "prisma_migration" {
   }
 
   tracing_config {
-    mode = "PassThrough"
+    mode = "Active"
   }
 }
 

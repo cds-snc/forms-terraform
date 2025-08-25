@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/nodejs:22 as build
+FROM public.ecr.aws/lambda/nodejs:22 AS build
 
 WORKDIR /usr/app
 

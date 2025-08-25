@@ -37,7 +37,7 @@ resource "aws_lambda_function" "reliability_dlq_consumer" {
   }
 
   tracing_config {
-    mode = "PassThrough"
+    mode = "Active"
   }
 }
 

@@ -252,6 +252,39 @@ data "aws_iam_policy_document" "lambda_sns" {
   }
 }
 
+resource "aws_iam_policy" "lambda_xray" {
+  name        = "lambda_xray"
+  path        = "/"
+  description = "IAM policy for allowing X-Ray tracing"
+  policy      = data.aws_iam_policy_document.lambda_xray.json
+}
+
+data "aws_iam_policy_document" "lambda_xray" {
+  # checkov:skip=CKV_AWS_111: IAM policy recommended by AWS
+  # checkov:skip=CKV_AWS_356: IAM policy recommended by AWS
+  # checkov:skip=CKV_AWS_108: IAM policy recommended by AWS
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:PutLogEvents",
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:DescribeLogStreams",
+      "logs:DescribeLogGroups",
+      "logs:PutRetentionPolicy",
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+      "xray:GetSamplingRules",
+      "xray:GetSamplingTargets",
+      "xray:GetSamplingStatisticSummaries",
+      "ssm:GetParameters"
+    ]
+
+    resources = ["*"]
+  }
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_secrets" {
   role       = aws_iam_role.lambda.name
   policy_arn = aws_iam_policy.lambda_secrets.arn
@@ -296,6 +329,13 @@ resource "aws_iam_role_policy_attachment" "lambda_sns" {
   role       = aws_iam_role.lambda.name
   policy_arn = aws_iam_policy.lambda_sns.arn
 }
+
+resource "aws_iam_role_policy_attachment" "lambda_xray" {
+  role       = aws_iam_role.lambda.name
+  policy_arn = aws_iam_policy.lambda_xray.arn
+}
+
+
 
 // This is required by the API end to end test lambda function
 

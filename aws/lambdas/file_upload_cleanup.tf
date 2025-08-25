@@ -30,7 +30,7 @@ resource "aws_lambda_function" "file_upload_cleanup" {
   }
 
   tracing_config {
-    mode = "PassThrough"
+    mode = "Active"
   }
 }
 
