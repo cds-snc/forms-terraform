@@ -13,7 +13,7 @@ WORKDIR /opt
 RUN unzip /tmp/layer.zip -d ./
 RUN chmod -R 755 /opt/
 
-FROM public.ecr.aws/lambda/nodejs:22 as build
+FROM public.ecr.aws/lambda/nodejs:22 AS build
 
 WORKDIR /usr/app
 

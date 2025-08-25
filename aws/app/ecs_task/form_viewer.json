@@ -9,7 +9,7 @@
       "options": {
         "awslogs-group": "/ecs/ecs-aws-otel-sidecar-collector",
         "awslogs-region": "${awslogs-region}",
-        "awslogs-stream-prefix": "ecs",
+        "awslogs-stream-prefix": "ecs-otel",
         "awslogs-create-group": "True"
       }
     },
