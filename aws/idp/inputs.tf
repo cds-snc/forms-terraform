@@ -78,18 +78,6 @@ variable "zitadel_database_name" {
   sensitive   = true
 }
 
-variable "zitadel_database_user_password" {
-  description = "The Zitadel database user password."
-  type        = string
-  sensitive   = true
-}
-
-variable "zitadel_database_user_username" {
-  description = "The Zitadel database user username."
-  type        = string
-  sensitive   = true
-}
-
 variable "zitadel_image_ecr_url" {
   description = "The Zitadel Docker image ECR repository URL."
   type        = string

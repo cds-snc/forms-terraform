@@ -91,3 +91,7 @@ sqs:
   - *common
   - "aws/sqs/**"
   - "env/cloud/sqs/**"
+pr_review:
+  - *common
+  - "aws/pr_review/**"
+  - "env/cloud/pr_review/**"
