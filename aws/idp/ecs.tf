@@ -16,11 +16,11 @@ locals {
     },
     {
       "name"      = "ZITADEL_DATABASE_POSTGRES_USER_USERNAME"
-      "valueFrom" = aws_ssm_parameter.zitadel_database_user_username.arn
+      "valueFrom" = aws_ssm_parameter.idp_database_cluster_admin_username.arn
     },
     {
       "name"      = "ZITADEL_DATABASE_POSTGRES_USER_PASSWORD"
-      "valueFrom" = aws_ssm_parameter.zitadel_database_user_password.arn
+      "valueFrom" = aws_ssm_parameter.idp_database_cluster_admin_password.arn
     },
     {
       "name"      = "ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME"
@@ -109,8 +109,6 @@ data "aws_iam_policy_document" "ecs_task_ssm_parameters" {
       aws_ssm_parameter.zitadel_admin_password.arn,
       aws_ssm_parameter.zitadel_database_host.arn,
       aws_ssm_parameter.zitadel_database_name.arn,
-      aws_ssm_parameter.zitadel_database_user_username.arn,
-      aws_ssm_parameter.zitadel_database_user_password.arn,
       aws_ssm_parameter.zitadel_secret_key.arn
     ]
   }
