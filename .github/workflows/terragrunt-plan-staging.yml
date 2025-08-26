@@ -105,6 +105,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      max-parallel: 4 # Limits parallel matrix jobs
       matrix:
         image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
     steps:
