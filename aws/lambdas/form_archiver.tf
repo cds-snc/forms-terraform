@@ -36,7 +36,7 @@ resource "aws_lambda_function" "form_archiver" {
   }
 
   tracing_config {
-    mode = "PassThrough"
+    mode = "Active"
   }
 }
 

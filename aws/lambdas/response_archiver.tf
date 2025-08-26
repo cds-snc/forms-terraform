@@ -37,7 +37,7 @@ resource "aws_lambda_function" "response_archiver" {
   }
 
   tracing_config {
-    mode = "PassThrough"
+    mode = "Active"
   }
 }
 

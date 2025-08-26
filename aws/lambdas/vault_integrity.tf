@@ -22,7 +22,7 @@ resource "aws_lambda_function" "vault_integrity" {
   }
 
   tracing_config {
-    mode = "PassThrough"
+    mode = "Active"
   }
 }
 

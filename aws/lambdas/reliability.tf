@@ -32,7 +32,7 @@ resource "aws_lambda_function" "reliability" {
   }
 
   tracing_config {
-    mode = "PassThrough"
+    mode = "Active"
   }
 }
 
