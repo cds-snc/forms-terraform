@@ -11,7 +11,7 @@ Pull Requests in this repository require all commits to be signed before they ca
 - [Colima](https://github.com/abiosoft/colima)
 
   1. Install Docker
-     - `brew install docker docker-compose docker-credential-helper`
+     - `brew install docker docker-buildx docker-compose docker-credential-helper`
   1. Modify the docker config file to use mac os keychain as `credStore`
 
      ```shell

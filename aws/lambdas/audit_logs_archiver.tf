@@ -31,7 +31,7 @@ resource "aws_lambda_function" "audit_logs_archiver" {
   }
 
   tracing_config {
-    mode = "PassThrough"
+    mode = "Active"
   }
 }
 

@@ -42,7 +42,7 @@ resource "aws_lambda_function" "submission" {
   }
 
   tracing_config {
-    mode = "PassThrough"
+    mode = "Active"
   }
 }
 
