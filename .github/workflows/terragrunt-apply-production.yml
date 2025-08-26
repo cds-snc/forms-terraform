@@ -120,6 +120,7 @@ jobs:
       VERSION: ${{ needs.get-version.outputs.version }}
     strategy:
       fail-fast: false
+      max-parallel: 4 # Limits parallel matrix jobs
       matrix:
         image: ${{ fromJSON(needs.generate-lambda-functions-matrix.outputs.lambda-functions-matrix) }}
     steps:
