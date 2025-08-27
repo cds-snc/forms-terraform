@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.38.1](https://github.com/cds-snc/forms-terraform/compare/v3.38.0...v3.38.1) (2025-08-27)
+
+
+### Bug Fixes
+
+* Typo in production lambda list ([#1082](https://github.com/cds-snc/forms-terraform/issues/1082)) ([5e6805e](https://github.com/cds-snc/forms-terraform/commit/5e6805ea59becc9ce81d147cc4447d740910db76))
+
 ## [3.38.0](https://github.com/cds-snc/forms-terraform/compare/v3.37.0...v3.38.0) (2025-08-27)
 
 
