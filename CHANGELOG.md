@@ -1,5 +1,35 @@
 # Changelog
 
+## [3.38.0](https://github.com/cds-snc/forms-terraform/compare/v3.37.0...v3.38.0) (2025-08-27)
+
+
+### Features
+
+* Enables AWS XRay for Lambda's and preps App Infra ([#1050](https://github.com/cds-snc/forms-terraform/issues/1050)) ([d4ce608](https://github.com/cds-snc/forms-terraform/commit/d4ce6083b451444d6b2dd88851e9a65b9ab74b76))
+* enhance load test lambda to allow test form assignation based on thread id ([#1073](https://github.com/cds-snc/forms-terraform/issues/1073)) ([157109a](https://github.com/cds-snc/forms-terraform/commit/157109af7624198be4f1fae7b5d1a2e10a43adde))
+* File Processing with S3 ([#1064](https://github.com/cds-snc/forms-terraform/issues/1064)) ([8e58bbf](https://github.com/cds-snc/forms-terraform/commit/8e58bbfa64226141360cb9f611e58c77bcc88c5d))
+* revamp API load testing scenario ([#1062](https://github.com/cds-snc/forms-terraform/issues/1062)) ([f7be090](https://github.com/cds-snc/forms-terraform/commit/f7be0902ca9af4a5b9c37079e40ac7bc701cc0f7))
+
+
+### Bug Fixes
+
+* DLQ consumer compatibility with SQS standard queue ([#1070](https://github.com/cds-snc/forms-terraform/issues/1070)) ([efb7f12](https://github.com/cds-snc/forms-terraform/commit/efb7f125ccd35500b81af73193873b2ed212cd4f))
+* handle non existing submission when getting file upload events from S3 for a submission that was already processed ([#1069](https://github.com/cds-snc/forms-terraform/issues/1069)) ([3bc88f5](https://github.com/cds-snc/forms-terraform/commit/3bc88f58a8a52211d355d791e025f0e048e3d11d))
+* Lmbda workflow build matrix ([#1080](https://github.com/cds-snc/forms-terraform/issues/1080)) ([9818b2b](https://github.com/cds-snc/forms-terraform/commit/9818b2bc28207c59cc9a92dcfedcd801c71704b1))
+* remove old version of file_scanning ([#1067](https://github.com/cds-snc/forms-terraform/issues/1067)) ([ac28c8b](https://github.com/cds-snc/forms-terraform/commit/ac28c8b999263929b541d6f3085bf8e3f301ba94))
+* replace old FileKeysCreatedAt with new HasFileKeysByCreatedAt to resolve issue with primary key being too large ([#1068](https://github.com/cds-snc/forms-terraform/issues/1068)) ([feb91c1](https://github.com/cds-snc/forms-terraform/commit/feb91c10a2f99cb46c3885610b241d6d6501ee4f))
+* try to add back ZITADEL_DATABASE_POSTGRES_USER_USERNAME and associated PASSWORD to Zitadel ECS task definition ([#1078](https://github.com/cds-snc/forms-terraform/issues/1078)) ([e2f9aea](https://github.com/cds-snc/forms-terraform/commit/e2f9aeac2bb6bae2ff7824ed476c44f3cd29fa98))
+* trying to fix recurring Zitadel Notifier errors ([#1075](https://github.com/cds-snc/forms-terraform/issues/1075)) ([2873600](https://github.com/cds-snc/forms-terraform/commit/28736001aa31adb6ab968083f5c280b9d36ed05f))
+
+
+### Miscellaneous Chores
+
+* delete IdP RDS Proxy ([#1077](https://github.com/cds-snc/forms-terraform/issues/1077)) ([f49e17d](https://github.com/cds-snc/forms-terraform/commit/f49e17db173420d6574ccb7f7301d7a21f56a409))
+* **deps:** update aws-actions/amazon-ecs-render-task-definition action to v1.7.4 ([#1056](https://github.com/cds-snc/forms-terraform/issues/1056)) ([4e4d15d](https://github.com/cds-snc/forms-terraform/commit/4e4d15dffe0f23488761136fd1e9039135562469))
+* improve skip log message in file upload processor lambda ([#1071](https://github.com/cds-snc/forms-terraform/issues/1071)) ([6a8ec47](https://github.com/cds-snc/forms-terraform/commit/6a8ec478b5794a6a6b3b8ae836eb2eae3ce56eef))
+* rework load test scenario for new file upload architecture ([#1072](https://github.com/cds-snc/forms-terraform/issues/1072)) ([5688431](https://github.com/cds-snc/forms-terraform/commit/568843170813989f994cbe1d4f0b67d2fcd326c4))
+* upgrade zitadel image to 3.4.0 ([#1074](https://github.com/cds-snc/forms-terraform/issues/1074)) ([b640ec4](https://github.com/cds-snc/forms-terraform/commit/b640ec434f85858e77f60531e5b116d5648ff143))
+
 ## [3.37.0](https://github.com/cds-snc/forms-terraform/compare/v3.36.0...v3.37.0) (2025-07-09)
 
 
