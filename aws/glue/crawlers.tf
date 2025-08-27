@@ -46,11 +46,15 @@ resource "aws_glue_crawler" "forms_rds_data" {
     path = "s3://${var.datalake_bucket_name}/platform/gc-forms/processed-data/submissions/"
   }
 
+  s3_target {
+    path = "s3://${var.datalake_bucket_name}/platform/gc-forms/processed-data/submissions_files/"
+  }
+
   configuration = jsonencode(
     {
       CrawlerOutput = {
         Tables = {
-          TableThreshold = 4
+          TableThreshold = 5
         }
       }
       CreatePartitionIndex = true

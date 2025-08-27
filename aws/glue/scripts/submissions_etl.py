@@ -96,38 +96,103 @@ for event in events:
 logger.info("Completed parsing log events")
 
 # Create a Spark DataFrame from the list of logs.
-cloudwatch_df = spark.createDataFrame(log_entries)
+if log_entries:
+    cloudwatch_df = spark.createDataFrame(log_entries)
 
-# Extract submission_id and form_id from the msg column.
-cloudwatch_df = cloudwatch_df.withColumn(
-    "submission_id",
-    when(col("msg").isNotNull(), regexp_extract(col("msg"), r"submission ([a-zA-Z0-9-]+)", 1))
-)
-cloudwatch_df = cloudwatch_df.withColumn(
-    "form_id",
-    when(col("msg").isNotNull(), regexp_extract(col("msg"), r"(?i)\(formId:\s*([a-zA-Z0-9-]+)\)", 1))
-)
+    # Extract submission_id and form_id from the msg column.
+    cloudwatch_df = cloudwatch_df.withColumn(
+        "submission_id",
+        when(col("msg").isNotNull(), regexp_extract(col("msg"), r"submission ([a-zA-Z0-9-]+)", 1))
+    )
+    cloudwatch_df = cloudwatch_df.withColumn(
+        "form_id",
+        when(col("msg").isNotNull(), regexp_extract(col("msg"), r"(?i)\(formId:\s*([a-zA-Z0-9-]+)\)", 1))
+    )
 
-# Drop the msg column as it's no longer needed.
-cloudwatch_df = cloudwatch_df.drop("msg")
+    # Drop the msg column as it's no longer needed.
+    cloudwatch_df = cloudwatch_df.drop("msg")
 
-# Get current timestamp
-current_stamp = current_timestamp()
+    # Get current timestamp
+    current_stamp = current_timestamp()
 
-# Add a timestamp column for Athena to use as a partition.
-cloudwatch_df = cloudwatch_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
+    # Add a timestamp column for Athena to use as a partition.
+    cloudwatch_df = cloudwatch_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
 
-logger.info("Completed extracting submission_id and form_id")
+    logger.info("Completed extracting submission_id and form_id")
 
-# ------- Final Step -------
-# Write the data to the S3 bucket
-cloudwatch_logs = DynamicFrame.fromDF(cloudwatch_df, glueContext, "cloudwatch_logs")
-glueContext.write_dynamic_frame.from_options(
-    frame = cloudwatch_logs,
-    connection_type = "s3",
-    connection_options = {"path": f"s3://{args['s3_endpoint']}/platform/gc-forms/processed-data/submissions"},
-    format = "parquet"
-)
+    # ------- Final Step -------
+    # Write the data to the S3 bucket
+    cloudwatch_logs = DynamicFrame.fromDF(cloudwatch_df, glueContext, "cloudwatch_logs")
+    glueContext.write_dynamic_frame.from_options(
+        frame = cloudwatch_logs,
+        connection_type = "s3",
+        connection_options = {"path": f"s3://{args['s3_endpoint']}/platform/gc-forms/processed-data/submissions"},
+        format = "parquet"
+    )
+
+# ---- Addon : Get File Size Metrics ----
+# Message Format :  "msg": "File input detected for submission 25e1ee28-494a-4b86-8fd4-b19d1b9c48f1: fileID=1753f031-d730-4fff-8714-fa0f0e46925a, fileSize=10000008 bytes."
+events = get_all_log_events(
+        client,
+        log_group,
+        'File input detected for submission',
+        start_time,
+        end_time
+    )
+logger.info("Completed fetching file upload log events from CloudWatch")
+
+# Extract the events; each event is expected to have a 'message' field.
+file_log_entries = []
+for event in events:
+    message = event.get('message', '')
+    try:
+        parsed = json.loads(message)
+    except Exception:
+        parsed = {"msg": message}
+    file_log_entries.append(parsed)
+
+logger.info("Completed parsing file upload log events")
+
+# Create a Spark DataFrame from the list of logs.
+if file_log_entries:
+    cloudwatch_files_df = spark.createDataFrame(file_log_entries)
+
+    # Extract submission_id, form_id, file_id and file_size from the msg column.
+    cloudwatch_files_df = cloudwatch_files_df.withColumn(
+        "submission_id",
+        when(col("msg").isNotNull(), regexp_extract(col("msg"), r"submission ([a-zA-Z0-9-]+)", 1))
+    )
+    cloudwatch_files_df = cloudwatch_files_df.withColumn(
+        "file_id",
+        when(col("msg").isNotNull(), regexp_extract(col("msg"), r"fileID=([a-zA-Z0-9-]+)", 1))
+    )
+    cloudwatch_files_df = cloudwatch_files_df.withColumn(
+        "file_size",
+        when(col("msg").isNotNull(), regexp_extract(col("msg"), r"fileSize=(\d+)", 1))
+    )
+    # Cast File Size to an int
+    cloudwatch_files_df = cloudwatch_files_df.withColumn("file_size", col("file_size").cast("int"))
+
+    # Drop the msg column as it's no longer needed.
+    cloudwatch_files_df = cloudwatch_files_df.drop("msg")
+
+    # Get current timestamp
+    current_stamp = current_timestamp()
+
+    # Add a timestamp column for Athena to use as a partition.
+    cloudwatch_files_df = cloudwatch_files_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
+
+    logger.info("Completed extracting submission_id, file_id and file_size")
+
+    cloudwatch_file_logs = DynamicFrame.fromDF(cloudwatch_files_df, glueContext, "cloudwatch_logs")
+    glueContext.write_dynamic_frame.from_options(
+        frame = cloudwatch_file_logs,
+        connection_type = "s3",
+        connection_options = {"path": f"s3://{args['s3_endpoint']}/platform/gc-forms/processed-data/submissions_files"},
+        format = "parquet"
+    )
+
+# -- Commit Job : All done!~
 
 logger.info("Completed writing data to S3")
 
