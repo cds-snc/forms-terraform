@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.38.2](https://github.com/cds-snc/forms-terraform/compare/v3.38.1...v3.38.2) (2025-08-27)
+
+
+### Miscellaneous Chores
+
+* increase Nagware lambda max memory size to 512 MB ([#1084](https://github.com/cds-snc/forms-terraform/issues/1084)) ([7ea328e](https://github.com/cds-snc/forms-terraform/commit/7ea328e3d23c8c08f166381f48dddacfb5ee70fa))
+
 ## [3.38.1](https://github.com/cds-snc/forms-terraform/compare/v3.38.0...v3.38.1) (2025-08-27)
 
 
