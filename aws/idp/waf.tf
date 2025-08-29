@@ -1,6 +1,7 @@
 locals {
   excluded_common_rules = [
-    "EC2MetaDataSSRF_BODY" # Rule is blocking IdP OIDC app creation
+    "EC2MetaDataSSRF_BODY", # Rule is blocking IdP OIDC app creation
+    "EC2MetaDataSSRF_QUERYARGUMENTS" # Rule is blocking IdP OIDC login
   ]
 }
 
