@@ -67,8 +67,11 @@ resource "aws_s3_bucket_public_access_block" "reliability_file_storage" {
 # The policy is in the S3 module because adding it to the SQS module would cause a circular dependency.
 
 resource "aws_s3_bucket_notification" "file_upload" {
-  bucket      = aws_s3_bucket.reliability_file_storage.id
-  eventbridge = false
+  bucket = aws_s3_bucket.reliability_file_storage.id
+
+  # [IMPORTANT] We need to keep this enabled as it would break the integration with AWS Guard Duty
+  # which relies on notifications being published to EventBridge in order to trigger scanning
+  eventbridge = true
 
   queue {
     queue_arn = var.sqs_file_upload_arn
