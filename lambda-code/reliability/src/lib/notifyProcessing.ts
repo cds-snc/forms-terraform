@@ -1,7 +1,10 @@
 import { GCNotifyConnector } from "@gcforms/connectors";
 import convertMessage from "./markdown.js";
 import { notifyProcessed } from "./dataLayer.js";
-import { retrieveFilesFromReliabilityStorage } from "./s3FileInput.js";
+import {
+  removeFilesFromReliabilityStorage,
+  retrieveFilesFromReliabilityStorage,
+} from "./s3FileInput.js";
 import { FormSubmission } from "./types.js";
 import { SubmissionAttachmentWithScanStatus } from "./file_scanning.js";
 
@@ -87,7 +90,10 @@ export default async (
       submissionID
     );
 
-    await notifyProcessed(submissionID);
+    await Promise.all([
+      notifyProcessed(submissionID),
+      removeFilesFromReliabilityStorage(submissionAttachmentPaths),
+    ]);
 
     console.log(
       JSON.stringify({
