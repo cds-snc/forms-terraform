@@ -20,7 +20,7 @@ runs:
   using: "composite"
   steps:
     - name: Configure AWS credentials using OIDC
-      uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+      uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
       with:
         role-to-assume: ${{ inputs.aws-role-to-assume }}
         role-session-name: ${{ inputs.aws-role-session-name }}
@@ -39,14 +39,14 @@ runs:
 
     - name: Update ECS task image
       id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@acd72bc11233ac43bac45ddb7b8e54ada737e6cd # v1.7.4
+      uses: aws-actions/amazon-ecs-render-task-definition@5cb8c74c1b1ecaec4c8ea82eff82c009333509ce # v1.8.0
       with:
         task-definition: task-definition.json
         container-name: ${{ inputs.ecs-service-name }}
         image: "${{ steps.login-ecr-staging.outputs.registry }}/${{ inputs.image-tag }}"
 
     - name: Create the new ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@f7b2b96b7fe1b20b452641919c0559bcc19ab8f9 # v2.3.3
+      uses: aws-actions/amazon-ecs-deploy-task-definition@4b08990e8909cf36bc2ca95f994312f090c41865 # v2.3.4
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         cluster: ${{ inputs.ecs-cluster-name }}
