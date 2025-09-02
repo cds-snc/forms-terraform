@@ -108,7 +108,7 @@ export const handler: Handler = async (event: SQSEvent) => {
         submissionID,
         sendReceipt,
         formSubmission,
-        fileKeys,
+        submissionAttachmentsWithScanStatuses,
         language,
         createdAt
       );

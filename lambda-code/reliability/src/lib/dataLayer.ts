@@ -15,6 +15,7 @@ import {
   DateFormat,
   AddressElements,
   AddressCompleteProps,
+  FileInputResponse,
 } from "./types.js";
 import { getFormattedDateFromObject } from "./utils.js";
 
@@ -243,7 +244,7 @@ function handleType(
       );
       break;
     case "fileInput":
-      handleFileInputResponse(qTitle, response, collector);
+      handleFileInputResponse(qTitle, response as FileInputResponse, collector);
       break;
     case "formattedDate":
       handleFormattedDateResponse(
@@ -292,7 +293,11 @@ function handleDynamicForm(
           handleTextResponse(qTitle, (row as Record<string, Response>)[qIndex], rowCollector);
           break;
         case "fileInput":
-          handleFileInputResponse(qTitle, (row as Record<string, Response>)[qIndex], rowCollector);
+          handleFileInputResponse(
+            qTitle,
+            (row as Record<string, Response>)[qIndex] as FileInputResponse,
+            rowCollector
+          );
           break;
         case "checkbox":
           handleArrayResponse(qTitle, (row as Record<string, Response>)[qIndex], rowCollector);
@@ -349,10 +354,9 @@ function handleTextResponse(title: string, response: Response, collector: string
   collector.push(`**${title}**${String.fromCharCode(13)}—`);
 }
 
-function handleFileInputResponse(title: string, response: Response, collector: string[]) {
-  if (response !== undefined && response !== null && response !== "") {
-    const fileName = (response as string).split("/").pop();
-    collector.push(`**${title}**${String.fromCharCode(13)}${fileName}`);
+function handleFileInputResponse(title: string, response: FileInputResponse, collector: string[]) {
+  if (response !== undefined && response !== null) {
+    collector.push(`**${title}**${String.fromCharCode(13)}${response.name}`);
     return;
   }
 

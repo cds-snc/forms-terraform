@@ -19,9 +19,9 @@ export type Response =
   | Record<string, unknown>;
 
 export type FileInputResponse = {
+  id: string;
   name: string;
-  file: string;
-  [key: string]: string | number;
+  size: number;
 };
 
 // the choices available for fields with multiple options like dropdowns or radio buttons
