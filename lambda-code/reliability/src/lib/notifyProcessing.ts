@@ -3,6 +3,7 @@ import convertMessage from "./markdown.js";
 import { notifyProcessed } from "./dataLayer.js";
 import { retrieveFilesFromReliabilityStorage } from "./s3FileInput.js";
 import { FormSubmission } from "./types.js";
+import { SubmissionAttachmentWithScanStatus } from "./file_scanning.js";
 
 const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
   process.env.NOTIFY_API_KEY ?? ""
@@ -12,7 +13,7 @@ export default async (
   submissionID: string,
   sendReceipt: string,
   formSubmission: FormSubmission,
-  submissionAttachmentPaths: string[],
+  submissionAttachmentsWithScanStatuses: SubmissionAttachmentWithScanStatus[],
   language: string,
   createdAt: string
 ) => {
@@ -25,12 +26,34 @@ export default async (
       throw Error("Email address is missing or empty.");
     }
 
+    const submissionAttachmentPaths = submissionAttachmentsWithScanStatuses.map(
+      (item) => item.attachmentPath
+    );
+
+    const submissionAttachments = submissionAttachmentsWithScanStatuses.map((item) => {
+      if (item.scanStatus === undefined) {
+        // This should never happen since we verified earlier whether file scanning has completed
+        throw new Error(`Detected undefined scan status for file path ${item.attachmentPath}`);
+      }
+
+      const attachmentName = item.attachmentPath.split("/").pop();
+
+      if (attachmentName === undefined) {
+        throw new Error(`Attachment name is undefined. File path: ${item.attachmentPath}.`);
+      }
+
+      return {
+        name: attachmentName,
+        path: item.attachmentPath,
+      };
+    });
+
     const files = await retrieveFilesFromReliabilityStorage(submissionAttachmentPaths);
-    const attachFileParameters = submissionAttachmentPaths.reduce((acc, current, index) => {
+    const attachFileParameters = submissionAttachments.reduce((acc, current, index) => {
       return {
         [`file${index}`]: {
           file: files[index],
-          filename: current.split("/").pop(), // Extract file name from storage path
+          filename: current.name,
           sending_method: "attach",
         },
         ...acc,
