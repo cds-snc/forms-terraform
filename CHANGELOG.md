@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.38.2](https://github.com/cds-snc/forms-terraform/compare/v3.38.1...v3.38.2) (2025-09-02)
+
+
+### Bug Fixes
+
+* Allow OIDC login for Zitadel ([#1086](https://github.com/cds-snc/forms-terraform/issues/1086)) ([73e0179](https://github.com/cds-snc/forms-terraform/commit/73e0179244cf6e97a9f17166561e34aeefa73bdd))
+* deployment of aws_s3_bucket_notification Terraform resource breaks Guard Duty integration ([#1089](https://github.com/cds-snc/forms-terraform/issues/1089)) ([6514a8a](https://github.com/cds-snc/forms-terraform/commit/6514a8a6f2900eb8b64b2f3d1885600edd33ded0))
+* handle file attachments with email delivery method ([#1088](https://github.com/cds-snc/forms-terraform/issues/1088)) ([9693941](https://github.com/cds-snc/forms-terraform/commit/96939417f40412e5985e26837b12df77b276d122))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major docker images ([#882](https://github.com/cds-snc/forms-terraform/issues/882)) ([f9099ac](https://github.com/cds-snc/forms-terraform/commit/f9099ace70242d37ab694d77cedab0595d382e0d))
+* **deps:** update all non-major github action dependencies ([#1065](https://github.com/cds-snc/forms-terraform/issues/1065)) ([8fd92f7](https://github.com/cds-snc/forms-terraform/commit/8fd92f7da2eee5e7ef873b0edfbf1b7aeb18a568))
+* increase Nagware lambda max memory size to 512 MB ([#1084](https://github.com/cds-snc/forms-terraform/issues/1084)) ([7ea328e](https://github.com/cds-snc/forms-terraform/commit/7ea328e3d23c8c08f166381f48dddacfb5ee70fa))
+* update waf ip block version ([#1087](https://github.com/cds-snc/forms-terraform/issues/1087)) ([35f4fb2](https://github.com/cds-snc/forms-terraform/commit/35f4fb262866b550e7d1d3754b9f3bb99bdec5bb))
+
 ## [3.38.1](https://github.com/cds-snc/forms-terraform/compare/v3.38.0...v3.38.1) (2025-08-27)
 
 
