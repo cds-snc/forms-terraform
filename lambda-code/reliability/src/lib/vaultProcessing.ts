@@ -27,13 +27,18 @@ export default async (
       throw new Error(`Detected undefined scan status for file path ${item.attachmentPath}`);
     }
 
-    const attachmentName = item.attachmentPath.split("/").pop();
+    const attachmentPathParts = item.attachmentPath.split("/");
+
+    const attachmentName = attachmentPathParts.at(-1);
+
+    const attachmentId = attachmentPathParts.at(-2);
 
     if (attachmentName === undefined) {
       throw new Error(`Attachment name is undefined. File path: ${item.attachmentPath}.`);
     }
 
     return {
+      id: attachmentId,
       name: attachmentName,
       path: item.attachmentPath,
       scanStatus: item.scanStatus,
