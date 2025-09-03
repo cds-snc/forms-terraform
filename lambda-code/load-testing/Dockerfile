@@ -4,6 +4,7 @@ COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
 COPY main.py .
+COPY custom_create_settings.py .
 COPY tests ./tests
 
 CMD ["main.handler"]

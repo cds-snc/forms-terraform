@@ -3,6 +3,6 @@ boto3==1.35.39
 cryptography==44.0.1
 httpx[http2]==0.27.2
 invokust==0.77
-locust==2.31.7
+locust==2.39.1
 PyJWT==2.9.0
 pydantic==2.11.7

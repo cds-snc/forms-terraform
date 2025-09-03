@@ -5,6 +5,7 @@ import boto3
 import json
 
 from invokust.aws_lambda import get_lambda_runtime_info
+from custom_create_settings import create_settings
 
 logging.basicConfig(level=logging.INFO)
 
@@ -47,7 +48,7 @@ def handler(event: dict[str, any], context=None):
         with open("/tmp/test_configuration.json", "w") as file:
             json.dump(test_configuration, file)
 
-        loadtest = invokust.LocustLoadTest(invokust.create_settings(**event))
+        loadtest = invokust.LocustLoadTest(create_settings(**event))
         loadtest.run()
     except Exception as e:
         logging.error("Exception running locust tests {0}".format(repr(e)))
