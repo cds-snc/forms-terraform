@@ -16,18 +16,7 @@ from utils.sequential_task_set_with_failure import SequentialTaskSetWithFailure
 class AccessTokenBehaviour(SequentialTaskSetWithFailure):
     def __init__(self, parent: HttpUser) -> None:
         super().__init__(parent)
-        test_configuration = load_test_configuration()
-        random_test_form = (
-            test_configuration.get_test_form_based_on_thread_id()
-            if test_configuration.assignTestFormBasedOnThreadId
-            else test_configuration.get_random_test_form()
-        )
-
-        if random_test_form.apiKey is None:
-            raise Exception("Test requires form API key")
-
-        self.form_private_key = random_test_form.apiKey
-
+        self.test_configuration = load_test_configuration()
         self.idp_url = get_idp_url_from_target_host(self.parent.host)
         self.idp_project_id = get_idp_project_id()
         self.zitadel_app_private_key = get_zitadel_app_private_key()
@@ -36,6 +25,17 @@ class AccessTokenBehaviour(SequentialTaskSetWithFailure):
         self.access_token = None
 
     def on_start(self) -> None:
+        random_test_form = (
+            self.test_configuration.get_test_form_based_on_thread_id()
+            if self.test_configuration.assignTestFormBasedOnThreadId
+            else self.test_configuration.get_random_test_form()
+        )
+
+        if random_test_form.apiKey is None:
+            raise Exception("Test requires form API key")
+
+        self.form_private_key = random_test_form.apiKey
+
         self.jwt_app = JwtGenerator.generate(self.idp_url, self.zitadel_app_private_key)
         self.jwt_form = JwtGenerator.generate(self.idp_url, self.form_private_key)
 
@@ -46,9 +46,14 @@ class AccessTokenBehaviour(SequentialTaskSetWithFailure):
             "assertion": self.jwt_form,
             "scope": f"openid profile urn:zitadel:iam:org:project:id:{self.idp_project_id}:aud",
         }
+
         response = self.request_with_failure_check(
-            "post", f"{self.idp_url}/oauth/v2/token", 200, data=data
+            method="post",
+            url=f"{self.idp_url}/oauth/v2/token",
+            expected_status_code=200,
+            data=data,
         )
+
         self.access_token = response["access_token"]
 
     @task
@@ -58,6 +63,10 @@ class AccessTokenBehaviour(SequentialTaskSetWithFailure):
             "client_assertion": self.jwt_app,
             "token": self.access_token,
         }
+
         self.request_with_failure_check(
-            "post", f"{self.idp_url}/oauth/v2/introspect", 200, data=data
+            method="post",
+            url=f"{self.idp_url}/oauth/v2/introspect",
+            expected_status_code=200,
+            data=data,
         )
