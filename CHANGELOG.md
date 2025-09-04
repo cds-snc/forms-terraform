@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.39.0](https://github.com/cds-snc/forms-terraform/compare/v3.38.2...v3.39.0) (2025-09-04)
+
+
+### Features
+
+* Add file add to attachment array ([#1091](https://github.com/cds-snc/forms-terraform/issues/1091)) ([4a5d4d8](https://github.com/cds-snc/forms-terraform/commit/4a5d4d807205b1e4c9e89bc49c14ba8fc6fb0a94))
+
+
+### Bug Fixes
+
+* Add cors to retrieve vault files ([#1093](https://github.com/cds-snc/forms-terraform/issues/1093)) ([7450f67](https://github.com/cds-snc/forms-terraform/commit/7450f67d9bb659a20fdc51cd126f2481ef00c3d4))
+* load test bug related to compatibility between invokust and locust ([#1094](https://github.com/cds-snc/forms-terraform/issues/1094)) ([73c2861](https://github.com/cds-snc/forms-terraform/commit/73c2861f10e6b5fc9ae79153561912ce1e795e45))
+
 ## [3.38.2](https://github.com/cds-snc/forms-terraform/compare/v3.38.1...v3.38.2) (2025-09-02)
 
 
