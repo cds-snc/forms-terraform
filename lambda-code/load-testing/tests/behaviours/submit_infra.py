@@ -18,19 +18,22 @@ from boto3 import client
 class FormSubmitThroughInfraBehaviour(SequentialTaskSetWithFailure):
     def __init__(self, parent: HttpUser) -> None:
         super().__init__(parent)
-        test_configuration = load_test_configuration()
-        random_test_form = (
-            test_configuration.get_test_form_based_on_thread_id()
-            if test_configuration.assignTestFormBasedOnThreadId
-            else test_configuration.get_random_test_form()
-        )
-        self.form_id = random_test_form.id
-        self.form_template = test_configuration.get_form_template(
-            random_test_form.usedTemplate
-        )
+        self.test_configuration = load_test_configuration()
         self.form_submission_generator = None
 
     def on_start(self) -> None:
+        random_test_form = (
+            self.test_configuration.get_test_form_based_on_thread_id()
+            if self.test_configuration.assignTestFormBasedOnThreadId
+            else self.test_configuration.get_random_test_form()
+        )
+
+        self.form_id = random_test_form.id
+
+        self.form_template = self.test_configuration.get_form_template(
+            random_test_form.usedTemplate
+        )
+
         self.form_submission_generator = FormSubmissionGenerator(
             self.form_id, self.form_template
         )
@@ -87,10 +90,10 @@ class FormSubmitThroughInfraBehaviour(SequentialTaskSetWithFailure):
             file = {"file": (attachment.name, random_file, "application/octet-stream")}
 
             self.request_with_failure_check(
-                "post",
-                upload_information["url"],
-                204,
-                name="submission-attachment-upload",
+                method="post",
+                url=upload_information["url"],
+                expected_status_code=204,
+                request_tracking_name="submission-attachment-upload",
                 data=fields,
                 files=file,
             )
