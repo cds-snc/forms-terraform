@@ -40,8 +40,8 @@ module "api_ecs" {
   create_cluster = false
   cluster_name   = var.ecs_cluster_name
   service_name   = "forms-api"
-  task_cpu       = 1024
-  task_memory    = 2048
+  task_cpu       = 2048
+  task_memory    = 4096
 
   # This causes the service to always use the latest ACTIVE task definition.
   # This gives precedence to the `cds-snc/forms-api` repo's CI/CD task deployments
@@ -50,8 +50,8 @@ module "api_ecs" {
 
   # Scaling
   enable_autoscaling       = true
-  desired_count            = 1
-  autoscaling_min_capacity = 1
+  desired_count            = 2
+  autoscaling_min_capacity = 2
   autoscaling_max_capacity = 3
 
   # Task definition
