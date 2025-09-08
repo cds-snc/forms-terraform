@@ -81,6 +81,9 @@ module "api_ecs" {
   service_discovery_enabled      = true
   service_discovery_namespace_id = var.service_discovery_private_dns_namespace_ecs_local_id
 
+  # Logging
+  cloudwatch_log_group_retention_in_days = 731
+
   billing_tag_key   = var.billing_tag_key
   billing_tag_value = var.billing_tag_value
 }
