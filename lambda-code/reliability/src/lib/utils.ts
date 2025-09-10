@@ -1,4 +1,4 @@
-import { DateFormat, DateObject } from "./types.js";
+import { DateFormat, DateObject, Response } from "./types.js";
 
 /**
  * Utility function to use when rendering a formatted date string
@@ -9,7 +9,7 @@ import { DateFormat, DateObject } from "./types.js";
  */
 export const getFormattedDateFromObject = (
   dateFormat: DateFormat = "YYYY-MM-DD",
-  dateObject: DateObject
+  dateObject: Response
 ): string => {
   // If an invalid date format is provided, use the default format
   if (!isValidDateFormat(dateFormat)) {
@@ -75,9 +75,9 @@ export const isValidDateObject = (obj: unknown): obj is DateObject => {
     "YYYY" in obj &&
     "MM" in obj &&
     "DD" in obj &&
-    typeof obj.YYYY === "number" &&
-    typeof obj.MM === "number" &&
-    typeof obj.DD === "number"
+    typeof obj["YYYY"] === "number" &&
+    typeof obj["MM"] === "number" &&
+    typeof obj["DD"] === "number"
   );
 };
 
