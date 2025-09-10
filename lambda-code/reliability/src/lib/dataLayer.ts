@@ -371,10 +371,7 @@ function handleFormattedDateResponse(
 ) {
   if (response !== undefined && response !== null && response !== "") {
     collector.push(
-      `**${title}**${String.fromCharCode(13)}${getFormattedDateFromObject(
-        dateFormat,
-        JSON.parse(String(response))
-      )}`
+      `**${title}**${String.fromCharCode(13)}${getFormattedDateFromObject(dateFormat, response)}`
     );
     return;
   }
