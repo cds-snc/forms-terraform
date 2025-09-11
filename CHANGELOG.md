@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.39.1](https://github.com/cds-snc/forms-terraform/compare/v3.39.0...v3.39.1) (2025-09-11)
+
+
+### Miscellaneous Chores
+
+* revert one specific change around Makefile install command in the load testing lambda ([#1099](https://github.com/cds-snc/forms-terraform/issues/1099)) ([e233f1c](https://github.com/cds-snc/forms-terraform/commit/e233f1c4bd62f8ab350ac96e546fb6325d2c547b))
+
 ## [3.39.0](https://github.com/cds-snc/forms-terraform/compare/v3.38.2...v3.39.0) (2025-09-10)
 
 
