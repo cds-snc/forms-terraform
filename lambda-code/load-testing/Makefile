@@ -2,7 +2,7 @@ fmt:
 	black .
 
 install:
-	python3.12 -m venv .venv && source .venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt
+	pip3 install --user -r requirements.txt
 
 .PHONY: \
 	fmt \
