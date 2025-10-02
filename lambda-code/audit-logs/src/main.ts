@@ -92,10 +92,9 @@ const detectAndRemoveDuplicateEvents = (transactionItems: TransactionRequest[]) 
       }
     });
 
-    console.warn(
+    console.info(
       JSON.stringify({
-        level: "warn",
-        severity: 3,
+        level: "info",
         msg: `Duplicate log events were detected and removed. List of duplicate events: ${JSON.stringify(
           clonedPutTransactionItems
         )}`,
@@ -137,18 +136,19 @@ const detectUnprocessedItems = (
         return unprocessedItem.messageId;
       });
 
-      console.error(
+      console.info(
         JSON.stringify({
-          level: "error",
-          severity: 2,
+          level: "info",
           msg: `Failed to process ${
             items.length
           } ${tableName} events. List of unprocessed items: ${JSON.stringify(items)}`,
         })
       );
+
       batchItemFailures.push(...unprocessedIDs.map((id) => ({ itemIdentifier: id })));
     }
   }
+
   return { batchItemFailures };
 };
 
