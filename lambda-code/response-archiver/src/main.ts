@@ -6,7 +6,7 @@ import {
   CopyObjectCommand,
   DeleteObjectsCommand,
 } from "@aws-sdk/client-s3";
-import { Handler } from "aws-lambda";
+import { Context, Handler } from "aws-lambda";
 
 const DYNAMODB_VAULT_TABLE_NAME = process.env.DYNAMODB_VAULT_TABLE_NAME ?? "";
 const ARCHIVING_S3_BUCKET = process.env.ARCHIVING_S3_BUCKET;
@@ -37,9 +37,9 @@ const s3Client = new S3Client({
   region: process.env.REGION ?? "ca-central-1",
 });
 
-export const handler: Handler = async () => {
+export const handler: Handler = async (_, context) => {
   try {
-    await archiveResponses(dynamodbClient, s3Client);
+    await archiveResponses(dynamodbClient, s3Client, context);
 
     console.log(
       JSON.stringify({
@@ -70,10 +70,15 @@ export const handler: Handler = async () => {
   }
 };
 
-async function archiveResponses(dynamodbClient: DynamoDBClient, s3Client: S3Client): Promise<void> {
+async function archiveResponses(
+  dynamodbClient: DynamoDBClient,
+  s3Client: S3Client,
+  lambdaContext: Context
+): Promise<void> {
   let lastEvaluatedKey = null;
 
-  while (lastEvaluatedKey !== undefined) {
+  // Exit loop if no more items to process or lambda will time out in less than a minute
+  while (lastEvaluatedKey !== undefined && lambdaContext.getRemainingTimeInMillis() >= 60000) {
     const archivableResponses = await retrieveArchivableResponses(
       dynamodbClient,
       lastEvaluatedKey ?? undefined
