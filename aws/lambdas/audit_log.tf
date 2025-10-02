@@ -9,6 +9,7 @@ resource "aws_lambda_function" "audit_logs" {
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
   timeout       = 60
+  memory_size   = 256
 
   lifecycle {
     ignore_changes = [image_uri]
