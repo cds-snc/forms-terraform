@@ -4,8 +4,8 @@
 
 resource "aws_cloudwatch_event_rule" "audit_logs_archiver_lambda_trigger" {
   name                = "audit-logs-archiver-lambda-trigger"
-  description         = "Fires every day at 6 AM UTC"
-  schedule_expression = "cron(0 6 * * ? *)" # 1 AM EST / 2 AM EDT
+  description         = "Fires every hour between 6 AM and 10 AM (UTC)"
+  schedule_expression = "cron(0 6-10 * * ? *)"
 }
 
 resource "aws_cloudwatch_event_rule" "reliability_dlq_lambda_trigger" {
@@ -16,8 +16,8 @@ resource "aws_cloudwatch_event_rule" "reliability_dlq_lambda_trigger" {
 
 resource "aws_cloudwatch_event_rule" "response_archiver_lambda_trigger" {
   name                = "response-archiver-lambda-trigger"
-  description         = "Fires every day at 8 AM UTC"
-  schedule_expression = "cron(0 8 * * ? *)" # 3 AM EST / 4 AM EDT
+  description         = "Fires every hour between 6 AM and 10 AM (UTC)"
+  schedule_expression = "cron(0 6-10 * * ? *)"
 }
 
 resource "aws_cloudwatch_event_rule" "form_archiver_lambda_trigger" {
