@@ -119,8 +119,8 @@ resource "aws_cloudwatch_metric_alarm" "dlq_message_detector" {
 
   alarm_name          = "${each.key}DeadLetterQueueWarn"
   comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "1"
-  threshold           = "0"
+  evaluation_periods  = 1
+  threshold           = 0
   alarm_description   = "Detect when a message is sent to the ${each.key} Dead Letter Queue"
   alarm_actions       = [var.sns_topic_alert_warning_arn]
 
@@ -137,7 +137,7 @@ resource "aws_cloudwatch_metric_alarm" "dlq_message_detector" {
     metric {
       metric_name = "ApproximateNumberOfMessagesVisible"
       namespace   = "AWS/SQS"
-      period      = "60"
+      period      = 60
       stat        = "Sum"
       unit        = "Count"
 
@@ -153,7 +153,7 @@ resource "aws_cloudwatch_metric_alarm" "dlq_message_detector" {
     metric {
       metric_name = "ApproximateNumberOfMessagesNotVisible"
       namespace   = "AWS/SQS"
-      period      = "60"
+      period      = 60
       stat        = "Sum"
       unit        = "Count"
 
