@@ -9,6 +9,8 @@ resource "aws_lambda_function" "file_upload" {
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
   timeout       = 300
+  memory_size   = 256
+
   # Only allow a single instance to run at a time
   reserved_concurrent_executions = 1
 

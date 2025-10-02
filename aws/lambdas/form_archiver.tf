@@ -8,6 +8,7 @@ resource "aws_lambda_function" "form_archiver" {
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
   timeout       = 300
+  memory_size   = 256
 
   lifecycle {
     ignore_changes = [image_uri]
