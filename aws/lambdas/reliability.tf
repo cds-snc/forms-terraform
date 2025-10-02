@@ -4,6 +4,7 @@ resource "aws_lambda_function" "reliability" {
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
   timeout       = 300
+  memory_size   = 256
 
   // Even in development mode this lambda should be attached to the VPC in order to connecto the DB
   // In development mode the lambda cannot sent emails as there is no internet access

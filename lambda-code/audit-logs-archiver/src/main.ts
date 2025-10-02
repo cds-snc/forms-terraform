@@ -1,4 +1,4 @@
-import { Handler } from "aws-lambda";
+import { Context, Handler } from "aws-lambda";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { BatchWriteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
@@ -23,9 +23,9 @@ const s3Client = new S3Client({
   region: REGION ?? "ca-central-1",
 });
 
-export const handler: Handler = async () => {
+export const handler: Handler = async (_, context) => {
   try {
-    await archiveAuditLogs(dynamodbClient, s3Client);
+    await archiveAuditLogs(dynamodbClient, s3Client, context);
   } catch (error) {
     // Error message will be sent to slack
     console.error(
@@ -40,10 +40,15 @@ export const handler: Handler = async () => {
   }
 };
 
-async function archiveAuditLogs(dynamodbClient: DynamoDBClient, s3Client: S3Client): Promise<void> {
+async function archiveAuditLogs(
+  dynamodbClient: DynamoDBClient,
+  s3Client: S3Client,
+  lambdaContext: Context
+): Promise<void> {
   let lastEvaluatedKey = null;
 
-  while (lastEvaluatedKey !== undefined) {
+  // Exit loop if no more items to process or lambda will time out in less than a minute
+  while (lastEvaluatedKey !== undefined && lambdaContext.getRemainingTimeInMillis() >= 60000) {
     const archivableAuditLogs = await retrieveArchivableAuditLogs(
       dynamodbClient,
       lastEvaluatedKey ?? undefined
