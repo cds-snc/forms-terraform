@@ -46,7 +46,7 @@ runs:
         image: "${{ steps.login-ecr-staging.outputs.registry }}/${{ inputs.image-tag }}"
 
     - name: Create the new ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@4b08990e8909cf36bc2ca95f994312f090c41865 # v2.3.4
+      uses: aws-actions/amazon-ecs-deploy-task-definition@1beffbdddb3eb5f83c7a746c3e9bafeccdccbbaa # v2.4.0
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         cluster: ${{ inputs.ecs-cluster-name }}
