@@ -211,23 +211,23 @@ variable "rds_idp_cpu_maxiumum" {
 
 }
 
-variable "sqs_reliability_deadletter_queue_arn" {
-  description = "ARN of the Reliability queue's SQS Dead Letter Queue"
+variable "sqs_reliability_deadletter_queue_name" {
+  description = "Name of the Reliability queue's SQS Dead Letter Queue"
   type        = string
 }
 
-variable "sqs_app_audit_log_deadletter_queue_arn" {
-  description = "ARN of the Audit Log queue's SQS Dead Letter Queue"
+variable "sqs_app_audit_log_deadletter_queue_name" {
+  description = "Name of the Audit Log queue's SQS Dead Letter Queue"
   type        = string
 }
 
-variable "sqs_api_audit_log_deadletter_queue_arn" {
-  description = "ARN of the API Audit Log queue's SQS Dead Letter Queue"
+variable "sqs_api_audit_log_deadletter_queue_name" {
+  description = "Name of the API Audit Log queue's SQS Dead Letter Queue"
   type        = string
 }
 
-variable "sqs_file_upload_deadletter_queue_arn" {
-  description = "File upload dead-letter queue ARN"
+variable "sqs_file_upload_deadletter_queue_name" {
+  description = "Name of the File upload queue's SQS Dead Letter Queue"
   type        = string
 }
 

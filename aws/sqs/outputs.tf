@@ -23,8 +23,8 @@ output "sqs_reliability_reprocessing_queue_id" {
   value       = aws_sqs_queue.reliability_reprocessing_queue.id
 }
 
-output "sqs_reliability_deadletter_queue_arn" {
-  description = "Reliability queue's dead-letter queue ARN"
+output "sqs_reliability_deadletter_queue_name" {
+  description = "Reliability queue's dead-letter queue name"
   value       = aws_sqs_queue.reliability_deadletter_queue.name
 }
 
@@ -48,14 +48,14 @@ output "sqs_api_audit_log_queue_id" {
   value       = aws_sqs_queue.api_audit_log_queue.id
 }
 
-output "sqs_app_audit_log_deadletter_queue_arn" {
-  description = "Audit Log queues dead-letter queue ARN"
-  value       = aws_sqs_queue.audit_log_deadletter_queue.arn
+output "sqs_app_audit_log_deadletter_queue_name" {
+  description = "Audit Log queues dead-letter queue name"
+  value       = aws_sqs_queue.audit_log_deadletter_queue.name
 }
 
-output "sqs_api_audit_log_deadletter_queue_arn" {
-  description = "API Audit Log queues dead-letter queue ARN"
-  value       = aws_sqs_queue.api_audit_log_deadletter_queue.arn
+output "sqs_api_audit_log_deadletter_queue_name" {
+  description = "API Audit Log queues dead-letter queue name"
+  value       = aws_sqs_queue.api_audit_log_deadletter_queue.name
 }
 
 output "sqs_file_upload_queue_arn" {
@@ -68,7 +68,7 @@ output "sqs_file_upload_queue_id" {
   value       = aws_sqs_queue.file_upload_queue.id
 }
 
-output "sqs_file_upload_deadletter_queue_arn" {
-  description = "File upload dead-letter queue ARN"
-  value       = aws_sqs_queue.file_upload_deadletter_queue.arn
+output "sqs_file_upload_deadletter_queue_name" {
+  description = "File upload dead-letter queue name"
+  value       = aws_sqs_queue.file_upload_deadletter_queue.name
 }
