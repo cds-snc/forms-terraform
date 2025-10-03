@@ -23,7 +23,7 @@ services:
       TF_VAR_region: "ca-central-1"
 
   localstack:
-    image: localstack/localstack@sha256:8a6cfaca28e4ef7043b53d4d875537ee4245060072390b31ab0d35c7778313a7
+    image: localstack/localstack@sha256:ef90c3d6d69e36752d0154f9bc21099fc70dfbffc99a0145a6d7d04a721a6124
     hostname: localstack
     volumes:
       - "./data:/tmp/localstack"
