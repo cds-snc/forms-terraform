@@ -107,10 +107,10 @@ resource "aws_cloudwatch_metric_alarm" "ELB_healthy_hosts" {
 
 locals {
   map_of_sqs_dead_letter_queues = {
-    reliability   = var.sqs_reliability_deadletter_queue_arn,
-    app_audit_log = var.sqs_app_audit_log_deadletter_queue_arn,
-    api_audit_log = var.sqs_api_audit_log_deadletter_queue_arn,
-    file_upload   = var.sqs_file_upload_deadletter_queue_arn
+    reliability   = var.sqs_reliability_deadletter_queue_name,
+    app_audit_log = var.sqs_app_audit_log_deadletter_queue_name,
+    api_audit_log = var.sqs_api_audit_log_deadletter_queue_name,
+    file_upload   = var.sqs_file_upload_deadletter_queue_name
   }
 }
 
