@@ -1,5 +1,24 @@
 # Changelog
 
+## [3.39.1](https://github.com/cds-snc/forms-terraform/compare/v3.39.0...v3.39.1) (2025-10-07)
+
+
+### Bug Fixes
+
+* alarms not properly detecting when new messages are available in DLQ ([#1104](https://github.com/cds-snc/forms-terraform/issues/1104)) ([b6d6dfa](https://github.com/cds-snc/forms-terraform/commit/b6d6dfa160cae922e8d377f1b5be6b7f5b186f07))
+* archiver lambdas timing out ([#1102](https://github.com/cds-snc/forms-terraform/issues/1102)) ([b9323ae](https://github.com/cds-snc/forms-terraform/commit/b9323ae1e4d9b446b94886a8f7622eeb0062a608))
+* DLQ alarms should use name of queue instead of ARN ([#1105](https://github.com/cds-snc/forms-terraform/issues/1105)) ([c64e33d](https://github.com/cds-snc/forms-terraform/commit/c64e33d965606c27c38b6c0ab9b2b95d87dee98e))
+* Udate RDS to latest available engine ([#1107](https://github.com/cds-snc/forms-terraform/issues/1107)) ([ce0ebda](https://github.com/cds-snc/forms-terraform/commit/ce0ebda83554945e47ea520080f63595aea18571))
+
+
+### Miscellaneous Chores
+
+* convert error logs to info logs when processing audit logs and detecting duplication or unprocessed items ([#1103](https://github.com/cds-snc/forms-terraform/issues/1103)) ([0ee8b39](https://github.com/cds-snc/forms-terraform/commit/0ee8b398ea9d527c53823c7602b6fd561d2a6a53))
+* **deps:** update all non-major github action dependencies ([#1095](https://github.com/cds-snc/forms-terraform/issues/1095)) ([e3c90c4](https://github.com/cds-snc/forms-terraform/commit/e3c90c4114362090267288f596960c15129a1ebe))
+* **deps:** update dependency axios to v1.12.0 [security] ([#1101](https://github.com/cds-snc/forms-terraform/issues/1101)) ([c6fabb0](https://github.com/cds-snc/forms-terraform/commit/c6fabb0023364c6352c541806f9f617f2eb56f7a))
+* revert one specific change around Makefile install command in the load testing lambda ([#1099](https://github.com/cds-snc/forms-terraform/issues/1099)) ([e233f1c](https://github.com/cds-snc/forms-terraform/commit/e233f1c4bd62f8ab350ac96e546fb6325d2c547b))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1106](https://github.com/cds-snc/forms-terraform/issues/1106)) ([e21d32e](https://github.com/cds-snc/forms-terraform/commit/e21d32e53b1fbfea01c781a3fe95c75eac190d48))
+
 ## [3.39.0](https://github.com/cds-snc/forms-terraform/compare/v3.38.2...v3.39.0) (2025-09-10)
 
 
