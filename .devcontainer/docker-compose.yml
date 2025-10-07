@@ -21,18 +21,3 @@ services:
       TF_VAR_email_address_support: ""
       TF_VAR_localstack_host: "host.docker.internal"
       TF_VAR_region: "ca-central-1"
-
-  localstack:
-    image: localstack/localstack@sha256:8a6cfaca28e4ef7043b53d4d875537ee4245060072390b31ab0d35c7778313a7
-    hostname: localstack
-    volumes:
-      - "./data:/tmp/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "./scripts/init_localstack:/docker-entrypoint-initaws.d"
-    ports:
-      - 4566:4566
-    environment:
-      - SERVICES=ec2,dynamodb,kms,sqs,s3,sns
-      - DATA_DIR=/tmp/localstack/data
-      - DOCKER_HOST=unix:///var/run/docker.sock`
-      - DEBUG=1
