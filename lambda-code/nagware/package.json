@@ -9,8 +9,8 @@
     "build:dev": "tsc --project tsconfig.json --watch"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "3.799.0",
-    "@aws-sdk/lib-dynamodb": "3.799.0",
+    "@aws-sdk/client-dynamodb": "3.899.0",
+    "@aws-sdk/lib-dynamodb": "3.899.0",
     "@gcforms/connectors": "^2.0.2",
     "redis": "^4.7.0"
   },
@@ -20,5 +20,5 @@
     "tsc-alias": "^1.8.15",
     "typescript": "^5.8.3"
   },
-  "packageManager": "yarn@4.9.1"
+  "packageManager": "yarn@4.10.3"
 }
