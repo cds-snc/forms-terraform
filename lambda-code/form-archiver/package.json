@@ -9,13 +9,13 @@
     "build:dev": "tsc --project tsconfig.json --watch"
   },
   "dependencies": {
-    "@aws-sdk/client-rds-data": "3.799.0"
+    "@aws-sdk/client-rds-data": "^3.901.0"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.149",
-    "@types/node": "^22.15.3",
-    "tsc-alias": "^1.8.15",
-    "typescript": "^5.8.3"
+    "@types/aws-lambda": "^8.10.155",
+    "@types/node": "^22.18.8",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.9.3"
   },
-  "packageManager": "yarn@4.9.1"
+  "packageManager": "yarn@4.10.3"
 }

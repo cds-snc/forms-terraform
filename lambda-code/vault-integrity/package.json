@@ -9,10 +9,10 @@
     "build:dev": "tsc --project tsconfig.json --watch"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.149",
-    "@types/node": "^22.15.3",
-    "tsc-alias": "^1.8.15",
-    "typescript": "^5.8.3"
+    "@types/aws-lambda": "^8.10.155",
+    "@types/node": "^22.18.8",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.9.3"
   },
-  "packageManager": "yarn@4.9.1"
+  "packageManager": "yarn@4.10.3"
 }

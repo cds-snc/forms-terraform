@@ -12,9 +12,9 @@
     "start": "node dist/main.js"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.126",
-    "@types/node": "^20.9.0",
-    "typescript": "^5.2.2"
+    "@types/aws-lambda": "^8.10.155",
+    "@types/node": "^20.14.8",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@aws-sdk/client-ec2": "^3.750.0"
