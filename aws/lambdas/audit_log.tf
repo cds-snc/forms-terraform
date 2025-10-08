@@ -12,7 +12,7 @@ resource "aws_lambda_function" "audit_logs" {
   memory_size   = 256
 
   # Limit number of concurrent instances running at a time to fight against DynamoDB's API rate limiting when there is a spike in numbers of audit logs to process
-  reserved_concurrent_executions = 10
+  reserved_concurrent_executions = 5
 
   lifecycle {
     ignore_changes = [image_uri]
