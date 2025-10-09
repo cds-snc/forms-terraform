@@ -19,7 +19,7 @@ FROM public.ecr.aws/lambda/nodejs:22 AS build
 WORKDIR /usr/app
 
 RUN npm install -g yarn
-RUN yarn set version 4.9.1
+RUN yarn set version 4.10.3
 
 COPY .yarnrc.yml package.json yarn.lock ./
 

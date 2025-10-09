@@ -1,40 +1,50 @@
 <!DOCTYPE html>
 <html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Site actuellement indisponible</title>
+    <!-- Icons Font Awesome (to access icons, import Font Awesome) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      crossorigin="anonymous"
+    />
+    <!-- GC Design System -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@latest/dist/gcds/gcds.css"
+    />
+    <script
+      type="module"
+      src="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@latest/dist/gcds/gcds.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@latest/dist/gcds/gcds.js"
+    ></script>
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" sizes="32x32" />
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <title>Site actuellement indisponible</title>
-  <!-- Icons Font Awesome (to access icons, import Font Awesome) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-    crossorigin="anonymous">
-  <!-- GC Design System -->
-  <link rel="stylesheet"
-    href="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@latest/dist/gcds/gcds.css">
-  <script type="module"
-    src="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@latest/dist/gcds/gcds.esm.js"></script>
-  <script nomodule
-    src="https://cdn.design-system.alpha.canada.ca/@cdssnc/gcds-components@latest/dist/gcds/gcds.js"></script>
-  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" type="text/css" href="style.css">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" sizes="32x32">
-</head>
+  <header>
+    <gcds-header lang-href="index.html" skip-to-href="#main-content" lang="fr"></gcds-header>
+  </header>
 
-<header>
-  <gcds-header lang-href="index.html" skip-to-href="#main-content" lang="fr"></gcds-header>
-</header>
-
-<main>
-  <div id="card">
-    <div class="icon"><img src="site-unavailable.svg" alt="Site indisponible"></div>
-    <div class="description">
-      <h1 id="main-content" tabindex="-1">Le site est actuellement indisponible</h1>
-      <p>Nous nous efforçons de résoudre ce problème et d'améliorer votre expérience. Veuillez réessayer plus tard.</p>
+  <main>
+    <div id="card">
+      <div class="icon"><img src="site-unavailable.svg" alt="Site indisponible" /></div>
+      <div class="description">
+        <h1 id="main-content" tabindex="-1">Le site est actuellement indisponible</h1>
+        <p>
+          Nous nous efforçons de résoudre ce problème et d'améliorer votre expérience. Veuillez
+          réessayer plus tard.
+        </p>
+      </div>
     </div>
-  </div>
-</main>
+  </main>
 
-<footer>
-  <gcds-footer sub-links="{}"></gcds-footer>
-</footer>
-
+  <footer>
+    <gcds-footer sub-links="{}"></gcds-footer>
+  </footer>
 </html>
