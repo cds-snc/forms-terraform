@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.39.2](https://github.com/cds-snc/forms-terraform/compare/v3.39.1...v3.39.2) (2025-10-09)
+
+
+### Miscellaneous Chores
+
+* limit to 10 the number of concurrent audit logs lambda running at a time ([#1109](https://github.com/cds-snc/forms-terraform/issues/1109)) ([6d3716c](https://github.com/cds-snc/forms-terraform/commit/6d3716c24d4e4b5bb2d6a105005ce214b9e56fc9))
+* limit to 5 the number of concurrent audit logs lambda running at a time ([#1112](https://github.com/cds-snc/forms-terraform/issues/1112)) ([fbcb5c2](https://github.com/cds-snc/forms-terraform/commit/fbcb5c251b5c58eab42d60f33db69eb18ef26e61))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1108](https://github.com/cds-snc/forms-terraform/issues/1108)) ([040cc44](https://github.com/cds-snc/forms-terraform/commit/040cc4499bf3847b893361435c9cdc799a27ac05))
+* update dependencies ([#1111](https://github.com/cds-snc/forms-terraform/issues/1111)) ([027d930](https://github.com/cds-snc/forms-terraform/commit/027d930ae5c0c8c601279878d452f4b3f308085a))
+* update GCForms connectors package to version 2.2.12 ([#1113](https://github.com/cds-snc/forms-terraform/issues/1113)) ([2c037d2](https://github.com/cds-snc/forms-terraform/commit/2c037d2e9a91d7eb9a3136c51e71f9639c820e51))
+
 ## [3.39.1](https://github.com/cds-snc/forms-terraform/compare/v3.39.0...v3.39.1) (2025-10-07)
 
 
