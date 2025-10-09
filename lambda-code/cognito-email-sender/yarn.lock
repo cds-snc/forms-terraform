@@ -1177,14 +1177,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gcforms/connectors@npm:^2.2.11":
-  version: 2.2.11
-  resolution: "@gcforms/connectors@npm:2.2.11"
+"@gcforms/connectors@npm:^2.2.12":
+  version: 2.2.12
+  resolution: "@gcforms/connectors@npm:2.2.12"
   dependencies:
     "@aws-sdk/client-secrets-manager": "npm:^3.901.0"
     axios: "npm:^1.12.2"
     postgres: "npm:^3.4.5"
-  checksum: 10c0/1efa8576f529e406741294e10e6e342c30e6cd31bc8fef2d4ff5466651f5a2ac658b046ae5d14643f3dfec325037d427359e1fd6727f7569a5b9ba182777827a
+  checksum: 10c0/17e4c3d286cb65dbc47efc2432af1e50ca2855a0ffce5b57b6c20b16f8fd32a5f3447eaad099ae9062d49bccc9d4ebed5c4056372eb89e6ec8c47f8ca772a54a
   languageName: node
   linkType: hard
 
@@ -2483,7 +2483,7 @@ __metadata:
   resolution: "cognito-email-sender@workspace:."
   dependencies:
     "@aws-crypto/client-node": "npm:^4.2.1"
-    "@gcforms/connectors": "npm:^2.2.11"
+    "@gcforms/connectors": "npm:^2.2.12"
     "@types/aws-lambda": "npm:^8.10.155"
     "@types/node": "npm:^22.18.8"
     tsc-alias: "npm:^1.8.16"

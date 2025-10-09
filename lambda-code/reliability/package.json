@@ -14,7 +14,7 @@
     "@aws-sdk/client-s3": "^3.901.0",
     "@aws-sdk/client-sqs": "^3.901.0",
     "@aws-sdk/lib-dynamodb": "^3.902.0",
-    "@gcforms/connectors": "^2.2.11",
+    "@gcforms/connectors": "^2.2.12",
     "json2md": "^2.0.3",
     "uuid": "^11.1.0"
   },
