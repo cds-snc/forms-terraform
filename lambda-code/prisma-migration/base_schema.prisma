@@ -1,8 +1,0 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = "postgres://postgres:chummy@localhost:5432/forms"
-}

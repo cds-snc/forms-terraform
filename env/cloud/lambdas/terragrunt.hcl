@@ -150,8 +150,6 @@ dependency "s3" {
     archive_storage_id             = "forms-staging-archive-storage"
     audit_logs_archive_storage_id  = "forms-staging-audit-logs-archive-storage"
     audit_logs_archive_storage_arn = "arn:aws:s3:::forms-staging-audit-logs-archive-storage"
-    prisma_migration_storage_id    = "forms-staging-prisma-migration-storage"
-    prisma_migration_storage_arn   = "arn:aws:s3:::forms-staging-prisma-migration-storage"
   }
 }
 
@@ -175,7 +173,6 @@ dependency "ecr" {
       response-archiver-lambda        = "test_url",
       submission-lambda               = "test_url",
       vault-integrity-lambda          = "test_url",
-      prisma-migration-lambda         = "test_url",
       api-end-to-end-test-lambda      = "test_url",
       file-upload-processor-lambda    = "test_url",
       file-upload-cleanup-lambda      = "test_url",
@@ -264,8 +261,6 @@ inputs = {
   archive_storage_id             = dependency.s3.outputs.archive_storage_id
   audit_logs_archive_storage_id  = dependency.s3.outputs.audit_logs_archive_storage_id
   audit_logs_archive_storage_arn = dependency.s3.outputs.audit_logs_archive_storage_arn
-  prisma_migration_storage_id    = dependency.s3.outputs.prisma_migration_storage_id
-  prisma_migration_storage_arn   = dependency.s3.outputs.prisma_migration_storage_arn
   reliability_file_storage_id    = dependency.s3.outputs.reliability_file_storage_id
 
   ecr_repository_lambda_urls = dependency.ecr.outputs.ecr_repository_lambda_urls
