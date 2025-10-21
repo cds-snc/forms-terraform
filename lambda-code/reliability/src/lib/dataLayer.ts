@@ -54,7 +54,7 @@ export async function removeSubmission(submissionID: string) {
 
     return await db.send(new DeleteCommand(DBParams));
   } catch (error) {
-    console.error(JSON.stringify(error));
+    console.error(error);
     throw new Error(`Error removing submission ${submissionID} from ReliabilityQueue table`);
   }
 }
@@ -85,7 +85,7 @@ export async function notifyProcessed(submissionID: string) {
 
     return await db.send(new UpdateCommand(DBParams));
   } catch (error) {
-    console.error(JSON.stringify(error));
+    console.error(error);
     throw new Error(`Error updating Notify TTL for submission ${submissionID}`);
   }
 }
@@ -190,7 +190,7 @@ export async function saveToVault(
         });
       } else {
         // Not a duplication error, something else has gone wrong
-        console.error(JSON.stringify(error));
+        console.error(error);
         throw new Error(
           `Error saving submission to vault for submission ID ${submissionID} / FormID: ${formID}`
         );
