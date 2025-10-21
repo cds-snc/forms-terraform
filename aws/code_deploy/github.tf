@@ -22,7 +22,7 @@ resource "aws_codebuild_webhook" "github" {
 }
 
 resource "aws_codebuild_project" "github_runner" {
-  name          = "Github-Runner"
+  name          = title("${var.env}-Github-Runner")
   description   = "Github Runner for GCForms"
   build_timeout = 5
   service_role  = aws_iam_role.code_build_role.arn
@@ -66,7 +66,7 @@ resource "aws_codebuild_project" "github_runner" {
     }
   }
 
-  source_version = "chore/package_prisma"
+  source_version = "main"
 
   vpc_config {
     vpc_id = var.vpc_id

@@ -92,3 +92,8 @@ output "api_end_to_end_test_lambda_security_group_id" {
   description = "API end to end test Lambda security group ID"
   value       = aws_security_group.api_end_to_end_test_lambda.id
 }
+
+output "code_build_security_group_id"{
+  description = "Code Build security group id"
+  value = aws_security_group.code_build.id
+}
