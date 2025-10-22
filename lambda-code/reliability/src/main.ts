@@ -139,7 +139,7 @@ export const handler: Handler = async (event: SQSEvent) => {
     );
 
     // Log full error to console, it will not be sent to Slack
-    console.warn(JSON.stringify(error));
+    console.warn(error);
 
     throw new Error(JSON.stringify({ status: "failed" }));
   }

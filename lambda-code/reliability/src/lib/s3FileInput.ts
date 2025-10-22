@@ -47,7 +47,7 @@ async function getObject(bucket: string, key: string) {
       );
 
       // Log full error to console, it will not be sent to Slack
-      console.error(JSON.stringify(error));
+      console.error(error);
 
       return reject(error);
     }
@@ -62,7 +62,7 @@ export async function retrieveFilesFromReliabilityStorage(filePaths: string[]) {
     });
     return await Promise.all(files);
   } catch (error) {
-    console.error(JSON.stringify(error));
+    console.error(error);
     throw new Error(`Failed to retrieve files from reliability storage: ${filePaths.toString()}`);
   }
 }
@@ -79,7 +79,7 @@ export async function copyFilesFromReliabilityToVaultStorage(filePaths: string[]
       await s3Client.send(new CopyObjectCommand(commandInput));
     }
   } catch (error) {
-    console.error(JSON.stringify(error));
+    console.error(error);
     throw new Error(
       `Failed to copy files from reliability storage to vault storage: ${filePaths.toString()}`
     );
@@ -97,7 +97,7 @@ export async function removeFilesFromReliabilityStorage(filePaths: string[]) {
       await s3Client.send(new DeleteObjectCommand(commandInput));
     }
   } catch (error) {
-    console.log(JSON.stringify(error));
+    console.log(error);
     throw new Error(`Failed to remove files from reliability storage: ${filePaths.toString()}`);
   }
 }
@@ -118,7 +118,7 @@ export const getFileMetaData = async (filePath: string) => {
 
     return metadata;
   } catch (error) {
-    console.error(JSON.stringify(error));
+    console.error(error);
     throw new Error(`Failed to retrieve metadata for file: ${filePath}`);
   }
 };
