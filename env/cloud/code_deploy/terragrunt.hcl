@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../rds","../network"]
+  paths = ["../rds", "../network"]
 }
 
 
@@ -12,8 +12,8 @@ dependency "network" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    private_subnet_ids          = [""]
-    vpc_id                      = "vpc-id"
+    private_subnet_ids           = [""]
+    vpc_id                       = "vpc-id"
     code_build_security_group_id = "1234"
   }
 }
@@ -27,12 +27,12 @@ dependency "rds" {
   }
 }
 
-inputs = { 
+inputs = {
   private_subnet_ids           = dependency.network.outputs.private_subnet_ids
   vpc_id                       = dependency.network.outputs.vpc_id
   code_build_security_group_id = dependency.network.outputs.code_build_security_group_id
   database_url_secret_arn      = dependency.rds.outputs.database_url_secret_arn
- }
+}
 
 include "root" {
   path = find_in_parent_folders("root.hcl")

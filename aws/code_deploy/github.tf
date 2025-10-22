@@ -10,8 +10,8 @@ resource "aws_codebuild_source_credential" "github" {
 }
 
 resource "aws_codebuild_webhook" "github" {
-  project_name = aws_codebuild_project.github_runner.name
-  build_type   = "BUILD"
+  project_name    = aws_codebuild_project.github_runner.name
+  build_type      = "BUILD"
   manual_creation = true
   filter_group {
     filter {
@@ -32,7 +32,7 @@ resource "aws_codebuild_project" "github_runner" {
   }
 
   cache {
-    type     = "NO_CACHE"
+    type = "NO_CACHE"
   }
 
   environment {
@@ -43,7 +43,7 @@ resource "aws_codebuild_project" "github_runner" {
 
     environment_variable {
       name  = "DATABASE_URL"
-      type = "SECRETS_MANAGER"
+      type  = "SECRETS_MANAGER"
       value = var.database_url_secret_arn
     }
   }

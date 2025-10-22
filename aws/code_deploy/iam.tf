@@ -64,7 +64,7 @@ data "aws_iam_policy_document" "code_build" {
     resources = [aws_codestarconnections_connection.github.arn]
   }
 
-    statement {
+  statement {
     effect = "Allow"
 
     actions = [
