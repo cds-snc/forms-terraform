@@ -19,6 +19,9 @@ data "aws_iam_policy_document" "assume_role" {
 
 
 data "aws_iam_policy_document" "code_build" {
+  # checkov:skip=CKV_AWS_356: AWS provided policy
+  # checkov:skip=CKV_AWS_111: AWS provided policy
+  
   statement {
     effect = "Allow"
 
