@@ -11,7 +11,7 @@ variable "vpc_id" {
 
 variable "code_build_security_group_id" {
   description = "Code Build Security Group"
-  type = string
+  type        = string
 }
 
 variable "database_url_secret_arn" {
