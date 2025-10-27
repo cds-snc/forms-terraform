@@ -125,35 +125,29 @@ const extractFileInputs = (originalObject: Record<string, unknown>) => {
   return fileInputList;
 };
 
-const generateSignedUrl = async (key: string, contentMD5?: string) => {
+const generateSignedUrl = async (key: string, contentMD5: string) => {
+
+  if (!contentMD5) {
+    throw new Error("Content MD5 checksum is required to generate signed URL.");
+  }
+  
   const fields: Record<string, string> = {
     acl: "bucket-owner-full-control",
+    "Content-MD5": contentMD5,
   };
 
-  // Add Content-MD5 if provided
-  if (contentMD5) {
-    fields["Content-MD5"] = contentMD5;
-  }
-
-  const MAX_SIZE_CONDITION: Conditions = [
+  const CONDITIONS: Conditions[] = [
     "content-length-range",
     0,
     S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES,
+    ["eq", "$Content-MD5", contentMD5],
   ];
-
-
-  let conditions: Conditions[] = [MAX_SIZE_CONDITION];
-
-  if (contentMD5) {
-    // add Content-MD5 condition if provided
-    conditions = [MAX_SIZE_CONDITION, ["eq", "$Content-MD5", contentMD5]];
-  }
 
   return createPresignedPost(s3Client, {
     Bucket: S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME,
     Key: key,
     Fields: fields,
-    Conditions: conditions,
+    Conditions: CONDITIONS,
     Expires: S3_SIGNED_URL_LIFETIME_IN_SECONDS,
   }).catch((error: unknown) => {
     throw new Error(`Failed to generate signed URL. Reason: ${(error as Error).message}.`);
