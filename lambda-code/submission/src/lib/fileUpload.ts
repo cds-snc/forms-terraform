@@ -68,12 +68,6 @@ export async function generateFileAccessKeysAndUploadURLs(
       const fileAccessKey = `${keyStartingPath}/${fileReference.id}/${fileReference.name}`;
       const contentMD5 = fileChecksums?.[fileReference.id];
 
-      if (!contentMD5) {
-        throw new Error(
-          `Failed to generate signed URL. Reason: No checksum provided for file ID ${fileReference.id} in submission ${submissionId}.`
-        );
-      }
-
       const fileUploadURL = await generateSignedUrl(fileAccessKey, contentMD5);
       return { id: fileReference.id, fileAccessKey, fileUploadURL };
     })
@@ -127,7 +121,7 @@ const extractFileInputs = (originalObject: Record<string, unknown>) => {
 
 const generateSignedUrl = async (key: string, contentMD5: string) => {
   if (!contentMD5) {
-    throw new Error("Content MD5 checksum is required to generate signed URL.");
+    throw new Error(`Content MD5 checksum is required to generate signed URL. $_key: ${key}`);
   }
 
   const fields: Record<string, string> = {
