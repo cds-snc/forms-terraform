@@ -133,10 +133,13 @@ const generateSignedUrl = async (key: string, contentMD5?: string) => {
     fields["Content-MD5"] = contentMD5;
   }
 
-  const conditions = [["content-length-range", 0, S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES]];
+  let conditions = [["content-length-range", 0, S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES]];
 
   if (contentMD5) {
-    conditions.push(["eq", "$Content-MD5", contentMD5]);
+    conditions = [
+      ["content-length-range", 0, S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES],
+      ["eq", "$Content-MD5", contentMD5],
+    ];
   }
 
   return createPresignedPost(s3Client, {
