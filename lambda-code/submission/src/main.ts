@@ -42,9 +42,18 @@ export const handler: Handler = async (submission: AnyObject) => {
      * in order to generate and return upload URLs for the client to send us files attached to the submission.
      */
     if (attachedFileReferences.length > 0) {
+      
+      const fileChecksums = submission.fileChecksums;
+      
+      // Validate that we have checksums for all file references
+      if (!fileChecksums || Object.keys(fileChecksums).length === 0) {
+        throw new Error("File references found but no checksums provided");
+      }
+      
       const { fileAccessKeys, fileUploadURLs } = await generateFileAccessKeysAndUploadURLs(
         submissionId,
-        attachedFileReferences
+        attachedFileReferences,
+        fileChecksums
       );
 
       await saveSubmission(submissionId, submission, fileAccessKeys);
