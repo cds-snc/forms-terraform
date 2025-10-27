@@ -126,20 +126,17 @@ const extractFileInputs = (originalObject: Record<string, unknown>) => {
 };
 
 const generateSignedUrl = async (key: string, contentMD5: string) => {
-
   if (!contentMD5) {
     throw new Error("Content MD5 checksum is required to generate signed URL.");
   }
-  
+
   const fields: Record<string, string> = {
     acl: "bucket-owner-full-control",
     "Content-MD5": contentMD5,
   };
 
   const CONDITIONS: Conditions[] = [
-    "content-length-range",
-    0,
-    S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES,
+    ["content-length-range", 0, S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES],
     ["eq", "$Content-MD5", contentMD5],
   ];
 
