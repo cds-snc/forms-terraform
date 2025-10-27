@@ -72,3 +72,13 @@ output "sqs_file_upload_deadletter_queue_name" {
   description = "File upload dead-letter queue name"
   value       = aws_sqs_queue.file_upload_deadletter_queue.name
 }
+
+output "sqs_notifications_queue_arn" {
+  description = "Notifications queue ARN"
+  value       = aws_sqs_queue.notifications_queue.arn
+}
+
+output "sqs_notifications_queue_id" {
+  description = "Notifications queue URL"
+  value       = aws_sqs_queue.notifications_queue.id
+}
