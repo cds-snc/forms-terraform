@@ -1,6 +1,8 @@
 import { S3Client } from "@aws-sdk/client-s3";
 import { createPresignedPost, PresignedPost } from "@aws-sdk/s3-presigned-post";
 
+import { Conditions } from "@aws-sdk/s3-presigned-post/dist-types/types.js";
+
 export type FileReference = {
   id: string;
   name: string;
@@ -133,7 +135,7 @@ const generateSignedUrl = async (key: string, contentMD5?: string) => {
     fields["Content-MD5"] = contentMD5;
   }
 
-  let conditions = [["content-length-range", 0, S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES]];
+  let conditions: Conditions[] = [["content-length-range", 0, S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES]];
 
   if (contentMD5) {
     conditions = [
