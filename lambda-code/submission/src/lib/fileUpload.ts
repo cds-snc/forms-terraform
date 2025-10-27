@@ -54,7 +54,8 @@ export function findAttachedFileReferencesInSubmissionResponses(
 
 export async function generateFileAccessKeysAndUploadURLs(
   submissionId: string,
-  fileReferences: FileReference[]
+  fileReferences: FileReference[],
+  fileChecksums?: Record<string, string>
 ): Promise<{ fileAccessKeys: string[]; fileUploadURLs: Record<string, PresignedPost> }> {
   const keyStartingPath = `form_attachments/${new Date()
     .toISOString()
@@ -63,7 +64,15 @@ export async function generateFileAccessKeysAndUploadURLs(
   const generateFileAccessKeyAndUploadURLOperationResults = await Promise.all(
     fileReferences.map(async (fileReference) => {
       const fileAccessKey = `${keyStartingPath}/${fileReference.id}/${fileReference.name}`;
-      const fileUploadURL = await generateSignedUrl(fileAccessKey);
+      const contentMD5 = fileChecksums?.[fileReference.id];
+
+      if (!contentMD5) {
+        throw new Error(
+          `Failed to generate signed URL. Reason: No checksum provided for file ID ${fileReference.id} in submission ${submissionId}.`
+        );
+      }
+
+      const fileUploadURL = await generateSignedUrl(fileAccessKey, contentMD5);
       return { id: fileReference.id, fileAccessKey, fileUploadURL };
     })
   );
@@ -114,14 +123,27 @@ const extractFileInputs = (originalObject: Record<string, unknown>) => {
   return fileInputList;
 };
 
-const generateSignedUrl = async (key: string) => {
+const generateSignedUrl = async (key: string, contentMD5?: string) => {
+  const fields: Record<string, string> = {
+    acl: "bucket-owner-full-control",
+  };
+
+  // Add Content-MD5 if provided
+  if (contentMD5) {
+    fields["Content-MD5"] = contentMD5;
+  }
+
+  const conditions = [["content-length-range", 0, S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES]];
+
+  if (contentMD5) {
+    conditions.push(["eq", "$Content-MD5", contentMD5]);
+  }
+
   return createPresignedPost(s3Client, {
     Bucket: S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME,
     Key: key,
-    Fields: {
-      acl: "bucket-owner-full-control",
-    },
-    Conditions: [["content-length-range", 0, S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES]],
+    Fields: fields,
+    Conditions: conditions,
     Expires: S3_SIGNED_URL_LIFETIME_IN_SECONDS,
   }).catch((error: unknown) => {
     throw new Error(`Failed to generate signed URL. Reason: ${(error as Error).message}.`);
