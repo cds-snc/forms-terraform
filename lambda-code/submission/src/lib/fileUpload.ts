@@ -126,12 +126,13 @@ const generateSignedUrl = async (key: string, contentMD5: string) => {
 
   const fields: Record<string, string> = {
     acl: "bucket-owner-full-control",
+    "x-amz-meta-md5": contentMD5,
     "Content-MD5": contentMD5,
   };
 
   const CONDITIONS: Conditions[] = [
     ["content-length-range", 0, S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES],
-    ["eq", "$Content-MD5", contentMD5],
+    { "Content-MD5": contentMD5 },
   ];
 
   return createPresignedPost(s3Client, {
