@@ -54,7 +54,7 @@ resource "aws_iam_role_policy_attachment" "sqs_forms_lambda_client" {
   policy_arn = var.ecs_iam_forms_sqs_policy_arn
 }
 
-resource "aws_iam_role_policy_attachement" "forms_lambda_audit_logs" {
+resource "aws_iam_role_policy_attachment" "forms_lambda_audit_logs" {
   count = var.env == "development" ? 0 : 1
 
   role       = aws_iam_role.forms_lambda_client[0].name
