@@ -26,6 +26,8 @@ dependency "app" {
     ecs_iam_forms_dynamodb_policy_arn        = null
     ecs_iam_forms_sqs_policy_arn             = null
     ecs_iam_forms_cognito_policy_arn         = null
+    ecs_iam_forms_audit_logs_policy_arn      = null
+
   }
 }
 
@@ -214,6 +216,7 @@ inputs = {
   ecs_iam_forms_kms_policy_arn             = dependency.app.outputs.ecs_iam_forms_kms_policy_arn
   ecs_iam_forms_s3_policy_arn              = dependency.app.outputs.ecs_iam_forms_s3_policy_arn
   ecs_iam_forms_dynamodb_policy_arn        = dependency.app.outputs.ecs_iam_forms_dynamodb_policy_arn
+  ecs_iam_forms_audit_logs_arn             = dependency.app.outputs.ecs_iam_forms_audit_logs_policy_arn
   ecs_iam_forms_sqs_policy_arn             = dependency.app.outputs.ecs_iam_forms_sqs_policy_arn
   ecs_iam_forms_cognito_policy_arn         = dependency.app.outputs.ecs_iam_forms_cognito_policy_arn
 
