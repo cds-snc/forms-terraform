@@ -38,6 +38,12 @@ output "ecs_iam_forms_dynamodb_policy_arn" {
   value       = aws_iam_policy.forms_dynamodb.arn
 }
 
+output "ecs_iam_forms_audit_logs_policy_arn" {
+  description = "IAM policy for access to DynamoDB for Audit Logs"
+  value       = aws_iam_policy.forms_audit_logs.arn
+}
+
+
 output "ecs_iam_forms_sqs_policy_arn" {
   description = "IAM policy for access to SQS"
   value       = aws_iam_policy.forms_sqs.arn
