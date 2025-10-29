@@ -1,7 +1,9 @@
 import { saveToVault, removeSubmission } from "./dataLayer.js";
 import { SubmissionAttachmentWithScanStatus } from "./file_scanning.js";
+import { isFileValid } from "./fileValidation.js";
 import {
   copyFilesFromReliabilityToVaultStorage,
+  getObjectFirst100BytesInReliabilityBucket,
   removeFilesFromReliabilityStorage,
 } from "./s3FileInput.js";
 import { FormSubmission } from "./types.js";
@@ -21,36 +23,20 @@ export default async (
     (item) => item.attachmentPath
   );
 
-  const submissionAttachments = submissionAttachmentsWithScanStatuses.map((item) => {
-    if (item.scanStatus === undefined) {
-      // This should never happen since we verified earlier whether file scanning has completed
-      throw new Error(`Detected undefined scan status for file path ${item.attachmentPath}`);
-    }
-
-    const attachmentPathParts = item.attachmentPath.split("/");
-
-    const attachmentName = attachmentPathParts.at(-1);
-
-    const attachmentId = attachmentPathParts.at(-2);
-
-    if (attachmentName === undefined) {
-      throw new Error(`Attachment name is undefined. File path: ${item.attachmentPath}.`);
-    }
-
-    return {
-      id: attachmentId,
-      name: attachmentName,
-      path: item.attachmentPath,
-      scanStatus: item.scanStatus,
-    };
-  });
-
   try {
+    const submissionAttachmentsWithScanStatusesAfterInternalValidation =
+      await verifyAndFlagMaliciousSubmissionAttachments(submissionAttachmentsWithScanStatuses);
+
+    const submissionAttachments = buildSubmissionAttachmentJsonRecord(
+      submissionAttachmentsWithScanStatusesAfterInternalValidation
+    );
+
     await copyFilesFromReliabilityToVaultStorage(submissionAttachmentPaths);
+
     await saveToVault(
       submissionID,
       formSubmission.responses,
-      JSON.stringify(submissionAttachments),
+      submissionAttachments,
       formID,
       language,
       createdAt,
@@ -99,3 +85,48 @@ export default async (
     );
   }
 };
+
+async function verifyAndFlagMaliciousSubmissionAttachments(
+  submissionAttachmentsWithScanStatuses: SubmissionAttachmentWithScanStatus[]
+): Promise<SubmissionAttachmentWithScanStatus[]> {
+  return Promise.all(
+    submissionAttachmentsWithScanStatuses.map(async (item) => {
+      const attachmentFirst100Bytes = await getObjectFirst100BytesInReliabilityBucket(
+        item.attachmentPath
+      );
+
+      const isFileValidResult = isFileValid(item.attachmentPath, attachmentFirst100Bytes);
+
+      // If we flagged the file as invalid we return the same scan status value AWS Guard Duty offers to avoid breaking Data Retrieval API service integration
+      const scanStatus = isFileValidResult ? item.scanStatus : "THREATS_FOUND";
+
+      return {
+        attachmentPath: item.attachmentPath,
+        scanStatus: scanStatus,
+      };
+    })
+  );
+}
+
+function buildSubmissionAttachmentJsonRecord(
+  submissionAttachmentsWithScanStatuses: SubmissionAttachmentWithScanStatus[]
+): string {
+  return JSON.stringify(
+    submissionAttachmentsWithScanStatuses.map((item) => {
+      const attachmentPathParts = item.attachmentPath.split("/");
+      const attachmentId = attachmentPathParts.at(-2);
+      const attachmentName = attachmentPathParts.at(-1);
+
+      if (attachmentName === undefined || attachmentId === undefined) {
+        throw new Error(`Attachment name or ID is undefined. File path: ${item.attachmentPath}.`);
+      }
+
+      return {
+        id: attachmentId,
+        name: attachmentName,
+        path: item.attachmentPath,
+        scanStatus: item.scanStatus,
+      };
+    })
+  );
+}
