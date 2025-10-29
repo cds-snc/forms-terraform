@@ -4,7 +4,6 @@ import sendToVault from "@lib/vaultProcessing.js";
 import { getTemplateInfo } from "@lib/templates.js";
 import { getSubmission } from "@lib/dataLayer.js";
 import {
-  haveAllSubmissionAttachmentsBeenScanned,
   FileScanningCompletionError,
   getAllSubmissionAttachmentScanStatuses,
 } from "@lib/file_scanning.js";
@@ -80,18 +79,11 @@ export const handler: Handler = async (event: SQSEvent) => {
 
     const submissionAttachmentsWithScanStatuses = await getAllSubmissionAttachmentScanStatuses(
       fileKeys
-    );
-
-    // Verify if file scanning is required and if it has been completed
-    if (submissionAttachmentsWithScanStatuses.length > 0) {
-      if (
-        haveAllSubmissionAttachmentsBeenScanned(submissionAttachmentsWithScanStatuses) === false
-      ) {
-        throw new FileScanningCompletionError(
-          `File scanning for submission ID ${submissionID} is not completed.`
-        );
-      }
-    }
+    ).catch(() => {
+      throw new FileScanningCompletionError(
+        `File scanning for submission ID ${submissionID} is not completed.`
+      );
+    });
 
     /*
      Process submission to vault or Notify
