@@ -43,9 +43,8 @@ resource "aws_dynamodb_table" "reliability_queue" {
   }
 }
 
-# Notifications DynamoDB table
-resource "aws_dynamodb_table" "notifications" {
-  name                        = "Notifications"
+resource "aws_dynamodb_table" "notification" {
+  name                        = "Notification"
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "notificationId"
   deletion_protection_enabled = var.env != "development"

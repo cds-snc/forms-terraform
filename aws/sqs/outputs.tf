@@ -73,12 +73,12 @@ output "sqs_file_upload_deadletter_queue_name" {
   value       = aws_sqs_queue.file_upload_deadletter_queue.name
 }
 
-output "sqs_notifications_queue_arn" {
-  description = "Notifications queue ARN"
-  value       = aws_sqs_queue.notifications_queue.arn
+output "sqs_notification_queue_arn" {
+  description = "Notification queue ARN"
+  value       = aws_sqs_queue.notification_queue.arn
 }
 
-output "sqs_notifications_queue_id" {
-  description = "Notifications queue URL"
-  value       = aws_sqs_queue.notifications_queue.id
+output "sqs_notification_queue_id" {
+  description = "Notification queue URL"
+  value       = aws_sqs_queue.notification_queue.id
 }
