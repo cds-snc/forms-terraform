@@ -1,4 +1,4 @@
-import { getFileMetaData } from "./s3FileInput.js";
+import { getFileTags } from "./s3FileInput.js";
 
 export class FileScanningCompletionError extends Error {
   constructor(message: string) {
@@ -9,7 +9,7 @@ export class FileScanningCompletionError extends Error {
 
 export type SubmissionAttachmentWithScanStatus = {
   attachmentPath: string;
-  scanStatus: string | undefined;
+  scanStatus: string;
 };
 
 export async function getAllSubmissionAttachmentScanStatuses(
@@ -22,19 +22,24 @@ export async function getAllSubmissionAttachmentScanStatuses(
     });
   });
 
-  return Promise.all(submissionAttachmentScanStatusQueries);
+  const statuses = await Promise.all(submissionAttachmentScanStatusQueries);
+  if (haveAllSubmissionAttachmentsBeenScanned(statuses)) {
+    return statuses;
+  } else {
+    throw new FileScanningCompletionError(`File scanning is not completed.`);
+  }
 }
 
 export function haveAllSubmissionAttachmentsBeenScanned(
-  attachmentsWithScanStatuses: SubmissionAttachmentWithScanStatus[]
-): boolean {
+  attachmentsWithScanStatuses: { attachmentPath: string; scanStatus: string | undefined }[]
+): attachmentsWithScanStatuses is SubmissionAttachmentWithScanStatus[] {
   return attachmentsWithScanStatuses.every((item) => item.scanStatus !== undefined);
 }
 
 async function getSubmissionAttachmentScanStatus(
   attachmentPath: string
 ): Promise<string | undefined> {
-  return getFileMetaData(attachmentPath)
+  return getFileTags(attachmentPath)
     .then((tags) => {
       return tags.find((tag) => tag.Key === "GuardDutyMalwareScanStatus")?.Value;
     })

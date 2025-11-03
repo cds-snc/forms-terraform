@@ -1,5 +1,5 @@
 import { saveToVault, removeSubmission } from "./dataLayer.js";
-import { SubmissionAttachmentWithScanStatus } from "./file_scanning.js";
+import { SubmissionAttachmentInformation } from "./file_checksum.js";
 import {
   copyFilesFromReliabilityToVaultStorage,
   removeFilesFromReliabilityStorage,
@@ -10,7 +10,7 @@ export default async (
   submissionID: string,
   sendReceipt: string,
   formSubmission: FormSubmission,
-  submissionAttachmentsWithScanStatuses: SubmissionAttachmentWithScanStatus[],
+  submissionAttachmentsWithScanStatuses: SubmissionAttachmentInformation[],
   formID: string,
   language: string,
   createdAt: string,
@@ -22,11 +22,6 @@ export default async (
   );
 
   const submissionAttachments = submissionAttachmentsWithScanStatuses.map((item) => {
-    if (item.scanStatus === undefined) {
-      // This should never happen since we verified earlier whether file scanning has completed
-      throw new Error(`Detected undefined scan status for file path ${item.attachmentPath}`);
-    }
-
     const attachmentPathParts = item.attachmentPath.split("/");
 
     const attachmentName = attachmentPathParts.at(-1);
@@ -42,6 +37,7 @@ export default async (
       name: attachmentName,
       path: item.attachmentPath,
       scanStatus: item.scanStatus,
+      md5: item.md5,
     };
   });
 

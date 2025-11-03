@@ -9,6 +9,8 @@ import {
   getAllSubmissionAttachmentScanStatuses,
 } from "@lib/file_scanning.js";
 
+import { addAllSubmissionAttachmentsChecksums } from "@lib/file_checksum.js";
+
 export const handler: Handler = async (event: SQSEvent) => {
   const message = JSON.parse(event.Records[0].body);
 
@@ -78,20 +80,18 @@ export const handler: Handler = async (event: SQSEvent) => {
       throw new Error(`No associated form template (ID: ${formID}) exist in the database.`);
     }
 
+    // Verify if file scanning is required and if it has been completed
     const submissionAttachmentsWithScanStatuses = await getAllSubmissionAttachmentScanStatuses(
       fileKeys
-    );
-
-    // Verify if file scanning is required and if it has been completed
-    if (submissionAttachmentsWithScanStatuses.length > 0) {
-      if (
-        haveAllSubmissionAttachmentsBeenScanned(submissionAttachmentsWithScanStatuses) === false
-      ) {
+    )
+      .then((submissionScanStatuses) => {
+        return addAllSubmissionAttachmentsChecksums(submissionScanStatuses);
+      })
+      .catch(() => {
         throw new FileScanningCompletionError(
           `File scanning for submission ID ${submissionID} is not completed.`
         );
-      }
-    }
+      });
 
     /*
      Process submission to vault or Notify
