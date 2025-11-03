@@ -10,6 +10,7 @@ export const addAllSubmissionAttachmentsChecksums = async (
 ): Promise<SubmissionAttachmentInformation[]> => {
   return Promise.all(
     attachments.map(async (record) => {
+      // Not throwing an error is md5 metadata is missing for backwards compatibility
       const metadata = await getFileMetaData(record.attachmentPath);
       return { ...record, md5: metadata.md5 };
     })
