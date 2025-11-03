@@ -4,7 +4,6 @@ import sendToVault from "@lib/vaultProcessing.js";
 import { getTemplateInfo } from "@lib/templates.js";
 import { getSubmission } from "@lib/dataLayer.js";
 import {
-  haveAllSubmissionAttachmentsBeenScanned,
   FileScanningCompletionError,
   getAllSubmissionAttachmentScanStatuses,
 } from "@lib/file_scanning.js";

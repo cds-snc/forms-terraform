@@ -44,7 +44,6 @@ async function getSubmissionAttachmentScanStatus(
       return tags.find((tag) => tag.Key === "GuardDutyMalwareScanStatus")?.Value;
     })
     .catch((error) => {
-      console.error(`Error retrieving scan status for file: ${(error as Error).message}`);
-      return undefined;
+      throw new Error(`Error retrieving scan status for file: ${(error as Error).message}`);
     });
 }

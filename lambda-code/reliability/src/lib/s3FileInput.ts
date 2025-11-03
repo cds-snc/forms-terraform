@@ -145,3 +145,22 @@ export const getFileMetaData = async (filePath: string) => {
 
   return metadata;
 };
+export async function getObjectFirst100BytesInReliabilityBucket(
+  objectKey: string
+): Promise<Uint8Array<ArrayBufferLike>> {
+  const response = await s3Client.send(
+    new GetObjectCommand({
+      Bucket: reliabilityBucketName,
+      Key: objectKey,
+      Range: "bytes=0-99",
+    })
+  );
+
+  const bytes = await response.Body?.transformToByteArray();
+
+  if (bytes === undefined) {
+    throw new Error("Object first 100 bytes failed to be retrieved");
+  }
+
+  return bytes;
+}
