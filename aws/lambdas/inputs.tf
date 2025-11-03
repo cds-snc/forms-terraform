@@ -220,6 +220,10 @@ variable "ecs_iam_forms_dynamodb_policy_arn" {
   type        = string
 }
 
+variable "ecs_iam_forms_audit_logs_arn" {
+  description = "IAM Policy for access to Audit Logs"
+}
+
 variable "ecs_iam_forms_sqs_policy_arn" {
   description = "IAM policy for access to SQS"
   type        = string
