@@ -1,5 +1,35 @@
 # Changelog
 
+## [3.39.2](https://github.com/cds-snc/forms-terraform/compare/v3.39.1...v3.39.2) (2025-10-29)
+
+
+### Bug Fixes
+
+* Add perms to pr review env to access audit logs ([#1140](https://github.com/cds-snc/forms-terraform/issues/1140)) ([9b88f11](https://github.com/cds-snc/forms-terraform/commit/9b88f118c5ca0aa5bf9aae43df643c46b29c7d8d))
+* modify post url config and add meta data ([#1139](https://github.com/cds-snc/forms-terraform/issues/1139)) ([1849d24](https://github.com/cds-snc/forms-terraform/commit/1849d244a76115c5527257f3577d491a81c29539))
+* remove the use of JSON.stringify in console logs when formatting errors from external services ([#1123](https://github.com/cds-snc/forms-terraform/issues/1123)) ([ce2eb2c](https://github.com/cds-snc/forms-terraform/commit/ce2eb2cb4c40b3c9217c3a91f0490bf0277a6e9e))
+
+
+### Miscellaneous Chores
+
+* Add checksum for file uploads ([#1135](https://github.com/cds-snc/forms-terraform/issues/1135)) ([319b80a](https://github.com/cds-snc/forms-terraform/commit/319b80a9293f97c9fce745d15bcaf6fb78e46a2c))
+* **deps:** lock file maintenance ([#1116](https://github.com/cds-snc/forms-terraform/issues/1116)) ([a58dc7e](https://github.com/cds-snc/forms-terraform/commit/a58dc7ef3f9d5ec28a059c6c6be5c6b8991a5187))
+* **deps:** lock file maintenance ([#1119](https://github.com/cds-snc/forms-terraform/issues/1119)) ([99f28a0](https://github.com/cds-snc/forms-terraform/commit/99f28a02a7fbf05a51e3f024edacf961665d4928))
+* **deps:** lock file maintenance ([#1134](https://github.com/cds-snc/forms-terraform/issues/1134)) ([2ab8cc3](https://github.com/cds-snc/forms-terraform/commit/2ab8cc37cf69fbb6fb4a36febb44c2362db51aaf))
+* **deps:** update all non-major github action dependencies ([#1115](https://github.com/cds-snc/forms-terraform/issues/1115)) ([d8d4b25](https://github.com/cds-snc/forms-terraform/commit/d8d4b25efd9f96acf1595dce0ea32eb71cda562c))
+* **deps:** update all non-major github action dependencies ([#1118](https://github.com/cds-snc/forms-terraform/issues/1118)) ([577c76c](https://github.com/cds-snc/forms-terraform/commit/577c76c4482c17c3009ea62e5c54f136ac31d3e5))
+* **deps:** update all non-major github action dependencies ([#1133](https://github.com/cds-snc/forms-terraform/issues/1133)) ([75e4516](https://github.com/cds-snc/forms-terraform/commit/75e45161da4136e192344f94994068cab3e5f2b1))
+* limit to 10 the number of concurrent audit logs lambda running at a time ([#1109](https://github.com/cds-snc/forms-terraform/issues/1109)) ([6d3716c](https://github.com/cds-snc/forms-terraform/commit/6d3716c24d4e4b5bb2d6a105005ce214b9e56fc9))
+* limit to 5 the number of concurrent audit logs lambda running at a time ([#1112](https://github.com/cds-snc/forms-terraform/issues/1112)) ([fbcb5c2](https://github.com/cds-snc/forms-terraform/commit/fbcb5c251b5c58eab42d60f33db69eb18ef26e61))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1108](https://github.com/cds-snc/forms-terraform/issues/1108)) ([040cc44](https://github.com/cds-snc/forms-terraform/commit/040cc4499bf3847b893361435c9cdc799a27ac05))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1117](https://github.com/cds-snc/forms-terraform/issues/1117)) ([1108aaf](https://github.com/cds-snc/forms-terraform/commit/1108aaf25b5e6bf9af95b82505daabbb8105914d))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1121](https://github.com/cds-snc/forms-terraform/issues/1121)) ([264aefb](https://github.com/cds-snc/forms-terraform/commit/264aefbc7473f842c36bb942769850a781881c6b))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1122](https://github.com/cds-snc/forms-terraform/issues/1122)) ([968cc06](https://github.com/cds-snc/forms-terraform/commit/968cc06c78ac9946e10639c4367def1c4da530bf))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1136](https://github.com/cds-snc/forms-terraform/issues/1136)) ([9e59463](https://github.com/cds-snc/forms-terraform/commit/9e594636443b3c3c815f8898d385f8c9ce7e8a60))
+* update dependencies ([#1111](https://github.com/cds-snc/forms-terraform/issues/1111)) ([027d930](https://github.com/cds-snc/forms-terraform/commit/027d930ae5c0c8c601279878d452f4b3f308085a))
+* update GCForms connectors package to version 2.2.12 ([#1113](https://github.com/cds-snc/forms-terraform/issues/1113)) ([2c037d2](https://github.com/cds-snc/forms-terraform/commit/2c037d2e9a91d7eb9a3136c51e71f9639c820e51))
+* upgrade aurora-postgresql to 16.8 for the IdP module ([#1120](https://github.com/cds-snc/forms-terraform/issues/1120)) ([e48dcb0](https://github.com/cds-snc/forms-terraform/commit/e48dcb06748d0d5d3ce8512fceabba9eede0dea5))
+
 ## [3.39.1](https://github.com/cds-snc/forms-terraform/compare/v3.39.0...v3.39.1) (2025-10-07)
 
 
