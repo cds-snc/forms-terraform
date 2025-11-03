@@ -31,11 +31,6 @@ export default async (
     );
 
     const submissionAttachments = submissionAttachmentsWithScanStatuses.map((item) => {
-      if (item.scanStatus === undefined) {
-        // This should never happen since we verified earlier whether file scanning has completed
-        throw new Error(`Detected undefined scan status for file path ${item.attachmentPath}`);
-      }
-
       const attachmentName = item.attachmentPath.split("/").pop();
 
       if (attachmentName === undefined) {
@@ -49,6 +44,7 @@ export default async (
     });
 
     const files = await retrieveFilesFromReliabilityStorage(submissionAttachmentPaths);
+
     const attachFileParameters = submissionAttachments.reduce((acc, current, index) => {
       return {
         [`file${index}`]: {

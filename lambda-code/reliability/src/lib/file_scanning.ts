@@ -9,7 +9,7 @@ export class FileScanningCompletionError extends Error {
 
 export type SubmissionAttachmentWithScanStatus = {
   attachmentPath: string;
-  scanStatus: string | undefined;
+  scanStatus: string;
 };
 
 export async function getAllSubmissionAttachmentScanStatuses(
@@ -25,21 +25,20 @@ export async function getAllSubmissionAttachmentScanStatuses(
   return Promise.all(submissionAttachmentScanStatusQueries);
 }
 
-export function haveAllSubmissionAttachmentsBeenScanned(
-  attachmentsWithScanStatuses: SubmissionAttachmentWithScanStatus[]
-): boolean {
-  return attachmentsWithScanStatuses.every((item) => item.scanStatus !== undefined);
-}
-
-async function getSubmissionAttachmentScanStatus(
-  attachmentPath: string
-): Promise<string | undefined> {
+async function getSubmissionAttachmentScanStatus(attachmentPath: string): Promise<string> {
   return getFileMetaData(attachmentPath)
     .then((tags) => {
-      return tags.find((tag) => tag.Key === "GuardDutyMalwareScanStatus")?.Value;
+      const guardDutyScanStatus = tags.find(
+        (tag) => tag.Key === "GuardDutyMalwareScanStatus"
+      )?.Value;
+
+      if (guardDutyScanStatus === undefined) {
+        throw new Error(`Detected undefined scan status for file path ${attachmentPath}`);
+      }
+
+      return guardDutyScanStatus;
     })
     .catch((error) => {
-      console.error(`Error retrieving scan status for file: ${(error as Error).message}`);
-      return undefined;
+      throw new Error(`Error retrieving scan status for file: ${(error as Error).message}`);
     });
 }

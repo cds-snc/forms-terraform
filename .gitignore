@@ -75,3 +75,6 @@ aws/vpn/certificates
 
 # Malware Testing Files
 malware_testing
+
+# Yarn
+install-state.gz
