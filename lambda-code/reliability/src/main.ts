@@ -3,11 +3,7 @@ import sendToNotify from "@lib/notifyProcessing.js";
 import sendToVault from "@lib/vaultProcessing.js";
 import { getTemplateInfo } from "@lib/templates.js";
 import { getSubmission } from "@lib/dataLayer.js";
-import {
-  FileScanningCompletionError,
-  getAllSubmissionAttachmentScanStatuses,
-} from "@lib/file_scanning.js";
-
+import { getAllSubmissionAttachmentScanStatuses } from "@lib/file_scanning.js";
 import { addAllSubmissionAttachmentsChecksums } from "@lib/file_checksum.js";
 
 export const handler: Handler = async (event: SQSEvent) => {
@@ -79,18 +75,19 @@ export const handler: Handler = async (event: SQSEvent) => {
       throw new Error(`No associated form template (ID: ${formID}) exist in the database.`);
     }
 
-    // Verify if file scanning is required and if it has been completed
     const submissionAttachmentsWithScanStatuses = await getAllSubmissionAttachmentScanStatuses(
       fileKeys
-    )
-      .then((submissionScanStatuses) => {
-        return addAllSubmissionAttachmentsChecksums(submissionScanStatuses);
-      })
-      .catch(() => {
-        throw new FileScanningCompletionError(
-          `File scanning for submission ID ${submissionID} is not completed.`
-        );
-      });
+    ).catch(() => {
+      throw new Error(
+        `File scanning for submission ID ${submissionID} is not completed or we failed to retrieve the scan status`
+      );
+    });
+
+    const submissionAttachmentsWithInformation = await addAllSubmissionAttachmentsChecksums(
+      submissionAttachmentsWithScanStatuses
+    ).catch(() => {
+      throw new Error(`Failed to retrieve checksum information for submission ID ${submissionID}`);
+    });
 
     /*
      Process submission to vault or Notify
@@ -107,7 +104,7 @@ export const handler: Handler = async (event: SQSEvent) => {
         submissionID,
         sendReceipt,
         formSubmission,
-        submissionAttachmentsWithScanStatuses,
+        submissionAttachmentsWithInformation,
         language,
         createdAt
       );
@@ -116,7 +113,7 @@ export const handler: Handler = async (event: SQSEvent) => {
         submissionID,
         sendReceipt,
         formSubmission,
-        submissionAttachmentsWithScanStatuses,
+        submissionAttachmentsWithInformation,
         formID,
         language,
         createdAt,
