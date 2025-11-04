@@ -145,6 +145,7 @@ export const getFileMetaData = async (filePath: string) => {
 
   return metadata;
 };
+
 export async function getObjectFirst100BytesInReliabilityBucket(
   objectKey: string
 ): Promise<Uint8Array<ArrayBufferLike>> {

@@ -3,7 +3,7 @@ import convertMessage from "./markdown.js";
 import { notifyProcessed } from "./dataLayer.js";
 import { retrieveFilesFromReliabilityStorage } from "./s3FileInput.js";
 import { FormSubmission } from "./types.js";
-import { SubmissionAttachmentWithScanStatus } from "./file_scanning.js";
+import { SubmissionAttachmentInformation } from "./file_checksum.js";
 
 const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
   process.env.NOTIFY_API_KEY ?? ""
@@ -13,7 +13,7 @@ export default async (
   submissionID: string,
   sendReceipt: string,
   formSubmission: FormSubmission,
-  submissionAttachmentsWithScanStatuses: SubmissionAttachmentWithScanStatus[],
+  submissionAttachmentsWithInformation: SubmissionAttachmentInformation[],
   language: string,
   createdAt: string
 ) => {
@@ -26,11 +26,11 @@ export default async (
       throw Error("Email address is missing or empty.");
     }
 
-    const submissionAttachmentPaths = submissionAttachmentsWithScanStatuses.map(
+    const submissionAttachmentPaths = submissionAttachmentsWithInformation.map(
       (item) => item.attachmentPath
     );
 
-    const submissionAttachments = submissionAttachmentsWithScanStatuses.map((item) => {
+    const submissionAttachments = submissionAttachmentsWithInformation.map((item) => {
       const attachmentName = item.attachmentPath.split("/").pop();
 
       if (attachmentName === undefined) {

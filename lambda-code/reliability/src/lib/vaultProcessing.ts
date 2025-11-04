@@ -13,20 +13,20 @@ export default async (
   submissionID: string,
   sendReceipt: string,
   formSubmission: FormSubmission,
-  submissionAttachmentsWithScanStatuses: SubmissionAttachmentInformation[],
+  submissionAttachmentsWithInformation: SubmissionAttachmentInformation[],
   formID: string,
   language: string,
   createdAt: string,
   securityAttribute: string,
   formSubmissionHash: string
 ) => {
-  const submissionAttachmentPaths = submissionAttachmentsWithScanStatuses.map(
+  const submissionAttachmentPaths = submissionAttachmentsWithInformation.map(
     (item) => item.attachmentPath
   );
 
   try {
     const submissionAttachmentsWithScanStatusesAfterInternalValidation =
-      await verifyAndFlagMaliciousSubmissionAttachments(submissionAttachmentsWithScanStatuses);
+      await verifyAndFlagMaliciousSubmissionAttachments(submissionAttachmentsWithInformation);
 
     const submissionAttachments = buildSubmissionAttachmentJsonRecord(
       submissionAttachmentsWithScanStatusesAfterInternalValidation
