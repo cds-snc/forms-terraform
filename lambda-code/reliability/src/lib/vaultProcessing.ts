@@ -1,5 +1,6 @@
 import { saveToVault, removeSubmission } from "./dataLayer.js";
-import { SubmissionAttachmentWithScanStatus } from "./file_scanning.js";
+import { SubmissionAttachmentInformation } from "./file_checksum.js";
+import {} from "./file_scanning.js";
 import { isFileValid } from "./fileValidation.js";
 import {
   copyFilesFromReliabilityToVaultStorage,
@@ -12,20 +13,20 @@ export default async (
   submissionID: string,
   sendReceipt: string,
   formSubmission: FormSubmission,
-  submissionAttachmentsWithScanStatuses: SubmissionAttachmentWithScanStatus[],
+  submissionAttachmentsWithInformation: SubmissionAttachmentInformation[],
   formID: string,
   language: string,
   createdAt: string,
   securityAttribute: string,
   formSubmissionHash: string
 ) => {
-  const submissionAttachmentPaths = submissionAttachmentsWithScanStatuses.map(
+  const submissionAttachmentPaths = submissionAttachmentsWithInformation.map(
     (item) => item.attachmentPath
   );
 
   try {
     const submissionAttachmentsWithScanStatusesAfterInternalValidation =
-      await verifyAndFlagMaliciousSubmissionAttachments(submissionAttachmentsWithScanStatuses);
+      await verifyAndFlagMaliciousSubmissionAttachments(submissionAttachmentsWithInformation);
 
     const submissionAttachments = buildSubmissionAttachmentJsonRecord(
       submissionAttachmentsWithScanStatusesAfterInternalValidation
@@ -87,8 +88,8 @@ export default async (
 };
 
 async function verifyAndFlagMaliciousSubmissionAttachments(
-  submissionAttachmentsWithScanStatuses: SubmissionAttachmentWithScanStatus[]
-): Promise<SubmissionAttachmentWithScanStatus[]> {
+  submissionAttachmentsWithScanStatuses: SubmissionAttachmentInformation[]
+): Promise<SubmissionAttachmentInformation[]> {
   return Promise.all(
     submissionAttachmentsWithScanStatuses.map(async (item) => {
       const attachmentFirst100Bytes = await getObjectFirst100BytesInReliabilityBucket(
@@ -101,7 +102,7 @@ async function verifyAndFlagMaliciousSubmissionAttachments(
       const scanStatus = isFileValidResult ? item.scanStatus : "THREATS_FOUND";
 
       return {
-        attachmentPath: item.attachmentPath,
+        ...item,
         scanStatus: scanStatus,
       };
     })
@@ -109,7 +110,7 @@ async function verifyAndFlagMaliciousSubmissionAttachments(
 }
 
 function buildSubmissionAttachmentJsonRecord(
-  submissionAttachmentsWithScanStatuses: SubmissionAttachmentWithScanStatus[]
+  submissionAttachmentsWithScanStatuses: SubmissionAttachmentInformation[]
 ): string {
   return JSON.stringify(
     submissionAttachmentsWithScanStatuses.map((item) => {
@@ -126,6 +127,7 @@ function buildSubmissionAttachmentJsonRecord(
         name: attachmentName,
         path: item.attachmentPath,
         scanStatus: item.scanStatus,
+        md5: item.md5,
       };
     })
   );

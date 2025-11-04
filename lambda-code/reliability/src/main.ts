@@ -3,10 +3,8 @@ import sendToNotify from "@lib/notifyProcessing.js";
 import sendToVault from "@lib/vaultProcessing.js";
 import { getTemplateInfo } from "@lib/templates.js";
 import { getSubmission } from "@lib/dataLayer.js";
-import {
-  FileScanningCompletionError,
-  getAllSubmissionAttachmentScanStatuses,
-} from "@lib/file_scanning.js";
+import { getAllSubmissionAttachmentScanStatuses } from "@lib/file_scanning.js";
+import { addAllSubmissionAttachmentsChecksums } from "@lib/file_checksum.js";
 
 export const handler: Handler = async (event: SQSEvent) => {
   const message = JSON.parse(event.Records[0].body);
@@ -79,10 +77,20 @@ export const handler: Handler = async (event: SQSEvent) => {
 
     const submissionAttachmentsWithScanStatuses = await getAllSubmissionAttachmentScanStatuses(
       fileKeys
-    ).catch(() => {
-      throw new FileScanningCompletionError(
-        `File scanning for submission ID ${submissionID} is not completed.`
+    ).catch((error) => {
+      // Not creating a message to slack and only writing to console.  The next error thrown in the chain will cause a Slack message.
+      console.warn(error.message);
+      throw new Error(
+        `File scanning for submission ID ${submissionID} is not completed or we failed to retrieve the scan status`
       );
+    });
+
+    const submissionAttachmentsWithInformation = await addAllSubmissionAttachmentsChecksums(
+      submissionAttachmentsWithScanStatuses
+    ).catch((error) => {
+      // Not creating a message to slack and only writing to console.  The next error thrown in the chain will cause a Slack message.
+      console.warn(error.message);
+      throw new Error(`Failed to retrieve checksum information for submission ID ${submissionID}`);
     });
 
     /*
@@ -100,7 +108,7 @@ export const handler: Handler = async (event: SQSEvent) => {
         submissionID,
         sendReceipt,
         formSubmission,
-        submissionAttachmentsWithScanStatuses,
+        submissionAttachmentsWithInformation,
         language,
         createdAt
       );
@@ -109,7 +117,7 @@ export const handler: Handler = async (event: SQSEvent) => {
         submissionID,
         sendReceipt,
         formSubmission,
-        submissionAttachmentsWithScanStatuses,
+        submissionAttachmentsWithInformation,
         formID,
         language,
         createdAt,

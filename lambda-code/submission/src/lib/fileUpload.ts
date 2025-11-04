@@ -124,15 +124,17 @@ const generateSignedUrl = async (key: string, contentMD5: string) => {
     throw new Error(`Content MD5 checksum is required to generate signed URL. $_key: ${key}`);
   }
 
+  const base64ContentMD5 = Buffer.from(contentMD5, "hex").toString("base64");
+
   const fields: Record<string, string> = {
     acl: "bucket-owner-full-control",
     "x-amz-meta-md5": contentMD5,
-    "Content-MD5": contentMD5,
+    "Content-MD5": base64ContentMD5,
   };
 
   const CONDITIONS: Conditions[] = [
     ["content-length-range", 0, S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES],
-    { "Content-MD5": contentMD5 },
+    { "Content-MD5": base64ContentMD5 },
   ];
 
   return createPresignedPost(s3Client, {
