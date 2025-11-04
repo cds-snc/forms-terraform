@@ -2,7 +2,7 @@ import type { SubmissionAttachmentWithScanStatus } from "./file_scanning.js";
 import { getFileMetaData } from "./s3FileInput.js";
 
 export interface SubmissionAttachmentInformation extends SubmissionAttachmentWithScanStatus {
-  md5: string | undefined;
+  md5?: string;
 }
 
 export const addAllSubmissionAttachmentsChecksums = async (

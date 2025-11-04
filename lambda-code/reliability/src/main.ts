@@ -77,7 +77,9 @@ export const handler: Handler = async (event: SQSEvent) => {
 
     const submissionAttachmentsWithScanStatuses = await getAllSubmissionAttachmentScanStatuses(
       fileKeys
-    ).catch(() => {
+    ).catch((error) => {
+      // Not creating a message to slack and only writing to console.  The next error thrown in the chain will cause a Slack message.
+      console.warn(error.message);
       throw new Error(
         `File scanning for submission ID ${submissionID} is not completed or we failed to retrieve the scan status`
       );
@@ -85,7 +87,9 @@ export const handler: Handler = async (event: SQSEvent) => {
 
     const submissionAttachmentsWithInformation = await addAllSubmissionAttachmentsChecksums(
       submissionAttachmentsWithScanStatuses
-    ).catch(() => {
+    ).catch((error) => {
+      // Not creating a message to slack and only writing to console.  The next error thrown in the chain will cause a Slack message.
+      console.warn(error.message);
       throw new Error(`Failed to retrieve checksum information for submission ID ${submissionID}`);
     });
 
