@@ -2,7 +2,7 @@
   {
     "name": "aws-otel-collector",
     "image": "amazon/aws-otel-collector",
-    "command": ["--config=/etc/ecs/ecs-default-config.yaml"],
+    "command": ["--config=/etc/ecs/ecs-xray.yaml"],
     "essential": true,
     "logConfiguration": {
       "logDriver": "awslogs",
