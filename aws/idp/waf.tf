@@ -1,7 +1,8 @@
 locals {
   excluded_common_rules = [
-    "EC2MetaDataSSRF_BODY",          # Rule is blocking IdP OIDC app creation
-    "EC2MetaDataSSRF_QUERYARGUMENTS" # Rule is blocking IdP OIDC login
+    "EC2MetaDataSSRF_BODY",           # Rule is blocking IdP OIDC app creation
+    "EC2MetaDataSSRF_QUERYARGUMENTS", # Rule is blocking IdP OIDC login
+    "SizeRestrictions_BODY"           # Default size rule of 8Kb is too restrictive
   ]
 }
 
@@ -23,21 +24,6 @@ resource "aws_wafv2_web_acl" "idp" {
 
     statement {
       or_statement {
-        statement {
-          size_constraint_statement {
-            field_to_match {
-              body {
-                oversize_handling = "MATCH"
-              }
-            }
-            comparison_operator = "GT"
-            size                = 8192
-            text_transformation {
-              priority = 0
-              type     = "NONE"
-            }
-          }
-        }
         statement {
           size_constraint_statement {
             field_to_match {
