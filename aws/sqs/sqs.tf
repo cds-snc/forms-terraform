@@ -8,7 +8,7 @@ resource "aws_sqs_queue" "reliability_queue" {
   max_message_size           = 262144
   message_retention_seconds  = 345600
   receive_wait_time_seconds  = 0
-  visibility_timeout_seconds = 1800
+  visibility_timeout_seconds = 1830
   # https://aws.amazon.com/premiumsupport/knowledge-center/lambda-function-process-sqs-messages/
   # The SQS visibility timeout must be at least six times the total of the function timeout and the batch window timeout.
   # Lambda function timeout is 300.
@@ -38,7 +38,7 @@ resource "aws_sqs_queue" "reliability_reprocessing_queue" {
   max_message_size           = 262144
   message_retention_seconds  = 172800 // 2 days
   receive_wait_time_seconds  = 0
-  visibility_timeout_seconds = 1800
+  visibility_timeout_seconds = 1830
   # https://aws.amazon.com/premiumsupport/knowledge-center/lambda-function-process-sqs-messages/
   # The SQS visibility timeout must be at least six times the total of the function timeout and the batch window timeout.
   # Lambda function timeout is 300.
