@@ -9,14 +9,14 @@ import {
 import { v4 } from "uuid";
 import {
   FormElement,
-  FormSubmission,
   Responses,
   Response,
   DateFormat,
   AddressElements,
-  AddressCompleteProps,
+  AddressComponents,
   FileInputResponse,
-} from "./types.js";
+} from "@gcforms/types";
+import { FormSubmission } from "./types.js";
 import { getFormattedDateFromObject } from "./utils.js";
 
 const db = DynamoDBDocumentClient.from(
@@ -384,7 +384,7 @@ function handleAddressCompleteResponse(
   response: Response,
   collector: string[],
   language: string,
-  adddressComponents?: AddressCompleteProps
+  adddressComponents?: AddressComponents
 ) {
   if (response !== undefined && response !== null && response !== "") {
     const address = JSON.parse(response as string) as AddressElements;
