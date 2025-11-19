@@ -41,10 +41,11 @@ resource "aws_lambda_function" "reliability" {
 }
 
 resource "aws_lambda_event_source_mapping" "reliability" {
-  event_source_arn = var.sqs_reliability_queue_arn
-  function_name    = aws_lambda_function.reliability.arn
-  batch_size       = 10
-  enabled          = true
+  event_source_arn        = var.sqs_reliability_queue_arn
+  function_name           = aws_lambda_function.reliability.arn
+  function_response_types = ["ReportBatchItemFailures"]
+  batch_size              = 10
+  enabled                 = true
 
   scaling_config {
     maximum_concurrency = 150
