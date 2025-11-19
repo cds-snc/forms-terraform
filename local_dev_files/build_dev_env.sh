@@ -72,8 +72,8 @@ fi
 
 if [ -z "$MODULE_NAME" ]; then
   printf "${greenColor}=> Building All Terragrunt Modules${reset}\n"
-  terragrunt run-all apply \
-    --non-interactive --log-level info -auto-approve --queue-strict-include \
+  terragrunt run --all \
+    --non-interactive --log-level info --queue-strict-include \
     --working-dir $basedir/env \
     --queue-include-dir $basedir/env/cloud/kms \
     --queue-include-dir $basedir/env/cloud/network \
@@ -87,7 +87,8 @@ if [ -z "$MODULE_NAME" ]; then
     --queue-include-dir $basedir/env/cloud/dynamodb \
     --queue-include-dir $basedir/env/cloud/lambdas \
     --queue-include-dir $basedir/env/cloud/vpn \
-    --queue-include-dir $basedir/env/cloud/guard_duty
+    --queue-include-dir $basedir/env/cloud/guard_duty \
+    apply
 else
   printf "${greenColor}=> Only building ${MODULE_NAME} Terragrunt Module${reset}\n"
   cd $basedir/env/cloud/$MODULE_NAME
