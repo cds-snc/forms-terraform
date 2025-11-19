@@ -6,6 +6,9 @@ resource "aws_lambda_function" "reliability" {
   timeout       = 300
   memory_size   = 256
 
+  // Ensure that the Reliability Lambda always has a pool of at least 150 / 1000 execution environments
+  reserved_concurrent_executions = 150
+
   // Even in development mode this lambda should be attached to the VPC in order to connecto the DB
   // In development mode the lambda cannot sent emails as there is no internet access
   vpc_config {
@@ -38,10 +41,12 @@ resource "aws_lambda_function" "reliability" {
 }
 
 resource "aws_lambda_event_source_mapping" "reliability" {
-  event_source_arn = var.sqs_reliability_queue_arn
-  function_name    = aws_lambda_function.reliability.arn
-  batch_size       = 1
-  enabled          = true
+  event_source_arn                   = var.sqs_reliability_queue_arn
+  function_name                      = aws_lambda_function.reliability.arn
+  function_response_types            = ["ReportBatchItemFailures"]
+  batch_size                         = 50
+  maximum_batching_window_in_seconds = 5
+  enabled                            = true
 
   scaling_config {
     maximum_concurrency = 150
@@ -49,13 +54,16 @@ resource "aws_lambda_event_source_mapping" "reliability" {
 }
 
 resource "aws_lambda_event_source_mapping" "reprocess_submission" {
-  event_source_arn = var.sqs_reliability_reprocessing_queue_arn
-  function_name    = aws_lambda_function.reliability.arn
-  batch_size       = 1
-  enabled          = true
+  event_source_arn                   = var.sqs_reliability_reprocessing_queue_arn
+  function_name                      = aws_lambda_function.reliability.arn
+  function_response_types            = ["ReportBatchItemFailures"]
+  batch_size                         = 50
+  maximum_batching_window_in_seconds = 5
+  enabled                            = true
 
   scaling_config {
-    maximum_concurrency = 150
+    // Ensure that new submissions are not blocked by trying to reprocess a large block of failed submissions
+    maximum_concurrency = 50
   }
 }
 

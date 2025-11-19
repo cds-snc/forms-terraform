@@ -16,6 +16,9 @@ resource "aws_lambda_function" "submission" {
   timeout       = 60
   memory_size   = 256
 
+  // Ensure that the Submisison Lambda always has a pool of at least 150 / 1000 execution environments
+  reserved_concurrent_executions = 150
+
   lifecycle {
     ignore_changes = [image_uri]
   }

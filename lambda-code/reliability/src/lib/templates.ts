@@ -1,4 +1,4 @@
-import { FormProperties } from "./types.js";
+import { FormProperties } from "@gcforms/types";
 import { PostgresConnector } from "@gcforms/connectors";
 
 export type TemplateInfo = {

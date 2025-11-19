@@ -7,8 +7,28 @@ import { getAllSubmissionAttachmentScanStatuses } from "@lib/file_scanning.js";
 import { addAllSubmissionAttachmentsChecksums } from "@lib/file_checksum.js";
 
 export const handler: Handler = async (event: SQSEvent) => {
-  const message = JSON.parse(event.Records[0].body);
+  const batch = event.Records.map((message) => {
+    const { messageId, body } = message;
+    return { messageId, message: JSON.parse(body) };
+  });
 
+  // We can use Promise.all because messageProcessor will never throw and always return a value
+  const results = await Promise.all(batch.map((item) => messageProcessor(item)));
+
+  const batchItemFailures = results
+    .filter((result) => !result.status)
+    .map((result) => ({ itemIdentifier: result.messageId }));
+
+  return { batchItemFailures };
+};
+
+const messageProcessor = async ({
+  messageId,
+  message,
+}: {
+  messageId: string;
+  message: { submissionID: string };
+}) => {
   let sendReceipt = null;
 
   try {
@@ -43,7 +63,6 @@ export const handler: Handler = async (event: SQSEvent) => {
           msg: "Submission will not be processed because it could not be found in the database or has already been processed.",
         })
       );
-      return { status: true };
     }
 
     if (formID === null || typeof formID === "undefined") {
@@ -104,7 +123,7 @@ export const handler: Handler = async (event: SQSEvent) => {
     */
 
     if (formSubmission.deliveryOption) {
-      return await sendToNotify(
+      await sendToNotify(
         submissionID,
         sendReceipt,
         formSubmission,
@@ -112,8 +131,9 @@ export const handler: Handler = async (event: SQSEvent) => {
         language,
         createdAt
       );
+      return { status: true, messageId };
     } else {
-      return await sendToVault(
+      await sendToVault(
         submissionID,
         sendReceipt,
         formSubmission,
@@ -124,6 +144,7 @@ export const handler: Handler = async (event: SQSEvent) => {
         securityAttribute,
         formSubmissionHash
       );
+      return { status: true, messageId };
     }
   } catch (error) {
     console.warn(
@@ -141,6 +162,6 @@ export const handler: Handler = async (event: SQSEvent) => {
     // Log full error to console, it will not be sent to Slack
     console.warn(error);
 
-    throw new Error(JSON.stringify({ status: "failed" }));
+    return { status: false, messageId };
   }
 };

@@ -1,4 +1,4 @@
-import { DateFormat, DateObject, Response } from "./types.js";
+import { DateFormat, DateObject, Response } from "@gcforms/types";
 
 /**
  * Utility function to use when rendering a formatted date string
