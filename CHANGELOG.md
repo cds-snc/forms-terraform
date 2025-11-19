@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.41.0](https://github.com/cds-snc/forms-terraform/compare/v3.40.1...v3.41.0) (2025-11-19)
+
+
+### Features
+
+* Reliability queue lambda batching ([#1158](https://github.com/cds-snc/forms-terraform/issues/1158)) ([05e8bb4](https://github.com/cds-snc/forms-terraform/commit/05e8bb4c312a926e211c9a5afec26e97bbde56e9))
+
 ## [3.40.1](https://github.com/cds-snc/forms-terraform/compare/v3.40.0...v3.40.1) (2025-11-17)
 
 
