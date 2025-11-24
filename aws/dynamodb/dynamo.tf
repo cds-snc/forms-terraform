@@ -43,31 +43,6 @@ resource "aws_dynamodb_table" "reliability_queue" {
   }
 }
 
-resource "aws_dynamodb_table" "notification" {
-  name                        = "Notification"
-  billing_mode                = "PAY_PER_REQUEST"
-  hash_key                    = "notificationId"
-  deletion_protection_enabled = var.env != "development"
-
-  attribute {
-    name = "notificationId"
-    type = "S"
-  }
-
-  ttl {
-    enabled        = true
-    attribute_name = "TTL"
-  }
-
-  server_side_encryption {
-    enabled     = true
-    kms_key_arn = var.kms_key_dynamodb_arn
-  }
-
-  point_in_time_recovery {
-    enabled = var.env != "development"
-  }
-}
 resource "aws_dynamodb_table" "vault" {
   # checkov:skip=CKV_AWS_28: 'point in time recovery' is set to true for staging and production
   name                        = "Vault"
@@ -243,3 +218,28 @@ resource "aws_dynamodb_table" "api_audit_logs" {
   }
 }
 
+resource "aws_dynamodb_table" "notification" {
+  name                        = "Notification"
+  billing_mode                = "PAY_PER_REQUEST"
+  hash_key                    = "notificationId"
+  deletion_protection_enabled = var.env != "development"
+
+  attribute {
+    name = "notificationId"
+    type = "S"
+  }
+
+  ttl {
+    enabled        = true
+    attribute_name = "TTL"
+  }
+
+  server_side_encryption {
+    enabled     = true
+    kms_key_arn = var.kms_key_dynamodb_arn
+  }
+
+  point_in_time_recovery {
+    enabled = var.env != "development"
+  }
+}
