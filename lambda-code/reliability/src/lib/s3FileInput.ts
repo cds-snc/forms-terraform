@@ -4,6 +4,7 @@ import {
   GetObjectTaggingCommand,
   CopyObjectCommand,
   DeleteObjectCommand,
+  HeadObjectCommand,
 } from "@aws-sdk/client-s3";
 import { NodeJsClient } from "@smithy/types";
 
@@ -102,7 +103,7 @@ export async function removeFilesFromReliabilityStorage(filePaths: string[]) {
   }
 }
 
-export const getFileMetaData = async (filePath: string) => {
+export const getFileTags = async (filePath: string) => {
   try {
     const response = await s3Client.send(
       new GetObjectTaggingCommand({
@@ -110,15 +111,57 @@ export const getFileMetaData = async (filePath: string) => {
         Key: filePath,
       })
     );
-    const metadata = response.TagSet;
+    const tags = response.TagSet;
 
-    if (!metadata) {
-      throw new Error(`No metadata found for file: ${filePath}`);
+    if (!tags) {
+      throw new Error(`No tags found for file: ${filePath}`);
     }
 
-    return metadata;
+    return tags;
   } catch (error) {
     console.error(error);
-    throw new Error(`Failed to retrieve metadata for file: ${filePath}`);
+    throw new Error(`Failed to retrieve tags for file: ${filePath}`);
   }
 };
+
+export const getFileMetaData = async (filePath: string) => {
+  const response = await s3Client
+    .send(
+      new HeadObjectCommand({
+        Bucket: reliabilityBucketName,
+        Key: filePath,
+      })
+    )
+    .catch((error) => {
+      console.error(error);
+      throw new Error(`Failed to retrieve metadata for file: ${filePath}`);
+    });
+
+  const metadata = response.Metadata;
+
+  if (!metadata) {
+    throw new Error(`No metadata found for file: ${filePath}`);
+  }
+
+  return metadata;
+};
+
+export async function getObjectFirst100BytesInReliabilityBucket(
+  objectKey: string
+): Promise<Uint8Array<ArrayBufferLike>> {
+  const response = await s3Client.send(
+    new GetObjectCommand({
+      Bucket: reliabilityBucketName,
+      Key: objectKey,
+      Range: "bytes=0-99",
+    })
+  );
+
+  const bytes = await response.Body?.transformToByteArray();
+
+  if (bytes === undefined) {
+    throw new Error("Object first 100 bytes failed to be retrieved");
+  }
+
+  return bytes;
+}

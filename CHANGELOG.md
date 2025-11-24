@@ -1,5 +1,36 @@
 # Changelog
 
+## [3.40.1](https://github.com/cds-snc/forms-terraform/compare/v3.40.0...v3.40.1) (2025-11-17)
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#1149](https://github.com/cds-snc/forms-terraform/issues/1149)) ([6adbe45](https://github.com/cds-snc/forms-terraform/commit/6adbe45d7f7c269fbdf629423c12f62691b5aebf))
+* **deps:** lock file maintenance ([#1156](https://github.com/cds-snc/forms-terraform/issues/1156)) ([e90f179](https://github.com/cds-snc/forms-terraform/commit/e90f179424679073d6918cdd1c80945e53a96198))
+* **deps:** update all non-major github action dependencies ([#1148](https://github.com/cds-snc/forms-terraform/issues/1148)) ([bb54932](https://github.com/cds-snc/forms-terraform/commit/bb54932ae588efd79602c0175e272078cd1e2876))
+* **deps:** update all non-major github action dependencies ([#1155](https://github.com/cds-snc/forms-terraform/issues/1155)) ([30e478b](https://github.com/cds-snc/forms-terraform/commit/30e478bab249e4eb5c238a881eef5bba51ff531e))
+* **deps:** update ghcr.io/zitadel/zitadel docker tag to v3.4.4 ([#1154](https://github.com/cds-snc/forms-terraform/issues/1154)) ([f1fc7cb](https://github.com/cds-snc/forms-terraform/commit/f1fc7cbdec4ba72940ac7b1f4668d414743f8073))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1151](https://github.com/cds-snc/forms-terraform/issues/1151)) ([3c9f3c3](https://github.com/cds-snc/forms-terraform/commit/3c9f3c3b7a9af2e2f13d40876874d6fe94c03388))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1153](https://github.com/cds-snc/forms-terraform/issues/1153)) ([af8e24b](https://github.com/cds-snc/forms-terraform/commit/af8e24b321fdf3d1da14a616106d09eec4c2342a))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1157](https://github.com/cds-snc/forms-terraform/issues/1157)) ([4d4aa78](https://github.com/cds-snc/forms-terraform/commit/4d4aa787adb6bc03aa83dbba81ac0e8a34139d50))
+* update @gcforms/core package to version 2.0.1 to get latest allowed file type list ([#1152](https://github.com/cds-snc/forms-terraform/issues/1152)) ([b9cbd52](https://github.com/cds-snc/forms-terraform/commit/b9cbd525c14ffc228943781b36dff9b712698bba))
+
+## [3.40.0](https://github.com/cds-snc/forms-terraform/compare/v3.39.2...v3.40.0) (2025-11-04)
+
+
+### Features
+
+* add internal file validation layer ([#1138](https://github.com/cds-snc/forms-terraform/issues/1138)) ([7d867ce](https://github.com/cds-snc/forms-terraform/commit/7d867ce4590741963b922abae8616b3c3a9160a6))
+* Add md5 digest value to vault ([#1146](https://github.com/cds-snc/forms-terraform/issues/1146)) ([685e577](https://github.com/cds-snc/forms-terraform/commit/685e577c639715768cb90d0d1e4472faf955dbc6))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#1143](https://github.com/cds-snc/forms-terraform/issues/1143)) ([c80a887](https://github.com/cds-snc/forms-terraform/commit/c80a887e08ecdaeee6d36b56fc6640ec374466b4))
+* **deps:** update all non-major github action dependencies ([#1142](https://github.com/cds-snc/forms-terraform/issues/1142)) ([5c7e6a0](https://github.com/cds-snc/forms-terraform/commit/5c7e6a0393d7b41c9131daa92c717bb66ef5f6d1))
+* **deps:** update ghcr.io/zitadel/zitadel docker tag to v3.4.3 ([#1141](https://github.com/cds-snc/forms-terraform/issues/1141)) ([a50d8f8](https://github.com/cds-snc/forms-terraform/commit/a50d8f893f303d47a4981f7a83c32aa8d09565f6))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1145](https://github.com/cds-snc/forms-terraform/issues/1145)) ([eeedd08](https://github.com/cds-snc/forms-terraform/commit/eeedd08f97fd47640e1584221ab4357271bee0c4))
+
 ## [3.39.2](https://github.com/cds-snc/forms-terraform/compare/v3.39.1...v3.39.2) (2025-10-29)
 
 

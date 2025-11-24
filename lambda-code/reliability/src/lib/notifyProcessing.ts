@@ -3,7 +3,7 @@ import convertMessage from "./markdown.js";
 import { notifyProcessed } from "./dataLayer.js";
 import { retrieveFilesFromReliabilityStorage } from "./s3FileInput.js";
 import { FormSubmission } from "./types.js";
-import { SubmissionAttachmentWithScanStatus } from "./file_scanning.js";
+import { SubmissionAttachmentInformation } from "./file_checksum.js";
 
 const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
   process.env.NOTIFY_API_KEY ?? ""
@@ -13,7 +13,7 @@ export default async (
   submissionID: string,
   sendReceipt: string,
   formSubmission: FormSubmission,
-  submissionAttachmentsWithScanStatuses: SubmissionAttachmentWithScanStatus[],
+  submissionAttachmentsWithInformation: SubmissionAttachmentInformation[],
   language: string,
   createdAt: string
 ) => {
@@ -26,16 +26,11 @@ export default async (
       throw Error("Email address is missing or empty.");
     }
 
-    const submissionAttachmentPaths = submissionAttachmentsWithScanStatuses.map(
+    const submissionAttachmentPaths = submissionAttachmentsWithInformation.map(
       (item) => item.attachmentPath
     );
 
-    const submissionAttachments = submissionAttachmentsWithScanStatuses.map((item) => {
-      if (item.scanStatus === undefined) {
-        // This should never happen since we verified earlier whether file scanning has completed
-        throw new Error(`Detected undefined scan status for file path ${item.attachmentPath}`);
-      }
-
+    const submissionAttachments = submissionAttachmentsWithInformation.map((item) => {
       const attachmentName = item.attachmentPath.split("/").pop();
 
       if (attachmentName === undefined) {
@@ -49,6 +44,7 @@ export default async (
     });
 
     const files = await retrieveFilesFromReliabilityStorage(submissionAttachmentPaths);
+
     const attachFileParameters = submissionAttachments.reduce((acc, current, index) => {
       return {
         [`file${index}`]: {

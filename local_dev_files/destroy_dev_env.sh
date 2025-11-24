@@ -20,10 +20,9 @@ basedir=$(pwd)
 
 printf "${greenColor}=> Destroying AWS services${reset}\n"
 
-terragrunt run-all destroy \
+terragrunt run --all \
     --non-interactive --log-level warn \
     --queue-strict-include \
-    -auto-approve \
     --working-dir $basedir/env \
     --queue-include-dir $basedir/env/cloud/kms \
     --queue-include-dir $basedir/env/cloud/network \
@@ -37,7 +36,8 @@ terragrunt run-all destroy \
     --queue-include-dir $basedir/env/cloud/redis \
     --queue-include-dir $basedir/env/cloud/sns \
     --queue-include-dir $basedir/env/cloud/vpn \
-    --queue-include-dir $basedir/env/cloud/lambdas
+    --queue-include-dir $basedir/env/cloud/lambdas \
+    destroy
 
 # Remove all the terraform state and lock components
 printf "${greenColor}=> Destroying DynamoDB terraform lock table${reset}\n"
