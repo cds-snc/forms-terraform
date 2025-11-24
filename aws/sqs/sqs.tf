@@ -161,11 +161,11 @@ resource "aws_sqs_queue" "file_upload_deadletter_queue" {
 
 # Notification queue (no DLQ requirement)
 resource "aws_sqs_queue" "notification_queue" {
-  name                       = "notification_queue"
-  delay_seconds              = 0
-  max_message_size           = 262144
-  message_retention_seconds  = 172800 // 2 days
-  visibility_timeout_seconds = 180    // 6x planned lambda timeout (30s)
+  name                              = "notification_queue"
+  delay_seconds                     = 0
+  max_message_size                  = 262144
+  message_retention_seconds         = 172800 // 2 days
+  visibility_timeout_seconds        = 180    // 6x planned lambda timeout (30s)
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
 }
