@@ -93,6 +93,106 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   }
 
   rule {
+    name     = "BlockLargeRequestsToDataRetrievalApi"
+    priority = 2
+
+    action {
+      block {}
+    }
+
+    statement {
+      and_statement {
+        statement {
+          byte_match_statement {
+            positional_constraint = "EXACTLY"
+            field_to_match {
+              single_header {
+                name = "host"
+              }
+            }
+            search_string = var.domain_api
+            text_transformation {
+              priority = 0
+              type     = "LOWERCASE"
+            }
+          }
+        }
+        statement {
+          or_statement {
+            statement {
+              size_constraint_statement {
+                field_to_match {
+                  headers {
+                    match_pattern {
+                      all {}
+                    }
+                    match_scope       = "ALL"
+                    oversize_handling = "MATCH"
+                  }
+                }
+
+                comparison_operator = "GT"
+                size                = 1536
+
+                text_transformation {
+                  priority = 0
+                  type     = "NONE"
+                }
+              }
+            }
+
+            statement {
+              size_constraint_statement {
+                field_to_match {
+                  cookies {
+                    match_pattern {
+                      all {}
+                    }
+                    match_scope       = "ALL"
+                    oversize_handling = "MATCH"
+                  }
+                }
+
+                comparison_operator = "GT"
+                size                = 0
+
+                text_transformation {
+                  priority = 0
+                  type     = "NONE"
+                }
+              }
+            }
+
+            statement {
+              size_constraint_statement {
+                field_to_match {
+                  body {
+                    oversize_handling = "MATCH"
+                  }
+                }
+
+                comparison_operator = "GT"
+                size                = 1536
+
+                text_transformation {
+                  priority = 0
+                  type     = "NONE"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "BlockLargeRequestsToDataRetrievalApi"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
     name     = "RateLimitersRuleGroup"
     priority = 10
 
