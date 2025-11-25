@@ -38,6 +38,17 @@ export function isFileValid(
       return true;
     }
 
+    /**
+     * When magic-bytes.js detects a defined charset in a text based files it returns the information that the file is probably a TXT.
+     * Any text based files like CSV could have such encoding, and thus should be accepted in this situation.
+     */
+    if (
+      supportedMimeType.includes("text/") &&
+      detectedFileTypeInfo.find((info) => info.mime?.includes("text/") !== undefined)
+    ) {
+      return true;
+    }
+
     // magic-bytes.js sometimes does not return a MIME type but just a type name which almost always matches the extension name so we can use it to detect even more type mismatch occurrences
     const isDetectedFileTypeOrExtensionSupported =
       detectedFileTypeInfo.find(
