@@ -38,12 +38,12 @@ output "dynamodb_api_audit_logs_table_name" {
   value       = aws_dynamodb_table.api_audit_logs.name
 }
 
-output "notification_queue_arn" {
-  description = "The ARN of the notification SQS queue"
-  value       = aws_sqs_queue.notification_queue.arn
+output "dynamodb_notification_table_arn" {
+  description = "DynamoDB notification table ARN"
+  value       = aws_dynamodb_table.notification.arn
 }
 
-output "notification_queue_url" {
-  description = "The URL of the notification SQS queue"
-  value       = aws_sqs_queue.notification_queue.url
+output "dynamodb_notification_table_name" {
+  description = "DynamoDB notification table name"
+  value       = aws_dynamodb_table.notification.name
 }
