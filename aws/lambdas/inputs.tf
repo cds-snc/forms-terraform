@@ -281,3 +281,18 @@ variable "api_end_to_end_test_lambda_security_group_id" {
   description = "API end to end test Lambda security group ID"
   type        = string
 }
+
+variable "sqs_notification_queue_arn" {
+  description = "ARN of the notification SQS queue"
+  type        = string
+}
+
+variable "dynamodb_notification_table_arn" {
+  description = "ARN of the notification DynamoDB table"
+  type        = string
+}
+
+variable "dynamodb_notification_table_name" {
+  description = "Name of the notification DynamoDB table"
+  type        = string
+}

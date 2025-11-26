@@ -81,6 +81,7 @@ dependency "sqs" {
     sqs_reliability_dead_letter_queue_id   = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/reliability_deadletter_queue"
     sqs_app_audit_log_queue_arn            = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:audit_log_queue"
     sqs_api_audit_log_queue_arn            = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:api_audit_log_queue"
+    sqs_notification_queue_arn             = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:notification_queue"
   }
 }
 
@@ -119,6 +120,8 @@ dependency "dynamodb" {
     dynamodb_app_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/AuditLogs"
     dynamodb_api_audit_logs_table_name = "ApiAuditLogs"
     dynamodb_api_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ApiAuditLogs"
+    dynamodb_notification_table_name   = "Notification"
+    dynamodb_notification_table_arn    = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Notification"
   }
 }
 
@@ -179,7 +182,8 @@ dependency "ecr" {
       api-end-to-end-test-lambda      = "test_url",
       file-upload-processor-lambda    = "test_url",
       file-upload-cleanup-lambda      = "test_url",
-      load-testing-lambda             = "test_url"
+      load-testing-lambda             = "test_url",
+      notification-lambda             = "test_url"
     }
   }
 }
@@ -233,6 +237,8 @@ inputs = {
   dynamodb_app_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_app_audit_logs_arn
   dynamodb_api_audit_logs_table_name = dependency.dynamodb.outputs.dynamodb_api_audit_logs_table_name
   dynamodb_api_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_api_audit_logs_arn
+  dynamodb_notification_table_name   = dependency.dynamodb.outputs.dynamodb_notification_table_name
+  dynamodb_notification_table_arn    = dependency.dynamodb.outputs.dynamodb_notification_table_arn
 
   kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
   kms_key_dynamodb_arn   = dependency.kms.outputs.kms_key_dynamodb_arn
@@ -252,6 +258,7 @@ inputs = {
   sqs_reliability_dead_letter_queue_id   = dependency.sqs.outputs.sqs_reliability_dead_letter_queue_id
   sqs_app_audit_log_queue_arn            = dependency.sqs.outputs.sqs_app_audit_log_queue_arn
   sqs_api_audit_log_queue_arn            = dependency.sqs.outputs.sqs_api_audit_log_queue_arn
+  sqs_notification_queue_arn             = dependency.sqs.outputs.sqs_notification_queue_arn
 
   sns_topic_alert_critical_arn = dependency.sns.outputs.sns_topic_alert_critical_arn
 
