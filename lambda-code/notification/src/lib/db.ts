@@ -38,8 +38,7 @@ export const getNotification = async (notificationId: string) => {
 
 export const createNotification = async (notificationId:string, emails:string[], subject:string, body:string) => {
   try {
-    const timeStamp = Date.now();
-
+    // const timeStamp = Date.now();
     await dynamodbClient.send(
       new PutCommand({
         TableName: NOTIFICATION_TABLE,

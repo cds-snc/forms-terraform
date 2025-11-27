@@ -11,27 +11,25 @@ export const handler: SQSHandler = async (event) => {
       // TEMP
       console.log(`Processing notification: notificationId=${notificationId}, emails=${JSON.stringify(emails)}, subject=${subject}, body=${body}`);
 
-      // Case 1: send message immediately
+      // Case 1: send notification immediately
       if (!notificationId) {
         await sendNotification(emails, subject, body);
         return;
       } 
 
-      // Case 2: defer message and send after another proces has finished
+      // Case 2: defer notification and send after another proces has finished
       const notification = await getNotification(notificationId);
 
-      // New message, store for later
+      // New notification, store for later
       if (!notification) {
-        console.log("NOTIFICATION CASE 2 - creating new notification record");
-
         await createNotification(notificationId, emails, subject, body);
         return;
       } 
 
-      // Existing message, process completed, send it
+      // Existing notification, process completed, send it
       await sendNotification(emails, subject, body);
     }
   } catch (error) {
-    console.error('Error processing message:', error);
+    console.error('Error processing notification:', error);
   }
 };

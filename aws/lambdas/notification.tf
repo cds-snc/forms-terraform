@@ -4,7 +4,7 @@ resource "aws_lambda_function" "notification" {
   image_uri     = "${var.ecr_repository_lambda_urls["notification-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
-  timeout       = 300 # how long a lambda runs (not really a timeout :)
+  timeout       = 300 # lambda can run for up to 5 minutes
   memory_size   = 512
 
   dynamic "vpc_config" {
