@@ -222,11 +222,11 @@ resource "aws_dynamodb_table" "notification" {
   # checkov:skip=CKV_AWS_28: 'point in time recovery' is set to true for staging and production
   name                        = "Notification"
   billing_mode                = "PAY_PER_REQUEST"
-  hash_key                    = "notificationId"
+  hash_key                    = "NotificationID"
   deletion_protection_enabled = var.env != "development"
 
   attribute {
-    name = "notificationId"
+    name = "NotificationID"
     type = "S"
   }
 
