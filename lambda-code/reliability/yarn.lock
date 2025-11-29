@@ -1023,9 +1023,9 @@ __metadata:
   linkType: hard
 
 "@gcforms/types@npm:^1.0.23":
-  version: 1.0.24
-  resolution: "@gcforms/types@npm:1.0.24"
-  checksum: 10c0/2eb586124e0d3c066c977f6672f5c3baadf9f8e551af26b1dc8e76dea8daeb5d7cb7c07120228f945da4f06172724da83b9736d0cdfc137da5e17437e480fbe6
+  version: 1.0.25
+  resolution: "@gcforms/types@npm:1.0.25"
+  checksum: 10c0/3ed43e899e668667cc7fb718fa48370a974cd440099d531f94b572ca38cc81ca3c4aafe26da70197a9687b84a316f82f54582fa25ecdb1aaab97d4bb97939ee0
   languageName: node
   linkType: hard
 
@@ -1921,9 +1921,9 @@ __metadata:
   linkType: hard
 
 "@types/aws-lambda@npm:^8.10.155":
-  version: 8.10.158
-  resolution: "@types/aws-lambda@npm:8.10.158"
-  checksum: 10c0/a3615b12760f6a802680cd2422b2093974b3ae08fe89d14c77d5decac86f6f1e3c05361cfd13f546b57cf1a728700dd945e7ed14c7b30b0d2753e308967798fe
+  version: 8.10.159
+  resolution: "@types/aws-lambda@npm:8.10.159"
+  checksum: 10c0/87d2b01949c47a13f4b8c97372e4b028b3faa5d421a23770be47a86f8ebcd74e7eea0179b552055ca58383854141bafb039da2d90e4e2a030c3b8e9a743ed9ec
   languageName: node
   linkType: hard
 
