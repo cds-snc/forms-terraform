@@ -192,4 +192,6 @@ For more details see [Datalake Documentation](/docs/datalake.md)
 This Index supports the future feature of the GCForms API. Essentially the ability to retrieve responses without using the Application Interface.
 ![StatusCreatedAt Index](./readme_images/GSI_Vault_StatusCreatedAt.png)
 
-# Traduction en français à venir...
+### Adding a new Lambda
+
+Remember to first push the lambda to AWS ECR using `make lambda name=LAMBDA_NAME` or `make lambdas` before running `make build_env`.
