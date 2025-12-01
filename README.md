@@ -195,3 +195,5 @@ This Index supports the future feature of the GCForms API. Essentially the abili
 ### Adding a new Lambda
 
 Remember to first push the lambda to AWS ECR using `make lambda name=LAMBDA_NAME` or `make lambdas` before running `make build_env`.
+
+# Traduction en français à venir...
