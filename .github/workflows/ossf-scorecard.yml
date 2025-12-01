@@ -22,12 +22,12 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           persist-credentials: false
 
       - name: "Run analysis"
-        uses: ossf/scorecard-action@169c9b9248e36d400bebded8160c7fe2cbbc7762
+        uses: ossf/scorecard-action@4a0b87a20cc42672e6c80e82e63b5cd8f25f108a
         with:
           results_file: ossf-results.json
           results_format: json
@@ -41,7 +41,7 @@ jobs:
           jq -c '. + {"metadata_owner": "'$OWNER'", "metadata_repo": "'$REPO'", "metadata_query": "ossf"}' ossf-results.json > ossf-results-modified.json
 
       - name: "Post results to Sentinel"
-        uses: cds-snc/sentinel-forward-data-action@01db4a9203054ecdb60ff368c3cdfca71d62e85f
+        uses: cds-snc/sentinel-forward-data-action@717c852022dff8e51f34a4b59702f8d684b0eb3d
         with:
           file_name: ossf-results-modified.json
           log_type: GitHubMetadata_OSSF_Scorecard
