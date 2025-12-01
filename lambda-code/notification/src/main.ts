@@ -2,7 +2,11 @@ import { SQSHandler } from 'aws-lambda';
 import { sendNotification } from '@lib/email.js';
 import { createNotification, getNotification } from '@lib/db.js';
 
-// Next: add sqs notification event to reliablity queue (if no existing notificationId will be ignored) -- ok I think?
+// TODO:
+// - add sqs notification event to reliablity queue (if no existing notificationId will be ignored) -- ok I think?
+// - add notification to file production-lambda-functions.config.json
+// - should notification be added to aws/lambdas/cloudwatch.tf?
+// - should notification be added to aws/alarms/cloudwatch_app.tf?
 
 /**
  * SQS Lambda handler for sending email notifications.
@@ -24,22 +28,47 @@ export const handler: SQSHandler = async (event) => {
   try {
     for (const record of records) {
       const {notificationId, emails, subject, body} = JSON.parse(record.body);
-      
+
       // TEMP
       console.log(`Processing notification: notificationId=${notificationId}, emails=${JSON.stringify(emails)}, subject=${subject}, body=${body}`);
-
+      
       // Case 1: send notification immediately
       if (!notificationId) {
+        if (!validNotification(emails, subject, body)) {
+          console.warn(
+              JSON.stringify({
+                level: "warn",
+                emails: emails,
+                subject: subject,
+                body: subject,
+                msg: "notification handler will skip sending this notification because it received invalid parameters.",
+              })
+            );
+          return;
+        }
+
         await sendNotification(emails, subject, body);
         return;
       } 
 
-      // Cases 2 and 3: defer notification and send after another proces has finished
       const notification = await getNotification(notificationId);
 
       // Case 2: New notification, create and store for later
       if (!notification) {
-        await createNotification(notificationId, emails, subject, body);
+        if (!validNotification(emails, subject, body)) {
+          console.warn(
+              JSON.stringify({
+                level: "warn",
+                emails: emails,
+                subject: subject,
+                body: subject,
+                msg: "notification handler failed because it received invalid parameters.",
+              })
+            );
+          return;
+        }
+
+        await createNotification(notificationId, emails, subject, body); 
         return;
       } 
 
@@ -50,3 +79,7 @@ export const handler: SQSHandler = async (event) => {
     console.error('Error processing notification:', error);
   }
 };
+
+const validNotification = (emails: string[] | undefined, subject: string | undefined, body: string | undefined) => {
+  return Array.isArray(emails) && emails.length > 0 && subject && body;
+}

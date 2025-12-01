@@ -5,11 +5,6 @@ const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecre
 );
 
 export const sendNotification = async (emails:string[], subject:string, body:string) => {
-  if (!Array.isArray(emails) || emails.length === 0) {
-    console.warn("No email addresses provided, skipping notification.");
-    return;
-  }
-
   Promise.all(emails.map((emailAddress) => sendEmail(emailAddress, subject, body)));
 };
 
@@ -17,10 +12,12 @@ export const sendNotification = async (emails:string[], subject:string, body:str
 // TODO: Anything to configure on Notify side? 
 const sendEmail = async (emailAddress: string, subject: string, body: string) => {
   try {
-    await gcNotifyConnector.sendEmail(emailAddress, process.env.TEMPLATE_ID ?? "", {
-        subject: subject,
-        emailBody: body,
-    });
+    // TODO uncomment before merging to staging
+    // await gcNotifyConnector.sendEmail(emailAddress, process.env.TEMPLATE_ID ?? "", {
+    //     subject: subject,
+    //     emailBody: body,
+    // });
+    
     console.log(`Sent notification to ${emailAddress}`);
   } catch (error) {
     // Error Message will be sent to slack -- Will this be too verbose for slack?

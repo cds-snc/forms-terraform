@@ -19,21 +19,13 @@ export const getNotification = async (notificationId: string) => {
     );
 
     if (!result.Item) {
-        // TEMP
-      console.log(
-        JSON.stringify({
-          level: "info",
-          msg: `Notification ${notificationId} not found`,
-        })
-      );
-      
       return undefined;
     }
 
     return result.Item;
   } catch (error) {
     throw new Error(
-      `Failed to retrieve notification ${notificationId}. Reason: ${(error as Error).message}`
+      `Failed to check for notification with id ${notificationId}. Reason: ${(error as Error).message}`
     );
   }
 };
