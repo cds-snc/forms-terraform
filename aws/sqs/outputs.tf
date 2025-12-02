@@ -77,8 +77,3 @@ output "sqs_notification_queue_arn" {
   description = "Notification queue ARN"
   value       = aws_sqs_queue.notification_queue.arn
 }
-
-output "sqs_notification_queue_id" {
-  description = "Notification queue URL"
-  value       = aws_sqs_queue.notification_queue.id
-}

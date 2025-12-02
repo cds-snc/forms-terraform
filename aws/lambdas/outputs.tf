@@ -97,4 +97,3 @@ output "lambda_notification_function_name" {
   description = "Notification Lambda function name"
   value       = aws_lambda_function.notification.function_name
 }
-

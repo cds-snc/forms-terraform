@@ -56,6 +56,7 @@ export const createDeferredNotification = async (
   body: string
 ): Promise<void> => {
   try {
+    const ttl = Math.floor(Date.now() / 1000) + 86400; // 24 hours from now
     await dynamodbClient.send(
       new PutCommand({
         TableName: NOTIFICATION_TABLE,
@@ -64,6 +65,7 @@ export const createDeferredNotification = async (
           Emails: emails,
           Subject: subject,
           Body: body,
+          TTL: ttl,
         },
       })
     );

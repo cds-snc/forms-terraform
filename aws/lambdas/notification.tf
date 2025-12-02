@@ -17,10 +17,7 @@ resource "aws_lambda_function" "notification" {
 
   environment {
     variables = {
-      ENVIRONMENT                      = local.env
       REGION                           = var.region
-      DOMAIN                           = var.domains[0]
-      NOTIFICATION_QUEUE               = var.sqs_notification_queue_arn
       DYNAMODB_NOTIFICATION_TABLE_NAME = var.dynamodb_notification_table_name
       NOTIFY_API_KEY                   = var.notify_api_key_secret_arn
     }

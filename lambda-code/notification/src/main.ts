@@ -1,12 +1,16 @@
-import { SQSHandler } from 'aws-lambda';
+import { Handler, SQSEvent, SQSHandler } from 'aws-lambda';
 import { sendNotification } from '@lib/email.js';
 import { createDeferredNotification, consumeDeferredNotification } from '@lib/db.js';
 
+interface DeferredNotification {
+  NotificationID: string;
+  Emails: string[];
+  Subject: string;
+  Body: string;
+}
+
 // TODO:
-// - add sqs notification event to reliablity queue (if no existing notificationId will be ignored) -- ok I think?
-// - add notification to file production-lambda-functions.config.json
-// - should notification be added to aws/lambdas/cloudwatch.tf?
-// - should notification be added to aws/alarms/cloudwatch_app.tf?
+// - Reminder to add notification to file production-lambda-functions.config.json before merging to staging
 
 /**
  * SQS Lambda handler for sending email notifications.
@@ -16,10 +20,13 @@ import { createDeferredNotification, consumeDeferredNotification } from '@lib/db
  * If the notificationId is provided but not found in DB, create deferred notification.
  * If the notificationId is provided and found in DB, send the completed notification.
  */
-export const handler: SQSHandler = async (event) => {
+export const handler: Handler = async (event:SQSEvent) => {
   for (const record of event.Records) {
     try {
-      const { notificationId, emails, subject, body } = JSON.parse(record.body);
+      const { notificationId, emails, subject, body } = JSON.parse(record.body);  // Add type
+
+      // SQS cannot handle large messages, create record on app db connector side
+      // e.g. coat checking with ticket, so create ticket first, then process here
 
       if (!notificationId) {
         await handleImmediateNotification(emails, subject, body);
