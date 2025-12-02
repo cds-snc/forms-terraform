@@ -165,7 +165,7 @@ resource "aws_sqs_queue" "notification_queue" {
   name                              = "notification_queue"
   delay_seconds                     = 0
   max_message_size                  = 262144
-  message_retention_seconds         = 86400   // 24 hours
+  message_retention_seconds         = 86400 // 24 hours
   visibility_timeout_seconds        = 1800
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
