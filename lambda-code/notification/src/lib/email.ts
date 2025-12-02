@@ -1,12 +1,19 @@
 import { GCNotifyConnector } from "@gcforms/connectors";
 
+// TODO: Anything to configure on Notify side?
+// TODO: Remember to uncomment code below before merging to staging
+
 const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
   process.env.NOTIFY_API_KEY ?? ""
 );
 
-export const sendNotification = async (emails:string[], subject:string, body:string) => {
+export const sendNotification = async (
+  emails: string[],
+  subject: string,
+  body: string
+): Promise<void> => {
   await Promise.all(emails.map((emailAddress) => sendEmail(emailAddress, subject, body)));
-  
+
   console.log(
     JSON.stringify({
       level: "info",
@@ -16,9 +23,11 @@ export const sendNotification = async (emails:string[], subject:string, body:str
   );
 };
 
-// TODO: Probably don't need template_id?
-// TODO: Anything to configure on Notify side? 
-const sendEmail = async (emailAddress: string, subject: string, body: string) => {
+const sendEmail = async (
+  emailAddress: string, 
+  subject: string, 
+  body: string
+): Promise<void> => {
   try {
     // TODO uncomment before merging to staging
     // await gcNotifyConnector.sendEmail(emailAddress, process.env.TEMPLATE_ID ?? "", {
@@ -26,16 +35,15 @@ const sendEmail = async (emailAddress: string, subject: string, body: string) =>
     //     emailBody: body,
     // });
   } catch (error) {
-    // Error Message will be sent to slack -- Will this be too verbose for slack?
     console.error(
-        JSON.stringify({
-            level: "error",
-            msg: `Failed to send notification to: ${emailAddress}.`,
-            error: (error as Error).message,
-        })
+      JSON.stringify({
+        level: "error",
+        msg: `Failed to send notification to ${emailAddress}`,
+        error: (error as Error).message,
+      })
     );
 
     // Continue to send notifications even if one fails
     return;
   }
-}
+};

@@ -1,6 +1,6 @@
 import { SQSHandler } from 'aws-lambda';
 import { sendNotification } from '@lib/email.js';
-import { createDeferredNotification, getDeferredNotification } from '@lib/db.js';
+import { createDeferredNotification, consumeDeferredNotification } from '@lib/db.js';
 
 // TODO:
 // - add sqs notification event to reliablity queue (if no existing notificationId will be ignored) -- ok I think?
@@ -11,10 +11,10 @@ import { createDeferredNotification, getDeferredNotification } from '@lib/db.js'
 /**
  * SQS Lambda handler for sending email notifications.
  * 
- * Three cases:
- * 1. Send immediately: pass emails, subject, body (no notificationId)
- * 2. Queue up to send when process is complete: pass notificationId, emails, subject, body
- * 3. Queued notification process complete, send it: pass only notificationId
+ * The notificationId is used as a flag to determine the type of processing:
+ * If the notificationId is not provided, send immediately.
+ * If the notificationId is provided but not found in DB, create deferred notification.
+ * If the notificationId is provided and found in DB, send the completed notification.
  */
 export const handler: SQSHandler = async (event) => {
   for (const record of event.Records) {
@@ -26,14 +26,19 @@ export const handler: SQSHandler = async (event) => {
         return;
       }
 
-      const notification = await getDeferredNotification(notificationId);
+      const notification = await consumeDeferredNotification(notificationId);
 
       if (!notification) {
         await handleCreateDeferredNotification(notificationId, emails, subject, body);
         return;
       }
 
-      await handleCompletedNotification(notification.NotificationID, notification.Emails, notification.Subject, notification.Body);
+      await handleCompletedDeferredNotification(
+        notification.NotificationID,
+        notification.Emails,
+        notification.Subject,
+        notification.Body
+      );
     } catch (error) {
       console.error(
         JSON.stringify({
@@ -92,7 +97,7 @@ async function handleCreateDeferredNotification(
   await createDeferredNotification(notificationId, emails, subject, body);
 }
 
-async function handleCompletedNotification(
+async function handleCompletedDeferredNotification(
   notificationId: string,
   emails: string[],
   subject: string,
