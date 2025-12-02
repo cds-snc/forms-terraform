@@ -8,16 +8,16 @@ const dynamodbClient = new DynamoDBClient({
   region: REGION,
 });
 
-interface DeferredNotification {
+interface Notification {
   NotificationID: string;
   Emails: string[];
   Subject: string;
   Body: string;
 }
 
-export const consumeDeferredNotification = async (
+export const consumeNotification = async (
   notificationId: string
-): Promise<DeferredNotification | undefined> => {
+): Promise<Notification | undefined> => {
   try {
     const result = await dynamodbClient.send(
       new GetCommand({
@@ -41,7 +41,7 @@ export const consumeDeferredNotification = async (
       })
     );
 
-    return result.Item as DeferredNotification;
+    return result.Item as Notification;
   } catch (error) {
     throw new Error(
       `Failed to retrieve notification ${notificationId}. Reason: ${(error as Error).message}`
@@ -49,7 +49,7 @@ export const consumeDeferredNotification = async (
   }
 };
 
-export const createDeferredNotification = async (
+export const createNotification = async (
   notificationId: string,
   emails: string[],
   subject: string,

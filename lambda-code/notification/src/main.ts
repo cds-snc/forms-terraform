@@ -1,51 +1,50 @@
-import { Handler, SQSEvent, SQSHandler } from 'aws-lambda';
+import { Handler, SQSEvent } from 'aws-lambda';
 import { sendNotification } from '@lib/email.js';
-import { createDeferredNotification, consumeDeferredNotification } from '@lib/db.js';
+import { consumeNotification } from '@lib/db.js';
 
-interface DeferredNotification {
-  NotificationID: string;
-  Emails: string[];
-  Subject: string;
-  Body: string;
+// TODO: Reminder to add notification to file production-lambda-functions.config.json before merging to staging
+
+interface NotificationSQSMessage {
+  notificationId: string;
 }
 
-// TODO:
-// - Reminder to add notification to file production-lambda-functions.config.json before merging to staging
-
-/**
- * SQS Lambda handler for sending email notifications.
- * 
- * The notificationId is used as a flag to determine the type of processing:
- * If the notificationId is not provided, send immediately.
- * If the notificationId is provided but not found in DB, create deferred notification.
- * If the notificationId is provided and found in DB, send the completed notification.
- */
+// SQS Lambda handler for sending email notifications
 export const handler: Handler = async (event:SQSEvent) => {
   for (const record of event.Records) {
     try {
-      const { notificationId, emails, subject, body } = JSON.parse(record.body);  // Add type
+      const { notificationId } = JSON.parse(record.body) as NotificationSQSMessage;
 
-      // SQS cannot handle large messages, create record on app db connector side
-      // e.g. coat checking with ticket, so create ticket first, then process here
-
-      if (!notificationId) {
-        await handleImmediateNotification(emails, subject, body);
-        return;
-      }
-
-      const notification = await consumeDeferredNotification(notificationId);
+      // Retrieve and delete notification from DynamoDB
+      const notification = await consumeNotification(notificationId);
 
       if (!notification) {
-        await handleCreateDeferredNotification(notificationId, emails, subject, body);
-        return;
+        console.warn(
+          JSON.stringify({
+            level: "warn",
+            msg: "Notification not found in database",
+            notificationId,
+          })
+        );
+        continue;
       }
 
-      await handleCompletedDeferredNotification(
-        notification.NotificationID,
-        notification.Emails,
-        notification.Subject,
-        notification.Body
-      );
+      const { Emails: emails, Subject: subject, Body: body } = notification;
+
+      if (!isValidNotification(emails, subject, body)) {
+        console.warn(
+          JSON.stringify({
+            level: "warn",
+            msg: "Skipping notification due to invalid stored data",
+            notificationId,
+            hasEmails: Array.isArray(emails) && emails.length > 0,
+            hasSubject: !!subject,
+            hasBody: !!body,
+          })
+        );
+        continue;
+      }
+
+      await sendNotification(emails, subject, body);
     } catch (error) {
       console.error(
         JSON.stringify({
@@ -59,70 +58,6 @@ export const handler: Handler = async (event:SQSEvent) => {
     }
   }
 };
-
-async function handleImmediateNotification(
-  emails: string[],
-  subject: string,
-  body: string
-): Promise<void> {
-  if (!isValidNotification(emails, subject, body)) {
-    console.warn(
-      JSON.stringify({
-        level: "warn",
-        msg: "Skipping immediate notification due to invalid parameters",
-        hasEmails: !!emails,
-        hasSubject: !!subject,
-        hasBody: !!body,
-      })
-    );
-    return;
-  }
-
-  await sendNotification(emails, subject, body);
-}
-
-async function handleCreateDeferredNotification(
-  notificationId: string,
-  emails: string[],
-  subject: string,
-  body: string
-): Promise<void> {
-  if (!isValidNotification(emails, subject, body)) {
-    console.warn(
-      JSON.stringify({
-        level: "warn",
-        msg: "Failed to defer notification due to invalid parameters",
-        notificationId,
-        hasEmails: !!emails,
-        hasSubject: !!subject,
-        hasBody: !!body,
-      })
-    );
-    return;
-  }
-
-  await createDeferredNotification(notificationId, emails, subject, body);
-}
-
-async function handleCompletedDeferredNotification(
-  notificationId: string,
-  emails: string[],
-  subject: string,
-  body: string
-): Promise<void> {
-  if (!isValidNotification(emails, subject, body)) {
-    console.warn(
-      JSON.stringify({
-        level: "warn",
-        msg: "Skipping completed notification due to invalid stored data",
-        notificationId: notificationId,
-      })
-    );
-    return;
-  }
-
-  await sendNotification(emails, subject, body);
-}
 
 function isValidNotification(
   emails: string[] | undefined,

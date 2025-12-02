@@ -1,7 +1,7 @@
 import { GCNotifyConnector } from "@gcforms/connectors";
 
-// TODO: Anything to configure on Notify side?
 // TODO: Remember to uncomment code below before merging to staging
+
 
 const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
   process.env.NOTIFY_API_KEY ?? ""
