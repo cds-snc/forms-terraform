@@ -1,13 +1,23 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { PutCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand, GetCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 
 const NOTIFICATION_TABLE = process.env.DYNAMODB_NOTIFICATION_TABLE_NAME ?? "";
+const REGION = process.env.REGION ?? "ca-central-1";
 
 const dynamodbClient = new DynamoDBClient({
-  region: process.env.REGION ?? "ca-central-1",
+  region: REGION,
 });
 
-export const getDeferredNotification = async (notificationId: string) => {
+interface DeferredNotification {
+  NotificationID: string;
+  Emails: string[];
+  Subject: string;
+  Body: string;
+}
+
+export const consumeDeferredNotification = async (
+  notificationId: string
+): Promise<DeferredNotification | undefined> => {
   try {
     const result = await dynamodbClient.send(
       new GetCommand({
@@ -22,22 +32,29 @@ export const getDeferredNotification = async (notificationId: string) => {
       return undefined;
     }
 
-    console.log(
-      JSON.stringify({
-        level: "info",
-        msg: `Successfully retrieved deferred notification ${notificationId}`,
+    await dynamodbClient.send(
+      new DeleteCommand({
+        TableName: NOTIFICATION_TABLE,
+        Key: {
+          NotificationID: notificationId,
+        },
       })
     );
 
-    return result.Item;
+    return result.Item as DeferredNotification;
   } catch (error) {
     throw new Error(
-      `Failed to check for notification with id ${notificationId}. Reason: ${(error as Error).message}`
+      `Failed to retrieve notification ${notificationId}. Reason: ${(error as Error).message}`
     );
   }
 };
 
-export const createDeferredNotification = async (notificationId:string, emails:string[], subject:string, body:string) => {
+export const createDeferredNotification = async (
+  notificationId: string,
+  emails: string[],
+  subject: string,
+  body: string
+): Promise<void> => {
   try {
     await dynamodbClient.send(
       new PutCommand({
