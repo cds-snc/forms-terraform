@@ -1,5 +1,24 @@
 # Changelog
 
+## [3.41.0](https://github.com/cds-snc/forms-terraform/compare/v3.40.1...v3.41.0) (2025-12-01)
+
+
+### Features
+
+* Reliability queue lambda batching ([#1158](https://github.com/cds-snc/forms-terraform/issues/1158)) ([05e8bb4](https://github.com/cds-snc/forms-terraform/commit/05e8bb4c312a926e211c9a5afec26e97bbde56e9))
+
+
+### Bug Fixes
+
+* CSV file with defined encoding should not be flagged as malicious ([#1163](https://github.com/cds-snc/forms-terraform/issues/1163)) ([0f18ebd](https://github.com/cds-snc/forms-terraform/commit/0f18ebd2b17b8b875f9de762d1a28babd297004f))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all patch dependencies ([#1165](https://github.com/cds-snc/forms-terraform/issues/1165)) ([9e39b52](https://github.com/cds-snc/forms-terraform/commit/9e39b5291bc5f18e0a99625de5c067ebecbd2cc2))
+* limit API request size for headers, cookies and body ([#1160](https://github.com/cds-snc/forms-terraform/issues/1160)) ([4de982c](https://github.com/cds-snc/forms-terraform/commit/4de982cb03ef66e8f8eb10bc31c57399724e9959))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1164](https://github.com/cds-snc/forms-terraform/issues/1164)) ([3d3a4c0](https://github.com/cds-snc/forms-terraform/commit/3d3a4c0a7972321ab19e28598b1518b22e137eb4))
+
 ## [3.40.1](https://github.com/cds-snc/forms-terraform/compare/v3.40.0...v3.40.1) (2025-11-17)
 
 
