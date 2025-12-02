@@ -2,12 +2,12 @@ import { GCNotifyConnector } from "@gcforms/connectors";
 
 // TODO: Remember to uncomment code below before merging to staging
 
-
 const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
   process.env.NOTIFY_API_KEY ?? ""
 );
 
 export const sendNotification = async (
+  notificationId: string,
   emails: string[],
   subject: string,
   body: string
@@ -18,6 +18,7 @@ export const sendNotification = async (
     JSON.stringify({
       level: "info",
       msg: "Notification sent successfully",
+      notificationId: notificationId,
       emailCount: emails.length,
     })
   );

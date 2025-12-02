@@ -14,28 +14,27 @@ export const handler: Handler = async (event:SQSEvent) => {
     try {
       const { notificationId } = JSON.parse(record.body) as NotificationSQSMessage;
 
-      // Retrieve and delete notification from DynamoDB
       const notification = await consumeNotification(notificationId);
-
       if (!notification) {
         console.warn(
           JSON.stringify({
             level: "warn",
             msg: "Notification not found in database",
             notificationId,
+            sqsMessageId: record.messageId,
           })
         );
         continue;
       }
 
       const { Emails: emails, Subject: subject, Body: body } = notification;
-
       if (!isValidNotification(emails, subject, body)) {
         console.warn(
           JSON.stringify({
             level: "warn",
             msg: "Skipping notification due to invalid stored data",
             notificationId,
+            sqsMessageId: record.messageId,
             hasEmails: Array.isArray(emails) && emails.length > 0,
             hasSubject: !!subject,
             hasBody: !!body,
@@ -44,13 +43,13 @@ export const handler: Handler = async (event:SQSEvent) => {
         continue;
       }
 
-      await sendNotification(emails, subject, body);
+      await sendNotification(notificationId, emails, subject, body);
     } catch (error) {
       console.error(
         JSON.stringify({
           level: "error",
           msg: "Failed to process notification record",
-          messageId: record.messageId,
+          sqsMessageId: record.messageId,
           error: (error as Error).message,
         })
       );
