@@ -5,7 +5,15 @@ const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecre
 );
 
 export const sendNotification = async (emails:string[], subject:string, body:string) => {
-  Promise.all(emails.map((emailAddress) => sendEmail(emailAddress, subject, body)));
+  await Promise.all(emails.map((emailAddress) => sendEmail(emailAddress, subject, body)));
+  
+  console.log(
+    JSON.stringify({
+      level: "info",
+      msg: "Notification sent successfully",
+      emailCount: emails.length,
+    })
+  );
 };
 
 // TODO: Probably don't need template_id?
@@ -17,8 +25,6 @@ const sendEmail = async (emailAddress: string, subject: string, body: string) =>
     //     subject: subject,
     //     emailBody: body,
     // });
-    
-    console.log(`Sent notification to ${emailAddress}`);
   } catch (error) {
     // Error Message will be sent to slack -- Will this be too verbose for slack?
     console.error(

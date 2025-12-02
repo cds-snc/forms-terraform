@@ -1,6 +1,6 @@
 import { SQSHandler } from 'aws-lambda';
 import { sendNotification } from '@lib/email.js';
-import { createNotification, getNotification } from '@lib/db.js';
+import { createDeferredNotification, getDeferredNotification } from '@lib/db.js';
 
 // TODO:
 // - add sqs notification event to reliablity queue (if no existing notificationId will be ignored) -- ok I think?
@@ -15,71 +15,107 @@ import { createNotification, getNotification } from '@lib/db.js';
  * 1. Send immediately: pass emails, subject, body (no notificationId)
  * 2. Queue up to send when process is complete: pass notificationId, emails, subject, body
  * 3. Queued notification process complete, send it: pass only notificationId
- *
- * @param event - SQS event containing notification messages
- * @param event.Records[].body - JSON string with the following structure:
- * @param event.Records[].body.notificationId - (optional) Id to defer sending until another process completes
- * @param event.Records[].body.emails - Array of email addresses to send the notification to
- * @param event.Records[].body.subject - Email subject line
- * @param event.Records[].body.body - Email body content (should be pre-formatted for email delivery)
  */
 export const handler: SQSHandler = async (event) => {
-  const records = event.Records;
-  try {
-    for (const record of records) {
-      const {notificationId, emails, subject, body} = JSON.parse(record.body);
+  for (const record of event.Records) {
+    try {
+      const { notificationId, emails, subject, body } = JSON.parse(record.body);
 
-      // TEMP
-      console.log(`Processing notification: notificationId=${notificationId}, emails=${JSON.stringify(emails)}, subject=${subject}, body=${body}`);
-      
-      // Case 1: send notification immediately
       if (!notificationId) {
-        if (!validNotification(emails, subject, body)) {
-          console.warn(
-              JSON.stringify({
-                level: "warn",
-                emails: emails,
-                subject: subject,
-                body: subject,
-                msg: "notification handler will skip sending this notification because it received invalid parameters.",
-              })
-            );
-          return;
-        }
-
-        await sendNotification(emails, subject, body);
+        await handleImmediateNotification(emails, subject, body);
         return;
-      } 
+      }
 
-      const notification = await getNotification(notificationId);
+      const notification = await getDeferredNotification(notificationId);
 
-      // Case 2: New notification, create and store for later
       if (!notification) {
-        if (!validNotification(emails, subject, body)) {
-          console.warn(
-              JSON.stringify({
-                level: "warn",
-                emails: emails,
-                subject: subject,
-                body: subject,
-                msg: "notification handler failed because it received invalid parameters.",
-              })
-            );
-          return;
-        }
-
-        await createNotification(notificationId, emails, subject, body); 
+        await handleCreateDeferredNotification(notificationId, emails, subject, body);
         return;
-      } 
+      }
 
-      // Case 3: Existing notification, process completed, send it
-      await sendNotification(notification.Emails, notification.Subject, notification.Body);
+      await handleCompletedNotification(notification.NotificationID, notification.Emails, notification.Subject, notification.Body);
+    } catch (error) {
+      console.error(
+        JSON.stringify({
+          level: "error",
+          msg: "Failed to process notification record",
+          messageId: record.messageId,
+          error: (error as Error).message,
+        })
+      );
+      // Continue processing other records even if one fails
     }
-  } catch (error) {
-    console.error('Error processing notification:', error);
   }
 };
 
-const validNotification = (emails: string[] | undefined, subject: string | undefined, body: string | undefined) => {
-  return Array.isArray(emails) && emails.length > 0 && subject && body;
+async function handleImmediateNotification(
+  emails: string[],
+  subject: string,
+  body: string
+): Promise<void> {
+  if (!isValidNotification(emails, subject, body)) {
+    console.warn(
+      JSON.stringify({
+        level: "warn",
+        msg: "Skipping immediate notification due to invalid parameters",
+        hasEmails: !!emails,
+        hasSubject: !!subject,
+        hasBody: !!body,
+      })
+    );
+    return;
+  }
+
+  await sendNotification(emails, subject, body);
+}
+
+async function handleCreateDeferredNotification(
+  notificationId: string,
+  emails: string[],
+  subject: string,
+  body: string
+): Promise<void> {
+  if (!isValidNotification(emails, subject, body)) {
+    console.warn(
+      JSON.stringify({
+        level: "warn",
+        msg: "Failed to defer notification due to invalid parameters",
+        notificationId,
+        hasEmails: !!emails,
+        hasSubject: !!subject,
+        hasBody: !!body,
+      })
+    );
+    return;
+  }
+
+  await createDeferredNotification(notificationId, emails, subject, body);
+}
+
+async function handleCompletedNotification(
+  notificationId: string,
+  emails: string[],
+  subject: string,
+  body: string
+): Promise<void> {
+  if (!isValidNotification(emails, subject, body)) {
+    console.warn(
+      JSON.stringify({
+        level: "warn",
+        msg: "Skipping completed notification due to invalid stored data",
+        notificationId: notificationId,
+      })
+    );
+    return;
+  }
+
+  await sendNotification(emails, subject, body);
+}
+
+function isValidNotification(
+  emails: string[] | undefined,
+  subject: string | undefined,
+  body: string | undefined
+): boolean {
+  return Array.isArray(emails) && emails.length > 0 && !!subject && !!body;
 }

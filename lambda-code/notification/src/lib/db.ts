@@ -7,7 +7,7 @@ const dynamodbClient = new DynamoDBClient({
   region: process.env.REGION ?? "ca-central-1",
 });
 
-export const getNotification = async (notificationId: string) => {
+export const getDeferredNotification = async (notificationId: string) => {
   try {
     const result = await dynamodbClient.send(
       new GetCommand({
@@ -22,6 +22,13 @@ export const getNotification = async (notificationId: string) => {
       return undefined;
     }
 
+    console.log(
+      JSON.stringify({
+        level: "info",
+        msg: `Successfully retrieved deferred notification ${notificationId}`,
+      })
+    );
+
     return result.Item;
   } catch (error) {
     throw new Error(
@@ -30,7 +37,7 @@ export const getNotification = async (notificationId: string) => {
   }
 };
 
-export const createNotification = async (notificationId:string, emails:string[], subject:string, body:string) => {
+export const createDeferredNotification = async (notificationId:string, emails:string[], subject:string, body:string) => {
   try {
     await dynamodbClient.send(
       new PutCommand({
@@ -47,7 +54,7 @@ export const createNotification = async (notificationId:string, emails:string[],
     console.log(
       JSON.stringify({
         level: "info",
-        msg: `Successfully created notification ${notificationId}`,
+        msg: `Successfully created deferred notification ${notificationId}`,
       })
     );
   } catch (error) {
