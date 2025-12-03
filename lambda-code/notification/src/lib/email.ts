@@ -12,7 +12,7 @@ export const sendNotification = async (
   subject: string,
   body: string
 ): Promise<void> => {
-  await Promise.all(emails.map((emailAddress) => sendEmail(emailAddress, subject, body)));
+  await Promise.all(emails.map((emailAddress) => sendEmail(notificationId, emailAddress, subject, body)));
 
   console.log(
     JSON.stringify({
@@ -25,6 +25,7 @@ export const sendNotification = async (
 };
 
 const sendEmail = async (
+  notificationId: string,
   emailAddress: string, 
   subject: string, 
   body: string
@@ -40,6 +41,7 @@ const sendEmail = async (
       JSON.stringify({
         level: "error",
         msg: `Failed to send notification to ${emailAddress}`,
+        notificationId: notificationId,
         error: (error as Error).message,
       })
     );

@@ -49,36 +49,36 @@ export const consumeNotification = async (
   }
 };
 
-export const createNotification = async (
-  notificationId: string,
-  emails: string[],
-  subject: string,
-  body: string
-): Promise<void> => {
-  try {
-    const ttl = Math.floor(Date.now() / 1000) + 86400; // 24 hours from now
-    await dynamodbClient.send(
-      new PutCommand({
-        TableName: NOTIFICATION_TABLE,
-        Item: {
-          NotificationID: notificationId,
-          Emails: emails,
-          Subject: subject,
-          Body: body,
-          TTL: ttl,
-        },
-      })
-    );
+// export const createNotification = async (
+//   notificationId: string,
+//   emails: string[],
+//   subject: string,
+//   body: string
+// ): Promise<void> => {
+//   try {
+//     const ttl = Math.floor(Date.now() / 1000) + 86400; // 24 hours from now
+//     await dynamodbClient.send(
+//       new PutCommand({
+//         TableName: NOTIFICATION_TABLE,
+//         Item: {
+//           NotificationID: notificationId,
+//           Emails: emails,
+//           Subject: subject,
+//           Body: body,
+//           TTL: ttl,
+//         },
+//       })
+//     );
 
-    console.log(
-      JSON.stringify({
-        level: "info",
-        msg: `Successfully created deferred notification ${notificationId}`,
-      })
-    );
-  } catch (error) {
-    throw new Error(
-      `Failed to create notification ${notificationId}. Reason: ${(error as Error).message}`
-    );
-  }
-};
+//     console.log(
+//       JSON.stringify({
+//         level: "info",
+//         msg: `Successfully created deferred notification ${notificationId}`,
+//       })
+//     );
+//   } catch (error) {
+//     throw new Error(
+//       `Failed to create notification ${notificationId}. Reason: ${(error as Error).message}`
+//     );
+//   }
+// };
