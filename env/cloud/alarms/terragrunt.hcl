@@ -109,6 +109,7 @@ dependency "lambdas" {
     lambda_api_end_to_end_test_log_group_name      = "/aws/lambda/API_End_To_End_Test"
     lambda_file_upload_processor_log_group_name    = "/aws/lambda/file-upload-processor"
     lambda_file_upload_cleanup_log_group_name      = "/aws/lambda/file-upload-cleanup"
+    lambda_notification_log_group_name             = "/aws/lambda/Notification"
   }
 }
 
@@ -231,6 +232,7 @@ inputs = {
   lambda_api_end_to_end_test_log_group_name      = dependency.lambdas.outputs.lambda_api_end_to_end_test_log_group_name
   lambda_file_upload_processor_log_group_name    = dependency.lambdas.outputs.lambda_file_upload_processor_log_group_name
   lambda_file_upload_cleanup_log_group_name      = dependency.lambdas.outputs.lambda_file_upload_cleanup_log_group_name
+  lambda_notification_log_group_name             = dependency.lambdas.outputs.lambda_notification_log_group_name
 
   rds_cluster_identifier = dependency.rds.outputs.rds_cluster_identifier
 

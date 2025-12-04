@@ -18,6 +18,7 @@ resource "aws_cloudwatch_dashboard" "forms_service_health" {
     lambda_response_archiver_log_group_name = var.lambda_response_archiver_log_group_name,
     lambda_submission_log_group_name        = var.lambda_submission_log_group_name,
     lambda_vault_integrity_log_group_name   = var.lambda_vault_integrity_log_group_name,
+    lambda_notification_log_group_name      = var.lambda_notification_log_group_name,
     rds_cluster_identifier                  = var.rds_cluster_identifier,
     region                                  = var.region
   })

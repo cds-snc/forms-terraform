@@ -87,3 +87,13 @@ output "forms_lambda_client_iam_role_name" {
   description = "IAM role name for forms client Lambda"
   value       = try(aws_iam_role.forms_lambda_client[0].name, null)
 }
+
+output "lambda_notification_log_group_name" {
+  description = "Notification Lambda CloudWatch log group name"
+  value       = aws_cloudwatch_log_group.notification.name
+}
+
+output "lambda_notification_function_name" {
+  description = "Notification Lambda function name"
+  value       = aws_lambda_function.notification.function_name
+}
