@@ -44,7 +44,7 @@ export const consumeNotification = async (
     return result.Item as Notification;
   } catch (error) {
     throw new Error(
-      `Failed to retrieve notification ${notificationId}. Reason: ${(error as Error).message}`
+      `Failed to retrieve notification id ${notificationId}. Reason: ${(error as Error).message}`
     );
   }
 };

@@ -2,66 +2,62 @@ import { Handler, SQSEvent } from 'aws-lambda';
 import { sendNotification } from '@lib/email.js';
 import { consumeNotification } from '@lib/db.js';
 
-// TODO: Reminder to add notification to file production-lambda-functions.config.json before merging to staging
-
-interface NotificationSQSMessage {
-  notificationId: string;
-}
-
-// SQS Lambda handler for sending email notifications
 export const handler: Handler = async (event:SQSEvent) => {
-  for (const record of event.Records) {
-    try {
-      const { notificationId } = JSON.parse(record.body) as NotificationSQSMessage;
+  const batch = event.Records.map((message) => {
+    const { messageId, body } = message;
+    return { messageId, message: JSON.parse(body) };
+  });
+  
+  const results = await Promise.all(batch.map((item) => messageProcessor(item)));
 
-      const notification = await consumeNotification(notificationId);
-      if (!notification) {
-        console.warn(
-          JSON.stringify({
-            level: "warn",
-            msg: "Notification not found in database",
-            notificationId,
-            sqsMessageId: record.messageId,
-          })
-        );
-        continue;
-      }
+  const batchItemFailures = results
+    .filter((result) => !result.status)
+    .map((result) => ({ itemIdentifier: result.messageId }));
 
-      const { Emails: emails, Subject: subject, Body: body } = notification;
-      if (!isValidNotification(emails, subject, body)) {
-        console.warn(
-          JSON.stringify({
-            level: "warn",
-            msg: "Skipping notification due to invalid stored data",
-            notificationId,
-            sqsMessageId: record.messageId,
-            hasEmails: Array.isArray(emails) && emails.length > 0,
-            hasSubject: !!subject,
-            hasBody: !!body,
-          })
-        );
-        continue;
-      }
-
-      await sendNotification(notificationId, emails, subject, body);
-    } catch (error) {
-      console.error(
-        JSON.stringify({
-          level: "error",
-          msg: "Failed to process notification record",
-          sqsMessageId: record.messageId,
-          error: (error as Error).message,
-        })
-      );
-      // Continue processing other records even if one fails
-    }
-  }
+  // SQS will retry up to 5 times for each failed message
+  return { batchItemFailures };
 };
 
-function isValidNotification(
+const messageProcessor = async ({
+  messageId,
+  message,
+}: {
+  messageId: string;
+  message: { notificationId: string };
+}) => {
+  try {
+    const { notificationId } = message;
+    const notification = await consumeNotification(notificationId);
+    if (!notification) {
+      throw new Error("Notification not found in database");
+    }
+
+    const { Emails: emails, Subject: subject, Body: body } = notification;
+    if (!isValidNotification(emails, subject, body)) {
+      throw new Error("Skipping notification due to invalid stored data");
+    }
+    
+    await sendNotification(notificationId, emails, subject, body);
+    
+    return { status: true, messageId };
+  } catch (error) {
+    console.info(
+      JSON.stringify({
+        level: "info",
+        status: "failed",
+        msg: `Failed to process notification id ${message.notificationId ?? "n/a"}`,
+        notificationId: message.notificationId ?? "n/a",
+        error: (error as Error).message,
+      })
+    );
+    return { status: false, messageId };
+  }
+}
+
+const isValidNotification = (
   emails: string[] | undefined,
   subject: string | undefined,
   body: string | undefined
-): boolean {
+): boolean => {
   return Array.isArray(emails) && emails.length > 0 && !!subject && !!body;
 }
