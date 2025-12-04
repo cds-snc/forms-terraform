@@ -40,8 +40,9 @@ resource "aws_cloudwatch_log_group" "notification" {
 }
 
 resource "aws_lambda_event_source_mapping" "notification_sqs" {
-  event_source_arn = var.sqs_notification_queue_arn
-  function_name    = aws_lambda_function.notification.function_name
-  batch_size       = 10
-  enabled          = true
+  event_source_arn        = var.sqs_notification_queue_arn
+  function_name           = aws_lambda_function.notification.function_name
+  batch_size              = 10
+  enabled                 = true
+  function_response_types = ["ReportBatchItemFailures"]
 }

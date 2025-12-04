@@ -14,7 +14,6 @@ export const handler: Handler = async (event:SQSEvent) => {
     .filter((result) => !result.status)
     .map((result) => ({ itemIdentifier: result.messageId }));
 
-  // SQS will retry up to 5 times for each failed message
   return { batchItemFailures };
 };
 
