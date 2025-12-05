@@ -135,13 +135,9 @@ function checkModifyEvent(oldData: StreamRecord["OldImage"], newData: StreamReco
       throw new Error("Missing data in record new image.");
     }
 
-    const oldDataAsString = `${oldFormId}${oldNameOfConf}${oldConfirmationCode}${String(
-      oldCreatedAt
-    )}${oldFormSubmission}${oldName}${oldSubmissionID}${oldFormSubmissionHash}${oldSubmissionAttachments}`;
+    const oldDataAsString = `${oldFormId}${oldNameOfConf}${oldConfirmationCode}${oldCreatedAt}${oldFormSubmission}${oldName}${oldSubmissionID}${oldFormSubmissionHash}${oldSubmissionAttachments}`;
 
-    const newDataAsString = `${newFormId}${newNameOfConf}${newConfirmationCode}${String(
-      newCreatedAt
-    )}${newFormSubmission}${newName}${newSubmissionID}${newFormSubmissionHash}${newSubmissionAttachments}`;
+    const newDataAsString = `${newFormId}${newNameOfConf}${newConfirmationCode}${newCreatedAt}${newFormSubmission}${newName}${newSubmissionID}${newFormSubmissionHash}${newSubmissionAttachments}`;
 
     if (oldDataAsString !== newDataAsString) {
       const investigationId = randomUUID();
