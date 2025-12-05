@@ -4,6 +4,7 @@ import {} from "./file_scanning.js";
 import { isFileValid } from "./fileValidation.js";
 import {
   copyFilesFromReliabilityToVaultStorage,
+  getFileMetaData,
   getObjectFirst100BytesInReliabilityBucket,
   removeFilesFromReliabilityStorage,
 } from "./s3FileInput.js";
@@ -92,6 +93,18 @@ async function verifyAndFlagMaliciousSubmissionAttachments(
 ): Promise<SubmissionAttachmentInformation[]> {
   return Promise.all(
     submissionAttachmentsWithScanStatuses.map(async (item) => {
+      const fileSize = await getFileMetaData(item.attachmentPath).then((response) =>
+        Number(response.ContentLength ?? "0")
+      );
+
+      if (fileSize < 100) {
+        // File size is too small to test and contains no content that can be of value to the end user
+        return {
+          ...item,
+          scanStatus: "THREATS_FOUND",
+        };
+      }
+
       const attachmentFirst100Bytes = await getObjectFirst100BytesInReliabilityBucket(
         item.attachmentPath
       );
