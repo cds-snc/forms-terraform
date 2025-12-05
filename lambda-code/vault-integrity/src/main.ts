@@ -87,6 +87,7 @@ function checkModifyEvent(oldData: StreamRecord["OldImage"], newData: StreamReco
     const oldName = oldData?.Name?.S ?? null;
     oldSubmissionID = oldData?.SubmissionID?.S ?? null;
     const oldFormSubmissionHash = oldData?.FormSubmissionHash?.S ?? null;
+    const oldSubmissionAttachments = oldData?.SubmissionAttachments?.S ?? "[]"; // Default to "[]" to support old submissions (pre file attachment support)
 
     const newFormId = newData?.FormID?.S ?? null;
     const newNameOfConf = newData?.NAME_OR_CONF?.S ?? null;
@@ -96,6 +97,7 @@ function checkModifyEvent(oldData: StreamRecord["OldImage"], newData: StreamReco
     const newName = newData?.Name?.S ?? null;
     newSubmissionID = newData?.SubmissionID?.S ?? null;
     const newFormSubmissionHash = newData?.FormSubmissionHash?.S ?? null;
+    const newSubmissionAttachments = newData?.SubmissionAttachments?.S ?? "[]"; // Default to "[]" to support old submissions (pre file attachment support)
 
     if (!oldFormSubmissionHash && !newFormSubmissionHash) {
       console.log(
@@ -133,12 +135,9 @@ function checkModifyEvent(oldData: StreamRecord["OldImage"], newData: StreamReco
       throw new Error("Missing data in record new image.");
     }
 
-    const oldDataAsString = `${oldFormId}${oldNameOfConf}${oldConfirmationCode}${String(
-      oldCreatedAt
-    )}${oldFormSubmission}${oldName}${oldSubmissionID}${oldFormSubmissionHash}`;
-    const newDataAsString = `${newFormId}${newNameOfConf}${newConfirmationCode}${String(
-      newCreatedAt
-    )}${newFormSubmission}${newName}${newSubmissionID}${newFormSubmissionHash}`;
+    const oldDataAsString = `${oldFormId}${oldNameOfConf}${oldConfirmationCode}${oldCreatedAt}${oldFormSubmission}${oldName}${oldSubmissionID}${oldFormSubmissionHash}${oldSubmissionAttachments}`;
+
+    const newDataAsString = `${newFormId}${newNameOfConf}${newConfirmationCode}${newCreatedAt}${newFormSubmission}${newName}${newSubmissionID}${newFormSubmissionHash}${newSubmissionAttachments}`;
 
     if (oldDataAsString !== newDataAsString) {
       const investigationId = randomUUID();
