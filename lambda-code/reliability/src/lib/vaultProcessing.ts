@@ -4,7 +4,7 @@ import {} from "./file_scanning.js";
 import { isFileValid } from "./fileValidation.js";
 import {
   copyFilesFromReliabilityToVaultStorage,
-  getFileMetaData,
+  getFileSize,
   getObjectFirst100BytesInReliabilityBucket,
   removeFilesFromReliabilityStorage,
 } from "./s3FileInput.js";
@@ -93,9 +93,7 @@ async function verifyAndFlagMaliciousSubmissionAttachments(
 ): Promise<SubmissionAttachmentInformation[]> {
   return Promise.all(
     submissionAttachmentsWithScanStatuses.map(async (item) => {
-      const fileSize = await getFileMetaData(item.attachmentPath).then((response) =>
-        Number(response.ContentLength ?? "0")
-      );
+      const fileSize = await getFileSize(item.attachmentPath);
 
       if (fileSize < 100) {
         // File size is too small to test and contains no content that can be of value to the end user
