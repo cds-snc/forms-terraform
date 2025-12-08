@@ -1,5 +1,5 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { PutCommand, GetCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 
 const NOTIFICATION_TABLE = process.env.DYNAMODB_NOTIFICATION_TABLE_NAME ?? "";
 const REGION = process.env.REGION ?? "ca-central-1";
