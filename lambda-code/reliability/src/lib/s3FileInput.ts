@@ -124,6 +124,22 @@ export const getFileTags = async (filePath: string) => {
   }
 };
 
+export const getFileSize = async (filePath: string) => {
+  const response = await s3Client
+    .send(
+      new HeadObjectCommand({
+        Bucket: reliabilityBucketName,
+        Key: filePath,
+      })
+    )
+    .catch((error) => {
+      console.error(error);
+      throw new Error(`Failed to retrieve size for file: ${filePath}`);
+    });
+
+  return Number(response.ContentLength ?? "0");
+};
+
 export const getFileMetaData = async (filePath: string) => {
   const response = await s3Client
     .send(
