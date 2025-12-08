@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.41.1](https://github.com/cds-snc/forms-terraform/compare/v3.41.0...v3.41.1) (2025-12-05)
+
+
+### Bug Fixes
+
+* Small files less than 100 Bytes are processed ([#1168](https://github.com/cds-snc/forms-terraform/issues/1168)) ([f3c1278](https://github.com/cds-snc/forms-terraform/commit/f3c1278b015cafab2ae2fde0da1b1ba2b7438bf5))
+
+
+### Miscellaneous Chores
+
+* add support for submission attachments in vault integrity lambda ([#1166](https://github.com/cds-snc/forms-terraform/issues/1166)) ([5ed9c40](https://github.com/cds-snc/forms-terraform/commit/5ed9c403576582848a276bbf9b0c5585546c4f53))
+
 ## [3.41.0](https://github.com/cds-snc/forms-terraform/compare/v3.40.1...v3.41.0) (2025-12-01)
 
 
