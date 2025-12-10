@@ -287,6 +287,11 @@ variable "sqs_notification_queue_arn" {
   type        = string
 }
 
+variable "sqs_notification_queue_url" {
+  description = "URL of the notification SQS queue"
+  type        = string
+}
+
 variable "dynamodb_notification_table_arn" {
   description = "ARN of the notification DynamoDB table"
   type        = string

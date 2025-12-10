@@ -49,6 +49,7 @@ const messageProcessor = async ({
         error: (error as Error).message,
       })
     );
+    // Will retry up to 5 times and report an error on batch failure
     return { status: false, messageId };
   }
 }

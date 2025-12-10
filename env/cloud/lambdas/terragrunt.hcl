@@ -259,6 +259,7 @@ inputs = {
   sqs_app_audit_log_queue_arn            = dependency.sqs.outputs.sqs_app_audit_log_queue_arn
   sqs_api_audit_log_queue_arn            = dependency.sqs.outputs.sqs_api_audit_log_queue_arn
   sqs_notification_queue_arn             = dependency.sqs.outputs.sqs_notification_queue_arn
+  sqs_notification_queue_url             = dependency.sqs.outputs.sqs_notification_queue_url
 
   sns_topic_alert_critical_arn = dependency.sns.outputs.sns_topic_alert_critical_arn
 

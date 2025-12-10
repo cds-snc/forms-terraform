@@ -1,6 +1,6 @@
 import { GCNotifyConnector } from "@gcforms/connectors";
 
-// TODO: Remember to uncomment code below before merging to staging
+// TODO: Remember to uncomment Notify connector code below before merging to staging
 
 const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
   process.env.NOTIFY_API_KEY ?? ""
@@ -18,8 +18,7 @@ export const sendNotification = async (
     JSON.stringify({
       level: "info",
       msg: "Notification sent successfully",
-      notificationId: notificationId,
-      emailCount: emails.length,
+      notificationId: notificationId
     })
   );
 };
@@ -37,9 +36,9 @@ const sendEmail = async (
     //     emailBody: body,
     // });
   } catch (error) {
-    console.error(
+    console.warn(
       JSON.stringify({
-        level: "error",
+        level: "warn",
         msg: `Failed to send notification to ${emailAddress}`,
         notificationId: notificationId,
         error: (error as Error).message,
