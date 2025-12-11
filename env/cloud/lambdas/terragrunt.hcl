@@ -82,6 +82,7 @@ dependency "sqs" {
     sqs_app_audit_log_queue_arn            = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:audit_log_queue"
     sqs_api_audit_log_queue_arn            = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:api_audit_log_queue"
     sqs_notification_queue_arn             = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:notification_queue"
+    sqs_notification_queue_url             = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/notification_queue"
   }
 }
 
