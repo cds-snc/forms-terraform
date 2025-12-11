@@ -5,6 +5,7 @@ import { consumeNotification } from '@lib/db.js';
 export const handler: Handler = async (event:SQSEvent) => {
   const batch = event.Records.map((message) => {
     const { messageId, body } = message;
+    // TODO: Can throw an error on invalid JSON in the message body
     return { messageId, message: JSON.parse(body) };
   });
   

@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "build": "rm -rf build && tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
-    "build:dev": "tsc --project tsconfig.json --watch"
+    "build:dev": "tsc --project tsconfig.json --watch",
+    "test": "vitest --coverage"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.902.0",
@@ -17,8 +18,10 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.155",
     "@types/node": "^22.18.8",
+    "@vitest/coverage-v8": "^3.2.4",
     "tsc-alias": "^1.8.16",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
   },
   "packageManager": "yarn@4.10.3"
 }
