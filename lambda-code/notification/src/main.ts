@@ -5,8 +5,7 @@ import { consumeNotification } from '@lib/db.js';
 export const handler: Handler = async (event:SQSEvent) => {
   const batch = event.Records.map((message) => {
     const { messageId, body } = message;
-    // TODO: Can throw an error on invalid JSON in the message body
-    return { messageId, message: JSON.parse(body) };
+    return { messageId, body };
   });
   
   const results = await Promise.all(batch.map((item) => messageProcessor(item)));
@@ -20,24 +19,24 @@ export const handler: Handler = async (event:SQSEvent) => {
 
 const messageProcessor = async ({
   messageId,
-  message,
+  body,
 }: {
   messageId: string;
-  message: { notificationId: string };
+  body: string;
 }) => {
   try {
-    const { notificationId } = message;
+    const { notificationId }: { notificationId: string } = JSON.parse(body);
     const notification = await consumeNotification(notificationId);
     if (!notification) {
-      throw new Error("Notification not found in database");
+      throw new Error(`Not found in database id ${notificationId}`);
     }
 
-    const { Emails: emails, Subject: subject, Body: body } = notification;
-    if (!isValidNotification(emails, subject, body)) {
-      throw new Error("Skipping notification due to invalid stored data");
+    const { Emails: emails, Subject: subject, Body: emailBody } = notification;
+    if (!isValidNotification(emails, subject, emailBody)) {
+      throw new Error(`Skipping due to invalid stored data id ${notificationId}`);
     }
     
-    await sendNotification(notificationId, emails, subject, body);
+    await sendNotification(notificationId, emails, subject, emailBody);
     
     return { status: true, messageId };
   } catch (error) {
@@ -45,8 +44,7 @@ const messageProcessor = async ({
       JSON.stringify({
         level: "info",
         status: "failed",
-        msg: `Failed to process notification id ${message.notificationId ?? "n/a"}`,
-        notificationId: message.notificationId ?? "n/a",
+        msg: `Failed to process notification`,
         error: (error as Error).message,
       })
     );
