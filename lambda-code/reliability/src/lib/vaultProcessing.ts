@@ -4,7 +4,7 @@ import {} from "./file_scanning.js";
 import { isFileValid } from "./fileValidation.js";
 import {
   copyFilesFromReliabilityToVaultStorage,
-  getFileSize,
+  FileSizeUnder100BytesException,
   getObjectFirst100BytesInReliabilityBucket,
   removeFilesFromReliabilityStorage,
 } from "./s3FileInput.js";
@@ -93,29 +93,39 @@ async function verifyAndFlagMaliciousSubmissionAttachments(
 ): Promise<SubmissionAttachmentInformation[]> {
   return Promise.all(
     submissionAttachmentsWithScanStatuses.map(async (item) => {
-      const fileSize = await getFileSize(item.attachmentPath);
+      try {
+        const attachmentFirst100Bytes = await getObjectFirst100BytesInReliabilityBucket(
+          item.attachmentPath
+        );
 
-      if (fileSize < 100) {
-        // File size is too small to test and contains no content that can be of value to the end user
+        const isFileValidResult = isFileValid(item.attachmentPath, attachmentFirst100Bytes);
+
+        // If we flagged the file as invalid we return the same scan status value AWS Guard Duty offers to avoid breaking Data Retrieval API service integration
+        const scanStatus = isFileValidResult ? item.scanStatus : "THREATS_FOUND";
+
         return {
           ...item,
-          scanStatus: "THREATS_FOUND",
+          scanStatus: scanStatus,
         };
+      } catch (error) {
+        switch ((error as Error).constructor) {
+          case FileSizeUnder100BytesException:
+            console.warn(
+              JSON.stringify({
+                level: "warn",
+                msg: `Will not try to validate file as its size is under 100 bytes and probably contains no content that can be of value to the end user. Flagging ${item.attachmentPath} as potentially malicious.`,
+              })
+            );
+
+            return {
+              ...item,
+              scanStatus: "THREATS_FOUND",
+            };
+          default: {
+            throw new Error(`Failed to verify submission attachment ${item.attachmentPath}`);
+          }
+        }
       }
-
-      const attachmentFirst100Bytes = await getObjectFirst100BytesInReliabilityBucket(
-        item.attachmentPath
-      );
-
-      const isFileValidResult = isFileValid(item.attachmentPath, attachmentFirst100Bytes);
-
-      // If we flagged the file as invalid we return the same scan status value AWS Guard Duty offers to avoid breaking Data Retrieval API service integration
-      const scanStatus = isFileValidResult ? item.scanStatus : "THREATS_FOUND";
-
-      return {
-        ...item,
-        scanStatus: scanStatus,
-      };
     })
   );
 }

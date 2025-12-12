@@ -8,6 +8,13 @@ import {
 } from "@aws-sdk/client-s3";
 import { NodeJsClient } from "@smithy/types";
 
+export class FileSizeUnder100BytesException extends Error {
+  constructor() {
+    super("FileSizeUnder100BytesException");
+    Object.setPrototypeOf(this, FileSizeUnder100BytesException.prototype);
+  }
+}
+
 const s3Client = new S3Client({
   region: process.env.REGION ?? "ca-central-1",
   forcePathStyle: true,
@@ -124,22 +131,6 @@ export const getFileTags = async (filePath: string) => {
   }
 };
 
-export const getFileSize = async (filePath: string) => {
-  const response = await s3Client
-    .send(
-      new HeadObjectCommand({
-        Bucket: reliabilityBucketName,
-        Key: filePath,
-      })
-    )
-    .catch((error) => {
-      console.error(error);
-      throw new Error(`Failed to retrieve size for file: ${filePath}`);
-    });
-
-  return Number(response.ContentLength ?? "0");
-};
-
 export const getFileMetaData = async (filePath: string) => {
   const response = await s3Client
     .send(
@@ -165,19 +156,28 @@ export const getFileMetaData = async (filePath: string) => {
 export async function getObjectFirst100BytesInReliabilityBucket(
   objectKey: string
 ): Promise<Uint8Array<ArrayBufferLike>> {
-  const response = await s3Client.send(
-    new GetObjectCommand({
-      Bucket: reliabilityBucketName,
-      Key: objectKey,
-      Range: "bytes=0-99",
-    })
-  );
+  try {
+    const response = await s3Client.send(
+      new GetObjectCommand({
+        Bucket: reliabilityBucketName,
+        Key: objectKey,
+        Range: "bytes=0-99",
+      })
+    );
 
-  const bytes = await response.Body?.transformToByteArray();
+    const bytes = await response.Body?.transformToByteArray();
 
-  if (bytes === undefined) {
-    throw new Error("Object first 100 bytes failed to be retrieved");
+    if (bytes === undefined || bytes.length < 100) {
+      throw new FileSizeUnder100BytesException();
+    }
+
+    return bytes;
+  } catch (error) {
+    // AWS S3 will throw the exception only if the file size is 0 bytes.
+    if ((error as Error).name === "InvalidRange") {
+      throw new FileSizeUnder100BytesException();
+    }
+
+    throw error;
   }
-
-  return bytes;
 }
