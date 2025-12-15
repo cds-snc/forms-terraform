@@ -1,3 +1,3 @@
-FROM ghcr.io/zitadel/zitadel:v3.4.4@sha256:1c9ba049af10edb4bb47b5b2a24b85459e495a1c31833927c720adb4149be92c
+FROM ghcr.io/zitadel/zitadel:v4.7.5@sha256:sha256:5e90a7bb9b94ba1d403e19aaab5f401f2d0ff7d7591900a18624a25da5e00b91
 # Copy configuration and certificates
 COPY ./*.yaml /app/
