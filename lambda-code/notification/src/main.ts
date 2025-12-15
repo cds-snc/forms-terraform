@@ -8,7 +8,20 @@ export const handler: Handler = async (event:SQSEvent) => {
     return { messageId, body };
   });
   
-  const results = await Promise.all(batch.map((item) => messageProcessor(item)));
+  const results = await Promise.all(
+    batch.map((item) =>
+      messageProcessor(item).catch((error) => {
+        console.warn(
+          JSON.stringify({
+            level: "warn",
+            msg: `Unexpected error processing message id ${item.messageId}`,
+            error: (error as Error).message,
+          })
+        );
+        return { status: false, messageId: item.messageId };
+      })
+    )
+  );
 
   const batchItemFailures = results
     .filter((result) => !result.status)
