@@ -40,6 +40,14 @@ const messageProcessor = async ({
     
     return { status: true, messageId };
   } catch (error) {
+    // Notification queued but was never created, this is fine. Some cases will 
+    // always enqueue a notification that may or may not have been created. 
+    // e.g. reliability lambda always queues a notification but depends on app 
+    // logic whether or not a notification was first created (record in the db).
+    if ((error as Error).message.includes("Not found in database")) {
+      return { status: true, messageId };
+    }
+
     console.info(
       JSON.stringify({
         level: "info",
