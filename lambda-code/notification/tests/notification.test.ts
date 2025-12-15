@@ -59,7 +59,8 @@ describe("Notification Lambda Handler SQS batch processing", () => {
       );
     });
 
-    it("should return batchItemFailures when notification not found", async () => {
+    // Common case of code queuing a notification but the record may not exist e.g. reliability lambda
+    it("should skip notification when record not found", async () => {
       const consoleInfoSpy = vi.spyOn(console, "info");
       
       // Simulate notification not found in DB
@@ -76,13 +77,7 @@ describe("Notification Lambda Handler SQS batch processing", () => {
       };
       const result = await main.handler(event, {} as any, {} as any);
 
-      // Should be 1 batch failure after retry attempts
-      expect(result.batchItemFailures).toHaveLength(1);
-      expect(result.batchItemFailures[0].itemIdentifier).toBe("sqs-messsage-1");
-      
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining("{\"level\":\"info\",\"status\":\"failed\",\"msg\":\"Failed to process notification\",\"error\":\"Not found in database id missing-123\"}")
-      );
+      expect(result.batchItemFailures).toHaveLength(0);
     });
 
     it("should handle partial batch failures correctly", async () => {
@@ -96,22 +91,32 @@ describe("Notification Lambda Handler SQS batch processing", () => {
           Subject: "Subject 1",
           Body: "Body 1",
         })
-        .mockResolvedValueOnce(undefined) // Second one fails
+        .mockResolvedValueOnce({
+          NotificationID: "notificationId-2",
+          Emails: ["test@cds-snc.ca"],
+          Subject: "Subject 2",
+          Body: "Body 2",
+        })
         .mockResolvedValueOnce({
           NotificationID: "notificationId-3",
           Emails: ["test@cds-snc.ca"],
           Subject: "Subject 3",
           Body: "Body 3",
-        });
+        })
+        .mockResolvedValueOnce(undefined); // Fourth not found in DB (skipped)
 
       const mockSendNotification = vi.spyOn(email, "sendNotification");
-      mockSendNotification.mockResolvedValue();
+      mockSendNotification
+        .mockResolvedValueOnce(undefined) // First succeeds
+        .mockRejectedValueOnce(new Error("Email service error")) // Second fails
+        .mockResolvedValueOnce(undefined); // Third succeeds
 
       const event: SQSEvent = {
         Records: [
           { messageId: "sqs-messsage-1", body: JSON.stringify({ notificationId: "notificationId-1" }) } as any,
           { messageId: "sqs-messsage-2", body: JSON.stringify({ notificationId: "notificationId-2" }) } as any,
           { messageId: "sqs-messsage-3", body: JSON.stringify({ notificationId: "notificationId-3" }) } as any,
+          { messageId: "sqs-messsage-4", body: JSON.stringify({ notificationId: "notificationId-4" }) } as any,
         ],
       };
 
@@ -119,9 +124,9 @@ describe("Notification Lambda Handler SQS batch processing", () => {
 
       expect(result.batchItemFailures).toHaveLength(1);
       expect(result.batchItemFailures[0].itemIdentifier).toBe("sqs-messsage-2");
-      expect(mockSendNotification).toHaveBeenCalledTimes(2);
+      expect(mockSendNotification).toHaveBeenCalledTimes(3); // Only called for messages 1, 2, 3 (not 4)
       expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining("{\"level\":\"info\",\"status\":\"failed\",\"msg\":\"Failed to process notification\",\"error\":\"Not found in database id notificationId-2\"}")
+        expect.stringContaining("{\"level\":\"info\",\"status\":\"failed\",\"msg\":\"Failed to process notification\",\"error\":\"Email service error\"}")
       );
     });
   });
