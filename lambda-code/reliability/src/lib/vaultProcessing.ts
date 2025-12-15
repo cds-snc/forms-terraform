@@ -46,9 +46,6 @@ export default async (
       securityAttribute,
       formSubmissionHash
     );
-
-    // Will retry up to 5 times and then give up - fire and forget
-    await enqueueDeferredNotificationMessage(formID);
   } catch (error) {
     console.error(
       JSON.stringify({
@@ -61,6 +58,19 @@ export default async (
       })
     );
     throw new Error(`Failed to save submission to Vault.`);
+  }
+
+  try {
+    // Will retry up to 5 times and then give up
+    await enqueueDeferredNotificationMessage(formID);
+  } catch (error) {
+    console.warn(
+      JSON.stringify({
+        level: "warn",
+        msg: "Failed to enqueue notification message",
+        error: (error as Error).message,
+      })
+    );
   }
 
   try {
