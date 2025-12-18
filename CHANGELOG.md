@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.41.2](https://github.com/cds-snc/forms-terraform/compare/v3.41.1...v3.41.2) (2025-12-16)
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#1170](https://github.com/cds-snc/forms-terraform/issues/1170)) ([03fefcb](https://github.com/cds-snc/forms-terraform/commit/03fefcba6b99f54ec519f08bd9d86c3ccc21de44))
+* **deps:** update all patch dependencies ([#1173](https://github.com/cds-snc/forms-terraform/issues/1173)) ([69ca3d0](https://github.com/cds-snc/forms-terraform/commit/69ca3d0608f282f30355f19a6f8111cfac0237b6))
+* rework handling of submission attachment under 100 bytes ([#1171](https://github.com/cds-snc/forms-terraform/issues/1171)) ([985c0ad](https://github.com/cds-snc/forms-terraform/commit/985c0add83005e1ffeab43b7dcba53c3bc4f34a7))
+* update zitadel to V4 ([#1174](https://github.com/cds-snc/forms-terraform/issues/1174)) ([6a343dd](https://github.com/cds-snc/forms-terraform/commit/6a343dd882ed14fd8734ffc52bee0c61d17e9ed5))
+
 ## [3.41.1](https://github.com/cds-snc/forms-terraform/compare/v3.41.0...v3.41.1) (2025-12-05)
 
 
