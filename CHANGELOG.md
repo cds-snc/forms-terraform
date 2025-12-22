@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.41.3](https://github.com/cds-snc/forms-terraform/compare/v3.41.2...v3.41.3) (2025-12-22)
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#1178](https://github.com/cds-snc/forms-terraform/issues/1178)) ([1921190](https://github.com/cds-snc/forms-terraform/commit/1921190619ec348a98598f48ca2356ba116ed768))
+* **deps:** update all non-major github action dependencies ([#1169](https://github.com/cds-snc/forms-terraform/issues/1169)) ([15c94e9](https://github.com/cds-snc/forms-terraform/commit/15c94e9a59758585b9dc9664819418c3af6dabb4))
+* **deps:** update all non-major github action dependencies ([#1177](https://github.com/cds-snc/forms-terraform/issues/1177)) ([4dcee42](https://github.com/cds-snc/forms-terraform/commit/4dcee42b845608bd861375924d7531a5fca12c51))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1176](https://github.com/cds-snc/forms-terraform/issues/1176)) ([5e874da](https://github.com/cds-snc/forms-terraform/commit/5e874da69b3f3992300b45bfab0110e1af9370a6))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1179](https://github.com/cds-snc/forms-terraform/issues/1179)) ([ce6d9a5](https://github.com/cds-snc/forms-terraform/commit/ce6d9a529affa76e37149ec92f9ee27f6cd8bffc))
+
 ## [3.41.2](https://github.com/cds-snc/forms-terraform/compare/v3.41.1...v3.41.2) (2025-12-16)
 
 
