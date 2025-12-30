@@ -47,12 +47,6 @@ variable "zitadel_application_key" {
   sensitive   = true
 }
 
-variable "idp_login_service_user_token" {
-  description = "The IDP service user token that allows the IDP Login to communicate with the API"
-  type        = string
-  sensitive   = true
-}
-
 variable "hcaptcha_site_verify_key" {
   description = "The hCaptcha site verify key secret used for forms"
   type        = string

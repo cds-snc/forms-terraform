@@ -100,14 +100,3 @@ resource "aws_secretsmanager_secret" "hcaptcha_site_verify_key" {
   name                    = "hcaptcha_site_verify_key"
   recovery_window_in_days = 0
 }
-
-resource "aws_secretsmanager_secret_version" "idp_login_service_user_token" {
-  secret_id     = aws_secretsmanager_secret.idp_login_service_user_token.id
-  secret_string = var.idp_login_service_user_token
-}
-
-resource "aws_secretsmanager_secret" "idp_login_service_user_token" {
-  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
-  name                    = "idp_login_service_user_token"
-  recovery_window_in_days = 0
-}
