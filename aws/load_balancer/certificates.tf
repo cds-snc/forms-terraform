@@ -27,8 +27,9 @@ resource "aws_acm_certificate" "form_viewer_maintenance_mode" {
 }
 
 resource "aws_acm_certificate" "forms_api" {
-  domain_name       = var.domain_api
-  validation_method = "DNS"
+  domain_name               = local.api_domains[0]
+  validation_method         = "DNS"
+  subject_alternative_names = length(lcoal.api_domains) > 1 ? setsubtract(local.api_domains, [local.api_domains[0]]) : []
 
   lifecycle {
     create_before_destroy = true

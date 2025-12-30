@@ -2,7 +2,7 @@ locals {
   container_env = [
     {
       "name"  = "ZITADEL_EXTERNALDOMAIN",
-      "value" = var.domain_idp
+      "value" = local.idp_domains[0]
     },
   ]
   container_secrets = [

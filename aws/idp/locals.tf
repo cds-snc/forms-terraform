@@ -5,4 +5,6 @@ locals {
     Terraform             = "true"
     (var.billing_tag_key) = var.billing_tag_value
   }
+  idp_domains = [for domain in var.domains : "auth.${domain}"]
+
 }

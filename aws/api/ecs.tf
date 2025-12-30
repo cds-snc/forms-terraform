@@ -6,7 +6,7 @@ locals {
     },
     {
       name  = "ZITADEL_TRUSTED_DOMAIN"
-      value = var.domain_idp
+      value = "auth.${var.domains[0]}"
     },
     {
       name  = "ENVIRONMENT_MODE"

@@ -29,17 +29,24 @@ resource "aws_wafv2_rule_group" "rate_limiters_group" {
         scope_down_statement {
           not_statement {
             statement {
-              byte_match_statement {
-                positional_constraint = "EXACTLY"
-                field_to_match {
-                  single_header {
-                    name = "host"
+              or_statement {
+                dynamic "statement" {
+                  for_each = local.api_domains
+                  content {
+                    byte_match_statement {
+                      positional_constraint = "EXACTLY"
+                      field_to_match {
+                        single_header {
+                          name = "host"
+                        }
+                      }
+                      search_string = statement.value
+                      text_transformation {
+                        priority = 1
+                        type     = "LOWERCASE"
+                      }
+                    }
                   }
-                }
-                search_string = var.domain_api
-                text_transformation {
-                  priority = 1
-                  type     = "LOWERCASE"
                 }
               }
             }
@@ -103,17 +110,24 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     statement {
       and_statement {
         statement {
-          byte_match_statement {
-            positional_constraint = "EXACTLY"
-            field_to_match {
-              single_header {
-                name = "host"
+          or_statement {
+            dynamic "statement" {
+              for_each = local.api_domains
+              content {
+                byte_match_statement {
+                  positional_constraint = "EXACTLY"
+                  field_to_match {
+                    single_header {
+                      name = "host"
+                    }
+                  }
+                  search_string = statement.value
+                  text_transformation {
+                    priority = 1
+                    type     = "LOWERCASE"
+                  }
+                }
               }
-            }
-            search_string = var.domain_api
-            text_transformation {
-              priority = 0
-              type     = "LOWERCASE"
             }
           }
         }
@@ -416,17 +430,24 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     statement {
       and_statement {
         statement {
-          byte_match_statement {
-            positional_constraint = "EXACTLY"
-            field_to_match {
-              single_header {
-                name = "host"
+          or_statement {
+            dynamic "statement" {
+              for_each = local.api_domains
+              content {
+                byte_match_statement {
+                  positional_constraint = "EXACTLY"
+                  field_to_match {
+                    single_header {
+                      name = "host"
+                    }
+                  }
+                  search_string = statement.value
+                  text_transformation {
+                    priority = 1
+                    type     = "LOWERCASE"
+                  }
+                }
               }
-            }
-            search_string = var.domain_api
-            text_transformation {
-              priority = 1
-              type     = "LOWERCASE"
             }
           }
         }
