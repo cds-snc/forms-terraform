@@ -91,6 +91,21 @@ resource "aws_ecr_lifecycle_policy" "idp" {
   policy     = file("${path.module}/policy/lifecycle.json")
 }
 
+resource "aws_ecr_repository" "idp_user_portal" {
+  name                 = "idp/user_portal"
+  image_tag_mutability = "MUTABLE"
+  force_delete         = var.env == "development"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_lifecycle_policy" "idp_user_portal" {
+  repository = aws_ecr_repository.idp_user_portal.name
+  policy     = file("${path.module}/policy/lifecycle.json")
+}
+
 resource "aws_ecr_repository" "api" {
   name                 = "forms/api"
   image_tag_mutability = "MUTABLE"
