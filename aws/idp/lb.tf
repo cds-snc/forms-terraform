@@ -61,6 +61,36 @@ resource "aws_lb_target_group" "idp" {
   tags = local.common_tags
 }
 
+resource "aws_lb_target_group" "user_portal" {
+  count                = 2
+  name                 = "user-portal-${count.index}"
+  port                 = 3000
+  protocol             = "HTTP"
+  target_type          = "ip"
+  deregistration_delay = 30
+  vpc_id               = var.vpc_id
+
+  health_check {
+    enabled  = true
+    protocol = "HTTP"
+    path     = "/ui/v2"
+    matcher  = "200-399"
+  }
+
+  stickiness {
+    type = "lb_cookie"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      stickiness[0].cookie_name
+    ]
+  }
+
+  tags = local.common_tags
+}
+
 resource "aws_lb_listener" "idp" {
   load_balancer_arn = aws_lb.idp.arn
   port              = "443"
@@ -113,6 +143,22 @@ resource "aws_alb_listener_rule" "idp_protocol_version" {
   condition {
     path_pattern {
       values = ["/oauth/v2/token", "/.well-known/openid-configuration"] # REST API endpoints
+    }
+  }
+}
+
+# Send requests to the login app to the appropriate target group
+resource "aws_alb_listener_rule" "user_portal" {
+  listener_arn = aws_lb_listener.idp.arn
+  priority     = 1
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.user_portal[0].arn
+  }
+
+  condition {
+    path_pattern {
+      regex_values = ["^\\/ui\\/v2(?:\\/.*)?$"]
     }
   }
 }

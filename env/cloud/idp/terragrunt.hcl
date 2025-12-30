@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../hosted_zone", "../network", "../ecr", "../load_balancer", "../secrets"]
+  paths = ["../hosted_zone", "../network", "../ecr", "../load_balancer"]
 }
 
 locals {
@@ -25,13 +25,14 @@ dependency "network" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    idp_db_security_group_id                             = "sg-db"
-    idp_ecs_security_group_id                            = "sg-ecs"
-    idp_lb_security_group_id                             = "sg-lb"
-    private_subnet_ids                                   = ["prv-1", "prv-2"]
-    public_subnet_ids                                    = ["pub-1", "pub-2"]
-    vpc_id                                               = "vpc-id"
-    service_discovery_private_dns_namespace_ecs_local_id = ""
+    idp_db_security_group_id                               = "sg-db"
+    idp_ecs_security_group_id                              = "sg-ecs"
+    idp_lb_security_group_id                               = "sg-lb"
+    private_subnet_ids                                     = ["prv-1", "prv-2"]
+    public_subnet_ids                                      = ["pub-1", "pub-2"]
+    vpc_id                                                 = "vpc-id"
+    service_discovery_private_dns_namespace_ecs_local_id   = ""
+    service_discovery_private_dns_namespace_ecs_local_name = "ecs.local"
   }
 }
 
@@ -57,16 +58,6 @@ dependency "load_balancer" {
   }
 }
 
-dependency "hosted_zone" {
-  config_path = "../secrets"
-
-  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_strategy_with_state  = "shallow"
-  mock_outputs = {
-    idp_login_service_user_token = "Z123456789012"
-  }
-}
-
 inputs = {
   hosted_zone_ids = dependency.hosted_zone.outputs.hosted_zone_ids
 
@@ -77,9 +68,12 @@ inputs = {
   security_group_idp_lb_id                             = dependency.network.outputs.idp_lb_security_group_id
   vpc_id                                               = dependency.network.outputs.vpc_id
   service_discovery_private_dns_namespace_ecs_local_id = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_id
+  service_discovery_private_dns_namespace_ecs_local_name = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_name
 
   zitadel_image_ecr_url = dependency.ecr.outputs.ecr_repository_url_idp
   zitadel_image_tag     = "latest" # TODO: pin to specific tag for prod
+
+  idp_login_ecr_url    = dependency.ecr.outputs.ecr_repository_url_idp_user_portal
 
   kinesis_firehose_waf_logs_arn = dependency.load_balancer.outputs.kinesis_firehose_waf_logs_arn
   waf_ipv4_blocklist_arn        = dependency.load_balancer.outputs.waf_ipv4_blocklist_arn

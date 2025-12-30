@@ -104,12 +104,17 @@ variable "service_discovery_private_dns_namespace_ecs_local_id" {
   type        = string
 }
 
+variable "service_discovery_private_dns_namespace_ecs_local_name" {
+  description = "Local ECS service discovery private DNS namespace name"
+  type        = string
+}
+
 #####################
 ## IDP Hosted Login
 #####################
 
 
-variable "idp_login_ecr" {
+variable "idp_login_ecr_url" {
   description = "The Hosted Login Docker image ECR repository URL."
   type        = string
 }
