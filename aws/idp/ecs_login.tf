@@ -1,11 +1,11 @@
 locals {
-  container_env = [
+  user_portal_container_env = [
     {
       "name"  = "ZITADEL_API_URL",
       "value" = "http://zitadel.${var.service_discovery_private_dns_namespace_ecs_local_name}:8080"
     },
   ]
-  container_secrets = [
+  user_portal_container_secrets = [
     {
       "name"      = "ZITADEL_SERVICE_USER_TOKEN"
       "valueFrom" = aws_ssm_parameter.idp_login_service_user_token.arn
@@ -34,8 +34,8 @@ module "idp_user_portal_ecs" {
   container_image       = "${var.idp_login_ecr_url}:latest"
   container_host_port   = 3000
   container_port        = 3000
-  container_environment = local.container_env
-  container_secrets     = local.container_secrets
+  container_environment = local.user_portal_container_env
+  container_secrets     = local.user_portal_container_secrets
 
   task_exec_role_policy_documents = [
     data.aws_iam_policy_document.idp_login_task_ssm_parameters.json

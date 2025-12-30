@@ -1,11 +1,11 @@
 locals {
-  container_env = [
+  idp_container_env = [
     {
       "name"  = "ZITADEL_EXTERNALDOMAIN",
       "value" = local.idp_domains[0]
     },
   ]
-  container_secrets = [
+  idp_container_secrets = [
     {
       "name"      = "ZITADEL_DATABASE_POSTGRES_DATABASE"
       "valueFrom" = aws_ssm_parameter.zitadel_database_name.arn
@@ -67,8 +67,8 @@ module "idp_ecs" {
   container_command     = ["start-from-init", "--masterkeyFromEnv", "--tlsMode", "external", "--config", "/app/config.yaml", "--steps", "/app/steps.yaml"] # TODO: update to `start` command only for prod
   container_host_port   = 8080
   container_port        = 8080
-  container_environment = local.container_env
-  container_secrets     = local.container_secrets
+  container_environment = local.idp_container_env
+  container_secrets     = local.idp_container_secrets
 
   task_exec_role_policy_documents = [
     data.aws_iam_policy_document.ecs_task_ssm_parameters.json
