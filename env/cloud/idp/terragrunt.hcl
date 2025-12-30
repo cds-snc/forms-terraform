@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../hosted_zone", "../network", "../ecr", "../load_balancer"]
+  paths = ["../hosted_zone", "../network", "../ecr", "../load_balancer", "../secrets"]
 }
 
 locals {
@@ -42,6 +42,7 @@ dependency "ecr" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     ecr_repository_url_idp = "https://${local.aws_account_id}.dkr.ecr.ca-central-1.amazonaws.com/idp/zitadel"
+    ecr_repository_url_idp_user_portal = "https://${local.aws_account_id}.dkr.ecr.ca-central-1.amazonaws.com/idp/user_portal"
   }
 }
 
@@ -53,6 +54,16 @@ dependency "load_balancer" {
   mock_outputs = {
     kinesis_firehose_waf_logs_arn = "arn:aws:firehose:ca-central-1:${local.aws_account_id}:deliverystream/waf-logs"
     waf_ipv4_blocklist_arn        = "arn:aws:wafv2:ca-central-1:${local.aws_account_id}:ipset/mock-ip-blocklist/abcd1234-efgh5678-ijkl9012"
+  }
+}
+
+dependency "hosted_zone" {
+  config_path = "../secrets"
+
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs = {
+    idp_login_service_user_token = "Z123456789012"
   }
 }
 

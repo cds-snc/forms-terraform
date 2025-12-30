@@ -42,3 +42,8 @@ output "hcaptcha_site_verify_key_secret_arn" {
   description = "The hCaptcha site verify key secret used for forms"
   value       = aws_secretsmanager_secret_version.hcaptcha_site_verify_key.arn
 }
+
+output "idp_login_service_user_token" {
+  description = "The service user token for the IDP login"
+  value       = aws_secretsmanager_secret_version.idp_login_service_user_token.arn
+}
