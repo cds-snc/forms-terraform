@@ -42,7 +42,7 @@ dependency "ecr" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    ecr_repository_url_idp = "https://${local.aws_account_id}.dkr.ecr.ca-central-1.amazonaws.com/idp/zitadel"
+    ecr_repository_url_idp             = "https://${local.aws_account_id}.dkr.ecr.ca-central-1.amazonaws.com/idp/zitadel"
     ecr_repository_url_idp_user_portal = "https://${local.aws_account_id}.dkr.ecr.ca-central-1.amazonaws.com/idp/user_portal"
   }
 }
@@ -61,19 +61,19 @@ dependency "load_balancer" {
 inputs = {
   hosted_zone_ids = dependency.hosted_zone.outputs.hosted_zone_ids
 
-  private_subnet_ids                                   = dependency.network.outputs.private_subnet_ids
-  public_subnet_ids                                    = dependency.network.outputs.public_subnet_ids
-  security_group_idp_db_id                             = dependency.network.outputs.idp_db_security_group_id
-  security_group_idp_ecs_id                            = dependency.network.outputs.idp_ecs_security_group_id
-  security_group_idp_lb_id                             = dependency.network.outputs.idp_lb_security_group_id
-  vpc_id                                               = dependency.network.outputs.vpc_id
-  service_discovery_private_dns_namespace_ecs_local_id = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_id
+  private_subnet_ids                                     = dependency.network.outputs.private_subnet_ids
+  public_subnet_ids                                      = dependency.network.outputs.public_subnet_ids
+  security_group_idp_db_id                               = dependency.network.outputs.idp_db_security_group_id
+  security_group_idp_ecs_id                              = dependency.network.outputs.idp_ecs_security_group_id
+  security_group_idp_lb_id                               = dependency.network.outputs.idp_lb_security_group_id
+  vpc_id                                                 = dependency.network.outputs.vpc_id
+  service_discovery_private_dns_namespace_ecs_local_id   = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_id
   service_discovery_private_dns_namespace_ecs_local_name = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_name
 
   zitadel_image_ecr_url = dependency.ecr.outputs.ecr_repository_url_idp
   zitadel_image_tag     = "latest" # TODO: pin to specific tag for prod
 
-  idp_login_ecr_url    = dependency.ecr.outputs.ecr_repository_url_idp_user_portal
+  idp_login_ecr_url = dependency.ecr.outputs.ecr_repository_url_idp_user_portal
 
   kinesis_firehose_waf_logs_arn = dependency.load_balancer.outputs.kinesis_firehose_waf_logs_arn
   waf_ipv4_blocklist_arn        = dependency.load_balancer.outputs.waf_ipv4_blocklist_arn
@@ -83,7 +83,7 @@ inputs = {
   idp_database_max_acu = 4
 
   # Overwritten in GitHub Actions by TFVARS
-  idp_login_service_user_token = "ServiceUserTokenValues" 
+  idp_login_service_user_token = "ServiceUserTokenValues"
 }
 
 include "root" {

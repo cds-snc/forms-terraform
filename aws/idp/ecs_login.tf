@@ -14,7 +14,7 @@ locals {
 }
 
 module "idp_user_portal_ecs" {
-  count = var.env == "staging" ? 1 : 0
+  count  = var.env == "staging" ? 1 : 0
   source = "github.com/cds-snc/terraform-modules//ecs?ref=825c15a16d794bd878e0d11555c0abe6f481f29e" # v10.10.2
 
   cluster_name = "idp"
@@ -43,7 +43,7 @@ module "idp_user_portal_ecs" {
 
   # Networking
   lb_target_group_arn = aws_lb_target_group.user_portal[0].arn
-  
+
   subnet_ids                     = var.private_subnet_ids
   security_group_ids             = [var.security_group_idp_ecs_id]
   service_discovery_enabled      = true
@@ -55,7 +55,7 @@ module "idp_user_portal_ecs" {
   billing_tag_key   = var.billing_tag_key
   billing_tag_value = var.billing_tag_value
 
-## The Deploy pipeline will alternate between the target groups.
+  ## The Deploy pipeline will alternate between the target groups.
   lifecycle {
     ignore_changes = [
       lb_target_group_arn

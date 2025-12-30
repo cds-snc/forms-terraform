@@ -149,7 +149,7 @@ resource "aws_alb_listener_rule" "idp_protocol_version" {
 
 # Send requests to the login app to the appropriate target group
 resource "aws_alb_listener_rule" "user_portal" {
-  count = var.env == "staging" ? 1 : 0
+  count        = var.env == "staging" ? 1 : 0
   listener_arn = aws_lb_listener.idp.arn
   priority     = 1
   action {
