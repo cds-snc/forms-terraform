@@ -13,7 +13,8 @@ locals {
   ]
 }
 
-module "idp_ecs" {
+module "idp_user_portal_ecs" {
+  count = var.env == "staging" ? 1 : 0
   source = "github.com/cds-snc/terraform-modules//ecs?ref=825c15a16d794bd878e0d11555c0abe6f481f29e" # v10.10.2
 
   cluster_name = "idp"

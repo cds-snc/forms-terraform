@@ -81,6 +81,9 @@ inputs = {
   # 1 ACU ~= 2GB of memory and 1vCPU
   idp_database_min_acu = 1
   idp_database_max_acu = 4
+
+  # Overwritten in GitHub Actions by TFVARS
+  idp_login_service_user_token = "ServiceUserTokenValues" 
 }
 
 include "root" {
