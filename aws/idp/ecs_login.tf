@@ -16,7 +16,7 @@ locals {
       logDriver = "awslogs",
       options = {
         awslogs-region        = var.region,
-        awslogs-group         = aws_cloudwatch_log_group.this.name,
+        awslogs-group         = aws_cloudwatch_log_group.user_portal.name,
         awslogs-stream-prefix = "task"
       }
     }
