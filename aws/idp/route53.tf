@@ -59,7 +59,7 @@ resource "aws_route53_record" "idp_ses_verification_TXT" {
 # Email sending
 resource "aws_route53_record" "idp_spf_TXT" {
   zone_id = local.hosted_zone_id
-  name    = local.ipd_domains[0]
+  name    = local.idp_domains[0]
   type    = "TXT"
   ttl     = "300"
   records = [
@@ -70,7 +70,7 @@ resource "aws_route53_record" "idp_spf_TXT" {
 resource "aws_route53_record" "idp_dkim_CNAME" {
   count   = 3
   zone_id = local.hosted_zone_id
-  name    = "${element(aws_ses_domain_dkim.idp.dkim_tokens, count.index)}._domainkey.${local.ipd_domains[0]}"
+  name    = "${element(aws_ses_domain_dkim.idp.dkim_tokens, count.index)}._domainkey.${local.idp_domains[0]}"
   type    = "CNAME"
   ttl     = "300"
   records = [
@@ -80,7 +80,7 @@ resource "aws_route53_record" "idp_dkim_CNAME" {
 
 resource "aws_route53_record" "idp_dmarc_TXT" {
   zone_id = local.hosted_zone_id
-  name    = "_dmarc.${local.ipd_domains[0]}"
+  name    = "_dmarc.${local.idp_domains[0]}"
   type    = "TXT"
   ttl     = "300"
   records = [

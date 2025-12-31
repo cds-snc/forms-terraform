@@ -98,7 +98,7 @@ resource "aws_appautoscaling_target" "user_portal" {
   count = var.env == "staging" ? 1 : 0
 
   service_namespace  = "ecs"
-  resource_id        = "service/${aws_ecs_cluster.idp.name}/${aws_ecs_service.user_portal.name}"
+  resource_id        = "service/${aws_ecs_cluster.idp.name}/${aws_ecs_service.user_portal[0].name}"
   scalable_dimension = "ecs:service:DesiredCount"
   min_capacity       = 1
   max_capacity       = 3

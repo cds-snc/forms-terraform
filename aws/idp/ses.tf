@@ -2,7 +2,7 @@
 # Send email using a SES SMTP server
 #
 resource "aws_ses_domain_identity" "idp" {
-  domain = local.ipd_domains[0]
+  domain = local.idp_domains[0]
 }
 
 resource "aws_ses_domain_dkim" "idp" {
