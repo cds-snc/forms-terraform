@@ -124,3 +124,8 @@ variable "idp_login_service_user_token" {
   type        = string
   sensitive   = true
 }
+
+variable "kms_key_cloudwatch_arn" {
+  description = "CloudWatch KMS key ARN, used by the ECS task's CloudWatch log group"
+  type        = string
+}

@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../hosted_zone", "../network", "../ecr", "../load_balancer"]
+  paths = ["../hosted_zone", "../network", "../ecr", "../load_balancer", "../kms"]
 }
 
 locals {
@@ -58,6 +58,17 @@ dependency "load_balancer" {
   }
 }
 
+
+dependency "kms" {
+  config_path                             = "../kms"
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs = {
+    kms_key_cloudwatch_arn = null
+  }
+}
+
+
 inputs = {
   hosted_zone_ids = dependency.hosted_zone.outputs.hosted_zone_ids
 
@@ -77,6 +88,8 @@ inputs = {
 
   kinesis_firehose_waf_logs_arn = dependency.load_balancer.outputs.kinesis_firehose_waf_logs_arn
   waf_ipv4_blocklist_arn        = dependency.load_balancer.outputs.waf_ipv4_blocklist_arn
+
+  kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
 
   # 1 ACU ~= 2GB of memory and 1vCPU
   idp_database_min_acu = 1
