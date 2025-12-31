@@ -4,7 +4,7 @@ locals {
     cpu       = 1024
     memory    = 2048
     essential = true
-    image     = "${idp_login_ecr_url}:latest"
+    image     = "${var.idp_login_ecr_url}:latest"
 
 
     portMappings = [{
