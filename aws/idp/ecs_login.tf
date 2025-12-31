@@ -111,7 +111,7 @@ resource "aws_appautoscaling_policy" "user_portal_cpu" {
   policy_type        = "TargetTrackingScaling"
   service_namespace  = aws_appautoscaling_target.user_portal[0].service_namespace
   resource_id        = aws_appautoscaling_target.user_portal[0].resource_id
-  scalable_dimension = aws_appautoscaling_target.fuser_portal[0].scalable_dimension
+  scalable_dimension = aws_appautoscaling_target.user_portal[0].scalable_dimension
 
   target_tracking_scaling_policy_configuration {
     scale_in_cooldown  = 60
