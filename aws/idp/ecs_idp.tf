@@ -93,6 +93,8 @@ module "idp_ecs" {
 
   billing_tag_key   = var.billing_tag_key
   billing_tag_value = var.billing_tag_value
+
+  depends_on = [aws_ecs_cluster.idp]
 }
 
 #

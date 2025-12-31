@@ -89,6 +89,8 @@ resource "aws_ecs_service" "user_portal" {
       load_balancer    # updated by codedeploy
     ]
   }
+  depends_on = [aws_ecs_cluster.idp]
+
 }
 
 #
