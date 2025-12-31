@@ -19,7 +19,7 @@ locals {
   # This will allow the module to plan correctly before the `/aws/hosted_zone` module
   # has been applied.
   domain_name_to_zone_id = {
-    (var.domains[0]) = var.hosted_zone_ids[0]
+    (local.idp_domains) = var.hosted_zone_ids[0]
   }
 }
 
@@ -28,6 +28,7 @@ locals {
 resource "aws_route53_record" "idp_validation" {
   for_each = {
     for dvo in aws_acm_certificate.idp.domain_validation_options : dvo.domain_name => {
+      domain = dvo.domain_name
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
