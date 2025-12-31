@@ -1,5 +1,5 @@
 locals {
-  container_definitions = [ {
+  container_definitions = [{
     name      = "user_portal"
     cpu       = 1024
     memory    = 2048
