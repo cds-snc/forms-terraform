@@ -159,7 +159,7 @@ resource "aws_alb_listener_rule" "user_portal" {
 
   condition {
     path_pattern {
-      regex_values = ["^\\/ui\\/v2(?:\\/.*)?$"]
+      values = ["/ui/v2", "/ui/v2/", "/ui/v2/*"]
     }
   }
 }
