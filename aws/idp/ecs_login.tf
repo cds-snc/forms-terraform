@@ -1,5 +1,5 @@
 locals {
-  definition = {
+  container_definitions = [ {
     name      = "user_portal"
     cpu       = 1024
     memory    = 2048
@@ -31,7 +31,7 @@ locals {
       "valueFrom" = aws_ssm_parameter.idp_login_service_user_token.arn
     },
 
-  }
+  }]
 }
 
 
@@ -47,7 +47,7 @@ resource "aws_ecs_task_definition" "user_portal" {
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = aws_iam_role.idp_user_portal.arn
   task_role_arn            = aws_iam_role.idp_user_portal.arn
-  container_definitions    = "[${join(",", [jsonencode(local.definition)])}]"
+  container_definitions    = jsonencode(local.container_definitions)
 }
 
 #
