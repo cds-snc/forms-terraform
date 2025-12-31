@@ -19,7 +19,7 @@ locals {
   # This will allow the module to plan correctly before the `/aws/hosted_zone` module
   # has been applied.
   domain_name_to_zone_id = {
-    (local.idp_domains) = var.hosted_zone_ids[0]
+    (local.idp_domains[0]) = var.hosted_zone_ids[0]
   }
 }
 
