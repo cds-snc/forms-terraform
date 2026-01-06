@@ -54,7 +54,7 @@ resource "aws_ecs_task_definition" "user_portal" {
 # Service
 #
 resource "aws_ecs_service" "user_portal" {
-  count                = var.env == "staging" ? 1 : 0
+  count                = var.env == "production" ? 0 : 1
   name                 = "user_portal"
   cluster              = aws_ecs_cluster.idp.id
   task_definition      = aws_ecs_task_definition.user_portal.arn
@@ -97,7 +97,7 @@ resource "aws_ecs_service" "user_portal" {
 # Service autoscaling config
 #
 resource "aws_appautoscaling_target" "user_portal" {
-  count = var.env == "staging" ? 1 : 0
+  count = var.env == "production" ? 0 : 1
 
   service_namespace  = "ecs"
   resource_id        = "service/${aws_ecs_cluster.idp.name}/${aws_ecs_service.user_portal[0].name}"
@@ -107,7 +107,7 @@ resource "aws_appautoscaling_target" "user_portal" {
 }
 
 resource "aws_appautoscaling_policy" "user_portal_cpu" {
-  count = var.env == "staging" ? 1 : 0
+  count = var.env == "production" ? 0 : 1
 
   name               = "user_portal_cpu"
   policy_type        = "TargetTrackingScaling"
@@ -126,7 +126,7 @@ resource "aws_appautoscaling_policy" "user_portal_cpu" {
 }
 
 resource "aws_appautoscaling_policy" "user_portal_memory" {
-  count = var.env == "staging" ? 1 : 0
+  count = var.env == "production" ? 0 : 1
 
   name               = "user_portal_memory"
   policy_type        = "TargetTrackingScaling"

@@ -28,6 +28,7 @@ dependency "network" {
     idp_db_security_group_id                               = "sg-db"
     idp_ecs_security_group_id                              = "sg-ecs"
     idp_lb_security_group_id                               = "sg-lb"
+    code_build_security_group_id                           = "sg-cb"
     private_subnet_ids                                     = ["prv-1", "prv-2"]
     public_subnet_ids                                      = ["pub-1", "pub-2"]
     vpc_id                                                 = "vpc-id"
@@ -77,6 +78,7 @@ inputs = {
   security_group_idp_db_id                               = dependency.network.outputs.idp_db_security_group_id
   security_group_idp_ecs_id                              = dependency.network.outputs.idp_ecs_security_group_id
   security_group_idp_lb_id                               = dependency.network.outputs.idp_lb_security_group_id
+  code_build_security_group_id                           = dependency.network.outputs.code_build_security_group_id
   vpc_id                                                 = dependency.network.outputs.vpc_id
   service_discovery_private_dns_namespace_ecs_local_id   = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_id
   service_discovery_private_dns_namespace_ecs_local_name = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_name

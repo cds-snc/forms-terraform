@@ -129,3 +129,8 @@ variable "kms_key_cloudwatch_arn" {
   description = "CloudWatch KMS key ARN, used by the ECS task's CloudWatch log group"
   type        = string
 }
+
+variable "code_build_security_group_id" {
+  description = "Code Build Security Group"
+  type        = string
+}
