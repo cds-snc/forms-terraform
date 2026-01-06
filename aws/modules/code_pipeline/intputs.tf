@@ -37,21 +37,21 @@ variable "app_ecr_name" {
 
 variable "ecs_cluster_name" {
   description = "ECS Cluster name of the app"
-  type = string
+  type        = string
 }
 
 variable "ecs_service_name" {
   description = "ECS Service name of the app"
-  type = string
+  type        = string
 }
 
 variable "load_balancer_listener_arns" {
   description = "Load Balancer Listeners that direct traffic to the app"
-  type = list(string)
+  type        = list(string)
 }
 
 variable "loadblancer_target_group_names" {
   description = "List of target group names that direct traffic to the application"
-  type = list(string)
-  
+  type        = list(string)
+
 }

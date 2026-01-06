@@ -5,7 +5,7 @@
 
 resource "aws_codedeploy_app" "app" {
   compute_platform = "ECS"
-  name             = "${var.app_name}"
+  name             = var.app_name
 
 }
 
@@ -47,7 +47,7 @@ resource "aws_codedeploy_deployment_group" "app" {
         content {
           name = setting.value
         }
-              }
+      }
 
     }
   }
