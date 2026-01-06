@@ -45,7 +45,7 @@ resource "aws_codedeploy_deployment_group" "app" {
       dynamic "target_group" {
         for_each = var.loadblancer_target_group_names
         content {
-          name = setting.value
+          name = target_group.value
         }
       }
 
