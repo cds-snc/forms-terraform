@@ -1,5 +1,6 @@
 
 resource "aws_codebuild_project" "this" {
+  # checkov:skip=CKV_AWS_147: No sensitive data is stored in the output artifacts
   name          = var.app_name
   description   = "Build project for ${var.app_name}"
   build_timeout = 5

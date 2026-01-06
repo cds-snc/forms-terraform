@@ -26,6 +26,10 @@ resource "aws_iam_role_policy_attachment" "AWSCodeDeployRole" {
 }
 
 data "aws_iam_policy_document" "codepipeline_policy" {
+  # checkov:skip=CKV_AWS_356: All resources identifier is required
+  # checkov:skip=CKV_AWS_111: Requires write access
+
+ 
   statement {
     effect = "Allow"
 

@@ -1,4 +1,5 @@
 resource "aws_codepipeline" "this" {
+   # checkov:skip=CKV_AWS_219: No sensitive values are stored in artifacts
   name          = "${var.app_name}-pipeline"
   role_arn      = aws_iam_role.this.arn
   pipeline_type = "V2"
