@@ -1,4 +1,5 @@
 module "user_portal_code_pipeline" {
+  count = var.env == "production" ? 0 : 1
   source                         = "../modules/code_pipeline"
   vpc_id                         = var.vpc_id
   code_build_security_group_id   = var.code_build_security_group_id
