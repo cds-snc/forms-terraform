@@ -8,7 +8,7 @@ import {
   getObjectFirst100BytesInReliabilityBucket,
   removeFilesFromReliabilityStorage,
 } from "./s3FileInput.js";
-import { enqueueDeferredNotificationMessage } from "./sqsNotification.js";
+import { notification } from "@gcforms/connectors";
 import { FormSubmission } from "./types.js";
 
 export default async (
@@ -61,8 +61,7 @@ export default async (
   }
 
   try {
-    // Will retry up to 5 times and then give up
-    await enqueueDeferredNotificationMessage(formID);
+    await notification.enqueueDeferred(formID);
   } catch (error) {
     console.warn(
       JSON.stringify({
