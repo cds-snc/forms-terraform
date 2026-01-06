@@ -11,4 +11,6 @@ module "user_portal_code_pipeline" {
   ecs_service_name               = aws_ecs_service.user_portal.name
   load_balancer_listener_arns    = [aws_lb_listener.idp.arn]
   loadblancer_target_group_names = aws_lb_target_group.user_portal[*].name
+
+  depends_on = [ aws_ecs_service.user_portal, aws_ecs_cluster.idp,aws_lb_listener.idp,aws_lb_target_group.user_portal ]
 }
