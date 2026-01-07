@@ -8,7 +8,7 @@ type LogEvent = {
   event: string;
   timestamp: string;
   subject: { type: string; id?: string };
-  description: string;
+  description?: string;
 };
 
 type TransactionRequest = {
@@ -60,17 +60,19 @@ const notifyOnEvent = async (logEvents: Array<LogEvent>) => {
   eventsToNotify.forEach((logEvent) => {
     let eventDescription = logEvent.description;
 
-    try {
-      const parsedDescription = JSON.parse(logEvent.description);
-      eventDescription = interpolateEventDescription(
-        parsedDescription.eventDesc,
-        parsedDescription
-      );
-    } catch (_) {
-      /**
-       * Nothing to do here as the eventDescription already has a default value that was set earlier on.
-       * The goal of this try/catch is to make sure we still get a notification on Slack even if we failed to interpolate the eventDescription.
-       */
+    if (logEvent.description !== undefined) {
+      try {
+        const parsedDescription = JSON.parse(logEvent.description);
+        eventDescription = interpolateEventDescription(
+          parsedDescription.eventDesc,
+          parsedDescription
+        );
+      } catch (_) {
+        /**
+         * Nothing to do here as the eventDescription already has a default value that was set earlier on.
+         * The goal of this try/catch is to make sure we still get a notification on Slack even if we failed to interpolate the eventDescription.
+         */
+      }
     }
 
     console.warn(
@@ -78,7 +80,7 @@ const notifyOnEvent = async (logEvents: Array<LogEvent>) => {
         level: "warn",
         msg: `User ${logEvent.userId} performed ${logEvent.event} on ${logEvent.subject?.type}${
           logEvent.subject.id ? ` (id: ${logEvent.subject.id})` : ""
-        }.\n\n${eventDescription}`,
+        }.${eventDescription ? `\n\n${eventDescription}` : ""}`,
       })
     );
   });
