@@ -10,6 +10,9 @@
     "build:dev": "tsc --project tsconfig.json --watch",
     "test": "vitest --coverage"
   },
+  "dependencies": {
+    "axios": "^1.13.2"
+  },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.155",
     "@types/node": "^22.18.8",
