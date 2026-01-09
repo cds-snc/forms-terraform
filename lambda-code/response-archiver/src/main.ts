@@ -225,29 +225,36 @@ async function archiveResponsesAsJson(
   }
 }
 
-async function deleteFileAttachments(s3Client: S3Client, fileAttachments: Attachment[]) {
+async function deleteFileAttachments(
+  s3Client: S3Client,
+  fileAttachments: Attachment[]
+): Promise<void> {
   if (fileAttachments.length === 0) return;
 
-  try {
-    await s3Client.send(
-      new DeleteObjectsCommand({
-        Bucket: VAULT_FILE_STORAGE_S3_BUCKET,
-        Delete: {
-          Objects: fileAttachments.map((f) => ({ Key: f.path })),
-        },
-      })
-    );
-  } catch (error) {
-    console.warn(
-      JSON.stringify({
-        level: "warn",
-        msg: `Failed to delete file attachments from Vault S3 bucket. Files: ${fileAttachments
-          .map((f) => `${f.path}`)
-          .join(",")}.`,
-        error: (error as Error).message,
-      })
-    );
-  }
+  const chunkedDeleteRequests = chunkArray(fileAttachments, 1000).map((fileAttachmentsChunk) => {
+    return s3Client
+      .send(
+        new DeleteObjectsCommand({
+          Bucket: VAULT_FILE_STORAGE_S3_BUCKET,
+          Delete: {
+            Objects: fileAttachmentsChunk.map((f) => ({ Key: f.path })),
+          },
+        })
+      )
+      .catch((error) => {
+        console.warn(
+          JSON.stringify({
+            level: "warn",
+            msg: `Failed to delete file attachments from Vault S3 bucket. Files: ${fileAttachments
+              .map((f) => `${f.path}`)
+              .join(",")}.`,
+            error: (error as Error).message,
+          })
+        );
+      });
+  });
+
+  await Promise.all(chunkedDeleteRequests);
 }
 
 async function deleteResponses(dynamodbClient: DynamoDBClient, responses: FormResponse[]) {
