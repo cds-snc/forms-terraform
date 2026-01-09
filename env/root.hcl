@@ -1,8 +1,6 @@
 locals {
   account_id       = get_env("AWS_ACCOUNT_ID", "000000000000")
   env              = get_env("APP_ENV", "development")
-  domain_api       = get_env("API_DOMAIN", "localhost:3001") 
-  domain_idp       = get_env("IDP_DOMAIN", "localhost:8080")
   domains          = get_env("APP_DOMAINS", "[\"localhost:3000\"]")
 }
 
@@ -10,8 +8,6 @@ inputs = {
   account_id                = "${local.account_id}"
   billing_tag_key           = "CostCentre"
   billing_tag_value         = "forms-platform-${local.env}"
-  domain_api                = local.domain_api  
-  domain_idp                = local.domain_idp   
   domains                   = local.domains
   env                       = "${local.env}"
   region                    = "ca-central-1"

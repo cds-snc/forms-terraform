@@ -35,6 +35,12 @@ build_env: 	    ## Build Development environment
 build_module: 	## Build specific module
 	./local_dev_files/build_dev_env.sh $(name)
 
+refresh_env: 	    ## Refresh Development environment state
+	./local_dev_files/refresh_dev_state.sh
+
+refresh_module: 	## Refresh specific module state
+	./local_dev_files/refresh_dev_state.sh $(name)
+
 destroy_env: 	## Destroy Development environment
 	./local_dev_files/destroy_dev_env.sh
 
@@ -63,8 +69,8 @@ upgrade_env:  ## Update existing state to new provider version
 
 # Dependency guards
 
-lambda lambdas connect_env create_certs destroy_env build_env build_module upgrade_env: guard-AWS_ACCOUNT_ID
-lambda lambdas connect_env destroy_env build_env build_module upgrade_env: sso_login
+lambda lambdas connect_env create_certs destroy_env build_env build_module refresh_env refresh_module upgrade_env: guard-AWS_ACCOUNT_ID
+lambda lambdas connect_env destroy_env build_env build_module refresh_env refresh_module upgrade_env: sso_login
 
 build_env build_module: guard-STAGING_AWS_ACCOUNT_ID
 
@@ -78,6 +84,8 @@ build_env build_module: guard-STAGING_AWS_ACCOUNT_ID
 	validate \
 	build_env \
 	build_module \
+	refresh_env \
+	refresh_module \
 	destroy_env \
 	create_certs \
 	connect_env \

@@ -43,8 +43,9 @@ resource "aws_route53_record" "form_viewer_maintenance" {
 }
 
 resource "aws_route53_record" "forms_api" {
-  zone_id = var.hosted_zone_ids[0]
-  name    = var.domain_api
+  count   = length(var.domains)
+  zone_id = var.hosted_zone_ids[count.index]
+  name    = "api.${var.domains[count.index]}"
   type    = "A"
 
   alias {

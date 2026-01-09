@@ -21,7 +21,7 @@ resource "aws_lambda_function" "api_end_to_end_test" {
 
   environment {
     variables = {
-      IDP_TRUSTED_DOMAIN     = var.domain_idp
+      IDP_TRUSTED_DOMAIN     = "auth.${var.domains[0]}"
       IDP_URL                = "http://${var.ecs_idp_service_name}.${var.service_discovery_private_dns_namespace_ecs_local_name}:${var.ecs_idp_service_port}"
       IDP_PROJECT_IDENTIFIER = var.idp_project_identifier
       API_URL                = "http://${var.ecs_api_service_name}.${var.service_discovery_private_dns_namespace_ecs_local_name}:${var.ecs_api_service_port}"

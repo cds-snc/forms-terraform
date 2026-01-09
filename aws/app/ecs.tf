@@ -43,7 +43,7 @@ data "template_file" "form_viewer_task" {
     reprocess_submission_queue      = var.sqs_reliability_reprocessing_queue_id
     audit_log_queue_url             = var.sqs_app_audit_log_queue_id
     zitadel_url                     = "http://${var.ecs_idp_service_name}.${var.service_discovery_private_dns_namespace_ecs_local_name}:${var.ecs_idp_service_port}"
-    zitadel_trusted_domain          = var.domain_idp
+    zitadel_trusted_domain          = "auth.${var.domains[0]}"
     zitadel_administration_key      = var.zitadel_administration_key_secret_arn
     sentry_api_key                  = var.sentry_api_key_secret_arn
     hcaptcha_site_verify_key        = var.hcaptcha_site_verify_key_secret_arn

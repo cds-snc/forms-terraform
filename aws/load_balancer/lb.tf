@@ -156,7 +156,7 @@ resource "aws_alb_listener_rule" "forms_api" {
 
   condition {
     host_header {
-      values = [var.domain_api]
+      values = local.api_domains
     }
   }
 }
