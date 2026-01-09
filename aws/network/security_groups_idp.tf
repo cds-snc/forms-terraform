@@ -45,6 +45,16 @@ resource "aws_security_group_rule" "idp_ecs_ingress_lb" {
   source_security_group_id = aws_security_group.idp_lb.id
 }
 
+resource "aws_security_group_rule" "user_portal_ecs_ingress_lb" {
+  description              = "Ingress from load balancer to User Portal ECS task"
+  type                     = "ingress"
+  from_port                = 3000
+  to_port                  = 3000
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.idp_ecs.id
+  source_security_group_id = aws_security_group.idp_lb.id
+}
+
 # Load balancer
 resource "aws_security_group" "idp_lb" {
   name        = "idp_lb"
@@ -78,6 +88,16 @@ resource "aws_security_group_rule" "idp_lb_egress_ecs" {
   type                     = "egress"
   from_port                = 8080
   to_port                  = 8080
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.idp_lb.id
+  source_security_group_id = aws_security_group.idp_ecs.id
+}
+
+resource "aws_security_group_rule" "user_portal_lb_egress_ecs" {
+  description              = "Egress from load balancer to User Portal ECS task"
+  type                     = "egress"
+  from_port                = 3000
+  to_port                  = 3000
   protocol                 = "tcp"
   security_group_id        = aws_security_group.idp_lb.id
   source_security_group_id = aws_security_group.idp_ecs.id

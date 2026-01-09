@@ -1,15 +1,14 @@
-# #
-# # CodeDeploy
-# # Provides Blue/Green deployments for ECS tasks
-# #
+# # #
+# # # CodeDeploy
+# # # Provides Blue/Green deployments for ECS tasks
+# # #
 
-resource "aws_codedeploy_app" "app" {
+resource "aws_codedeploy_app" "this" {
   compute_platform = "ECS"
   name             = var.app_name
-
 }
 
-resource "aws_codedeploy_deployment_group" "app" {
+resource "aws_codedeploy_deployment_group" "this" {
   app_name               = var.app_name
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
   deployment_group_name  = var.app_name
@@ -23,6 +22,10 @@ resource "aws_codedeploy_deployment_group" "app" {
   blue_green_deployment_config {
     deployment_ready_option {
       action_on_timeout = "CONTINUE_DEPLOYMENT"
+    }
+    terminate_blue_instances_on_deployment_success {
+      action                           = "TERMINATE"
+      termination_wait_time_in_minutes = 1
     }
   }
 
@@ -51,6 +54,21 @@ resource "aws_codedeploy_deployment_group" "app" {
 
     }
   }
-
-
 }
+
+
+locals {
+  appspec = <<EOT
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        PlatformVersion: LATEST
+        TaskDefinition: <TASK_DEFINITION>
+        LoadBalancerInfo:
+          ContainerName: ${var.app_container_name}
+          ContainerPort: ${data.aws_lb_target_group.this.port}
+EOT
+}
+

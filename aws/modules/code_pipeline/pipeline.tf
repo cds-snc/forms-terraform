@@ -1,5 +1,5 @@
 resource "aws_codepipeline" "this" {
-   # checkov:skip=CKV_AWS_219: No sensitive values are stored in artifacts
+  # checkov:skip=CKV_AWS_219: No sensitive values are stored in artifacts
   name          = "${var.app_name}-pipeline"
   role_arn      = aws_iam_role.this.arn
   pipeline_type = "V2"
@@ -20,13 +20,13 @@ resource "aws_codepipeline" "this" {
       provider         = "CodeStarSourceConnection"
       version          = "1"
       output_artifacts = ["source_output"]
-      namespace        = "SourceVariables"
+      namespace        = "GitSource"
 
       configuration = {
         ConnectionArn        = aws_codestarconnections_connection.this.arn
         FullRepositoryId     = var.github_repo_name
         BranchName           = "main"
-        OutputArtifactFormat = "CODE_ZIP"
+        OutputArtifactFormat = "CODEBUILD_CLONE_REF"
       }
     }
   }
@@ -35,37 +35,60 @@ resource "aws_codepipeline" "this" {
     name = "Build"
 
     action {
-      name            = "Build"
-      category        = "Build"
-      owner           = "AWS"
-      provider        = "ECRBuildAndPublish"
-      input_artifacts = ["source_output"]
-      version         = "1"
+      name             = "Render_For_ECS"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      input_artifacts  = ["source_output"]
+      version          = "1"
+      namespace        = "RenderSource"
+      output_artifacts = ["render_output"]
+      run_order        = 1
 
       configuration = {
-        ECRRepositoryName : var.app_ecr_name
+        PrimarySource = "GitSource"
+        ProjectName   = aws_codebuild_project.ecs_render.name
+        EnvironmentVariables = jsonencode([
+          { name : "GIT_COMMIT_ID", value : "#{GitSource.CommitId}", type : "PLAINTEXT" },
+          { name : "TASKDEF_FAMILY", value : var.task_definition_family, type : "PLAINTEXT" },
+          { name : "APPSPEC", value : local.appspec, type : "PLAINTEXT" }
+        ])
       }
     }
+
+    # action {
+    #   name            = "Build_Docker_Image"
+    #   category        = "Build"
+    #   owner           = "AWS"
+    #   provider        = "ECRBuildAndPublish"
+    #   input_artifacts = ["render_output"]
+    #   version         = "1"
+    #   namespace       = "ECRSource"
+    #   run_order       = 2
+
+    #   configuration = {
+    #     ECRRepositoryName = var.app_ecr_name
+    #     ImageTags         = "#{GitSource.CommitId},latest"
+    #   }
+    # }
   }
 
   # stage {
-  #   name = "Deploy B/G"
+  #   name = "Deploy"
   #   action {
-  #     name = "Deploy"
-  #     category = "Deploy"
-  #     owner = "AWS"
-  #     provider = "CodeDeployToECS"
-  #     version = "1"
-  #     input_artifacts = ["source_output"]
+  #     name            = "Deploy"
+  #     category        = "Deploy"
+  #     owner           = "AWS"
+  #     provider        = "CodeDeployToECS"
+  #     version         = "1"
+  #     input_artifacts = ["render_output"]
   #     configuration = {
-  #       AppSpecTemplateArtifact: "source_output"
-  #       ApplicationName: var.app_name
-  #       DeploymentGroupName: ecs-deployment-group
-  #       Image1ArtifactName: MyImage
-  #       Image1ContainerName: IMAGE1_NAME
-  #       TaskDefinitionTemplatePath: taskdef.json
-  #       AppSpecTemplatePath: appspec.yaml
-  #       TaskDefinitionTemplateArtifact: "source_output"
+  #       ApplicationName : aws_codedeploy_app.this.name
+  #       DeploymentGroupName : aws_codedeploy_deployment_group.this.deployment_group_name
+  #       AppSpecTemplateArtifact : "render_output"
+  #       AppSpecTemplatePath : "appspec.yaml"
+  #       TaskDefinitionTemplateArtifact : "render_output"
+  #       TaskDefinitionTemplatePath : "task_definition.json"
   #     }
   #   }
   # }

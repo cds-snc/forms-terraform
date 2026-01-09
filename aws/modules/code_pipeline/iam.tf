@@ -25,11 +25,18 @@ resource "aws_iam_role_policy_attachment" "AWSCodeDeployRole" {
   role       = aws_iam_role.this.name
 }
 
+resource "aws_iam_role_policy_attachment" "AWSCodeDeployRoleForECS" {
+  policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
+  role       = aws_iam_role.this.name
+}
+
+
+
 data "aws_iam_policy_document" "codepipeline_policy" {
   # checkov:skip=CKV_AWS_356: All resources identifier is required
   # checkov:skip=CKV_AWS_111: Requires write access
 
- 
+
   statement {
     effect = "Allow"
 
@@ -106,7 +113,7 @@ data "aws_iam_policy_document" "codepipeline_policy" {
       "codedeploy:GetDeployment"
     ]
 
-    resources = ["arn:aws:codedeploy:*:${local.account_id}:deploymentgroup:[[ApplicationName]]/*"]
+    resources = ["arn:aws:codedeploy:*:${local.account_id}:deploymentgroup:${aws_codedeploy_app.this.name}/*"]
   }
   statement {
     effect = "Allow"
@@ -116,8 +123,8 @@ data "aws_iam_policy_document" "codepipeline_policy" {
       "codedeploy:RegisterApplicationRevision"
     ]
     resources = [
-      "arn:aws:codedeploy:*:${local.account_id}:application:[[ApplicationName]]",
-      "arn:aws:codedeploy:*:${local.account_id}:application:[[ApplicationName]]/*"
+      "arn:aws:codedeploy:*:${local.account_id}:application:${aws_codedeploy_app.this.name}",
+      "arn:aws:codedeploy:*:${local.account_id}:application:${aws_codedeploy_app.this.name}/*"
     ]
   }
   statement {
@@ -125,24 +132,48 @@ data "aws_iam_policy_document" "codepipeline_policy" {
     actions = [
       "codedeploy:GetDeploymentConfig"
     ]
-    resources = ["arn:aws:codedeploy:*:${local.account_id}deploymentconfig:*"]
+    resources = ["arn:aws:codedeploy:*:${local.account_id}:deploymentconfig:*"]
   }
   statement {
-    effect    = "Allow"
-    actions   = ["ecs:RegisterTaskDefinition"]
+    effect = "Allow"
+    actions = [
+      "ecs:RegisterTaskDefinition",
+      "ecs:DescribeTaskDefinition",
+      "ecs:DescribeServices",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "ec2:CreateNetworkInterface",
+      "ec2:DescribeDhcpOptions",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DeleteNetworkInterface",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeVpcs"
+    ]
     resources = ["*"]
   }
 
   statement {
     effect    = "Allow"
+    actions   = ["ec2:CreateNetworkInterfacePermission"]
+    resources = ["arn:aws:ec2:${local.region}:${local.account_id}:network-interface/*"]
+  }
+
+  statement {
+    effect    = "Allow"
+    actions   = ["codestar-connections:UseConnection"]
+    resources = ["arn:aws:iam::*:role/Service*"]
+  }
+
+  statement {
+    effect    = "Allow"
     actions   = ["iam:PassRole"]
-    resources = ["arn:aws:iam::111122223333:role/[[PassRoles]]"]
-    condition {
-      test     = "StringEquals"
-      variable = "iam:PassedToService"
-      values = ["ecs.amazonaws.com",
-      "ecs-tasks.amazonaws.com"]
-    }
+    resources = [data.aws_ecs_task_definition.this.execution_role_arn]
   }
 }
 

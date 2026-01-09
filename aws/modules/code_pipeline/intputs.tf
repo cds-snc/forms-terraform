@@ -35,6 +35,21 @@ variable "app_ecr_name" {
   type        = string
 }
 
+variable "app_ecr_url" {
+  description = "ECR repository url for the app"
+  type        = string
+}
+
+variable "task_definition_family" {
+  description = "Task Definiton family of the ECS service"
+  type        = string
+}
+
+variable "app_container_name" {
+  description = "Applications container name in the task definition"
+  type        = string
+}
+
 variable "ecs_cluster_name" {
   description = "ECS Cluster name of the app"
   type        = string
@@ -53,5 +68,31 @@ variable "load_balancer_listener_arns" {
 variable "loadblancer_target_group_names" {
   description = "List of target group names that direct traffic to the application"
   type        = list(string)
+}
 
+variable "docker_build_env_vars_plaintext" {
+  description = "Environment value key / values required during the docker build - plain text"
+  type = list(object({
+    key   = string
+    value = string
+  }))
+  default = []
+}
+
+variable "docker_build_env_vars_secrets" {
+  description = "Environment value key / secret manager arns required during the docker build - secrets"
+  type = list(object({
+    key   = string
+    value = string
+  }))
+  default = []
+}
+
+variable "docker_build_env_vars_parameter_store" {
+  description = "Environment value key / parameter-store names required during the docker build - parameter store"
+  type = list(object({
+    key   = string
+    value = string
+  }))
+  default = []
 }

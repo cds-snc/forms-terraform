@@ -1,6 +1,6 @@
 resource "aws_secretsmanager_secret" "this" {
   # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
-  name                    = "github-webhook-${var.app_name}"
+  name                    = "github-webhook-${var.app_name}_1"
   recovery_window_in_days = 0
 }
 
