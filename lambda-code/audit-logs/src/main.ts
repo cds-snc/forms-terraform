@@ -8,7 +8,7 @@ type LogEvent = {
   event: string;
   timestamp: string;
   subject: { type: string; id?: string };
-  description: string;
+  description?: string;
 };
 
 type TransactionRequest = {
@@ -49,18 +49,41 @@ const warnOnEvents = [
   "DeleteSetting",
 ];
 
+function interpolateEventDescription(eventDesc: string, params: Record<string, string>): string {
+  return eventDesc.replace(/\$\{(\w+)\}/g, (_, key) => {
+    return params[key] ?? `\${${key}}`;
+  });
+}
+
 const notifyOnEvent = async (logEvents: Array<LogEvent>) => {
   const eventsToNotify = logEvents.filter((logEvent) => warnOnEvents.includes(logEvent.event));
-  eventsToNotify.forEach((logEvent) =>
+  eventsToNotify.forEach((logEvent) => {
+    let eventDescription = logEvent.description;
+
+    if (logEvent.description !== undefined) {
+      try {
+        const parsedDescription = JSON.parse(logEvent.description);
+        eventDescription = interpolateEventDescription(
+          parsedDescription.eventDesc,
+          parsedDescription
+        );
+      } catch (_) {
+        /**
+         * Nothing to do here as the eventDescription already has a default value that was set earlier on.
+         * The goal of this try/catch is to make sure we still get a notification on Slack even if we failed to interpolate the eventDescription.
+         */
+      }
+    }
+
     console.warn(
       JSON.stringify({
         level: "warn",
-        msg: `User ${logEvent.userId} performed ${logEvent.event} on ${logEvent.subject?.type} ${
-          logEvent.subject.id ?? `with id ${logEvent.subject.id}.`
-        }${logEvent.description ? "\n".concat(logEvent.description) : ""}`,
+        msg: `User ${logEvent.userId} performed ${logEvent.event} on ${logEvent.subject?.type}${
+          logEvent.subject.id ? ` (id: ${logEvent.subject.id})` : ""
+        }.${eventDescription ? `\n\n${eventDescription}` : ""}`,
       })
-    )
-  );
+    );
+  });
 };
 
 const detectAndRemoveDuplicateEvents = (transactionItems: TransactionRequest[]) => {
@@ -203,10 +226,6 @@ export const handler: Handler = async (event: SQSEvent) => {
   try {
     const logEvents = event.Records.map((record) => {
       const logEvent = JSON.parse(record.body);
-      // App currently does not use userId, but userID
-      // Opening an issue to correct
-      logEvent.userId = logEvent.userId ?? logEvent.userID;
-
       return {
         messageId: record.messageId,
         eventSourceARN: record.eventSourceARN,
