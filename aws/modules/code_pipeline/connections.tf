@@ -15,6 +15,6 @@ resource "aws_codepipeline_webhook" "this" {
 
   filter {
     json_path    = "$.ref"
-    match_equals = "refs/heads/{Branch}"
+    match_equals = "refs/heads/main"
   }
 }
