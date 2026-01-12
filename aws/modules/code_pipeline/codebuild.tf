@@ -45,6 +45,7 @@ resource "aws_codebuild_project" "build_image" {
 
 resource "aws_codebuild_project" "ecs_render" {
   # checkov:skip=CKV_AWS_147: No sensitive data is stored in the output artifacts
+  # checkov:skip=CKV_AWS_316: Privileges required to build docker container within codebuild environment
   name          = "ECS-Render-${var.app_name}"
   description   = "Render ECS files for ${var.app_name}"
   build_timeout = 5
