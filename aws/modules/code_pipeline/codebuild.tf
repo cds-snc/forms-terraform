@@ -63,7 +63,7 @@ resource "aws_codebuild_project" "ecs_render" {
     image                       = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
-    privileged_mode = true
+    privileged_mode             = true
   }
 
   logs_config {
@@ -93,9 +93,9 @@ locals {
   buildspec = jsonencode({
     version = 0.2
     env = {
-      variables         =  { for item in var.docker_build_env_vars_plaintext : item.key => item.value }
-      "parameter-store" = { for item in var.docker_build_env_vars_parameter_store : item.key => item.value }      
-      "secrets-manager" = { for item in var.docker_build_env_vars_secrets : item.key => item.value }      
+      variables         = { for item in var.docker_build_env_vars_plaintext : item.key => item.value }
+      "parameter-store" = { for item in var.docker_build_env_vars_parameter_store : item.key => item.value }
+      "secrets-manager" = { for item in var.docker_build_env_vars_secrets : item.key => item.value }
     }
     phases = {
       build = {
@@ -127,5 +127,5 @@ locals {
       files = ["appspec.yaml", "task_definition.json"]
     }
   })
-  docker_build_args = join(" ", [for instance in concat(var.docker_build_env_vars_plaintext, var.docker_build_env_vars_parameter_store, var.docker_build_env_vars_secrets) : "--build-arg ${instance.key}=${instance.value}"],["."])
+  docker_build_args = join(" ", [for instance in concat(var.docker_build_env_vars_plaintext, var.docker_build_env_vars_parameter_store, var.docker_build_env_vars_secrets) : "--build-arg ${instance.key}=${instance.value}"], ["."])
 }

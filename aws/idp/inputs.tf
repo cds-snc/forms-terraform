@@ -121,8 +121,8 @@ variable "idp_login_ecr_url" {
 
 variable "ipd_login_github_webhook_secret" {
   description = "Github Webhook auth secret"
-  type = string
-  sensitive = true
+  type        = string
+  sensitive   = true
 }
 
 variable "idp_login_service_user_token" {
