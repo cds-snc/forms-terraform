@@ -55,42 +55,26 @@ resource "aws_codepipeline" "this" {
         ])
       }
     }
-
-    # action {
-    #   name            = "Build_Docker_Image"
-    #   category        = "Build"
-    #   owner           = "AWS"
-    #   provider        = "ECRBuildAndPublish"
-    #   input_artifacts = ["render_output"]
-    #   version         = "1"
-    #   namespace       = "ECRSource"
-    #   run_order       = 2
-
-    #   configuration = {
-    #     ECRRepositoryName = var.app_ecr_name
-    #     ImageTags         = "#{GitSource.CommitId},latest"
-    #   }
-    # }
   }
 
-  # stage {
-  #   name = "Deploy"
-  #   action {
-  #     name            = "Deploy"
-  #     category        = "Deploy"
-  #     owner           = "AWS"
-  #     provider        = "CodeDeployToECS"
-  #     version         = "1"
-  #     input_artifacts = ["render_output"]
-  #     configuration = {
-  #       ApplicationName : aws_codedeploy_app.this.name
-  #       DeploymentGroupName : aws_codedeploy_deployment_group.this.deployment_group_name
-  #       AppSpecTemplateArtifact : "render_output"
-  #       AppSpecTemplatePath : "appspec.yaml"
-  #       TaskDefinitionTemplateArtifact : "render_output"
-  #       TaskDefinitionTemplatePath : "task_definition.json"
-  #     }
-  #   }
-  # }
+  stage {
+    name = "Deploy"
+    action {
+      name            = "Deploy"
+      category        = "Deploy"
+      owner           = "AWS"
+      provider        = "CodeDeployToECS"
+      version         = "1"
+      input_artifacts = ["render_output"]
+      configuration = {
+        ApplicationName : aws_codedeploy_app.this.name
+        DeploymentGroupName : aws_codedeploy_deployment_group.this.deployment_group_name
+        AppSpecTemplateArtifact : "render_output"
+        AppSpecTemplatePath : "appspec.yaml"
+        TaskDefinitionTemplateArtifact : "render_output"
+        TaskDefinitionTemplatePath : "task_definition.json"
+      }
+    }
+  }
 
 }
