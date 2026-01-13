@@ -118,6 +118,10 @@
         "value": "${zitadel_url}"
       },
       {
+        "name": "ZITADEL_CLIENT_ID",
+        "value": "${zitadel_client_id}"
+      },
+      {
         "name": "ZITADEL_TRUSTED_DOMAIN",
         "value": "${zitadel_trusted_domain}"
       }

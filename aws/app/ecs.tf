@@ -45,6 +45,7 @@ data "template_file" "form_viewer_task" {
     zitadel_url                     = "http://${var.ecs_idp_service_name}.${var.service_discovery_private_dns_namespace_ecs_local_name}:${var.ecs_idp_service_port}"
     zitadel_trusted_domain          = "auth.${var.domains[0]}"
     zitadel_administration_key      = var.zitadel_administration_key_secret_arn
+    zitadel_client_id               = var.zitadel_client_id
     sentry_api_key                  = var.sentry_api_key_secret_arn
     hcaptcha_site_verify_key        = var.hcaptcha_site_verify_key_secret_arn
   }
