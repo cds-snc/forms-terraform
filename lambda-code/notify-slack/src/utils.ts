@@ -71,14 +71,14 @@ export const sendToOpsGenie = async (logGroup: string, logMessage: string, logSe
     return;
   }
 
-  const environment = process.env.ENVIRONMENT || "staging";
+  // const environment = process.env.ENVIRONMENT || "staging";
 
-  if (environment !== "production") {
-    console.log(
-      `Skipping sending to OpsGenie because environment is not production: ${environment}`
-    );
-    return;
-  }
+  // if (environment !== "production") {
+  //   console.log(
+  //     `Skipping sending to OpsGenie because environment is not production: ${environment}`
+  //   );
+  //   return;
+  // }
 
   try {
     await axios.post(
