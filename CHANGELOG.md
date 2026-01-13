@@ -1,5 +1,29 @@
 # Changelog
 
+## [3.41.3](https://github.com/cds-snc/forms-terraform/compare/v3.41.2...v3.41.3) (2026-01-12)
+
+
+### Bug Fixes
+
+* handle undefined description when sending audit log to Slack ([#1184](https://github.com/cds-snc/forms-terraform/issues/1184)) ([6a2b45e](https://github.com/cds-snc/forms-terraform/commit/6a2b45e7a828a5a22e71dc6148e6560312ff8042))
+* response archiver can handle file attachments deletion when there is more than 1000 items to delete ([#1187](https://github.com/cds-snc/forms-terraform/issues/1187)) ([af2bc13](https://github.com/cds-snc/forms-terraform/commit/af2bc13b78bf00021a047ea9947f68a6129375ca))
+
+
+### Miscellaneous Chores
+
+* add event description interpolation for audit log events ([#1180](https://github.com/cds-snc/forms-terraform/issues/1180)) ([8f74264](https://github.com/cds-snc/forms-terraform/commit/8f74264a778910807ff8db600374fce33b6401da))
+* **deps:** lock file maintenance ([#1178](https://github.com/cds-snc/forms-terraform/issues/1178)) ([1921190](https://github.com/cds-snc/forms-terraform/commit/1921190619ec348a98598f48ca2356ba116ed768))
+* **deps:** lock file maintenance ([#1182](https://github.com/cds-snc/forms-terraform/issues/1182)) ([c10a1e7](https://github.com/cds-snc/forms-terraform/commit/c10a1e7b59bf41c643df3d94351bcf334eb11d96))
+* **deps:** lock file maintenance ([#1189](https://github.com/cds-snc/forms-terraform/issues/1189)) ([a5107cb](https://github.com/cds-snc/forms-terraform/commit/a5107cb593abd86bc9cbf676cae42536fe2e13e6))
+* **deps:** update all non-major github action dependencies ([#1169](https://github.com/cds-snc/forms-terraform/issues/1169)) ([15c94e9](https://github.com/cds-snc/forms-terraform/commit/15c94e9a59758585b9dc9664819418c3af6dabb4))
+* **deps:** update all non-major github action dependencies ([#1177](https://github.com/cds-snc/forms-terraform/issues/1177)) ([4dcee42](https://github.com/cds-snc/forms-terraform/commit/4dcee42b845608bd861375924d7531a5fca12c51))
+* **deps:** update all non-major github action dependencies ([#1181](https://github.com/cds-snc/forms-terraform/issues/1181)) ([0c5b3c2](https://github.com/cds-snc/forms-terraform/commit/0c5b3c24ae71532e83d0b46238c5db78a06cdbc0))
+* **deps:** update all non-major github action dependencies ([#1188](https://github.com/cds-snc/forms-terraform/issues/1188)) ([ac34f87](https://github.com/cds-snc/forms-terraform/commit/ac34f87c274010d2265e9c2890f273711fa4b8bd))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1176](https://github.com/cds-snc/forms-terraform/issues/1176)) ([5e874da](https://github.com/cds-snc/forms-terraform/commit/5e874da69b3f3992300b45bfab0110e1af9370a6))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1179](https://github.com/cds-snc/forms-terraform/issues/1179)) ([ce6d9a5](https://github.com/cds-snc/forms-terraform/commit/ce6d9a529affa76e37149ec92f9ee27f6cd8bffc))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1186](https://github.com/cds-snc/forms-terraform/issues/1186)) ([fc2d410](https://github.com/cds-snc/forms-terraform/commit/fc2d41022779143c73b5141ecf2b4625d3e47933))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1190](https://github.com/cds-snc/forms-terraform/issues/1190)) ([c226422](https://github.com/cds-snc/forms-terraform/commit/c226422cad66cfef6ac128a1c01564d18fa46942))
+
 ## [3.41.2](https://github.com/cds-snc/forms-terraform/compare/v3.41.1...v3.41.2) (2025-12-16)
 
 
