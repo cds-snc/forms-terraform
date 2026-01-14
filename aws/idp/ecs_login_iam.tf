@@ -23,7 +23,7 @@ data "aws_iam_policy_document" "idp_user_portal" {
 #
 
 resource "aws_iam_policy" "user_portal_ssm" {
-  name   = "formsS3Access"
+  name   = "IdpS3Access"
   path   = "/"
   policy = data.aws_iam_policy_document.idp_login_task_ssm_parameters.json
 }
@@ -43,7 +43,7 @@ data "aws_iam_policy_document" "idp_login_task_ssm_parameters" {
 }
 
 resource "aws_iam_policy" "ecs_xray" {
-  name        = "ecs_xray"
+  name        = "idp_ecs_xray"
   path        = "/"
   description = "IAM policy for allowing X-Ray tracing"
   policy      = data.aws_iam_policy_document.ecs_xray.json
@@ -89,30 +89,3 @@ resource "aws_iam_role_policy_attachment" "ecs_xray" {
   role       = aws_iam_role.idp_user_portal.name
   policy_arn = aws_iam_policy.ecs_xray.arn
 }
-
-
-#
-# IAM - Codedeploy
-#
-resource "aws_iam_role" "codedeploy" {
-  name               = "codedeploy"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy_codedeploy.json
-  path               = "/"
-}
-
-data "aws_iam_policy_document" "assume_role_policy_codedeploy" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["codedeploy.amazonaws.com"]
-    }
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "codedeploy" {
-  role       = aws_iam_role.codedeploy.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
-}
-
