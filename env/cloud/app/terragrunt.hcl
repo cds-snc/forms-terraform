@@ -195,6 +195,7 @@ inputs = {
   cognito_client_id     = dependency.cognito.outputs.cognito_client_id
   cognito_user_pool_arn = dependency.cognito.outputs.cognito_user_pool_arn
 
+
   recaptcha_secret_arn                    = dependency.secrets.outputs.recaptcha_secret_arn
   notify_api_key_secret_arn               = dependency.secrets.outputs.notify_api_key_secret_arn
   freshdesk_api_key_secret_arn            = dependency.secrets.outputs.freshdesk_api_key_secret_arn
@@ -210,6 +211,8 @@ inputs = {
 
   ecs_idp_service_name = dependency.idp.outputs.ecs_idp_service_name
   ecs_idp_service_port = dependency.idp.outputs.ecs_idp_service_port
+  # Overwritten by GitHub TFVARS
+  zitadel_client_id     = "123456789"
 }
 
 include "root" {

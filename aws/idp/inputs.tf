@@ -103,3 +103,40 @@ variable "service_discovery_private_dns_namespace_ecs_local_id" {
   description = "Local ECS service discovery private DNS namespace ID"
   type        = string
 }
+
+variable "service_discovery_private_dns_namespace_ecs_local_name" {
+  description = "Local ECS service discovery private DNS namespace name"
+  type        = string
+}
+
+#####################
+## IDP Hosted Login
+#####################
+
+
+variable "idp_login_ecr_url" {
+  description = "The Hosted Login Docker image ECR repository URL."
+  type        = string
+}
+
+variable "ipd_login_github_webhook_secret" {
+  description = "Github Webhook auth secret"
+  type        = string
+  sensitive   = true
+}
+
+variable "idp_login_service_user_token" {
+  description = "The service user token that allows communication with the Zitadel API"
+  type        = string
+  sensitive   = true
+}
+
+variable "kms_key_cloudwatch_arn" {
+  description = "CloudWatch KMS key ARN, used by the ECS task's CloudWatch log group"
+  type        = string
+}
+
+variable "code_build_security_group_id" {
+  description = "Code Build Security Group"
+  type        = string
+}

@@ -1,11 +1,11 @@
 locals {
-  container_env = [
+  idp_container_env = [
     {
       "name"  = "ZITADEL_EXTERNALDOMAIN",
-      "value" = var.domain_idp
+      "value" = local.idp_domains[0]
     },
   ]
-  container_secrets = [
+  idp_container_secrets = [
     {
       "name"      = "ZITADEL_DATABASE_POSTGRES_DATABASE"
       "valueFrom" = aws_ssm_parameter.zitadel_database_name.arn
@@ -46,8 +46,9 @@ locals {
 }
 
 module "idp_ecs" {
-  source = "github.com/cds-snc/terraform-modules//ecs?ref=374e397485ef4888d455e2a3c6237376a45179cb" # v10.4.4
+  source = "github.com/cds-snc/terraform-modules//ecs?ref=825c15a16d794bd878e0d11555c0abe6f481f29e" # v10.10.2
 
+  create_cluster = false
   cluster_name   = "idp"
   service_name   = "zitadel"
   container_name = "zitadel"
@@ -67,8 +68,8 @@ module "idp_ecs" {
   container_command     = ["start-from-init", "--masterkeyFromEnv", "--tlsMode", "external", "--config", "/app/config.yaml", "--steps", "/app/steps.yaml"] # TODO: update to `start` command only for prod
   container_host_port   = 8080
   container_port        = 8080
-  container_environment = local.container_env
-  container_secrets     = local.container_secrets
+  container_environment = local.idp_container_env
+  container_secrets     = local.idp_container_secrets
 
   task_exec_role_policy_documents = [
     data.aws_iam_policy_document.ecs_task_ssm_parameters.json
@@ -92,6 +93,8 @@ module "idp_ecs" {
 
   billing_tag_key   = var.billing_tag_key
   billing_tag_value = var.billing_tag_value
+
+  depends_on = [aws_ecs_cluster.idp]
 }
 
 #
