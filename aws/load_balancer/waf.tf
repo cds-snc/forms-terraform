@@ -28,27 +28,28 @@ resource "aws_wafv2_rule_group" "rate_limiters_group" {
         aggregate_key_type = "IP"
         scope_down_statement {
           not_statement {
-            statement {
-              or_statement {
-                dynamic "statement" {
-                  for_each = local.api_domains
-                  content {
-                    byte_match_statement {
-                      positional_constraint = "EXACTLY"
-                      field_to_match {
-                        single_header {
-                          name = "host"
-                        }
-                      }
-                      search_string = statement.value
-                      text_transformation {
-                        priority = 1
-                        type     = "LOWERCASE"
-                      }
+            // statement {
+            // The OR statement is commented out until we have more then one domain to check against
+            // or_statement {
+            dynamic "statement" {
+              for_each = local.api_domains
+              content {
+                byte_match_statement {
+                  positional_constraint = "EXACTLY"
+                  field_to_match {
+                    single_header {
+                      name = "host"
                     }
+                  }
+                  search_string = statement.value
+                  text_transformation {
+                    priority = 1
+                    type     = "LOWERCASE"
                   }
                 }
               }
+              //    }
+              //     }
             }
           }
         }
@@ -109,26 +110,27 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
     statement {
       and_statement {
-        statement {
-          or_statement {
-            dynamic "statement" {
-              for_each = local.api_domains
-              content {
-                byte_match_statement {
-                  positional_constraint = "EXACTLY"
-                  field_to_match {
-                    single_header {
-                      name = "host"
-                    }
-                  }
-                  search_string = statement.value
-                  text_transformation {
-                    priority = 1
-                    type     = "LOWERCASE"
-                  }
+        // statement {
+        // The OR statement is commented out until we have more then one domain to check against
+        // or_statement {
+        dynamic "statement" {
+          for_each = local.api_domains
+          content {
+            byte_match_statement {
+              positional_constraint = "EXACTLY"
+              field_to_match {
+                single_header {
+                  name = "host"
                 }
               }
+              search_string = statement.value
+              text_transformation {
+                priority = 1
+                type     = "LOWERCASE"
+              }
             }
+            //      }
+            //      }
           }
         }
         statement {
@@ -429,26 +431,27 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     */
     statement {
       and_statement {
-        statement {
-          or_statement {
-            dynamic "statement" {
-              for_each = local.api_domains
-              content {
-                byte_match_statement {
-                  positional_constraint = "EXACTLY"
-                  field_to_match {
-                    single_header {
-                      name = "host"
-                    }
-                  }
-                  search_string = statement.value
-                  text_transformation {
-                    priority = 1
-                    type     = "LOWERCASE"
-                  }
+        // statement {
+        // The OR statement is commented out until we have more then one domain to check against
+        // or_statement {
+        dynamic "statement" {
+          for_each = local.api_domains
+          content {
+            byte_match_statement {
+              positional_constraint = "EXACTLY"
+              field_to_match {
+                single_header {
+                  name = "host"
                 }
               }
+              search_string = statement.value
+              text_transformation {
+                priority = 1
+                type     = "LOWERCASE"
+              }
             }
+            //    }
+            //  }
           }
         }
         statement {

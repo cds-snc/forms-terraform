@@ -220,7 +220,7 @@ variable "cognito_client_id" {
 
 variable "zitadel_client_id" {
   description = "Zitadel Client ID for GCforms"
-  type = string
+  type        = string
 }
 
 variable "cognito_endpoint_url" {
