@@ -212,7 +212,7 @@ inputs = {
   ecs_idp_service_name = dependency.idp.outputs.ecs_idp_service_name
   ecs_idp_service_port = dependency.idp.outputs.ecs_idp_service_port
   # Overwritten by GitHub TFVARS
-  zitadel_client_id     = "123456789"
+  zitadel_client_id = "123456789"
 }
 
 include "root" {
