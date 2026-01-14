@@ -16,7 +16,7 @@ resource "aws_wafv2_web_acl" "idp" {
 
   rule {
     name     = "BlockLargeRequests"
-    priority = 1
+    priority = 2
 
     action {
       block {}
