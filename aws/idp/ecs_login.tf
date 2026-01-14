@@ -56,7 +56,7 @@ resource "aws_ecs_task_definition" "user_portal" {
 resource "aws_ecs_service" "user_portal" {
   count                = var.env == "production" ? 0 : 1
   name                 = "user_portal"
-  cluster              = aws_ecs_cluster.idp.id
+  cluster              = aws_ecs_cluster.idp.name
   task_definition      = aws_ecs_task_definition.user_portal.arn
   launch_type          = "FARGATE"
   platform_version     = "1.4.0"
