@@ -38,7 +38,7 @@ resource "aws_wafv2_web_acl" "idp" {
             comparison_operator = "GT"
             size                = 8192
             text_transformation {
-              priority = 0
+              priority = 1
               type     = "NONE"
             }
           }
@@ -57,7 +57,7 @@ resource "aws_wafv2_web_acl" "idp" {
             comparison_operator = "GT"
             size                = 8192
             text_transformation {
-              priority = 0
+              priority = 1
               type     = "NONE"
             }
           }
@@ -101,7 +101,7 @@ resource "aws_wafv2_web_acl" "idp" {
                 type     = "COMPRESS_WHITE_SPACE"
               }
               text_transformation {
-                priority = 1
+                priority = 2
                 type     = "LOWERCASE"
               }
               //        }
