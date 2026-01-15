@@ -9,6 +9,7 @@ type LogEvent = {
   timestamp: string;
   subject: { type: string; id?: string };
   description?: string;
+  clientIp?: string;
 };
 
 type TransactionRequest = {
@@ -21,6 +22,7 @@ type TransactionRequest = {
       TimeStamp: string;
       description?: string;
       Status: string;
+      ClientIp?: string;
     };
   };
 };
@@ -80,7 +82,9 @@ const notifyOnEvent = async (logEvents: Array<LogEvent>) => {
         level: "warn",
         msg: `User ${logEvent.userId} performed ${logEvent.event} on ${logEvent.subject?.type}${
           logEvent.subject.id ? ` (id: ${logEvent.subject.id})` : ""
-        }.${eventDescription ? `\n\n${eventDescription}` : ""}`,
+        }.${eventDescription ? `\n\n${eventDescription}.` : ""}${
+          logEvent.clientIp ? `\n\nClient IP: ${logEvent.clientIp}` : ""
+        }`,
       })
     );
   });
@@ -204,6 +208,7 @@ const buildTransactionItems = (
             TimeStamp: logEvent.timestamp,
             ...(logEvent.description && { Description: logEvent.description }),
             Status: "Archivable",
+            ...(logEvent.clientIp && { ClientIp: logEvent.clientIp }),
           },
         },
       };
