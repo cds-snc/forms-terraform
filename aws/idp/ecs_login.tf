@@ -26,10 +26,10 @@ locals {
       "name"  = "ZITADEL_API_URL",
       "value" = "http://zitadel.${var.service_discovery_private_dns_namespace_ecs_local_name}:8080"
 
-    },
-    {
-      "name" = "CUSTOM_REQUEST_HEADERS"
-      "value" = "Host:${local.idp_domains[0]}"
+      },
+      {
+        "name"  = "CUSTOM_REQUEST_HEADERS"
+        "value" = "Host:${local.idp_domains[0]}"
     }]
     secrets = [{
       "name"      = "ZITADEL_SERVICE_USER_TOKEN"
