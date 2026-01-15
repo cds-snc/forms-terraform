@@ -16,7 +16,7 @@ resource "aws_wafv2_web_acl" "idp" {
 
   rule {
     name     = "BlockLargeRequests"
-    priority = 1
+    priority = 3
 
     action {
       block {}
@@ -38,7 +38,7 @@ resource "aws_wafv2_web_acl" "idp" {
             comparison_operator = "GT"
             size                = 8192
             text_transformation {
-              priority = 0
+              priority = 1
               type     = "NONE"
             }
           }
@@ -57,7 +57,7 @@ resource "aws_wafv2_web_acl" "idp" {
             comparison_operator = "GT"
             size                = 8192
             text_transformation {
-              priority = 0
+              priority = 1
               type     = "NONE"
             }
           }
@@ -82,23 +82,31 @@ resource "aws_wafv2_web_acl" "idp" {
 
     statement {
       not_statement {
-        statement {
-          byte_match_statement {
-            field_to_match {
-              single_header {
-                name = "host"
+        // statement {
+        // The OR statement is commented out until we have more then one domain to check against
+        // or_statement {
+        dynamic "statement" {
+          for_each = local.idp_domains
+          content {
+            byte_match_statement {
+              positional_constraint = "EXACTLY"
+              field_to_match {
+                single_header {
+                  name = "host"
+                }
               }
+              search_string = statement.value
+              text_transformation {
+                priority = 1
+                type     = "COMPRESS_WHITE_SPACE"
+              }
+              text_transformation {
+                priority = 2
+                type     = "LOWERCASE"
+              }
+              //        }
+              //        }
             }
-            text_transformation {
-              priority = 1
-              type     = "COMPRESS_WHITE_SPACE"
-            }
-            text_transformation {
-              priority = 2
-              type     = "LOWERCASE"
-            }
-            positional_constraint = "EXACTLY"
-            search_string         = var.domain_idp
           }
         }
       }

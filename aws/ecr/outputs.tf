@@ -29,6 +29,11 @@ output "ecr_repository_url_idp" {
   value       = aws_ecr_repository.idp.repository_url
 }
 
+output "ecr_repository_url_idp_user_portal" {
+  description = "URL of the Zitadel User Portal ECR"
+  value       = aws_ecr_repository.idp_user_portal.repository_url
+}
+
 output "ecr_repository_url_api" {
   description = "URL of the Forms API's ECR"
   value       = aws_ecr_repository.api.repository_url

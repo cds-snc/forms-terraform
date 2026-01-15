@@ -15,6 +15,26 @@ resource "aws_security_group_rule" "idp_ecs_egress_internet" {
   cidr_blocks       = ["0.0.0.0/0"]
 }
 
+resource "aws_security_group_rule" "idp_ecs_ingress_internal" {
+  description              = "Ingress for internal cluster traffic"
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 65535
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.idp_ecs.id
+  source_security_group_id = aws_security_group.idp_ecs.id
+}
+
+resource "aws_security_group_rule" "idp_ecs_egress_internal" {
+  description              = "Ingress for internal cluster traffic"
+  type                     = "egress"
+  from_port                = 0
+  to_port                  = 65535
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.idp_ecs.id
+  source_security_group_id = aws_security_group.idp_ecs.id
+}
+
 resource "aws_security_group_rule" "idp_ecs_egress_smtp_tls" {
   description       = "Egress from Zitadel IdP ECS task to SMTP"
   type              = "egress"
@@ -40,6 +60,16 @@ resource "aws_security_group_rule" "idp_ecs_ingress_lb" {
   type                     = "ingress"
   from_port                = 8080
   to_port                  = 8080
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.idp_ecs.id
+  source_security_group_id = aws_security_group.idp_lb.id
+}
+
+resource "aws_security_group_rule" "user_portal_ecs_ingress_lb" {
+  description              = "Ingress from load balancer to User Portal ECS task"
+  type                     = "ingress"
+  from_port                = 3000
+  to_port                  = 3000
   protocol                 = "tcp"
   security_group_id        = aws_security_group.idp_ecs.id
   source_security_group_id = aws_security_group.idp_lb.id
@@ -78,6 +108,16 @@ resource "aws_security_group_rule" "idp_lb_egress_ecs" {
   type                     = "egress"
   from_port                = 8080
   to_port                  = 8080
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.idp_lb.id
+  source_security_group_id = aws_security_group.idp_ecs.id
+}
+
+resource "aws_security_group_rule" "user_portal_lb_egress_ecs" {
+  description              = "Egress from load balancer to User Portal ECS task"
+  type                     = "egress"
+  from_port                = 3000
+  to_port                  = 3000
   protocol                 = "tcp"
   security_group_id        = aws_security_group.idp_lb.id
   source_security_group_id = aws_security_group.idp_ecs.id

@@ -1,6 +1,7 @@
 resource "aws_route53_record" "idp" {
-  zone_id = local.hosted_zone_id
-  name    = var.domain_idp
+  count   = length(local.idp_domains)
+  zone_id = var.hosted_zone_ids[count.index]
+  name    = local.idp_domains[count.index]
   type    = "A"
 
   alias {
@@ -10,12 +11,24 @@ resource "aws_route53_record" "idp" {
   }
 }
 
+#
+# Certificate validation
+# 
+locals {
+  # Temporary workaround for the removal of the `forms-formulaires.canada.ca` hosted zone.
+  # This will allow the module to plan correctly before the `/aws/hosted_zone` module
+  # has been applied.
+  domain_name_to_zone_id = {
+    (local.idp_domains[0]) = var.hosted_zone_ids[0]
+  }
+}
+
+
 # ACM certification validation
 resource "aws_route53_record" "idp_validation" {
-  zone_id = local.hosted_zone_id
-
   for_each = {
     for dvo in aws_acm_certificate.idp.domain_validation_options : dvo.domain_name => {
+      domain = dvo.domain_name
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
@@ -27,6 +40,7 @@ resource "aws_route53_record" "idp_validation" {
   records         = [each.value.record]
   type            = each.value.type
   ttl             = 60
+  zone_id         = local.domain_name_to_zone_id[each.value.domain]
 }
 
 resource "aws_acm_certificate_validation" "idp" {
@@ -46,7 +60,7 @@ resource "aws_route53_record" "idp_ses_verification_TXT" {
 # Email sending
 resource "aws_route53_record" "idp_spf_TXT" {
   zone_id = local.hosted_zone_id
-  name    = var.domain_idp
+  name    = local.idp_domains[0]
   type    = "TXT"
   ttl     = "300"
   records = [
@@ -57,7 +71,7 @@ resource "aws_route53_record" "idp_spf_TXT" {
 resource "aws_route53_record" "idp_dkim_CNAME" {
   count   = 3
   zone_id = local.hosted_zone_id
-  name    = "${element(aws_ses_domain_dkim.idp.dkim_tokens, count.index)}._domainkey.${var.domain_idp}"
+  name    = "${element(aws_ses_domain_dkim.idp.dkim_tokens, count.index)}._domainkey.${local.idp_domains[0]}"
   type    = "CNAME"
   ttl     = "300"
   records = [
@@ -67,7 +81,7 @@ resource "aws_route53_record" "idp_dkim_CNAME" {
 
 resource "aws_route53_record" "idp_dmarc_TXT" {
   zone_id = local.hosted_zone_id
-  name    = "_dmarc.${var.domain_idp}"
+  name    = "_dmarc.${local.idp_domains[0]}"
   type    = "TXT"
   ttl     = "300"
   records = [
