@@ -162,6 +162,12 @@ resource "aws_alb_listener_rule" "user_portal" {
       values = ["/ui/v2", "/ui/v2/", "/ui/v2/*"]
     }
   }
+
+  lifecycle {
+    ignore_changes = [
+      action # updated by codedeploy
+    ]
+  }
 }
 
 resource "aws_shield_protection" "idp" {
