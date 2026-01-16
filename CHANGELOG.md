@@ -1,5 +1,33 @@
 # Changelog
 
+## [3.42.0](https://github.com/cds-snc/forms-terraform/compare/v3.41.3...v3.42.0) (2026-01-16)
+
+
+### Features
+
+* handle client IP from audit logs ([#1201](https://github.com/cds-snc/forms-terraform/issues/1201)) ([402ed2d](https://github.com/cds-snc/forms-terraform/commit/402ed2dd19060d677f96d3d4ea149a285200feaf))
+* idp login user portal ([#1183](https://github.com/cds-snc/forms-terraform/issues/1183)) ([df094f4](https://github.com/cds-snc/forms-terraform/commit/df094f4729055a4ec9c2c5ad7c78691f3fe59181))
+
+
+### Bug Fixes
+
+* Allow internal IDP ECS traffic ([#1200](https://github.com/cds-snc/forms-terraform/issues/1200)) ([faf789f](https://github.com/cds-snc/forms-terraform/commit/faf789fe1e3f1e9353b04b48905df838c2727f0e))
+* ecs user portal configuration ([#1196](https://github.com/cds-snc/forms-terraform/issues/1196)) ([89f211c](https://github.com/cds-snc/forms-terraform/commit/89f211c38afb9c0015522335cf82df77d37101ed))
+* IDP cluster name reference ([#1198](https://github.com/cds-snc/forms-terraform/issues/1198)) ([634e4e0](https://github.com/cds-snc/forms-terraform/commit/634e4e0c36eaaea924ec256f13e8ce35372d686f))
+* idp ecs cluster ([#1197](https://github.com/cds-snc/forms-terraform/issues/1197)) ([27142e7](https://github.com/cds-snc/forms-terraform/commit/27142e7a0085744e99f567930f0e70213f7f849e))
+* idp user portal blue green deployment ([#1202](https://github.com/cds-snc/forms-terraform/issues/1202)) ([ec43a25](https://github.com/cds-snc/forms-terraform/commit/ec43a2595c129e46e709bfb4d2297b0a5dee082f))
+* idp waf text transformation priorities ([#1199](https://github.com/cds-snc/forms-terraform/issues/1199)) ([d4ba0a6](https://github.com/cds-snc/forms-terraform/commit/d4ba0a63c79253ce80fcfbc267831474dd71d1bf))
+* ignore or on dynamic blocks until we have multiple domains ([#1195](https://github.com/cds-snc/forms-terraform/issues/1195)) ([4b685e8](https://github.com/cds-snc/forms-terraform/commit/4b685e809d5aa9cf5f64f055ba59ba8b99e87189))
+* spelling of var to vars ([#1194](https://github.com/cds-snc/forms-terraform/issues/1194)) ([72ae3ee](https://github.com/cds-snc/forms-terraform/commit/72ae3ee56b8e12c347a9ee8644670bd3eaa8bb44))
+
+
+### Miscellaneous Chores
+
+* disable OpsGenie for Staging environment ([#1193](https://github.com/cds-snc/forms-terraform/issues/1193)) ([40a9e12](https://github.com/cds-snc/forms-terraform/commit/40a9e12f8872a6db2274ecea954425134f1f5345))
+* enable OpsGenie for Staging environment ([#1192](https://github.com/cds-snc/forms-terraform/issues/1192)) ([7ec974c](https://github.com/cds-snc/forms-terraform/commit/7ec974ccdcfb014361a89e029e65a3cc2d7b23f7))
+* modify Nagware email content ([#1204](https://github.com/cds-snc/forms-terraform/issues/1204)) ([d9f7589](https://github.com/cds-snc/forms-terraform/commit/d9f758960a32159f06147b2b73a1b887d114190d))
+* replace Slack Incoming Webhooks with SRE Bot Slack app ([#1185](https://github.com/cds-snc/forms-terraform/issues/1185)) ([797cae6](https://github.com/cds-snc/forms-terraform/commit/797cae666c8441d1219935224c8abe1eff8d855e))
+
 ## [3.41.3](https://github.com/cds-snc/forms-terraform/compare/v3.41.2...v3.41.3) (2026-01-12)
 
 
