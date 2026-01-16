@@ -19,33 +19,30 @@ export async function notifyFormOwner(
     const baseUrl = `http://${process.env.DOMAIN}`;
 
     await gcNotifyConnector.sendEmail(formOwnerEmailAddress, templateId, {
-      subject: "Overdue form responses - Réponses de formulaire non traitées",
-      formResponse: `
-**GC Forms Notification**
+      subject: "Action required: Overdue responses | Action requise : Réponses non traitées",
+      formResponse: `      
 
-Form name: ${formName}
+You have responses waiting on your form:
 
-There are form responses over 28 days old. Form responses must be downloaded and signed off for removal from GC Forms within 5 days.
+**${formName}**
 
-Downloading of responses will be restricted if responses are older than 35 days
+Promptly downloading responses is important to protect the personal information of people who filled out your form. 
 
-After 45 days, if responses remain overdue, an incident process will kick-off.
+Restrictions will be applied to your account, if responses are in GC Forms for more than 35 days.
 
-[Download and sign off on the removal of form responses](${baseUrl}/form-builder/${formID}/responses)
+[Retrieve form response data](${baseUrl}/form-builder/${formID}/responses)
 
 ****
 
-**Notification de Formulaires GC**
+Vous avez des réponses en attente sur votre formulaire : 
 
-Nom du formulaire: ${formName}
+**${formName}**
 
-De nouvelles réponses ont plus de 28 jours de retard. Les réponses au formulaire doivent être téléchargées et appouvées pour suppression de Formulaires GC dans les 5 jours.
+Il est important de télécharger rapidement les réponses afin de protéger les informations personnelles des personnes qui ont rempli à votre formulaire. 
 
-Le téléchargement des réponses sera limité si les réponses datent de plus de 35 jours
+Des restrictions seront appliquées à votre compte si les réponses datent de plus de 35 jours.
 
-Si les réponses ne sont toujours pas traitées après 45 jours, un processus d'incident sera déclaré.
-
-[Télécharger et approuver la suppression des réponses au formulaire](${baseUrl}/fr/form-builder/${formID}/responses)`,
+[Récupérer les réponses de Formulaires GC](${baseUrl}/fr/form-builder/${formID}/responses)`,
     });
   } catch (error) {
     // Error Message will be sent to slack
