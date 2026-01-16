@@ -22,11 +22,12 @@ resource "aws_lambda_function" "reliability" {
 
   environment {
     variables = {
-      ENVIRONMENT    = local.env
-      REGION         = var.region
-      NOTIFY_API_KEY = var.notify_api_key_secret_arn
-      TEMPLATE_ID    = var.gc_template_id
-      DB_URL         = var.database_url_secret_arn
+      ENVIRONMENT             = local.env
+      REGION                  = var.region
+      NOTIFY_API_KEY          = var.notify_api_key_secret_arn
+      TEMPLATE_ID             = var.gc_template_id
+      DB_URL                  = var.database_url_secret_arn
+      NOTIFICATION_QUEUE_URL  = var.sqs_notification_queue_url
     }
   }
 
