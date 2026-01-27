@@ -12,8 +12,12 @@ resource "aws_route53_zone" "form_viewer" {
   name     = each.key
 }
 
+locals {
+  old_domain = var.domains[1]
+}
+
 
 moved {
   from = aws_route53_zone.form_viewer[0]
-  to   = aws_route53_zone.form_viewer[var.domains[1]]
+  to   = aws_route53_zone.form_viewer[old_domain]
 }
