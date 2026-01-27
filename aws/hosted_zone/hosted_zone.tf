@@ -9,7 +9,7 @@ resource "aws_route53_zone" "form_viewer" {
   // TODO: Implement Domain Name System Security Extensions signing
   // TODO: Implement Domain Name System query logging
   for_each = toset(var.domains)
-  name  = each.key
+  name     = each.key
 }
 
 
