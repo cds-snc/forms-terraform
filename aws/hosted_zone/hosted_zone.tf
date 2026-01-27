@@ -11,3 +11,9 @@ resource "aws_route53_zone" "form_viewer" {
   for_each = toset(var.domains)
   name  = each.key
 }
+
+
+moved {
+  from = aws_route53_zone.form_viewer[0]
+  to   = aws_route53_zone.form_viewer[var.domains[1]]
+}
