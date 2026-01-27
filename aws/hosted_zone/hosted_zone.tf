@@ -8,6 +8,6 @@ resource "aws_route53_zone" "form_viewer" {
   # checkov:skip=CKV2_AWS_39: Domain Name System query logging not required
   // TODO: Implement Domain Name System Security Extensions signing
   // TODO: Implement Domain Name System query logging
-  for_each = var.domains
+  for_each = toset(var.domains)
   name  = each.key
 }
