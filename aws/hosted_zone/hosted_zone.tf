@@ -11,3 +11,8 @@ resource "aws_route53_zone" "form_viewer" {
   count = length(var.domains)
   name  = var.domains[count.index]
 }
+
+import {
+  to = aws_route53_zone.form_viewer[1]
+  id = aws_route53_zone.form_viewer[0]
+}
