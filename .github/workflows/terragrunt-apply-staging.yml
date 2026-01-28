@@ -318,7 +318,7 @@ jobs:
           aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
           aws-role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
-          ecs-cluster-name: idp
+          ecs-cluster-name: auth
           ecs-service-name: zitadel
           ecs-task-def-name: zitadel
           image-tag: "idp/zitadel:${{ github.sha }}"
