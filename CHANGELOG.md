@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.42.1](https://github.com/cds-snc/forms-terraform/compare/v3.42.0...v3.42.1) (2026-01-28)
+
+
+### Bug Fixes
+
+* update Redis parameter group for new engine ([#1217](https://github.com/cds-snc/forms-terraform/issues/1217)) ([de942eb](https://github.com/cds-snc/forms-terraform/commit/de942ebc9c89fa55adb7fd31c019e8befa726696))
+
+
+### Miscellaneous Chores
+
+* prep for migration of alpha domain ([#1214](https://github.com/cds-snc/forms-terraform/issues/1214)) ([1c52f4c](https://github.com/cds-snc/forms-terraform/commit/1c52f4cec6569c7c10b60080d1fa54c7d99870d9))
+* Update idp cluster name ([#1215](https://github.com/cds-snc/forms-terraform/issues/1215)) ([7846155](https://github.com/cds-snc/forms-terraform/commit/78461559d0e9836075add031770106ac3471ee26))
+
 ## [3.42.0](https://github.com/cds-snc/forms-terraform/compare/v3.41.3...v3.42.0) (2026-01-26)
 
 
