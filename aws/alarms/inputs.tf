@@ -325,3 +325,8 @@ variable "unhealthy_host_count_for_target_group_2_alarm_arn" {
   description = "ARN of unhealthy host count alarm for target group 2"
   type        = string
 }
+
+variable "lambda_notification_log_group_name" {
+  description = "Notification Lambda CloudWatch log group name"
+  type        = string
+}
