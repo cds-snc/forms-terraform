@@ -11,8 +11,8 @@ resource "aws_elasticache_replication_group" "redis" {
   description                = "Redis cluster for GCForms"
   node_type                  = "cache.t2.micro"
   num_cache_clusters         = var.env == "development" ? 1 : 2
-  engine_version             = "6.x"
-  parameter_group_name       = "default.redis6.x"
+  engine_version             = "7.1"
+  parameter_group_name       = "default.redis7"
   port                       = 6379
   multi_az_enabled           = var.env != "development"
   subnet_group_name          = aws_elasticache_subnet_group.redis.name

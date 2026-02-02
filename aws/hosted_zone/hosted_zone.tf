@@ -10,4 +10,10 @@ resource "aws_route53_zone" "form_viewer" {
   // TODO: Implement Domain Name System query logging
   count = length(var.domains)
   name  = var.domains[count.index]
+
+
 }
+resource "aws_route53_delegation_set" "main" {
+  reference_name = "GCForms"
+}
+
