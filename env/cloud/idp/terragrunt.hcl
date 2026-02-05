@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../hosted_zone", "../network", "../ecr", "../load_balancer", "../kms"]
+  paths = ["../hosted_zone", "../network", "../ecr", "../load_balancer", "../kms", "../secrets"]
 }
 
 locals {
@@ -69,6 +69,15 @@ dependency "kms" {
   }
 }
 
+dependency "secrets" {
+  config_path                             = "../secrets"
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_strategy_with_state  = "shallow"
+  mock_outputs = {
+    notify_api_key_secret_arn = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:notify_api_key"
+  }
+}
+
 
 inputs = {
   hosted_zone_ids = dependency.hosted_zone.outputs.hosted_zone_ids
@@ -93,6 +102,8 @@ inputs = {
 
   kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
 
+  notify_api_key_secret_arn = dependency.secrets.outputs.notify_api_key_secret_arn
+
   # 1 ACU ~= 2GB of memory and 1vCPU
   idp_database_min_acu = 1
   idp_database_max_acu = 4
@@ -100,6 +111,7 @@ inputs = {
   # Overwritten in GitHub Actions by TFVARS
   idp_login_service_user_token    = "ServiceUserTokenValue"
   ipd_login_github_webhook_secret = "GitHubWebhookAuthToken"
+  gc_template_id                  = "0123456789"
 }
 
 include "root" {

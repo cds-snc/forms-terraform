@@ -115,7 +115,7 @@ data "aws_iam_policy_document" "ecs_task_ssm_parameters" {
       aws_ssm_parameter.zitadel_admin_password.arn,
       aws_ssm_parameter.zitadel_database_host.arn,
       aws_ssm_parameter.zitadel_database_name.arn,
-      aws_ssm_parameter.zitadel_secret_key.arn
+      aws_ssm_parameter.zitadel_secret_key.arn,
     ]
   }
 }

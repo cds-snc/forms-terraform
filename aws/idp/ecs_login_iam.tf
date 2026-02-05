@@ -75,7 +75,27 @@ data "aws_iam_policy_document" "ecs_xray" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_task_execution_forms" {
+resource "aws_iam_policy" "user_portal_secrets_manager" {
+  name   = "userPortalSecretsManagerKeyRetrieval"
+  path   = "/"
+  policy = data.aws_iam_policy_document.user_portal_secrets_manager.json
+}
+
+data "aws_iam_policy_document" "user_portal_secrets_manager" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+
+    resources = [
+      var.notify_api_key_secret_arn,
+    ]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_user_portal" {
   role       = aws_iam_role.idp_user_portal.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
@@ -88,4 +108,9 @@ resource "aws_iam_role_policy_attachment" "ssm_user_portal" {
 resource "aws_iam_role_policy_attachment" "ecs_xray" {
   role       = aws_iam_role.idp_user_portal.name
   policy_arn = aws_iam_policy.ecs_xray.arn
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_secrets" {
+  role       = aws_iam_role.idp_user_portal.name
+  policy_arn = aws_iam_policy.user_portal_secrets_manager.arn
 }
