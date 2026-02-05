@@ -109,3 +109,8 @@ resource "aws_iam_role_policy_attachment" "ecs_xray" {
   role       = aws_iam_role.idp_user_portal.name
   policy_arn = aws_iam_policy.ecs_xray.arn
 }
+
+resource "aws_iam_role_policy_attachment" "ecs_secrets" {
+  role       = aws_iam_role.idp_user_portal.name
+  policy_arn = aws_iam_policy.user_portal_secrets_manager.arn
+}
