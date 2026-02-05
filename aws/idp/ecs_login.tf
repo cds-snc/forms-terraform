@@ -30,11 +30,20 @@ locals {
       {
         "name"  = "CUSTOM_REQUEST_HEADERS"
         "value" = "Host:${local.idp_domains[0]}"
+      },
+      {
+        "name"  = "TEMPLATE_ID",
+        "value" = var.gc_template_id
     }]
     secrets = [{
       "name"      = "ZITADEL_SERVICE_USER_TOKEN"
       "valueFrom" = aws_ssm_parameter.idp_login_service_user_token.arn
-    }],
+      },
+      {
+        "name"      = "NOTIFY_API_KEY",
+        "valueFrom" = var.notify_api_key_secret_arn
+      }
+    ],
 
 
   }]
