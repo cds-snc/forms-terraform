@@ -218,37 +218,37 @@ resource "aws_wafv2_web_acl" "idp" {
       allow {}
     }
 
-    statement {
 
-      // statement {
-      // The OR statement is commented out until we have more then one domain to check against
-      // or_statement {
-      dynamic "statement" {
-        for_each = local.idp_domains
-        content {
-          byte_match_statement {
-            positional_constraint = "EXACTLY"
-            field_to_match {
-              single_header {
-                name = "host"
-              }
+
+    // statement {
+    // The OR statement is commented out until we have more then one domain to check against
+    // or_statement {
+    dynamic "statement" {
+      for_each = local.idp_domains
+      content {
+        byte_match_statement {
+          positional_constraint = "EXACTLY"
+          field_to_match {
+            single_header {
+              name = "host"
             }
-            search_string = statement.value
-            text_transformation {
-              priority = 1
-              type     = "COMPRESS_WHITE_SPACE"
-            }
-            text_transformation {
-              priority = 2
-              type     = "LOWERCASE"
-            }
-            //        }
-            //        }
           }
+          search_string = statement.value
+          text_transformation {
+            priority = 1
+            type     = "COMPRESS_WHITE_SPACE"
+          }
+          text_transformation {
+            priority = 2
+            type     = "LOWERCASE"
+          }
+          //        }
+          //        }
         }
       }
-
     }
+
+
 
     visibility_config {
       cloudwatch_metrics_enabled = true
