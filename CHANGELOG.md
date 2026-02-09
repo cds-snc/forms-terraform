@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.42.2](https://github.com/cds-snc/forms-terraform/compare/v3.42.1...v3.42.2) (2026-02-09)
+
+
+### Miscellaneous Chores
+
+* Add Notify api key environment variable for SSO portal ([#1221](https://github.com/cds-snc/forms-terraform/issues/1221)) ([fe7bf81](https://github.com/cds-snc/forms-terraform/commit/fe7bf8188261d073f5fbdd268b73d08d59dc48d8))
+* **deps:** lock file maintenance ([#1224](https://github.com/cds-snc/forms-terraform/issues/1224)) ([958baaa](https://github.com/cds-snc/forms-terraform/commit/958baaad6eef0586dc95e82fb636fd0888982505))
+* **deps:** update all non-major github action dependencies ([#1223](https://github.com/cds-snc/forms-terraform/issues/1223)) ([77c724a](https://github.com/cds-snc/forms-terraform/commit/77c724af3b3f3fcabc14c9d4e87398f1ec369c6f))
+* Modify IDP and App/API WAF to block by default ([#1226](https://github.com/cds-snc/forms-terraform/issues/1226)) ([9b3960d](https://github.com/cds-snc/forms-terraform/commit/9b3960db9355f2fdbbf28aaf6b9f6f1742cd765b))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1225](https://github.com/cds-snc/forms-terraform/issues/1225)) ([2a8bbf7](https://github.com/cds-snc/forms-terraform/commit/2a8bbf7f2b08e75e78ad398f08a4c9f0fa40312e))
+
 ## [3.42.1](https://github.com/cds-snc/forms-terraform/compare/v3.42.0...v3.42.1) (2026-02-02)
 
 
