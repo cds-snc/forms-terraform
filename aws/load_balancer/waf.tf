@@ -210,7 +210,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "RateLimitersRuleGroup"
-    priority = 10
+    priority = 3
 
     override_action {
       none {}
@@ -231,7 +231,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "PreventHostInjections"
-    priority = 20
+    priority = 4
 
     statement {
       not_statement {
@@ -268,7 +268,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AWSManagedRulesCommonRuleSet"
-    priority = 30
+    priority = 5
 
     override_action {
       none {}
@@ -300,7 +300,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AWSManagedRulesKnownBadInputsRuleSet"
-    priority = 40
+    priority = 6
     override_action {
       none {}
     }
@@ -321,7 +321,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AWSManagedRulesLinuxRuleSet"
-    priority = 50
+    priority = 7
 
     override_action {
       none {}
@@ -342,8 +342,82 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   }
 
   rule {
+    name     = local.cognito_login_outside_canada_rule_name
+    priority = 8
+
+    action {
+      count {
+        custom_request_handling {
+          insert_header {
+            name  = "cognito-login-outside-of-canada"
+            value = "detected"
+          }
+        }
+      }
+    }
+
+    statement {
+      and_statement {
+        statement {
+          not_statement {
+            statement {
+              geo_match_statement {
+                country_codes = ["CA"]
+              }
+            }
+          }
+        }
+
+        statement {
+          regex_pattern_set_reference_statement {
+            arn = aws_wafv2_regex_pattern_set.cognito_login_paths.arn
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 1
+              type     = "COMPRESS_WHITE_SPACE"
+            }
+            text_transformation {
+              priority = 2
+              type     = "LOWERCASE"
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      metric_name                = local.cognito_login_outside_canada_rule_name
+      cloudwatch_metrics_enabled = true
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "BlockedIPv4"
+    priority = 9
+
+    action {
+      block {}
+    }
+
+    statement {
+      ip_set_reference_statement {
+        arn = module.waf_ip_blocklist.ipv4_blocklist_arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "BlockedIPv4"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
     name     = "AllowOnlyAppUrls"
-    priority = 60
+    priority = 10
 
     action {
       allow {}
@@ -412,7 +486,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AllowOnlyApiUrls"
-    priority = 65
+    priority = 11
 
     action {
       allow {}
@@ -478,80 +552,6 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       cloudwatch_metrics_enabled = true
       metric_name                = "AllowOnlyApiUrls"
       sampled_requests_enabled   = false
-    }
-  }
-
-  rule {
-    name     = local.cognito_login_outside_canada_rule_name
-    priority = 70
-
-    action {
-      count {
-        custom_request_handling {
-          insert_header {
-            name  = "cognito-login-outside-of-canada"
-            value = "detected"
-          }
-        }
-      }
-    }
-
-    statement {
-      and_statement {
-        statement {
-          not_statement {
-            statement {
-              geo_match_statement {
-                country_codes = ["CA"]
-              }
-            }
-          }
-        }
-
-        statement {
-          regex_pattern_set_reference_statement {
-            arn = aws_wafv2_regex_pattern_set.cognito_login_paths.arn
-            field_to_match {
-              uri_path {}
-            }
-            text_transformation {
-              priority = 1
-              type     = "COMPRESS_WHITE_SPACE"
-            }
-            text_transformation {
-              priority = 2
-              type     = "LOWERCASE"
-            }
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      metric_name                = local.cognito_login_outside_canada_rule_name
-      cloudwatch_metrics_enabled = true
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "BlockedIPv4"
-    priority = 80
-
-    action {
-      block {}
-    }
-
-    statement {
-      ip_set_reference_statement {
-        arn = module.waf_ip_blocklist.ipv4_blocklist_arn
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "BlockedIPv4"
-      sampled_requests_enabled   = true
     }
   }
 
