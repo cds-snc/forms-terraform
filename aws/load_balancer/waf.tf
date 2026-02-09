@@ -75,7 +75,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   scope = "REGIONAL"
 
   default_action {
-    allow {}
+    block {}
   }
 
   rule {
@@ -346,15 +346,15 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     priority = 60
 
     action {
-      block {}
+      allow {}
     }
 
     /* 
-  app && !url
+  app && url
   app = true && url = false = block
-  app = false && url = true = allow
+  app = false && url = true = block
   app = true && url = true = allow
-  app = false && url = false = allow   
+  app = false && url = false = block   
     */
 
     statement {
@@ -384,22 +384,18 @@ resource "aws_wafv2_web_acl" "forms_acl" {
         // }
         // }
         statement {
-          not_statement {
-            statement {
-              regex_pattern_set_reference_statement {
-                arn = aws_wafv2_regex_pattern_set.valid_app_uri_paths.arn
-                field_to_match {
-                  uri_path {}
-                }
-                text_transformation {
-                  priority = 1
-                  type     = "COMPRESS_WHITE_SPACE"
-                }
-                text_transformation {
-                  priority = 2
-                  type     = "LOWERCASE"
-                }
-              }
+          regex_pattern_set_reference_statement {
+            arn = aws_wafv2_regex_pattern_set.valid_app_uri_paths.arn
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 1
+              type     = "COMPRESS_WHITE_SPACE"
+            }
+            text_transformation {
+              priority = 2
+              type     = "LOWERCASE"
             }
           }
         }
@@ -419,15 +415,15 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     priority = 65
 
     action {
-      block {}
+      allow {}
     }
 
     /* 
-  api && !url
+  api && url
   api = true && url = false = block
-  api = false && url = true = allow
+  api = false && url = true = block
   api = true && url = true = allow
-  api = false && url = false = allow   
+  api = false && url = false = block  
     */
     statement {
       and_statement {
@@ -455,24 +451,24 @@ resource "aws_wafv2_web_acl" "forms_acl" {
           }
         }
         statement {
-          not_statement {
-            statement {
-              regex_pattern_set_reference_statement {
-                arn = aws_wafv2_regex_pattern_set.valid_api_uri_paths.arn
-                field_to_match {
-                  uri_path {}
-                }
-                text_transformation {
-                  priority = 1
-                  type     = "COMPRESS_WHITE_SPACE"
-                }
-                text_transformation {
-                  priority = 2
-                  type     = "LOWERCASE"
-                }
-              }
+
+
+          regex_pattern_set_reference_statement {
+            arn = aws_wafv2_regex_pattern_set.valid_api_uri_paths.arn
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 1
+              type     = "COMPRESS_WHITE_SPACE"
+            }
+            text_transformation {
+              priority = 2
+              type     = "LOWERCASE"
             }
           }
+
+
         }
       }
     }
