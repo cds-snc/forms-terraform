@@ -11,12 +11,128 @@ resource "aws_wafv2_web_acl" "idp" {
   scope = "REGIONAL"
 
   default_action {
-    allow {}
+    block {}
+  }
+
+  rule {
+    name     = "AWSManagedRulesAmazonIpReputationList"
+    priority = 1
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesAmazonIpReputationList"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesAmazonIpReputationList"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "RateLimitersRuleGroup"
+    priority = 2
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      rule_group_reference_statement {
+        arn = aws_wafv2_rule_group.rate_limiters_group_idp.arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "rate_limiters_rule_group"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    name     = "AWSManagedRulesKnownBadInputsRuleSet"
+    priority = 3
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesKnownBadInputsRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesKnownBadInputsRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWSManagedRulesLinuxRuleSet"
+    priority = 4
+    override_action {
+      none {}
+    }
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesLinuxRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesLinuxRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWSManagedRulesCommonRuleSet"
+    priority = 5
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesCommonRuleSet"
+        vendor_name = "AWS"
+
+        dynamic "rule_action_override" {
+          for_each = local.excluded_common_rules
+          content {
+            name = rule_action_override.value
+            action_to_use {
+              count {}
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesCommonRuleSet"
+      sampled_requests_enabled   = true
+    }
   }
 
   rule {
     name     = "BlockLargeRequests"
-    priority = 3
+    priority = 6
 
     action {
       block {}
@@ -72,177 +188,10 @@ resource "aws_wafv2_web_acl" "idp" {
     }
   }
 
-  rule {
-    name     = "InvalidHost"
-    priority = 5
-
-    action {
-      block {}
-    }
-
-    statement {
-      not_statement {
-        // statement {
-        // The OR statement is commented out until we have more then one domain to check against
-        // or_statement {
-        dynamic "statement" {
-          for_each = local.idp_domains
-          content {
-            byte_match_statement {
-              positional_constraint = "EXACTLY"
-              field_to_match {
-                single_header {
-                  name = "host"
-                }
-              }
-              search_string = statement.value
-              text_transformation {
-                priority = 1
-                type     = "COMPRESS_WHITE_SPACE"
-              }
-              text_transformation {
-                priority = 2
-                type     = "LOWERCASE"
-              }
-              //        }
-              //        }
-            }
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "InvalidHost"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "AWSManagedRulesAmazonIpReputationList"
-    priority = 10
-
-    override_action {
-      none {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesAmazonIpReputationList"
-        vendor_name = "AWS"
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesAmazonIpReputationList"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "RateLimitersRuleGroup"
-    priority = 20
-
-    override_action {
-      none {}
-    }
-
-    statement {
-      rule_group_reference_statement {
-        arn = aws_wafv2_rule_group.rate_limiters_group_idp.arn
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "rate_limiters_rule_group"
-      sampled_requests_enabled   = false
-    }
-  }
-
-  rule {
-    name     = "AWSManagedRulesKnownBadInputsRuleSet"
-    priority = 30
-    override_action {
-      none {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesKnownBadInputsRuleSet"
-        vendor_name = "AWS"
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesKnownBadInputsRuleSet"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "AWSManagedRulesLinuxRuleSet"
-    priority = 40
-    override_action {
-      none {}
-    }
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesLinuxRuleSet"
-        vendor_name = "AWS"
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesLinuxRuleSet"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "AWSManagedRulesCommonRuleSet"
-    priority = 50
-
-    override_action {
-      none {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesCommonRuleSet"
-        vendor_name = "AWS"
-
-        dynamic "rule_action_override" {
-          for_each = local.excluded_common_rules
-          content {
-            name = rule_action_override.value
-            action_to_use {
-              count {}
-            }
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesCommonRuleSet"
-      sampled_requests_enabled   = true
-    }
-  }
-  visibility_config {
-    cloudwatch_metrics_enabled = true
-    metric_name                = "idp"
-    sampled_requests_enabled   = true
-  }
 
   rule {
     name     = "BlockedIPv4"
-    priority = 70
+    priority = 7
 
     action {
       block {}
@@ -261,6 +210,58 @@ resource "aws_wafv2_web_acl" "idp" {
     }
   }
 
+  rule {
+    name     = "ValidHost"
+    priority = 8
+
+    action {
+      allow {}
+    }
+
+    statement {
+
+      // statement {
+      // The OR statement is commented out until we have more then one domain to check against
+      // or_statement {
+      dynamic "statement" {
+        for_each = local.idp_domains
+        content {
+          byte_match_statement {
+            positional_constraint = "EXACTLY"
+            field_to_match {
+              single_header {
+                name = "host"
+              }
+            }
+            search_string = statement.value
+            text_transformation {
+              priority = 1
+              type     = "COMPRESS_WHITE_SPACE"
+            }
+            text_transformation {
+              priority = 2
+              type     = "LOWERCASE"
+            }
+            //        }
+            //        }
+          }
+        }
+      }
+
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "InvalidHost"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "idp"
+    sampled_requests_enabled   = true
+  }
   tags = local.common_tags
 }
 
