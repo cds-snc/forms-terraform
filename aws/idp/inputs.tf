@@ -140,3 +140,14 @@ variable "code_build_security_group_id" {
   description = "Code Build Security Group"
   type        = string
 }
+
+variable "notify_api_key_secret_arn" {
+  description = "The Notify API key secret used by the ECS task and Lambda arn"
+  type        = string
+  sensitive   = true
+}
+
+variable "gc_template_id" {
+  description = "GC Notify send a notification templateID"
+  type        = string
+}
