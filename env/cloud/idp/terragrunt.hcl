@@ -110,7 +110,6 @@ inputs = {
 
   # Overwritten in GitHub Actions by TFVARS
   idp_login_service_user_token    = "ServiceUserTokenValue"
-  ipd_login_github_webhook_secret = "GitHubWebhookAuthToken"
   gc_template_id                  = "0123456789"
 }
 
