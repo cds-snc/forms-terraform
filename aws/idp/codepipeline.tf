@@ -6,7 +6,6 @@ module "user_portal_code_pipeline" {
   private_subnet_ids             = var.private_subnet_ids
   app_name                       = "idp_user_portal"
   github_repo_name               = "cds-snc/forms-idp-user-portal"
-  webhook_secret                 = var.ipd_login_github_webhook_secret
   app_ecr_name                   = "idp/user_portal"
   app_ecr_url                    = var.idp_login_ecr_url
   ecs_cluster_name               = aws_ecs_cluster.idp.name

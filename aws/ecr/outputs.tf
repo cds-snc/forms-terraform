@@ -1,5 +1,10 @@
+output "ecr_form_viewer_repository_name" {
+  description = "Name of the Form viewer ECR repository"
+  value       = aws_ecr_repository.viewer_repository.name
+}
+
 output "ecr_repository_url_form_viewer" {
-  description = "URL of the Form viewer ECR"
+  description = "URL of the Form viewer ECR repository"
   value       = aws_ecr_repository.viewer_repository.repository_url
 }
 
