@@ -75,7 +75,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   scope = "REGIONAL"
 
   default_action {
-    allow {}
+    block {}
   }
 
   rule {
@@ -210,7 +210,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "RateLimitersRuleGroup"
-    priority = 10
+    priority = 3
 
     override_action {
       none {}
@@ -231,7 +231,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "PreventHostInjections"
-    priority = 20
+    priority = 4
 
     statement {
       not_statement {
@@ -268,7 +268,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AWSManagedRulesCommonRuleSet"
-    priority = 30
+    priority = 5
 
     override_action {
       none {}
@@ -300,7 +300,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AWSManagedRulesKnownBadInputsRuleSet"
-    priority = 40
+    priority = 6
     override_action {
       none {}
     }
@@ -321,7 +321,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AWSManagedRulesLinuxRuleSet"
-    priority = 50
+    priority = 7
 
     override_action {
       none {}
@@ -342,152 +342,8 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   }
 
   rule {
-    name     = "AllowOnlyAppUrls"
-    priority = 60
-
-    action {
-      block {}
-    }
-
-    /* 
-  app && !url
-  app = true && url = false = block
-  app = false && url = true = allow
-  app = true && url = true = allow
-  app = false && url = false = allow   
-    */
-
-    statement {
-
-      and_statement {
-        // statement {
-        // The OR statement is commented out until we have more then one domain to check against
-        // or_statement {
-        dynamic "statement" {
-          for_each = var.domains
-          content {
-            byte_match_statement {
-              positional_constraint = "EXACTLY"
-              field_to_match {
-                single_header {
-                  name = "host"
-                }
-              }
-              search_string = statement.value
-              text_transformation {
-                priority = 1
-                type     = "LOWERCASE"
-              }
-            }
-          }
-        }
-        // }
-        // }
-        statement {
-          not_statement {
-            statement {
-              regex_pattern_set_reference_statement {
-                arn = aws_wafv2_regex_pattern_set.valid_app_uri_paths.arn
-                field_to_match {
-                  uri_path {}
-                }
-                text_transformation {
-                  priority = 1
-                  type     = "COMPRESS_WHITE_SPACE"
-                }
-                text_transformation {
-                  priority = 2
-                  type     = "LOWERCASE"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AllowOnlyAppUrls"
-      sampled_requests_enabled   = false
-    }
-  }
-
-  rule {
-    name     = "AllowOnlyApiUrls"
-    priority = 65
-
-    action {
-      block {}
-    }
-
-    /* 
-  api && !url
-  api = true && url = false = block
-  api = false && url = true = allow
-  api = true && url = true = allow
-  api = false && url = false = allow   
-    */
-    statement {
-      and_statement {
-        // statement {
-        // The OR statement is commented out until we have more then one domain to check against
-        // or_statement {
-        dynamic "statement" {
-          for_each = local.api_domains
-          content {
-            byte_match_statement {
-              positional_constraint = "EXACTLY"
-              field_to_match {
-                single_header {
-                  name = "host"
-                }
-              }
-              search_string = statement.value
-              text_transformation {
-                priority = 1
-                type     = "LOWERCASE"
-              }
-            }
-            //    }
-            //  }
-          }
-        }
-        statement {
-          not_statement {
-            statement {
-              regex_pattern_set_reference_statement {
-                arn = aws_wafv2_regex_pattern_set.valid_api_uri_paths.arn
-                field_to_match {
-                  uri_path {}
-                }
-                text_transformation {
-                  priority = 1
-                  type     = "COMPRESS_WHITE_SPACE"
-                }
-                text_transformation {
-                  priority = 2
-                  type     = "LOWERCASE"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AllowOnlyApiUrls"
-      sampled_requests_enabled   = false
-    }
-  }
-
-  rule {
     name     = local.cognito_login_outside_canada_rule_name
-    priority = 70
+    priority = 8
 
     action {
       count {
@@ -540,7 +396,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "BlockedIPv4"
-    priority = 80
+    priority = 9
 
     action {
       block {}
@@ -556,6 +412,146 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       cloudwatch_metrics_enabled = true
       metric_name                = "BlockedIPv4"
       sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AllowOnlyAppUrls"
+    priority = 10
+
+    action {
+      allow {}
+    }
+
+    /* 
+  app && url
+  app = true && url = false = block
+  app = false && url = true = block
+  app = true && url = true = allow
+  app = false && url = false = block   
+    */
+
+    statement {
+
+      and_statement {
+        // statement {
+        // The OR statement is commented out until we have more then one domain to check against
+        // or_statement {
+        dynamic "statement" {
+          for_each = var.domains
+          content {
+            byte_match_statement {
+              positional_constraint = "EXACTLY"
+              field_to_match {
+                single_header {
+                  name = "host"
+                }
+              }
+              search_string = statement.value
+              text_transformation {
+                priority = 1
+                type     = "LOWERCASE"
+              }
+            }
+          }
+        }
+        // }
+        // }
+        statement {
+          regex_pattern_set_reference_statement {
+            arn = aws_wafv2_regex_pattern_set.valid_app_uri_paths.arn
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 1
+              type     = "COMPRESS_WHITE_SPACE"
+            }
+            text_transformation {
+              priority = 2
+              type     = "LOWERCASE"
+            }
+          }
+        }
+      }
+    }
+
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AllowOnlyAppUrls"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    name     = "AllowOnlyApiUrls"
+    priority = 11
+
+    action {
+      allow {}
+    }
+
+    /* 
+  api && url
+  api = true && url = false = block
+  api = false && url = true = block
+  api = true && url = true = allow
+  api = false && url = false = block  
+    */
+    statement {
+      and_statement {
+        // statement {
+        // The OR statement is commented out until we have more then one domain to check against
+        // or_statement {
+        dynamic "statement" {
+          for_each = local.api_domains
+          content {
+            byte_match_statement {
+              positional_constraint = "EXACTLY"
+              field_to_match {
+                single_header {
+                  name = "host"
+                }
+              }
+              search_string = statement.value
+              text_transformation {
+                priority = 1
+                type     = "LOWERCASE"
+              }
+            }
+            //    }
+            //  }
+          }
+        }
+        statement {
+
+
+          regex_pattern_set_reference_statement {
+            arn = aws_wafv2_regex_pattern_set.valid_api_uri_paths.arn
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 1
+              type     = "COMPRESS_WHITE_SPACE"
+            }
+            text_transformation {
+              priority = 2
+              type     = "LOWERCASE"
+            }
+          }
+
+
+        }
+      }
+    }
+
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AllowOnlyApiUrls"
+      sampled_requests_enabled   = false
     }
   }
 
