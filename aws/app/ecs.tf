@@ -14,10 +14,8 @@ resource "aws_ecs_cluster" "forms" {
 #
 # Task Definition
 #
-data "template_file" "form_viewer_task" {
-  template = file("ecs_task/form_viewer.json")
-
-  vars = {
+locals {
+  container_definitions = templatefile("ecs_task/form_viewer.json", {
     image                           = var.ecr_repository_url_form_viewer
     awslogs-group                   = aws_cloudwatch_log_group.forms.name
     awslogs-region                  = var.region
@@ -48,7 +46,7 @@ data "template_file" "form_viewer_task" {
     zitadel_client_id               = var.zitadel_client_id
     sentry_api_key                  = var.sentry_api_key_secret_arn
     hcaptcha_site_verify_key        = var.hcaptcha_site_verify_key_secret_arn
-  }
+  })
 }
 
 resource "aws_ecs_task_definition" "form_viewer" {
@@ -63,7 +61,7 @@ resource "aws_ecs_task_definition" "form_viewer" {
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = aws_iam_role.forms.arn
   task_role_arn            = aws_iam_role.forms.arn
-  container_definitions    = data.template_file.form_viewer_task.rendered
+  container_definitions    = local.container_definitions
 }
 
 #
