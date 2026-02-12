@@ -119,12 +119,6 @@ variable "idp_login_ecr_url" {
   type        = string
 }
 
-variable "ipd_login_github_webhook_secret" {
-  description = "Github Webhook auth secret"
-  type        = string
-  sensitive   = true
-}
-
 variable "idp_login_service_user_token" {
   description = "The service user token that allows communication with the Zitadel API"
   type        = string
