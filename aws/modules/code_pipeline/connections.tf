@@ -9,10 +9,6 @@ resource "aws_codepipeline_webhook" "this" {
   target_action   = "Source"
   target_pipeline = aws_codepipeline.this.name
 
-  authentication_configuration {
-    secret_token = aws_secretsmanager_secret_version.this.arn
-  }
-
   filter {
     json_path    = "$.ref"
     match_equals = "refs/heads/{Branch}"
