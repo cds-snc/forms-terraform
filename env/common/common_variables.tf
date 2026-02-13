@@ -32,3 +32,8 @@ variable "region" {
   description = "The current AWS region"
   type        = string
 }
+
+variable "security_txt_content" {
+  description = "The content of the /.well-known/security.txt file"
+  type        = string
+}
