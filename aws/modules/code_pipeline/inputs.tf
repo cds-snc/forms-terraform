@@ -24,12 +24,6 @@ variable "github_repo_name" {
   type        = string
 }
 
-variable "webhook_secret" {
-  description = "Secret for GitHub HMAC auth of webhook"
-  type        = string
-  sensitive   = true
-}
-
 variable "app_ecr_name" {
   description = "ECR repository name for the app"
   type        = string
@@ -70,8 +64,8 @@ variable "loadblancer_target_group_names" {
   type        = list(string)
 }
 
-variable "docker_build_env_vars_plaintext" {
-  description = "Environment value key / values required during the docker build - plain text"
+variable "build_env_vars_plaintext" {
+  description = "Environment variable injected during build process - plain text"
   type = list(object({
     key   = string
     value = string
@@ -79,8 +73,27 @@ variable "docker_build_env_vars_plaintext" {
   default = []
 }
 
-variable "docker_build_env_vars_secrets" {
-  description = "Environment value key / secret manager arns required during the docker build - secrets"
+variable "build_env_vars_from_secrets" {
+  description = "Environment variable injected during build process - retrieved from AWS Secrets Manager"
+  type = list(object({
+    key       = string
+    secretArn = string
+  }))
+  default = []
+}
+
+variable "build_env_vars_from_parameter_store" {
+  description = "Environment variable injected during build process - retrieved from AWS Parameter Store"
+  type = list(object({
+    key           = string
+    parameterName = string
+    parameterArn  = string
+  }))
+  default = []
+}
+
+variable "docker_build_args" {
+  description = "Arguments to be passed to the Docker build command. It can reference build environment variables using $<key>."
   type = list(object({
     key   = string
     value = string
@@ -88,11 +101,8 @@ variable "docker_build_env_vars_secrets" {
   default = []
 }
 
-variable "docker_build_env_vars_parameter_store" {
-  description = "Environment value key / parameter-store names required during the docker build - parameter store"
-  type = list(object({
-    key   = string
-    value = string
-  }))
-  default = []
+variable "custom_build_commands" {
+  description = "Custom build commands to be executed after the Docker image has been built tagged and pushed to ECR"
+  type        = list(string)
+  default     = []
 }
