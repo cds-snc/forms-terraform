@@ -9,7 +9,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: docker build -t $LAMBDA_NAME-lambda .
+    - run: docker build --platform=linux/amd64 --provenance false -t $LAMBDA_NAME-lambda .
       env:
         LAMBDA_NAME: ${{ inputs.lambda-name }}
       working-directory: ${{ inputs.lambda-directory }}
