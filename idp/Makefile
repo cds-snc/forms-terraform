@@ -2,4 +2,4 @@
 
 # Build the IdP's Docker image
 build:
-	docker build -t idp/zitadel:latest ./docker -f ./docker/Dockerfile
+	docker build --platform=linux/amd64 --provenance false -t idp/zitadel:latest ./docker -f ./docker/Dockerfile
