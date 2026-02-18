@@ -32,3 +32,5 @@ file-upload-processor:
   - "lambda-code/file-upload-processor/**"
 file-upload-cleanup:
   - "lambda-code/file-upload-cleanup/**"
+notification:
+  - "lambda-code/notification/**"

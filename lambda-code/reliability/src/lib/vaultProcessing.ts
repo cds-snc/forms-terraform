@@ -8,6 +8,7 @@ import {
   getObjectFirst100BytesInReliabilityBucket,
   removeFilesFromReliabilityStorage,
 } from "./s3FileInput.js";
+import { notification } from "@gcforms/connectors";
 import { FormSubmission } from "./types.js";
 
 export default async (
@@ -57,6 +58,18 @@ export default async (
       })
     );
     throw new Error(`Failed to save submission to Vault.`);
+  }
+
+  try {
+    await notification.enqueueDeferred(formID);
+  } catch (error) {
+    console.warn(
+      JSON.stringify({
+        level: "warn",
+        msg: "Failed to enqueue notification message",
+        error: (error as Error).message,
+      })
+    );
   }
 
   try {

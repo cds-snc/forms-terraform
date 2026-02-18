@@ -53,6 +53,7 @@ locals {
     "api-end-to-end-test-lambda",
     "file-upload-processor-lambda",
     "file-upload-cleanup-lambda",
+    "notification-lambda",
     var.env == "staging" ? "load-testing-lambda" : null
   ]))
 }

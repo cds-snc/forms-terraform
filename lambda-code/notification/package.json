@@ -1,0 +1,27 @@
+{
+  "name": "notification",
+  "version": "1.0.0",
+  "main": "main.js",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "rm -rf build && tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
+    "build:dev": "tsc --project tsconfig.json --watch",
+    "test": "vitest --coverage"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.902.0",
+    "@aws-sdk/lib-dynamodb": "^3.902.0",
+    "@gcforms/connectors": "^2.2.12",
+    "aws-sdk": "^2.1692.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.155",
+    "@types/node": "^22.18.8",
+    "@vitest/coverage-v8": "^3.2.4",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "packageManager": "yarn@4.10.3"
+}

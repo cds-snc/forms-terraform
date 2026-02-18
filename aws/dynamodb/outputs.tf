@@ -37,3 +37,13 @@ output "dynamodb_api_audit_logs_table_name" {
   description = "API Audit Logs table name"
   value       = aws_dynamodb_table.api_audit_logs.name
 }
+
+output "dynamodb_notification_table_arn" {
+  description = "DynamoDB notification table ARN"
+  value       = aws_dynamodb_table.notification.arn
+}
+
+output "dynamodb_notification_table_name" {
+  description = "DynamoDB notification table name"
+  value       = aws_dynamodb_table.notification.name
+}
