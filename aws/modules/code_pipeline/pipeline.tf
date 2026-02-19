@@ -7,7 +7,6 @@ resource "aws_codepipeline" "this" {
   artifact_store {
     location = aws_s3_bucket.codepipeline_bucket.bucket
     type     = "S3"
-
   }
 
   stage {
@@ -76,5 +75,4 @@ resource "aws_codepipeline" "this" {
       }
     }
   }
-
 }

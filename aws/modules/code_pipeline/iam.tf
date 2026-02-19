@@ -30,13 +30,9 @@ resource "aws_iam_role_policy_attachment" "AWSCodeDeployRoleForECS" {
   role       = aws_iam_role.this.name
 }
 
-
-
 data "aws_iam_policy_document" "codepipeline_policy" {
   # checkov:skip=CKV_AWS_356: All resources identifier is required
   # checkov:skip=CKV_AWS_111: Requires write access
-
-
   statement {
     effect = "Allow"
 
@@ -70,6 +66,7 @@ data "aws_iam_policy_document" "codepipeline_policy" {
 
     resources = ["*"]
   }
+
   statement {
     effect = "Allow"
 
@@ -115,6 +112,7 @@ data "aws_iam_policy_document" "codepipeline_policy" {
 
     resources = ["arn:aws:codedeploy:*:${local.account_id}:deploymentgroup:${aws_codedeploy_app.this.name}/*"]
   }
+
   statement {
     effect = "Allow"
     actions = [
@@ -127,6 +125,7 @@ data "aws_iam_policy_document" "codepipeline_policy" {
       "arn:aws:codedeploy:*:${local.account_id}:application:${aws_codedeploy_app.this.name}/*"
     ]
   }
+
   statement {
     effect = "Allow"
     actions = [
@@ -134,6 +133,7 @@ data "aws_iam_policy_document" "codepipeline_policy" {
     ]
     resources = ["arn:aws:codedeploy:*:${local.account_id}:deploymentconfig:*"]
   }
+
   statement {
     effect = "Allow"
     actions = [
@@ -175,14 +175,28 @@ data "aws_iam_policy_document" "codepipeline_policy" {
     actions   = ["iam:PassRole"]
     resources = [data.aws_ecs_task_definition.this.execution_role_arn]
   }
+
+  dynamic "statement" {
+    for_each = length(var.build_env_vars_from_parameter_store) > 0 ? [1] : []
+    content {
+      effect    = "Allow"
+      actions   = ["ssm:GetParameters"]
+      resources = [for item in var.build_env_vars_from_parameter_store : item.parameterArn]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = length(var.build_env_vars_from_secrets) > 0 ? [1] : []
+    content {
+      effect    = "Allow"
+      actions   = ["secretsmanager:GetSecretValue"]
+      resources = [for item in var.build_env_vars_from_secrets : item.secretArn]
+    }
+  }
 }
 
 resource "aws_iam_role_policy" "codepipeline_policy" {
   name   = "codepipeline_policy"
   role   = aws_iam_role.this.id
   policy = data.aws_iam_policy_document.codepipeline_policy.json
-
 }
-
-
-

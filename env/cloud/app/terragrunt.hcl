@@ -25,7 +25,8 @@ dependency "ecr" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    ecr_repository_url_form_viewer = null
+    ecr_form_viewer_repository_name = "form_viewer_development"
+    ecr_repository_url_form_viewer  = "${local.aws_account_id}.dkr.ecr.ca-central-1.amazonaws.com/form_viewer_development"
   }
 }
 
@@ -56,6 +57,8 @@ dependency "network" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
+    vpc_id                                                 = "vpc-id"
+    code_build_security_group_id                           = "sg-cb"
     private_subnet_ids                                     = ["prv-1", "prv-2"]
     egress_security_group_id                               = "sg-1234567890"
     ecs_security_group_id                                  = "sg-1234567890"
@@ -99,9 +102,10 @@ dependency "cognito" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    cognito_endpoint_url  = null
-    cognito_client_id     = null
-    cognito_user_pool_arn = null
+    cognito_endpoint_url  = "https://cognito-idp.ca-central-1.amazonaws.com/ca-central-1_123456"
+    cognito_client_id     = "123456abcde"
+    cognito_user_pool_arn = "arn:aws:cognito-idp:ca-central-1:${local.aws_account_id}:userpool/ca-central-1_123456"
+    cognito_user_pool_id  = "ca-central-1_123456"
   }
 }
 
@@ -167,7 +171,8 @@ inputs = {
   dynamodb_app_audit_logs_arn    = dependency.dynamodb.outputs.dynamodb_app_audit_logs_arn
   dynamodb_api_audit_logs_arn    = dependency.dynamodb.outputs.dynamodb_api_audit_logs_arn
 
-  ecr_repository_url_form_viewer = dependency.ecr.outputs.ecr_repository_url_form_viewer
+  ecr_form_viewer_repository_name = dependency.ecr.outputs.ecr_form_viewer_repository_name
+  ecr_repository_url_form_viewer  = dependency.ecr.outputs.ecr_repository_url_form_viewer
 
   kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
   kms_key_dynamodb_arn   = dependency.kms.outputs.kms_key_dynamodb_arn
@@ -177,6 +182,8 @@ inputs = {
   lb_target_group_1_name = dependency.load_balancer.outputs.lb_target_group_1_name
   lb_target_group_2_name = dependency.load_balancer.outputs.lb_target_group_2_name
 
+  vpc_id                                                 = dependency.network.outputs.vpc_id
+  code_build_security_group_id                           = dependency.network.outputs.code_build_security_group_id
   ecs_security_group_id                                  = dependency.network.outputs.ecs_security_group_id
   egress_security_group_id                               = dependency.network.outputs.egress_security_group_id
   private_subnet_ids                                     = dependency.network.outputs.private_subnet_ids
@@ -194,7 +201,7 @@ inputs = {
   cognito_endpoint_url  = dependency.cognito.outputs.cognito_endpoint_url
   cognito_client_id     = dependency.cognito.outputs.cognito_client_id
   cognito_user_pool_arn = dependency.cognito.outputs.cognito_user_pool_arn
-
+  cognito_user_pool_id  = dependency.cognito.outputs.cognito_user_pool_id
 
   recaptcha_secret_arn                    = dependency.secrets.outputs.recaptcha_secret_arn
   notify_api_key_secret_arn               = dependency.secrets.outputs.notify_api_key_secret_arn
@@ -211,8 +218,11 @@ inputs = {
 
   ecs_idp_service_name = dependency.idp.outputs.ecs_idp_service_name
   ecs_idp_service_port = dependency.idp.outputs.ecs_idp_service_port
+  
   # Overwritten by GitHub TFVARS
-  zitadel_client_id = "123456789"
+  zitadel_client_id                            = "123456789"
+  zitadel_project_id                           = "123456789"
+  hcaptcha_site_key                            = "hCaptchaSiteKey"
 }
 
 include "root" {

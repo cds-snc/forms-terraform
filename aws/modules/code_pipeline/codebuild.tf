@@ -4,7 +4,7 @@ resource "aws_codebuild_project" "ecs_render" {
   # checkov:skip=CKV_AWS_316: Privileges required to build docker container within codebuild environment
   name          = "ECS-Render-${var.app_name}"
   description   = "Render ECS files for ${var.app_name}"
-  build_timeout = 5
+  build_timeout = 10
   service_role  = aws_iam_role.this.arn
 
   artifacts {
@@ -47,26 +47,32 @@ resource "aws_codebuild_project" "ecs_render" {
 }
 
 locals {
+  docker_build_args = join(" ", [for instance in var.docker_build_args : "--build-arg ${instance.key}=${instance.value}"])
+
+  base_build_commands = [
+    "export GIT_TAG=$(git tag --points-at $GIT_COMMIT_ID)",
+    "aws ecr get-login-password --region ca-central-1 | docker login --username AWS --password-stdin ${var.app_ecr_url}",
+    "docker build -t base ${local.docker_build_args} .",
+    "docker tag base ${var.app_ecr_url}:latest",
+    "docker push ${var.app_ecr_url}:latest",
+    "docker tag base ${var.app_ecr_url}:$GIT_COMMIT_ID",
+    "docker push ${var.app_ecr_url}:$GIT_COMMIT_ID",
+    "if [[ -n \"$GIT_TAG\" ]]; then docker tag base ${var.app_ecr_url}:$GIT_TAG && docker push ${var.app_ecr_url}:$GIT_TAG; fi"
+  ]
+
+  build_commands = concat(local.base_build_commands, var.custom_build_commands)
+
   buildspec = jsonencode({
     version = 0.2
     env = {
-      variables         = { for item in var.docker_build_env_vars_plaintext : item.key => item.value }
-      "parameter-store" = { for item in var.docker_build_env_vars_parameter_store : item.key => item.value }
-      "secrets-manager" = { for item in var.docker_build_env_vars_secrets : item.key => item.value }
+      variables         = { for item in var.build_env_vars_plaintext : item.key => item.value }
+      "parameter-store" = { for item in var.build_env_vars_from_parameter_store : item.key => item.parameterName }
+      "secrets-manager" = { for item in var.build_env_vars_from_secrets : item.key => item.secretArn }
     }
     phases = {
       build = {
         "on-failure" = "ABORT"
-        commands = [
-          "aws ecr get-login-password --region ca-central-1 | docker login --username AWS --password-stdin ${var.app_ecr_url}",
-          "docker build -t base ${local.docker_build_args}",
-          "docker tag base ${var.app_ecr_url}:latest",
-          "docker push ${var.app_ecr_url}:latest",
-          "docker tag base ${var.app_ecr_url}:$GIT_COMMIT_ID",
-          "docker push ${var.app_ecr_url}:$GIT_COMMIT_ID",
-          "export GIT_TAG=$(git tag --points-at $GIT_COMMIT_ID)",
-          "if [[ -n \"$GIT_TAG\" ]]; then docker tag base ${var.app_ecr_url}:$GIT_TAG && docker push ${var.app_ecr_url}:$GIT_TAG; fi"
-        ]
+        commands     = local.build_commands
         finally = [
           "docker logout ${var.app_ecr_url}"
         ]
@@ -84,5 +90,4 @@ locals {
       files = ["appspec.yaml", "task_definition.json"]
     }
   })
-  docker_build_args = join(" ", [for instance in concat(var.docker_build_env_vars_plaintext, var.docker_build_env_vars_parameter_store, var.docker_build_env_vars_secrets) : "--build-arg ${instance.key}=${instance.value}"], ["."])
 }
