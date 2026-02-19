@@ -12,6 +12,7 @@ inputs = {
   env                       = "${local.env}"
   region                    = "ca-central-1"
   cbs_satellite_bucket_name = "cbs-satellite-${local.account_id}"
+  security_txt_content      = "I'm a text file content placeholder"
 }
 
 generate "backend_remote_state" {
