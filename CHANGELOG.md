@@ -1,5 +1,33 @@
 # Changelog
 
+## [3.43.0](https://github.com/cds-snc/forms-terraform/compare/v3.42.1...v3.43.0) (2026-02-19)
+
+
+### Features
+
+* add `/.well-known/security.txt` fixed LB response ([#1228](https://github.com/cds-snc/forms-terraform/issues/1228)) ([1ec8b3f](https://github.com/cds-snc/forms-terraform/commit/1ec8b3f895ffc4e1448977399380de884ff1401f))
+
+
+### Bug Fixes
+
+* Add placeholder for security_txt_content ([#1235](https://github.com/cds-snc/forms-terraform/issues/1235)) ([e1a02cb](https://github.com/cds-snc/forms-terraform/commit/e1a02cb20df9aa268934080f412876eac4c1d7aa))
+* allow security.txt through the WAF ([#1233](https://github.com/cds-snc/forms-terraform/issues/1233)) ([f1acff8](https://github.com/cds-snc/forms-terraform/commit/f1acff848ae9a922dbdc350fa4fbea9f611a4071))
+* update docker build commands to work on latest ubuntu version ([#1231](https://github.com/cds-snc/forms-terraform/issues/1231)) ([80ebfa1](https://github.com/cds-snc/forms-terraform/commit/80ebfa19c53b36a0c70fe5419bd6580a7cde8044))
+
+
+### Miscellaneous Chores
+
+* Add Notify api key environment variable for SSO portal ([#1221](https://github.com/cds-snc/forms-terraform/issues/1221)) ([fe7bf81](https://github.com/cds-snc/forms-terraform/commit/fe7bf8188261d073f5fbdd268b73d08d59dc48d8))
+* **deps:** lock file maintenance ([#1224](https://github.com/cds-snc/forms-terraform/issues/1224)) ([958baaa](https://github.com/cds-snc/forms-terraform/commit/958baaad6eef0586dc95e82fb636fd0888982505))
+* **deps:** lock file maintenance ([#1230](https://github.com/cds-snc/forms-terraform/issues/1230)) ([64f8394](https://github.com/cds-snc/forms-terraform/commit/64f8394b06b97c7ccd15ed7cb882407bd9babc58))
+* **deps:** update all non-major github action dependencies ([#1223](https://github.com/cds-snc/forms-terraform/issues/1223)) ([77c724a](https://github.com/cds-snc/forms-terraform/commit/77c724af3b3f3fcabc14c9d4e87398f1ec369c6f))
+* **deps:** update all non-major github action dependencies ([#1229](https://github.com/cds-snc/forms-terraform/issues/1229)) ([e36d592](https://github.com/cds-snc/forms-terraform/commit/e36d592e8b7a55b5b72f7007438fe8598b964964))
+* Modify IDP and App/API WAF to block by default ([#1226](https://github.com/cds-snc/forms-terraform/issues/1226)) ([9b3960d](https://github.com/cds-snc/forms-terraform/commit/9b3960db9355f2fdbbf28aaf6b9f6f1742cd765b))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1225](https://github.com/cds-snc/forms-terraform/issues/1225)) ([2a8bbf7](https://github.com/cds-snc/forms-terraform/commit/2a8bbf7f2b08e75e78ad398f08a4c9f0fa40312e))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1232](https://github.com/cds-snc/forms-terraform/issues/1232)) ([9424543](https://github.com/cds-snc/forms-terraform/commit/94245431a88620969c27c492feb901415ddcdb38))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1236](https://github.com/cds-snc/forms-terraform/issues/1236)) ([be93f65](https://github.com/cds-snc/forms-terraform/commit/be93f656575f1aff101e6a0d4b24fd4171e0c276))
+* Update RDS engine to 17.7 ([#1234](https://github.com/cds-snc/forms-terraform/issues/1234)) ([361917a](https://github.com/cds-snc/forms-terraform/commit/361917a3ff15b671496fec5b5c68c1a4d4bbd5c9))
+
 ## [3.42.1](https://github.com/cds-snc/forms-terraform/compare/v3.42.0...v3.42.1) (2026-02-02)
 
 
