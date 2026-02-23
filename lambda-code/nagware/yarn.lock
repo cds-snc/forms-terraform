@@ -682,9 +682,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gcforms/connectors@npm:^2.2.12":
-  version: 2.2.16
-  resolution: "@gcforms/connectors@npm:2.2.16"
+"@gcforms/connectors@npm:^2.2.17":
+  version: 2.2.17
+  resolution: "@gcforms/connectors@npm:2.2.17"
   dependencies:
     "@aws-sdk/client-dynamodb": "npm:^3.971.0"
     "@aws-sdk/client-secrets-manager": "npm:^3.971.0"
@@ -692,7 +692,7 @@ __metadata:
     "@aws-sdk/lib-dynamodb": "npm:^3.971.0"
     axios: "npm:^1.12.2"
     postgres: "npm:^3.4.5"
-  checksum: 10c0/2da6c4fea3d5ea54ddd93a40631144a44bcf6302bbee81ffd8f908701b2cac3dbb501ff3f2db8085ffea26b1824d9e8a0767261af7597b46487d0b0ef09f5431
+  checksum: 10c0/e5223fa242db1daeff89a028521ee727f0306cfb2da2aef05fc4060a428bd9779bac9d1c7012c78eda7d48f57950ea50bc5cf62168d05d4abcd4cd278e4eca07
   languageName: node
   linkType: hard
 
@@ -2154,7 +2154,7 @@ __metadata:
   dependencies:
     "@aws-sdk/client-dynamodb": "npm:^3.902.0"
     "@aws-sdk/lib-dynamodb": "npm:^3.902.0"
-    "@gcforms/connectors": "npm:^2.2.12"
+    "@gcforms/connectors": "npm:^2.2.17"
     "@types/aws-lambda": "npm:^8.10.155"
     "@types/node": "npm:^22.18.8"
     redis: "npm:^4.7.1"
