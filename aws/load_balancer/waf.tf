@@ -630,6 +630,11 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
   regular_expression {
     regex_string = "^\\/(?:en|fr)?\\/?$"
   }
+
+  # Security.txt
+  regular_expression {
+    regex_string = "^\\/\\.well-known\\/security\\.txt$"
+  }
 }
 
 resource "aws_wafv2_regex_pattern_set" "valid_api_uri_paths" {

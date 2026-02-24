@@ -145,6 +145,27 @@ resource "aws_lb_listener" "form_viewer_http" {
   }
 }
 
+resource "aws_alb_listener_rule" "security_txt" {
+  listener_arn = aws_lb_listener.form_viewer_https.arn
+  priority     = 39999
+
+  action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = var.security_txt_content
+      status_code  = "200"
+    }
+  }
+
+  condition {
+    path_pattern {
+      values = ["/.well-known/security.txt"]
+    }
+  }
+}
+
 resource "aws_alb_listener_rule" "forms_api" {
   listener_arn = aws_lb_listener.form_viewer_https.arn
   priority     = 49999

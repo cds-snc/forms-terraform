@@ -147,6 +147,27 @@ resource "aws_alb_listener_rule" "idp_protocol_version" {
   }
 }
 
+resource "aws_alb_listener_rule" "security_txt" {
+  listener_arn = aws_lb_listener.idp.arn
+  priority     = 200
+
+  action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = var.security_txt_content
+      status_code  = "200"
+    }
+  }
+
+  condition {
+    path_pattern {
+      values = ["/.well-known/security.txt"]
+    }
+  }
+}
+
 # Send requests to the login app to the appropriate target group
 resource "aws_alb_listener_rule" "user_portal" {
   count        = var.env == "production" ? 0 : 1
