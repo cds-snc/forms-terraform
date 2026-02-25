@@ -22,8 +22,8 @@ locals {
 
 
 inputs = {
-  vpc_cidr_block = "172.16.0.0/16"
-  vpc_name       = "forms"
+  vpc_cidr_block         = "172.16.0.0/16"
+  vpc_name               = "forms"
   kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
 }
 

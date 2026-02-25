@@ -1,8 +1,8 @@
 locals {
   # Map: key (availability zone ID) => value (firewall endpoint ID)
   networkfirewall_endpoints = { for i in aws_networkfirewall_firewall.forms.firewall_status[0].sync_states : i.availability_zone => i.attachment[0].endpoint_id }
-  public_subnet_cidrs = {for index, sub in aws_subnet.forms_public.*.cidr_block: index + 1 => sub }
-  }
+  public_subnet_cidrs       = { for index, sub in aws_subnet.forms_public.*.cidr_block : index + 1 => sub }
+}
 
 
 resource "aws_networkfirewall_firewall" "forms" {
@@ -49,7 +49,7 @@ resource "aws_networkfirewall_rule_group" "known_external_domains_only" {
       rules_source_list {
         generated_rules_type = "ALLOWLIST"
         target_types         = ["TLS_SNI"]
-        targets              = concat(["api.notification.canada.ca", "api.hcaptcha.com"], [for domain in var.domains: ".${domain}"])
+        targets              = concat(["api.notification.canada.ca", "api.hcaptcha.com"], [for domain in var.domains : ".${domain}"])
       }
     }
   }
@@ -62,22 +62,22 @@ resource "aws_networkfirewall_rule_group" "general" {
   type        = "STATEFUL"
   rule_group {
     rules_source {
-      dynamic "stateful_rule"{
+      dynamic "stateful_rule" {
         for_each = local.public_subnet_cidrs
         content {
           action = "PASS"
           header {
-          destination      = stateful_rule.value
-          destination_port = "ANY"
-          protocol         = "HTTP"
-          direction        = "FORWARD"
-          source_port      = "ANY"
-          source           = "ANY"
-        }
-        rule_option {
-          keyword  = "sid"
-          settings = ["${stateful_rule.key}"]
-        }
+            destination      = stateful_rule.value
+            destination_port = "ANY"
+            protocol         = "HTTP"
+            direction        = "FORWARD"
+            source_port      = "ANY"
+            source           = "ANY"
+          }
+          rule_option {
+            keyword  = "sid"
+            settings = ["${stateful_rule.key}"]
+          }
         }
       }
       stateful_rule {
@@ -100,7 +100,7 @@ resource "aws_networkfirewall_rule_group" "general" {
 }
 
 resource "aws_networkfirewall_logging_configuration" "forms" {
-  firewall_arn = aws_networkfirewall_firewall.forms.arn
+  firewall_arn                = aws_networkfirewall_firewall.forms.arn
   enable_monitoring_dashboard = true
   logging_configuration {
     log_destination_config {
@@ -109,9 +109,9 @@ resource "aws_networkfirewall_logging_configuration" "forms" {
       }
       log_destination_type = "CloudWatchLogs"
       log_type             = "FLOW"
-      }
     }
   }
+}
 
 #
 # Firewall CloudWatch log group

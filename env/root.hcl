@@ -1,7 +1,7 @@
 locals {
-  account_id       = get_env("AWS_ACCOUNT_ID", "000000000000")
-  env              = get_env("APP_ENV", "development")
-  domains          = get_env("APP_DOMAINS", "[\"localhost:3000\"]")
+  account_id = get_env("AWS_ACCOUNT_ID", "000000000000")
+  env        = get_env("APP_ENV", "development")
+  domains    = get_env("APP_DOMAINS", "[\"localhost:3000\"]")
 }
 
 inputs = {

@@ -23,11 +23,11 @@ fmt:                ## Format all .tf files
 
 hclfmt:             ## Format all .hcl files
 	cd env/
-	terragrunt run-all hclfmt
+	terragrunt hcl fmt 
 
 validate:           ## Terragrunt validate all resources
 	cd env/
-	terragrunt run-all validate
+	terragrunt run --all validate
 
 build_env: 	    ## Build Development environment
 	./local_dev_files/build_dev_env.sh

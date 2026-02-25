@@ -10,5 +10,5 @@ variable "vpc_name" {
 
 variable "kms_key_cloudwatch_arn" {
   description = "KMS key for cloudwatch logs"
-  type = string
+  type        = string
 }
