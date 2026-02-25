@@ -6,9 +6,11 @@ locals {
 
 
 resource "aws_networkfirewall_firewall" "forms" {
+  #checkov:skip=CKV_AWS_345: AWS Managed Key is enough encryption for this use case
+
   name                = "GCForms"
   description         = "Firewall limiting outbound traffic.  WAF handles inbound"
-  delete_protection   = var.env != "development"
+  delete_protection   = true
   vpc_id              = aws_vpc.forms.id
   firewall_policy_arn = aws_networkfirewall_firewall_policy.forms.arn
   dynamic "subnet_mapping" {
@@ -22,6 +24,7 @@ resource "aws_networkfirewall_firewall" "forms" {
 
 
 resource "aws_networkfirewall_firewall_policy" "forms" {
+  #checkov:skip=CKV_AWS_346: AWS Managed Key is enough encryption for this use case
   name = "forms"
 
   firewall_policy {
@@ -40,6 +43,7 @@ resource "aws_networkfirewall_firewall_policy" "forms" {
 }
 
 resource "aws_networkfirewall_rule_group" "known_external_domains_only" {
+  #checkov:skip=CKV_AWS_345: AWS Managed Key is enough encryption for this use case
   capacity    = 10
   name        = "known-external-domains-only"
   description = "Only allow traffic originating internally to reach known domains"
@@ -56,6 +60,7 @@ resource "aws_networkfirewall_rule_group" "known_external_domains_only" {
 }
 
 resource "aws_networkfirewall_rule_group" "general" {
+  #checkov:skip=CKV_AWS_345: AWS Managed Key is enough encryption for this use case
   capacity    = 10
   name        = "general"
   description = "Only allow web traffic and deny everything else"
@@ -117,6 +122,7 @@ resource "aws_networkfirewall_logging_configuration" "forms" {
 # Firewall CloudWatch log group
 #
 resource "aws_cloudwatch_log_group" "forms" {
+  # checkov:skip=CKV_AWS_338: WAF and Firewall logs are only kept for 14 days 
   name              = "Network-Firewall"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 14
