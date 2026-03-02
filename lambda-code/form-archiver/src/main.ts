@@ -1,9 +1,14 @@
-import { deleteFormTemplatesMarkedAsArchived } from "@lib/templates.js";
 import { Handler } from "aws-lambda";
+import { PostgresConnector } from "@gcforms/connectors";
+
+const postgresConnector = await PostgresConnector.defaultUsingPostgresConnectionUrlFromAwsSecret(
+  process.env.DB_URL ?? ""
+);
 
 export const handler: Handler = async () => {
   try {
-    await deleteFormTemplatesMarkedAsArchived();
+    // Delete all form templates that have been marked as archived (has an TTL value that is not null)
+    await postgresConnector.executeSqlStatement()`DELETE FROM "Template" WHERE ttl IS NOT NULL AND ttl < CURRENT_TIMESTAMP`;
 
     console.log(
       JSON.stringify({

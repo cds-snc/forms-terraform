@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.43.1](https://github.com/cds-snc/forms-terraform/compare/v3.43.0...v3.43.1) (2026-02-25)
+
+
+### Miscellaneous Chores
+
+* use GC Forms connectors package to connect to the database instead of the RDSDataClient ([#1242](https://github.com/cds-snc/forms-terraform/issues/1242)) ([ad6206e](https://github.com/cds-snc/forms-terraform/commit/ad6206e4289b7a5ea2b739ead88848fd3bcf4bdc))
+
 ## [3.43.0](https://github.com/cds-snc/forms-terraform/compare/v3.42.1...v3.43.0) (2026-02-23)
 
 
