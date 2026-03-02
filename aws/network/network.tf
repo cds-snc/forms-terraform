@@ -149,7 +149,7 @@ resource "aws_route" "ig" {
   vpc_endpoint_id        = local.networkfirewall_endpoints[element(data.aws_availability_zones.available.names, count.index)]
 }
 
-resource "aws_route_table_association" "if" {
+resource "aws_route_table_association" "ig" {
   gateway_id     = aws_internet_gateway.forms.id
   route_table_id = aws_route_table.ig.id
 }
