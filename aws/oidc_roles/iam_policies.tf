@@ -162,3 +162,37 @@ data "aws_iam_policy_document" "ecr_push_image" {
     resources = ["*"]
   }
 }
+
+#
+# ECR read only access on form viewer repository related to the environment it is deployed on
+#
+
+resource "aws_iam_policy" "platform_forms_client_post_deployment" {
+  name   = local.platform_forms_client_post_deployment
+  path   = "/"
+  policy = data.aws_iam_policy_document.platform_forms_client_post_deployment.json
+}
+
+data "aws_iam_policy_document" "platform_forms_client_post_deployment" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ecr:GetAuthorizationToken"
+    ]
+
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage"
+    ]
+
+    resources = ["arn:aws:ecr:${var.region}:${var.account_id}:repository/form_viewer_${var.env}"]
+  }
+}

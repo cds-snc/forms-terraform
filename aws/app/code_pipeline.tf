@@ -79,7 +79,7 @@ module "gc_forms_code_pipeline" {
 
   github_trigger = {
     mode             = var.env == "production" ? "DeployOnNewTag" : "DeployOnNewCommit"
-    excludeFilePaths = var.env == "production" ? null : [".**", "__*/**"]
+    excludeFilePaths = var.env == "production" ? null : [".**", "__*/**", "tests/**"]
   }
 
   build_env_vars_from_secrets = [
