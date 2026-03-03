@@ -54,7 +54,7 @@ export const getAlarmDescription = (message: string): string => {
  */
 export const getSNSMessageSeverity = (message: string): string => {
   const errorMessages = ["error", "critical"];
-  const warningMessages = ["warning", "failure"];
+  const warningMessages = ["warning", "failure", "failed"];
   const alarm_ok_status = '"newstatevalue":"ok"'; // This is the string that is returned when the alarm is reset
 
   message = message.toLowerCase();

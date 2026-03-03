@@ -163,45 +163,36 @@ data "aws_iam_policy_document" "ecr_push_image" {
   }
 }
 
-
 #
-# Upload to S3 and invoke Lambda
+# ECR read only access on form viewer repository related to the environment it is deployed on
 #
 
-resource "aws_iam_policy" "forms_db_migration" {
-  name   = local.platform_forms_client_db_migration
+resource "aws_iam_policy" "platform_forms_client_post_deployment" {
+  name   = local.platform_forms_client_post_deployment
   path   = "/"
-  policy = data.aws_iam_policy_document.forms_db_migration.json
+  policy = data.aws_iam_policy_document.platform_forms_client_post_deployment.json
 }
 
-data "aws_iam_policy_document" "forms_db_migration" {
+data "aws_iam_policy_document" "platform_forms_client_post_deployment" {
   statement {
     effect = "Allow"
 
     actions = [
-      "s3:DeleteObject",
-      "s3:GetObject",
-      "s3:PutObject",
-      "s3:ListBucket",
-      "s3:GetObjectTagging",
-      "s3:PutObjectTagging"
+      "ecr:GetAuthorizationToken"
     ]
 
-    resources = [
-      "arn:aws:s3:::forms-${var.env}-prisma-migration-storage",
-      "arn:aws:s3:::forms-${var.env}-prisma-migration-storage/*"
-    ]
+    resources = ["*"]
   }
 
   statement {
-
     effect = "Allow"
+
     actions = [
-      "lambda:InvokeFunction",
-      "lambda:GetFunction"
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage"
     ]
-    resources = [
-      "arn:aws:lambda:${var.region}:${var.account_id}:function:prisma-migration",
-    ]
+
+    resources = ["arn:aws:ecr:${var.region}:${var.account_id}:repository/form_viewer_${var.env}"]
   }
 }
