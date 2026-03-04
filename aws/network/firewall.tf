@@ -53,7 +53,7 @@ resource "aws_networkfirewall_rule_group" "known_external_domains_only" {
       rules_source_list {
         generated_rules_type = "ALLOWLIST"
         target_types         = ["TLS_SNI"]
-        targets              = concat(["api.notification.canada.ca", "api.hcaptcha.com"], [for domain in var.domains : ".${domain}"])
+        targets              = concat(["api.notification.canada.ca", "api.hcaptcha.com", "github.com"], [for domain in var.domains : ".${domain}"])
       }
     }
   }
