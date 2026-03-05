@@ -379,7 +379,8 @@ locals {
     vault_integrity          = var.lambda_vault_integrity_log_group_name,
     api_end_to_end_test      = var.lambda_api_end_to_end_test_log_group_name,
     file_upload_processor    = var.lambda_file_upload_processor_log_group_name,
-    file_upload_cleanup      = var.lambda_file_upload_cleanup_log_group_name
+    file_upload_cleanup      = var.lambda_file_upload_cleanup_log_group_name,
+    notification             = var.lambda_notification_log_group_name,
   }
 }
 

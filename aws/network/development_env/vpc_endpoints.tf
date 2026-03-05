@@ -26,3 +26,14 @@ resource "aws_vpc_endpoint" "secretsmanager" {
   ]
   subnet_ids = local.private_subnet_ids
 }
+
+resource "aws_vpc_endpoint" "sqs" {
+  vpc_id              = aws_vpc.forms.id
+  vpc_endpoint_type   = "Interface"
+  service_name        = "com.amazonaws.${var.region}.sqs"
+  private_dns_enabled = true
+  security_group_ids = [
+    aws_security_group.privatelink.id
+  ]
+  subnet_ids = local.private_subnet_ids
+}
