@@ -52,7 +52,6 @@ resource "aws_rds_cluster" "forms" {
 
   tags = {
     Name           = "${var.rds_name}-cluster"
-    managed_backup = "true"
   }
 
 

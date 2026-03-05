@@ -21,11 +21,34 @@ resource "aws_backup_plan" "forms" {
 
 }
 
-resource "aws_backup_selection" "forms" {
+resource "aws_backup_selection" "s3" {
   iam_role_arn = aws_iam_role.forms_backup_role.arn
-  name         = "gcforms_backup_selection"
+  name         = "gcforms_backup_s3"
   plan_id      = aws_backup_plan.forms.id
-  resources = ["arn:aws:dynamodb:${var.region}:${var.account_id}:table/*", "arn:aws:rds:${var.region}:${var.account_id}:cluster:*", "arn:aws:s3:::*"]
+  resources = ["arn:aws:s3:::*"]
+
+  condition {
+    string_equals {
+      key   = "aws:ResourceTag/managed_backup"
+      value = "true"
+    }
+  }
+
+}
+resource "aws_backup_selection" "rds" {
+  iam_role_arn = aws_iam_role.forms_backup_role.arn
+  name         = "gcforms_backup_rds"
+  plan_id      = aws_backup_plan.forms.id
+  resources = ["arn:aws:rds:${var.region}:${var.account_id}:cluster:*"]
+
+
+}
+
+resource "aws_backup_selection" "dynamodb" {
+  iam_role_arn = aws_iam_role.forms_backup_role.arn
+  name         = "gcforms_backup_dynamodb"
+  plan_id      = aws_backup_plan.forms.id
+  resources = ["arn:aws:dynamodb:${var.region}:${var.account_id}:table/*"]
 
   condition {
     string_equals {
