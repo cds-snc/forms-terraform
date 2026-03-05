@@ -41,6 +41,9 @@ resource "aws_dynamodb_table" "reliability_queue" {
   point_in_time_recovery {
     enabled = var.env != "development"
   }
+  tags = {
+    managed_backup = "true"
+  }
 }
 
 resource "aws_dynamodb_table" "vault" {
@@ -83,6 +86,9 @@ resource "aws_dynamodb_table" "vault" {
 
   point_in_time_recovery {
     enabled = var.env != "development"
+  }
+  tags = {
+    managed_backup = "true"
   }
 }
 
@@ -148,6 +154,9 @@ resource "aws_dynamodb_table" "audit_logs" {
 
   point_in_time_recovery {
     enabled = var.env != "development"
+  }
+  tags = {
+    managed_backup = "true"
   }
 }
 
@@ -215,6 +224,9 @@ resource "aws_dynamodb_table" "api_audit_logs" {
 
   point_in_time_recovery {
     enabled = var.env != "development"
+  }
+  tags = {
+    managed_backup = "true"
   }
 }
 

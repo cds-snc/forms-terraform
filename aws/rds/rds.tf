@@ -35,8 +35,6 @@ resource "aws_rds_cluster" "forms" {
   final_snapshot_identifier   = "server-${random_string.random.result}"
   master_username             = var.rds_db_user
   master_password             = var.rds_db_password
-  backup_retention_period     = 5
-  preferred_backup_window     = "07:00-09:00"
   db_subnet_group_name        = aws_db_subnet_group.forms.name
   storage_encrypted           = true
   allow_major_version_upgrade = true
@@ -53,8 +51,10 @@ resource "aws_rds_cluster" "forms" {
   vpc_security_group_ids = [var.rds_security_group_id]
 
   tags = {
-    Name = "${var.rds_name}-cluster"
+    Name           = "${var.rds_name}-cluster"
+    managed_backup = "true"
   }
+
 
   lifecycle {
     ignore_changes = [

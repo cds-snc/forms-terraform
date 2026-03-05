@@ -127,6 +127,18 @@ resource "aws_s3_bucket" "vault_file_storage" {
   # checkov:skip=CKV2_AWS_62: Event notifications not required
   bucket        = "forms-${local.env}-vault-file-storage"
   force_destroy = var.env == "development"
+
+  tags = {
+    managed_backup = "true"
+  }
+}
+
+resource "aws_s3_bucket_versioning" "vault_file_storage" {
+  bucket = aws_s3_bucket.vault_file_storage.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 resource "aws_s3_bucket_ownership_controls" "vault_file_storage" {
@@ -229,6 +241,18 @@ resource "aws_s3_bucket" "audit_logs_archive_storage" {
   # checkov:skip=CKV2_AWS_62: Event notifications not required
   bucket        = "forms-${local.env}-audit-logs-archive-storage"
   force_destroy = var.env == "development"
+
+  tags = {
+    managed_backup = "true"
+  }
+}
+
+resource "aws_s3_bucket_versioning" "audit_logs_archive_storage" {
+  bucket = aws_s3_bucket.audit_logs_archive_storage.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 resource "aws_s3_bucket_ownership_controls" "audit_logs_archive_storage" {
