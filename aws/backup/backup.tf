@@ -1,6 +1,5 @@
 resource "aws_backup_vault" "forms" {
   name          = "gcforms_backup_vault"
-  force_destroy = true
 }
 
 resource "aws_backup_plan" "forms" {
