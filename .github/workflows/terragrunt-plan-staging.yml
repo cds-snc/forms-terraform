@@ -322,6 +322,16 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
+      - name: Terragrunt plan backup
+        if: steps.filter.outputs.backup == 'true'
+        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        with:
+          directory: "env/cloud/backup"
+          comment-delete: "true"
+          comment-title: "Staging: backup"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
       # Depends on everything
       - name: Terragrunt plan app
         if: steps.filter.outputs.app == 'true'

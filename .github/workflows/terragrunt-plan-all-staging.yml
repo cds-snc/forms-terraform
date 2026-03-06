@@ -194,6 +194,13 @@ jobs:
           comment: "false"
           terragrunt: "true"
 
+      - name: Terragrunt plan backup
+        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        with:
+          directory: "env/cloud/backup"
+          comment: "false"
+          terragrunt: "true"
+
       # Depends on everything
       - name: Terragrunt plan app
         uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0

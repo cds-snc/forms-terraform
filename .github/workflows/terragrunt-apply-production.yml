@@ -258,6 +258,10 @@ jobs:
         working-directory: env/cloud/idp
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Terragrunt apply backup
+        working-directory: env/cloud/backup
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
       # Depends on everything
       - name: Terragrunt apply app
         working-directory: env/cloud/app
