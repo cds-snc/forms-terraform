@@ -20,7 +20,7 @@ resource "aws_backup_plan" "forms" {
   }
 
 }
-
+# Only S3 resources that are tagged to backup
 resource "aws_backup_selection" "s3" {
   iam_role_arn = aws_iam_role.forms_backup_role.arn
   name         = "gcforms_backup_s3"
@@ -35,6 +35,8 @@ resource "aws_backup_selection" "s3" {
   }
 
 }
+
+# All RDS clusters
 resource "aws_backup_selection" "rds" {
   iam_role_arn = aws_iam_role.forms_backup_role.arn
   name         = "gcforms_backup_rds"
@@ -42,6 +44,7 @@ resource "aws_backup_selection" "rds" {
   resources    = ["arn:aws:rds:${var.region}:${var.account_id}:cluster:*"]
 }
 
+# Only DynamoDB resources that are tagged to backup
 resource "aws_backup_selection" "dynamodb" {
   iam_role_arn = aws_iam_role.forms_backup_role.arn
   name         = "gcforms_backup_dynamodb"
