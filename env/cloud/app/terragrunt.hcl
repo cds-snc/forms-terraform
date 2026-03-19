@@ -223,7 +223,6 @@ inputs = {
   zitadel_client_id                            = "123456789"
   zitadel_project_id                           = "123456789"
   hcaptcha_site_key                            = "hCaptchaSiteKey"
-  github_personal_access_token                 = "githubPAT"
 }
 
 include "root" {

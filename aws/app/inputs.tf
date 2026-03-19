@@ -315,9 +315,3 @@ variable "code_build_security_group_id" {
   description = "Code Build security group"
   type        = string
 }
-
-variable "github_personal_access_token" {
-  description = "Github personal access token used to trigger Github actions"
-  type        = string
-  sensitive   = true
-}

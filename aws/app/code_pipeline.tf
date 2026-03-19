@@ -83,8 +83,7 @@ module "gc_forms_code_pipeline" {
   }
 
   build_env_vars_from_secrets = [
-    { key = "DATABASE_URL", secretArn = var.database_url_secret_arn },                             # This is required for the database migration script (post build commands)
-    { key = "GITHUB_PAT", secretArn = aws_secretsmanager_secret.github_personal_access_token.arn } # This is required to trigger a Github action (post build commands)
+    { key = "DATABASE_URL", secretArn = var.database_url_secret_arn }, # This is required for the database migration script (post build commands)
   ]
 
   docker_build_args = [
@@ -101,27 +100,7 @@ module "gc_forms_code_pipeline" {
     "yarn install",
     "yarn prisma:generate",
     "yarn prisma:deploy",
-    <<-EOF
-      curl --fail-with-body -L \
-      -X POST \
-      -H "Accept: application/vnd.github+json" \
-      -H "Authorization: Bearer $GITHUB_PAT" \
-      -H "X-GitHub-Api-Version: 2022-11-28" \
-      https://api.github.com/repos/cds-snc/platform-forms-client/actions/workflows/${var.env}-post-deployment.yml/dispatches \
-      -d '{"ref":"main"}'
-    EOF
   ]
 
   depends_on = [aws_ecs_service.form_viewer, aws_ecs_cluster.forms, aws_ecs_task_definition.form_viewer]
-}
-
-resource "aws_secretsmanager_secret" "github_personal_access_token" {
-  # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
-  name                    = "github_personal_access_token"
-  recovery_window_in_days = 0
-}
-
-resource "aws_secretsmanager_secret_version" "github_personal_access_token" {
-  secret_id     = aws_secretsmanager_secret.github_personal_access_token.id
-  secret_string = var.github_personal_access_token
 }

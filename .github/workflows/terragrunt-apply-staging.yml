@@ -52,7 +52,6 @@ env:
   TF_VAR_hcaptcha_site_key: ${{ vars.STAGING_HCAPTCHA_SITE_KEY }}
   TF_VAR_hcaptcha_site_verify_key: ${{ secrets.STAGING_HCAPTCHA_SITE_VERIFY_KEY }}
   TF_VAR_security_txt_content: ${{ vars.SECURITY_TXT_CDSSANDBOX_XYZ }}
-  TF_VAR_github_personal_access_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
   # IdP
   TF_VAR_idp_database_cluster_admin_username: ${{ secrets.STAGING_IDP_DATABASE_CLUSTER_ADMIN_USERNAME }}
   TF_VAR_idp_database_cluster_admin_password: ${{ secrets.STAGING_IDP_DATABASE_CLUSTER_ADMIN_PASSWORD }}
