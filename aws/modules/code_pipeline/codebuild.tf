@@ -44,7 +44,7 @@ resource "aws_codebuild_project" "ecs_render" {
     ]
   }
 
-  depends_on = [aws_iam_role_policy_attachment.codepipeline_policy]
+  depends_on = [aws_iam_role_policy.codepipeline_policy]
 }
 
 locals {
