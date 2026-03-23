@@ -30,9 +30,9 @@ resource "aws_iam_role_policy_attachment" "AWSCodeDeployRoleForECS" {
   role       = aws_iam_role.this.name
 }
 
-resource "aws_iam_policy" "codepipeline_policy" {
+resource "aws_iam_role_policy" "codepipeline_policy" {
   name   = "codepipeline_policy"
-  path   = "/"
+  role   = aws_iam_role.this.id
   policy = data.aws_iam_policy_document.codepipeline_policy.json
 }
 
@@ -199,9 +199,4 @@ data "aws_iam_policy_document" "codepipeline_policy" {
       resources = [for item in var.build_env_vars_from_secrets : item.secretArn]
     }
   }
-}
-
-resource "aws_iam_role_policy_attachment" "codepipeline_policy" {
-  role       = aws_iam_role.this.name
-  policy_arn = aws_iam_policy.codepipeline_policy.arn
 }
