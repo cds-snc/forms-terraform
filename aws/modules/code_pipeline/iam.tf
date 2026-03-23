@@ -30,6 +30,12 @@ resource "aws_iam_role_policy_attachment" "AWSCodeDeployRoleForECS" {
   role       = aws_iam_role.this.name
 }
 
+resource "aws_iam_policy" "codepipeline_policy" {
+  name   = "codepipeline_policy"
+  path   = "/"
+  policy = data.aws_iam_policy_document.codepipeline_policy.json
+}
+
 data "aws_iam_policy_document" "codepipeline_policy" {
   # checkov:skip=CKV_AWS_356: All resources identifier is required
   # checkov:skip=CKV_AWS_111: Requires write access
@@ -195,8 +201,7 @@ data "aws_iam_policy_document" "codepipeline_policy" {
   }
 }
 
-resource "aws_iam_role_policy" "codepipeline_policy" {
-  name   = "codepipeline_policy"
-  role   = aws_iam_role.this.id
-  policy = data.aws_iam_policy_document.codepipeline_policy.json
+resource "aws_iam_role_policy_attachment" "codepipeline_policy" {
+  role       = aws_iam_role.this.name
+  policy_arn = aws_iam_policy.codepipeline_policy.arn
 }

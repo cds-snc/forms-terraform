@@ -3,7 +3,7 @@ resource "aws_s3_bucket" "codepipeline_bucket" {
   # checkov:skip=CKV_AWS_21: Versioning not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
   # checkov:skip=CKV2_AWS_61: Lifecycle configuration not required
-  bucket        = "${local.account_id}-pipeline"
+  bucket        = "${var.app_name}-pipeline"
   force_destroy = true
 }
 
@@ -15,8 +15,6 @@ resource "aws_s3_bucket_public_access_block" "codepipeline_bucket" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
-
-
 
 resource "aws_s3_bucket_ownership_controls" "codepipeline_bucket" {
   bucket = aws_s3_bucket.codepipeline_bucket.id
