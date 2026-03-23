@@ -4,7 +4,7 @@ module "user_portal_code_pipeline" {
   vpc_id                         = var.vpc_id
   code_build_security_group_id   = var.code_build_security_group_id
   private_subnet_ids             = var.private_subnet_ids
-  app_name                       = "idp_user_portal"
+  app_name                       = "idp-user-portal"
   github_repo_name               = "cds-snc/forms-idp-user-portal"
   app_ecr_name                   = "idp/user_portal"
   app_ecr_url                    = var.idp_login_ecr_url
