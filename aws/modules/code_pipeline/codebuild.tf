@@ -1,4 +1,3 @@
-
 resource "aws_codebuild_project" "ecs_render" {
   # checkov:skip=CKV_AWS_147: No sensitive data is stored in the output artifacts
   # checkov:skip=CKV_AWS_316: Privileges required to build docker container within codebuild environment
@@ -28,7 +27,6 @@ resource "aws_codebuild_project" "ecs_render" {
       group_name  = "Cloud-Build-${var.app_name}"
       stream_name = "ecs-render"
     }
-
   }
 
   source {
@@ -45,6 +43,8 @@ resource "aws_codebuild_project" "ecs_render" {
       var.code_build_security_group_id
     ]
   }
+
+  depends_on = [aws_iam_role_policy.codepipeline_policy]
 }
 
 locals {
