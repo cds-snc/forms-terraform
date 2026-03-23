@@ -1,12 +1,21 @@
 import * as notify_slack from "../src/main.js";
 import * as utils from "../src/utils.js";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import * as zlib from "zlib";
+import { mockClient } from "aws-sdk-client-mock";
+import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
+
+const ssmClientMock = mockClient(SSMClient);
 
 describe("handler", () => {
+  beforeAll(() => {
+    ssmClientMock.on(GetParameterCommand).resolves({ Parameter: { Value: "[]" } });
+  });
+
   afterEach(() => {
     vi.resetAllMocks();
   });
+
   it("should return success if no event type is found and it should have called 'send to Slack'", async () => {
     const mockSendToSlack = vi.spyOn(utils, "sendToSlack");
     mockSendToSlack.mockImplementation(() => Promise.resolve());
@@ -29,31 +38,31 @@ describe("handler", () => {
 
   it("should parse SNS severity for normal message", async () => {
     const message = "dd";
-    const result = await notify_slack.getSNSMessageSeverity(message);
+    const result = notify_slack.getSNSMessageSeverity(message);
     expect(result).toBe("info");
   });
 
   it("should parse SNS severity for SEV1 message", async () => {
     const message = "Hello-sev1";
-    const result = await notify_slack.getSNSMessageSeverity(message);
+    const result = notify_slack.getSNSMessageSeverity(message);
     expect(result).toBe("SEV1");
   });
 
   it("should parse SNS severity for alarm_reset message", async () => {
     const message = 'Hello this is "newstatevalue":"ok"';
-    const result = await notify_slack.getSNSMessageSeverity(message);
+    const result = notify_slack.getSNSMessageSeverity(message);
     expect(result).toBe("alarm_reset");
   });
 
   it("should fail for bad json", async () => {
     const message = `dummy`;
-    const result = await notify_slack.safeParseLogIncludingJSON(message);
+    const result = notify_slack.safeParseLogIncludingJSON(message);
     expect(result).toBe(false);
   });
 
   it("should extract good json", async () => {
     const message = '{"hello": "world"}';
-    const result = await notify_slack.safeParseLogIncludingJSON(message);
+    const result = notify_slack.safeParseLogIncludingJSON(message);
     expect(result).toStrictEqual({ hello: "world" });
   });
 

@@ -1,7 +1,47 @@
 import { sendToSlack, sendToOpsGenie, ungzip } from "./utils.js";
+import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
+
+const ssmClient = new SSMClient({ region: process.env.REGION ?? "ca-central-1" });
+
+let slackLogFilter: { ignoredLogs: string[]; lastUpdateTimestamp: Date } | undefined = undefined;
 
 export const handler = async (event: any) => {
   console.log("Handling raw event: " + JSON.stringify(event));
+
+  /**
+   * Load list of logs that should not be sent to Slack (updated every 3 minutes)
+   * Refresh every 3 minutes in case the Lambda is invoked in a warm execution environment
+   */
+  try {
+    if (
+      slackLogFilter === undefined ||
+      Date.now() - slackLogFilter.lastUpdateTimestamp.getTime() > 3 * 60 * 1000
+    ) {
+      const commandOutput = await ssmClient.send(
+        new GetParameterCommand({
+          Name: process.env.IGNORED_LOGS_PARAMETER_STORE_ARN ?? "unknown",
+        })
+      );
+
+      if (commandOutput.Parameter?.Value !== undefined) {
+        slackLogFilter = {
+          ignoredLogs: JSON.parse(commandOutput.Parameter.Value),
+          lastUpdateTimestamp: new Date(),
+        };
+      }
+    }
+  } catch (error) {
+    // Leave `slackLogFilter` variable as is
+
+    console.error((error as Error).message);
+
+    await postLogToSlack(
+      "/aws/lambda/notify-slack",
+      "Failed to load list of logs that should not be sent to Slack",
+      "warn"
+    );
+  }
+
   try {
     if (event.awslogs) {
       await handleCloudWatchLogEvent(event.awslogs.data);
@@ -9,7 +49,7 @@ export const handler = async (event: any) => {
       await handleSnsEventFromCloudWatchAlarm(event.Records[0].Sns.Message);
     } else {
       console.log("No supported event type found.");
-      await sendToSlack("Unknown Event", JSON.stringify(event, null, 2), "info");
+      await postLogToSlack("Unknown Event", JSON.stringify(event, null, 2), "info");
     }
 
     return {
@@ -40,7 +80,7 @@ export const safeParseLogIncludingJSON = (message: string) => {
   }
 };
 
-export const getAlarmDescription = (message: string): string => {
+const getAlarmDescription = (message: string): string => {
   try {
     const parsedMessage = JSON.parse(message);
     return parsedMessage.AlarmDescription ? parsedMessage.AlarmDescription : parsedMessage;
@@ -86,7 +126,7 @@ export const getSNSMessageSeverity = (message: string): string => {
   return "info";
 };
 
-export const handleCloudWatchLogEvent = async (logData: string) => {
+const handleCloudWatchLogEvent = async (logData: string) => {
   console.log("Received CloudWatch logs event: ", JSON.stringify(logData));
   const payload = Buffer.from(logData, "base64");
 
@@ -112,7 +152,7 @@ export const handleCloudWatchLogEvent = async (logData: string) => {
               ${logMessage.error ? "\n".concat(logMessage.error) : ""}
               ${logMessage.severity ? "\n\nSeverity level: ".concat(logMessage.severity) : ""}
               `;
-      await sendToSlack(parsedResult.logGroup, message, logMessage.level);
+      await postLogToSlack(parsedResult.logGroup, message, logMessage.level);
       await sendToOpsGenie(parsedResult.logGroup, message, logMessage.severity);
       console.log(
         JSON.stringify({
@@ -121,7 +161,7 @@ export const handleCloudWatchLogEvent = async (logData: string) => {
       );
     } else {
       // Non-JSON log message.  Send as-is and treat as an error.
-      await sendToSlack(parsedResult.logGroup, log.message, "error");
+      await postLogToSlack(parsedResult.logGroup, log.message, "error");
 
       console.log(
         JSON.stringify({
@@ -132,7 +172,7 @@ export const handleCloudWatchLogEvent = async (logData: string) => {
   }
 };
 
-export const handleSnsEventFromCloudWatchAlarm = async (message: string) => {
+const handleSnsEventFromCloudWatchAlarm = async (message: string) => {
   console.log(
     JSON.stringify({
       msg: `Event Data for Alarms: ${message}`,
@@ -147,6 +187,23 @@ export const handleSnsEventFromCloudWatchAlarm = async (message: string) => {
     message = getAlarmDescription(message);
   }
 
-  await sendToSlack("CloudWatch Alarm Event", message, severity);
+  await postLogToSlack("CloudWatch Alarm Event", message, severity);
   await sendToOpsGenie("CloudWatch Alarm Event", message, severity);
 };
+
+function postLogToSlack(logGroup: string, logMessage: string, logLevel: string): Promise<void> {
+  if (slackLogFilter !== undefined) {
+    const isLogIgnored = slackLogFilter.ignoredLogs.find((message) =>
+      logMessage.toLowerCase().includes(message.toLowerCase())
+    )
+      ? true
+      : false;
+
+    if (isLogIgnored) {
+      // Not sending to Slack
+      return Promise.resolve();
+    }
+  }
+
+  return sendToSlack(logGroup, logMessage, logLevel);
+}
