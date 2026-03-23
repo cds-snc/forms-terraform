@@ -11,12 +11,14 @@
     "test": "vitest --coverage"
   },
   "dependencies": {
+    "@aws-sdk/client-ssm": "^3.1012.0",
     "axios": "^1.13.2"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.155",
     "@types/node": "^22.18.8",
     "@vitest/coverage-v8": "^3.2.4",
+    "aws-sdk-client-mock": "^4.1.0",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
