@@ -125,3 +125,15 @@ variable "github_trigger" {
     error_message = "'excludeFilePaths' is not allowed when mode is set to 'DeployOnNewTag'"
   }
 }
+
+variable "build_compute_type" {
+  type        = string
+  description = "Defines the compute capacity allocated to the builder machine. This impacts CPU and memory available during builds. Valid values: 'small' or 'large'"
+
+  default = "small"
+
+  validation {
+    condition     = contains(["small", "large"], var.build_compute_type)
+    error_message = "Valid values for 'build_compute_type' are 'small' or 'large'"
+  }
+}
