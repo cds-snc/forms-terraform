@@ -43,6 +43,11 @@ variable "ecs_form_viewer_name" {
   type        = string
 }
 
+variable "ecr_form_viewer_repository_name" {
+  description = "ECR repository name for the form viewer ECS task's Docker image"
+  type        = string
+}
+
 variable "ecr_repository_url_form_viewer" {
   description = "ECR repository URL for the ECS task's Docker image"
   type        = string
@@ -218,8 +223,24 @@ variable "cognito_client_id" {
   type        = string
 }
 
+variable "cognito_user_pool_id" {
+  description = "Cognito user pool identifier"
+  type        = string
+}
+
 variable "zitadel_client_id" {
   description = "Zitadel Client ID for GCforms"
+  type        = string
+}
+
+variable "zitadel_administration_key_secret_arn" {
+  description = "The Zitadel administration key secret used by the ECS task"
+  type        = string
+  sensitive   = true
+}
+
+variable "zitadel_project_id" {
+  description = "Zitadel Project ID"
   type        = string
 }
 
@@ -253,16 +274,15 @@ variable "vault_file_storage_arn" {
   type        = string
 }
 
-variable "zitadel_administration_key_secret_arn" {
-  description = "The Zitadel administration key secret used by the ECS task"
-  type        = string
-  sensitive   = true
-}
-
 variable "sentry_api_key_secret_arn" {
   description = "The Sentry API key secret used by the ECS task"
   type        = string
   sensitive   = true
+}
+
+variable "hcaptcha_site_key" {
+  description = "The hCaptcha site key used for forms"
+  type        = string
 }
 
 variable "hcaptcha_site_verify_key_secret_arn" {
@@ -284,4 +304,14 @@ variable "ecs_idp_service_name" {
 variable "ecs_idp_service_port" {
   description = "IdP's ECS service port"
   type        = number
+}
+
+variable "vpc_id" {
+  description = "The VPC ID to create the resources in."
+  type        = string
+}
+
+variable "code_build_security_group_id" {
+  description = "Code Build security group"
+  type        = string
 }

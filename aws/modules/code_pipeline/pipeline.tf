@@ -7,7 +7,37 @@ resource "aws_codepipeline" "this" {
   artifact_store {
     location = aws_s3_bucket.codepipeline_bucket.bucket
     type     = "S3"
+  }
 
+  trigger {
+    provider_type = "CodeStarSourceConnection"
+
+    git_configuration {
+      source_action_name = "Source"
+
+      push {
+        dynamic "branches" {
+          for_each = var.github_trigger.mode == "DeployOnNewCommit" ? [1] : []
+          content {
+            includes = ["main"]
+          }
+        }
+
+        dynamic "file_paths" {
+          for_each = var.github_trigger.mode == "DeployOnNewCommit" ? [1] : []
+          content {
+            excludes = var.github_trigger.excludeFilePaths
+          }
+        }
+
+        dynamic "tags" {
+          for_each = var.github_trigger.mode == "DeployOnNewTag" ? [1] : []
+          content {
+            includes = ["v*"]
+          }
+        }
+      }
+    }
   }
 
   stage {
@@ -76,5 +106,4 @@ resource "aws_codepipeline" "this" {
       }
     }
   }
-
 }

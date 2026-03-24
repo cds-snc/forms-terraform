@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.43.2](https://github.com/cds-snc/forms-terraform/compare/v3.43.1...v3.43.2) (2026-03-23)
+
+
+### Miscellaneous Chores
+
+* add log filter to notify-slack Lambda to prevent some logs from being sent to Slack ([#1254](https://github.com/cds-snc/forms-terraform/issues/1254)) ([95a27a0](https://github.com/cds-snc/forms-terraform/commit/95a27a084869466da97d4c45a2d275e5a33f4f87))
+* **deps:** lock file maintenance ([#1249](https://github.com/cds-snc/forms-terraform/issues/1249)) ([6a2c9b5](https://github.com/cds-snc/forms-terraform/commit/6a2c9b53be8bdb07f1d9c85ea41f329cc2eeb5cc))
+* **deps:** lock file maintenance ([#1252](https://github.com/cds-snc/forms-terraform/issues/1252)) ([fb3beaf](https://github.com/cds-snc/forms-terraform/commit/fb3beafa9c20d4380e8393d924cfb067ff22494e))
+* **deps:** update all non-major github action dependencies ([#1244](https://github.com/cds-snc/forms-terraform/issues/1244)) ([7451a0d](https://github.com/cds-snc/forms-terraform/commit/7451a0dbc721716a922ff314b7ecbe0ab4c0fffc))
+* **deps:** update all non-major github action dependencies ([#1248](https://github.com/cds-snc/forms-terraform/issues/1248)) ([033a69f](https://github.com/cds-snc/forms-terraform/commit/033a69fff5fec88623d5d41c96398b5a1e404a8b))
+* **deps:** update all non-major github action dependencies ([#1251](https://github.com/cds-snc/forms-terraform/issues/1251)) ([d407530](https://github.com/cds-snc/forms-terraform/commit/d4075309f0e87ed54d4275c1c8c3a052bdf20f1d))
+* **deps:** update all non-major github action dependencies ([#1255](https://github.com/cds-snc/forms-terraform/issues/1255)) ([a8378e2](https://github.com/cds-snc/forms-terraform/commit/a8378e29373c20b9a6588398e1cfd8b65e2e7b05))
+* **deps:** update all patch dependencies ([#1247](https://github.com/cds-snc/forms-terraform/issues/1247)) ([04addc5](https://github.com/cds-snc/forms-terraform/commit/04addc5fab944ce9023531bb3d2501873494b155))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1246](https://github.com/cds-snc/forms-terraform/issues/1246)) ([2f29f95](https://github.com/cds-snc/forms-terraform/commit/2f29f9502891866286a4ec3293811281471a9bba))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1250](https://github.com/cds-snc/forms-terraform/issues/1250)) ([4a4acf6](https://github.com/cds-snc/forms-terraform/commit/4a4acf6a954e0abfd2dd1e34393789000641b42e))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1253](https://github.com/cds-snc/forms-terraform/issues/1253)) ([f728de3](https://github.com/cds-snc/forms-terraform/commit/f728de39e2033cd55b18d22343c6e237b056a14c))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1256](https://github.com/cds-snc/forms-terraform/issues/1256)) ([a19d46a](https://github.com/cds-snc/forms-terraform/commit/a19d46aa67f5658ab8ea99d691563cdc32af9941))
+
 ## [3.43.1](https://github.com/cds-snc/forms-terraform/compare/v3.43.0...v3.43.1) (2026-02-25)
 
 
