@@ -76,6 +76,7 @@ module "gc_forms_code_pipeline" {
   task_definition_family         = aws_ecs_task_definition.form_viewer.family
   load_balancer_listener_arns    = [var.lb_https_listener_arn]
   loadblancer_target_group_names = [var.lb_target_group_1_name, var.lb_target_group_2_name]
+  build_compute_type             = "large"
 
   github_trigger = {
     mode             = var.env == "production" ? "DeployOnNewTag" : "DeployOnNewCommit"
