@@ -9,7 +9,7 @@ resource "aws_secretsmanager_secret" "database_url" {
 
 resource "aws_secretsmanager_secret_version" "database_url" {
   secret_id     = aws_secretsmanager_secret.database_url.id
-  secret_string = "postgres://${var.rds_db_user}:${var.rds_db_password}@${aws_rds_cluster.forms.endpoint}:5432/${var.rds_db_name}"
+  secret_string = "postgres://${var.rds_db_user}:${var.rds_db_password}@${aws_rds_cluster.forms.endpoint}:5432/${var.rds_db_name}?sslmode=prefer&uselibpqcompat=true" # "?sslmode=prefer&uselibpqcompat=true" was added to make the transition to Prisma Client 7 possible (see https://github.com/prisma/prisma/issues/27611)
 }
 
 resource "aws_secretsmanager_secret" "database_secret" {
