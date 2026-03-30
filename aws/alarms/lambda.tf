@@ -16,9 +16,11 @@ resource "aws_lambda_function" "notify_slack" {
 
   environment {
     variables = {
-      ENVIRONMENT      = var.env
-      SLACK_WEBHOOK    = var.slack_webhook
-      OPSGENIE_API_KEY = var.opsgenie_api_key
+      REGION                           = var.region
+      ENVIRONMENT                      = var.env
+      SLACK_WEBHOOK                    = var.slack_webhook
+      OPSGENIE_API_KEY                 = var.opsgenie_api_key
+      IGNORED_LOGS_PARAMETER_STORE_ARN = aws_ssm_parameter.ignored_logs_for_slack.arn
     }
   }
 
@@ -30,6 +32,17 @@ resource "aws_lambda_function" "notify_slack" {
   tracing_config {
     mode = "PassThrough"
   }
+}
+
+/*
+ * When implementing containerized Lambda we had to rename some of the functions.
+ * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
+ */
+
+resource "aws_cloudwatch_log_group" "notify_slack" {
+  name              = "/aws/lambda/NotifySlack"
+  kms_key_id        = var.kms_key_cloudwatch_arn
+  retention_in_days = 731
 }
 
 #
@@ -101,13 +114,43 @@ resource "aws_iam_role_policy_attachment" "notify_slack_lambda_basic_access" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-/*
- * When implementing containerized Lambda we had to rename some of the functions.
- * In order to keep existing log groups we decided to hardcode the group name and make the Lambda write to that legacy group.
- */
+resource "aws_iam_policy" "access_to_parameter_store" {
+  name        = "access_to_parameter_store"
+  path        = "/"
+  description = "IAM policy for allowing access to parameter store"
+  policy      = data.aws_iam_policy_document.access_to_parameter_store.json
+}
 
-resource "aws_cloudwatch_log_group" "notify_slack" {
-  name              = "/aws/lambda/NotifySlack"
-  kms_key_id        = var.kms_key_cloudwatch_arn
-  retention_in_days = 731
+data "aws_iam_policy_document" "access_to_parameter_store" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ssm:GetParameter"
+    ]
+
+    resources = [
+      aws_ssm_parameter.ignored_logs_for_slack.arn
+    ]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "access_to_parameter_store" {
+  role       = aws_iam_role.notify_slack_lambda.name
+  policy_arn = aws_iam_policy.access_to_parameter_store.arn
+}
+
+resource "aws_ssm_parameter" "ignored_logs_for_slack" {
+  # checkov:skip=CKV2_AWS_34: no sensitive data
+  # checkov:skip=CKV_AWS_337: this is not a SecureString
+  name        = "/notify-slack/ignored-logs"
+  description = "List of logs that should not be sent to Slack"
+  type        = "String"
+  value       = "[]"
+
+  lifecycle {
+    ignore_changes = [
+      value,
+    ]
+  }
 }

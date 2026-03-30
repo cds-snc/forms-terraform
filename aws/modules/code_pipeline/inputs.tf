@@ -24,12 +24,6 @@ variable "github_repo_name" {
   type        = string
 }
 
-variable "webhook_secret" {
-  description = "Secret for GitHub HMAC auth of webhook"
-  type        = string
-  sensitive   = true
-}
-
 variable "app_ecr_name" {
   description = "ECR repository name for the app"
   type        = string
@@ -70,8 +64,8 @@ variable "loadblancer_target_group_names" {
   type        = list(string)
 }
 
-variable "docker_build_env_vars_plaintext" {
-  description = "Environment value key / values required during the docker build - plain text"
+variable "build_env_vars_plaintext" {
+  description = "Environment variable injected during build process - plain text"
   type = list(object({
     key   = string
     value = string
@@ -79,8 +73,27 @@ variable "docker_build_env_vars_plaintext" {
   default = []
 }
 
-variable "docker_build_env_vars_secrets" {
-  description = "Environment value key / secret manager arns required during the docker build - secrets"
+variable "build_env_vars_from_secrets" {
+  description = "Environment variable injected during build process - retrieved from AWS Secrets Manager"
+  type = list(object({
+    key       = string
+    secretArn = string
+  }))
+  default = []
+}
+
+variable "build_env_vars_from_parameter_store" {
+  description = "Environment variable injected during build process - retrieved from AWS Parameter Store"
+  type = list(object({
+    key           = string
+    parameterName = string
+    parameterArn  = string
+  }))
+  default = []
+}
+
+variable "docker_build_args" {
+  description = "Arguments to be passed to the Docker build command. It can reference build environment variables using $<key>."
   type = list(object({
     key   = string
     value = string
@@ -88,11 +101,39 @@ variable "docker_build_env_vars_secrets" {
   default = []
 }
 
-variable "docker_build_env_vars_parameter_store" {
-  description = "Environment value key / parameter-store names required during the docker build - parameter store"
-  type = list(object({
-    key   = string
-    value = string
-  }))
-  default = []
+variable "custom_post_build_commands" {
+  description = "Custom build commands to be executed after the Docker image has been built tagged and pushed to ECR"
+  type        = list(string)
+  default     = []
+}
+
+variable "github_trigger" {
+  description = "Pipeline trigger configuration (excludeFilePaths is optional and can only be set when mode is DeployOnNewCommit)"
+
+  type = object({
+    mode             = string
+    excludeFilePaths = optional(list(string))
+  })
+
+  validation {
+    condition     = contains(["DeployOnNewCommit", "DeployOnNewTag"], var.github_trigger.mode)
+    error_message = "Valid values for 'mode' are 'DeployOnNewCommit' or 'DeployOnNewTag'"
+  }
+
+  validation {
+    condition     = (var.github_trigger.mode == "DeployOnNewCommit" || (var.github_trigger.mode == "DeployOnNewTag" && var.github_trigger.excludeFilePaths == null))
+    error_message = "'excludeFilePaths' is not allowed when mode is set to 'DeployOnNewTag'"
+  }
+}
+
+variable "build_compute_type" {
+  type        = string
+  description = "Defines the compute capacity allocated to the builder machine. This impacts CPU and memory available during builds. Valid values: 'small' or 'large'"
+
+  default = "small"
+
+  validation {
+    condition     = contains(["small", "large"], var.build_compute_type)
+    error_message = "Valid values for 'build_compute_type' are 'small' or 'large'"
+  }
 }
