@@ -68,6 +68,16 @@ output "waf_ipv4_new_blocked_ip_metric_filter_namespace" {
   value       = module.waf_ip_blocklist.ipv4_new_blocked_ip_metric_filter_namespace
 }
 
+output "waf_ipv4_blocklist_lambda_function_name" {
+  description = "Name of WAF Blocklist associated Lambda"
+  value       = module.waf_ip_blocklist.ipv4_lambda_function_name
+}
+
+output "waf_ipv4_blocklist_lambda_log_group_name" {
+  description = "Name of WAF Blocklist associated Lambda log group"
+  value       = module.waf_ip_blocklist.ipv4_lambda_cloudwatch_log_group_name
+}
+
 output "unhealthy_host_count_for_target_group_1_alarm_arn" {
   description = "ARN of unhealthy host count alarm for target group 1"
   value       = aws_cloudwatch_metric_alarm.UnHealthyHostCount-TargetGroup1.arn
