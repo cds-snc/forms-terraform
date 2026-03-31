@@ -93,23 +93,30 @@ dependency "lambdas" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
+    lambda_api_end_to_end_test_function_name       = "api-end-to-end-test"
+    lambda_api_end_to_end_test_log_group_name      = "/aws/lambda/API_End_To_End_Test"
+    lambda_audit_logs_function_name                = "audit-logs"
     lambda_audit_logs_log_group_name               = "/aws/lambda/Audit_Logs"
+    lambda_audit_logs_archiver_function_name       = "audit-logs-archiver"
     lambda_audit_logs_archiver_log_group_name      = "/aws/lambda/Audit_Logs_Archiver"
+    lambda_file_upload_cleanup_function_name       = "file-upload-cleanup"
+    lambda_file_upload_cleanup_log_group_name      = "/aws/lambda/file-upload-cleanup"
+    lambda_file_upload_processor_function_name     = "file-upload-processor"
+    lambda_file_upload_processor_log_group_name    = "/aws/lambda/file-upload-processor"
     lambda_form_archiver_function_name             = "form-archiver"
     lambda_form_archiver_log_group_name            = "/aws/lambda/Archive_Form_Templates"
     lambda_nagware_function_name                   = "nagware"
     lambda_nagware_log_group_name                  = "/aws/lambda/Nagware"
+    lambda_reliability_function_name               = "reliability"
     lambda_reliability_log_group_name              = "/aws/lambda/Reliability"
+    lambda_reliability_dlq_consumer_function_name  = "reliability-dlq-consumer"
     lambda_reliability_dlq_consumer_log_group_name = "/aws/lambda/Reliability_DLQ_Consumer"
     lambda_response_archiver_function_name         = "response-archiver"
     lambda_response_archiver_log_group_name        = "/aws/lambda/Response_Archiver"
     lambda_submission_function_name                = "Submission"
     lambda_submission_log_group_name               = "/aws/lambda/Submission"
-    lambda_vault_integrity_log_group_name          = "/aws/lambda/Vault_Data_Integrity_Check"
     lambda_vault_integrity_function_name           = "vault-integrity"
-    lambda_api_end_to_end_test_log_group_name      = "/aws/lambda/API_End_To_End_Test"
-    lambda_file_upload_processor_log_group_name    = "/aws/lambda/file-upload-processor"
-    lambda_file_upload_cleanup_log_group_name      = "/aws/lambda/file-upload-cleanup"
+    lambda_vault_integrity_log_group_name          = "/aws/lambda/Vault_Data_Integrity_Check"
   }
 }
 
@@ -215,24 +222,31 @@ inputs = {
   ecs_cluster_name              = dependency.app.outputs.ecs_cluster_name
   ecs_service_name              = dependency.app.outputs.ecs_service_name
 
+  lambda_api_end_to_end_test_function_name       = dependency.lambdas.outputs.lambda_api_end_to_end_test_function_name
+  lambda_api_end_to_end_test_log_group_name      = dependency.lambdas.outputs.lambda_api_end_to_end_test_log_group_name
+  lambda_audit_logs_function_name                = dependency.lambdas.outputs.lambda_audit_logs_function_name
   lambda_audit_logs_log_group_name               = dependency.lambdas.outputs.lambda_audit_logs_log_group_name
+  lambda_audit_logs_archiver_function_name       = dependency.lambdas.outputs.lambda_audit_logs_archiver_function_name
   lambda_audit_logs_archiver_log_group_name      = dependency.lambdas.outputs.lambda_audit_logs_archiver_log_group_name
+  lambda_file_upload_cleanup_function_name       = dependency.lambdas.outputs.lambda_file_upload_cleanup_function_name
+  lambda_file_upload_cleanup_log_group_name      = dependency.lambdas.outputs.lambda_file_upload_cleanup_log_group_name
+  lambda_file_upload_processor_function_name     = dependency.lambdas.outputs.lambda_file_upload_processor_function_name
+  lambda_file_upload_processor_log_group_name    = dependency.lambdas.outputs.lambda_file_upload_processor_log_group_name
   lambda_form_archiver_function_name             = dependency.lambdas.outputs.lambda_form_archiver_function_name
   lambda_form_archiver_log_group_name            = dependency.lambdas.outputs.lambda_form_archiver_log_group_name
   lambda_nagware_function_name                   = dependency.lambdas.outputs.lambda_nagware_function_name
   lambda_nagware_log_group_name                  = dependency.lambdas.outputs.lambda_nagware_log_group_name
+  lambda_reliability_function_name               = dependency.lambdas.outputs.lambda_reliability_function_name
   lambda_reliability_log_group_name              = dependency.lambdas.outputs.lambda_reliability_log_group_name
+  lambda_reliability_dlq_consumer_function_name  = dependency.lambdas.outputs.lambda_reliability_dlq_consumer_function_name
   lambda_reliability_dlq_consumer_log_group_name = dependency.lambdas.outputs.lambda_reliability_dlq_consumer_log_group_name
   lambda_response_archiver_function_name         = dependency.lambdas.outputs.lambda_response_archiver_function_name
   lambda_response_archiver_log_group_name        = dependency.lambdas.outputs.lambda_response_archiver_log_group_name
-  lambda_submission_expect_invocation_in_period  = 30
   lambda_submission_function_name                = dependency.lambdas.outputs.lambda_submission_function_name
   lambda_submission_log_group_name               = dependency.lambdas.outputs.lambda_submission_log_group_name
-  lambda_vault_integrity_log_group_name          = dependency.lambdas.outputs.lambda_vault_integrity_log_group_name
   lambda_vault_integrity_function_name           = dependency.lambdas.outputs.lambda_vault_integrity_function_name
-  lambda_api_end_to_end_test_log_group_name      = dependency.lambdas.outputs.lambda_api_end_to_end_test_log_group_name
-  lambda_file_upload_processor_log_group_name    = dependency.lambdas.outputs.lambda_file_upload_processor_log_group_name
-  lambda_file_upload_cleanup_log_group_name      = dependency.lambdas.outputs.lambda_file_upload_cleanup_log_group_name
+  lambda_vault_integrity_log_group_name          = dependency.lambdas.outputs.lambda_vault_integrity_log_group_name
+  lambda_submission_expect_invocation_in_period  = 30
 
   rds_cluster_identifier = dependency.rds.outputs.rds_cluster_identifier
 

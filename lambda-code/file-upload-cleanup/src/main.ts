@@ -31,9 +31,8 @@ async function cleanupIncompleteSubmissionsWithFileAttachments(): Promise<void> 
       await getUnprocessedSubmissions(lastEvaluatedKey);
 
     const detectAndDeleteOperations = unprocessedSubmissions.map(async (unprocessedSubmission) => {
-      const { shouldDelete, reason } = await decideIfUnprocessedSubmissionShouldBeDeleted(
-        unprocessedSubmission
-      );
+      const { shouldDelete, reason } =
+        await decideIfUnprocessedSubmissionShouldBeDeleted(unprocessedSubmission);
 
       switch (reason) {
         case ReasonBehindUnprocessedSubmission.SubmissionIsInReliabilityQueue:
@@ -83,7 +82,13 @@ async function cleanupIncompleteSubmissionsWithFileAttachments(): Promise<void> 
 
     detectAndDeleteOperationsResults.forEach((result) => {
       if (result.status === "rejected") {
-        console.error(result.reason);
+        console.error(
+          JSON.stringify({
+            level: "error",
+            msg: `Failed to detect and delete incomplete submission with file attachments`,
+            error: JSON.stringify(result.reason),
+          })
+        );
       }
     });
 

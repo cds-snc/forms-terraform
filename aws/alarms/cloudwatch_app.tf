@@ -404,19 +404,55 @@ resource "aws_cloudwatch_metric_alarm" "vault_data_integrity_check_lambda_iterat
 // Cloudwatch log subscription filters
 
 locals {
-  map_of_lambda_log_group = {
-    audit_logs               = var.lambda_audit_logs_log_group_name,
-    audit_logs_archiver      = var.lambda_audit_logs_archiver_log_group_name,
-    form_archiver            = var.lambda_form_archiver_log_group_name,
-    nagware                  = var.lambda_nagware_log_group_name,
-    reliability              = var.lambda_reliability_log_group_name,
-    reliability_dlq_consumer = var.lambda_reliability_dlq_consumer_log_group_name,
-    response_archiver        = var.lambda_response_archiver_log_group_name,
-    submission               = var.lambda_submission_log_group_name,
-    vault_integrity          = var.lambda_vault_integrity_log_group_name,
-    api_end_to_end_test      = var.lambda_api_end_to_end_test_log_group_name,
-    file_upload_processor    = var.lambda_file_upload_processor_log_group_name,
-    file_upload_cleanup      = var.lambda_file_upload_cleanup_log_group_name
+  map_of_forms_app_lambda = {
+    api_end_to_end_test = {
+      function_name  = var.lambda_api_end_to_end_test_function_name
+      log_group_name = var.lambda_api_end_to_end_test_log_group_name
+    }
+    audit_logs = {
+      function_name  = var.lambda_audit_logs_function_name
+      log_group_name = var.lambda_audit_logs_log_group_name
+    }
+    audit_logs_archiver = {
+      function_name  = var.lambda_audit_logs_archiver_function_name
+      log_group_name = var.lambda_audit_logs_archiver_log_group_name
+    }
+    file_upload_cleanup = {
+      function_name  = var.lambda_file_upload_cleanup_function_name
+      log_group_name = var.lambda_file_upload_cleanup_log_group_name
+    }
+    file_upload_processor = {
+      function_name  = var.lambda_file_upload_processor_function_name
+      log_group_name = var.lambda_file_upload_processor_log_group_name
+    }
+    form_archiver = {
+      function_name  = var.lambda_form_archiver_function_name
+      log_group_name = var.lambda_form_archiver_log_group_name
+    }
+    nagware = {
+      function_name  = var.lambda_nagware_function_name
+      log_group_name = var.lambda_nagware_log_group_name
+    }
+    reliability = {
+      function_name  = var.lambda_reliability_function_name
+      log_group_name = var.lambda_reliability_log_group_name
+    }
+    reliability_dlq_consumer = {
+      function_name  = var.lambda_reliability_dlq_consumer_function_name
+      log_group_name = var.lambda_reliability_dlq_consumer_log_group_name
+    }
+    response_archiver = {
+      function_name  = var.lambda_response_archiver_function_name
+      log_group_name = var.lambda_response_archiver_log_group_name
+    }
+    submission = {
+      function_name  = var.lambda_submission_function_name
+      log_group_name = var.lambda_submission_log_group_name
+    }
+    vault_integrity = {
+      function_name  = var.lambda_vault_integrity_function_name
+      log_group_name = var.lambda_vault_integrity_log_group_name
+    }
   }
 }
 
@@ -442,25 +478,31 @@ resource "aws_cloudwatch_log_subscription_filter" "forms_app_log_stream" {
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "lambda_error_detection" {
-  for_each        = local.map_of_lambda_log_group
+  for_each        = local.map_of_forms_app_lambda
   name            = "error_detection_in_${each.key}_lambda_logs"
-  log_group_name  = each.value
+  log_group_name  = each.value.log_group_name
   filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
   destination_arn = aws_lambda_function.notify_slack.arn
 }
 
-/*
- * Lambda timeout detection
- * Note: We used the second and final lambda subscription filter to detect function time out.
- * If we ever need to create a new subscription filter we will have to rework the way we parse logs to extract errors and time out logs.
- */
+resource "aws_cloudwatch_metric_alarm" "lambda_error_detection" {
+  for_each            = local.map_of_forms_app_lambda
+  alarm_name          = "${each.key}-lambda-error-detection"
+  alarm_description   = "Detected error or timeout in ${each.key} lambda function (SEV2)"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "Errors"
+  namespace           = "AWS/Lambda"
+  period              = "60"
+  statistic           = "Sum"
+  threshold           = "0"
+  treat_missing_data  = "notBreaching"
 
-resource "aws_cloudwatch_log_subscription_filter" "lambda_timeout_detection" {
-  for_each        = local.map_of_lambda_log_group
-  name            = "timeout_detection_in_${each.key}_lambda_logs"
-  log_group_name  = each.value
-  filter_pattern  = "Task timed out"
-  destination_arn = aws_lambda_function.notify_slack.arn
+  dimensions = {
+    FunctionName = each.value.function_name
+  }
+
+  alarm_actions = [var.sns_topic_alert_critical_arn]
 }
 
 // Allow Cloudwatch filters to trigger Lambda
