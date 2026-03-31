@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.43.3](https://github.com/cds-snc/forms-terraform/compare/v3.43.2...v3.43.3) (2026-03-31)
+
+
+### Bug Fixes
+
+* notify-slack lambda logic should not be interrupted in case it fails to send Slack message ([#1263](https://github.com/cds-snc/forms-terraform/issues/1263)) ([6fc4e38](https://github.com/cds-snc/forms-terraform/commit/6fc4e38023e16975b096083c72e90f14c72cf6cf))
+* update Code Pipeline with new user portal repo name ([#1270](https://github.com/cds-snc/forms-terraform/issues/1270)) ([4c7df84](https://github.com/cds-snc/forms-terraform/commit/4c7df846746f75291c71a71030c3b6c61ad7e414))
+
+
+### Miscellaneous Chores
+
+* add option to increase computing resources for the AWS CodeBuild machine ([#1262](https://github.com/cds-snc/forms-terraform/issues/1262)) ([37d8d45](https://github.com/cds-snc/forms-terraform/commit/37d8d45cc0ea6b24573d738b38e7500a492808f7))
+* creation of aws_codebuild_project.ecs_render should depend on creation of aws_iam_role_policy.codepipeline_policy resource ([#1258](https://github.com/cds-snc/forms-terraform/issues/1258)) ([bb804b5](https://github.com/cds-snc/forms-terraform/commit/bb804b53ae993cef7d7a2f260b89dcf20ea0e22b))
+* **deps:** update all non-major github action dependencies ([#1266](https://github.com/cds-snc/forms-terraform/issues/1266)) ([57cd1f7](https://github.com/cds-snc/forms-terraform/commit/57cd1f7b49a73a7d28d80fb6f5e930f60605a99d))
+* migrate GC Forms app deployment to new Code Pipeline solution (staging only) ([#1227](https://github.com/cds-snc/forms-terraform/issues/1227)) ([7b1b110](https://github.com/cds-snc/forms-terraform/commit/7b1b1100c96a10b93239c25603b50e6425dd8d56))
+* modify app name in user_portal_code_pipeline to remove any '_' which would prevent the creation of an underlying S3 bucket ([#1260](https://github.com/cds-snc/forms-terraform/issues/1260)) ([ffc3499](https://github.com/cds-snc/forms-terraform/commit/ffc3499dffb9b45848c1951041ec1415f820efbc))
+* new deployment pipeline fixes ([#1259](https://github.com/cds-snc/forms-terraform/issues/1259)) ([f428adc](https://github.com/cds-snc/forms-terraform/commit/f428adcfd9695915adb174dd12d0adfc67d13c89))
+* revert changes to the creation of the codepipeline_policy resource (having an inline policy should work fine) ([#1261](https://github.com/cds-snc/forms-terraform/issues/1261)) ([f8bc04a](https://github.com/cds-snc/forms-terraform/commit/f8bc04ab5094efbf482f41e5507b4a5f48fac67c))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1268](https://github.com/cds-snc/forms-terraform/issues/1268)) ([fb25a72](https://github.com/cds-snc/forms-terraform/commit/fb25a727187937c2434b1826ba48811ba34f86fe))
+* upgrade WAF IP blocklist module ([#1269](https://github.com/cds-snc/forms-terraform/issues/1269)) ([2e0ddf3](https://github.com/cds-snc/forms-terraform/commit/2e0ddf3ac51b0141369d411d03c749af3093e572))
+
 ## [3.43.2](https://github.com/cds-snc/forms-terraform/compare/v3.43.1...v3.43.2) (2026-03-23)
 
 
