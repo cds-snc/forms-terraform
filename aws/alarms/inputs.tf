@@ -316,6 +316,16 @@ variable "waf_ipv4_new_blocked_ip_metric_filter_namespace" {
   type        = string
 }
 
+variable "waf_ipv4_blocklist_lambda_function_name" {
+  description = "Name of WAF Blocklist associated Lambda"
+  type        = string
+}
+
+variable "waf_ipv4_blocklist_lambda_log_group_name" {
+  description = "Name of WAF Blocklist associated Lambda log group"
+  type        = string
+}
+
 variable "unhealthy_host_count_for_target_group_1_alarm_arn" {
   description = "ARN of unhealthy host count alarm for target group 1"
   type        = string
