@@ -3,18 +3,18 @@ variable "kms_key_cloudwatch_arn" {
   type        = string
 }
 
-variable "ecs_cloudwatch_log_group_name" {
-  description = "ECS App Forms CloudWatch log group name, used by app error metric alarms"
+variable "lambda_api_end_to_end_test_function_name" {
+  description = "API end to end test Lambda function name"
   type        = string
 }
 
-variable "ecs_api_cloudwatch_log_group_name" {
-  description = "ECS API CloudWatch log group name, used by API error metric alarms"
+variable "lambda_api_end_to_end_test_log_group_name" {
+  description = "API end to end test Lambda CloudWatch log group name"
   type        = string
 }
 
-variable "ecs_idp_cloudwatch_log_group_name" {
-  description = "ECS IdP CloudWatch log group name, used by IdP error metric alarms"
+variable "lambda_audit_logs_function_name" {
+  description = "Audit Logs Lambda function name"
   type        = string
 }
 
@@ -23,8 +23,33 @@ variable "lambda_audit_logs_log_group_name" {
   type        = string
 }
 
+variable "lambda_audit_logs_archiver_function_name" {
+  description = "Audit Logs Archiver Lambda function name"
+  type        = string
+}
+
 variable "lambda_audit_logs_archiver_log_group_name" {
   description = "Audit logs archiver Lambda CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_file_upload_cleanup_function_name" {
+  description = "File upload cleanup Lambda function name"
+  type        = string
+}
+
+variable "lambda_file_upload_cleanup_log_group_name" {
+  description = "File upload cleanup Lambda CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_file_upload_processor_function_name" {
+  description = "File upload processor Lambda function name"
+  type        = string
+}
+
+variable "lambda_file_upload_processor_log_group_name" {
+  description = "File upload processor Lambda CloudWatch log group name"
   type        = string
 }
 
@@ -48,13 +73,23 @@ variable "lambda_nagware_log_group_name" {
   type        = string
 }
 
+variable "lambda_reliability_function_name" {
+  description = "Reliability Lambda function name"
+  type        = string
+}
+
 variable "lambda_reliability_log_group_name" {
-  description = "Reliability Queues CloudWatch log group name"
+  description = "Reliability Lambda CloudWatch log group name"
+  type        = string
+}
+
+variable "lambda_reliability_dlq_consumer_function_name" {
+  description = "Reliability DLQ consumer Lambda function name"
   type        = string
 }
 
 variable "lambda_reliability_dlq_consumer_log_group_name" {
-  description = "DQL Consumer CloudWatch log group name"
+  description = "Reliability DLQ consumer CloudWatch log group name"
   type        = string
 }
 
@@ -68,11 +103,6 @@ variable "lambda_response_archiver_log_group_name" {
   type        = string
 }
 
-variable "lambda_submission_expect_invocation_in_period" {
-  description = "Submission Lambda period (minutes) during which it is expected at least one function invocation will occur.  This is used for the healthcheck alarms."
-  type        = number
-}
-
 variable "lambda_submission_function_name" {
   description = "Submission Lambda function name"
   type        = string
@@ -83,29 +113,34 @@ variable "lambda_submission_log_group_name" {
   type        = string
 }
 
-variable "lambda_vault_integrity_log_group_name" {
-  description = "Vault data integrity check Lambda CloudWatch log group name"
-  type        = string
-}
-
 variable "lambda_vault_integrity_function_name" {
   description = "Vault data integrity check lambda function name"
   type        = string
 }
 
-variable "lambda_api_end_to_end_test_log_group_name" {
-  description = "API end to end test Lambda CloudWatch log group name"
+variable "lambda_vault_integrity_log_group_name" {
+  description = "Vault data integrity check Lambda CloudWatch log group name"
   type        = string
 }
 
-variable "lambda_file_upload_processor_log_group_name" {
-  description = "File upload processor Lambda CloudWatch log group name"
+variable "ecs_cloudwatch_log_group_name" {
+  description = "ECS App Forms CloudWatch log group name, used by app error metric alarms"
   type        = string
 }
 
-variable "lambda_file_upload_cleanup_log_group_name" {
-  description = "File upload cleanup Lambda CloudWatch log group name"
+variable "ecs_api_cloudwatch_log_group_name" {
+  description = "ECS API CloudWatch log group name, used by API error metric alarms"
   type        = string
+}
+
+variable "ecs_idp_cloudwatch_log_group_name" {
+  description = "ECS IdP CloudWatch log group name, used by IdP error metric alarms"
+  type        = string
+}
+
+variable "lambda_submission_expect_invocation_in_period" {
+  description = "Submission Lambda period (minutes) during which it is expected at least one function invocation will occur.  This is used for the healthcheck alarms."
+  type        = number
 }
 
 variable "ecs_cluster_name" {
@@ -313,6 +348,16 @@ variable "waf_ipv4_new_blocked_ip_metric_filter_name" {
 
 variable "waf_ipv4_new_blocked_ip_metric_filter_namespace" {
   description = "WAF IP Blocking CloudWatch metric namespace"
+  type        = string
+}
+
+variable "waf_ipv4_blocklist_lambda_function_name" {
+  description = "Name of WAF Blocklist associated Lambda"
+  type        = string
+}
+
+variable "waf_ipv4_blocklist_lambda_log_group_name" {
+  description = "Name of WAF Blocklist associated Lambda log group"
   type        = string
 }
 
