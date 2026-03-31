@@ -46,6 +46,7 @@ dependency "load_balancer" {
     waf_ipv4_new_blocked_ip_metric_filter_name        = "default"
     waf_ipv4_new_blocked_ip_metric_filter_namespace   = "default"
     waf_ipv4_blocklist_lambda_function_name           = "ipv4_blocklist_forms_app"
+    waf_ipv4_blocklist_lambda_log_group_name          = "ipv4_blocklist_forms_app_log_group"
     unhealthy_host_count_for_target_group_1_alarm_arn = ""
     unhealthy_host_count_for_target_group_2_alarm_arn = ""
   }
@@ -210,6 +211,7 @@ inputs = {
   waf_ipv4_new_blocked_ip_metric_filter_name        = dependency.load_balancer.outputs.waf_ipv4_new_blocked_ip_metric_filter_name
   waf_ipv4_new_blocked_ip_metric_filter_namespace   = dependency.load_balancer.outputs.waf_ipv4_new_blocked_ip_metric_filter_namespace
   waf_ipv4_blocklist_lambda_function_name           = dependency.load_balancer.outputs.waf_ipv4_blocklist_lambda_function_name
+  waf_ipv4_blocklist_lambda_log_group_name          = dependency.load_balancer.outputs.waf_ipv4_blocklist_lambda_log_group_name
   unhealthy_host_count_for_target_group_1_alarm_arn = dependency.load_balancer.outputs.unhealthy_host_count_for_target_group_1_alarm_arn
   unhealthy_host_count_for_target_group_2_alarm_arn = dependency.load_balancer.outputs.unhealthy_host_count_for_target_group_2_alarm_arn
 
