@@ -57,6 +57,9 @@ export const handler = async (event: any) => {
     };
   } catch (error) {
     console.log("Handler Error: ", error);
+
+    // TODO: send OpsGenie SEV 2 alarm (only during business hours) once it is implemented
+
     return {
       statusCode: "ERROR",
       error: (error as Error).message,
@@ -145,6 +148,7 @@ const handleCloudWatchLogEvent = async (logData: string) => {
 
   for (const log of parsedResult.logEvents) {
     const logMessage = safeParseLogIncludingJSON(log.message);
+
     // If logMessage is false, then the message is not JSON
     if (logMessage) {
       const message = `
@@ -152,15 +156,19 @@ const handleCloudWatchLogEvent = async (logData: string) => {
               ${logMessage.error ? "\n".concat(logMessage.error) : ""}
               ${logMessage.severity ? "\n\nSeverity level: ".concat(logMessage.severity) : ""}
               `;
-      await postLogToSlack(parsedResult.logGroup, message, logMessage.level);
-      await sendToOpsGenie(parsedResult.logGroup, message, logMessage.severity);
+
+      await Promise.allSettled([
+        postLogToSlack(parsedResult.logGroup, message, logMessage.level),
+        sendToOpsGenie(parsedResult.logGroup, message, logMessage.severity),
+      ]);
+
       console.log(
         JSON.stringify({
           msg: `Event Data for ${parsedResult.logGroup}: ${JSON.stringify(logMessage, null, 2)}`,
         })
       );
     } else {
-      // Non-JSON log message.  Send as-is and treat as an error.
+      // Non-JSON log message. Send as-is and treat as an error.
       await postLogToSlack(parsedResult.logGroup, log.message, "error");
 
       console.log(
@@ -187,11 +195,17 @@ const handleSnsEventFromCloudWatchAlarm = async (message: string) => {
     message = getAlarmDescription(message);
   }
 
-  await postLogToSlack("CloudWatch Alarm Event", message, severity);
-  await sendToOpsGenie("CloudWatch Alarm Event", message, severity);
+  await Promise.allSettled([
+    postLogToSlack("CloudWatch Alarm Event", message, severity),
+    sendToOpsGenie("CloudWatch Alarm Event", message, severity),
+  ]);
 };
 
-function postLogToSlack(logGroup: string, logMessage: string, logLevel: string): Promise<void> {
+async function postLogToSlack(
+  logGroup: string,
+  logMessage: string,
+  logLevel: string
+): Promise<void> {
   if (slackLogFilter !== undefined) {
     const isLogIgnored = slackLogFilter.ignoredLogs.find((message) =>
       logMessage.toLowerCase().includes(message.toLowerCase())
@@ -205,5 +219,8 @@ function postLogToSlack(logGroup: string, logMessage: string, logLevel: string):
     }
   }
 
-  return sendToSlack(logGroup, logMessage, logLevel);
+  return sendToSlack(logGroup, logMessage, logLevel).catch((error) => {
+    // TODO: send OpsGenie SEV 2 alarm (only during business hours) once it is implemented
+    // Do not rethrow to avoid interrupting the caller in case of transient network errors
+  });
 }
