@@ -23,9 +23,12 @@ locals {
 
     readonlyRootFilesystem = true
     environment = [{
-      "name"  = "ZITADEL_API_URL",
-      "value" = "http://zitadel.${var.service_discovery_private_dns_namespace_ecs_local_name}:8080"
-
+        "name"  = "ZITADEL_API_URL",
+        "value" = "http://zitadel.${var.service_discovery_private_dns_namespace_ecs_local_name}:8080"
+      },
+      {
+        "name"  = "ZITADEL_ORGANIZATION",
+        "value" = var.zitadel_organization
       },
       {
         "name"  = "CUSTOM_REQUEST_HEADERS"

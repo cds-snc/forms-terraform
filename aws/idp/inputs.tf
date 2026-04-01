@@ -88,6 +88,11 @@ variable "zitadel_image_tag" {
   type        = string
 }
 
+variable "zitadel_organization" {
+  description = "The Zitadel organization used by the user portal service."
+  type        = string
+}
+
 variable "zitadel_secret_key" {
   description = "The secret key to use for Zitadel."
   type        = string
