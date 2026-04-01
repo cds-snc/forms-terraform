@@ -991,15 +991,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gcforms/core@npm:^2.0.1":
-  version: 2.2.2
-  resolution: "@gcforms/core@npm:2.2.2"
+"@gcforms/core@npm:2.2.1":
+  version: 2.2.1
+  resolution: "@gcforms/core@npm:2.2.1"
   dependencies:
     file-type: "npm:^21.0.0"
     tsdown: "npm:^0.15.0"
   peerDependencies:
     "@gcforms/types": "*"
-  checksum: 10c0/6ff267ce135c98970d80be1e3ad54af2715e5e8d36e5485c05244a71ea645d20f224dedf0790b65a25727898169b4d69d5b92fe9038f9bf7b958732b29fb5f77
+  checksum: 10c0/19aa352104a26471226cc3e849e47aa5daaa1dbfec62905bc356bc240a820b3e1106b591f29ffc972a5379f37345b1c0384ca9e2444a9f71a7646b0e0a61c545
   languageName: node
   linkType: hard
 
@@ -3003,7 +3003,7 @@ __metadata:
     "@aws-sdk/client-sqs": "npm:^3.901.0"
     "@aws-sdk/lib-dynamodb": "npm:^3.902.0"
     "@gcforms/connectors": "npm:^2.2.17"
-    "@gcforms/core": "npm:^2.0.1"
+    "@gcforms/core": "npm:2.2.1"
     "@gcforms/types": "npm:^1.0.23"
     "@types/aws-lambda": "npm:^8.10.155"
     "@types/json2md": "npm:^1.5.4"
