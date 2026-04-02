@@ -31,9 +31,9 @@ resource "aws_networkfirewall_firewall_policy" "forms" {
     stateless_default_actions          = ["aws:forward_to_sfe"]
     stateless_fragment_default_actions = ["aws:forward_to_sfe"]
 
-    stateful_rule_group_reference {
-      resource_arn = aws_networkfirewall_rule_group.known_external_domains_only.arn
-    }
+    # stateful_rule_group_reference {
+    #   resource_arn = aws_networkfirewall_rule_group.known_external_domains_only.arn
+    # }
 
     stateful_rule_group_reference {
       resource_arn = aws_networkfirewall_rule_group.general.arn
@@ -42,22 +42,22 @@ resource "aws_networkfirewall_firewall_policy" "forms" {
   }
 }
 
-resource "aws_networkfirewall_rule_group" "known_external_domains_only" {
-  #checkov:skip=CKV_AWS_345: AWS Managed Key is enough encryption for this use case
-  capacity    = 10
-  name        = "known-external-domains-only"
-  description = "Only allow traffic originating internally to reach known domains"
-  type        = "STATEFUL"
-  rule_group {
-    rules_source {
-      rules_source_list {
-        generated_rules_type = "ALLOWLIST"
-        target_types         = ["TLS_SNI"]
-        targets              = concat(["api.notification.canada.ca", "api.hcaptcha.com", "github.com"], [for domain in var.domains : ".${domain}"])
-      }
-    }
-  }
-}
+# resource "aws_networkfirewall_rule_group" "known_external_domains_only" {
+#   #checkov:skip=CKV_AWS_345: AWS Managed Key is enough encryption for this use case
+#   capacity    = 10
+#   name        = "known-external-domains-only"
+#   description = "Only allow traffic originating internally to reach known domains"
+#   type        = "STATEFUL"
+#   rule_group {
+#     rules_source {
+#       rules_source_list {
+#         generated_rules_type = "ALLOWLIST"
+#         target_types         = ["TLS_SNI"]
+#         targets              = concat(["api.notification.canada.ca", "api.hcaptcha.com", "github.com"], [for domain in var.domains : ".${domain}"])
+#       }
+#     }
+#   }
+# }
 
 resource "aws_networkfirewall_rule_group" "general" {
   #checkov:skip=CKV_AWS_345: AWS Managed Key is enough encryption for this use case
@@ -85,6 +85,24 @@ resource "aws_networkfirewall_rule_group" "general" {
           }
         }
       }
+      dynamic "stateful_rule" {
+        for_each = local.public_subnet_cidrs
+        content {
+          action = "ALERT"
+          header {
+            destination      = "ANY"
+            destination_port = "ANY"
+            protocol         = "IP"
+            direction        = "FORWARD"
+            source_port      = "ANY"
+            source           = stateful_rule.value
+          }
+          rule_option {
+            keyword  = "sid"
+            settings = ["${stateful_rule.key + length(aws_subnet.forms_public)}"]
+          }
+        }
+      }
       stateful_rule {
         action = "DROP"
         header {
@@ -97,7 +115,7 @@ resource "aws_networkfirewall_rule_group" "general" {
         }
         rule_option {
           keyword  = "sid"
-          settings = ["${length(aws_subnet.forms_public) + 1}"]
+          settings = ["${length(aws_subnet.forms_public) * 2 + 1}"]
         }
       }
     }
@@ -113,7 +131,7 @@ resource "aws_networkfirewall_logging_configuration" "forms" {
         logGroup = aws_cloudwatch_log_group.forms.name
       }
       log_destination_type = "CloudWatchLogs"
-      log_type             = "FLOW"
+      log_type             = "ALERT"
     }
   }
 }

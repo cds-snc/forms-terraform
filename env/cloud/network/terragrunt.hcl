@@ -31,17 +31,17 @@ include "root" {
   path = find_in_parent_folders("root.hcl")
 }
 
-# generate "network" {
-#   path      = "network.tf"
-#   if_exists = "overwrite"
-#   contents  = local.env == "development" ? file("../../../aws/network/development_env/network.tf") : file("../../../aws/network/network.tf")
-# }
+generate "network" {
+  path      = "network.tf"
+  if_exists = "overwrite"
+  contents  = local.env == "development" ? file("../../../aws/network/development_env/network.tf") : file("../../../aws/network/network.tf")
+}
 
-# generate "firewall" {
-#   path      = "firewall.tf"
-#   if_exists = "overwrite"
-#   contents  = local.env == "development" ? file("../../../aws/network/development_env/firewall.tf") : file("../../../aws/network/firewall.tf")
-# }
+generate "firewall" {
+  path      = "firewall.tf"
+  if_exists = "overwrite"
+  contents  = local.env == "development" ? file("../../../aws/network/development_env/firewall.tf") : file("../../../aws/network/firewall.tf")
+}
 
 generate "vpc_endpoints" {
   path      = "vpc_endpoints.tf"
@@ -49,8 +49,3 @@ generate "vpc_endpoints" {
   contents  = local.env == "development" ? file("../../../aws/network/development_env/vpc_endpoints.tf") : file("../../../aws/network/vpc_endpoints.tf")
 }
 
-generate "network" {
-  path      = "network.tf"
-  if_exists = "overwrite"
-  contents  = file("../../../aws/network/network.tf")
-}
