@@ -29,8 +29,9 @@ resource "aws_internet_gateway" "forms" {
 
 #
 # Subnets:
-# 3 public and 3 private subnets
+# 3 public, 3 private subnets, 3 firewall 
 #
+
 resource "aws_subnet" "forms_private" {
   count = 3
 
@@ -53,6 +54,18 @@ resource "aws_subnet" "forms_public" {
 
   tags = {
     Name   = "Public Subnet 0${count.index + 1}"
+    Access = "public"
+  }
+}
+
+resource "aws_subnet" "firewall" {
+  count             = 3
+  vpc_id            = aws_vpc.forms.id
+  cidr_block        = cidrsubnet(cidrsubnet(var.vpc_cidr_block, 4, 7), 8, count.index)
+  availability_zone = element(data.aws_availability_zones.available.names, count.index)
+
+  tags = {
+    Name   = "Firewall Subnet"
     Access = "public"
   }
 }
@@ -117,9 +130,36 @@ resource "aws_eip" "forms_natgw" {
 }
 
 #
-# Routes
+# IG Ingress Route
 #
-resource "aws_route_table" "forms_public_subnet" {
+
+resource "aws_route_table" "ig" {
+  vpc_id = aws_vpc.forms.id
+
+  tags = {
+    Name = "Internet Gateway Ingress Route Table"
+  }
+}
+
+resource "aws_route" "ig" {
+  count = 3
+
+  route_table_id         = aws_route_table.ig.id
+  destination_cidr_block = aws_subnet.forms_public[count.index].cidr_block
+  vpc_endpoint_id        = local.networkfirewall_endpoints[element(data.aws_availability_zones.available.names, count.index)]
+}
+
+resource "aws_route_table_association" "ig" {
+  gateway_id     = aws_internet_gateway.forms.id
+  route_table_id = aws_route_table.ig.id
+}
+
+
+#
+# Firewall Routes
+# 
+
+resource "aws_route_table" "firewall" {
   vpc_id = aws_vpc.forms.id
 
   route {
@@ -128,7 +168,33 @@ resource "aws_route_table" "forms_public_subnet" {
   }
 
   tags = {
-    Name = "Public Subnet Route Table"
+    Name = "Firewall Inspection Route Table"
+  }
+}
+
+resource "aws_route_table_association" "firewall" {
+  count          = 3
+  subnet_id      = aws_subnet.firewall.*.id[count.index]
+  route_table_id = aws_route_table.firewall.id
+}
+
+
+#
+# Public Routes
+#
+
+
+resource "aws_route_table" "forms_public_subnet" {
+  count  = 3
+  vpc_id = aws_vpc.forms.id
+
+  route {
+    cidr_block      = "0.0.0.0/0"
+    vpc_endpoint_id = local.networkfirewall_endpoints[element(data.aws_availability_zones.available.names, count.index)]
+  }
+
+  tags = {
+    Name = "Public Subnet Route Table ${count.index}"
   }
 }
 
@@ -136,8 +202,13 @@ resource "aws_route_table_association" "forms" {
   count = 3
 
   subnet_id      = aws_subnet.forms_public.*.id[count.index]
-  route_table_id = aws_route_table.forms_public_subnet.id
+  route_table_id = aws_route_table.forms_public_subnet.*.id[count.index]
 }
+
+#
+# Private Routes
+#
+
 
 resource "aws_route_table" "forms_private_subnet" {
   count = 3
@@ -160,6 +231,11 @@ resource "aws_route_table_association" "forms_private_route" {
   subnet_id      = aws_subnet.forms_private.*.id[count.index]
   route_table_id = aws_route_table.forms_private_subnet.*.id[count.index]
 }
+
+
+#
+# Local DNS Namespace
+#
 
 resource "aws_service_discovery_private_dns_namespace" "ecs_local" {
   name        = "ecs.local"

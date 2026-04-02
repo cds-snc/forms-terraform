@@ -12,8 +12,8 @@ basedir=$(pwd)
 
 # Set proper terraform and terragrunt versions
 
-tgswitch 0.82.3
-tfswitch 1.12.2
+tgswitch 0.99.4
+tfswitch 1.14.5
 
 export TG_PROVIDER_CACHE=1
 
@@ -27,7 +27,7 @@ else
 fi
 
 printf "${greenColor}=> Building All Terragrunt Modules${reset}\n"
-terragrunt run-all init --upgrade \
+terragrunt run --all \
     --non-interactive --log-level info --queue-strict-include \
     --working-dir $basedir/env \
     --queue-include-dir $basedir/env/cloud/kms \
@@ -42,7 +42,8 @@ terragrunt run-all init --upgrade \
     --queue-include-dir $basedir/env/cloud/dynamodb \
     --queue-include-dir $basedir/env/cloud/lambdas \
     --queue-include-dir $basedir/env/cloud/vpn \
-    --queue-include-dir $basedir/env/cloud/guard_duty
+    --queue-include-dir $basedir/env/cloud/guard_duty \
+    -- init -upgrade
 
 # Print out the time it took to initialize the infrastructure
 

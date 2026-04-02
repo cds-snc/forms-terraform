@@ -13,8 +13,8 @@ export TG_PROVIDER_CACHE=1
 
 # Set proper terraform and terragrunt versions
 
-tgswitch 0.83.0
-tfswitch 1.12.2
+tgswitch 0.99.4
+tfswitch 1.14.5
 
 basedir=$(pwd)
 
