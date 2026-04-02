@@ -46,9 +46,9 @@ Pull Requests in this repository require all commits to be signed before they ca
 
 - Terragrunt:
   1. `brew install warrensbox/tap/tfswitch`
-  1. `tfswitch 1.14.5`
+  1. `tfswitch 1.14.8`
   1. `brew install warrensbox/tap/tgswitch`
-  1. `tgswitch 0.99.4`
+  1. `tgswitch 1.0.0`
 
 - Yarn (chances are you already have this if working on the app):
 
