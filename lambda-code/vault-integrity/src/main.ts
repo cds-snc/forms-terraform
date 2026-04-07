@@ -16,7 +16,7 @@ export const handler: Handler = async (event: DynamoDBStreamEvent) => {
     console.error(
       JSON.stringify({
         level: "error",
-        severity: 1,
+        severity: "1",
         msg: "Failed to run Vault data integrity check.",
         error: (error as Error).message,
       })
@@ -59,7 +59,7 @@ function checkInsertEvent(data: StreamRecord["NewImage"]) {
     console.error(
       JSON.stringify({
         level: "error",
-        severity: 1,
+        severity: "1",
         msg: `Integrity check failure on inserted submission (submissionId: ${formSubmissionId}).`,
         error: (error as Error).message,
       })
@@ -153,7 +153,7 @@ function checkModifyEvent(oldData: StreamRecord["OldImage"], newData: StreamReco
     console.error(
       JSON.stringify({
         level: "error",
-        severity: 1,
+        severity: "1",
         msg: `Integrity check failure on modified submission (oldSubmissionID: ${oldSubmissionID} , newSubmissionID: ${newSubmissionID}).`,
         error: (error as Error).message,
       })

@@ -39,7 +39,7 @@ async function cleanupIncompleteSubmissionsWithFileAttachments(): Promise<void> 
           console.error(
             JSON.stringify({
               level: "error",
-              severity: 2,
+              severity: "2",
               submissionId: unprocessedSubmission.submissionId,
               msg: "Possible issue with Reliability Queue processing",
               details: `Submission ${
@@ -54,7 +54,7 @@ async function cleanupIncompleteSubmissionsWithFileAttachments(): Promise<void> 
           console.error(
             JSON.stringify({
               level: "error",
-              severity: 2,
+              severity: "2",
               submissionId: unprocessedSubmission.submissionId,
               msg: "Possible issue with File Upload processing",
               details: `Submission ${

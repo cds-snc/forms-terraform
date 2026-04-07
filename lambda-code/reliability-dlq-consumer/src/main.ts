@@ -55,7 +55,7 @@ export async function handler() {
     console.error(
       JSON.stringify({
         level: "error",
-        severity: 2,
+        severity: "2",
         msg: "Reliability DLQ could not process waiting messages.",
         error: (error as Error).message,
       })

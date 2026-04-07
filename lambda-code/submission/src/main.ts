@@ -89,7 +89,7 @@ export const handler: Handler = async (submission: AnyObject) => {
     console.error(
       JSON.stringify({
         level: "error",
-        severity: 1, // this will trigger an alert to on-call team
+        severity: "1", // this will trigger an alert to on-call team
         status: "failed",
         submissionId: submissionId,
         msg: (error as Error).message,
