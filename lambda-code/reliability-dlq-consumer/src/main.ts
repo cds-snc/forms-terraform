@@ -50,29 +50,17 @@ export async function handler() {
         messagesToProcess = false;
       }
     }
+  } catch (error) {
+    // Error Message will be sent to slack
+    console.error(
+      JSON.stringify({
+        level: "error",
+        severity: 2,
+        msg: "Reliability DLQ could not process waiting messages.",
+        error: (error as Error).message,
+      })
+    );
 
-    return {
-      statusCode: "SUCCESS",
-    };
-  } catch (err) {
-    if (err instanceof Error) {
-      // Report Errorr to Slack
-      console.error(
-        JSON.stringify({
-          level: "error",
-          severity: 2,
-          msg: "Reliability DLQ could not process waiting messages.",
-          error: err.message,
-        })
-      );
-
-      return {
-        statusCode: "ERROR",
-        error: err.message,
-      };
-    } else {
-      // We don't know what type of error this is, so we throw it
-      throw err;
-    }
+    throw error;
   }
 }

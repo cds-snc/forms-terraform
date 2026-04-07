@@ -11,10 +11,6 @@ export const handler: Handler = async (event: DynamoDBStreamEvent) => {
       if (r.eventName === "INSERT") checkInsertEvent(r.dynamodb?.NewImage);
       else checkModifyEvent(r.dynamodb?.OldImage, r.dynamodb?.NewImage);
     });
-
-    return {
-      statusCode: "SUCCESS",
-    };
   } catch (error) {
     // Error Message will be sent to slack
     console.error(
@@ -26,10 +22,7 @@ export const handler: Handler = async (event: DynamoDBStreamEvent) => {
       })
     );
 
-    return {
-      statusCode: "ERROR",
-      error: (error as Error).message,
-    };
+    throw error;
   }
 };
 

@@ -17,10 +17,6 @@ export const handler: Handler = async () => {
         msg: "Form Archiver ran successfully.",
       })
     );
-
-    return {
-      statusCode: "SUCCESS",
-    };
   } catch (error) {
     // Error Message will be sent to slack
     console.error(
@@ -32,9 +28,6 @@ export const handler: Handler = async () => {
       })
     );
 
-    return {
-      statusCode: "ERROR",
-      error: (error as Error).message,
-    };
+    throw error;
   }
 };

@@ -36,7 +36,7 @@ export const handler: Handler = async (_, context) => {
       })
     );
 
-    throw new Error((error as Error).message);
+    throw error;
   }
 };
 
