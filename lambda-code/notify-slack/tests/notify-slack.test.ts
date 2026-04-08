@@ -166,7 +166,7 @@ describe("handler", () => {
     expect(sendToSlackMock).toHaveBeenCalledWith(
       "CloudWatch Alarm Event",
       'Alarm Status now OK - test "newstatevalue":"ok"',
-      ""
+      "alarm_reset"
     );
     expect(sendToOpsGenieMock).toBeCalledTimes(0);
   });
