@@ -14,7 +14,7 @@ export const handler: Handler = async (event: any) => {
       await notifyGcFormsTeam({
         group: "Unknown Event",
         message: JSON.stringify(event, null, 2),
-        level: "info",
+        level: "warn",
         severity: "", // Not applicable here. Will disappear once we rework the `notify-slack` Lambda function
       });
     }
@@ -180,7 +180,7 @@ const handleSnsEventFromCloudWatchAlarm = async (message: string) => {
   await notifyGcFormsTeam({
     group: "CloudWatch Alarm Event",
     message,
-    level: "", // Not applicable here. Will disappear once we rework the `notify-slack` Lambda function
+    level: severity, // Assigning severity to level here will allow for the right Slack Emoji to be selected when a message is posted
     severity,
   });
 };
