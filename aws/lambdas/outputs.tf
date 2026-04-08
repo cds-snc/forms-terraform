@@ -1,11 +1,51 @@
+output "lambda_api_end_to_end_test_function_name" {
+  description = "API end to end test Lambda function name"
+  value       = aws_lambda_function.api_end_to_end_test.function_name
+}
+
+output "lambda_api_end_to_end_test_log_group_name" {
+  description = "API end to end test Lambda CloudWatch log group name"
+  value       = aws_cloudwatch_log_group.api_end_to_end_test.name
+}
+
+output "lambda_audit_logs_function_name" {
+  description = "Audit Logs Lambda function name"
+  value       = aws_lambda_function.audit_logs.function_name
+}
+
 output "lambda_audit_logs_log_group_name" {
   description = "Audit logs Lambda CloudWatch log group name"
   value       = aws_cloudwatch_log_group.audit_logs.name
 }
 
+output "lambda_audit_logs_archiver_function_name" {
+  description = "Audit Logs Archiver Lambda function name"
+  value       = aws_lambda_function.audit_logs_archiver.function_name
+}
+
 output "lambda_audit_logs_archiver_log_group_name" {
   description = "Audit logs archiver Lambda CloudWatch log group name"
   value       = aws_cloudwatch_log_group.audit_logs_archiver.name
+}
+
+output "lambda_file_upload_cleanup_function_name" {
+  description = "File upload cleanup Lambda function name"
+  value       = aws_lambda_function.file_upload_cleanup.function_name
+}
+
+output "lambda_file_upload_cleanup_log_group_name" {
+  description = "File upload cleanup Lambda CloudWatch log group name"
+  value       = aws_cloudwatch_log_group.file_upload_cleanup.name
+}
+
+output "lambda_file_upload_processor_function_name" {
+  description = "File upload processor Lambda function name"
+  value       = aws_lambda_function.file_upload.function_name
+}
+
+output "lambda_file_upload_processor_log_group_name" {
+  description = "File upload processor Lambda CloudWatch log group name"
+  value       = aws_cloudwatch_log_group.file_upload.name
 }
 
 output "lambda_form_archiver_function_name" {
@@ -28,9 +68,19 @@ output "lambda_nagware_log_group_name" {
   value       = aws_cloudwatch_log_group.nagware.name
 }
 
+output "lambda_reliability_function_name" {
+  description = "Reliability Lambda function name"
+  value       = aws_lambda_function.reliability.function_name
+}
+
 output "lambda_reliability_log_group_name" {
   description = "Reliability Lambda CloudWatch log group name"
   value       = aws_cloudwatch_log_group.reliability.name
+}
+
+output "lambda_reliability_dlq_consumer_function_name" {
+  description = "Reliability DLQ consumer Lambda function name"
+  value       = aws_lambda_function.reliability_dlq_consumer.function_name
 }
 
 output "lambda_reliability_dlq_consumer_log_group_name" {
@@ -48,19 +98,14 @@ output "lambda_response_archiver_log_group_name" {
   value       = aws_cloudwatch_log_group.response_archiver.name
 }
 
-output "lambda_submission_log_group_name" {
-  description = "Submission Lambda CloudWatch log group name"
-  value       = aws_cloudwatch_log_group.submission.name
-}
-
 output "lambda_submission_function_name" {
   description = "Submission Lambda function name"
   value       = aws_lambda_function.submission.function_name
 }
 
-output "lambda_vault_integrity_log_group_name" {
-  description = "Vault integrity Lambda CloudWatch log group name"
-  value       = aws_cloudwatch_log_group.vault_integrity.name
+output "lambda_submission_log_group_name" {
+  description = "Submission Lambda CloudWatch log group name"
+  value       = aws_cloudwatch_log_group.submission.name
 }
 
 output "lambda_vault_integrity_function_name" {
@@ -68,19 +113,9 @@ output "lambda_vault_integrity_function_name" {
   value       = aws_lambda_function.vault_integrity.function_name
 }
 
-output "lambda_api_end_to_end_test_log_group_name" {
-  description = "API end to end test Lambda CloudWatch log group name"
-  value       = aws_cloudwatch_log_group.api_end_to_end_test.name
-}
-
-output "lambda_file_upload_processor_log_group_name" {
-  description = "File upload processor Lambda CloudWatch log group name"
-  value       = aws_cloudwatch_log_group.file_upload.name
-}
-
-output "lambda_file_upload_cleanup_log_group_name" {
-  description = "File upload cleanup Lambda CloudWatch log group name"
-  value       = aws_cloudwatch_log_group.file_upload_cleanup.name
+output "lambda_vault_integrity_log_group_name" {
+  description = "Vault integrity Lambda CloudWatch log group name"
+  value       = aws_cloudwatch_log_group.vault_integrity.name
 }
 
 output "forms_lambda_client_iam_role_name" {

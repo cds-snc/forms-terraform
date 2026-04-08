@@ -139,6 +139,11 @@ resource "aws_route_table_association" "forms" {
   route_table_id = aws_route_table.forms_public_subnet.id
 }
 
+#
+# Private Routes
+#
+
+
 resource "aws_route_table" "forms_private_subnet" {
   count = 3
 
@@ -160,6 +165,11 @@ resource "aws_route_table_association" "forms_private_route" {
   subnet_id      = aws_subnet.forms_private.*.id[count.index]
   route_table_id = aws_route_table.forms_private_subnet.*.id[count.index]
 }
+
+
+#
+# Local DNS Namespace
+#
 
 resource "aws_service_discovery_private_dns_namespace" "ecs_local" {
   name        = "ecs.local"

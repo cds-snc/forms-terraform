@@ -20,8 +20,8 @@ env:
   AWS_ACCOUNT_ID: ${{ vars.PRODUCTION_AWS_ACCOUNT_ID }}
   AWS_REGION: ca-central-1
   CONFTEST_VERSION: 0.46.0
-  TERRAFORM_VERSION: 1.12.2
-  TERRAGRUNT_VERSION: 0.83.0
+  TERRAFORM_VERSION: 1.14.8
+  TERRAGRUNT_VERSION: 1.0.0
   TF_INPUT: false
   # API
   TF_VAR_zitadel_application_key: ${{ secrets.PRODUCTION_ZITADEL_APPLICATION_KEY }}
@@ -50,6 +50,7 @@ env:
   TF_VAR_zitadel_admin_password: ${{ secrets.PRODUCTION_ZITADEL_ADMIN_PASSWORD }}
   TF_VAR_zitadel_admin_username: ${{ secrets.PRODUCTION_ZITADEL_ADMIN_USERNAME }}
   TF_VAR_zitadel_database_name: ${{ secrets.PRODUCTION_ZITADEL_DATABASE_NAME }}
+  TF_VAR_zitadel_organization: "284770325416190874"
   TF_VAR_zitadel_secret_key: ${{ secrets.PRODUCTION_ZITADEL_SECRET_KEY }}
   # API END TO END TEST
   TF_VAR_idp_project_identifier: "284778202772022819"
@@ -172,7 +173,7 @@ jobs:
 
       # No dependencies
       - name: Terragrunt plan ecr
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/ecr"
           comment-delete: "true"
@@ -181,7 +182,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan hosted_zone
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/hosted_zone"
           comment-delete: "true"
@@ -190,7 +191,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan kms
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/kms"
           comment-delete: "true"
@@ -199,7 +200,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan oidc_roles
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/oidc_roles"
           comment-delete: "true"
@@ -208,7 +209,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan sqs
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/sqs"
           comment-delete: "true"
@@ -217,7 +218,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan secrets
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/secrets"
           comment-delete: "true"
@@ -226,7 +227,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan s3
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/s3"
           comment-delete: "true"
@@ -236,7 +237,7 @@ jobs:
 
       # Depends on S3
       - name: Terragrunt plan guard_duty
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/guard_duty"
           comment-delete: "true"
@@ -246,7 +247,7 @@ jobs:
 
       # Depends on kms
       - name: Terragrunt plan sns
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/sns"
           comment-delete: "true"
@@ -255,7 +256,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan cognito
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/cognito"
           comment-delete: "true"
@@ -264,7 +265,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan network
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/network"
           comment-delete: "true"
@@ -273,7 +274,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan dynamodb
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/dynamodb"
           comment-delete: "true"
@@ -283,7 +284,7 @@ jobs:
 
       # Depends on network
       - name: Terragrunt plan load_balancer
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/load_balancer"
           comment-delete: "true"
@@ -292,7 +293,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan redis
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/redis"
           comment-delete: "true"
@@ -301,7 +302,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan rds
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/rds"
           comment-delete: "true"
@@ -310,7 +311,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan idp
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/idp"
           comment-delete: "true"
@@ -320,7 +321,7 @@ jobs:
 
       # Depends on everything
       - name: Terragrunt plan app
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/app"
           comment-delete: "true"
@@ -329,7 +330,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan api
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/api"
           comment-delete: "true"
@@ -338,7 +339,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan lambdas
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/lambdas"
           comment-delete: "true"
@@ -347,7 +348,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan alarms
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/alarms"
           comment-delete: "true"
@@ -356,7 +357,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan glue
-        uses: cds-snc/terraform-plan@39b0058bcf977fbd8b067b84d5a9f6165e356c32 # v3.7.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
           directory: "env/cloud/glue"
           comment-delete: "true"

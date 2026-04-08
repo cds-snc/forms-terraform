@@ -12,20 +12,20 @@ rm -rf $basedir/.devcontainer/data/data
 
 printf "Setting up local KMS...\n"
 cd $basedir/env/local/kms
-terragrunt apply --terragrunt-non-interactive -auto-approve
+terragrunt run --non-interactive -- apply -auto-approve
 
 printf "Creating SQS queue...\n"
 cd $basedir/env/local/sqs
-terragrunt apply --terragrunt-non-interactive -auto-approve
+terragrunt run --non-interactive -- apply -auto-approve
 
 printf "Creating SNS queue...\n"
 cd $basedir/env/local/sns
-terragrunt apply --terragrunt-non-interactive -auto-approve
+terragrunt run --non-interactive -- apply -auto-approve
 
 printf "Creating the DynamoDB database...\n"
 cd $basedir/env/local/dynamodb
-terragrunt apply --terragrunt-non-interactive -auto-approve
+terragrunt run --non-interactive -- apply -auto-approve
 
 printf "Creating the S3 buckets...\n"
 cd $basedir/env/local/app
-terragrunt apply --terragrunt-non-interactive -auto-approve
+terragrunt run --non-interactive -- apply -auto-approve

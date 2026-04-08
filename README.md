@@ -9,7 +9,6 @@ Pull Requests in this repository require all commits to be signed before they ca
 ## Prerequisites:
 
 - [Colima](https://github.com/abiosoft/colima)
-
   1. Install Docker
      - `brew install docker docker-buildx docker-compose docker-credential-helper`
   1. Modify the docker config file to use mac os keychain as `credStore`
@@ -46,11 +45,10 @@ Pull Requests in this repository require all commits to be signed before they ca
   ```
 
 - Terragrunt:
-
   1. `brew install warrensbox/tap/tfswitch`
-  1. `tfswitch 1.12.2`
+  1. `tfswitch 1.14.8`
   1. `brew install warrensbox/tap/tgswitch`
-  1. `tgswitch 0.83.0`
+  1. `tgswitch 1.0.0`
 
 - Yarn (chances are you already have this if working on the app):
 
@@ -59,7 +57,6 @@ Pull Requests in this repository require all commits to be signed before they ca
   ```
 
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-
   1. Install AWS CLI
 
   ```shell
@@ -68,7 +65,6 @@ Pull Requests in this repository require all commits to be signed before they ca
   ```
 
 - [OpenVPN](https://community.openvpn.net/openvpn/wiki/Openvpn24ManPage):
-
   - `$ brew install openvpn`
   - In `.zprofile` add bin to Path: `export PATH="/usr/local/opt/openvpn/sbin:$PATH"`
 
