@@ -1,69 +1,32 @@
-import { sendToSlack, sendToOpsGenie, ungzip } from "./utils.js";
-import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
+import { Handler } from "aws-lambda";
+import { gunzip } from "zlib";
+import { notifyGcFormsTeam } from "./notificationRouter.js";
 
-const ssmClient = new SSMClient({ region: process.env.REGION ?? "ca-central-1" });
-
-let slackLogFilter: { ignoredLogs: string[]; lastUpdateTimestamp: Date } | undefined = undefined;
-
-export const handler = async (event: any) => {
-  console.log("Handling raw event: " + JSON.stringify(event));
-
-  /**
-   * Load list of logs that should not be sent to Slack (updated every 3 minutes)
-   * Refresh every 3 minutes in case the Lambda is invoked in a warm execution environment
-   */
+export const handler: Handler = async (event: any) => {
   try {
-    if (
-      slackLogFilter === undefined ||
-      Date.now() - slackLogFilter.lastUpdateTimestamp.getTime() > 3 * 60 * 1000
-    ) {
-      const commandOutput = await ssmClient.send(
-        new GetParameterCommand({
-          Name: process.env.IGNORED_LOGS_PARAMETER_STORE_ARN ?? "unknown",
-        })
-      );
+    console.log("Handling raw event: " + JSON.stringify(event));
 
-      if (commandOutput.Parameter?.Value !== undefined) {
-        slackLogFilter = {
-          ignoredLogs: JSON.parse(commandOutput.Parameter.Value),
-          lastUpdateTimestamp: new Date(),
-        };
-      }
-    }
-  } catch (error) {
-    // Leave `slackLogFilter` variable as is
-
-    console.error((error as Error).message);
-
-    await postLogToSlack(
-      "/aws/lambda/notify-slack",
-      "Failed to load list of logs that should not be sent to Slack",
-      "warn"
-    );
-  }
-
-  try {
     if (event.awslogs) {
       await handleCloudWatchLogEvent(event.awslogs.data);
     } else if (event?.Records?.[0]?.Sns?.Message) {
       await handleSnsEventFromCloudWatchAlarm(event.Records[0].Sns.Message);
     } else {
-      console.log("No supported event type found.");
-      await postLogToSlack("Unknown Event", JSON.stringify(event, null, 2), "info");
+      await notifyGcFormsTeam({
+        group: "Unknown Event",
+        message: JSON.stringify(event, null, 2),
+        level: "info",
+        severity: "", // Not applicable here. Will disappear once we rework the `notify-slack` Lambda function
+      });
     }
-
-    return {
-      statusCode: "SUCCESS",
-    };
   } catch (error) {
-    console.log("Handler Error: ", error);
+    await notifyGcFormsTeam({
+      group: "/aws/lambda/notify-slack",
+      message: `Failed to run Notify Slack. Reason: ${(error as Error).message}`,
+      level: "error",
+      severity: "SEV2",
+    });
 
-    // TODO: send OpsGenie SEV 2 alarm (only during business hours) once it is implemented
-
-    return {
-      statusCode: "ERROR",
-      error: (error as Error).message,
-    };
+    throw error;
   }
 };
 
@@ -103,6 +66,7 @@ export const getSNSMessageSeverity = (message: string): string => {
   message = message.toLowerCase();
 
   if (message.indexOf("sev1") != -1) return "SEV1";
+  if (message.indexOf("sev2") != -1) return "SEV2";
 
   for (const errorMessagesItem in errorMessages) {
     if (
@@ -144,7 +108,10 @@ const handleCloudWatchLogEvent = async (logData: string) => {
   // We can get events with a `CONTROL_MESSAGE` type. It happens when CloudWatch checks if the Lambda is reachable.
   if (parsedResult.messageType !== "DATA_MESSAGE") {
     console.log("Received a non-data message: exiting.. ");
+    return Promise.resolve();
   }
+
+  let didOneNotificationFailedToBeSent = false;
 
   for (const log of parsedResult.logEvents) {
     const logMessage = safeParseLogIncludingJSON(log.message);
@@ -157,26 +124,41 @@ const handleCloudWatchLogEvent = async (logData: string) => {
               ${logMessage.severity ? "\n\nSeverity level: ".concat(logMessage.severity) : ""}
               `;
 
-      await Promise.allSettled([
-        postLogToSlack(parsedResult.logGroup, message, logMessage.level),
-        sendToOpsGenie(parsedResult.logGroup, message, logMessage.severity),
-      ]);
-
       console.log(
         JSON.stringify({
           msg: `Event Data for ${parsedResult.logGroup}: ${JSON.stringify(logMessage, null, 2)}`,
         })
       );
-    } else {
-      // Non-JSON log message. Send as-is and treat as an error.
-      await postLogToSlack(parsedResult.logGroup, log.message, "error");
 
+      await notifyGcFormsTeam({
+        group: parsedResult.logGroup,
+        message,
+        level: logMessage.level ?? "",
+        severity: logMessage.severity ?? "",
+      }).catch(() => {
+        didOneNotificationFailedToBeSent = true; // Flag failure but continue processing other logs in case there is a transient network error
+      });
+    } else {
       console.log(
         JSON.stringify({
           msg: `Event Data for ${parsedResult.logGroup}: ${log.message}`,
         })
       );
+
+      // Non-JSON log message. Send as-is and treat as an error.
+      await notifyGcFormsTeam({
+        group: parsedResult.logGroup,
+        message: log.message,
+        level: "error",
+        severity: "", // Not applicable here. Will disappear once we rework the `notify-slack` Lambda function
+      }).catch(() => {
+        didOneNotificationFailedToBeSent = true; // Flag failure but continue processing other logs in case there is a transient network error
+      });
     }
+  }
+
+  if (didOneNotificationFailedToBeSent) {
+    throw new Error("At least one log event notification failed to reach the GC Forms team");
   }
 };
 
@@ -195,32 +177,22 @@ const handleSnsEventFromCloudWatchAlarm = async (message: string) => {
     message = getAlarmDescription(message);
   }
 
-  await Promise.allSettled([
-    postLogToSlack("CloudWatch Alarm Event", message, severity),
-    sendToOpsGenie("CloudWatch Alarm Event", message, severity),
-  ]);
+  await notifyGcFormsTeam({
+    group: "CloudWatch Alarm Event",
+    message,
+    level: "", // Not applicable here. Will disappear once we rework the `notify-slack` Lambda function
+    severity,
+  });
 };
 
-async function postLogToSlack(
-  logGroup: string,
-  logMessage: string,
-  logLevel: string
-): Promise<void> {
-  if (slackLogFilter !== undefined) {
-    const isLogIgnored = slackLogFilter.ignoredLogs.find((message) =>
-      logMessage.toLowerCase().includes(message.toLowerCase())
-    )
-      ? true
-      : false;
-
-    if (isLogIgnored) {
-      // Not sending to Slack
-      return Promise.resolve();
-    }
-  }
-
-  return sendToSlack(logGroup, logMessage, logLevel).catch((error) => {
-    // TODO: send OpsGenie SEV 2 alarm (only during business hours) once it is implemented
-    // Do not rethrow to avoid interrupting the caller in case of transient network errors
+const ungzip = (input: Buffer) => {
+  return new Promise((resolve, reject) => {
+    gunzip(input, (err: any, result: any) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result.toString());
+      }
+    });
   });
-}
+};

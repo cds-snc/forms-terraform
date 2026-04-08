@@ -32,10 +32,6 @@ export const handler: Handler = async () => {
     });
 
     await setOverdueResponseCache(oldestFormResponseByFormID);
-
-    return {
-      statusCode: "SUCCESS",
-    };
   } catch (error) {
     // Error Message will be sent to slack
     console.error(
@@ -46,28 +42,28 @@ export const handler: Handler = async () => {
       })
     );
 
-    return {
-      statusCode: "ERROR",
-      error: (error as Error).message,
-    };
+    throw error;
   }
 };
 
 async function findOldestFormResponseByFormID() {
   const formResponses = await retrieveNewOrDownloadedFormResponsesOver28DaysOld();
 
-  const reduceResult = formResponses.reduce((acc, curr) => {
-    const { formID, createdAt } = curr;
+  const reduceResult = formResponses.reduce(
+    (acc, curr) => {
+      const { formID, createdAt } = curr;
 
-    const previousEntry = acc[formID];
+      const previousEntry = acc[formID];
 
-    if (previousEntry && previousEntry?.createdAt < createdAt) {
-      return acc;
-    } else {
-      acc[formID] = curr;
-      return acc;
-    }
-  }, {} as { [key: string]: { formID: string; createdAt: number } });
+      if (previousEntry && previousEntry?.createdAt < createdAt) {
+        return acc;
+      } else {
+        acc[formID] = curr;
+        return acc;
+      }
+    },
+    {} as { [key: string]: { formID: string; createdAt: number } }
+  );
 
   return Object.values(reduceResult);
 }

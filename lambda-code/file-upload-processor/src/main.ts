@@ -104,7 +104,7 @@ async function requestSubmissionProcessingWhenAllFilesAreAvailable(
         console.error(
           JSON.stringify({
             level: "error",
-            severity: 2,
+            severity: "2",
             status: "failed",
             submissionId: submissionId,
             msg: (error as Error).message,

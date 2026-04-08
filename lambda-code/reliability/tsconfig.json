@@ -9,7 +9,8 @@
     "paths": {
       "@lib/*": ["src/lib/*"]
     },
-    "outDir": "build"
+    "outDir": "build",
+    "types": ["node"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

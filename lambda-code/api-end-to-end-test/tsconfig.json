@@ -10,7 +10,8 @@
       "@lib/*": ["src/lib/*"],
       "@tests/*": ["src/tests/*"]
     },
-    "outDir": "build"
+    "outDir": "build",
+    "types": ["node"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

@@ -69,8 +69,8 @@ export default async (
           ? formSubmission.deliveryOption.emailSubjectFr
           : formSubmission.form.titleFr
         : formSubmission.deliveryOption.emailSubjectEn
-        ? formSubmission.deliveryOption.emailSubjectEn
-        : formSubmission.form.titleEn;
+          ? formSubmission.deliveryOption.emailSubjectEn
+          : formSubmission.form.titleEn;
 
     await gcNotifyConnector.sendEmail(
       formSubmission.deliveryOption.emailAddress,
@@ -98,7 +98,7 @@ export default async (
     console.error(
       JSON.stringify({
         level: "error",
-        severity: 2,
+        severity: "2",
         submissionId: submissionID ?? "n/a",
         sendReceipt: sendReceipt ?? "n/a",
         msg: "Failed to send submission through GC Notify",

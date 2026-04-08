@@ -48,10 +48,6 @@ export const handler: Handler = async (_, context) => {
         msg: "Response Archiver ran successfully.",
       })
     );
-
-    return {
-      statusCode: "SUCCESS",
-    };
   } catch (error) {
     // Error Message will be sent to slack
     console.error(
@@ -63,10 +59,7 @@ export const handler: Handler = async (_, context) => {
       })
     );
 
-    return {
-      statusCode: "ERROR",
-      error: (error as Error).message,
-    };
+    throw error;
   }
 };
 

@@ -266,7 +266,7 @@ export const handler: Handler = async (event: SQSEvent) => {
     console.error(
       JSON.stringify({
         level: "error",
-        severity: 2,
+        severity: "2",
         msg: "Failed to run Audit Logs Processor.",
         error: (error as Error).message,
       })
