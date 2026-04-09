@@ -5,9 +5,9 @@ data "aws_subnet" "private" {
   id       = each.value
 }
 
-output "database_secret_arn" {
-  description = "value"
-  value       = aws_secretsmanager_secret_version.database_secret.arn
+output "postgres_json_connection_object_secret_arn" {
+  description = "Postgres JSON connection object secret arn"
+  value       = aws_secretsmanager_secret_version.postgres_json_connection_object.arn
 }
 
 output "database_url_secret_arn" {

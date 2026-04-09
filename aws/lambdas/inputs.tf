@@ -9,8 +9,8 @@ variable "gc_template_id" {
   type        = string
 }
 
-variable "database_secret_arn" {
-  description = "Database connection secret arn"
+variable "postgres_json_connection_object_secret_arn" {
+  description = "Postgres JSON connection object secret arn"
   type        = string
 }
 
