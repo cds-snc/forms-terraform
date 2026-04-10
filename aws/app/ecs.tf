@@ -28,7 +28,7 @@ locals {
     recaptcha_public                = var.recaptcha_public
     gc_notify_callback_bearer_token = var.notify_callback_bearer_token_secret_arn
     token_secret                    = var.token_secret_arn
-    database_url                    = var.database_url_secret_arn
+    database_url                    = var.database_connection_url_secret_arn
     redis_url                       = var.redis_url
     host_url                        = "https://${var.domains[0]}"
     reliability_file_storage        = var.reliability_file_storage_id

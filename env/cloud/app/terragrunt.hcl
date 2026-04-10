@@ -71,7 +71,7 @@ dependency "rds" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    database_url_secret_arn = null
+    database_connection_url_secret_arn = "database_connection_url_secret"
   }
 }
 
@@ -191,7 +191,7 @@ inputs = {
 
   redis_url = dependency.redis.outputs.redis_url
 
-  database_url_secret_arn = dependency.rds.outputs.database_url_secret_arn
+  database_connection_url_secret_arn = dependency.rds.outputs.database_connection_url_secret_arn
 
   sqs_reliability_reprocessing_queue_arn = dependency.sqs.outputs.sqs_reliability_reprocessing_queue_arn
   sqs_app_audit_log_queue_arn            = dependency.sqs.outputs.sqs_app_audit_log_queue_arn

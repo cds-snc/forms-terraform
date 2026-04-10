@@ -101,8 +101,8 @@ fi
 t=$SECONDS
 printf "${greenColor}All infratructure initialized in %d minutes\nReady for requests${reset}\n" "$((t / 60 - 1440 * (t / 86400)))"
 
-DB_SECRET_ARN=$(aws secretsmanager list-secrets --filter Key="name",Values="server-database-url" --query "SecretList[0].ARN" --output text)
+DB_SECRET_ARN=$(aws secretsmanager list-secrets --filter Key="name",Values="database-connection-url" --query "SecretList[0].ARN" --output text)
 DATABASE_URL=$(aws secretsmanager get-secret-value --secret-id $DB_SECRET_ARN --query "SecretString" --output text)
 REDIS_URL=$(aws elasticache describe-cache-clusters --show-cache-node-info --query "CacheClusters[0].CacheNodes[0].Endpoint.Address" --output text)
 VAULT_FILE_STORAGE_BUCKET_NAME="forms-${AWS_ACCOUNT_ID}-vault-file-storage"
-printf "${greenColor}=> Please copy the following to your app .env file:${reset}\nAWS_PROFILE=${AWS_PROFILE}\nDATABASE_URL=${DATABASE_URL}?connect_timeout=30&pool_timeout=30\nREDIS_URL=${REDIS_URL}:6379\nVAULT_FILE_STORAGE_BUCKET_NAME=${VAULT_FILE_STORAGE_BUCKET_NAME}\n"
+printf "${greenColor}=> Please copy the following to your app .env file:${reset}\nAWS_PROFILE=${AWS_PROFILE}\nDATABASE_URL=${DATABASE_URL}&connect_timeout=30&pool_timeout=30\nREDIS_URL=${REDIS_URL}:6379\nVAULT_FILE_STORAGE_BUCKET_NAME=${VAULT_FILE_STORAGE_BUCKET_NAME}\n"
