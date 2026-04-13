@@ -6,7 +6,8 @@
     "moduleResolution": "NodeNext",
     "target": "ESNext",
     "baseUrl": "./",
-    "outDir": "build"
+    "outDir": "build",
+    "types": ["node"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

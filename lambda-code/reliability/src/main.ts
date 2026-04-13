@@ -38,7 +38,7 @@ const messageProcessor = async ({
       // dynamodb client could possibly return as a number due to early form identifiers being numeric
       typeof messageData.Item?.FormID === "string"
         ? messageData.Item?.FormID
-        : messageData.Item?.FormID.toString() ?? null;
+        : (messageData.Item?.FormID.toString() ?? null);
     const formSubmission = messageData.Item?.FormData
       ? JSON.parse(messageData.Item?.FormData)
       : null;
@@ -69,7 +69,7 @@ const messageProcessor = async ({
       console.error(
         JSON.stringify({
           level: "error",
-          severity: 2,
+          severity: "2",
           msg: `Can't process submission because of null or undefined formID.`,
         })
       );
@@ -87,7 +87,7 @@ const messageProcessor = async ({
       console.error(
         JSON.stringify({
           level: "error",
-          severity: 2,
+          severity: "2",
           msg: `No associated form template (ID: ${formID}) exist in the database.`,
         })
       );
@@ -150,7 +150,7 @@ const messageProcessor = async ({
     console.warn(
       JSON.stringify({
         level: "warn",
-        severity: 2,
+        severity: "2",
         status: "failed",
         submissionId: message.submissionID ?? "n/a",
         sendReceipt: sendReceipt ?? "n/a",

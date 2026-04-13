@@ -50,7 +50,7 @@ export default async (
     console.error(
       JSON.stringify({
         level: "error",
-        severity: 2,
+        severity: "2",
         submissionId: submissionID,
         sendReceipt: sendReceipt,
         msg: "Failed to save submission to Vault.",
