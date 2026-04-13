@@ -34,10 +34,10 @@ module "gc_forms_code_pipeline" {
     { key = "ZITADEL_PROJECT_ID", value = var.zitadel_project_id }
   ]
 
+  # Run database migration process
   custom_post_build_commands = [
-    "yarn install",
-    "yarn prisma:generate",
-    "yarn prisma:deploy",
+    "yarn workspaces focus @gcforms/database",
+    "yarn db:prod"
   ]
 
   depends_on = [aws_ecs_service.form_viewer, aws_ecs_cluster.forms, aws_ecs_task_definition.form_viewer]
