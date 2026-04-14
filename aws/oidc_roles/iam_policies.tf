@@ -121,13 +121,6 @@ resource "aws_iam_policy" "forms_api_release" {
   policy = data.aws_iam_policy_document.ecr_push_image[0].json
 }
 
-resource "aws_iam_policy" "platform_forms_client_release" {
-  count  = var.env == "production" ? 1 : 0
-  name   = local.platform_forms_client_release
-  path   = "/"
-  policy = data.aws_iam_policy_document.ecr_push_image[0].json
-}
-
 data "aws_iam_policy_document" "ecr_push_image" {
   count = var.env == "production" ? 1 : 0
 
