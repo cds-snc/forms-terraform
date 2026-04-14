@@ -1,8 +1,11 @@
 #
 # VPC:
 # Defines the network and subnets for the Forms service
-# Provides no internet access
 #
+locals {
+  subnetCount = 2
+}
+
 data "aws_availability_zones" "available" {
   state = "available"
 }
@@ -18,13 +21,13 @@ resource "aws_vpc" "forms" {
   }
 }
 
-
 #
 # Subnets:
-# 3 private subnets
+# public, private subnets
 #
+
 resource "aws_subnet" "forms_private" {
-  count = 3
+  count = local.subnetCount
 
   vpc_id            = aws_vpc.forms.id
   cidr_block        = cidrsubnet(var.vpc_cidr_block, 4, count.index)
@@ -36,12 +39,11 @@ resource "aws_subnet" "forms_private" {
   }
 }
 
-# We need to create the resource as a dummy output
 resource "aws_subnet" "forms_public" {
-  count = 0
+  count = local.subnetCount
 
   vpc_id            = aws_vpc.forms.id
-  cidr_block        = cidrsubnet(var.vpc_cidr_block, 4, count.index + 3)
+  cidr_block        = cidrsubnet(var.vpc_cidr_block, 4, count.index + local.subnetCount)
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
 
   tags = {
@@ -49,7 +51,6 @@ resource "aws_subnet" "forms_public" {
     Access = "public"
   }
 }
-
 data "aws_subnets" "ecr_endpoint_available" {
   filter {
     name   = "vpc-id"
@@ -81,6 +82,9 @@ data "aws_subnets" "lambda_endpoint_available" {
   }
   depends_on = [aws_subnet.forms_private]
 }
+#
+# Local DNS Namespace
+#
 
 resource "aws_service_discovery_private_dns_namespace" "ecs_local" {
   name        = "ecs.local"
