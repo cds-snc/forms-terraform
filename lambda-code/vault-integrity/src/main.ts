@@ -11,25 +11,18 @@ export const handler: Handler = async (event: DynamoDBStreamEvent) => {
       if (r.eventName === "INSERT") checkInsertEvent(r.dynamodb?.NewImage);
       else checkModifyEvent(r.dynamodb?.OldImage, r.dynamodb?.NewImage);
     });
-
-    return {
-      statusCode: "SUCCESS",
-    };
   } catch (error) {
     // Error Message will be sent to slack
     console.error(
       JSON.stringify({
         level: "error",
-        severity: 1,
+        severity: "1",
         msg: "Failed to run Vault data integrity check.",
         error: (error as Error).message,
       })
     );
 
-    return {
-      statusCode: "ERROR",
-      error: (error as Error).message,
-    };
+    throw error;
   }
 };
 
@@ -66,7 +59,7 @@ function checkInsertEvent(data: StreamRecord["NewImage"]) {
     console.error(
       JSON.stringify({
         level: "error",
-        severity: 1,
+        severity: "1",
         msg: `Integrity check failure on inserted submission (submissionId: ${formSubmissionId}).`,
         error: (error as Error).message,
       })
@@ -160,7 +153,7 @@ function checkModifyEvent(oldData: StreamRecord["OldImage"], newData: StreamReco
     console.error(
       JSON.stringify({
         level: "error",
-        severity: 1,
+        severity: "1",
         msg: `Integrity check failure on modified submission (oldSubmissionID: ${oldSubmissionID} , newSubmissionID: ${newSubmissionID}).`,
         error: (error as Error).message,
       })

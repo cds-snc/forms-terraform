@@ -21,7 +21,7 @@ if (!S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME) {
   console.error(
     JSON.stringify({
       level: "warn",
-      severity: 3,
+      severity: "3",
       status: "failed",
       msg: "File upload cleanup lambda does not have environment variable for Reliability File Storage S3 bucket name",
     })
@@ -163,7 +163,7 @@ const deleteFiles = async (fileKeys: string[]) => {
       console.error(
         JSON.stringify({
           level: "warn",
-          severity: 3,
+          severity: "3",
           status: "failed",
           msg: (e as Error).message,
           details: JSON.stringify(e),
@@ -177,7 +177,7 @@ const deleteFiles = async (fileKeys: string[]) => {
       console.error(
         JSON.stringify({
           level: "warn",
-          severity: 3,
+          severity: "3",
           key: error.Key,
           msg: error.Message,
           code: error.Code,

@@ -1,15 +1,23 @@
 import * as notify_slack from "../src/main.js";
-import * as utils from "../src/utils.js";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import * as zlib from "zlib";
 import { mockClient } from "aws-sdk-client-mock";
 import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
+import { sendToSlack } from "../src/slack.js";
+import { sendToOpsGenie } from "../src/opsgenie.js";
+
+vi.mock("../src/slack");
+const sendToSlackMock = vi.mocked(sendToSlack);
+
+vi.mock("../src/opsgenie");
+const sendToOpsGenieMock = vi.mocked(sendToOpsGenie);
 
 const ssmClientMock = mockClient(SSMClient);
 
 describe("handler", () => {
   beforeAll(() => {
     ssmClientMock.on(GetParameterCommand).resolves({ Parameter: { Value: "[]" } });
+    process.env.ENVIRONMENT = "production";
   });
 
   afterEach(() => {
@@ -17,13 +25,9 @@ describe("handler", () => {
   });
 
   it("should return success if no event type is found and it should have called 'send to Slack'", async () => {
-    const mockSendToSlack = vi.spyOn(utils, "sendToSlack");
-    mockSendToSlack.mockImplementation(() => Promise.resolve());
+    await expect(notify_slack.handler({}, {} as any, () => {})).resolves.not.toThrow();
 
-    const result = await notify_slack.handler({});
-    expect(utils.sendToSlack).toHaveBeenCalled();
-
-    expect(result).toStrictEqual({ statusCode: "SUCCESS" });
+    expect(sendToSlackMock).toHaveBeenCalled();
   });
 
   it("should throw an error if the received payload is not compressed", async () => {
@@ -32,8 +36,10 @@ describe("handler", () => {
         data: "not compressed",
       },
     };
-    const result = await notify_slack.handler(event);
-    expect(result.statusCode).toBe("ERROR");
+
+    await expect(notify_slack.handler(event, {} as any, () => {})).rejects.toThrow(
+      "incorrect header check"
+    );
   });
 
   it("should parse SNS severity for normal message", async () => {
@@ -79,7 +85,7 @@ describe("handler", () => {
           timestamp: 1440442987000,
           message: `{
                     "level": "error",
-                    "severity": 1,
+                    "severity": "1",
                     "msg": "User clcqov5tv000689x5aib9uelt performed GrantFormAccess on Form clfsi1lva008789xagkeouz3w\\nAccess granted to bee@cds-snc.ca"
                 }`,
         },
@@ -92,17 +98,10 @@ describe("handler", () => {
       },
     };
 
-    const mockSendToSlack = vi.spyOn(utils, "sendToSlack");
-    mockSendToSlack.mockImplementation(() => Promise.resolve());
+    await expect(notify_slack.handler(event, {} as any, () => {})).resolves.not.toThrow();
 
-    const mockSendToOpsGenie = vi.spyOn(utils, "sendToOpsGenie");
-    mockSendToOpsGenie.mockImplementation(() => Promise.resolve());
-
-    const result = await notify_slack.handler(event);
-
-    expect(utils.sendToSlack).toBeCalledTimes(1);
-    expect(utils.sendToOpsGenie).toBeCalledTimes(1);
-    expect(result.statusCode).toBe("SUCCESS");
+    expect(sendToSlackMock).toBeCalledTimes(1);
+    expect(sendToOpsGenieMock).toBeCalledTimes(1);
   });
 
   it("should process AWS logs but fallback for non-JSON messages and should not call OpsGenie", async () => {
@@ -127,17 +126,10 @@ describe("handler", () => {
       },
     };
 
-    const mockSendToSlack = vi.spyOn(utils, "sendToSlack");
-    mockSendToSlack.mockImplementation(() => Promise.resolve());
+    await expect(notify_slack.handler(event, {} as any, () => {})).resolves.not.toThrow();
 
-    const mockSendToOpsGenie = vi.spyOn(utils, "sendToOpsGenie");
-    mockSendToOpsGenie.mockImplementation(() => Promise.resolve());
-
-    const result = await notify_slack.handler(event);
-
-    expect(utils.sendToSlack).toBeCalledTimes(1);
-    expect(utils.sendToOpsGenie).toBeCalledTimes(0);
-    expect(result.statusCode).toBe("SUCCESS");
+    expect(sendToSlackMock).toBeCalledTimes(1);
+    expect(sendToOpsGenieMock).toBeCalledTimes(0);
   });
 
   it("should handle SNS events when an SNS record is detected", async () => {
@@ -151,17 +143,10 @@ describe("handler", () => {
       ],
     };
 
-    const mockSendToSlack = vi.spyOn(utils, "sendToSlack");
-    mockSendToSlack.mockImplementation(() => Promise.resolve());
+    await expect(notify_slack.handler(event, {} as any, () => {})).resolves.not.toThrow();
 
-    const mockSendToOpsGenie = vi.spyOn(utils, "sendToOpsGenie");
-    mockSendToOpsGenie.mockImplementation(() => Promise.resolve());
-
-    const result = await notify_slack.handler(event);
-
-    expect(utils.sendToSlack).toBeCalledTimes(1);
-    expect(utils.sendToOpsGenie).toBeCalledTimes(1);
-    expect(result.statusCode).toBe("SUCCESS");
+    expect(sendToSlackMock).toBeCalledTimes(1);
+    expect(sendToOpsGenieMock).toBeCalledTimes(0);
   });
 
   it("should handle SNS events when an SNS record is detected and alarm_reset", async () => {
@@ -175,22 +160,15 @@ describe("handler", () => {
       ],
     };
 
-    const mockSendToSlack = vi.spyOn(utils, "sendToSlack");
-    mockSendToSlack.mockImplementation(() => Promise.resolve());
+    await expect(notify_slack.handler(event, {} as any, () => {})).resolves.not.toThrow();
 
-    const mockSendToOpsGenie = vi.spyOn(utils, "sendToOpsGenie");
-    mockSendToOpsGenie.mockImplementation(() => Promise.resolve());
-
-    const result = await notify_slack.handler(event);
-
-    expect(utils.sendToSlack).toBeCalledTimes(1);
-    expect(utils.sendToSlack).toHaveBeenCalledWith(
+    expect(sendToSlackMock).toBeCalledTimes(1);
+    expect(sendToSlackMock).toHaveBeenCalledWith(
       "CloudWatch Alarm Event",
       'Alarm Status now OK - test "newstatevalue":"ok"',
       "alarm_reset"
     );
-    expect(utils.sendToOpsGenie).toBeCalledTimes(1);
-    expect(result.statusCode).toBe("SUCCESS");
+    expect(sendToOpsGenieMock).toBeCalledTimes(0);
   });
 });
 

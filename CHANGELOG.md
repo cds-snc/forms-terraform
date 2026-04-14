@@ -1,5 +1,28 @@
 # Changelog
 
+## [3.43.4](https://github.com/cds-snc/forms-terraform/compare/v3.43.3...v3.43.4) (2026-04-08)
+
+
+### Bug Fixes
+
+* add new ZITADEL_ORGANIZATION env var ([#1274](https://github.com/cds-snc/forms-terraform/issues/1274)) ([109ad9c](https://github.com/cds-snc/forms-terraform/commit/109ad9ca4c6d02ecf8ba30238f18d6af337f37e4))
+* pin @gcforms/core package to version 2.2.1 ([#1273](https://github.com/cds-snc/forms-terraform/issues/1273)) ([4e1aa7c](https://github.com/cds-snc/forms-terraform/commit/4e1aa7ce45895d452a05b4f2b9469c2818359f21))
+* update terrgrunt, terraform, and cds modules versions ([#1275](https://github.com/cds-snc/forms-terraform/issues/1275)) ([86d77dc](https://github.com/cds-snc/forms-terraform/commit/86d77dc42ead2e9c08f2980a6b819f974a04fd77))
+
+
+### Miscellaneous Chores
+
+* Add Firewall to block outbound traffic ([#1241](https://github.com/cds-snc/forms-terraform/issues/1241)) ([2247ff9](https://github.com/cds-snc/forms-terraform/commit/2247ff9da4a4f129c6f6e7171f0412a0a517c171))
+* **deps:** lock file maintenance ([#1267](https://github.com/cds-snc/forms-terraform/issues/1267)) ([523c4ab](https://github.com/cds-snc/forms-terraform/commit/523c4abb9351dddf61c540956e353fe507d04323))
+* **deps:** lock file maintenance ([#1278](https://github.com/cds-snc/forms-terraform/issues/1278)) ([109c8c5](https://github.com/cds-snc/forms-terraform/commit/109c8c5f8a99473629931f324d2f191de2eac7e7))
+* **deps:** update all non-major github action dependencies ([#1277](https://github.com/cds-snc/forms-terraform/issues/1277)) ([8dacc13](https://github.com/cds-snc/forms-terraform/commit/8dacc135ec5532a79be0713516bca567bedd877d))
+* **deps:** update all patch dependencies ([#1265](https://github.com/cds-snc/forms-terraform/issues/1265)) ([989f9b5](https://github.com/cds-snc/forms-terraform/commit/989f9b54c0e10d09f1a32cf5f5800ec790112fe8))
+* remove firewall for now until we figure out what's going on ([#1276](https://github.com/cds-snc/forms-terraform/issues/1276)) ([0c31089](https://github.com/cds-snc/forms-terraform/commit/0c31089e1cdf7604fc48e10f569345b018de2160))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1272](https://github.com/cds-snc/forms-terraform/issues/1272)) ([a667442](https://github.com/cds-snc/forms-terraform/commit/a6674424bdce2b2e51ffe57f8f43404d6c25a1d2))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1280](https://github.com/cds-snc/forms-terraform/issues/1280)) ([1fd1864](https://github.com/cds-snc/forms-terraform/commit/1fd18642f9973eafff4defd27a1a9e745a36234d))
+* upgrade WAF IP Blocklist module to latest version 10.11.4 ([#1282](https://github.com/cds-snc/forms-terraform/issues/1282)) ([97c3359](https://github.com/cds-snc/forms-terraform/commit/97c335971732c8d27c98b9359b1f4b6cbb8d0c65))
+* upgrade WAF IP Blocklist to v10.11.3 ([#1279](https://github.com/cds-snc/forms-terraform/issues/1279)) ([b9d786c](https://github.com/cds-snc/forms-terraform/commit/b9d786c07f35210be0e63354ec81f4a1788bd39c))
+
 ## [3.43.3](https://github.com/cds-snc/forms-terraform/compare/v3.43.2...v3.43.3) (2026-03-31)
 
 

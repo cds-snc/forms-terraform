@@ -14,7 +14,7 @@ if (!S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME) {
   console.error(
     JSON.stringify({
       level: "warn",
-      severity: 3,
+      severity: "1",
       status: "failed",
       msg: "Submission lambda does not have environment variable for Reliability File Storage S3 bucket name",
     })
@@ -75,10 +75,13 @@ export async function generateFileAccessKeysAndUploadURLs(
 
   return {
     fileAccessKeys: generateFileAccessKeyAndUploadURLOperationResults.map((r) => r.fileAccessKey),
-    fileUploadURLs: generateFileAccessKeyAndUploadURLOperationResults.reduce((acc, current) => {
-      acc[current.id] = current.fileUploadURL;
-      return acc;
-    }, {} as Record<string, PresignedPost>),
+    fileUploadURLs: generateFileAccessKeyAndUploadURLOperationResults.reduce(
+      (acc, current) => {
+        acc[current.id] = current.fileUploadURL;
+        return acc;
+      },
+      {} as Record<string, PresignedPost>
+    ),
   };
 }
 
