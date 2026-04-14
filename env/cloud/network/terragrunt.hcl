@@ -37,6 +37,12 @@ generate "network" {
   contents  = local.env == "development" ? file("../../../aws/network/development_env/network.tf") : file("../../../aws/network/network.tf")
 }
 
+generate "firewall" {
+  path      = "firewall.tf"
+  if_exists = "overwrite"
+  contents  = local.env == "development" ? file("../../../aws/network/development_env/firewall.tf") : file("../../../aws/network/firewall.tf")
+}
+
 generate "vpc_endpoints" {
   path      = "vpc_endpoints.tf"
   if_exists = "overwrite"
