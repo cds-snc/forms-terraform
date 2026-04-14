@@ -7,11 +7,12 @@ locals {
 resource "aws_networkfirewall_firewall" "forms" {
   #checkov:skip=CKV_AWS_345: AWS Managed Key is enough encryption for this use case
 
-  name                = "GCForms"
-  description         = "Firewall limiting outbound traffic.  WAF handles inbound"
-  delete_protection   = true
-  vpc_id              = aws_vpc.forms.id
-  firewall_policy_arn = aws_networkfirewall_firewall_policy.forms.arn
+  name                   = "GCForms"
+  description            = "Firewall limiting outbound traffic.  WAF handles inbound"
+  delete_protection      = true
+  vpc_id                 = aws_vpc.forms.id
+  firewall_policy_arn    = aws_networkfirewall_firewall_policy.forms.arn
+  enabled_analysis_types = ["HTTP_HOST", "TLS_SNI"]
   dynamic "subnet_mapping" {
     for_each = aws_subnet.firewall.*.id
     content {
@@ -43,7 +44,7 @@ resource "aws_networkfirewall_firewall_policy" "forms" {
     }
 
     stateful_rule_group_reference {
-      priority = 1
+      priority     = 1
       resource_arn = aws_networkfirewall_rule_group.suricata_rules.arn
     }
 
@@ -56,16 +57,16 @@ resource "aws_networkfirewall_rule_group" "suricata_rules" {
   name        = "GCForms"
   description = "Only allow web traffic and deny everything else"
   type        = "STATEFUL"
-rule_group {
-  stateful_rule_options {
-    rule_order = "STRICT_ORDER"
+  rule_group {
+    stateful_rule_options {
+      rule_order = "STRICT_ORDER"
+    }
+    rules_source {
+      rules_string = file("./firewall_rules/suricata.rules")
+    }
   }
-  rules_source {
-    rules_string = file("./firewall_rules/suricata.rules")
-  }
-}
 
- 
+
 
 }
 
