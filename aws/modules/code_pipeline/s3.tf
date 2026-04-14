@@ -3,7 +3,7 @@ resource "aws_s3_bucket" "codepipeline_bucket" {
   # checkov:skip=CKV_AWS_21: Versioning not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
   # checkov:skip=CKV2_AWS_61: Lifecycle configuration not required
-  bucket        = "${var.app_name}-pipeline"
+  bucket        = "${var.app_name}-${local.account_id}-pipeline"
   force_destroy = true
 }
 
