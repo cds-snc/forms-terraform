@@ -2,6 +2,10 @@
 # VPC:
 # Defines the network and subnets for the Forms service
 #
+locals {
+  subnetCount = 3
+}
+
 data "aws_availability_zones" "available" {
   state = "available"
 }
@@ -33,7 +37,7 @@ resource "aws_internet_gateway" "forms" {
 #
 
 resource "aws_subnet" "forms_private" {
-  count = 3
+  count = local.subnetCount
 
   vpc_id            = aws_vpc.forms.id
   cidr_block        = cidrsubnet(var.vpc_cidr_block, 4, count.index)
@@ -46,10 +50,10 @@ resource "aws_subnet" "forms_private" {
 }
 
 resource "aws_subnet" "forms_public" {
-  count = 3
+  count = local.subnetCount
 
   vpc_id            = aws_vpc.forms.id
-  cidr_block        = cidrsubnet(var.vpc_cidr_block, 4, count.index + 3)
+  cidr_block        = cidrsubnet(var.vpc_cidr_block, 4, count.index + local.subnetCount)
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
 
   tags = {
@@ -59,9 +63,9 @@ resource "aws_subnet" "forms_public" {
 }
 
 resource "aws_subnet" "firewall" {
-  count             = 3
+  count             = local.subnetCount
   vpc_id            = aws_vpc.forms.id
-  cidr_block        = cidrsubnet(cidrsubnet(var.vpc_cidr_block, 4, 7), 8, count.index)
+  cidr_block        = cidrsubnet(cidrsubnet(var.vpc_cidr_block, 4, local.subnetCount * 2 + 1), 8, count.index)
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
 
   tags = {
@@ -107,7 +111,7 @@ data "aws_subnets" "lambda_endpoint_available" {
 # Allows private resources to access the internet
 #
 resource "aws_nat_gateway" "forms" {
-  count = 3
+  count = local.subnetCount
 
   allocation_id = aws_eip.forms_natgw.*.id[count.index]
   subnet_id     = aws_subnet.forms_public.*.id[count.index]
@@ -121,7 +125,7 @@ resource "aws_nat_gateway" "forms" {
 
 resource "aws_eip" "forms_natgw" {
   # checkov:skip=CKV2_AWS_19: False positive.  All EIP's are associated to Nat Gateways
-  count  = 3
+  count  = local.subnetCount
   domain = "vpc"
 
   tags = {
@@ -142,7 +146,7 @@ resource "aws_route_table" "ig" {
 }
 
 resource "aws_route" "ig" {
-  count = 3
+  count = local.subnetCount
 
   route_table_id         = aws_route_table.ig.id
   destination_cidr_block = aws_subnet.forms_public[count.index].cidr_block
@@ -173,7 +177,7 @@ resource "aws_route_table" "firewall" {
 }
 
 resource "aws_route_table_association" "firewall" {
-  count          = 3
+  count          = local.subnetCount
   subnet_id      = aws_subnet.firewall.*.id[count.index]
   route_table_id = aws_route_table.firewall.id
 }
@@ -185,7 +189,7 @@ resource "aws_route_table_association" "firewall" {
 
 
 resource "aws_route_table" "forms_public_subnet" {
-  count  = 3
+  count  = local.subnetCount
   vpc_id = aws_vpc.forms.id
 
   route {
@@ -194,12 +198,12 @@ resource "aws_route_table" "forms_public_subnet" {
   }
 
   tags = {
-    Name = "Public Subnet Route Table ${count.index}"
+    Name = "Public Subnet Route Table ${count.index + 1}"
   }
 }
 
 resource "aws_route_table_association" "forms" {
-  count = 3
+  count = local.subnetCount
 
   subnet_id      = aws_subnet.forms_public.*.id[count.index]
   route_table_id = aws_route_table.forms_public_subnet.*.id[count.index]
@@ -211,7 +215,7 @@ resource "aws_route_table_association" "forms" {
 
 
 resource "aws_route_table" "forms_private_subnet" {
-  count = 3
+  count = local.subnetCount
 
   vpc_id = aws_vpc.forms.id
 
@@ -221,12 +225,12 @@ resource "aws_route_table" "forms_private_subnet" {
   }
 
   tags = {
-    Name = "Private Subnet Route Table ${count.index}"
+    Name = "Private Subnet Route Table ${count.index + 1}"
   }
 }
 
 resource "aws_route_table_association" "forms_private_route" {
-  count = 3
+  count = local.subnetCount
 
   subnet_id      = aws_subnet.forms_private.*.id[count.index]
   route_table_id = aws_route_table.forms_private_subnet.*.id[count.index]

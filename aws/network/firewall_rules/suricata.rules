@@ -1,0 +1,52 @@
+# This is a "Strict rule ordering" ruleset. Use this ruleset with "Strict" rule ordering firewall policy and no default actions, as this template includes custom default block rules at the end that block everything not explicitly allowed.
+
+# Silently allow TCP 3-way handshake to be setup by $HOME_NET clients so that the domain filtering rules will work properly
+# Do not move this section, it's important that this be at the top of the entire firewall ruleset to reduce rule conflicts
+pass tcp $HOME_NET any -> any any (flow:not_established, to_server; sid:202501021;)
+
+# Egress Rules
+# Log any outgoing to ensure when we add the FQDN list that we have captured everything
+alert ip $HOME_NET any -> any any (msg:"Internal network calling out"; flow:to_server; sid:202501053;)
+
+# Port/protocol enforcement (TLS can only use TCP/443, TLS can't use anything other than TCP/443)
+reject tcp $HOME_NET any -> any 443 (msg:"Egress Port TCP/443 but not TLS"; app-layer-protocol:!tls; flow:to_server; sid:202501030;)
+reject tls $HOME_NET any -> any !443 (msg:"Egress TLS but not port TCP/443"; flow:to_server; sid:202501031;)
+
+# Allow-list of strict FQDNs to silently allow
+# pass tls $HOME_NET any -> any any (tls.sni; content:"github.com"; startswith; nocase; endswith; flow:to_server; sid:202501050;)
+# pass tls $HOME_NET any -> any any (tls.sni; content:"api.hcaptcha.com"; startswith; nocase; endswith; flow:to_server; sid:202501051;)
+# pass tls $HOME_NET any -> any any (tls.sni; content:"auth.cdssandbox.xyz"; startswith; nocase; endswith; flow:to_server; sid:202501079;)
+# pass tls $HOME_NET any -> any any (tls.sni; dotprefix; content:".docker.io"; nocase; endswith; flow:to_server; sid:202501052;)
+# pass tls $HOME_NET any -> any any (tls.sni; dotprefix; content:".notification.canada.ca"; nocase; endswith; flow:to_server; sid:202501078;)
+
+# Allow all outbound requests for testing before implementing string FQDN list
+pass tls $HOME_NET any -> any any (flow:to_server; sid:202500001;)
+
+# Egress Default Block Rules
+reject tls $HOME_NET any -> any any (msg:"Default Egress HTTPS Reject"; ssl_state:client_hello; ja4.hash; content:"_"; flowbits:set,blocked; flow:to_server; sid:999991;)
+reject http $HOME_NET any -> any any (msg:"Default Egress HTTP Reject"; flowbits:set,blocked; flow:to_server; sid:999992;)
+reject tcp $HOME_NET any -> any any (msg:"Default Egress TCP Reject"; flowbits:isnotset,blocked; flowbits:isnotset,PQC; flow:to_server; sid:999994;)
+drop udp $HOME_NET any -> any any (msg:"Default Egress UDP Drop"; flow:to_server; sid:999995;)
+drop icmp $HOME_NET any -> any any (msg:"Default Egress ICMP Drop"; flow:to_server; sid:999996;)
+drop ip $HOME_NET any -> any any (msg:"Default Egress All Other IP Drop"; ip_proto:!TCP; ip_proto:!UDP; ip_proto:!ICMP; flow:to_server; sid:999997;)
+
+# Ingress Rules
+pass tcp any any -> $HOME_NET any (msg:"Allow three-way handshake to be setup by any"; flow:not_established, to_server; sid:999980;)
+
+# Port/protocol enforcement (TLS can only use TCP/443, TLS can't use anything other than TCP/443, etc.)
+reject tcp any any -> $HOME_NET 443 (msg:"Ingress Port TCP/443 but not TLS"; app-layer-protocol:!tls; flow:to_server; sid:202601030;)
+reject tls any any -> $HOME_NET !443 (msg:"Ingress TLS but not port TCP/443"; flow:to_server; sid:202601031;)
+reject tcp any any -> $HOME_NET 80 (msg:"Ingress Port TCP/80 but not HTTP"; app-layer-protocol:!http; flow:to_server; sid:202601032;)
+reject http any any -> $HOME_NET !80 (msg:"Ingress HTTP but not port TCP/80"; flow:to_server; sid:202601033;)
+
+# Allow Web Traffic Only, protocols and ports already enforced above
+pass tls any any -> $HOME_NET any (msg:"Default Ingress HTTPS"; flow:to_server; sid:20260134;)
+pass http any any -> $HOME_NET any (msg:"Default Ingress HTTP"; flow:to_server; sid:20260135;)
+# Might need for locked editing but blocking for now
+# pass udp any any -> $HOME_NET any (msg:"Default Ingress UDP"; flow:to_server; sid:9999911;)
+
+# Drop everything else
+drop tcp any any -> $HOME_NET any (msg:"Default Ingress TCP Drop"; noalert; flowbits:isnotset,blocked; flowbits:isnotset,PQC; flow:to_server; sid:9999912;)
+drop udp any any -> $HOME_NET any (msg:"Default Ingress UDP Drop"; noalert; flow:to_server; sid:9999911;)
+drop icmp any any -> $HOME_NET any (msg:"Default Ingress ICMP Drop"; noalert; flow:to_server; sid:9999914;)
+drop ip any any -> $HOME_NET any (msg:"Default Ingress All Other IP Drop"; noalert; ip_proto:!TCP; ip_proto:!UDP; ip_proto:!ICMP; flow:to_server; sid:9999915;)
