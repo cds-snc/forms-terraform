@@ -158,7 +158,7 @@ resource "aws_vpc_endpoint" "dynamodb" {
   vpc_id            = aws_vpc.forms.id
   vpc_endpoint_type = "Gateway"
   service_name      = "com.amazonaws.${var.region}.dynamodb"
-  route_table_ids   = [aws_vpc.forms.main_route_table_id]
+  route_table_ids   = aws_route_table.forms_public_subnet.*.id
 
 
 }
@@ -167,5 +167,5 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_id            = aws_vpc.forms.id
   vpc_endpoint_type = "Gateway"
   service_name      = "com.amazonaws.${var.region}.s3"
-  route_table_ids   = [aws_vpc.forms.main_route_table_id]
+  route_table_ids   = aws_route_table.forms_public_subnet.*.id
 }
