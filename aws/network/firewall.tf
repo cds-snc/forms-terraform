@@ -84,6 +84,20 @@ resource "aws_networkfirewall_logging_configuration" "forms_alert" {
   }
 }
 
+resource "aws_networkfirewall_logging_configuration" "forms_flow" {
+  firewall_arn                = aws_networkfirewall_firewall.forms.arn
+  enable_monitoring_dashboard = true
+  logging_configuration {
+    log_destination_config {
+      log_destination = {
+        logGroup = aws_cloudwatch_log_group.forms_flow.name
+      }
+      log_destination_type = "CloudWatchLogs"
+      log_type             = "ALERT"
+    }
+  }
+}
+
 #
 # Firewall CloudWatch log group
 #
@@ -92,4 +106,11 @@ resource "aws_cloudwatch_log_group" "forms_alert" {
   name              = "Network-Firewall-Alert"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 14
+}
+
+resource "aws_cloudwatch_log_group" "forms_flow" {
+  # checkov:skip=CKV_AWS_338: WAF and Firewall logs are only kept for 14 days 
+  name              = "Network-Firewall-Flow"
+  kms_key_id        = var.kms_key_cloudwatch_arn
+  retention_in_days = 7
 }
