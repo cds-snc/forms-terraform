@@ -8,8 +8,8 @@ variable "codedeploy_termination_wait_time_in_minutes" {
   type        = number
 }
 
-variable "database_url_secret_arn" {
-  description = "Database URL secret version ARN, used by the ECS task"
+variable "database_connection_url_secret_arn" {
+  description = "ARN of the database URL used to connect to Postgres"
   type        = string
 }
 

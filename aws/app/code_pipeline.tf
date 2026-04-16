@@ -84,7 +84,7 @@ module "gc_forms_code_pipeline" {
   }
 
   build_env_vars_from_secrets = [
-    { key = "DATABASE_URL", secretArn = var.database_url_secret_arn }, # This is required for the database migration script (post build commands)
+    { key = "DATABASE_URL", secretArn = var.database_connection_url_secret_arn }, # This is required for the database migration script (post build commands)
   ]
 
   docker_build_args = [

@@ -33,7 +33,7 @@ data "aws_iam_policy_document" "forms_secrets_manager" {
     ]
 
     resources = [
-      var.database_url_secret_arn,
+      var.database_connection_url_secret_arn,
       var.recaptcha_secret_arn,
       var.notify_api_key_secret_arn,
       var.token_secret_arn,
