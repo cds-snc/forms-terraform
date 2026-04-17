@@ -24,11 +24,6 @@ variable "github_repo_name" {
   type        = string
 }
 
-variable "app_ecr_name" {
-  description = "ECR repository name for the app"
-  type        = string
-}
-
 variable "app_ecr_url" {
   description = "ECR repository url for the app"
   type        = string
