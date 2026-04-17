@@ -39,7 +39,7 @@ module "api_ecs" {
 
   create_cluster = false
   cluster_name   = var.ecs_cluster_name
-  service_name   = "forms-api"
+  service_name   = var.ecs_service_name
   task_cpu       = 2048
   task_memory    = 4096
 

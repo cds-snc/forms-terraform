@@ -13,6 +13,11 @@ variable "dynamodb_vault_arn" {
   type        = string
 }
 
+variable "ecs_service_name" {
+  description = "Name of the API service within the cluster"
+  type        = string
+}
+
 variable "ecs_cluster_name" {
   description = "ARN of the ECS cluster for the API"
   type        = string
@@ -98,4 +103,14 @@ variable "ecs_idp_service_name" {
 variable "ecs_idp_service_port" {
   description = "IdP's ECS service port"
   type        = number
+}
+
+variable "vpc_id" {
+  description = "The VPC ID to create the resources in."
+  type        = string
+}
+
+variable "code_build_security_group_id" {
+  description = "Code Build Security Group"
+  type        = string
 }
