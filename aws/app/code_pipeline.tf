@@ -5,7 +5,6 @@ module "gc_forms_code_pipeline" {
   private_subnet_ids             = var.private_subnet_ids
   app_name                       = "gc-forms-web-app"
   github_repo_name               = "cds-snc/platform-forms-client"
-  app_ecr_name                   = var.ecr_form_viewer_repository_name
   app_ecr_url                    = var.ecr_repository_url_form_viewer
   ecs_cluster_name               = aws_ecs_cluster.forms.name
   ecs_service_name               = aws_ecs_service.form_viewer.name
