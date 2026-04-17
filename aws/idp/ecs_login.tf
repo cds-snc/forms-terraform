@@ -81,7 +81,7 @@ resource "aws_ecs_service" "user_portal" {
   propagate_tags       = "SERVICE"
   force_new_deployment = true
 
-  desired_count                     = 1
+  desired_count                     = 0
   health_check_grace_period_seconds = 60
 
   deployment_controller {
