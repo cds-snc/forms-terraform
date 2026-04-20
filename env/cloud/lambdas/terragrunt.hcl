@@ -52,8 +52,7 @@ dependency "rds" {
   mock_outputs = {
     rds_cluster_arn         = null
     rds_db_name             = null
-    database_secret_arn     = null
-    database_url_secret_arn = null
+    database_url_secret_arn = "database_url_secret"
   }
 }
 
@@ -246,7 +245,6 @@ inputs = {
 
   rds_cluster_arn         = dependency.rds.outputs.rds_cluster_arn
   rds_db_name             = dependency.rds.outputs.rds_db_name
-  database_secret_arn     = dependency.rds.outputs.database_secret_arn
   database_url_secret_arn = dependency.rds.outputs.database_url_secret_arn
 
   redis_port = dependency.redis.outputs.redis_port

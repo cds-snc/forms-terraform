@@ -153,12 +153,23 @@ resource "aws_vpc_endpoint" "xray" {
   subnet_ids = aws_subnet.forms_private.*.id
 }
 
+resource "aws_vpc_endpoint" "ssm" {
+  vpc_id              = aws_vpc.forms.id
+  vpc_endpoint_type   = "Interface"
+  service_name        = "com.amazonaws.${var.region}.ssm"
+  private_dns_enabled = true
+  security_group_ids = [
+    aws_security_group.privatelink.id,
+  ]
+  subnet_ids = aws_subnet.forms_private.*.id
+}
+
 
 resource "aws_vpc_endpoint" "dynamodb" {
   vpc_id            = aws_vpc.forms.id
   vpc_endpoint_type = "Gateway"
   service_name      = "com.amazonaws.${var.region}.dynamodb"
-  route_table_ids   = [aws_vpc.forms.main_route_table_id]
+  route_table_ids   = aws_route_table.forms_public_subnet.*.id
 
 
 }
@@ -167,5 +178,5 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_id            = aws_vpc.forms.id
   vpc_endpoint_type = "Gateway"
   service_name      = "com.amazonaws.${var.region}.s3"
-  route_table_ids   = [aws_vpc.forms.main_route_table_id]
+  route_table_ids   = aws_route_table.forms_public_subnet.*.id
 }
