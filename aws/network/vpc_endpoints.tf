@@ -175,6 +175,16 @@ resource "aws_vpc_endpoint" "codestar" {
   subnet_ids = aws_subnet.forms_private.*.id
 }
 
+resource "aws_vpc_endpoint" "ecs" {
+  vpc_id              = aws_vpc.forms.id
+  vpc_endpoint_type   = "Interface"
+  service_name        = "com.amazonaws.${var.region}.ecs"
+  private_dns_enabled = true
+  security_group_ids = [
+    aws_security_group.privatelink.id,
+  ]
+  subnet_ids = aws_subnet.forms_private.*.id
+}
 
 resource "aws_vpc_endpoint" "dynamodb" {
   vpc_id            = aws_vpc.forms.id
