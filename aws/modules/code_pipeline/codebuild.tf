@@ -51,19 +51,18 @@ locals {
   docker_build_args = join(" ", [for instance in var.docker_build_args : "--build-arg ${instance.key}=${instance.value}"])
 
   base_build_commands = [
-    "export GIT_TAG=$(git tag --points-at $GIT_COMMIT_ID)",
-    "aws ecr get-login-password --region ca-central-1 | docker login --username AWS --password-stdin ${var.app_ecr_url}",
+    "export GIT_TAG=$(git tag --points-at $GIT_COMMIT_ID | head -n 1)", # Check if a GIT_TAG exist. This would mean that CodePipeline was triggered by a Production release
+    "export RELEASE_IDENTIFIER=$${GIT_TAG:-$GIT_COMMIT_ID}",            # Create RELEASE_IDENTIFIER which will be used by the rest of the deployment pipeline to either reference a Git tag (production) or commit identifier (staging)
+    "export NEXT_DEPLOYMENT_ID=$${RELEASE_IDENTIFIER//./-}",            # This is used in aws/app/code_pipeline.tf. We should be able to delete it once we get rid of Rainbow deployments (context: https://github.com/cds-snc/platform-forms-client/pull/6908)
+    "aws ecr get-login-password --region ${var.region} | docker login --username AWS --password-stdin ${var.app_ecr_url}",
     "docker build -t base ${local.docker_build_args} .",
-    "docker tag base ${var.app_ecr_url}:latest",
-    "docker push ${var.app_ecr_url}:latest",
-    "docker tag base ${var.app_ecr_url}:$GIT_COMMIT_ID",
-    "docker push ${var.app_ecr_url}:$GIT_COMMIT_ID",
-    "if [[ -n \"$GIT_TAG\" ]]; then docker tag base ${var.app_ecr_url}:$GIT_TAG && docker push ${var.app_ecr_url}:$GIT_TAG; fi"
+    "docker tag base ${var.app_ecr_url}:latest && docker push ${var.app_ecr_url}:latest",
+    "docker tag base ${var.app_ecr_url}:$RELEASE_IDENTIFIER && docker push ${var.app_ecr_url}:$RELEASE_IDENTIFIER"
   ]
 
   base_post_build_commands = [
     "printf \"$APPSPEC\" > appspec.yaml",
-    "aws ecs describe-task-definition --task-definition ${var.task_definition_family} --query taskDefinition | jq --arg gitCommit \"$GIT_COMMIT_ID\" '.taskDefinitionArn |= \"${data.aws_ecs_task_definition.this.arn_without_revision}\" | .containerDefinitions |= map(select(.name == \"${var.app_container_name}\").image |= \"${var.app_ecr_url}:\" + $gitCommit)' > task_definition.json"
+    "aws ecs describe-task-definition --task-definition ${var.task_definition_family} --query taskDefinition | jq --arg releaseIdentifier \"$RELEASE_IDENTIFIER\" '.taskDefinitionArn |= \"${data.aws_ecs_task_definition.this.arn_without_revision}\" | .containerDefinitions |= map(select(.name == \"${var.app_container_name}\").image |= \"${var.app_ecr_url}:\" + $releaseIdentifier)' > task_definition.json"
   ]
 
   post_build_commands = concat(local.base_post_build_commands, var.custom_post_build_commands)

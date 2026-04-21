@@ -205,40 +205,6 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_route53_warn" {
 }
 
 #
-# Code Deploy events
-# We can delete the following resources once we stop using Github actions to deploy our applications (migrate to the new code_pipeline module)
-#
-resource "aws_cloudwatch_event_target" "codedeploy_sns" {
-  target_id = "CodeDeploy_SNS"
-  rule      = aws_cloudwatch_event_rule.codedeploy_sns.name
-  arn       = var.sns_topic_alert_warning_arn
-
-  input_transformer {
-    input_paths = {
-      "status"       = "$.detail.state"
-      "deploymentID" = "$.detail.deploymentId"
-    }
-    input_template = "\"End User Forms - CloudDeploy has registered a <status> for deployment: <deploymentID>\""
-  }
-}
-
-resource "aws_cloudwatch_event_rule" "codedeploy_sns" {
-  name        = "alert-on-codedeploy-status"
-  description = "Alert if CodeDeploy succeeds or fails during deployment"
-  event_pattern = jsonencode({
-    source      = ["aws.codedeploy"],
-    detail-type = ["CodeDeploy Deployment State-change Notification"],
-    detail = {
-      state = [
-        "START",
-        "SUCCESS",
-        "FAILURE"
-      ]
-    }
-  })
-}
-
-#
 # Code Pipeline events
 #
 

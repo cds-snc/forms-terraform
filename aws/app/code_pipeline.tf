@@ -1,74 +1,11 @@
-#
-# Only use Blue/Gree deployment with CodeDeploy in Production while we test the new full deployment pipeline in Staging using our code_pipeline module.
-#
-resource "aws_codedeploy_app" "app" {
-  count = var.env == "production" ? 1 : 0
-
-  compute_platform = "ECS"
-  name             = "AppECS-${aws_ecs_cluster.forms.name}-${aws_ecs_service.form_viewer.name}"
-}
-
-resource "aws_codedeploy_deployment_group" "app" {
-  count = var.env == "production" ? 1 : 0
-
-  app_name               = aws_codedeploy_app.app[0].name
-  deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
-  deployment_group_name  = "DgpECS-${aws_ecs_cluster.forms.name}-${aws_ecs_service.form_viewer.name}"
-  service_role_arn       = aws_iam_role.codedeploy.arn
-
-  auto_rollback_configuration {
-    enabled = true
-    events  = ["DEPLOYMENT_FAILURE"]
-  }
-
-  blue_green_deployment_config {
-    deployment_ready_option {
-      action_on_timeout = var.codedeploy_manual_deploy_enabled ? "STOP_DEPLOYMENT" : "CONTINUE_DEPLOYMENT"
-    }
-
-    terminate_blue_instances_on_deployment_success {
-      action                           = "TERMINATE"
-      termination_wait_time_in_minutes = var.codedeploy_termination_wait_time_in_minutes
-    }
-  }
-
-  deployment_style {
-    deployment_option = "WITH_TRAFFIC_CONTROL"
-    deployment_type   = "BLUE_GREEN"
-  }
-
-  ecs_service {
-    cluster_name = aws_ecs_cluster.forms.name
-    service_name = aws_ecs_service.form_viewer.name
-  }
-
-  load_balancer_info {
-    target_group_pair_info {
-      prod_traffic_route {
-        listener_arns = [var.lb_https_listener_arn]
-      }
-
-      target_group {
-        name = var.lb_target_group_1_name
-      }
-
-      target_group {
-        name = var.lb_target_group_2_name
-      }
-    }
-  }
-}
-
 module "gc_forms_code_pipeline" {
-  count = var.env == "production" ? 0 : 1
-
+  region                         = var.region
   source                         = "../modules/code_pipeline"
   vpc_id                         = var.vpc_id
   code_build_security_group_id   = var.code_build_security_group_id
   private_subnet_ids             = var.private_subnet_ids
   app_name                       = "gc-forms-web-app"
   github_repo_name               = "cds-snc/platform-forms-client"
-  app_ecr_name                   = var.ecr_form_viewer_repository_name
   app_ecr_url                    = var.ecr_repository_url_form_viewer
   ecs_cluster_name               = aws_ecs_cluster.forms.name
   ecs_service_name               = aws_ecs_service.form_viewer.name
@@ -84,7 +21,7 @@ module "gc_forms_code_pipeline" {
   }
 
   build_env_vars_from_secrets = [
-    { key = "DATABASE_URL", secretArn = var.database_connection_url_secret_arn }, # This is required for the database migration script (post build commands)
+    { key = "DATABASE_URL", secretArn = var.database_connection_url_secret_arn }, # This is required by the @gcforms/database package to run database migrations
   ]
 
   docker_build_args = [
@@ -92,7 +29,7 @@ module "gc_forms_code_pipeline" {
     { key = "COGNITO_APP_CLIENT_ID", value = var.cognito_client_id },
     { key = "COGNITO_USER_POOL_ID", value = var.cognito_user_pool_id },
     { key = "HCAPTCHA_SITE_KEY", value = var.hcaptcha_site_key },
-    { key = "NEXT_DEPLOYMENT_ID", value = var.env == "production" ? "$GIT_TAG" : "$GIT_COMMIT_ID" },
+    { key = "NEXT_DEPLOYMENT_ID", value = "$NEXT_DEPLOYMENT_ID" }, # $NEXT_DEPLOYMENT_ID is declared in the actual CodePipeline module definition (see aws/modules/code_pipeline/codebuild.tf)
     { key = "ZITADEL_URL", value = "https://auth.${var.domains[0]}" },
     { key = "ZITADEL_PROJECT_ID", value = var.zitadel_project_id }
   ]
@@ -104,4 +41,71 @@ module "gc_forms_code_pipeline" {
   ]
 
   depends_on = [aws_ecs_service.form_viewer, aws_ecs_cluster.forms, aws_ecs_task_definition.form_viewer]
+}
+
+# Following moved blocks can be removed once https://github.com/cds-snc/forms-terraform/pull/1295 has been merged
+
+moved {
+  from = module.gc_forms_code_pipeline[0].aws_codebuild_project.ecs_render
+  to   = module.gc_forms_code_pipeline.aws_codebuild_project.ecs_render
+}
+
+moved {
+  from = module.gc_forms_code_pipeline[0].aws_codedeploy_app.this
+  to   = module.gc_forms_code_pipeline.aws_codedeploy_app.this
+}
+
+moved {
+  from = module.gc_forms_code_pipeline[0].aws_codedeploy_deployment_group.this
+  to   = module.gc_forms_code_pipeline.aws_codedeploy_deployment_group.this
+}
+
+moved {
+  from = module.gc_forms_code_pipeline[0].aws_codepipeline.this
+  to   = module.gc_forms_code_pipeline.aws_codepipeline.this
+}
+
+moved {
+  from = module.gc_forms_code_pipeline[0].aws_codestarconnections_connection.this
+  to   = module.gc_forms_code_pipeline.aws_codestarconnections_connection.this
+}
+
+moved {
+  from = module.gc_forms_code_pipeline[0].aws_iam_role.this
+  to   = module.gc_forms_code_pipeline.aws_iam_role.this
+}
+
+moved {
+  from = module.gc_forms_code_pipeline[0].aws_iam_role_policy.codepipeline_policy
+  to   = module.gc_forms_code_pipeline.aws_iam_role_policy.codepipeline_policy
+}
+
+moved {
+  from = module.gc_forms_code_pipeline[0].aws_iam_role_policy_attachment.AWSCodeDeployRole
+  to   = module.gc_forms_code_pipeline.aws_iam_role_policy_attachment.AWSCodeDeployRole
+}
+
+moved {
+  from = module.gc_forms_code_pipeline[0].aws_iam_role_policy_attachment.AWSCodeDeployRoleForECS
+  to   = module.gc_forms_code_pipeline.aws_iam_role_policy_attachment.AWSCodeDeployRoleForECS
+}
+
+moved {
+  from = module.gc_forms_code_pipeline[0].aws_s3_bucket.codepipeline_bucket
+  to   = module.gc_forms_code_pipeline.aws_s3_bucket.codepipeline_bucket
+}
+
+moved {
+  from = module.gc_forms_code_pipeline[0].aws_s3_bucket_ownership_controls.codepipeline_bucket
+  to   = module.gc_forms_code_pipeline.aws_s3_bucket_ownership_controls.codepipeline_bucket
+}
+
+moved {
+  from = module.gc_forms_code_pipeline[0].aws_s3_bucket_public_access_block.codepipeline_bucket
+  to   = module.gc_forms_code_pipeline.aws_s3_bucket_public_access_block.codepipeline_bucket
+}
+
+moved {
+  from = module.gc_forms_code_pipeline[0].aws_s3_bucket_server_side_encryption_configuration.codepipeline_bucket
+  to   = module.gc_forms_code_pipeline.aws_s3_bucket_server_side_encryption_configuration.codepipeline_bucket
 }

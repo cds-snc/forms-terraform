@@ -1,7 +1,6 @@
 locals {
   forms_api_release                   = "forms-api-release"
   platform_forms_client_pr_review_env = "platform-forms-client-pr-review-env"
-  platform_forms_client_release       = "platform-forms-client-release"
 }
 
 # 
@@ -32,11 +31,6 @@ module "github_workflow_roles" {
       name      = local.platform_forms_client_pr_review_env
       repo_name = "platform-forms-client"
       claim     = "pull_request"
-    },
-    {
-      name      = local.platform_forms_client_release
-      repo_name = "platform-forms-client"
-      claim     = "ref:refs/tags/v*"
     }
   ]
 
@@ -60,14 +54,6 @@ resource "aws_iam_role_policy_attachment" "platform_forms_client_pr_review_env" 
   count      = var.env == "staging" ? 1 : 0
   role       = local.platform_forms_client_pr_review_env
   policy_arn = aws_iam_policy.platform_forms_client_pr_review_env[0].arn
-
-  depends_on = [module.github_workflow_roles]
-}
-
-resource "aws_iam_role_policy_attachment" "platform_forms_client_release" {
-  count      = var.env == "production" ? 1 : 0
-  role       = local.platform_forms_client_release
-  policy_arn = aws_iam_policy.platform_forms_client_release[0].arn
 
   depends_on = [module.github_workflow_roles]
 }
