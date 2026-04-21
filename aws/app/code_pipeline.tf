@@ -1,4 +1,5 @@
 module "gc_forms_code_pipeline" {
+  region                         = var.region
   source                         = "../modules/code_pipeline"
   vpc_id                         = var.vpc_id
   code_build_security_group_id   = var.code_build_security_group_id

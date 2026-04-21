@@ -54,7 +54,7 @@ locals {
     "export GIT_TAG=$(git tag --points-at $GIT_COMMIT_ID | head -n 1)", # Check if a GIT_TAG exist. This would mean that CodePipeline was triggered by a Production release
     "export RELEASE_IDENTIFIER=$${GIT_TAG:-$GIT_COMMIT_ID}",            # Create RELEASE_IDENTIFIER which will be used by the rest of the deployment pipeline to either reference a Git tag (production) or commit identifier (staging)
     "export NEXT_DEPLOYMENT_ID=$${RELEASE_IDENTIFIER//./-}",            # This is used in aws/app/code_pipeline.tf. We should be able to delete it once we get rid of Rainbow deployments (context: https://github.com/cds-snc/platform-forms-client/pull/6908)
-    "aws ecr get-login-password --region ca-central-1 | docker login --username AWS --password-stdin ${var.app_ecr_url}",
+    "aws ecr get-login-password --region ${var.region} | docker login --username AWS --password-stdin ${var.app_ecr_url}",
     "docker build -t base ${local.docker_build_args} .",
     "docker tag base ${var.app_ecr_url}:latest && docker push ${var.app_ecr_url}:latest",
     "docker tag base ${var.app_ecr_url}:$RELEASE_IDENTIFIER && docker push ${var.app_ecr_url}:$RELEASE_IDENTIFIER"

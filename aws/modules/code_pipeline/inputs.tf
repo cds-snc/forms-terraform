@@ -1,3 +1,7 @@
+variable "region" {
+  description = "The current AWS region"
+  type        = string
+}
 
 variable "private_subnet_ids" {
   description = "The list of private subnet IDs used by the RDS cluster to"
