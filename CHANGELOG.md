@@ -1,5 +1,31 @@
 # Changelog
 
+## [3.43.5](https://github.com/cds-snc/forms-terraform/compare/v3.43.4...v3.43.5) (2026-04-22)
+
+
+### Bug Fixes
+
+* Add flow log ([#1297](https://github.com/cds-snc/forms-terraform/issues/1297)) ([00367ac](https://github.com/cds-snc/forms-terraform/commit/00367ac318e8cb4c0c33615e5af75581d027d5d9))
+* Add vpc gateway endpoints to public routes ([#1296](https://github.com/cds-snc/forms-terraform/issues/1296)) ([3cf52e1](https://github.com/cds-snc/forms-terraform/commit/3cf52e18976d17f296d213b4eba1bd59d44a60ec))
+
+
+### Miscellaneous Chores
+
+* add new database connection URL secret and use it for the App module where Prisma is implemented ([#1288](https://github.com/cds-snc/forms-terraform/issues/1288)) ([997577b](https://github.com/cds-snc/forms-terraform/commit/997577bf5ecc04951d8e765121e38de5ec0f465c))
+* add ssm vpc endpoint ([#1298](https://github.com/cds-snc/forms-terraform/issues/1298)) ([0d91f6c](https://github.com/cds-snc/forms-terraform/commit/0d91f6cf77841fdd49b58c26b1332d4c17e72f15))
+* **deps:** lock file maintenance ([#1291](https://github.com/cds-snc/forms-terraform/issues/1291)) ([a62a7b2](https://github.com/cds-snc/forms-terraform/commit/a62a7b2e9d51ad62fa7e3db53ce27d32cb2aedca))
+* **deps:** update all non-major github action dependencies ([#1290](https://github.com/cds-snc/forms-terraform/issues/1290)) ([b6ed07e](https://github.com/cds-snc/forms-terraform/commit/b6ed07e7a23de6dfe5031fb372aea5f6dbf969e1))
+* **deps:** update all non-major github action dependencies ([#1301](https://github.com/cds-snc/forms-terraform/issues/1301)) ([ef98873](https://github.com/cds-snc/forms-terraform/commit/ef98873e2f177f21bb9a26a5fe6baaf459984222))
+* enable AWS CodePipeline in production for the GC Forms web app ([#1295](https://github.com/cds-snc/forms-terraform/issues/1295)) ([8971a18](https://github.com/cds-snc/forms-terraform/commit/8971a182a67351d0b8e58ea91e4aad7cecfe2510))
+* enable SEV2 alarms to OpsGenie ([#1281](https://github.com/cds-snc/forms-terraform/issues/1281)) ([26ee602](https://github.com/cds-snc/forms-terraform/commit/26ee60201ebb884efcc63d9509638b19c8b57cbe))
+* Ensure firewall is only in staging ([#1309](https://github.com/cds-snc/forms-terraform/issues/1309)) ([1e4f87f](https://github.com/cds-snc/forms-terraform/commit/1e4f87f1bd0dcef464c2c40e4e3a526dd0018114))
+* fix emoji selection when processing CloudWatch alarm in order to send a message on Slack ([#1284](https://github.com/cds-snc/forms-terraform/issues/1284)) ([8eaa143](https://github.com/cds-snc/forms-terraform/commit/8eaa14339a32ef52db46a5d728b3ad634718b9df))
+* fix Slack notification when Github workflow fails ([#1306](https://github.com/cds-snc/forms-terraform/issues/1306)) ([e02b27b](https://github.com/cds-snc/forms-terraform/commit/e02b27b9ab6d94ace35bf08adc8d1bbf41cc58a5))
+* remove unused moved blocks ([#1307](https://github.com/cds-snc/forms-terraform/issues/1307)) ([1ffc50d](https://github.com/cds-snc/forms-terraform/commit/1ffc50d9c1ecfa12299f2e862aa1c10de01a11eb))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1292](https://github.com/cds-snc/forms-terraform/issues/1292)) ([7418f59](https://github.com/cds-snc/forms-terraform/commit/7418f5919039197f4853b3f3614d3f0451b7691a))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1302](https://github.com/cds-snc/forms-terraform/issues/1302)) ([42996af](https://github.com/cds-snc/forms-terraform/commit/42996afd49bf29d0a593afdc5a4f65d08c4e95ab))
+* turn off 'user_portal' service until we delete the Terraform code ([#1299](https://github.com/cds-snc/forms-terraform/issues/1299)) ([648aca7](https://github.com/cds-snc/forms-terraform/commit/648aca72bbeeeab81f0d4e701ccbf1b5b34f68c9))
+
 ## [3.43.4](https://github.com/cds-snc/forms-terraform/compare/v3.43.3...v3.43.4) (2026-04-08)
 
 
