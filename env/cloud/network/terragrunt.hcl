@@ -34,7 +34,7 @@ include "root" {
 generate "network" {
   path      = "network.tf"
   if_exists = "overwrite"
-  contents  = local.env == "development" ? file("../../../aws/network/.development_env/network.tf") : local.env == "staging" ? file("../../../aws/network/.staging_env/network.tf"):file("../../../aws/network/network.tf")
+  contents  = local.env == "development" ? file("../../../aws/network/.development_env/network.tf") : local.env == "staging" ? file("../../../aws/network/.staging_env/network.tf") : file("../../../aws/network/network.tf")
 }
 
 generate "firewall" {

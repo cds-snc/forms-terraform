@@ -25,7 +25,7 @@ dependency "ecr" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    ecr_repository_url_form_viewer  = "${local.aws_account_id}.dkr.ecr.ca-central-1.amazonaws.com/form_viewer_development"
+    ecr_repository_url_form_viewer = "${local.aws_account_id}.dkr.ecr.ca-central-1.amazonaws.com/form_viewer_development"
   }
 }
 
@@ -170,7 +170,7 @@ inputs = {
   dynamodb_app_audit_logs_arn    = dependency.dynamodb.outputs.dynamodb_app_audit_logs_arn
   dynamodb_api_audit_logs_arn    = dependency.dynamodb.outputs.dynamodb_api_audit_logs_arn
 
-  ecr_repository_url_form_viewer  = dependency.ecr.outputs.ecr_repository_url_form_viewer
+  ecr_repository_url_form_viewer = dependency.ecr.outputs.ecr_repository_url_form_viewer
 
   kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
   kms_key_dynamodb_arn   = dependency.kms.outputs.kms_key_dynamodb_arn
@@ -216,11 +216,11 @@ inputs = {
 
   ecs_idp_service_name = dependency.idp.outputs.ecs_idp_service_name
   ecs_idp_service_port = dependency.idp.outputs.ecs_idp_service_port
-  
+
   # Overwritten by GitHub TFVARS
-  zitadel_client_id                            = "123456789"
-  zitadel_project_id                           = "123456789"
-  hcaptcha_site_key                            = "hCaptchaSiteKey"
+  zitadel_client_id  = "123456789"
+  zitadel_project_id = "123456789"
+  hcaptcha_site_key  = "hCaptchaSiteKey"
 }
 
 include "root" {
