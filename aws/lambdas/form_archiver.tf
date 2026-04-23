@@ -14,18 +14,16 @@ resource "aws_lambda_function" "form_archiver" {
     ignore_changes = [image_uri]
   }
 
-  dynamic "vpc_config" {
-    for_each = local.vpc_config
-    content {
-      security_group_ids = vpc_config.value.security_group_ids
-      subnet_ids         = vpc_config.value.subnet_ids
-    }
+  // Even in development mode this lambda should be attached to the VPC in order to connecto the DB
+  vpc_config {
+    security_group_ids = [var.lambda_security_group_id]
+    subnet_ids         = var.private_subnet_ids
   }
 
   environment {
     variables = {
-      REGION = var.region
-      DB_URL = var.database_url_secret_arn
+      REGION       = var.region
+      DATABASE_URL = var.database_connection_url_secret_arn
     }
   }
 
