@@ -1,58 +1,41 @@
 import { FormProperties } from "@gcforms/types";
-import { PostgresConnector } from "@gcforms/connectors";
+import { prisma } from "@gcforms/database";
 
 export type TemplateInfo = {
   formConfig: FormProperties;
   deliveryOption?: {
     emailAddress: string;
-    emailSubjectEn: string | undefined;
-    emailSubjectFr: string | undefined;
+    emailSubjectEn: string | null;
+    emailSubjectFr: string | null;
   };
 };
 
-const postgresConnector = await PostgresConnector.defaultUsingPostgresConnectionUrlFromAwsSecret(
-  process.env.DB_URL ?? ""
-);
-
 export async function getTemplateInfo(formID: string): Promise<TemplateInfo | null> {
   try {
-    const templates = await postgresConnector.executeSqlStatement()<
-      {
-        jsonConfig?: Record<string, unknown>;
-        emailAddress?: string;
-        emailSubjectEn?: string;
-        emailSubjectFr?: string;
-      }[]
-    >`SELECT  t."jsonConfig", deli."emailAddress", deli."emailSubjectEn", deli."emailSubjectFr"
-      FROM "Template" t
-      LEFT JOIN "DeliveryOption" deli ON t.id = deli."templateId"
-      WHERE t.id = ${formID}`;
+    const template = await prisma.template.findUnique({
+      where: {
+        id: formID,
+      },
+      select: {
+        jsonConfig: true,
+        deliveryOption: {
+          select: {
+            emailAddress: true,
+            emailSubjectEn: true,
+            emailSubjectFr: true,
+          },
+        },
+      },
+    });
 
-    if (templates.length === 1) {
-      const { jsonConfig, emailAddress, emailSubjectEn, emailSubjectFr } = templates[0];
-
-      // make sure template jsonConfig is defined
-      if (jsonConfig === undefined) {
-        throw new Error(`Missing required parameters: template jsonConfig.`);
-      }
-
-      const formConfig = jsonConfig as FormProperties;
-
-      const deliveryOption = emailAddress
-        ? {
-            emailAddress,
-            emailSubjectEn,
-            emailSubjectFr,
-          }
-        : null;
-
-      return {
-        formConfig,
-        ...(deliveryOption && { deliveryOption }),
-      };
-    } else {
+    if (template === null) {
       return null;
     }
+
+    return {
+      formConfig: template.jsonConfig as FormProperties,
+      ...(template.deliveryOption && { deliveryOption: template.deliveryOption }),
+    };
   } catch (error) {
     console.warn(
       JSON.stringify({

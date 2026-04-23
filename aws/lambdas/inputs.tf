@@ -9,8 +9,8 @@ variable "gc_template_id" {
   type        = string
 }
 
-variable "database_url_secret_arn" {
-  description = "ARN of the database URL used to connect to Postgres. This is the legacy version that should be replaced by `database_connection_url_secret_arn` when possible."
+variable "database_connection_url_secret_arn" {
+  description = "ARN of the database URL used to connect to Postgres"
   type        = string
 }
 
