@@ -101,7 +101,7 @@ dependency "rds" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    database_url_secret_arn = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:database_url"
+    database_connection_url_secret_arn = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:database-connection-url"
   }
 }
 
@@ -153,7 +153,7 @@ inputs = {
 
   freshdesk_api_key_secret_arn = dependency.secrets.outputs.freshdesk_api_key_secret_arn
 
-  rds_connection_url_secret_arn = dependency.rds.outputs.database_url_secret_arn
+  database_connection_url_secret_arn = dependency.rds.outputs.database_connection_url_secret_arn
 
   sqs_api_audit_log_queue_arn = dependency.sqs.outputs.sqs_api_audit_log_queue_arn
 
