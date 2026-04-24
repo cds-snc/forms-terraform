@@ -70,11 +70,11 @@ variable "freshdesk_api_key_secret_arn" {
   sensitive   = true
 }
 
-variable "rds_connection_url_secret_arn" {
-  description = "The RDS connection URL secret used by the ECS task"
+variable "database_connection_url_secret_arn" {
+  description = "ARN of the database URL used to connect to Postgres"
   type        = string
-  sensitive   = true
 }
+
 variable "sqs_api_audit_log_queue_arn" {
   description = "SQS audit log queue ARN"
   type        = string

@@ -30,6 +30,10 @@ locals {
     {
       name      = "FRESHDESK_API_KEY"
       valueFrom = var.freshdesk_api_key_secret_arn
+    },
+    {
+      name      = "DATABASE_URL"
+      valueFrom = var.database_connection_url_secret_arn
     }
   ]
 }
@@ -66,7 +70,6 @@ module "api_ecs" {
     data.aws_iam_policy_document.api_ecs_kms_vault.json,
     data.aws_iam_policy_document.api_ecs_dynamodb_vault.json,
     data.aws_iam_policy_document.api_ecs_s3_vault.json,
-    data.aws_iam_policy_document.api_ecs_secrets_manager_runtime.json,
     data.aws_iam_policy_document.api_sqs.json
   ]
 
@@ -141,20 +144,6 @@ data "aws_iam_policy_document" "api_ecs_s3_vault" {
     resources = [
       var.s3_vault_file_storage_arn,
       "${var.s3_vault_file_storage_arn}/*"
-    ]
-  }
-}
-
-data "aws_iam_policy_document" "api_ecs_secrets_manager_runtime" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "secretsmanager:GetSecretValue",
-    ]
-
-    resources = [
-      var.rds_connection_url_secret_arn
     ]
   }
 }
