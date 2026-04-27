@@ -37,6 +37,7 @@ module "gc_forms_code_pipeline" {
   # Run database migration process
   custom_post_build_commands = [
     "yarn workspaces focus @gcforms/database",
+    "yarn db:generate",
     "yarn db:prod"
   ]
 
