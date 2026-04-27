@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.43.6](https://github.com/cds-snc/forms-terraform/compare/v3.43.5...v3.43.6) (2026-04-27)
+
+
+### Miscellaneous Chores
+
+* add db:generate command to AWS CodeBuild for the GC Forms web app ([#1316](https://github.com/cds-snc/forms-terraform/issues/1316)) ([0514ef0](https://github.com/cds-snc/forms-terraform/commit/0514ef05b912cd7945dc5e249738ae4b34cb7d33))
+* update AWS CodeBuild to leverage new GC Forms database (Prisma) package ([#1293](https://github.com/cds-snc/forms-terraform/issues/1293)) ([4e4e940](https://github.com/cds-snc/forms-terraform/commit/4e4e940908a587b37cc0f8fef2aedb1058784025))
+
 ## [3.43.5](https://github.com/cds-snc/forms-terraform/compare/v3.43.4...v3.43.5) (2026-04-22)
 
 
