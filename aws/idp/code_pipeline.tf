@@ -1,12 +1,12 @@
 module "user_portal_code_pipeline" {
   count                          = var.env == "production" ? 0 : 1
+  region                         = var.region
   source                         = "../modules/code_pipeline"
   vpc_id                         = var.vpc_id
   code_build_security_group_id   = var.code_build_security_group_id
   private_subnet_ids             = var.private_subnet_ids
   app_name                       = "idp-user-portal"
   github_repo_name               = "cds-snc/platform-unified-accounts-user-portal"
-  app_ecr_name                   = "idp/user_portal"
   app_ecr_url                    = var.idp_login_ecr_url
   ecs_cluster_name               = aws_ecs_cluster.idp.name
   ecs_service_name               = aws_ecs_service.user_portal[0].name

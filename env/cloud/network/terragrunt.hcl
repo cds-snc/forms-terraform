@@ -34,18 +34,18 @@ include "root" {
 generate "network" {
   path      = "network.tf"
   if_exists = "overwrite"
-  contents  = local.env == "development" ? file("../../../aws/network/development_env/network.tf") : file("../../../aws/network/network.tf")
+  contents  = local.env == "development" ? file("../../../aws/network/.development_env/network.tf") : local.env == "staging" ? file("../../../aws/network/.staging_env/network.tf") : file("../../../aws/network/network.tf")
 }
 
 generate "firewall" {
   path      = "firewall.tf"
   if_exists = "overwrite"
-  contents  = local.env == "development" ? file("../../../aws/network/development_env/firewall.tf") : file("../../../aws/network/firewall.tf")
+  contents  = local.env == "staging" ? file("../../../aws/network/firewall.tf") : file("../../../aws/network/.development_env/firewall.tf")
 }
 
 generate "vpc_endpoints" {
   path      = "vpc_endpoints.tf"
   if_exists = "overwrite"
-  contents  = local.env == "development" ? file("../../../aws/network/development_env/vpc_endpoints.tf") : file("../../../aws/network/vpc_endpoints.tf")
+  contents  = local.env == "development" ? file("../../../aws/network/.development_env/vpc_endpoints.tf") : file("../../../aws/network/vpc_endpoints.tf")
 }
 

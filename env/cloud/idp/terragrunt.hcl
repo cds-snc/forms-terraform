@@ -109,8 +109,8 @@ inputs = {
   idp_database_max_acu = 4
 
   # Overwritten in GitHub Actions by TFVARS
-  idp_login_service_user_token    = "ServiceUserTokenValue"
-  gc_template_id                  = "0123456789"
+  idp_login_service_user_token = "ServiceUserTokenValue"
+  gc_template_id               = "0123456789"
 }
 
 include "root" {

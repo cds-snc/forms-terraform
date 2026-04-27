@@ -1,3 +1,7 @@
+variable "region" {
+  description = "The current AWS region"
+  type        = string
+}
 
 variable "private_subnet_ids" {
   description = "The list of private subnet IDs used by the RDS cluster to"
@@ -21,11 +25,6 @@ variable "app_name" {
 
 variable "github_repo_name" {
   description = "GitHub repo name for the app repository"
-  type        = string
-}
-
-variable "app_ecr_name" {
-  description = "ECR repository name for the app"
   type        = string
 }
 
