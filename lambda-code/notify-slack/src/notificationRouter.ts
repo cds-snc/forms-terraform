@@ -150,7 +150,7 @@ function isWithinBusinessHours(): boolean {
     const hour = Number(dateParts.find((p) => p.type === "hour")?.value);
 
     const isWeekday = ["Mon", "Tue", "Wed", "Thu", "Fri"].includes(weekday!); // Monday to Friday
-    const isWithinHours = hour >= 8 && hour < 15; // Between 8 AM and 4 PM
+    const isWithinHours = hour >= 8 && hour < 16; // Between 8 AM and 4 PM
 
     return isWeekday && isWithinHours;
   } catch (error) {
