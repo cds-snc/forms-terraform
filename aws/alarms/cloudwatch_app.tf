@@ -419,6 +419,10 @@ locals {
       function_name  = var.lambda_vault_integrity_function_name
       log_group_name = var.lambda_vault_integrity_log_group_name
     }
+    notification = {
+      function_name  = var.lambda_vault_notification_function_name
+      log_group_name = var.lambda_notification_log_group_name
+    }
   }
 }
 

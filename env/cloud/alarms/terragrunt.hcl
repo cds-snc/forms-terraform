@@ -117,6 +117,7 @@ dependency "lambdas" {
     lambda_submission_function_name                = "Submission"
     lambda_submission_log_group_name               = "/aws/lambda/Submission"
     lambda_vault_integrity_function_name           = "vault-integrity"
+    lambda_notification_log_group_name             = "/aws/lambda/Notification"
     lambda_vault_integrity_log_group_name          = "/aws/lambda/Vault_Data_Integrity_Check"
   }
 }
@@ -247,6 +248,7 @@ inputs = {
   lambda_submission_function_name                = dependency.lambdas.outputs.lambda_submission_function_name
   lambda_submission_log_group_name               = dependency.lambdas.outputs.lambda_submission_log_group_name
   lambda_vault_integrity_function_name           = dependency.lambdas.outputs.lambda_vault_integrity_function_name
+  lambda_notification_log_group_name             = dependency.lambdas.outputs.lambda_notification_log_group_name
   lambda_vault_integrity_log_group_name          = dependency.lambdas.outputs.lambda_vault_integrity_log_group_name
   lambda_submission_expect_invocation_in_period  = 30
 
