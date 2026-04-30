@@ -14,7 +14,7 @@
     "@aws-sdk/client-sqs": "^3.901.0",
     "@aws-sdk/lib-dynamodb": "^3.902.0",
     "@aws-sdk/s3-presigned-post": "^3.901.0",
-    "uuid": "^11.1.0"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.155",

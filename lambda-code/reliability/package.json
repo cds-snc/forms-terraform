@@ -19,7 +19,7 @@
     "@gcforms/types": "^1.0.23",
     "json2md": "^2.0.3",
     "magic-bytes.js": "^1.12.1",
-    "uuid": "^11.1.0"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.155",
