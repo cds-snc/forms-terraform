@@ -28,7 +28,7 @@ runs:
 
     - name: Login to Staging Amazon ECR
       id: login-ecr-staging
-      uses: aws-actions/amazon-ecr-login@f2e9fc6c2b355c1890b65e6f6f0e2ac3e6e22f78 # v2.1.2
+      uses: aws-actions/amazon-ecr-login@19d944daaa35f0fa1d3f7f8af1d3f2e5de25c5b7 # v2.1.4
 
     - name: Download ECS task definition
       shell: bash
