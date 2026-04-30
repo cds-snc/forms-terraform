@@ -25,7 +25,7 @@ resource "aws_lambda_function" "form_archiver" {
   environment {
     variables = {
       REGION = var.region
-      DB_URL = var.database_url_secret_arn
+      DB_URL = var.database_connection_url_secret_arn
     }
   }
 

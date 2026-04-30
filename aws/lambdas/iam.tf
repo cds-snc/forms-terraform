@@ -187,7 +187,7 @@ data "aws_iam_policy_document" "lambda_secrets" {
 
     resources = [
       var.notify_api_key_secret_arn,
-      var.database_url_secret_arn,
+      var.database_connection_url_secret_arn,
     ]
   }
 }
