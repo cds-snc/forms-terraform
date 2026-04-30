@@ -26,7 +26,7 @@ resource "aws_lambda_function" "nagware" {
       REGION                    = var.region
       DOMAIN                    = var.domains[0]
       DYNAMODB_VAULT_TABLE_NAME = var.dynamodb_vault_table_name
-      DB_URL                    = var.database_url_secret_arn
+      DATABASE_URL              = var.database_connection_url_secret_value
       NOTIFY_API_KEY            = var.notify_api_key_secret_arn
       REDIS_URL                 = "redis://${var.redis_url}:${var.redis_port}"
       TEMPLATE_ID               = var.gc_template_id

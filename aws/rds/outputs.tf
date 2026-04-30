@@ -15,6 +15,12 @@ output "database_connection_url_secret_arn" {
   value       = aws_secretsmanager_secret_version.database_connection_url.arn
 }
 
+output "database_connection_url_secret_value" {
+  description = "Value of the database URL used to connect to Postgres"
+  value       = aws_secretsmanager_secret_version.database_connection_url.secret_string
+  sensitive   = true
+}
+
 output "rds_cluster_arn" {
   description = "RDS cluster ARN"
   value       = aws_rds_cluster.forms.arn

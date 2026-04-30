@@ -18,7 +18,7 @@ resource "aws_lambda_function" "prisma_migration" {
 
   environment {
     variables = {
-      DB_URL_SECRET_ARN     = var.database_url_secret_arn
+      DB_URL_SECRET_ARN     = var.database_connection_url_secret_value // This lambda is not used anymore and will be removed in https://github.com/cds-snc/forms-terraform/pull/1303
       PRISMA_S3_BUCKET_NAME = var.prisma_migration_storage_id
     }
   }
