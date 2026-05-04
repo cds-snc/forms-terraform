@@ -24,7 +24,7 @@ resource "aws_secretsmanager_secret" "database_connection_url" {
 
 resource "aws_secretsmanager_secret_version" "database_connection_url" {
   secret_id     = aws_secretsmanager_secret.database_connection_url.id
-  secret_string = "postgres://${var.rds_db_user}:${var.rds_db_password}@${aws_rds_cluster.forms.endpoint}:5432/${var.rds_db_name}?sslmode=prefer&uselibpqcompat=true"
+  secret_string = "postgres://${var.rds_db_user}:${var.rds_db_password}@${aws_rds_cluster.forms.endpoint}:5432/${var.rds_db_name}"
 }
 
 resource "aws_secretsmanager_secret" "rds_connector" {
