@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.43.7](https://github.com/cds-snc/forms-terraform/compare/v3.43.6...v3.43.7) (2026-05-04)
+
+
+### Bug Fixes
+
+* update database output parameters ([#1321](https://github.com/cds-snc/forms-terraform/issues/1321)) ([904432d](https://github.com/cds-snc/forms-terraform/commit/904432db83b93d7dc312da979d051c79c08906b3))
+
+
+### Miscellaneous Chores
+
+* fix business hours logic in NotifySlack lambda ([#1319](https://github.com/cds-snc/forms-terraform/issues/1319)) ([b55179f](https://github.com/cds-snc/forms-terraform/commit/b55179fbb8a3d8e2d4e589fad5dcc8cd760caf1a))
+* Remove rds ssl configuration ([#1318](https://github.com/cds-snc/forms-terraform/issues/1318)) ([95bf78b](https://github.com/cds-snc/forms-terraform/commit/95bf78b2924c53135ea36153b39e89a4a769eaf0))
+
 ## [3.43.6](https://github.com/cds-snc/forms-terraform/compare/v3.43.5...v3.43.6) (2026-04-27)
 
 
