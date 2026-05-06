@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.43.8](https://github.com/cds-snc/forms-terraform/compare/v3.43.7...v3.43.8) (2026-05-06)
+
+
+### Miscellaneous Chores
+
+* upgrade WAF IP Blocklist and Athena access logs modules to version 11.2.2 ([#1323](https://github.com/cds-snc/forms-terraform/issues/1323)) ([b335603](https://github.com/cds-snc/forms-terraform/commit/b33560347ee249eed694b35baa5dcb4b499c3216))
+
 ## [3.43.7](https://github.com/cds-snc/forms-terraform/compare/v3.43.6...v3.43.7) (2026-05-04)
 
 
