@@ -16,7 +16,7 @@ resource "aws_codebuild_project" "ecs_render" {
 
   environment {
     compute_type                = var.build_compute_type == "large" ? "BUILD_GENERAL1_MEDIUM" : "BUILD_GENERAL1_SMALL"
-    image                       = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
+    image                       = "aws/codebuild/amazonlinux2-x86_64-standard:6.0"
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode             = true
