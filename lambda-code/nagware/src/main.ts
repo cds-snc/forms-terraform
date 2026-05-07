@@ -16,7 +16,7 @@ type NagwareDetection = {
   formTimestamp: number;
   formId: string;
   formName: string;
-  owners: { name?: string; email: string }[];
+  owners: { name: string | null; email: string }[];
 };
 
 export const handler: Handler = async () => {
