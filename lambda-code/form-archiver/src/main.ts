@@ -1,14 +1,16 @@
 import { Handler } from "aws-lambda";
-import { PostgresConnector } from "@gcforms/connectors";
-
-const postgresConnector = await PostgresConnector.defaultUsingPostgresConnectionUrlFromAwsSecret(
-  process.env.DB_URL ?? ""
-);
+import { prisma } from "@gcforms/database";
 
 export const handler: Handler = async () => {
   try {
-    // Delete all form templates that have been marked as archived (has an TTL value that is not null)
-    await postgresConnector.executeSqlStatement()`DELETE FROM "Template" WHERE ttl IS NOT NULL AND ttl < CURRENT_TIMESTAMP`;
+    await prisma.template.deleteMany({
+      where: {
+        ttl: {
+          not: null,
+          lt: new Date(),
+        },
+      },
+    });
 
     console.log(
       JSON.stringify({
