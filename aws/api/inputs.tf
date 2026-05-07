@@ -75,6 +75,12 @@ variable "rds_connection_url_secret_arn" {
   type        = string
   sensitive   = true
 }
+
+variable "database_connection_url_secret_arn" {
+  description = "ARN of the database URL used to connect to Postgres"
+  type        = string
+}
+
 variable "sqs_api_audit_log_queue_arn" {
   description = "SQS audit log queue ARN"
   type        = string
