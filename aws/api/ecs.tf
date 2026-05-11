@@ -30,6 +30,10 @@ locals {
     {
       name      = "FRESHDESK_API_KEY"
       valueFrom = var.freshdesk_api_key_secret_arn
+    },
+    {
+      name      = "DATABASE_URL"
+      valueFrom = var.database_connection_url_secret_arn
     }
   ]
 }
@@ -169,7 +173,8 @@ data "aws_iam_policy_document" "api_ecs_secrets_manager" {
 
     resources = [
       var.zitadel_application_key_secret_arn,
-      var.freshdesk_api_key_secret_arn
+      var.freshdesk_api_key_secret_arn,
+      var.database_connection_url_secret_arn
     ]
   }
 }
