@@ -1,6 +1,6 @@
 #
 # ECS Cluster
-# Fargate cluster that runs the Form viewer app
+# Fargate cluster that runs the GC Forms Web Application and GC Forms API
 #
 resource "aws_ecs_cluster" "forms" {
   name = var.ecs_name
