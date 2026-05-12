@@ -87,20 +87,32 @@ jobs:
         working-directory: env/cloud/ecr
         run: terragrunt run --non-interactive -- apply -auto-approve
 
-  detect-lambda-changes:
-    needs: terragrunt-apply-ecr-only
+  find-lambdas-to-deploy:
     runs-on: ubuntu-latest
     outputs:
-      lambda-to-rebuild: ${{ steps.filter.outputs.changes }}
+      lambdas: ${{ steps.set-job-output.outputs.lambdas }}
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
-      - name: Filter
-        id: filter
+      - name: Find modified Lambdas
+        if: github.event_name != 'workflow_dispatch'
+        id: filtered-lambdas
         uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590 # v3.0.3
         with:
           filters: .github/lambda-filter.yml
+
+      - name: Find all Lambdas
+        if: github.event_name == 'workflow_dispatch'
+        id: all-lambdas
+        run: echo "changes=$(yq 'keys | .[]' .github/lambda-filter.yml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+
+      - name: Set job output
+        id: set-job-output
+        env:
+          FILTERED_LAMBDAS: ${{ steps.filtered-lambdas.outputs.changes }}
+          ALL_LAMBDAS: ${{ steps.all-lambdas.outputs.changes }}
+        run: echo "lambdas=${FILTERED_LAMBDAS:-$ALL_LAMBDAS}" >> $GITHUB_OUTPUT
 
   detect-idp-changes:
     needs: terragrunt-apply-ecr-only
@@ -120,14 +132,14 @@ jobs:
               - 'idp/**'
 
   build-tag-push-lambda-images:
-    needs: detect-lambda-changes
-    if: ${{ needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]' }}
+    needs: find-lambdas-to-deploy
+    if: ${{ needs.find-lambdas-to-deploy.outputs.lambdas != '[]' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       max-parallel: 4 # Limits parallel matrix jobs
       matrix:
-        image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
+        image: ${{ fromJSON(needs.find-lambdas-to-deploy.outputs.lambdas) }}
 
     steps:
       - name: Checkout
@@ -282,13 +294,13 @@ jobs:
         run: terragrunt run --non-interactive -- apply -auto-approve
 
   update-lambda-function-image:
-    needs: [detect-lambda-changes, terragrunt-apply-all-modules]
-    if: ${{ needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]' && !failure() && !cancelled() }}
+    needs: [find-lambdas-to-deploy, terragrunt-apply-all-modules]
+    if: ${{ needs.find-lambdas-to-deploy.outputs.lambdas != '[]' && !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
+        image: ${{ fromJSON(needs.find-lambdas-to-deploy.outputs.lambdas) }}
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
