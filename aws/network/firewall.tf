@@ -93,7 +93,7 @@ resource "aws_networkfirewall_logging_configuration" "forms_flow" {
         logGroup = aws_cloudwatch_log_group.forms_flow.name
       }
       log_destination_type = "CloudWatchLogs"
-      log_type             = "ALERT"
+      log_type             = "FLOW"
     }
   }
 }
