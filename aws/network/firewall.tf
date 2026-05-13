@@ -70,7 +70,7 @@ resource "aws_networkfirewall_rule_group" "suricata_rules" {
 
 }
 
-resource "aws_networkfirewall_logging_configuration" "forms_alert" {
+resource "aws_networkfirewall_logging_configuration" "forms" {
   firewall_arn                = aws_networkfirewall_firewall.forms.arn
   enable_monitoring_dashboard = true
   logging_configuration {
@@ -81,13 +81,7 @@ resource "aws_networkfirewall_logging_configuration" "forms_alert" {
       log_destination_type = "CloudWatchLogs"
       log_type             = "ALERT"
     }
-  }
-}
 
-resource "aws_networkfirewall_logging_configuration" "forms_flow" {
-  firewall_arn                = aws_networkfirewall_firewall.forms.arn
-  enable_monitoring_dashboard = true
-  logging_configuration {
     log_destination_config {
       log_destination = {
         logGroup = aws_cloudwatch_log_group.forms_flow.name
