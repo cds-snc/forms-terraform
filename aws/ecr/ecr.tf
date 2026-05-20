@@ -49,7 +49,6 @@ locals {
     "response-archiver-lambda",
     "submission-lambda",
     "vault-integrity-lambda",
-    "prisma-migration-lambda",
     "api-end-to-end-test-lambda",
     "file-upload-processor-lambda",
     "file-upload-cleanup-lambda",
