@@ -1,5 +1,29 @@
 # Changelog
 
+## [3.43.9](https://github.com/cds-snc/forms-terraform/compare/v3.43.8...v3.43.9) (2026-05-14)
+
+
+### Bug Fixes
+
+* **deps:** update dependency uuid to v13 [security] ([#1310](https://github.com/cds-snc/forms-terraform/issues/1310)) ([6ac3355](https://github.com/cds-snc/forms-terraform/commit/6ac3355693c01dbbceeec1fa5ef23bc251ab448c))
+* network firewall logging configuration should be specified in the same Terraform resource ([#1332](https://github.com/cds-snc/forms-terraform/issues/1332)) ([6976ab4](https://github.com/cds-snc/forms-terraform/commit/6976ab461e190b0393a1957a238f1004524d9430))
+* set log type to FLOW instead of ALERT for the forms flow log group ([#1331](https://github.com/cds-snc/forms-terraform/issues/1331)) ([1399235](https://github.com/cds-snc/forms-terraform/commit/139923526063ffa43e1e6c0751964a49623a2823))
+
+
+### Miscellaneous Chores
+
+* add new database connection URL as env var for the API service ([#1311](https://github.com/cds-snc/forms-terraform/issues/1311)) ([0e9873d](https://github.com/cds-snc/forms-terraform/commit/0e9873d1fb43aa64c76be89765975c0214dcceb4))
+* delete legacy IDP user portal ([#1324](https://github.com/cds-snc/forms-terraform/issues/1324)) ([63a128d](https://github.com/cds-snc/forms-terraform/commit/63a128dc4076a07a9c128284648e5b4402ff2f8a))
+* **deps:** lock file maintenance ([#1315](https://github.com/cds-snc/forms-terraform/issues/1315)) ([e14a7a8](https://github.com/cds-snc/forms-terraform/commit/e14a7a801b98f0752c3af5a609a3390c4b087fd4))
+* **deps:** update all non-major github action dependencies ([#1314](https://github.com/cds-snc/forms-terraform/issues/1314)) ([08bd841](https://github.com/cds-snc/forms-terraform/commit/08bd84125bd423f20ea6a7518d356a4f0a346d8a))
+* **deps:** update all patch dependencies ([#1313](https://github.com/cds-snc/forms-terraform/issues/1313)) ([6e8cef9](https://github.com/cds-snc/forms-terraform/commit/6e8cef978c5eba31105e52ca0b56943d99b02249))
+* **deps:** update dependency axios to v1.15.2 [security] ([#1322](https://github.com/cds-snc/forms-terraform/issues/1322)) ([1186bf2](https://github.com/cds-snc/forms-terraform/commit/1186bf2077f65c3f1e34c25b079e682c578c0218))
+* replace PostgresConnector with Prisma through new @gcforms/database package ([#1308](https://github.com/cds-snc/forms-terraform/issues/1308)) ([9617402](https://github.com/cds-snc/forms-terraform/commit/96174024a78049551bf219fe70279c04a849a8ae))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1328](https://github.com/cds-snc/forms-terraform/issues/1328)) ([b22db42](https://github.com/cds-snc/forms-terraform/commit/b22db42922c29455042475fffe5dd658117198ae))
+* ugprade Aurora ProtgreSQL engine version to 16.11 to match what is now running in Staging and Production ([#1327](https://github.com/cds-snc/forms-terraform/issues/1327)) ([616abcd](https://github.com/cds-snc/forms-terraform/commit/616abcdef2b7c9fb186e917e8b56142157a02b35))
+* update Staging apply Github workflow to force deploy all Lambda functions on manual trigger ([#1330](https://github.com/cds-snc/forms-terraform/issues/1330)) ([b48741a](https://github.com/cds-snc/forms-terraform/commit/b48741a67ee0671e26cc3b18f6bc62e16b67fc06))
+* upgrade WAF IP Blocklist module to version 11.2.3 ([#1334](https://github.com/cds-snc/forms-terraform/issues/1334)) ([8b95bbb](https://github.com/cds-snc/forms-terraform/commit/8b95bbbffdb19e34165f70a199ab2f9e143cfd04))
+
 ## [3.43.8](https://github.com/cds-snc/forms-terraform/compare/v3.43.7...v3.43.8) (2026-05-06)
 
 

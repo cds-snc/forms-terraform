@@ -88,11 +88,6 @@ variable "zitadel_image_tag" {
   type        = string
 }
 
-variable "zitadel_organization" {
-  description = "The Zitadel organization used by the user portal service."
-  type        = string
-}
-
 variable "zitadel_secret_key" {
   description = "The secret key to use for Zitadel."
   type        = string
@@ -106,47 +101,5 @@ variable "vpc_id" {
 
 variable "service_discovery_private_dns_namespace_ecs_local_id" {
   description = "Local ECS service discovery private DNS namespace ID"
-  type        = string
-}
-
-variable "service_discovery_private_dns_namespace_ecs_local_name" {
-  description = "Local ECS service discovery private DNS namespace name"
-  type        = string
-}
-
-#####################
-## IDP Hosted Login
-#####################
-
-
-variable "idp_login_ecr_url" {
-  description = "The Hosted Login Docker image ECR repository URL."
-  type        = string
-}
-
-variable "idp_login_service_user_token" {
-  description = "The service user token that allows communication with the Zitadel API"
-  type        = string
-  sensitive   = true
-}
-
-variable "kms_key_cloudwatch_arn" {
-  description = "CloudWatch KMS key ARN, used by the ECS task's CloudWatch log group"
-  type        = string
-}
-
-variable "code_build_security_group_id" {
-  description = "Code Build Security Group"
-  type        = string
-}
-
-variable "notify_api_key_secret_arn" {
-  description = "The Notify API key secret used by the ECS task and Lambda arn"
-  type        = string
-  sensitive   = true
-}
-
-variable "gc_template_id" {
-  description = "GC Notify send a notification templateID"
   type        = string
 }
