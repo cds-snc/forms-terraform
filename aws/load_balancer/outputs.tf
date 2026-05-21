@@ -48,6 +48,21 @@ output "lb_target_group_api_arn_suffix" {
   value       = aws_lb_target_group.forms_api.arn_suffix
 }
 
+output "lb_target_group_2_api_arn_suffix" {
+  description = "Load balancer target group 2 ARN suffix for the API"
+  value       = aws_lb_target_group.forms_api_2.arn_suffix
+}
+
+output "lb_api_target_group_1_name" {
+  description = "Load balancer API target group 1 name, used by CodeDeploy to alternate blue/green deployments"
+  value       = aws_lb_target_group.forms_api.name
+}
+
+output "lb_api_target_group_2_name" {
+  description = "Load balancer API target group 2 name, used by CodeDeploy to alternate blue/green deployments"
+  value       = aws_lb_target_group.forms_api_2.name
+}
+
 output "kinesis_firehose_waf_logs_arn" {
   description = "Kinesis Firehose delivery stream ARN used to collect and write WAF ACL logs to an S3 bucket."
   value       = aws_kinesis_firehose_delivery_stream.firehose_waf_logs.arn

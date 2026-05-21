@@ -13,6 +13,11 @@ variable "dynamodb_vault_arn" {
   type        = string
 }
 
+variable "ecs_service_name" {
+  description = "Name of the API service within the cluster"
+  type        = string
+}
+
 variable "ecs_cluster_name" {
   description = "ARN of the ECS cluster for the API"
   type        = string
@@ -23,8 +28,23 @@ variable "kms_key_dynamodb_arn" {
   type        = string
 }
 
+variable "lb_https_listener_arn" {
+  description = "Load balancer HTTPS listener ARN"
+  type        = string
+}
+
 variable "lb_target_group_arn_api_ecs" {
   description = "ARN of the load balancer target group for the API ECS service"
+  type        = string
+}
+
+variable "lb_target_group_1_name" {
+  description = "Load balancer target group 1 name, used by CodeDeploy to alternate blue/green deployments"
+  type        = string
+}
+
+variable "lb_target_group_2_name" {
+  description = "Load balancer target group 2 name, used by CodeDeploy to alternate blue/green deployments"
   type        = string
 }
 
@@ -98,4 +118,14 @@ variable "ecs_idp_service_name" {
 variable "ecs_idp_service_port" {
   description = "IdP's ECS service port"
   type        = number
+}
+
+variable "vpc_id" {
+  description = "The VPC ID to create the resources in."
+  type        = string
+}
+
+variable "code_build_security_group_id" {
+  description = "Code Build Security Group"
+  type        = string
 }

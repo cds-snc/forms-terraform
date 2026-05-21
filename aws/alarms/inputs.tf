@@ -213,6 +213,11 @@ variable "lb_api_target_group_arn_suffix" {
   type        = string
 }
 
+variable "lb_api_target_group_2_arn_suffix" {
+  description = "API's load balancer target group 2 ARN suffix, used by response time alarms"
+  type        = string
+}
+
 variable "lb_idp_target_groups_arn_suffix" {
   description = "IdP's load balancer target groups ARN suffixes, used by response time alarms"
   type        = map(string)
@@ -278,7 +283,7 @@ variable "threshold_ecs_memory_utilization_high" {
 
 variable "threshold_lb_response_time" {
   description = "Load balancer response time, in seconds, above which an alarm is triggered (10 minute period)"
-  type        = string
+  type        = number
 }
 
 variable "sns_topic_alert_critical_arn" {
