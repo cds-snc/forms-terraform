@@ -1,7 +1,5 @@
 import { GCNotifyConnector } from "@gcforms/connectors";
 
-// TODO: Remember to uncomment Notify connector code below before merging to staging
-
 const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
   process.env.NOTIFY_API_KEY ?? ""
 );
@@ -12,29 +10,30 @@ export const sendNotification = async (
   subject: string,
   body: string
 ): Promise<void> => {
-  await Promise.all(emails.map((emailAddress) => sendEmail(notificationId, emailAddress, subject, body)));
+  await Promise.all(
+    emails.map((emailAddress) => sendEmail(notificationId, emailAddress, subject, body))
+  );
 
   console.log(
     JSON.stringify({
       level: "info",
       msg: "Notification sent successfully",
-      notificationId: notificationId
+      notificationId: notificationId,
     })
   );
 };
 
 const sendEmail = async (
   notificationId: string,
-  emailAddress: string, 
-  subject: string, 
+  emailAddress: string,
+  subject: string,
   body: string
 ): Promise<void> => {
   try {
-    // TODO uncomment before merging to staging
-    // await gcNotifyConnector.sendEmail(emailAddress, process.env.TEMPLATE_ID ?? "", {
-    //     subject: subject,
-    //     emailBody: body,
-    // });
+    await gcNotifyConnector.sendEmail(emailAddress, process.env.TEMPLATE_ID ?? "", {
+      subject: subject,
+      emailBody: body,
+    });
   } catch (error) {
     console.warn(
       JSON.stringify({

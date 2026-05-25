@@ -20,6 +20,7 @@ resource "aws_lambda_function" "notification" {
       REGION                           = var.region
       DYNAMODB_NOTIFICATION_TABLE_NAME = var.dynamodb_notification_table_name
       NOTIFY_API_KEY                   = var.notify_api_key_secret_arn
+      TEMPLATE_ID                      = var.gc_template_id
     }
   }
 
