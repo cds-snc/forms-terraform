@@ -68,6 +68,16 @@ output "lambda_nagware_log_group_name" {
   value       = aws_cloudwatch_log_group.nagware.name
 }
 
+output "lambda_notification_function_name" {
+  description = "Notification Lambda function name"
+  value       = aws_lambda_function.notification.function_name
+}
+
+output "lambda_notification_log_group_name" {
+  description = "Notification Lambda CloudWatch log group name"
+  value       = aws_cloudwatch_log_group.notification.name
+}
+
 output "lambda_reliability_function_name" {
   description = "Reliability Lambda function name"
   value       = aws_lambda_function.reliability.function_name
@@ -121,14 +131,4 @@ output "lambda_vault_integrity_log_group_name" {
 output "forms_lambda_client_iam_role_name" {
   description = "IAM role name for forms client Lambda"
   value       = try(aws_iam_role.forms_lambda_client[0].name, null)
-}
-
-output "lambda_notification_log_group_name" {
-  description = "Notification Lambda CloudWatch log group name"
-  value       = aws_cloudwatch_log_group.notification.name
-}
-
-output "lambda_notification_function_name" {
-  description = "Notification Lambda function name"
-  value       = aws_lambda_function.notification.function_name
 }
