@@ -24,8 +24,6 @@ submission:
   - "lambda-code/submission/**"
 vault-integrity:
   - "lambda-code/vault-integrity/**"
-prisma-migration:
-  - "lambda-code/prisma-migration/**"
 api-end-to-end-test:
   - "lambda-code/api-end-to-end-test/**"
 file-upload-processor:

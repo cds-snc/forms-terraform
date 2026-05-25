@@ -39,7 +39,7 @@ locals {
 }
 
 module "api_ecs" {
-  source = "github.com/cds-snc/terraform-modules//ecs?ref=825c15a16d794bd878e0d11555c0abe6f481f29e" # v10.10.2
+  source = "github.com/cds-snc/terraform-modules//ecs?ref=b78d45257e74dab02c8f100d0023aebfee417720" # v11.3.0
 
   create_cluster = false
   cluster_name   = var.ecs_cluster_name
@@ -51,6 +51,8 @@ module "api_ecs" {
   # This gives precedence to the `cds-snc/forms-api` repo's CI/CD task deployments
   # and prevents the Terraform from undoing deployments.
   service_use_latest_task_def = true
+
+  platform_version = "1.4.0"
 
   # Scaling
   enable_autoscaling       = true
@@ -70,7 +72,6 @@ module "api_ecs" {
     data.aws_iam_policy_document.api_ecs_kms_vault.json,
     data.aws_iam_policy_document.api_ecs_dynamodb_vault.json,
     data.aws_iam_policy_document.api_ecs_s3_vault.json,
-    data.aws_iam_policy_document.api_ecs_secrets_manager_runtime.json,
     data.aws_iam_policy_document.api_sqs.json
   ]
 
@@ -145,20 +146,6 @@ data "aws_iam_policy_document" "api_ecs_s3_vault" {
     resources = [
       var.s3_vault_file_storage_arn,
       "${var.s3_vault_file_storage_arn}/*"
-    ]
-  }
-}
-
-data "aws_iam_policy_document" "api_ecs_secrets_manager_runtime" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "secretsmanager:GetSecretValue",
-    ]
-
-    resources = [
-      var.rds_connection_url_secret_arn
     ]
   }
 }
