@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.43.10](https://github.com/cds-snc/forms-terraform/compare/v3.43.9...v3.43.10) (2026-05-25)
+
+
+### Miscellaneous Chores
+
+* delete legacy server-database-url secret ([#1312](https://github.com/cds-snc/forms-terraform/issues/1312)) ([d95703e](https://github.com/cds-snc/forms-terraform/commit/d95703ea0c2992fe9e9100eea8226f5751d18896))
+* delete old Prisma migration solution ([#1303](https://github.com/cds-snc/forms-terraform/issues/1303)) ([a33b93e](https://github.com/cds-snc/forms-terraform/commit/a33b93ea356457787f1283565ba17ce5737cdb22))
+* **deps:** update all non-major github action dependencies ([#1336](https://github.com/cds-snc/forms-terraform/issues/1336)) ([9e896b8](https://github.com/cds-snc/forms-terraform/commit/9e896b8ffaf3190a4f70dd814975ae28c953b428))
+* set ECS platform version to 1.4.0 to prepare for the switch to AWS CodeDeploy ([#1340](https://github.com/cds-snc/forms-terraform/issues/1340)) ([6c9c33b](https://github.com/cds-snc/forms-terraform/commit/6c9c33ba60022659506680e1731f5fcaf20dc6ad))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1339](https://github.com/cds-snc/forms-terraform/issues/1339)) ([06e2c5d](https://github.com/cds-snc/forms-terraform/commit/06e2c5debdb3c6aa00afe101a728be1333b92b65))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1342](https://github.com/cds-snc/forms-terraform/issues/1342)) ([193f7e3](https://github.com/cds-snc/forms-terraform/commit/193f7e325b3a8deca25e363dcb73a94c6ea85d4d))
+
 ## [3.43.9](https://github.com/cds-snc/forms-terraform/compare/v3.43.8...v3.43.9) (2026-05-14)
 
 
