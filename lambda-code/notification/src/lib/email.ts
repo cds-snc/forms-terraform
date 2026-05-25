@@ -32,7 +32,7 @@ const sendEmail = async (
   try {
     await gcNotifyConnector.sendEmail(emailAddress, process.env.TEMPLATE_ID ?? "", {
       subject: subject,
-      emailBody: body,
+      formResponse: body,
     });
   } catch (error) {
     console.warn(
