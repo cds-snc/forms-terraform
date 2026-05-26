@@ -114,6 +114,10 @@
         "value": "${audit_log_queue_url}"
       },
       {
+        "name": "NOTIFICATION_QUEUE_URL",
+        "value": "${notification_queue_url}"
+      },
+      {
         "name": "ZITADEL_URL",
         "value": "${zitadel_url}"
       },
