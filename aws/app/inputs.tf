@@ -33,6 +33,11 @@ variable "dynamodb_app_audit_logs_arn" {
   type        = string
 }
 
+variable "dynamodb_notification_arn" {
+  description = "ARN of the Notification DynamoDB table"
+  type        = string
+}
+
 variable "ecs_autoscale_enabled" {
   description = "Should memory/CPU threshold ECS task scaling be enabled"
   type        = bool

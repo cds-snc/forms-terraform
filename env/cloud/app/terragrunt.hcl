@@ -12,10 +12,11 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_reliability_queue_arn = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ReliabilityQueue"
-    dynamodb_vault_arn             = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault"
-    dynamodb_app_audit_logs_arn    = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/AuditLogs"
-    dynamodb_api_audit_logs_arn    = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ApiAuditLogs"
+    dynamodb_reliability_queue_arn  = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ReliabilityQueue"
+    dynamodb_vault_arn              = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault"
+    dynamodb_app_audit_logs_arn     = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/AuditLogs"
+    dynamodb_api_audit_logs_arn     = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ApiAuditLogs"
+    dynamodb_notification_table_arn = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Notification"
   }
 }
 
@@ -170,6 +171,7 @@ inputs = {
   dynamodb_vault_arn             = dependency.dynamodb.outputs.dynamodb_vault_arn
   dynamodb_app_audit_logs_arn    = dependency.dynamodb.outputs.dynamodb_app_audit_logs_arn
   dynamodb_api_audit_logs_arn    = dependency.dynamodb.outputs.dynamodb_api_audit_logs_arn
+  dynamodb_notification_arn      = dependency.dynamodb.outputs.dynamodb_notification_table_arn
 
   ecr_repository_url_form_viewer = dependency.ecr.outputs.ecr_repository_url_form_viewer
 
