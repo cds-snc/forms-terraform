@@ -43,16 +43,13 @@ module "api_ecs" {
 
   create_cluster = false
   cluster_name   = var.ecs_cluster_name
-  service_name   = "forms-api"
+  service_name   = var.ecs_service_name
   task_cpu       = 2048
   task_memory    = 4096
 
-  # This causes the service to always use the latest ACTIVE task definition.
-  # This gives precedence to the `cds-snc/forms-api` repo's CI/CD task deployments
-  # and prevents the Terraform from undoing deployments.
-  service_use_latest_task_def = true
-
   platform_version = "1.4.0"
+
+  deployment_managed_by_code_deploy = true
 
   # Scaling
   enable_autoscaling       = true
@@ -91,6 +88,12 @@ module "api_ecs" {
 
   billing_tag_key   = var.billing_tag_key
   billing_tag_value = var.billing_tag_value
+}
+
+// Can be removed once GC Forms API deployment process goes through AWS CodePipeline
+moved {
+  from = module.api_ecs.aws_ecs_service.this[0]
+  to   = module.api_ecs.aws_ecs_service.with_code_deploy[0]
 }
 
 #
