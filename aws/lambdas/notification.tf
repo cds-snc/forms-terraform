@@ -4,8 +4,8 @@ resource "aws_lambda_function" "notification" {
   image_uri     = "${var.ecr_repository_lambda_urls["notification-lambda"]}:latest"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
-  timeout       = 300 # lambda can run for up to 5 minutes
-  memory_size   = 512
+  timeout       = 60
+  memory_size   = 256
 
   dynamic "vpc_config" {
     for_each = local.vpc_config
@@ -41,9 +41,11 @@ resource "aws_cloudwatch_log_group" "notification" {
 }
 
 resource "aws_lambda_event_source_mapping" "notification_sqs" {
-  event_source_arn        = var.sqs_notification_queue_arn
-  function_name           = aws_lambda_function.notification.function_name
-  batch_size              = 10
-  enabled                 = true
+  event_source_arn = var.sqs_notification_queue_arn
+  function_name    = aws_lambda_function.notification.function_name
+
   function_response_types = ["ReportBatchItemFailures"]
+
+  batch_size             = 10
+  maximum_retry_attempts = 3
 }
