@@ -1,6 +1,5 @@
 import { saveToVault, removeSubmission } from "./dataLayer.js";
 import { SubmissionAttachmentInformation } from "./file_checksum.js";
-import {} from "./file_scanning.js";
 import { isFileValid } from "./fileValidation.js";
 import {
   copyFilesFromReliabilityToVaultStorage,
@@ -57,20 +56,11 @@ export default async (
         error: (error as Error).message,
       })
     );
+
     throw new Error(`Failed to save submission to Vault.`);
   }
 
-  try {
-    await notification.enqueueDeferred(formID);
-  } catch (error) {
-    console.warn(
-      JSON.stringify({
-        level: "warn",
-        msg: "Failed to enqueue notification message",
-        error: (error as Error).message,
-      })
-    );
-  }
+  await notifyFormOwnersThatNewResponsesAreAvailable(formID);
 
   try {
     await Promise.all([
@@ -164,5 +154,17 @@ function buildSubmissionAttachmentJsonRecord(
         md5: item.md5,
       };
     })
+  );
+}
+
+async function notifyFormOwnersThatNewResponsesAreAvailable(formId: string): Promise<void> {
+  return notification.enqueueDeferred(formId).catch((error) =>
+    console.error(
+      JSON.stringify({
+        level: "error",
+        msg: "Failed to enqueue message for deferred email notification",
+        error: (error as Error).message,
+      })
+    )
   );
 }
