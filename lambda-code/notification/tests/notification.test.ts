@@ -62,7 +62,7 @@ describe("Notification Lambda Handler SQS batch processing", () => {
     // Common case of code queuing a notification but the record may not exist e.g. reliability lambda
     it("should skip notification when record not found", async () => {
       const consoleInfoSpy = vi.spyOn(console, "info");
-      
+
       // Simulate notification not found in DB
       const mockConsumeNotification = vi.spyOn(db, "consumeNotification");
       mockConsumeNotification.mockResolvedValue(undefined);
@@ -82,7 +82,7 @@ describe("Notification Lambda Handler SQS batch processing", () => {
 
     it("should handle partial batch failures correctly", async () => {
       const consoleInfoSpy = vi.spyOn(console, "info");
-      
+
       const mockConsumeNotification = vi.spyOn(db, "consumeNotification");
       mockConsumeNotification
         .mockResolvedValueOnce({
@@ -113,10 +113,22 @@ describe("Notification Lambda Handler SQS batch processing", () => {
 
       const event: SQSEvent = {
         Records: [
-          { messageId: "sqs-messsage-1", body: JSON.stringify({ notificationId: "notificationId-1" }) } as any,
-          { messageId: "sqs-messsage-2", body: JSON.stringify({ notificationId: "notificationId-2" }) } as any,
-          { messageId: "sqs-messsage-3", body: JSON.stringify({ notificationId: "notificationId-3" }) } as any,
-          { messageId: "sqs-messsage-4", body: JSON.stringify({ notificationId: "notificationId-4" }) } as any,
+          {
+            messageId: "sqs-messsage-1",
+            body: JSON.stringify({ notificationId: "notificationId-1" }),
+          } as any,
+          {
+            messageId: "sqs-messsage-2",
+            body: JSON.stringify({ notificationId: "notificationId-2" }),
+          } as any,
+          {
+            messageId: "sqs-messsage-3",
+            body: JSON.stringify({ notificationId: "notificationId-3" }),
+          } as any,
+          {
+            messageId: "sqs-messsage-4",
+            body: JSON.stringify({ notificationId: "notificationId-4" }),
+          } as any,
         ],
       };
 
@@ -126,140 +138,161 @@ describe("Notification Lambda Handler SQS batch processing", () => {
       expect(result.batchItemFailures[0].itemIdentifier).toBe("sqs-messsage-2");
       expect(mockSendNotification).toHaveBeenCalledTimes(3); // Only called for messages 1, 2, 3 (not 4)
       expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining("{\"level\":\"info\",\"status\":\"failed\",\"msg\":\"Failed to process notification\",\"error\":\"Email service error\"}")
+        expect.stringContaining(
+          '{"level":"info","status":"failed","msg":"Failed to process notification","error":"Email service error"}'
+        )
       );
     });
   });
 });
 
 describe("Notification Lambda Handler message data validation", () => {
-    afterEach(() => {
-        vi.clearAllMocks();
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should fail when notification has no Emails", async () => {
+    const consoleInfoSpy = vi.spyOn(console, "info");
+
+    const mockConsumeNotification = vi.spyOn(db, "consumeNotification");
+    mockConsumeNotification.mockResolvedValue({
+      NotificationID: "notificationId-1",
+      Emails: [], // Invalid: empty array
+      Subject: "Test Subject",
+      Body: "Test Body",
     });
 
-    it("should fail when notification has no Emails", async () => {
-      const consoleInfoSpy = vi.spyOn(console, "info");
- 
-      const mockConsumeNotification = vi.spyOn(db, "consumeNotification");
-      mockConsumeNotification.mockResolvedValue({
-        NotificationID: "notificationId-1",
-        Emails: [], // Invalid: empty array
-        Subject: "Test Subject",
-        Body: "Test Body",
-      });
+    const event: SQSEvent = {
+      Records: [
+        {
+          messageId: "sqs-messsage-1",
+          body: JSON.stringify({ notificationId: "notificationId-1" }),
+        } as any,
+      ],
+    };
 
-      const event: SQSEvent = {
-        Records: [
-          {
-            messageId: "sqs-messsage-1",
-            body: JSON.stringify({ notificationId: "notificationId-1" }),
-          } as any,
-        ],
-      };
+    const result = await main.handler(event, {} as any, {} as any);
 
-      const result = await main.handler(event, {} as any, {} as any);
+    expect(result.batchItemFailures).toHaveLength(1);
+    expect(result.batchItemFailures[0].itemIdentifier).toBe("sqs-messsage-1");
 
-      expect(result.batchItemFailures).toHaveLength(1);
-      expect(result.batchItemFailures[0].itemIdentifier).toBe("sqs-messsage-1");
+    expect(consoleInfoSpy).toHaveBeenCalledWith(
+      expect.stringContaining(
+        '{"level":"info","status":"failed","msg":"Failed to process notification","error":"Skipping due to invalid stored data id notificationId-1"}'
+      )
+    );
+  });
 
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining("{\"level\":\"info\",\"status\":\"failed\",\"msg\":\"Failed to process notification\",\"error\":\"Skipping due to invalid stored data id notificationId-1\"}")
-      );
+  it("should fail when emails is undefined", async () => {
+    const consoleInfoSpy = vi.spyOn(console, "info");
+
+    const mockConsumeNotification = vi.spyOn(db, "consumeNotification");
+    mockConsumeNotification.mockResolvedValue({
+      NotificationID: "notificationId-1",
+      Emails: undefined as any, // Invalid: undefined
+      Subject: "Test Subject",
+      Body: "Test Body",
     });
 
-    it("should fail when emails is undefined", async () => {
-      const consoleInfoSpy = vi.spyOn(console, "info");
+    const event: SQSEvent = {
+      Records: [
+        {
+          messageId: "sqs-messsage-1",
+          body: JSON.stringify({ notificationId: "notificationId-1" }),
+        } as any,
+      ],
+    };
 
-      const mockConsumeNotification = vi.spyOn(db, "consumeNotification");
-      mockConsumeNotification.mockResolvedValue({
-        NotificationID: "notificationId-1",
-        Emails: undefined as any, // Invalid: undefined
-        Subject: "Test Subject",
-        Body: "Test Body",
-      });
+    const result = await main.handler(event, {} as any, {} as any);
+    expect(result.batchItemFailures).toHaveLength(1);
 
-      const event: SQSEvent = {
-        Records: [
-          { messageId: "sqs-messsage-1", body: JSON.stringify({ notificationId: "notificationId-1" }) } as any,
-        ],
-      };
+    expect(consoleInfoSpy).toHaveBeenCalledWith(
+      expect.stringContaining(
+        '{"level":"info","status":"failed","msg":"Failed to process notification","error":"Skipping due to invalid stored data id notificationId-1"}'
+      )
+    );
+  });
 
-      const result = await main.handler(event, {} as any, {} as any);
-      expect(result.batchItemFailures).toHaveLength(1);
+  it("should fail when subject is missing", async () => {
+    const consoleInfoSpy = vi.spyOn(console, "info");
 
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining("{\"level\":\"info\",\"status\":\"failed\",\"msg\":\"Failed to process notification\",\"error\":\"Skipping due to invalid stored data id notificationId-1\"}")
-      );      
+    const mockConsumeNotification = vi.spyOn(db, "consumeNotification");
+    mockConsumeNotification.mockResolvedValue({
+      NotificationID: "notificationId-1",
+      Emails: ["test@cds-snc.ca"],
+      Subject: "", // Invalid: empty subject
+      Body: "Test Body",
     });
 
-    it("should fail when subject is missing", async () => {
-      const consoleInfoSpy = vi.spyOn(console, "info");
+    const event: SQSEvent = {
+      Records: [
+        {
+          messageId: "sqs-messsage-1",
+          body: JSON.stringify({ notificationId: "notificationId-1" }),
+        } as any,
+      ],
+    };
 
-      const mockConsumeNotification = vi.spyOn(db, "consumeNotification");
-      mockConsumeNotification.mockResolvedValue({
-        NotificationID: "notificationId-1",
-        Emails: ["test@cds-snc.ca"],
-        Subject: "", // Invalid: empty subject
-        Body: "Test Body",
-      });
+    const result = await main.handler(event, {} as any, {} as any);
+    expect(result.batchItemFailures).toHaveLength(1);
 
-      const event: SQSEvent = {
-        Records: [
-          { messageId: "sqs-messsage-1", body: JSON.stringify({ notificationId: "notificationId-1" }) } as any,
-        ],
-      };
+    expect(consoleInfoSpy).toHaveBeenCalledWith(
+      expect.stringContaining(
+        '{"level":"info","status":"failed","msg":"Failed to process notification","error":"Skipping due to invalid stored data id notificationId-1"}'
+      )
+    );
+  });
 
-      const result = await main.handler(event, {} as any, {} as any);
-      expect(result.batchItemFailures).toHaveLength(1);
+  it("should return false when body is missing", async () => {
+    const consoleInfoSpy = vi.spyOn(console, "info");
 
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining("{\"level\":\"info\",\"status\":\"failed\",\"msg\":\"Failed to process notification\",\"error\":\"Skipping due to invalid stored data id notificationId-1\"}")
-      ); 
+    const mockConsumeNotification = vi.spyOn(db, "consumeNotification");
+    mockConsumeNotification.mockResolvedValue({
+      NotificationID: "notificationId-1",
+      Emails: ["test@cds-snc.ca"],
+      Subject: "Test Subject",
+      Body: undefined as any, // Invalid: undefined body
     });
 
-    it("should return false when body is missing", async () => {
-      const consoleInfoSpy = vi.spyOn(console, "info");
+    const event: SQSEvent = {
+      Records: [
+        {
+          messageId: "sqs-messsage-1",
+          body: JSON.stringify({ notificationId: "notificationId-1" }),
+        } as any,
+      ],
+    };
 
-      const mockConsumeNotification = vi.spyOn(db, "consumeNotification");
-      mockConsumeNotification.mockResolvedValue({
-        NotificationID: "notificationId-1",
-        Emails: ["test@cds-snc.ca"],
-        Subject: "Test Subject",
-        Body: undefined as any, // Invalid: undefined body
-      });
+    const result = await main.handler(event, {} as any, {} as any);
+    expect(result.batchItemFailures).toHaveLength(1);
 
-      const event: SQSEvent = {
-        Records: [
-          { messageId: "sqs-messsage-1", body: JSON.stringify({ notificationId: "notificationId-1" }) } as any,
-        ],
-      };
+    expect(consoleInfoSpy).toHaveBeenCalledWith(
+      expect.stringContaining(
+        '{"level":"info","status":"failed","msg":"Failed to process notification","error":"Skipping due to invalid stored data id notificationId-1"}'
+      )
+    );
+  });
 
-      const result = await main.handler(event, {} as any, {} as any);
-      expect(result.batchItemFailures).toHaveLength(1);
+  it("should handle malformed JSON in message body", async () => {
+    const consoleInfoSpy = vi.spyOn(console, "info");
 
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining("{\"level\":\"info\",\"status\":\"failed\",\"msg\":\"Failed to process notification\",\"error\":\"Skipping due to invalid stored data id notificationId-1\"}")
-      ); 
-    });
+    const event: SQSEvent = {
+      Records: [
+        {
+          messageId: "sqs-messsage-1",
+          body: "not valid json",
+        } as any,
+      ],
+    };
 
-    it("should handle malformed JSON in message body", async () => {
-      const consoleInfoSpy = vi.spyOn(console, "info");
-      
-      const event: SQSEvent = {
-        Records: [
-          {
-            messageId: "sqs-messsage-1",
-            body: "not valid json",
-          } as any,
-        ],
-      };
+    const result = await main.handler(event, {} as any, {} as any);
 
-      const result = await main.handler(event, {} as any, {} as any);
+    expect(result.batchItemFailures).toHaveLength(1);
 
-      expect(result.batchItemFailures).toHaveLength(1);
-
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining("{\"level\":\"info\",\"status\":\"failed\",\"msg\":\"Failed to process notification\",\"error\":\"Unexpected token 'o', \\\"not valid json\\\" is not valid JSON\"}")
-      ); 
-    });    
+    expect(consoleInfoSpy).toHaveBeenCalledWith(
+      expect.stringContaining(
+        '{"level":"info","status":"failed","msg":"Failed to process notification","error":"Unexpected token \'o\', \\"not valid json\\" is not valid JSON"}'
+      )
+    );
+  });
 });
