@@ -198,6 +198,11 @@ variable "sqs_app_audit_log_queue_id" {
   type        = string
 }
 
+variable "sqs_notification_queue_arn" {
+  description = "SQS notification queue ARN"
+  type        = string
+}
+
 variable "sqs_notification_queue_url" {
   description = "SQS notification queue URL"
   type        = string

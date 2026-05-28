@@ -93,6 +93,7 @@ dependency "sqs" {
     sqs_app_audit_log_queue_arn            = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:audit_log_queue"
     sqs_app_audit_log_queue_id             = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/audit_log_queue"
     sqs_reliability_reprocessing_queue_id  = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/reprocess_submission_queue.fifo"
+    sqs_notification_queue_arn             = "arn:aws:sqs:ca-central-1:${local.aws_account_id}:notification_queue"
     sqs_notification_queue_url             = "https://sqs.ca-central-1.amazonaws.com/${local.aws_account_id}/notification_queue"
   }
 }
@@ -198,6 +199,7 @@ inputs = {
   sqs_app_audit_log_queue_arn            = dependency.sqs.outputs.sqs_app_audit_log_queue_arn
   sqs_app_audit_log_queue_id             = dependency.sqs.outputs.sqs_app_audit_log_queue_id
   sqs_reliability_reprocessing_queue_id  = dependency.sqs.outputs.sqs_reliability_reprocessing_queue_id
+  sqs_notification_queue_arn             = dependency.sqs.outputs.sqs_notification_queue_arn
   sqs_notification_queue_url             = dependency.sqs.outputs.sqs_notification_queue_url
 
   cognito_endpoint_url  = dependency.cognito.outputs.cognito_endpoint_url
