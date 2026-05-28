@@ -31,7 +31,6 @@ locals {
     database_url                    = var.database_connection_url_secret_arn
     redis_url                       = var.redis_url
     host_url                        = "https://${var.domains[0]}"
-    reliability_file_storage        = var.reliability_file_storage_id
     gc_temp_token_template_id       = var.gc_temp_token_template_id
     gc_template_id                  = var.gc_template_id
     cognito_endpoint_url            = var.cognito_endpoint_url

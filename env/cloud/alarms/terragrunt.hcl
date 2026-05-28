@@ -42,7 +42,8 @@ dependency "load_balancer" {
     lb_arn_suffix                                     = null
     lb_target_group_1_arn_suffix                      = null
     lb_target_group_2_arn_suffix                      = null
-    lb_target_group_api_arn_suffix                    = null
+    lb_target_group_api_arn_suffix                    = "targetgroup/forms-api/12345678abcdefgh"
+    lb_target_group_2_api_arn_suffix                  = "targetgroup/forms-api/12345678abcdefgh"
     waf_ipv4_new_blocked_ip_metric_filter_name        = "default"
     waf_ipv4_new_blocked_ip_metric_filter_namespace   = "default"
     waf_ipv4_blocklist_lambda_function_name           = "ipv4_blocklist_forms_app"
@@ -197,7 +198,7 @@ dependency "network" {
 inputs = {
   threshold_ecs_cpu_utilization_high    = "50"
   threshold_ecs_memory_utilization_high = "50"
-  threshold_lb_response_time            = "1"
+  threshold_lb_response_time            = 1
 
   hosted_zone_ids = dependency.hosted_zone.outputs.hosted_zone_ids
 
@@ -210,6 +211,7 @@ inputs = {
   lb_target_group_1_arn_suffix                      = dependency.load_balancer.outputs.lb_target_group_1_arn_suffix
   lb_target_group_2_arn_suffix                      = dependency.load_balancer.outputs.lb_target_group_2_arn_suffix
   lb_api_target_group_arn_suffix                    = dependency.load_balancer.outputs.lb_target_group_api_arn_suffix
+  lb_api_target_group_2_arn_suffix                  = dependency.load_balancer.outputs.lb_target_group_2_api_arn_suffix
   waf_ipv4_new_blocked_ip_metric_filter_name        = dependency.load_balancer.outputs.waf_ipv4_new_blocked_ip_metric_filter_name
   waf_ipv4_new_blocked_ip_metric_filter_namespace   = dependency.load_balancer.outputs.waf_ipv4_new_blocked_ip_metric_filter_namespace
   waf_ipv4_blocklist_lambda_function_name           = dependency.load_balancer.outputs.waf_ipv4_blocklist_lambda_function_name

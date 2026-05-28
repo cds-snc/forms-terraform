@@ -46,48 +46,6 @@ data "aws_iam_policy_document" "forms_secrets_manager" {
   }
 }
 
-resource "aws_iam_policy" "forms_s3" {
-  name   = "formsS3Access"
-  path   = "/"
-  policy = data.aws_iam_policy_document.forms_s3.json
-}
-
-data "aws_iam_policy_document" "forms_s3" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:DeleteObject",
-      "s3:GetObject",
-      "s3:PutObject",
-      "s3:ListBucket"
-    ]
-
-    resources = [
-      var.reliability_file_storage_arn,
-      "${var.reliability_file_storage_arn}/*"
-    ]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:ListBucket",
-      "s3:GetObject",
-      "s3:GetObjectTagging",
-      "s3:GetObjectVersion",
-      "s3:GetObjectVersionTagging"
-    ]
-
-    resources = [
-      var.vault_file_storage_arn,
-      "${var.vault_file_storage_arn}/*"
-    ]
-  }
-}
-
-
 resource "aws_iam_policy" "ecs_xray" {
   name        = "ecs_xray"
   path        = "/"
@@ -136,11 +94,6 @@ resource "aws_iam_role_policy_attachment" "kms_forms" {
   policy_arn = aws_iam_policy.forms_kms.arn
 }
 
-resource "aws_iam_role_policy_attachment" "s3_forms" {
-  role       = aws_iam_role.forms.name
-  policy_arn = aws_iam_policy.forms_s3.arn
-}
-
 resource "aws_iam_role_policy_attachment" "dynamodb_forms" {
   role       = aws_iam_role.forms.name
   policy_arn = aws_iam_policy.forms_dynamodb.arn
@@ -165,8 +118,6 @@ resource "aws_iam_role_policy_attachment" "ecs_xray" {
   role       = aws_iam_role.forms.name
   policy_arn = aws_iam_policy.ecs_xray.arn
 }
-
-
 
 #
 # IAM - SQS
@@ -278,31 +229,6 @@ data "aws_iam_policy_document" "forms_audit_logs" {
       "${var.dynamodb_app_audit_logs_arn}/index/*"
     ]
   }
-}
-
-#
-# IAM - Codedeploy
-#
-resource "aws_iam_role" "codedeploy" {
-  name               = "codedeploy"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy_codedeploy.json
-  path               = "/"
-}
-
-data "aws_iam_policy_document" "assume_role_policy_codedeploy" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["codedeploy.amazonaws.com"]
-    }
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "codedeploy" {
-  role       = aws_iam_role.codedeploy.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
 }
 
 #
