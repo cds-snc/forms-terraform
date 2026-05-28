@@ -74,10 +74,6 @@
         "value": "${redis_url}"
       },
       {
-        "name": "RELIABILITY_FILE_STORAGE",
-        "value": "${reliability_file_storage}"
-      },
-      {
         "name": "RECAPTCHA_V3_SITE_KEY",
         "value": "${recaptcha_public}"
       },

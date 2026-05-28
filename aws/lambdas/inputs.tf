@@ -195,11 +195,6 @@ variable "ecs_iam_forms_kms_policy_arn" {
   type        = string
 }
 
-variable "ecs_iam_forms_s3_policy_arn" {
-  description = "IAM policy access to S3"
-  type        = string
-}
-
 variable "ecs_iam_forms_dynamodb_policy_arn" {
   description = "IAM policy for access to DynamoDB"
   type        = string

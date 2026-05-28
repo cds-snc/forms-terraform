@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../cognito", "../secrets", "../s3", "../idp"]
+  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../cognito", "../secrets", "../idp"]
 }
 
 dependency "dynamodb" {
@@ -124,17 +124,6 @@ dependency "secrets" {
   }
 }
 
-dependency "s3" {
-  config_path                             = "../s3"
-  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs_merge_strategy_with_state  = "shallow"
-  mock_outputs = {
-    vault_file_storage_arn       = "arn:aws:s3:::forms-staging-vault-file-storage"
-    reliability_file_storage_id  = "forms-staging-reliability-file-storage"
-    reliability_file_storage_arn = "arn:aws:s3:::forms-staging-reliability-file-storage"
-  }
-}
-
 dependency "idp" {
   config_path = "../idp"
 
@@ -209,10 +198,6 @@ inputs = {
   zitadel_administration_key_secret_arn   = dependency.secrets.outputs.zitadel_administration_key_secret_arn
   sentry_api_key_secret_arn               = dependency.secrets.outputs.sentry_api_key_secret_arn
   hcaptcha_site_verify_key_secret_arn     = dependency.secrets.outputs.hcaptcha_site_verify_key_secret_arn
-
-  vault_file_storage_arn       = dependency.s3.outputs.vault_file_storage_arn
-  reliability_file_storage_arn = dependency.s3.outputs.reliability_file_storage_arn
-  reliability_file_storage_id  = dependency.s3.outputs.reliability_file_storage_id
 
   ecs_idp_service_name = dependency.idp.outputs.ecs_idp_service_name
   ecs_idp_service_port = dependency.idp.outputs.ecs_idp_service_port

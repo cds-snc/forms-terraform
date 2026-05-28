@@ -28,11 +28,6 @@ output "ecs_iam_forms_kms_policy_arn" {
   value       = aws_iam_policy.forms_kms.arn
 }
 
-output "ecs_iam_forms_s3_policy_arn" {
-  description = "IAM policy access to S3"
-  value       = aws_iam_policy.forms_s3.arn
-}
-
 output "ecs_iam_forms_dynamodb_policy_arn" {
   description = "IAM policy for access to DynamoDB"
   value       = aws_iam_policy.forms_dynamodb.arn
