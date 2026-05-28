@@ -254,21 +254,6 @@ variable "email_address_support" {
   type        = string
 }
 
-variable "reliability_file_storage_id" {
-  description = "id of the reliability file storage bucket"
-  type        = string
-}
-
-variable "reliability_file_storage_arn" {
-  description = "arn of the reliability file storage bucket"
-  type        = string
-}
-
-variable "vault_file_storage_arn" {
-  description = "arn of the vault file storage bucket"
-  type        = string
-}
-
 variable "sentry_api_key_secret_arn" {
   description = "The Sentry API key secret used by the ECS task"
   type        = string
