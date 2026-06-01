@@ -46,6 +46,5 @@ resource "aws_lambda_event_source_mapping" "notification_sqs" {
 
   function_response_types = ["ReportBatchItemFailures"]
 
-  batch_size             = 10
-  maximum_retry_attempts = 3
+  batch_size = 10
 }
