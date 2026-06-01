@@ -140,7 +140,8 @@ data "aws_iam_policy_document" "forms_sqs" {
 
     resources = [
       var.sqs_reliability_reprocessing_queue_arn,
-      var.sqs_app_audit_log_queue_arn
+      var.sqs_app_audit_log_queue_arn,
+      var.sqs_notification_queue_arn
     ]
   }
 }
@@ -199,7 +200,8 @@ data "aws_iam_policy_document" "forms_dynamodb" {
     resources = [
       var.dynamodb_reliability_queue_arn,
       var.dynamodb_vault_arn,
-      "${var.dynamodb_vault_arn}/index/*"
+      "${var.dynamodb_vault_arn}/index/*",
+      var.dynamodb_notification_arn
     ]
   }
 }

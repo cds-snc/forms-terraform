@@ -109,6 +109,8 @@ dependency "lambdas" {
     lambda_form_archiver_log_group_name            = "/aws/lambda/Archive_Form_Templates"
     lambda_nagware_function_name                   = "nagware"
     lambda_nagware_log_group_name                  = "/aws/lambda/Nagware"
+    lambda_notification_function_name              = "notification"
+    lambda_notification_log_group_name             = "/aws/lambda/Notification"
     lambda_reliability_function_name               = "reliability"
     lambda_reliability_log_group_name              = "/aws/lambda/Reliability"
     lambda_reliability_dlq_consumer_function_name  = "reliability-dlq-consumer"
@@ -240,6 +242,8 @@ inputs = {
   lambda_form_archiver_log_group_name            = dependency.lambdas.outputs.lambda_form_archiver_log_group_name
   lambda_nagware_function_name                   = dependency.lambdas.outputs.lambda_nagware_function_name
   lambda_nagware_log_group_name                  = dependency.lambdas.outputs.lambda_nagware_log_group_name
+  lambda_notification_function_name              = dependency.lambdas.outputs.lambda_notification_function_name
+  lambda_notification_log_group_name             = dependency.lambdas.outputs.lambda_notification_log_group_name
   lambda_reliability_function_name               = dependency.lambdas.outputs.lambda_reliability_function_name
   lambda_reliability_log_group_name              = dependency.lambdas.outputs.lambda_reliability_log_group_name
   lambda_reliability_dlq_consumer_function_name  = dependency.lambdas.outputs.lambda_reliability_dlq_consumer_function_name
