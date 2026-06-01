@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.43.11](https://github.com/cds-snc/forms-terraform/compare/v3.43.10...v3.43.11) (2026-06-01)
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#1341](https://github.com/cds-snc/forms-terraform/issues/1341)) ([d2fc7bc](https://github.com/cds-snc/forms-terraform/commit/d2fc7bc23eaa52093189d9318e89b1f65f114fff))
+* implement AWS CodePipeline for GC Forms API deployment ([#1333](https://github.com/cds-snc/forms-terraform/issues/1333)) ([f79416e](https://github.com/cds-snc/forms-terraform/commit/f79416ec716b4ac71cc7302727030e04bba11238))
+* remove legacy code deploy IAM role ([#1347](https://github.com/cds-snc/forms-terraform/issues/1347)) ([2a620f0](https://github.com/cds-snc/forms-terraform/commit/2a620f0daeacd2f642a83211570f52bc1792fc40))
+* remove unused access to S3 for the GC Forms App service ([#1345](https://github.com/cds-snc/forms-terraform/issues/1345)) ([b70822f](https://github.com/cds-snc/forms-terraform/commit/b70822fa45e9ad7c2bcae1de67c632bbf3adba3a))
+* remove unused terragrunt input (forgot to remove it in previous commit) ([#1346](https://github.com/cds-snc/forms-terraform/issues/1346)) ([24118fd](https://github.com/cds-snc/forms-terraform/commit/24118fde72c980770fb65404f171e952f271259d))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1344](https://github.com/cds-snc/forms-terraform/issues/1344)) ([9904147](https://github.com/cds-snc/forms-terraform/commit/990414783aa7ce9802dfed6341a3f574d286b532))
+* upgrade WAF IP Blocklist to version 11.3.1 ([#1349](https://github.com/cds-snc/forms-terraform/issues/1349)) ([1d1badf](https://github.com/cds-snc/forms-terraform/commit/1d1badf66d238c7397b432d85d7bf6a7e29ace19))
+
 ## [3.43.10](https://github.com/cds-snc/forms-terraform/compare/v3.43.9...v3.43.10) (2026-05-25)
 
 
