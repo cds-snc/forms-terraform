@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.43.12](https://github.com/cds-snc/forms-terraform/compare/v3.43.11...v3.43.12) (2026-06-01)
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#1348](https://github.com/cds-snc/forms-terraform/issues/1348)) ([2e37aa9](https://github.com/cds-snc/forms-terraform/commit/2e37aa90f5247f2f79a71dbebdf786d4c2b4afae))
+
 ## [3.43.11](https://github.com/cds-snc/forms-terraform/compare/v3.43.10...v3.43.11) (2026-06-01)
 
 
