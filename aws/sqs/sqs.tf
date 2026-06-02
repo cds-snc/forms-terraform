@@ -165,8 +165,8 @@ resource "aws_sqs_queue" "notification_queue" {
   name = "notification_queue"
 
   delay_seconds              = 0    # Messages should be processed right away
-  message_retention_seconds  = 7200 # 2 hours
-  visibility_timeout_seconds = 360  # The SQS visibility timeout must be at least six times the total of the function timeout and the batch window timeout. Lambda function timeout is 60.
+  message_retention_seconds  = 1800 # 30 minutes
+  visibility_timeout_seconds = 300  # 5 minutes (Lambda function timeout is 1 minute)
 
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
