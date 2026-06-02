@@ -1,50 +1,37 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { GetCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
-
-const NOTIFICATION_TABLE = process.env.DYNAMODB_NOTIFICATION_TABLE_NAME ?? "";
-const REGION = process.env.REGION ?? "ca-central-1";
+import { GetCommand } from "@aws-sdk/lib-dynamodb";
+import { Notification } from "@lib/types.js";
 
 const dynamodbClient = new DynamoDBClient({
-  region: REGION,
+  region: process.env.REGION ?? "ca-central-1",
 });
 
-interface Notification {
-  NotificationID: string;
-  Emails: string[];
-  Subject: string;
-  Body: string;
-}
-
-export const consumeNotification = async (
+export const retrieveNotification = async (
   notificationId: string
 ): Promise<Notification | undefined> => {
   try {
     const result = await dynamodbClient.send(
       new GetCommand({
-        TableName: NOTIFICATION_TABLE,
+        TableName: process.env.DYNAMODB_NOTIFICATION_TABLE_NAME ?? "",
         Key: {
           NotificationID: notificationId,
         },
       })
     );
 
-    if (!result.Item) {
+    if (result.Item === undefined) {
       return undefined;
     }
 
-    await dynamodbClient.send(
-      new DeleteCommand({
-        TableName: NOTIFICATION_TABLE,
-        Key: {
-          NotificationID: notificationId,
-        },
-      })
-    );
-
-    return result.Item as Notification;
+    return {
+      id: result.Item.NotificationID,
+      emailRecipients: result.Item.Emails,
+      emailSubject: result.Item.Subject,
+      emailBody: result.Item.Body,
+    };
   } catch (error) {
     throw new Error(
-      `Failed to retrieve notification id ${notificationId}. Reason: ${(error as Error).message}`
+      `Failed to retrieve notification ${notificationId}. Reason: ${(error as Error).message}`
     );
   }
 };

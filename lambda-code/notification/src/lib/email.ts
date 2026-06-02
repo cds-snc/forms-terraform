@@ -1,50 +1,54 @@
 import { GCNotifyConnector } from "@gcforms/connectors";
+import { Notification } from "@lib/types.js";
 
 const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
   process.env.NOTIFY_API_KEY ?? ""
 );
 
-export const sendNotification = async (
-  notificationId: string,
-  emails: string[],
-  subject: string,
-  body: string
-): Promise<void> => {
-  await Promise.all(
-    emails.map((emailAddress) => sendEmail(notificationId, emailAddress, subject, body))
-  );
+export const notifyByEmail = async (notification: Notification): Promise<void> => {
+  const operations = notification.emailRecipients.map((emailAddress) => {
+    return sendEmail(emailAddress, notification.emailSubject, notification.emailBody);
+  });
 
-  console.log(
-    JSON.stringify({
-      level: "info",
-      msg: "Notification sent successfully",
-      notificationId: notificationId,
-    })
-  );
+  const operationResults = await Promise.allSettled(operations);
+
+  const failedOperations = operationResults.filter((r) => r.status === "rejected");
+
+  if (failedOperations.length === notification.emailRecipients.length) {
+    throw new Error("Failed to send notification to all recipients");
+  }
 };
 
-const sendEmail = async (
-  notificationId: string,
-  emailAddress: string,
-  subject: string,
-  body: string
-): Promise<void> => {
-  try {
-    await gcNotifyConnector.sendEmail(emailAddress, process.env.TEMPLATE_ID ?? "", {
+const sendEmail = async (emailAddress: string, subject: string, body: string): Promise<void> => {
+  return gcNotifyConnector
+    .sendEmail(emailAddress, process.env.TEMPLATE_ID ?? "", {
       subject: subject,
       formResponse: body,
-    });
-  } catch (error) {
-    console.warn(
-      JSON.stringify({
-        level: "warn",
-        msg: `Failed to send notification to ${emailAddress}`,
-        notificationId: notificationId,
-        error: (error as Error).message,
-      })
-    );
+    })
+    .catch((error) => {
+      const errorMessage = (error as Error).message;
 
-    // Continue to send notifications even if one fails
-    return;
-  }
+      if (errorMessage.includes("Request timed out")) {
+        console.warn(
+          JSON.stringify({
+            level: "warn",
+            msg: `Request to send email to ${emailAddress} timed out`,
+            error: (error as Error).message,
+          })
+        );
+
+        // We believe the GC Notify API is timing out while processing our request but still sending the email successfully. Therefore, we will treat this error as a successful delivery
+        return;
+      } else {
+        console.error(
+          JSON.stringify({
+            level: "error",
+            msg: `Failed to send email to ${emailAddress}`,
+            error: (error as Error).message,
+          })
+        );
+
+        throw error;
+      }
+    });
 };
