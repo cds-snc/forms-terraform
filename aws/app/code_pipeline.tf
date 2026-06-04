@@ -17,8 +17,15 @@ module "gc_forms_code_pipeline" {
   build_compute_type             = "large"
 
   github_trigger = {
-    mode             = var.env == "production" ? "DeployOnNewTag" : "DeployOnNewCommit"
-    excludeFilePaths = var.env == "production" ? null : [".**", "__*/**", "tests/**"]
+    mode = var.env == "production" ? "DeployOnNewTag" : "DeployOnNewCommit"
+    excludeFilePaths = var.env == "production" ? null : [
+      ".*",
+      ".*/**",
+      "__*/**",
+      "scripts/**",
+      "tests/**",
+      "utils/**"
+    ]
   }
 
   build_env_vars_from_secrets = [

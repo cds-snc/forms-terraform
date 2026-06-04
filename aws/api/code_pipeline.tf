@@ -16,8 +16,14 @@ module "code_pipeline" {
   loadblancer_target_group_names = [var.lb_target_group_1_name, var.lb_target_group_2_name]
 
   github_trigger = {
-    mode             = var.env == "production" ? "DeployOnNewTag" : "DeployOnNewCommit"
-    excludeFilePaths = var.env == "production" ? null : ["test/**"]
+    mode = var.env == "production" ? "DeployOnNewTag" : "DeployOnNewCommit"
+    excludeFilePaths = var.env == "production" ? null : [
+      ".*",
+      ".*/**",
+      "documentation/**",
+      "examples/**",
+      "test/**"
+    ]
   }
 
   depends_on = [module.api_ecs]
