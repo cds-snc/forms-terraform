@@ -413,7 +413,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gcforms/connectors@npm:^2.2.19":
+"@gcforms/connectors@npm:^2.2.20":
   version: 2.2.20
   resolution: "@gcforms/connectors@npm:2.2.20"
   dependencies:
@@ -427,7 +427,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gcforms/database@npm:^1.0.8":
+"@gcforms/database@npm:^1.0.9":
   version: 1.0.9
   resolution: "@gcforms/database@npm:1.0.9"
   dependencies:
@@ -439,7 +439,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gcforms/types@npm:^1.0.30":
+"@gcforms/types@npm:^1.0.31":
   version: 1.0.31
   resolution: "@gcforms/types@npm:1.0.31"
   checksum: 10c0/2b7eeecbda3bb24dbe2bf96d073f886ab752ed78cd76f5d009101661e74139ffe50cdc88830948e6edbb7feba131a020ba75a9e067058cf1e07302aa5c8a7747
@@ -706,7 +706,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.18.8":
+"@types/node@npm:^22.19.19":
   version: 22.19.19
   resolution: "@types/node@npm:22.19.19"
   dependencies:
@@ -1335,11 +1335,11 @@ __metadata:
   dependencies:
     "@aws-sdk/client-dynamodb": "npm:^3.902.0"
     "@aws-sdk/lib-dynamodb": "npm:^3.902.0"
-    "@gcforms/connectors": "npm:^2.2.19"
-    "@gcforms/database": "npm:^1.0.8"
-    "@gcforms/types": "npm:^1.0.30"
+    "@gcforms/connectors": "npm:^2.2.20"
+    "@gcforms/database": "npm:^1.0.9"
+    "@gcforms/types": "npm:^1.0.31"
     "@types/aws-lambda": "npm:^8.10.155"
-    "@types/node": "npm:^22.18.8"
+    "@types/node": "npm:^22.19.19"
     redis: "npm:^4.7.1"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.9.3"

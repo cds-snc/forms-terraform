@@ -976,7 +976,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.18.8":
+"@types/node@npm:^22.19.19":
   version: 22.19.19
   resolution: "@types/node@npm:22.19.19"
   dependencies:
@@ -1224,7 +1224,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.13.2":
+"axios@npm:^1.16.1":
   version: 1.17.0
   resolution: "axios@npm:1.17.0"
   dependencies:
@@ -2236,10 +2236,10 @@ __metadata:
   dependencies:
     "@aws-sdk/client-ssm": "npm:^3.1012.0"
     "@types/aws-lambda": "npm:^8.10.155"
-    "@types/node": "npm:^22.18.8"
+    "@types/node": "npm:^22.19.19"
     "@vitest/coverage-v8": "npm:^3.2.4"
     aws-sdk-client-mock: "npm:^4.1.0"
-    axios: "npm:^1.13.2"
+    axios: "npm:^1.16.1"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.9.3"
     vitest: "npm:^3.2.4"

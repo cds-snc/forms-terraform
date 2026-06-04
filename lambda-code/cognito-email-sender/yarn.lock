@@ -631,7 +631,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gcforms/connectors@npm:^2.2.17":
+"@gcforms/connectors@npm:^2.2.20":
   version: 2.2.20
   resolution: "@gcforms/connectors@npm:2.2.20"
   dependencies:
@@ -813,7 +813,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.18.8":
+"@types/node@npm:^22.19.19":
   version: 22.19.19
   resolution: "@types/node@npm:22.19.19"
   dependencies:
@@ -978,9 +978,9 @@ __metadata:
   resolution: "cognito-email-sender@workspace:."
   dependencies:
     "@aws-crypto/client-node": "npm:^4.2.1"
-    "@gcforms/connectors": "npm:^2.2.17"
+    "@gcforms/connectors": "npm:^2.2.20"
     "@types/aws-lambda": "npm:^8.10.155"
-    "@types/node": "npm:^22.18.8"
+    "@types/node": "npm:^22.19.19"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.9.3"
   languageName: unknown

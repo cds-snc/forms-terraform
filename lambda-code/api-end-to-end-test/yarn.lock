@@ -525,7 +525,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.18.8":
+"@types/node@npm:^22.19.19":
   version: 22.19.19
   resolution: "@types/node@npm:22.19.19"
   dependencies:
@@ -568,8 +568,8 @@ __metadata:
     "@aws-sdk/client-lambda": "npm:^3.901.0"
     "@aws-sdk/lib-dynamodb": "npm:^3.902.0"
     "@types/aws-lambda": "npm:^8.10.155"
-    "@types/node": "npm:^22.18.8"
-    axios: "npm:^1.12.2"
+    "@types/node": "npm:^22.19.19"
+    axios: "npm:^1.16.1"
     jose: "npm:^6.1.0"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.9.3"
@@ -604,7 +604,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.12.2":
+"axios@npm:^1.16.1":
   version: 1.17.0
   resolution: "axios@npm:1.17.0"
   dependencies:

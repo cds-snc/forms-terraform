@@ -48,7 +48,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.18.8":
+"@types/node@npm:^22.19.19":
   version: 22.19.19
   resolution: "@types/node@npm:22.19.19"
   dependencies:
@@ -128,7 +128,7 @@ __metadata:
   resolution: "cognito-pre-sign-up@workspace:."
   dependencies:
     "@types/aws-lambda": "npm:^8.10.155"
-    "@types/node": "npm:^22.18.8"
+    "@types/node": "npm:^22.19.19"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.9.3"
   languageName: unknown
