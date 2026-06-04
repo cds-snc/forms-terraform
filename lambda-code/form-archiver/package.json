@@ -9,11 +9,11 @@
     "build:dev": "tsc --project tsconfig.json --watch"
   },
   "dependencies": {
-    "@gcforms/database": "^1.0.8"
+    "@gcforms/database": "^1.0.9"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.155",
-    "@types/node": "^22.18.8",
+    "@types/node": "^22.19.19",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3"
   },
