@@ -801,7 +801,7 @@ module "waf_ip_blocklist" {
   athena_query_source_bucket       = var.cbs_satellite_bucket_name
   athena_workgroup_name            = "primary"
   waf_rule_ids_skip                = ["BlockLargeRequests", "RateLimitersRuleGroup", "BlockedIPv4"]
-  lb_status_code_skip              = ["404"]
+  lb_status_code_skip              = ["404", "429"]
   athena_lb_table_name             = "lb_logs"
   query_lb                         = true
   query_waf                        = false
