@@ -147,7 +147,7 @@ export async function saveToVault(
             FormSubmissionLanguage: language,
             CreatedAt: Number(createdAt),
             SecurityAttribute: securityAttribute,
-            VersionId: versionId,
+            ...(versionId !== "" && { VersionId: versionId }),
             "Status#CreatedAt": `New#${Number(createdAt)}`,
             ConfirmationCode: confirmationCode,
             Name: name,
