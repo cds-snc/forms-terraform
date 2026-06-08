@@ -27,6 +27,7 @@ Params:
   language - form submission language "fr" or "en",
   responses - form responses: {formID, securityAttribute, questionID: answer}
   securityAttribute - string of security classification
+  versionId - version of the form template being submitted will default to "1" if not provided
 */
 export const handler: Handler = async (submission: AnyObject) => {
   const submissionId = v4();
@@ -133,6 +134,9 @@ const saveSubmission = async (
     const securityAttribute = formData.securityAttribute ?? "Protected A";
     delete formData.securityAttribute;
 
+    const versionId = formData.versionId ?? "1";
+    delete formData.versionId;
+
     const timeStamp = Date.now();
 
     const alteredFormDataAsString = JSON.stringify(formData);
@@ -159,6 +163,7 @@ const saveSubmission = async (
           FormData: alteredFormDataAsString,
           CreatedAt: timeStamp,
           SecurityAttribute: securityAttribute,
+          VersionId: versionId,
           FormSubmissionHash: formResponsesAsHash,
           HasFileKeys: fileKeys !== undefined ? 1 : 0,
           ...(fileKeys !== undefined && { FileKeys: JSON.stringify(fileKeys) }),
