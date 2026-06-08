@@ -78,13 +78,15 @@ export async function retrieveFilesFromReliabilityStorage(filePaths: string[]) {
 export async function copyFilesFromReliabilityToVaultStorage(filePaths: string[]) {
   try {
     for (const filePath of filePaths) {
-      const commandInput = {
-        Bucket: vaultBucketName,
-        CopySource: encodeURI(`${reliabilityBucketName}/${filePath}`),
-        Key: filePath,
-      };
-
-      await s3Client.send(new CopyObjectCommand(commandInput));
+      await s3Client.send(
+        new CopyObjectCommand({
+          Bucket: vaultBucketName,
+          CopySource: [reliabilityBucketName, filePath.split("/").map(encodeURIComponent)]
+            .flat()
+            .join("/"),
+          Key: filePath,
+        })
+      );
     }
   } catch (error) {
     console.error(error);
