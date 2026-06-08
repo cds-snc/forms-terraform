@@ -169,15 +169,14 @@ async function archiveFileAttachments(
 ): Promise<void> {
   try {
     const copyObjectRequests = fileAttachments.map((attachment) => {
+      const lastSlashIndex = attachment.path.lastIndexOf("/");
+      const filePathMinusFileName = attachment.path.slice(0, lastSlashIndex);
+      const fileName = attachment.path.slice(lastSlashIndex + 1);
+
       return s3Client.send(
         new CopyObjectCommand({
           Bucket: ARCHIVING_S3_BUCKET,
-          CopySource: [
-            VAULT_FILE_STORAGE_S3_BUCKET,
-            attachment.path.split("/").map(encodeURIComponent),
-          ]
-            .flat()
-            .join("/"),
+          CopySource: `${VAULT_FILE_STORAGE_S3_BUCKET}/${filePathMinusFileName}/${encodeURIComponent(fileName)}`,
           Key: `${new Date()
             .toISOString()
             .slice(0, 10)}/${formId}/${submissionId}/${submissionId}_${attachment.name}`,
