@@ -265,7 +265,8 @@ resource "aws_cloudwatch_metric_alarm" "alb_ddos" {
 
 resource "aws_cloudwatch_metric_alarm" "route53_ddos" {
   provider = aws.us-east-1
-  count    = length(var.hosted_zone_ids)
+
+  count = length(var.hosted_zone_ids)
 
   alarm_name          = "Route53DDoS"
   comparison_operator = "GreaterThanThreshold"

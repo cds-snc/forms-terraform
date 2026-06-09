@@ -34,7 +34,6 @@ resource "aws_ssm_parameter" "idp_database_cluster_admin_username" {
   name  = "idp_database_cluster_admin_username"
   type  = "SecureString"
   value = var.idp_database_cluster_admin_username
-  tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "idp_database_cluster_admin_password" {
@@ -42,7 +41,6 @@ resource "aws_ssm_parameter" "idp_database_cluster_admin_password" {
   name  = "idp_database_cluster_admin_password"
   type  = "SecureString"
   value = var.idp_database_cluster_admin_password
-  tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "zitadel_database_host" {
@@ -50,7 +48,6 @@ resource "aws_ssm_parameter" "zitadel_database_host" {
   name  = "zitadel_database_host"
   type  = "SecureString"
   value = module.idp_database.rds_cluster_endpoint
-  tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "zitadel_database_name" {
@@ -58,5 +55,4 @@ resource "aws_ssm_parameter" "zitadel_database_name" {
   name  = "zitadel_database_name"
   type  = "SecureString"
   value = var.zitadel_database_name
-  tags  = local.common_tags
 }

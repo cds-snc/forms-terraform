@@ -14,8 +14,6 @@ resource "aws_lb" "idp" {
     prefix  = "lb_logs"
     enabled = true
   }
-
-  tags = local.common_tags
 }
 
 resource "random_string" "idp_alb_tg_suffix" {
@@ -57,8 +55,6 @@ resource "aws_lb_target_group" "idp" {
       stickiness[0].cookie_name
     ]
   }
-
-  tags = local.common_tags
 }
 
 resource "aws_lb_listener" "idp" {
@@ -77,8 +73,6 @@ resource "aws_lb_listener" "idp" {
     aws_acm_certificate_validation.idp,
     aws_route53_record.idp_validation,
   ]
-
-  tags = local.common_tags
 }
 
 resource "aws_lb_listener" "idp_http_redirect" {
@@ -95,8 +89,6 @@ resource "aws_lb_listener" "idp_http_redirect" {
       status_code = "HTTP_301"
     }
   }
-
-  tags = local.common_tags
 }
 
 # Send REST API endpoint requests to the HTTP1 target group

@@ -661,10 +661,10 @@ resource "aws_wafv2_regex_pattern_set" "forms_base_url" {
 
 resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
   # checkov:skip=CKV2_AWS_31: Logging configuration not required
+  provider = aws.us-east-1
+
   name  = "GCFormsMaintenanceMode"
   scope = "CLOUDFRONT"
-
-  provider = aws.us-east-1
 
   default_action {
     block {}
@@ -777,11 +777,11 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
 }
 
 resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {
+  provider = aws.us-east-1
+
   name        = "valid_maintenance_page_uri_paths"
   scope       = "CLOUDFRONT"
   description = "Regex to match the maintenance page valid URIs"
-
-  provider = aws.us-east-1
 
   regular_expression {
     regex_string = "^\\/(index.html|index-fr.html|style.css|site-unavailable.svg|favicon.ico)?$"

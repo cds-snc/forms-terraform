@@ -17,10 +17,6 @@ resource "aws_lb" "form_viewer" {
     prefix  = "lb_logs"
     enabled = true
   }
-
-  tags = {
-    Name = "form_viewer"
-  }
 }
 
 resource "aws_lb_target_group" "form_viewer_1" {
@@ -40,10 +36,6 @@ resource "aws_lb_target_group" "form_viewer_1" {
     timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 2
-  }
-
-  tags = {
-    Name = "form_viewer_1"
   }
 }
 
@@ -65,10 +57,6 @@ resource "aws_lb_target_group" "form_viewer_2" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }
-
-  tags = {
-    Name = "form_viewer_2"
-  }
 }
 
 resource "aws_lb_target_group" "forms_api" {
@@ -89,10 +77,6 @@ resource "aws_lb_target_group" "forms_api" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }
-
-  tags = {
-    Name = "forms_api"
-  }
 }
 
 resource "aws_lb_target_group" "forms_api_2" {
@@ -112,10 +96,6 @@ resource "aws_lb_target_group" "forms_api_2" {
     timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 2
-  }
-
-  tags = {
-    Name = "forms_api_2"
   }
 }
 

@@ -262,7 +262,6 @@ resource "aws_wafv2_web_acl" "idp" {
     metric_name                = "idp"
     sampled_requests_enabled   = true
   }
-  tags = local.common_tags
 }
 
 resource "aws_wafv2_rule_group" "rate_limiters_group_idp" {
@@ -332,8 +331,6 @@ resource "aws_wafv2_rule_group" "rate_limiters_group_idp" {
     metric_name                = "RateLimitersGroup"
     sampled_requests_enabled   = false
   }
-
-  tags = local.common_tags
 }
 
 resource "aws_wafv2_web_acl_association" "idp" {

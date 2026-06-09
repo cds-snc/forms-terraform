@@ -128,7 +128,6 @@ resource "aws_ssm_parameter" "zitadel_secret_key" {
   name  = "zitadel_secret_key"
   type  = "SecureString"
   value = var.zitadel_secret_key
-  tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "zitadel_admin_username" {
@@ -136,7 +135,6 @@ resource "aws_ssm_parameter" "zitadel_admin_username" {
   name  = "zitadel_admin_username"
   type  = "SecureString"
   value = var.zitadel_admin_username
-  tags  = local.common_tags
 }
 
 resource "aws_ssm_parameter" "zitadel_admin_password" {
@@ -144,5 +142,4 @@ resource "aws_ssm_parameter" "zitadel_admin_password" {
   name  = "zitadel_admin_password"
   type  = "SecureString"
   value = var.zitadel_admin_password
-  tags  = local.common_tags
 }
