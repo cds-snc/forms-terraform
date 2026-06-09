@@ -5,6 +5,8 @@ resource "aws_s3_bucket" "codepipeline_bucket" {
   # checkov:skip=CKV2_AWS_61: Lifecycle configuration not required
   bucket        = "${var.app_name}-${local.account_id}-pipeline"
   force_destroy = true
+
+  tags = var.core_tags
 }
 
 resource "aws_s3_bucket_public_access_block" "codepipeline_bucket" {

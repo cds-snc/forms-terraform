@@ -17,6 +17,8 @@ resource "aws_lb" "form_viewer" {
     prefix  = "lb_logs"
     enabled = true
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_lb_target_group" "form_viewer_1" {
@@ -37,6 +39,8 @@ resource "aws_lb_target_group" "form_viewer_1" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_lb_target_group" "form_viewer_2" {
@@ -57,6 +61,8 @@ resource "aws_lb_target_group" "form_viewer_2" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_lb_target_group" "forms_api" {
@@ -77,6 +83,8 @@ resource "aws_lb_target_group" "forms_api" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_lb_target_group" "forms_api_2" {
@@ -97,6 +105,8 @@ resource "aws_lb_target_group" "forms_api_2" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_lb_listener" "form_viewer_https" {
@@ -120,6 +130,8 @@ resource "aws_lb_listener" "form_viewer_https" {
       default_action # updated by codedeploy
     ]
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_lb_listener_certificate" "forms_api_https" {
@@ -141,6 +153,8 @@ resource "aws_lb_listener" "form_viewer_http" {
       status_code = "HTTP_301"
     }
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_alb_listener_rule" "security_txt" {
@@ -162,6 +176,8 @@ resource "aws_alb_listener_rule" "security_txt" {
       values = ["/.well-known/security.txt"]
     }
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_alb_listener_rule" "forms_api" {
@@ -184,4 +200,6 @@ resource "aws_alb_listener_rule" "forms_api" {
       action # updated by codedeploy
     ]
   }
+
+  tags = var.core_tags
 }

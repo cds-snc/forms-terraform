@@ -106,4 +106,6 @@ resource "aws_codepipeline" "this" {
       }
     }
   }
+
+  tags = var.core_tags
 }

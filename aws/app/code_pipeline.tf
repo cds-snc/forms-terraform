@@ -49,5 +49,7 @@ module "gc_forms_code_pipeline" {
     "yarn db:prod"
   ]
 
+  core_tags = var.core_tags
+
   depends_on = [aws_ecs_service.form_viewer, aws_ecs_cluster.forms, aws_ecs_task_definition.form_viewer]
 }

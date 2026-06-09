@@ -8,6 +8,8 @@ resource "aws_security_group" "lambda_client_pr_review" {
   name        = "lambda-admin-pr-review"
   description = "Lambda admin PR review environment"
   vpc_id      = var.vpc_id
+
+  tags = var.core_tags
 }
 
 resource "aws_security_group_rule" "internet_ingress_to_lambda_client" {

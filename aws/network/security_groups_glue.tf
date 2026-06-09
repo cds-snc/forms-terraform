@@ -3,6 +3,8 @@ resource "aws_security_group" "glue_job" {
   description = "AWS Glue jobs"
   name        = "glue_job"
   vpc_id      = aws_vpc.forms.id
+
+  tags = var.core_tags
 }
 ##
 # VPC Endpoints do not exist in development environment

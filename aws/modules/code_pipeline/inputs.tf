@@ -136,3 +136,8 @@ variable "build_compute_type" {
     error_message = "Valid values for 'build_compute_type' are 'small' or 'large'"
   }
 }
+
+variable "core_tags" {
+  description = "Core resource tags"
+  type        = map(string)
+}

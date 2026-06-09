@@ -16,9 +16,12 @@ resource "aws_vpc" "forms" {
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
 
-  tags = {
-    Name = var.vpc_name
-  }
+  tags = merge(
+    {
+      Name = var.vpc_name
+    },
+    var.core_tags
+  )
 }
 
 #
@@ -33,10 +36,13 @@ resource "aws_subnet" "forms_private" {
   cidr_block        = cidrsubnet(var.vpc_cidr_block, 4, count.index)
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
 
-  tags = {
-    Name   = "Private Subnet 0${count.index + 1}"
-    Access = "private"
-  }
+  tags = merge(
+    {
+      Name   = "Private Subnet 0${count.index + 1}"
+      Access = "private"
+    },
+    var.core_tags
+  )
 }
 
 resource "aws_subnet" "forms_public" {
@@ -46,10 +52,13 @@ resource "aws_subnet" "forms_public" {
   cidr_block        = cidrsubnet(var.vpc_cidr_block, 4, count.index + local.subnetCount)
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
 
-  tags = {
-    Name   = "Public Subnet 0${count.index + 1}"
-    Access = "public"
-  }
+  tags = merge(
+    {
+      Name   = "Public Subnet 0${count.index + 1}"
+      Access = "public"
+    },
+    var.core_tags
+  )
 }
 data "aws_subnets" "ecr_endpoint_available" {
   filter {

@@ -4,6 +4,8 @@ resource "aws_s3_bucket" "maintenance_mode" {
   # checkov:skip=CKV2_AWS_61: Lifecycle configuration not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
   bucket = "gc-forms-${var.env}-application-maintenance-page"
+
+  tags = var.core_tags
 }
 
 resource "aws_s3_bucket_ownership_controls" "maintenance_mode" {

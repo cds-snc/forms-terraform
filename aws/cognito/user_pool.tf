@@ -26,6 +26,7 @@ resource "aws_cognito_user_pool" "forms" {
     }
   }
 
+  tags = var.core_tags
 }
 
 resource "aws_cognito_user_pool_client" "forms" {

@@ -188,7 +188,6 @@ resource "aws_wafv2_web_acl" "idp" {
     }
   }
 
-
   rule {
     name     = "BlockedIPv4"
     priority = 7
@@ -218,8 +217,6 @@ resource "aws_wafv2_web_acl" "idp" {
       allow {}
     }
 
-
-
     // statement {
     // The OR statement is commented out until we have more then one domain to check against
     // or_statement {
@@ -248,8 +245,6 @@ resource "aws_wafv2_web_acl" "idp" {
       }
     }
 
-
-
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "InvalidHost"
@@ -262,6 +257,8 @@ resource "aws_wafv2_web_acl" "idp" {
     metric_name                = "idp"
     sampled_requests_enabled   = true
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_wafv2_rule_group" "rate_limiters_group_idp" {

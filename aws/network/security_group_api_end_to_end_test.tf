@@ -2,6 +2,8 @@ resource "aws_security_group" "api_end_to_end_test_lambda" {
   description = "API end to end test Lambda"
   name        = "api_end_to_end_test_lambda"
   vpc_id      = aws_vpc.forms.id
+
+  tags = var.core_tags
 }
 
 resource "aws_vpc_security_group_egress_rule" "local_lambda_to_idp" {

@@ -26,5 +26,7 @@ module "code_pipeline" {
     ]
   }
 
+  core_tags = var.core_tags
+
   depends_on = [module.api_ecs]
 }

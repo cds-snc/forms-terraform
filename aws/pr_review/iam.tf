@@ -16,6 +16,8 @@ resource "aws_iam_policy" "forms_lambda_parameter_store" {
   name   = "formsLambdaParameterStoreRetrieval"
   path   = "/"
   policy = data.aws_iam_policy_document.forms_lambda_parameter_store[0].json
+
+  tags = var.core_tags
 }
 
 resource "aws_iam_role_policy_attachment" "forms_lambda_parameter_store" {

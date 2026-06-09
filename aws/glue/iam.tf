@@ -5,12 +5,16 @@ resource "aws_iam_role" "glue_crawler" {
   name               = "AWSGlueCrawler-DataLake"
   path               = "/service-role/"
   assume_role_policy = data.aws_iam_policy_document.glue_assume.json
+
+  tags = var.core_tags
 }
 
 resource "aws_iam_policy" "glue_crawler" {
   name   = "AWSGlueCrawler-DataLake"
   path   = "/service-role/"
   policy = data.aws_iam_policy_document.glue_crawler_combined.json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "glue_crawler_combined" {
@@ -37,12 +41,16 @@ resource "aws_iam_role" "glue_etl" {
   name               = "AWSGlueETL-DataLake"
   path               = "/service-role/"
   assume_role_policy = data.aws_iam_policy_document.glue_assume.json
+
+  tags = var.core_tags
 }
 
 resource "aws_iam_policy" "glue_etl" {
   name   = "AWSGlueETL-DataLake"
   path   = "/service-role/"
   policy = data.aws_iam_policy_document.glue_etl_combined.json
+
+  tags = var.core_tags
 }
 
 resource "aws_iam_role_policy_attachment" "glue_etl" {
@@ -175,11 +183,15 @@ data "aws_iam_policy_document" "s3_write_data_lake" {
 resource "aws_iam_role" "forms_s3_replicate" {
   name               = "FormsS3ReplicatePlatformDataLake"
   assume_role_policy = data.aws_iam_policy_document.s3_replicate_assume.json
+
+  tags = var.core_tags
 }
 
 resource "aws_iam_policy" "forms_s3_replicate" {
   name   = "FormsS3ReplicatePlatformDataLake"
   policy = data.aws_iam_policy_document.forms_s3_replicate.json
+
+  tags = var.core_tags
 }
 
 resource "aws_iam_role_policy_attachment" "forms_s3_replicate" {

@@ -43,6 +43,8 @@ resource "aws_s3_bucket" "athena_spill_bucket" {
   # checkov:skip=CKV_AWS_18: Access logging not required
   # checkov:skip=CKV_AWS_21: Versioning not required
   bucket = "gc-forms-${var.env}-athena-spill-bucket"
+
+  tags = var.core_tags
 }
 
 resource "aws_s3_bucket_public_access_block" "athena_spill_bucket" {
@@ -195,6 +197,8 @@ resource "aws_iam_role" "athena_dynamodb_role" {
       },
     ]
   })
+
+  tags = var.core_tags
 }
 
 #

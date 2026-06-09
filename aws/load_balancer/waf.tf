@@ -561,6 +561,8 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     metric_name                = "forms_global_rule"
     sampled_requests_enabled   = false
   }
+
+  tags = var.core_tags
 }
 
 // Matches the login paths for cognito /api/auth/signin/cognito OR /api/auth/callback/cognito
@@ -774,6 +776,8 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
     metric_name                = "forms_maintenance_mode_global_rule"
     sampled_requests_enabled   = false
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {

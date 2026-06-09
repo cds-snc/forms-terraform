@@ -6,6 +6,8 @@ resource "aws_iam_policy" "platform_forms_client_pr_review_env" {
   name   = local.platform_forms_client_pr_review_env
   path   = "/"
   policy = data.aws_iam_policy_document.platform_forms_client_pr_review_env[0].json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "platform_forms_client_pr_review_env" {
@@ -119,6 +121,8 @@ resource "aws_iam_policy" "forms_api_release" {
   name   = local.forms_api_release
   path   = "/"
   policy = data.aws_iam_policy_document.ecr_push_image[0].json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "ecr_push_image" {
