@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.43.12](https://github.com/cds-snc/forms-terraform/compare/v3.43.11...v3.43.12) (2026-06-08)
+
+
+### Bug Fixes
+
+* rework source path encoding when copying file between S3 buckets ([#1359](https://github.com/cds-snc/forms-terraform/issues/1359)) ([53765f9](https://github.com/cds-snc/forms-terraform/commit/53765f9b128ef6842d76bb6257759275d1bef019))
+
+
+### Miscellaneous Chores
+
+* add HTTP 429 to WAF IP Blocklist skip list ([#1354](https://github.com/cds-snc/forms-terraform/issues/1354)) ([5fd6e87](https://github.com/cds-snc/forms-terraform/commit/5fd6e87a5f56a85b6434bf034e68c6d11fefa527))
+* **deps:** lock file maintenance ([#1337](https://github.com/cds-snc/forms-terraform/issues/1337)) ([15c48a3](https://github.com/cds-snc/forms-terraform/commit/15c48a313d79292ca435ff02091c0a0911215956))
+* **deps:** update all non-major github action dependencies ([#1348](https://github.com/cds-snc/forms-terraform/issues/1348)) ([2e37aa9](https://github.com/cds-snc/forms-terraform/commit/2e37aa90f5247f2f79a71dbebdf786d4c2b4afae))
+* revisit AWS CodePipeline Github trigger for APP and API services to ignore changes on some files/folders ([#1353](https://github.com/cds-snc/forms-terraform/issues/1353)) ([8af1cc5](https://github.com/cds-snc/forms-terraform/commit/8af1cc5d4087867810513382d9bcc0574caa5ee0))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1352](https://github.com/cds-snc/forms-terraform/issues/1352)) ([932be87](https://github.com/cds-snc/forms-terraform/commit/932be870880537d0f33f28e026b6df93a0a9f079))
+
 ## [3.43.11](https://github.com/cds-snc/forms-terraform/compare/v3.43.10...v3.43.11) (2026-06-01)
 
 
