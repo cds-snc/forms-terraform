@@ -46,7 +46,7 @@ locals {
 }
 
 module "idp_ecs" {
-  source = "github.com/cds-snc/terraform-modules//ecs?ref=825c15a16d794bd878e0d11555c0abe6f481f29e" # v10.10.2
+  source = "github.com/cds-snc/terraform-modules//ecs?ref=94729229cfcb754146c82a566227e55df6612228" # v11.3.5
 
   create_cluster = false
   cluster_name   = aws_ecs_cluster.idp.name

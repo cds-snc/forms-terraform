@@ -2,7 +2,7 @@
 # RDS Postgress cluster
 #
 module "idp_database" {
-  source = "github.com/cds-snc/terraform-modules//rds?ref=64b19ecfc23025718cd687e24b7115777fd09666" # v10.2.1
+  source = "github.com/cds-snc/terraform-modules//rds?ref=94729229cfcb754146c82a566227e55df6612228" # v11.3.5
   name   = "idp"
 
   database_name           = var.zitadel_database_name
