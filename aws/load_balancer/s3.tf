@@ -44,6 +44,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "maintenance_mode"
   bucket = aws_s3_bucket.maintenance_mode.id
 
   rule {
+    blocked_encryption_types = ["NONE"]
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }
