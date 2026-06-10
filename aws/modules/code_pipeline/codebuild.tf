@@ -44,10 +44,6 @@ resource "aws_codebuild_project" "ecs_render" {
     ]
   }
 
-  tags = {
-    Test = "allo"
-  }
-
   depends_on = [aws_iam_role_policy.codepipeline_policy]
 }
 

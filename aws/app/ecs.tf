@@ -61,6 +61,10 @@ resource "aws_ecs_task_definition" "form_viewer" {
   execution_role_arn       = aws_iam_role.forms.arn
   task_role_arn            = aws_iam_role.forms.arn
   container_definitions    = local.container_definitions
+
+  tags = {
+    Name = "allo"
+  }
 }
 
 #
