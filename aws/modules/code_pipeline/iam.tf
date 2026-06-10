@@ -118,7 +118,7 @@ data "aws_iam_policy_document" "codepipeline_policy" {
       "codedeploy:GetDeployment"
     ]
 
-    resources = ["arn:aws:codedeploy:*:${local.account_id}:deploymentgroup:${aws_codedeploy_app.this.name}/*"]
+    resources = ["arn:aws:codedeploy:*:${var.account_id}:deploymentgroup:${aws_codedeploy_app.this.name}/*"]
   }
 
   statement {
@@ -129,8 +129,8 @@ data "aws_iam_policy_document" "codepipeline_policy" {
       "codedeploy:RegisterApplicationRevision"
     ]
     resources = [
-      "arn:aws:codedeploy:*:${local.account_id}:application:${aws_codedeploy_app.this.name}",
-      "arn:aws:codedeploy:*:${local.account_id}:application:${aws_codedeploy_app.this.name}/*"
+      "arn:aws:codedeploy:*:${var.account_id}:application:${aws_codedeploy_app.this.name}",
+      "arn:aws:codedeploy:*:${var.account_id}:application:${aws_codedeploy_app.this.name}/*"
     ]
   }
 
@@ -139,7 +139,7 @@ data "aws_iam_policy_document" "codepipeline_policy" {
     actions = [
       "codedeploy:GetDeploymentConfig"
     ]
-    resources = ["arn:aws:codedeploy:*:${local.account_id}:deploymentconfig:*"]
+    resources = ["arn:aws:codedeploy:*:${var.account_id}:deploymentconfig:*"]
   }
 
   statement {
@@ -169,7 +169,7 @@ data "aws_iam_policy_document" "codepipeline_policy" {
   statement {
     effect    = "Allow"
     actions   = ["ec2:CreateNetworkInterfacePermission"]
-    resources = ["arn:aws:ec2:${local.region}:${local.account_id}:network-interface/*"]
+    resources = ["arn:aws:ec2:${var.region}:${var.account_id}:network-interface/*"]
   }
 
   statement {
