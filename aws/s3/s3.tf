@@ -37,7 +37,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "reliability_file_
   bucket = aws_s3_bucket.reliability_file_storage.id
 
   rule {
-    blocked_encryption_types = null
+    blocked_encryption_types = ["SSE-C"]
+    bucket_key_enabled       = false
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }
@@ -142,7 +143,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "vault_file_storag
   bucket = aws_s3_bucket.vault_file_storage.id
 
   rule {
-    blocked_encryption_types = null
+    blocked_encryption_types = ["SSE-C"]
+    bucket_key_enabled       = false
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }
@@ -192,7 +194,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "archive_storage" 
   bucket = aws_s3_bucket.archive_storage.id
 
   rule {
-    blocked_encryption_types = null
+    blocked_encryption_types = ["SSE-C"]
+    bucket_key_enabled       = false
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }
@@ -246,7 +249,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "audit_logs_archiv
   bucket = aws_s3_bucket.audit_logs_archive_storage.id
 
   rule {
-    blocked_encryption_types = null
+    blocked_encryption_types = ["SSE-C"]
+    bucket_key_enabled       = false
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }
