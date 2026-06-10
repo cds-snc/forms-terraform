@@ -20,6 +20,8 @@ resource "aws_cloudwatch_metric_alarm" "idp_cpu_utilization_high_warn" {
     ClusterName = var.ecs_idp_cluster_name
     ServiceName = var.ecs_idp_service_name
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "idp_memory_utilization_high_warn" {
@@ -41,6 +43,8 @@ resource "aws_cloudwatch_metric_alarm" "idp_memory_utilization_high_warn" {
     ClusterName = var.ecs_idp_cluster_name
     ServiceName = var.ecs_idp_service_name
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "idp_error_detection" {
@@ -74,6 +78,8 @@ resource "aws_cloudwatch_metric_alarm" "idb_lb_unhealthy_host_count" {
     LoadBalancer = var.lb_idp_arn_suffix
     TargetGroup  = each.value
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "idb_lb_healthy_host_count" {
@@ -95,6 +101,8 @@ resource "aws_cloudwatch_metric_alarm" "idb_lb_healthy_host_count" {
     LoadBalancer = var.lb_idp_arn_suffix
     TargetGroup  = each.value
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "idp_response_time_warn" {
@@ -121,6 +129,8 @@ resource "aws_cloudwatch_metric_alarm" "idp_response_time_warn" {
       }
     }
   }
+
+  tags = var.core_tags
 }
 
 #
@@ -144,6 +154,8 @@ resource "aws_cloudwatch_metric_alarm" "idp_rds_cpu_utilization" {
   dimensions = {
     DBClusterIdentifier = var.rds_idp_cluster_identifier
   }
+
+  tags = var.core_tags
 }
 
 #
@@ -163,6 +175,8 @@ resource "aws_cloudwatch_metric_alarm" "idp_bounce_rate_high" {
 
   alarm_actions = [var.sns_topic_alert_warning_arn]
   ok_actions    = [var.sns_topic_alert_ok_arn]
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "idp_complaint_rate_high" {
@@ -179,4 +193,6 @@ resource "aws_cloudwatch_metric_alarm" "idp_complaint_rate_high" {
 
   alarm_actions = [var.sns_topic_alert_warning_arn]
   ok_actions    = [var.sns_topic_alert_ok_arn]
+
+  tags = var.core_tags
 }

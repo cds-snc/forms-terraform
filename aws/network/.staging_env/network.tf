@@ -14,9 +14,12 @@ resource "aws_vpc" "forms" {
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
 
-  tags = {
-    Name = var.vpc_name
-  }
+  tags = merge(
+    {
+      Name = var.vpc_name
+    },
+    var.core_tags
+  )
 }
 
 #
@@ -26,9 +29,12 @@ resource "aws_vpc" "forms" {
 resource "aws_internet_gateway" "forms" {
   vpc_id = aws_vpc.forms.id
 
-  tags = {
-    Name = var.vpc_name
-  }
+  tags = merge(
+    {
+      Name = var.vpc_name
+    },
+    var.core_tags
+  )
 }
 
 #
@@ -43,10 +49,13 @@ resource "aws_subnet" "forms_private" {
   cidr_block        = cidrsubnet(var.vpc_cidr_block, 4, count.index)
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
 
-  tags = {
-    Name   = "Private Subnet 0${count.index + 1}"
-    Access = "private"
-  }
+  tags = merge(
+    {
+      Name   = "Private Subnet 0${count.index + 1}"
+      Access = "private"
+    },
+    var.core_tags
+  )
 }
 
 resource "aws_subnet" "forms_public" {
@@ -56,10 +65,13 @@ resource "aws_subnet" "forms_public" {
   cidr_block        = cidrsubnet(var.vpc_cidr_block, 4, count.index + local.subnetCount)
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
 
-  tags = {
-    Name   = "Public Subnet 0${count.index + 1}"
-    Access = "public"
-  }
+  tags = merge(
+    {
+      Name   = "Public Subnet 0${count.index + 1}"
+      Access = "public"
+    },
+    var.core_tags
+  )
 }
 
 resource "aws_subnet" "firewall" {
@@ -68,10 +80,13 @@ resource "aws_subnet" "firewall" {
   cidr_block        = cidrsubnet(cidrsubnet(var.vpc_cidr_block, 4, local.subnetCount * 2 + 1), 8, count.index)
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
 
-  tags = {
-    Name   = "Firewall Subnet"
-    Access = "public"
-  }
+  tags = merge(
+    {
+      Name   = "Firewall Subnet"
+      Access = "public"
+    },
+    var.core_tags
+  )
 }
 
 data "aws_subnets" "ecr_endpoint_available" {
@@ -116,9 +131,12 @@ resource "aws_nat_gateway" "forms" {
   allocation_id = aws_eip.forms_natgw.*.id[count.index]
   subnet_id     = aws_subnet.forms_public.*.id[count.index]
 
-  tags = {
-    Name = "${var.vpc_name} NAT GW"
-  }
+  tags = merge(
+    {
+      Name = "${var.vpc_name} NAT GW"
+    },
+    var.core_tags
+  )
 
   depends_on = [aws_internet_gateway.forms]
 }
@@ -140,9 +158,12 @@ resource "aws_eip" "forms_natgw" {
 resource "aws_route_table" "ig" {
   vpc_id = aws_vpc.forms.id
 
-  tags = {
-    Name = "Internet Gateway Ingress Route Table"
-  }
+  tags = merge(
+    {
+      Name = "Internet Gateway Ingress Route Table"
+    },
+    var.core_tags
+  )
 }
 
 resource "aws_route" "ig" {
@@ -171,9 +192,12 @@ resource "aws_route_table" "firewall" {
     gateway_id = aws_internet_gateway.forms.id
   }
 
-  tags = {
-    Name = "Firewall Inspection Route Table"
-  }
+  tags = merge(
+    {
+      Name = "Firewall Inspection Route Table"
+    },
+    var.core_tags
+  )
 }
 
 resource "aws_route_table_association" "firewall" {
@@ -197,9 +221,12 @@ resource "aws_route_table" "forms_public_subnet" {
     vpc_endpoint_id = local.networkfirewall_endpoints[element(data.aws_availability_zones.available.names, count.index)]
   }
 
-  tags = {
-    Name = "Public Subnet Route Table ${count.index + 1}"
-  }
+  tags = merge(
+    {
+      Name = "Public Subnet Route Table ${count.index + 1}"
+    },
+    var.core_tags
+  )
 }
 
 resource "aws_route_table_association" "forms" {
@@ -224,9 +251,12 @@ resource "aws_route_table" "forms_private_subnet" {
     nat_gateway_id = aws_nat_gateway.forms.*.id[count.index]
   }
 
-  tags = {
-    Name = "Private Subnet Route Table ${count.index + 1}"
-  }
+  tags = merge(
+    {
+      Name = "Private Subnet Route Table ${count.index + 1}"
+    },
+    var.core_tags
+  )
 }
 
 resource "aws_route_table_association" "forms_private_route" {

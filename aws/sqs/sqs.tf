@@ -20,6 +20,8 @@ resource "aws_sqs_queue" "reliability_queue" {
     deadLetterTargetArn = aws_sqs_queue.reliability_deadletter_queue.arn
     maxReceiveCount     = 5
   })
+
+  tags = var.core_tags
 }
 
 resource "aws_sqs_queue" "reliability_deadletter_queue" {
@@ -30,6 +32,8 @@ resource "aws_sqs_queue" "reliability_deadletter_queue" {
   receive_wait_time_seconds         = 20
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
+
+  tags = var.core_tags
 }
 
 resource "aws_sqs_queue" "reliability_reprocessing_queue" {
@@ -50,6 +54,8 @@ resource "aws_sqs_queue" "reliability_reprocessing_queue" {
     deadLetterTargetArn = aws_sqs_queue.reliability_deadletter_queue.arn
     maxReceiveCount     = 5
   })
+
+  tags = var.core_tags
 }
 
 
@@ -77,6 +83,8 @@ resource "aws_sqs_queue" "audit_log_queue" {
     redrivePermission = "byQueue",
     sourceQueueArns   = [aws_sqs_queue.audit_log_deadletter_queue.arn]
   })
+
+  tags = var.core_tags
 }
 
 resource "aws_sqs_queue" "audit_log_deadletter_queue" {
@@ -88,6 +96,8 @@ resource "aws_sqs_queue" "audit_log_deadletter_queue" {
 
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
+
+  tags = var.core_tags
 }
 
 # API Audit Log Queue
@@ -114,6 +124,8 @@ resource "aws_sqs_queue" "api_audit_log_queue" {
     redrivePermission = "byQueue",
     sourceQueueArns   = [aws_sqs_queue.api_audit_log_deadletter_queue.arn]
   })
+
+  tags = var.core_tags
 }
 
 resource "aws_sqs_queue" "api_audit_log_deadletter_queue" {
@@ -125,6 +137,8 @@ resource "aws_sqs_queue" "api_audit_log_deadletter_queue" {
 
   kms_master_key_id                 = "alias/aws/sqs"
   kms_data_key_reuse_period_seconds = 300
+
+  tags = var.core_tags
 }
 
 # File Upload Verification Queue
@@ -148,6 +162,8 @@ resource "aws_sqs_queue" "file_upload_queue" {
     redrivePermission = "byQueue",
     sourceQueueArns   = [aws_sqs_queue.file_upload_deadletter_queue.arn]
   })
+
+  tags = var.core_tags
 }
 
 resource "aws_sqs_queue" "file_upload_deadletter_queue" {
@@ -157,4 +173,6 @@ resource "aws_sqs_queue" "file_upload_deadletter_queue" {
   max_message_size          = 262144
   message_retention_seconds = 1209600
   receive_wait_time_seconds = 5
+
+  tags = var.core_tags
 }

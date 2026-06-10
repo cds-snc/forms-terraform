@@ -13,6 +13,8 @@ resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount-TargetGroup1" {
     LoadBalancer = aws_lb.form_viewer.arn_suffix
     TargetGroup  = aws_lb_target_group.form_viewer_1.arn_suffix
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount-TargetGroup2" {
@@ -30,4 +32,6 @@ resource "aws_cloudwatch_metric_alarm" "UnHealthyHostCount-TargetGroup2" {
     LoadBalancer = aws_lb.form_viewer.arn_suffix
     TargetGroup  = aws_lb_target_group.form_viewer_2.arn_suffix
   }
+
+  tags = var.core_tags
 }

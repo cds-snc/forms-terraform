@@ -3,8 +3,10 @@ resource "aws_s3_bucket" "codepipeline_bucket" {
   # checkov:skip=CKV_AWS_21: Versioning not required
   # checkov:skip=CKV2_AWS_62: Event notifications not required
   # checkov:skip=CKV2_AWS_61: Lifecycle configuration not required
-  bucket        = "${var.app_name}-${local.account_id}-pipeline"
+  bucket        = "${var.app_name}-${var.account_id}-pipeline"
   force_destroy = true
+
+  tags = var.core_tags
 }
 
 resource "aws_s3_bucket_public_access_block" "codepipeline_bucket" {
@@ -28,6 +30,9 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "codepipeline_buck
   bucket = aws_s3_bucket.codepipeline_bucket.id
 
   rule {
+    blocked_encryption_types = ["SSE-C"]
+    bucket_key_enabled       = false
+
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }

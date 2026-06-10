@@ -2,7 +2,7 @@
 # Create Athena queries to view the WAF and load balancer access logs
 #
 module "athena" {
-  source = "github.com/cds-snc/terraform-modules//athena_access_logs?ref=77d83b2f20f6722384cc1bb5d75978d6a6ccff0f" # v11.2.2
+  source = "github.com/cds-snc/terraform-modules//athena_access_logs?ref=94729229cfcb754146c82a566227e55df6612228" # v11.3.5
 
   athena_bucket_name = module.athena_bucket.s3_bucket_id
 
@@ -18,7 +18,7 @@ module "athena" {
 # Hold the Athena data
 #
 module "athena_bucket" {
-  source            = "github.com/cds-snc/terraform-modules//S3?ref=bd904d01094f196fd3e8ff5c46e73838f1f1be26"
+  source            = "github.com/cds-snc/terraform-modules//S3?ref=94729229cfcb754146c82a566227e55df6612228" # v11.3.5
   bucket_name       = "forms-${var.env}-athena-bucket"
   billing_tag_value = var.billing_tag_value
 
@@ -43,6 +43,8 @@ resource "aws_s3_bucket" "athena_spill_bucket" {
   # checkov:skip=CKV_AWS_18: Access logging not required
   # checkov:skip=CKV_AWS_21: Versioning not required
   bucket = "gc-forms-${var.env}-athena-spill-bucket"
+
+  tags = var.core_tags
 }
 
 resource "aws_s3_bucket_public_access_block" "athena_spill_bucket" {
@@ -195,6 +197,8 @@ resource "aws_iam_role" "athena_dynamodb_role" {
       },
     ]
   })
+
+  tags = var.core_tags
 }
 
 #

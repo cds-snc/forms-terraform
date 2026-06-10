@@ -3,6 +3,11 @@ variable "region" {
   type        = string
 }
 
+variable "account_id" {
+  description = "The account ID to create resources in"
+  type        = string
+}
+
 variable "private_subnet_ids" {
   description = "The list of private subnet IDs used by the RDS cluster to"
   type        = list(string)
@@ -135,4 +140,9 @@ variable "build_compute_type" {
     condition     = contains(["small", "large"], var.build_compute_type)
     error_message = "Valid values for 'build_compute_type' are 'small' or 'large'"
   }
+}
+
+variable "core_tags" {
+  description = "Core resource tags"
+  type        = map(string)
 }

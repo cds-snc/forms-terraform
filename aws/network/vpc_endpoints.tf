@@ -13,7 +13,7 @@ resource "aws_vpc_endpoint" "sqs" {
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 
-
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "lambda" {
@@ -26,7 +26,7 @@ resource "aws_vpc_endpoint" "lambda" {
   ]
   subnet_ids = data.aws_subnets.lambda_endpoint_available.ids
 
-
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "ecr-dkr" {
@@ -39,7 +39,7 @@ resource "aws_vpc_endpoint" "ecr-dkr" {
   ]
   subnet_ids = data.aws_subnets.ecr_endpoint_available.ids
 
-
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "ecr-api" {
@@ -52,7 +52,7 @@ resource "aws_vpc_endpoint" "ecr-api" {
   ]
   subnet_ids = data.aws_subnets.ecr_endpoint_available.ids
 
-
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "kms" {
@@ -65,7 +65,7 @@ resource "aws_vpc_endpoint" "kms" {
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 
-
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "secretsmanager" {
@@ -78,7 +78,7 @@ resource "aws_vpc_endpoint" "secretsmanager" {
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 
-
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "logs" {
@@ -91,7 +91,7 @@ resource "aws_vpc_endpoint" "logs" {
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 
-
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "monitoring" {
@@ -104,7 +104,7 @@ resource "aws_vpc_endpoint" "monitoring" {
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 
-
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "rds" {
@@ -117,7 +117,7 @@ resource "aws_vpc_endpoint" "rds" {
   ]
   subnet_ids = aws_subnet.forms_private.*.id
 
-
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "glue" {
@@ -129,6 +129,8 @@ resource "aws_vpc_endpoint" "glue" {
     aws_security_group.privatelink.id,
   ]
   subnet_ids = aws_subnet.forms_private.*.id
+
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "sns" {
@@ -140,6 +142,8 @@ resource "aws_vpc_endpoint" "sns" {
     aws_security_group.privatelink.id,
   ]
   subnet_ids = aws_subnet.forms_private.*.id
+
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "xray" {
@@ -151,6 +155,8 @@ resource "aws_vpc_endpoint" "xray" {
     aws_security_group.privatelink.id,
   ]
   subnet_ids = aws_subnet.forms_private.*.id
+
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "ssm" {
@@ -162,6 +168,8 @@ resource "aws_vpc_endpoint" "ssm" {
     aws_security_group.privatelink.id,
   ]
   subnet_ids = aws_subnet.forms_private.*.id
+
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "codestar" {
@@ -173,6 +181,8 @@ resource "aws_vpc_endpoint" "codestar" {
     aws_security_group.privatelink.id,
   ]
   subnet_ids = aws_subnet.forms_private.*.id
+
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "ecs" {
@@ -184,6 +194,8 @@ resource "aws_vpc_endpoint" "ecs" {
     aws_security_group.privatelink.id,
   ]
   subnet_ids = aws_subnet.forms_private.*.id
+
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "dynamodb" {
@@ -192,7 +204,7 @@ resource "aws_vpc_endpoint" "dynamodb" {
   service_name      = "com.amazonaws.${var.region}.dynamodb"
   route_table_ids   = aws_route_table.forms_public_subnet.*.id
 
-
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "s3" {
@@ -200,4 +212,6 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_endpoint_type = "Gateway"
   service_name      = "com.amazonaws.${var.region}.s3"
   route_table_ids   = aws_route_table.forms_public_subnet.*.id
+
+  tags = var.core_tags
 }

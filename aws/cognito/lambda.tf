@@ -41,6 +41,8 @@ resource "aws_cloudwatch_log_group" "cognito_email_sender" {
   name              = "/aws/lambda/Cognito_Email_Sender"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
+
+  tags = var.core_tags
 }
 
 ########################
@@ -77,4 +79,6 @@ resource "aws_cloudwatch_log_group" "cognito_pre_sign_up" {
   name              = "/aws/lambda/Cognito_Pre_Sign_Up"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
+
+  tags = var.core_tags
 }

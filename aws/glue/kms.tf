@@ -12,6 +12,8 @@ resource "aws_kms_key" "aws_glue" {
   description         = "AWS Glue encryption key for data at rest"
   enable_key_rotation = "true"
   policy              = data.aws_iam_policy_document.aws_glue.json
+
+  tags = var.core_tags
 }
 
 resource "aws_kms_alias" "data_export" {

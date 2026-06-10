@@ -58,4 +58,6 @@ resource "aws_cloudwatch_log_group" "file_upload" {
   name              = "/aws/lambda/file-upload-processor"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
+
+  tags = var.core_tags
 }

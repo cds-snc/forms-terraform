@@ -17,6 +17,8 @@ resource "aws_ses_domain_identity_verification" "idp" {
 resource "aws_iam_user" "idp_send_email" {
   # checkov:skip=CKV_AWS_273: SES IAM user is required to confirgure SMTP credentials
   name = "idp_send_email"
+
+  tags = var.core_tags
 }
 
 resource "aws_iam_group" "idp_send_email" {
@@ -51,6 +53,8 @@ data "aws_iam_policy_document" "idp_send_email" {
 resource "aws_iam_policy" "idp_send_email" {
   name   = "idp_send_email"
   policy = data.aws_iam_policy_document.idp_send_email.json
+
+  tags = var.core_tags
 }
 
 resource "aws_iam_access_key" "idp_send_email" {

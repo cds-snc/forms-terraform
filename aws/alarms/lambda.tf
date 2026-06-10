@@ -43,6 +43,8 @@ resource "aws_cloudwatch_log_group" "notify_slack" {
   name              = "/aws/lambda/NotifySlack"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
+
+  tags = var.core_tags
 }
 
 #
@@ -94,6 +96,8 @@ resource "aws_lambda_permission" "notify_slack_ok_us_east" {
 resource "aws_iam_role" "notify_slack_lambda" {
   name               = "NotifySlackLambda"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "lambda_assume_policy" {
@@ -119,6 +123,8 @@ resource "aws_iam_policy" "access_to_parameter_store" {
   path        = "/"
   description = "IAM policy for allowing access to parameter store"
   policy      = data.aws_iam_policy_document.access_to_parameter_store.json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "access_to_parameter_store" {
@@ -153,4 +159,6 @@ resource "aws_ssm_parameter" "ignored_logs_for_slack" {
       value,
     ]
   }
+
+  tags = var.core_tags
 }
