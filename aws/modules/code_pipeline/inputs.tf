@@ -3,6 +3,11 @@ variable "region" {
   type        = string
 }
 
+variable "account_id" {
+  description = "The account ID to create resources in"
+  type        = string
+}
+
 variable "private_subnet_ids" {
   description = "The list of private subnet IDs used by the RDS cluster to"
   type        = list(string)
