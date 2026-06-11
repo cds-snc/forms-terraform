@@ -3,6 +3,8 @@ resource "aws_security_group" "idp_ecs" {
   description = "Zitadel IdP ECS Tasks"
   name        = "idp_ecs"
   vpc_id      = aws_vpc.forms.id
+
+  tags = var.core_tags
 }
 
 resource "aws_security_group_rule" "idp_ecs_egress_internet" {
@@ -50,6 +52,8 @@ resource "aws_security_group" "idp_lb" {
   name        = "idp_lb"
   description = "Zitadel IdP load balancer"
   vpc_id      = aws_vpc.forms.id
+
+  tags = var.core_tags
 }
 
 resource "aws_security_group_rule" "idp_lb_ingress_internet_http" {
@@ -88,6 +92,8 @@ resource "aws_security_group" "idp_db" {
   name        = "idp_db"
   description = "Zitadel IdP database"
   vpc_id      = aws_vpc.forms.id
+
+  tags = var.core_tags
 }
 
 resource "aws_security_group_rule" "idp_db_ingress_ecs" {

@@ -27,6 +27,8 @@ resource "aws_lambda_function" "load_testing" {
 resource "aws_iam_role" "load_test_lambda" {
   name               = "LoadTestLambda"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "lambda_assume_policy" {
@@ -46,6 +48,8 @@ resource "aws_iam_policy" "load_test_lambda" {
   name        = "LoadTestLambda"
   description = "Allow access to resources needed by the load testing Lambda function"
   policy      = data.aws_iam_policy_document.load_test_lambda.json
+
+  tags = var.core_tags
 }
 
 resource "aws_iam_role_policy_attachment" "load_test_lambda" {

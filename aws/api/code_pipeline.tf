@@ -1,7 +1,9 @@
 module "code_pipeline" {
   source = "../modules/code_pipeline"
 
-  region                         = var.region
+  region     = var.region
+  account_id = var.account_id
+
   vpc_id                         = var.vpc_id
   code_build_security_group_id   = var.code_build_security_group_id
   private_subnet_ids             = var.private_subnet_ids
@@ -25,6 +27,8 @@ module "code_pipeline" {
       "test/**"
     ]
   }
+
+  core_tags = var.core_tags
 
   depends_on = [module.api_ecs]
 }

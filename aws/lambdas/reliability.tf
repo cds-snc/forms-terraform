@@ -77,4 +77,6 @@ resource "aws_cloudwatch_log_group" "reliability" {
   name              = "/aws/lambda/Reliability"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
+
+  tags = var.core_tags
 }

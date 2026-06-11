@@ -18,6 +18,8 @@ resource "aws_cloudwatch_metric_alarm" "forms_cpu_utilization_high_warn" {
     ClusterName = var.ecs_cluster_name
     ServiceName = var.ecs_service_name
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "forms_memory_utilization_high_warn" {
@@ -38,6 +40,8 @@ resource "aws_cloudwatch_metric_alarm" "forms_memory_utilization_high_warn" {
     ClusterName = var.ecs_cluster_name
     ServiceName = var.ecs_service_name
   }
+
+  tags = var.core_tags
 }
 
 #
@@ -56,6 +60,8 @@ resource "aws_cloudwatch_metric_alarm" "ELB_5xx_error_warn" {
   threshold           = "1"
   treat_missing_data  = "notBreaching"
   alarm_actions       = [var.sns_topic_alert_warning_arn]
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "ELB_healthy_hosts" {
@@ -101,6 +107,8 @@ resource "aws_cloudwatch_metric_alarm" "ELB_healthy_hosts" {
       }
     }
   }
+
+  tags = var.core_tags
 }
 
 // Dead letter queue message detector
@@ -132,6 +140,8 @@ resource "aws_cloudwatch_metric_alarm" "dlq_message_detector" {
   dimensions = {
     QueueName = each.value
   }
+
+  tags = var.core_tags
 }
 
 #
@@ -161,6 +171,8 @@ resource "aws_cloudwatch_metric_alarm" "response_time_warn" {
       }
     }
   }
+
+  tags = var.core_tags
 }
 
 #
@@ -182,6 +194,8 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_forms_warn" {
   dimensions = {
     ResourceArn = var.lb_arn
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "ddos_detected_route53_warn" {
@@ -202,6 +216,8 @@ resource "aws_cloudwatch_metric_alarm" "ddos_detected_route53_warn" {
   dimensions = {
     ResourceArn = var.hosted_zone_ids[count.index]
   }
+
+  tags = var.core_tags
 }
 
 #
@@ -261,11 +277,14 @@ resource "aws_cloudwatch_metric_alarm" "alb_ddos" {
   dimensions = {
     ResourceArn = var.lb_arn
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "route53_ddos" {
   provider = aws.us-east-1
-  count    = length(var.hosted_zone_ids)
+
+  count = length(var.hosted_zone_ids)
 
   alarm_name          = "Route53DDoS"
   comparison_operator = "GreaterThanThreshold"
@@ -284,6 +303,8 @@ resource "aws_cloudwatch_metric_alarm" "route53_ddos" {
   dimensions = {
     ResourceArn = var.hosted_zone_ids[count.index]
   }
+
+  tags = var.core_tags
 }
 
 #
@@ -316,6 +337,8 @@ resource "aws_cloudwatch_metric_alarm" "cognito_signin_exceeded" {
   alarm_description   = "Cognito - multiple failed sign-in attempts detected."
 
   alarm_actions = [var.sns_topic_alert_warning_arn]
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_log_metric_filter" "twoFa_verification_exceeded" {
@@ -344,6 +367,8 @@ resource "aws_cloudwatch_metric_alarm" "twoFa_verification_exceeded" {
   alarm_description   = "2FA - multiple failed verification attempts detected. User has been locked out (see audit logs)."
 
   alarm_actions = [var.sns_topic_alert_warning_arn]
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "vault_data_integrity_check_lambda_iterator_age" {
@@ -365,6 +390,8 @@ resource "aws_cloudwatch_metric_alarm" "vault_data_integrity_check_lambda_iterat
     FunctionName = var.lambda_vault_integrity_function_name
     Resource     = var.lambda_vault_integrity_function_name
   }
+
+  tags = var.core_tags
 }
 
 // Cloudwatch log subscription filters
@@ -473,6 +500,8 @@ resource "aws_cloudwatch_metric_alarm" "lambda_error_detection" {
   }
 
   alarm_actions = [var.sns_topic_alert_critical_arn]
+
+  tags = var.core_tags
 }
 
 // Allow Cloudwatch filters to trigger Lambda
@@ -518,6 +547,8 @@ resource "aws_cloudwatch_metric_alarm" "healthcheck_lambda_submission_invocation
       }
     }
   }
+
+  tags = var.core_tags
 }
 
 # Nagware lambda: no invocations on a Tuesday, Thursday or Sunday
@@ -549,6 +580,8 @@ resource "aws_cloudwatch_metric_alarm" "healthcheck_lambda_nagware_invocations_s
       }
     }
   }
+
+  tags = var.core_tags
 }
 
 # Form archiver: no invocations in a day
@@ -567,6 +600,8 @@ resource "aws_cloudwatch_metric_alarm" "healthcheck_lambda_form_archiver_invocat
   dimensions = {
     FunctionName = var.lambda_form_archiver_function_name
   }
+
+  tags = var.core_tags
 }
 
 # Response archiver: no invocations in a day
@@ -585,4 +620,6 @@ resource "aws_cloudwatch_metric_alarm" "healthcheck_lambda_response_archiver_inv
   dimensions = {
     FunctionName = var.lambda_response_archiver_function_name
   }
+
+  tags = var.core_tags
 }

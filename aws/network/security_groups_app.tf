@@ -10,6 +10,8 @@ resource "aws_security_group" "forms" {
   name        = "forms"
   description = "Ingress - Forms"
   vpc_id      = aws_vpc.forms.id
+
+  tags = var.core_tags
 }
 
 resource "aws_security_group_rule" "forms_ingress_alb" {
@@ -57,6 +59,8 @@ resource "aws_security_group" "forms_load_balancer" {
   name        = "forms-load-balancer"
   description = "Ingress - forms Load Balancer"
   vpc_id      = aws_vpc.forms.id
+
+  tags = var.core_tags
 }
 
 resource "aws_security_group_rule" "forms_lb_ingress_internet_443" {
@@ -95,6 +99,8 @@ resource "aws_security_group" "forms_egress" {
   name        = "egress-anywhere"
   description = "Egress - Forms External Services"
   vpc_id      = aws_vpc.forms.id
+
+  tags = var.core_tags
 }
 
 resource "aws_security_group_rule" "forms_external_auth" {
@@ -111,6 +117,8 @@ resource "aws_security_group" "privatelink" {
   name        = "privatelink"
   description = "privatelink endpoints"
   vpc_id      = aws_vpc.forms.id
+
+  tags = var.core_tags
 }
 
 resource "aws_security_group_rule" "privatelink_forms_ingress" {
@@ -168,6 +176,8 @@ resource "aws_security_group" "forms_database" {
   name        = "forms-database"
   description = "Ingress - Forms Database"
   vpc_id      = aws_vpc.forms.id
+
+  tags = var.core_tags
 }
 
 resource "aws_security_group_rule" "forms_database_ingress" {
@@ -186,6 +196,8 @@ resource "aws_security_group" "forms_redis" {
   name        = "forms-redis"
   description = "Ingress - Forms Redis"
   vpc_id      = aws_vpc.forms.id
+
+  tags = var.core_tags
 }
 
 resource "aws_security_group_rule" "forms_redis_ingress" {

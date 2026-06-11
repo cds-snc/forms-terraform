@@ -5,6 +5,8 @@ resource "aws_security_group" "lambda" {
   description = "Lambdas"
   name        = "lambda"
   vpc_id      = aws_vpc.forms.id
+
+  tags = var.core_tags
 }
 
 # Internet
@@ -76,6 +78,8 @@ resource "aws_security_group" "connector_db" {
   name        = "connector_db"
   description = "For the Lambda RDS connector"
   vpc_id      = aws_vpc.forms.id
+
+  tags = var.core_tags
 }
 
 # Database

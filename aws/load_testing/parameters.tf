@@ -4,4 +4,6 @@ resource "aws_ssm_parameter" "load_testing_zitadel_app_private_key" {
   description = "Private key JSON of the Zitadel application to perform access token introspection requests."
   type        = "SecureString"
   value       = var.load_testing_zitadel_app_private_key
+
+  tags = var.core_tags
 }

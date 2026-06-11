@@ -37,3 +37,8 @@ variable "security_txt_content" {
   description = "The content of the /.well-known/security.txt file"
   type        = string
 }
+
+variable "core_tags" {
+  description = "Core resource tags"
+  type        = map(string)
+}

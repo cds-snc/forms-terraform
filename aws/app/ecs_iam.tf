@@ -4,6 +4,8 @@
 resource "aws_iam_role" "forms" {
   name               = var.ecs_form_viewer_name
   assume_role_policy = data.aws_iam_policy_document.forms.json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "forms" {
@@ -22,6 +24,8 @@ resource "aws_iam_policy" "forms_secrets_manager" {
   name   = "formsSecretsManagerKeyRetrieval"
   path   = "/"
   policy = data.aws_iam_policy_document.forms_secrets_manager.json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "forms_secrets_manager" {
@@ -51,6 +55,8 @@ resource "aws_iam_policy" "ecs_xray" {
   path        = "/"
   description = "IAM policy for allowing X-Ray tracing"
   policy      = data.aws_iam_policy_document.ecs_xray.json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "ecs_xray" {
@@ -128,6 +134,8 @@ resource "aws_iam_policy" "forms_sqs" {
   path        = "/"
   description = "IAM policy to allow access to SQS for Forms ECS task"
   policy      = data.aws_iam_policy_document.forms_sqs.json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "forms_sqs" {
@@ -155,6 +163,8 @@ resource "aws_iam_policy" "forms_kms" {
   path        = "/"
   description = "IAM policy for storing encrypting and decrypting data"
   policy      = data.aws_iam_policy_document.forms_kms.json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "forms_kms" {
@@ -182,6 +192,8 @@ resource "aws_iam_policy" "forms_dynamodb" {
   path        = "/"
   description = "IAM policy for allowing access for Forms ECS task to read and write to the vault"
   policy      = data.aws_iam_policy_document.forms_dynamodb.json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "forms_dynamodb" {
@@ -210,6 +222,8 @@ resource "aws_iam_policy" "forms_audit_logs" {
   path        = "/"
   description = "IAM policy for allowing access for Forms ECS task to read the Audit Logs"
   policy      = data.aws_iam_policy_document.forms_audit_logs.json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "forms_audit_logs" {
@@ -239,9 +253,9 @@ resource "aws_iam_policy" "cognito" {
   name        = "cognito"
   path        = "/"
   description = "IAM policy for allowing ECS access to cognito"
+  policy      = data.aws_iam_policy_document.assume_role_policy_cognito.json
 
-
-  policy = data.aws_iam_policy_document.assume_role_policy_cognito.json
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "assume_role_policy_cognito" {

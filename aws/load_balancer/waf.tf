@@ -561,6 +561,8 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     metric_name                = "forms_global_rule"
     sampled_requests_enabled   = false
   }
+
+  tags = var.core_tags
 }
 
 // Matches the login paths for cognito /api/auth/signin/cognito OR /api/auth/callback/cognito
@@ -661,10 +663,10 @@ resource "aws_wafv2_regex_pattern_set" "forms_base_url" {
 
 resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
   # checkov:skip=CKV2_AWS_31: Logging configuration not required
+  provider = aws.us-east-1
+
   name  = "GCFormsMaintenanceMode"
   scope = "CLOUDFRONT"
-
-  provider = aws.us-east-1
 
   default_action {
     block {}
@@ -774,14 +776,16 @@ resource "aws_wafv2_web_acl" "forms_maintenance_mode_acl" {
     metric_name                = "forms_maintenance_mode_global_rule"
     sampled_requests_enabled   = false
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {
+  provider = aws.us-east-1
+
   name        = "valid_maintenance_page_uri_paths"
   scope       = "CLOUDFRONT"
   description = "Regex to match the maintenance page valid URIs"
-
-  provider = aws.us-east-1
 
   regular_expression {
     regex_string = "^\\/(index.html|index-fr.html|style.css|site-unavailable.svg|favicon.ico)?$"
@@ -793,7 +797,7 @@ resource "aws_wafv2_regex_pattern_set" "valid_maintenance_mode_uri_paths" {
 # that crosses a block threshold will be added to the blocklist.
 #
 module "waf_ip_blocklist" {
-  source = "github.com/cds-snc/terraform-modules//waf_ip_blocklist?ref=b1d66b1740d02ddac303179028f2278f902714ec" # v11.3.1
+  source = "github.com/cds-snc/terraform-modules//waf_ip_blocklist?ref=94729229cfcb754146c82a566227e55df6612228" # v11.3.5
 
   service_name                     = "forms_app"
   athena_database_name             = "access_logs"

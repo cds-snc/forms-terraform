@@ -3,7 +3,7 @@ resource "aws_kms_key" "cognito_encryption" {
   enable_key_rotation = true
   policy              = data.aws_iam_policy_document.kms_cognito_encryption.json
 
-
+  tags = var.core_tags
 }
 
 resource "aws_kms_alias" "cognito_encryption_alias" {

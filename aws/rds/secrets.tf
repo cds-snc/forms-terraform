@@ -7,6 +7,8 @@ resource "aws_secretsmanager_secret" "database_connection_url" {
   name                    = "database-connection-url"
   description             = "Database URL used to connect to Postgres. It handles SSL connection (if available) with no certificate verification (default behavior for many drivers)."
   recovery_window_in_days = 0
+
+  tags = var.core_tags
 }
 
 resource "aws_secretsmanager_secret_version" "database_connection_url" {
@@ -18,6 +20,8 @@ resource "aws_secretsmanager_secret" "rds_connector" {
   # checkov:skip=CKV2_AWS_57: Automatic secret rotation not required
   name                    = "rds-connector"
   recovery_window_in_days = 0
+
+  tags = var.core_tags
 }
 
 resource "aws_secretsmanager_secret_version" "rds_connector" {

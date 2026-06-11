@@ -3,6 +3,8 @@ resource "aws_iam_role" "forms_lambda_client" {
 
   name               = "forms-lambda-client"
   assume_role_policy = data.aws_iam_policy_document.forms_lambda_client[0].json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "forms_lambda_client" {
