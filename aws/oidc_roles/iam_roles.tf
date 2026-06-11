@@ -19,7 +19,7 @@ data "aws_iam_policy" "admin" {
 # 
 
 module "github_workflow_roles" {
-  source = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=64b19ecfc23025718cd687e24b7115777fd09666" # v10.2.1
+  source = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=94729229cfcb754146c82a566227e55df6612228" # v11.3.5
 
   roles = [
     {

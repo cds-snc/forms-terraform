@@ -8,6 +8,8 @@ resource "aws_s3_bucket" "reliability_file_storage" {
   # checkov:skip=CKV2_AWS_62: Event notifications not required
   bucket        = "forms-${local.env}-reliability-file-storage"
   force_destroy = var.env == "development"
+
+  tags = var.core_tags
 }
 
 resource "aws_s3_bucket_ownership_controls" "reliability_file_storage" {
@@ -37,6 +39,9 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "reliability_file_
   bucket = aws_s3_bucket.reliability_file_storage.id
 
   rule {
+    blocked_encryption_types = ["SSE-C"]
+    bucket_key_enabled       = false
+
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }
@@ -127,6 +132,8 @@ resource "aws_s3_bucket" "vault_file_storage" {
   # checkov:skip=CKV2_AWS_62: Event notifications not required
   bucket        = "forms-${local.env}-vault-file-storage"
   force_destroy = var.env == "development"
+
+  tags = var.core_tags
 }
 
 resource "aws_s3_bucket_ownership_controls" "vault_file_storage" {
@@ -141,6 +148,9 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "vault_file_storag
   bucket = aws_s3_bucket.vault_file_storage.id
 
   rule {
+    blocked_encryption_types = ["SSE-C"]
+    bucket_key_enabled       = false
+
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }
@@ -176,6 +186,8 @@ resource "aws_s3_bucket" "archive_storage" {
   # checkov:skip=CKV2_AWS_62: Event notifications not required
   bucket        = "forms-${local.env}-archive-storage"
   force_destroy = var.env == "development"
+
+  tags = var.core_tags
 }
 
 resource "aws_s3_bucket_ownership_controls" "archive_storage" {
@@ -190,6 +202,9 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "archive_storage" 
   bucket = aws_s3_bucket.archive_storage.id
 
   rule {
+    blocked_encryption_types = ["SSE-C"]
+    bucket_key_enabled       = false
+
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }
@@ -229,6 +244,8 @@ resource "aws_s3_bucket" "audit_logs_archive_storage" {
   # checkov:skip=CKV2_AWS_62: Event notifications not required
   bucket        = "forms-${local.env}-audit-logs-archive-storage"
   force_destroy = var.env == "development"
+
+  tags = var.core_tags
 }
 
 resource "aws_s3_bucket_ownership_controls" "audit_logs_archive_storage" {
@@ -243,6 +260,9 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "audit_logs_archiv
   bucket = aws_s3_bucket.audit_logs_archive_storage.id
 
   rule {
+    blocked_encryption_types = ["SSE-C"]
+    bucket_key_enabled       = false
+
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }

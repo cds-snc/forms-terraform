@@ -21,6 +21,8 @@ resource "aws_cloudwatch_metric_alarm" "api_cpu_utilization_high_warn" {
     ClusterName = var.ecs_api_cluster_name
     ServiceName = var.ecs_api_service_name
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "api_memory_utilization_high_warn" {
@@ -42,6 +44,8 @@ resource "aws_cloudwatch_metric_alarm" "api_memory_utilization_high_warn" {
     ClusterName = var.ecs_api_cluster_name
     ServiceName = var.ecs_api_service_name
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "api_error_detection" {
@@ -104,6 +108,8 @@ resource "aws_cloudwatch_metric_alarm" "api_lb_unhealthy_host_count" {
     label       = "Unhealthy hosts"
     return_data = true
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "api_lb_healthy_host_count" {
@@ -154,6 +160,8 @@ resource "aws_cloudwatch_metric_alarm" "api_lb_healthy_host_count" {
     label       = "Healthy hosts"
     return_data = true
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "api_response_time_warn" {
@@ -176,4 +184,6 @@ resource "aws_cloudwatch_metric_alarm" "api_response_time_warn" {
   dimensions = {
     LoadBalancer = var.lb_api_arn_suffix
   }
+
+  tags = var.core_tags
 }

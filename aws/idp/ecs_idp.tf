@@ -46,7 +46,7 @@ locals {
 }
 
 module "idp_ecs" {
-  source = "github.com/cds-snc/terraform-modules//ecs?ref=825c15a16d794bd878e0d11555c0abe6f481f29e" # v10.10.2
+  source = "github.com/cds-snc/terraform-modules//ecs?ref=94729229cfcb754146c82a566227e55df6612228" # v11.3.5
 
   create_cluster = false
   cluster_name   = aws_ecs_cluster.idp.name
@@ -128,7 +128,8 @@ resource "aws_ssm_parameter" "zitadel_secret_key" {
   name  = "zitadel_secret_key"
   type  = "SecureString"
   value = var.zitadel_secret_key
-  tags  = local.common_tags
+
+  tags = var.core_tags
 }
 
 resource "aws_ssm_parameter" "zitadel_admin_username" {
@@ -136,7 +137,8 @@ resource "aws_ssm_parameter" "zitadel_admin_username" {
   name  = "zitadel_admin_username"
   type  = "SecureString"
   value = var.zitadel_admin_username
-  tags  = local.common_tags
+
+  tags = var.core_tags
 }
 
 resource "aws_ssm_parameter" "zitadel_admin_password" {
@@ -144,5 +146,6 @@ resource "aws_ssm_parameter" "zitadel_admin_password" {
   name  = "zitadel_admin_password"
   type  = "SecureString"
   value = var.zitadel_admin_password
-  tags  = local.common_tags
+
+  tags = var.core_tags
 }

@@ -1,6 +1,8 @@
 resource "aws_iam_role" "cognito_lambda" {
   name               = "iam_for_cognito_lambda"
   assume_role_policy = data.aws_iam_policy_document.cognito_lambda_assume.json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "cognito_lambda_assume" {
@@ -20,6 +22,8 @@ resource "aws_iam_policy" "cognito_lambda_logging" {
   path        = "/"
   description = "IAM policy for logging from a cognito lambda"
   policy      = data.aws_iam_policy_document.cognito_lambda_logging.json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "cognito_lambda_logging" {
@@ -44,6 +48,8 @@ resource "aws_iam_policy" "cognito_lambda_kms" {
   path        = "/"
   description = "IAM policy for storing encrypting and decrypting data"
   policy      = data.aws_iam_policy_document.cognito_lambda_kms.json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "cognito_lambda_kms" {
@@ -68,6 +74,8 @@ resource "aws_iam_policy" "cognito_lambda_secrets" {
   path        = "/"
   description = "IAM policy for accessing secret manager"
   policy      = data.aws_iam_policy_document.cognito_lambda_secrets.json
+
+  tags = var.core_tags
 }
 
 data "aws_iam_policy_document" "cognito_lambda_secrets" {

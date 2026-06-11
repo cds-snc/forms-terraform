@@ -3,6 +3,8 @@ resource "aws_security_group" "api_ecs" {
   description = "API ECS Tasks"
   name        = "api_ecs"
   vpc_id      = aws_vpc.forms.id
+
+  tags = var.core_tags
 }
 
 resource "aws_security_group_rule" "api_ecs_egress_internet" {

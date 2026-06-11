@@ -44,6 +44,8 @@ resource "aws_codebuild_project" "ecs_render" {
     ]
   }
 
+  tags = var.core_tags
+
   depends_on = [aws_iam_role_policy.codepipeline_policy]
 }
 

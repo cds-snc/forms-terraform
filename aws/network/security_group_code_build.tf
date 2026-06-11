@@ -2,6 +2,8 @@ resource "aws_security_group" "code_build" {
   description = "Code Build"
   name        = "code_build"
   vpc_id      = aws_vpc.forms.id
+
+  tags = var.core_tags
 }
 
 # Internet

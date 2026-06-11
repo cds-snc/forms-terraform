@@ -24,6 +24,8 @@ resource "aws_kinesis_firehose_delivery_stream" "firehose_waf_logs" {
 resource "aws_iam_role" "firehose_waf_logs" {
   name               = "firehose_waf_logs"
   assume_role_policy = data.aws_iam_policy_document.firehose_waf_assume.json
+
+  tags = var.core_tags
 }
 
 resource "aws_iam_role_policy" "firehose_waf_logs" {

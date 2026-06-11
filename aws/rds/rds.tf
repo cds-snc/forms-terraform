@@ -14,9 +14,7 @@ resource "aws_db_subnet_group" "forms" {
   subnet_ids = var.private_subnet_ids
 
   tags = {
-    Name                  = var.rds_db_subnet_group_name
-    (var.billing_tag_key) = var.billing_tag_value
-    Terraform             = true
+    Name = var.rds_db_subnet_group_name
   }
 }
 

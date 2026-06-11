@@ -2,7 +2,7 @@
 # RDS Postgress cluster
 #
 module "idp_database" {
-  source = "github.com/cds-snc/terraform-modules//rds?ref=64b19ecfc23025718cd687e24b7115777fd09666" # v10.2.1
+  source = "github.com/cds-snc/terraform-modules//rds?ref=94729229cfcb754146c82a566227e55df6612228" # v11.3.5
   name   = "idp"
 
   database_name           = var.zitadel_database_name
@@ -34,7 +34,8 @@ resource "aws_ssm_parameter" "idp_database_cluster_admin_username" {
   name  = "idp_database_cluster_admin_username"
   type  = "SecureString"
   value = var.idp_database_cluster_admin_username
-  tags  = local.common_tags
+
+  tags = var.core_tags
 }
 
 resource "aws_ssm_parameter" "idp_database_cluster_admin_password" {
@@ -42,7 +43,8 @@ resource "aws_ssm_parameter" "idp_database_cluster_admin_password" {
   name  = "idp_database_cluster_admin_password"
   type  = "SecureString"
   value = var.idp_database_cluster_admin_password
-  tags  = local.common_tags
+
+  tags = var.core_tags
 }
 
 resource "aws_ssm_parameter" "zitadel_database_host" {
@@ -50,7 +52,8 @@ resource "aws_ssm_parameter" "zitadel_database_host" {
   name  = "zitadel_database_host"
   type  = "SecureString"
   value = module.idp_database.rds_cluster_endpoint
-  tags  = local.common_tags
+
+  tags = var.core_tags
 }
 
 resource "aws_ssm_parameter" "zitadel_database_name" {
@@ -58,5 +61,6 @@ resource "aws_ssm_parameter" "zitadel_database_name" {
   name  = "zitadel_database_name"
   type  = "SecureString"
   value = var.zitadel_database_name
-  tags  = local.common_tags
+
+  tags = var.core_tags
 }

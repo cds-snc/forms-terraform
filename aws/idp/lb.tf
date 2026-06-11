@@ -15,7 +15,7 @@ resource "aws_lb" "idp" {
     enabled = true
   }
 
-  tags = local.common_tags
+  tags = var.core_tags
 }
 
 resource "random_string" "idp_alb_tg_suffix" {
@@ -58,7 +58,7 @@ resource "aws_lb_target_group" "idp" {
     ]
   }
 
-  tags = local.common_tags
+  tags = var.core_tags
 }
 
 resource "aws_lb_listener" "idp" {
@@ -78,7 +78,7 @@ resource "aws_lb_listener" "idp" {
     aws_route53_record.idp_validation,
   ]
 
-  tags = local.common_tags
+  tags = var.core_tags
 }
 
 resource "aws_lb_listener" "idp_http_redirect" {
@@ -96,7 +96,7 @@ resource "aws_lb_listener" "idp_http_redirect" {
     }
   }
 
-  tags = local.common_tags
+  tags = var.core_tags
 }
 
 # Send REST API endpoint requests to the HTTP1 target group
@@ -115,6 +115,8 @@ resource "aws_alb_listener_rule" "idp_protocol_version" {
       values = ["/oauth/v2/token", "/.well-known/openid-configuration"] # REST API endpoints
     }
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_alb_listener_rule" "security_txt" {
@@ -136,9 +138,13 @@ resource "aws_alb_listener_rule" "security_txt" {
       values = ["/.well-known/security.txt"]
     }
   }
+
+  tags = var.core_tags
 }
 
 resource "aws_shield_protection" "idp" {
   name         = "LoadBalancerIdP"
   resource_arn = aws_lb.idp.arn
+
+  tags = var.core_tags
 }

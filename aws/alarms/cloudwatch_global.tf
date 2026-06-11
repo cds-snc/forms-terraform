@@ -11,6 +11,8 @@ resource "aws_cloudwatch_metric_alarm" "ip_added_to_block_list" {
   alarm_description   = "WAF - IP(s) Has been added to the dynamic block list."
 
   alarm_actions = [var.sns_topic_alert_warning_arn]
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "waf_ipv4_blocklist_lambda_error_detection" {
@@ -39,4 +41,6 @@ resource "aws_cloudwatch_metric_alarm" "waf_ipv4_blocklist_lambda_error_detectio
   }
 
   alarm_actions = [var.sns_topic_alert_critical_arn]
+
+  tags = var.core_tags
 }

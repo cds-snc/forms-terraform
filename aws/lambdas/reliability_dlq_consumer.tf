@@ -59,4 +59,6 @@ resource "aws_cloudwatch_log_group" "dead_letter_queue_consumer" {
   name              = "/aws/lambda/Reliability_DLQ_Consumer"
   kms_key_id        = var.kms_key_cloudwatch_arn
   retention_in_days = 731
+
+  tags = var.core_tags
 }

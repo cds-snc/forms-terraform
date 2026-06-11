@@ -7,6 +7,8 @@ resource "aws_vpc_endpoint" "dynamodb" {
   vpc_endpoint_type = "Gateway"
   service_name      = "com.amazonaws.${var.region}.dynamodb"
   route_table_ids   = [aws_vpc.forms.main_route_table_id]
+
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "s3" {
@@ -14,6 +16,8 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_endpoint_type = "Gateway"
   service_name      = "com.amazonaws.${var.region}.s3"
   route_table_ids   = [aws_vpc.forms.main_route_table_id]
+
+  tags = var.core_tags
 }
 
 resource "aws_vpc_endpoint" "secretsmanager" {
@@ -25,4 +29,6 @@ resource "aws_vpc_endpoint" "secretsmanager" {
     aws_security_group.privatelink.id,
   ]
   subnet_ids = local.private_subnet_ids
+
+  tags = var.core_tags
 }

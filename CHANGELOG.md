@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.43.13](https://github.com/cds-snc/forms-terraform/compare/v3.43.12...v3.43.13) (2026-06-10)
+
+
+### Miscellaneous Chores
+
+* add SSC Cloud Business Requirement tags ([#1362](https://github.com/cds-snc/forms-terraform/issues/1362)) ([5e27579](https://github.com/cds-snc/forms-terraform/commit/5e27579a2ab097c928a2af7e517f20f86c8be1b0))
+* **deps:** lock file maintenance ([#1357](https://github.com/cds-snc/forms-terraform/issues/1357)) ([b82e083](https://github.com/cds-snc/forms-terraform/commit/b82e083cfc8dfe5dc4a731258debeaca30415d88))
+* **deps:** update all non-major github action dependencies ([#1356](https://github.com/cds-snc/forms-terraform/issues/1356)) ([a5cacc0](https://github.com/cds-snc/forms-terraform/commit/a5cacc05039314422333cfbf8032a97427c4e222))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1361](https://github.com/cds-snc/forms-terraform/issues/1361)) ([efbf9ff](https://github.com/cds-snc/forms-terraform/commit/efbf9ff23f5ef13477c0cb511e9d3c26955052fa))
+
 ## [3.43.12](https://github.com/cds-snc/forms-terraform/compare/v3.43.11...v3.43.12) (2026-06-08)
 
 
