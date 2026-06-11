@@ -21,9 +21,18 @@ resource "aws_dynamodb_table" "reliability_queue" {
   }
 
   global_secondary_index {
-    name               = "HasFileKeysByCreatedAt"
-    hash_key           = "HasFileKeys"
-    range_key          = "CreatedAt"
+    name = "HasFileKeysByCreatedAt"
+
+    key_schema {
+      attribute_name = "HasFileKeys"
+      key_type       = "HASH"
+    }
+
+    key_schema {
+      attribute_name = "CreatedAt"
+      key_type       = "RANGE"
+    }
+
     projection_type    = "INCLUDE"
     non_key_attributes = ["SubmissionID", "SendReceipt", "NotifyProcessed", "FileKeys"]
   }
@@ -68,12 +77,30 @@ resource "aws_dynamodb_table" "vault" {
     type = "S"
   }
 
+  # Legacy StatusCreatedAt GSI (now replaced with StatusCreatedAt_v2). We can delete it once both GC Forms APP and API use v2.
   global_secondary_index {
     name               = "StatusCreatedAt"
     hash_key           = "FormID"
     range_key          = "Status#CreatedAt"
     projection_type    = "INCLUDE"
     non_key_attributes = ["CreatedAt", "Name"]
+  }
+
+  global_secondary_index {
+    name = "StatusCreatedAt_v2"
+
+    key_schema {
+      attribute_name = "FormID"
+      key_type       = "HASH"
+    }
+
+    key_schema {
+      attribute_name = "Status#CreatedAt"
+      key_type       = "RANGE"
+    }
+
+    projection_type    = "INCLUDE"
+    non_key_attributes = ["CreatedAt", "Name", "VersionId"]
   }
 
   server_side_encryption {
@@ -121,23 +148,50 @@ resource "aws_dynamodb_table" "audit_logs" {
   }
 
   global_secondary_index {
-    name            = "UserByTime"
-    hash_key        = "UserID"
-    range_key       = "TimeStamp"
+    name = "UserByTime"
+
+    key_schema {
+      attribute_name = "UserID"
+      key_type       = "HASH"
+    }
+
+    key_schema {
+      attribute_name = "TimeStamp"
+      key_type       = "RANGE"
+    }
+
     projection_type = "KEYS_ONLY"
   }
 
   global_secondary_index {
-    name            = "StatusByTimestamp"
-    hash_key        = "Status"
-    range_key       = "TimeStamp"
+    name = "StatusByTimestamp"
+
+    key_schema {
+      attribute_name = "Status"
+      key_type       = "HASH"
+    }
+
+    key_schema {
+      attribute_name = "TimeStamp"
+      key_type       = "RANGE"
+    }
+
     projection_type = "ALL"
   }
 
   global_secondary_index {
-    name            = "SubjectByTimestamp"
-    hash_key        = "Subject"
-    range_key       = "TimeStamp"
+    name = "SubjectByTimestamp"
+
+    key_schema {
+      attribute_name = "Subject"
+      key_type       = "HASH"
+    }
+
+    key_schema {
+      attribute_name = "TimeStamp"
+      key_type       = "RANGE"
+    }
+
     projection_type = "KEYS_ONLY"
   }
 
@@ -186,24 +240,51 @@ resource "aws_dynamodb_table" "api_audit_logs" {
   }
 
   global_secondary_index {
-    name            = "UserByTime"
-    hash_key        = "UserID"
-    range_key       = "TimeStamp"
+    name = "UserByTime"
+
+    key_schema {
+      attribute_name = "UserID"
+      key_type       = "HASH"
+    }
+
+    key_schema {
+      attribute_name = "TimeStamp"
+      key_type       = "RANGE"
+    }
+
     projection_type = "KEYS_ONLY"
   }
 
   global_secondary_index {
-    name            = "StatusByTimestamp"
-    hash_key        = "Status"
-    range_key       = "TimeStamp"
+    name = "StatusByTimestamp"
+
+    key_schema {
+      attribute_name = "Status"
+      key_type       = "HASH"
+    }
+
+    key_schema {
+      attribute_name = "TimeStamp"
+      key_type       = "RANGE"
+    }
+
     projection_type = "ALL"
   }
 
 
   global_secondary_index {
-    name            = "SubjectByTimestamp"
-    hash_key        = "Subject"
-    range_key       = "TimeStamp"
+    name = "SubjectByTimestamp"
+
+    key_schema {
+      attribute_name = "Subject"
+      key_type       = "HASH"
+    }
+
+    key_schema {
+      attribute_name = "TimeStamp"
+      key_type       = "RANGE"
+    }
+
     projection_type = "KEYS_ONLY"
   }
 
