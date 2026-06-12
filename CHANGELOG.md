@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.44.0](https://github.com/cds-snc/forms-terraform/compare/v3.43.13...v3.44.0) (2026-06-12)
+
+
+### Features
+
+* add new StatusCreatedAt_v2 GSI on Vault table ([#1365](https://github.com/cds-snc/forms-terraform/issues/1365)) ([e6599dd](https://github.com/cds-snc/forms-terraform/commit/e6599dd34721eea1181d2d8f1b721168e3abdf9b))
+
+
+### Miscellaneous Chores
+
+* upgrade @gcforms/database package to version 1.1.1 ([#1367](https://github.com/cds-snc/forms-terraform/issues/1367)) ([ce92644](https://github.com/cds-snc/forms-terraform/commit/ce92644638d59fddaf974adbc980bd55cf309eca))
+
 ## [3.43.13](https://github.com/cds-snc/forms-terraform/compare/v3.43.12...v3.43.13) (2026-06-10)
 
 
