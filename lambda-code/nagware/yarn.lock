@@ -427,15 +427,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gcforms/database@npm:^1.0.9":
-  version: 1.0.9
-  resolution: "@gcforms/database@npm:1.0.9"
+"@gcforms/database@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@gcforms/database@npm:1.1.1"
   dependencies:
     "@aws-sdk/client-secrets-manager": "npm:^3.1045.0"
     "@prisma/adapter-pg": "npm:7.8.0"
     "@prisma/client": "npm:7.8.0"
     pg: "npm:8.20.0"
-  checksum: 10c0/60316b6108b31faa01ff04f890df7df4cc575877bdbefbf23bde37eb6fdb8133df310f8c86fee67cc1642623513ea267d82bebf4dbd3419d51e7aa93a1d10ec7
+  checksum: 10c0/e202e3bdf675d00fca4746d1e5464e4d4bd641a895fe87c3d8127bd104d72f8748492b8e7eb8849c34f5348e4874db323099c66be501200190c1dfbb9b50d841
   languageName: node
   linkType: hard
 
@@ -1336,7 +1336,7 @@ __metadata:
     "@aws-sdk/client-dynamodb": "npm:^3.902.0"
     "@aws-sdk/lib-dynamodb": "npm:^3.902.0"
     "@gcforms/connectors": "npm:^2.2.20"
-    "@gcforms/database": "npm:^1.0.9"
+    "@gcforms/database": "npm:1.1.1"
     "@gcforms/types": "npm:^1.0.31"
     "@types/aws-lambda": "npm:^8.10.155"
     "@types/node": "npm:^22.19.19"
