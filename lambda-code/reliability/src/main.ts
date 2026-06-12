@@ -44,6 +44,10 @@ const messageProcessor = async ({
       : null;
     const language = messageData.Item?.FormSubmissionLanguage ?? "en";
     const securityAttribute = messageData.Item?.SecurityAttribute ?? "Protected A";
+    let versionId = messageData.Item?.VersionId ?? "";
+
+    // Ensure value is a string; missing values defaulted above
+    versionId = String(versionId);
     const createdAt = messageData.Item?.CreatedAt ?? null;
     const notifyProcessed = messageData.Item?.NotifyProcessed ?? false;
     sendReceipt = messageData.Item?.SendReceipt ?? null;
@@ -142,6 +146,7 @@ const messageProcessor = async ({
         language,
         createdAt,
         securityAttribute,
+        versionId,
         formSubmissionHash
       );
       return { status: true, messageId };
