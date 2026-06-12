@@ -33,6 +33,11 @@ variable "dynamodb_app_audit_logs_arn" {
   type        = string
 }
 
+variable "dynamodb_notification_arn" {
+  description = "ARN of the Notification DynamoDB table"
+  type        = string
+}
+
 variable "ecs_autoscale_enabled" {
   description = "Should memory/CPU threshold ECS task scaling be enabled"
   type        = bool
@@ -190,6 +195,16 @@ variable "sqs_app_audit_log_queue_arn" {
 
 variable "sqs_app_audit_log_queue_id" {
   description = "SQS audit log queue URL"
+  type        = string
+}
+
+variable "sqs_notification_queue_arn" {
+  description = "SQS notification queue ARN"
+  type        = string
+}
+
+variable "sqs_notification_queue_url" {
+  description = "SQS notification queue URL"
   type        = string
 }
 

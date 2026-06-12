@@ -73,6 +73,16 @@ variable "lambda_nagware_log_group_name" {
   type        = string
 }
 
+variable "lambda_notification_function_name" {
+  description = "Notification Lambda function name"
+  type        = string
+}
+
+variable "lambda_notification_log_group_name" {
+  description = "Notification Lambda CloudWatch log group name"
+  type        = string
+}
+
 variable "lambda_reliability_function_name" {
   description = "Reliability Lambda function name"
   type        = string
