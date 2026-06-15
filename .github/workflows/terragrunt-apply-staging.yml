@@ -23,6 +23,7 @@ env:
   AWS_REGION: ca-central-1
   TERRAFORM_VERSION: 1.15.6
   TERRAGRUNT_VERSION: 1.0.8
+  TG_PROVIDER_CACHE: 1
   TF_INPUT: false
   # API
   TF_VAR_zitadel_application_key: ${{ secrets.STAGING_ZITADEL_APPLICATION_KEY }}
