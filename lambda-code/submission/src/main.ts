@@ -27,8 +27,8 @@ Params:
   language - form submission language "fr" or "en",
   responses - form responses: {formID, securityAttribute, questionID: answer}
   securityAttribute - string of security classification
-  versionId - version of the form template being submitted. Missing or legacy value "1" is
-              normalized to an empty string.
+  fileChecksums - map of file content MD5 checksum associated to file identifier (Record<string, string>)
+  versionId - version of the form template being submitted
 */
 export const handler: Handler = async (submission: AnyObject) => {
   const submissionId = v4();
@@ -132,14 +132,11 @@ const saveSubmission = async (
   fileKeys?: string[]
 ): Promise<void> => {
   try {
-    const securityAttribute = formData.securityAttribute ?? "Protected A";
+    const securityAttribute = String(formData.securityAttribute ?? "Protected A");
     delete formData.securityAttribute;
 
-    let versionId = formData.versionId ?? "";
+    const versionId = String(formData.versionId ?? "1");
     delete formData.versionId;
-
-    // Ensure value is a string; missing values defaulted above
-    versionId = String(versionId);
 
     const timeStamp = Date.now();
 
@@ -167,7 +164,7 @@ const saveSubmission = async (
           FormData: alteredFormDataAsString,
           CreatedAt: timeStamp,
           SecurityAttribute: securityAttribute,
-          ...(versionId !== "" && { VersionId: versionId }),
+          VersionId: versionId,
           FormSubmissionHash: formResponsesAsHash,
           HasFileKeys: fileKeys !== undefined ? 1 : 0,
           ...(fileKeys !== undefined && { FileKeys: JSON.stringify(fileKeys) }),

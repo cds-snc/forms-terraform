@@ -43,11 +43,8 @@ const messageProcessor = async ({
       ? JSON.parse(messageData.Item?.FormData)
       : null;
     const language = messageData.Item?.FormSubmissionLanguage ?? "en";
-    const securityAttribute = messageData.Item?.SecurityAttribute ?? "Protected A";
-    let versionId = messageData.Item?.VersionId ?? "";
-
-    // Ensure value is a string; missing values defaulted above
-    versionId = String(versionId);
+    const securityAttribute = String(messageData.Item?.SecurityAttribute ?? "Protected A");
+    const versionId = String(messageData.Item?.VersionId ?? "1");
     const createdAt = messageData.Item?.CreatedAt ?? null;
     const notifyProcessed = messageData.Item?.NotifyProcessed ?? false;
     sendReceipt = messageData.Item?.SendReceipt ?? null;
