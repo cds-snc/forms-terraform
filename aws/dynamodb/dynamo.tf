@@ -152,12 +152,6 @@ resource "aws_dynamodb_global_secondary_index" "vault_status_created_at_v2" {
   }
 }
 
-# Should be deleted after it has been applied to Staging but before we it is applied to Production (this is because the new index does not exist in Production yet)
-import {
-  to = aws_dynamodb_global_secondary_index.vault_status_created_at_v2
-  id = "${aws_dynamodb_table.vault.name},StatusCreatedAt_v2"
-}
-
 resource "aws_dynamodb_table" "audit_logs" {
   # checkov:skip=CKV_AWS_28: 'point in time recovery' is set to true for staging and production
   name                        = "AuditLogs"
