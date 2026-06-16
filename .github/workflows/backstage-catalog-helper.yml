@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Audit DNS requests
-        uses: cds-snc/dns-proxy-action@9ad793100229573be3f5ba78cc69ec523f2c8b7e # v1.1.0
+        uses: cds-snc/dns-proxy-action@f0796e7f3d6bec5d40aecb0321ed8012f5602f84 # v1.0.2
         env:
           DNS_PROXY_FORWARDTOSENTINEL: "true"
           DNS_PROXY_LOGANALYTICSWORKSPACEID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Run Backstage Catalog Info Helper
-        uses: cds-snc/backstage-catalog-info-helper-action@e36696cef34ed39c43a6e4a3873821bb2bad7eef # v0.3.1
+        uses: cds-snc/backstage-catalog-info-helper-action@cc75afc29a0ade6c41400132ff9e1222f8916ba6 # v0.3.1
         with:
           github_app_id: ${{ secrets.SRE_BOT_RW_APP_ID }}
           github_app_private_key: ${{ secrets.SRE_BOT_RW_PRIVATE_KEY }}
@@ -34,7 +34,7 @@ jobs:
           app_id: ${{ secrets.SRE_BOT_RW_APP_ID }}
           private_key: ${{ secrets.SRE_BOT_RW_PRIVATE_KEY }}
       - name: Create pull request
-        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7.0.11
+        uses: peter-evans/create-pull-request@6cd32fd93684475c31847837f87bb135d40a2b79 # v7.0.3
         with:
           token: ${{ steps.generate_token.outputs.token}}
           sign-commits: true

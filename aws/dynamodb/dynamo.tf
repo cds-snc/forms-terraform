@@ -20,23 +20,6 @@ resource "aws_dynamodb_table" "reliability_queue" {
     type = "N"
   }
 
-  global_secondary_index {
-    name = "HasFileKeysByCreatedAt"
-
-    key_schema {
-      attribute_name = "HasFileKeys"
-      key_type       = "HASH"
-    }
-
-    key_schema {
-      attribute_name = "CreatedAt"
-      key_type       = "RANGE"
-    }
-
-    projection_type    = "INCLUDE"
-    non_key_attributes = ["SubmissionID", "SendReceipt", "NotifyProcessed", "FileKeys"]
-  }
-
   ttl {
     enabled        = true
     attribute_name = "TTL"
@@ -50,6 +33,34 @@ resource "aws_dynamodb_table" "reliability_queue" {
   point_in_time_recovery {
     enabled = var.env != "development"
   }
+}
+
+resource "aws_dynamodb_global_secondary_index" "reliability_queue_has_file_keys_by_created_at" {
+  index_name = "HasFileKeysByCreatedAt"
+  table_name = aws_dynamodb_table.reliability_queue.name
+
+  key_schema {
+    attribute_name = "HasFileKeys"
+    attribute_type = "N"
+    key_type       = "HASH"
+  }
+
+  key_schema {
+    attribute_name = "CreatedAt"
+    attribute_type = "N"
+    key_type       = "RANGE"
+  }
+
+  projection {
+    projection_type    = "INCLUDE"
+    non_key_attributes = ["SubmissionID", "SendReceipt", "NotifyProcessed", "FileKeys"]
+  }
+}
+
+# Should be deleted once this code has been applied to both Staging and Production
+import {
+  to = aws_dynamodb_global_secondary_index.reliability_queue_has_file_keys_by_created_at
+  id = "${aws_dynamodb_table.reliability_queue.name},HasFileKeysByCreatedAt"
 }
 
 resource "aws_dynamodb_table" "vault" {
@@ -77,32 +88,6 @@ resource "aws_dynamodb_table" "vault" {
     type = "S"
   }
 
-  # Legacy StatusCreatedAt GSI (now replaced with StatusCreatedAt_v2). We can delete it once both GC Forms APP and API use v2.
-  global_secondary_index {
-    name               = "StatusCreatedAt"
-    hash_key           = "FormID"
-    range_key          = "Status#CreatedAt"
-    projection_type    = "INCLUDE"
-    non_key_attributes = ["CreatedAt", "Name"]
-  }
-
-  global_secondary_index {
-    name = "StatusCreatedAt_v2"
-
-    key_schema {
-      attribute_name = "FormID"
-      key_type       = "HASH"
-    }
-
-    key_schema {
-      attribute_name = "Status#CreatedAt"
-      key_type       = "RANGE"
-    }
-
-    projection_type    = "INCLUDE"
-    non_key_attributes = ["CreatedAt", "Name", "VersionId"]
-  }
-
   server_side_encryption {
     enabled     = true
     kms_key_arn = var.kms_key_dynamodb_arn
@@ -110,6 +95,60 @@ resource "aws_dynamodb_table" "vault" {
 
   point_in_time_recovery {
     enabled = var.env != "development"
+  }
+
+  lifecycle {
+    ignore_changes = [global_secondary_index]
+  }
+}
+
+resource "aws_dynamodb_global_secondary_index" "vault_status_created_at" {
+  index_name = "StatusCreatedAt"
+  table_name = aws_dynamodb_table.vault.name
+
+  key_schema {
+    attribute_name = "FormID"
+    attribute_type = "S"
+    key_type       = "HASH"
+  }
+
+  key_schema {
+    attribute_name = "Status#CreatedAt"
+    attribute_type = "S"
+    key_type       = "RANGE"
+  }
+
+  projection {
+    projection_type    = "INCLUDE"
+    non_key_attributes = ["CreatedAt", "Name"]
+  }
+}
+
+# Should be deleted once this code has been applied to both Staging and Production
+import {
+  to = aws_dynamodb_global_secondary_index.vault_status_created_at
+  id = "${aws_dynamodb_table.vault.name},StatusCreatedAt"
+}
+
+resource "aws_dynamodb_global_secondary_index" "vault_status_created_at_v2" {
+  index_name = "StatusCreatedAt_v2"
+  table_name = aws_dynamodb_table.vault.name
+
+  key_schema {
+    attribute_name = "FormID"
+    attribute_type = "S"
+    key_type       = "HASH"
+  }
+
+  key_schema {
+    attribute_name = "Status#CreatedAt"
+    attribute_type = "S"
+    key_type       = "RANGE"
+  }
+
+  projection {
+    projection_type    = "INCLUDE"
+    non_key_attributes = ["CreatedAt", "Name", "VersionId"]
   }
 }
 
@@ -147,54 +186,6 @@ resource "aws_dynamodb_table" "audit_logs" {
     type = "S"
   }
 
-  global_secondary_index {
-    name = "UserByTime"
-
-    key_schema {
-      attribute_name = "UserID"
-      key_type       = "HASH"
-    }
-
-    key_schema {
-      attribute_name = "TimeStamp"
-      key_type       = "RANGE"
-    }
-
-    projection_type = "KEYS_ONLY"
-  }
-
-  global_secondary_index {
-    name = "StatusByTimestamp"
-
-    key_schema {
-      attribute_name = "Status"
-      key_type       = "HASH"
-    }
-
-    key_schema {
-      attribute_name = "TimeStamp"
-      key_type       = "RANGE"
-    }
-
-    projection_type = "ALL"
-  }
-
-  global_secondary_index {
-    name = "SubjectByTimestamp"
-
-    key_schema {
-      attribute_name = "Subject"
-      key_type       = "HASH"
-    }
-
-    key_schema {
-      attribute_name = "TimeStamp"
-      key_type       = "RANGE"
-    }
-
-    projection_type = "KEYS_ONLY"
-  }
-
   server_side_encryption {
     enabled     = true
     kms_key_arn = var.kms_key_dynamodb_arn
@@ -203,6 +194,87 @@ resource "aws_dynamodb_table" "audit_logs" {
   point_in_time_recovery {
     enabled = var.env != "development"
   }
+}
+
+resource "aws_dynamodb_global_secondary_index" "audit_logs_user_by_time" {
+  index_name = "UserByTime"
+  table_name = aws_dynamodb_table.audit_logs.name
+
+  key_schema {
+    attribute_name = "UserID"
+    attribute_type = "S"
+    key_type       = "HASH"
+  }
+
+  key_schema {
+    attribute_name = "TimeStamp"
+    attribute_type = "N"
+    key_type       = "RANGE"
+  }
+
+  projection {
+    projection_type = "KEYS_ONLY"
+  }
+}
+
+# Should be deleted once this code has been applied to both Staging and Production
+import {
+  to = aws_dynamodb_global_secondary_index.audit_logs_user_by_time
+  id = "${aws_dynamodb_table.audit_logs.name},UserByTime"
+}
+
+resource "aws_dynamodb_global_secondary_index" "audit_logs_status_by_timestamp" {
+  index_name = "StatusByTimestamp"
+  table_name = aws_dynamodb_table.audit_logs.name
+
+  key_schema {
+    attribute_name = "Status"
+    attribute_type = "S"
+    key_type       = "HASH"
+  }
+
+  key_schema {
+    attribute_name = "TimeStamp"
+    attribute_type = "N"
+    key_type       = "RANGE"
+  }
+
+  projection {
+    projection_type = "ALL"
+  }
+}
+
+# Should be deleted once this code has been applied to both Staging and Production
+import {
+  to = aws_dynamodb_global_secondary_index.audit_logs_status_by_timestamp
+  id = "${aws_dynamodb_table.audit_logs.name},StatusByTimestamp"
+}
+
+resource "aws_dynamodb_global_secondary_index" "audit_logs_subject_by_timestamp" {
+  index_name = "SubjectByTimestamp"
+  table_name = aws_dynamodb_table.audit_logs.name
+
+  key_schema {
+    attribute_name = "Subject"
+    attribute_type = "S"
+    key_type       = "HASH"
+  }
+
+  key_schema {
+    attribute_name = "TimeStamp"
+    attribute_type = "N"
+    key_type       = "RANGE"
+  }
+
+  projection {
+    projection_type = "KEYS_ONLY"
+  }
+}
+
+# Should be deleted once this code has been applied to both Staging and Production
+import {
+  to = aws_dynamodb_global_secondary_index.audit_logs_subject_by_timestamp
+  id = "${aws_dynamodb_table.audit_logs.name},SubjectByTimestamp"
 }
 
 resource "aws_dynamodb_table" "api_audit_logs" {
@@ -239,56 +311,6 @@ resource "aws_dynamodb_table" "api_audit_logs" {
     type = "S"
   }
 
-  global_secondary_index {
-    name = "UserByTime"
-
-    key_schema {
-      attribute_name = "UserID"
-      key_type       = "HASH"
-    }
-
-    key_schema {
-      attribute_name = "TimeStamp"
-      key_type       = "RANGE"
-    }
-
-    projection_type = "KEYS_ONLY"
-  }
-
-  global_secondary_index {
-    name = "StatusByTimestamp"
-
-    key_schema {
-      attribute_name = "Status"
-      key_type       = "HASH"
-    }
-
-    key_schema {
-      attribute_name = "TimeStamp"
-      key_type       = "RANGE"
-    }
-
-    projection_type = "ALL"
-  }
-
-
-  global_secondary_index {
-    name = "SubjectByTimestamp"
-
-    key_schema {
-      attribute_name = "Subject"
-      key_type       = "HASH"
-    }
-
-    key_schema {
-      attribute_name = "TimeStamp"
-      key_type       = "RANGE"
-    }
-
-    projection_type = "KEYS_ONLY"
-  }
-
-
   server_side_encryption {
     enabled     = true
     kms_key_arn = var.kms_key_dynamodb_arn
@@ -299,3 +321,83 @@ resource "aws_dynamodb_table" "api_audit_logs" {
   }
 }
 
+resource "aws_dynamodb_global_secondary_index" "api_audit_logs_user_by_time" {
+  index_name = "UserByTime"
+  table_name = aws_dynamodb_table.api_audit_logs.name
+
+  key_schema {
+    attribute_name = "UserID"
+    attribute_type = "S"
+    key_type       = "HASH"
+  }
+
+  key_schema {
+    attribute_name = "TimeStamp"
+    attribute_type = "N"
+    key_type       = "RANGE"
+  }
+
+  projection {
+    projection_type = "KEYS_ONLY"
+  }
+}
+
+# Should be deleted once this code has been applied to both Staging and Production
+import {
+  to = aws_dynamodb_global_secondary_index.api_audit_logs_user_by_time
+  id = "${aws_dynamodb_table.api_audit_logs.name},UserByTime"
+}
+
+resource "aws_dynamodb_global_secondary_index" "api_audit_logs_status_by_timestamp" {
+  index_name = "StatusByTimestamp"
+  table_name = aws_dynamodb_table.api_audit_logs.name
+
+  key_schema {
+    attribute_name = "Status"
+    attribute_type = "S"
+    key_type       = "HASH"
+  }
+
+  key_schema {
+    attribute_name = "TimeStamp"
+    attribute_type = "N"
+    key_type       = "RANGE"
+  }
+
+  projection {
+    projection_type = "ALL"
+  }
+}
+
+# Should be deleted once this code has been applied to both Staging and Production
+import {
+  to = aws_dynamodb_global_secondary_index.api_audit_logs_status_by_timestamp
+  id = "${aws_dynamodb_table.api_audit_logs.name},StatusByTimestamp"
+}
+
+resource "aws_dynamodb_global_secondary_index" "api_audit_logs_subject_by_timestamp" {
+  index_name = "SubjectByTimestamp"
+  table_name = aws_dynamodb_table.api_audit_logs.name
+
+  key_schema {
+    attribute_name = "Subject"
+    attribute_type = "S"
+    key_type       = "HASH"
+  }
+
+  key_schema {
+    attribute_name = "TimeStamp"
+    attribute_type = "N"
+    key_type       = "RANGE"
+  }
+
+  projection {
+    projection_type = "KEYS_ONLY"
+  }
+}
+
+# Should be deleted once this code has been applied to both Staging and Production
+import {
+  to = aws_dynamodb_global_secondary_index.api_audit_logs_subject_by_timestamp
+  id = "${aws_dynamodb_table.api_audit_logs.name},SubjectByTimestamp"
+}
