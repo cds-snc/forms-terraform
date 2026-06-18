@@ -48,7 +48,7 @@ for lambdaFolderPath in $basedir/*/; do
 
     repositoryName=${lambdaName}-lambda
 
-    docker build --platform=linux/amd64 -t $repositoryName .
+    docker build --platform=linux/amd64 --provenance false -t $repositoryName .
     printf "${greenColor}=> Tagging and pushing ${lambdaName} image${reset}\n"
 
     docker tag $repositoryName $ecrRepositoryAddress/$repositoryName
