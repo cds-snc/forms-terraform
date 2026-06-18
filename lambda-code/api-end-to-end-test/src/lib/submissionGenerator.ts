@@ -30,7 +30,6 @@ export class SubmissionGenerator {
             formID: this.formId,
             language: "en",
             responses,
-            versionId: "1",
           }),
         })
       )

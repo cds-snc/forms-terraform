@@ -59,7 +59,6 @@ class FormSubmitThroughInfraBehaviour(SequentialTaskSetWithFailure):
                         "responses": generated_response.response_data,
                         "language": "en",
                         "securityAttribute": "Protected A",
-                        "versionId": "1",
                     }
                 ).encode("utf-8"),
             }
