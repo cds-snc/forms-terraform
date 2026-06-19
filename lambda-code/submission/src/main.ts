@@ -41,6 +41,8 @@ export const handler: Handler = async (submission: AnyObject) => {
      * If we found file references in the response we bypass the regular submission flow
      * in order to generate and return upload URLs for the client to send us files attached to the submission.
      */
+    const notificationId: string | undefined = submission.notificationId;
+
     if (attachedFileReferences.length > 0) {
       const fileChecksums = submission.fileChecksums;
 
@@ -55,7 +57,7 @@ export const handler: Handler = async (submission: AnyObject) => {
         fileChecksums
       );
 
-      await saveSubmission(submissionId, submission, fileAccessKeys);
+      await saveSubmission(submissionId, submission, fileAccessKeys, notificationId);
 
       console.log(
         JSON.stringify({
@@ -69,7 +71,7 @@ export const handler: Handler = async (submission: AnyObject) => {
       return { status: true, submissionId, fileURLMap: fileUploadURLs };
     }
 
-    await saveSubmission(submissionId, submission);
+    await saveSubmission(submissionId, submission, undefined, notificationId);
 
     const receiptId = await enqueueReliabilityProcessingRequest(submissionId);
 
@@ -127,7 +129,8 @@ const enqueueReliabilityProcessingRequest = async (submissionId: string): Promis
 const saveSubmission = async (
   submissionId: string,
   formData: AnyObject,
-  fileKeys?: string[]
+  fileKeys?: string[],
+  notificationId?: string
 ): Promise<void> => {
   try {
     const securityAttribute = formData.securityAttribute ?? "Protected A";
@@ -162,6 +165,7 @@ const saveSubmission = async (
           FormSubmissionHash: formResponsesAsHash,
           HasFileKeys: fileKeys !== undefined ? 1 : 0,
           ...(fileKeys !== undefined && { FileKeys: JSON.stringify(fileKeys) }),
+          ...(notificationId !== undefined && { NotificationID: notificationId }),
         },
       })
     );

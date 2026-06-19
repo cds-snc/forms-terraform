@@ -19,7 +19,8 @@ export default async (
   language: string,
   createdAt: string,
   securityAttribute: string,
-  formSubmissionHash: string
+  formSubmissionHash: string,
+  notificationId?: string
 ) => {
   const submissionAttachmentPaths = submissionAttachmentsWithInformation.map(
     (item) => item.attachmentPath
@@ -60,7 +61,9 @@ export default async (
     throw new Error(`Failed to save submission to Vault.`);
   }
 
-  await notifyFormOwnersThatNewResponsesAreAvailable(formID);
+  if (notificationId !== undefined) {
+    await notifyFormOwnersThatNewResponsesAreAvailable(notificationId);
+  }
 
   try {
     await Promise.all([
@@ -157,8 +160,8 @@ function buildSubmissionAttachmentJsonRecord(
   );
 }
 
-async function notifyFormOwnersThatNewResponsesAreAvailable(formId: string): Promise<void> {
-  return notification.enqueueDeferred(formId).catch((error) =>
+async function notifyFormOwnersThatNewResponsesAreAvailable(notificationId: string): Promise<void> {
+  return notification.enqueueDeferred(notificationId).catch((error) =>
     console.error(
       JSON.stringify({
         level: "error",

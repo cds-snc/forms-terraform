@@ -32,7 +32,7 @@ export async function getSubmission(message: Record<string, unknown>) {
       SubmissionID: message.submissionID,
     },
     ProjectExpression:
-      "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt,SecurityAttribute,NotifyProcessed,FileKeys",
+      "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt,SecurityAttribute,NotifyProcessed,FileKeys,NotificationID",
   };
 
   return await db.send(new GetCommand(DBParams));
