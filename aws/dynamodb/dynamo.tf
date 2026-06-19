@@ -131,6 +131,8 @@ import {
 }
 
 resource "aws_dynamodb_global_secondary_index" "vault_status_created_at_v2" {
+  count = var.env == "production" ? 0 : 1 # disabled in Production as it is used to design and test the new form versioning system
+
   index_name = "StatusCreatedAt_v2"
   table_name = aws_dynamodb_table.vault.name
 
