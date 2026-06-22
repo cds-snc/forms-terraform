@@ -57,12 +57,6 @@ resource "aws_dynamodb_global_secondary_index" "reliability_queue_has_file_keys_
   }
 }
 
-# Should be deleted once this code has been applied to both Staging and Production
-import {
-  to = aws_dynamodb_global_secondary_index.reliability_queue_has_file_keys_by_created_at
-  id = "${aws_dynamodb_table.reliability_queue.name},HasFileKeysByCreatedAt"
-}
-
 resource "aws_dynamodb_table" "vault" {
   # checkov:skip=CKV_AWS_28: 'point in time recovery' is set to true for staging and production
   name                        = "Vault"
@@ -122,12 +116,6 @@ resource "aws_dynamodb_global_secondary_index" "vault_status_created_at" {
     projection_type    = "INCLUDE"
     non_key_attributes = ["CreatedAt", "Name"]
   }
-}
-
-# Should be deleted once this code has been applied to both Staging and Production
-import {
-  to = aws_dynamodb_global_secondary_index.vault_status_created_at
-  id = "${aws_dynamodb_table.vault.name},StatusCreatedAt"
 }
 
 resource "aws_dynamodb_global_secondary_index" "vault_status_created_at_v2" {
@@ -219,12 +207,6 @@ resource "aws_dynamodb_global_secondary_index" "audit_logs_user_by_time" {
   }
 }
 
-# Should be deleted once this code has been applied to both Staging and Production
-import {
-  to = aws_dynamodb_global_secondary_index.audit_logs_user_by_time
-  id = "${aws_dynamodb_table.audit_logs.name},UserByTime"
-}
-
 resource "aws_dynamodb_global_secondary_index" "audit_logs_status_by_timestamp" {
   index_name = "StatusByTimestamp"
   table_name = aws_dynamodb_table.audit_logs.name
@@ -246,12 +228,6 @@ resource "aws_dynamodb_global_secondary_index" "audit_logs_status_by_timestamp" 
   }
 }
 
-# Should be deleted once this code has been applied to both Staging and Production
-import {
-  to = aws_dynamodb_global_secondary_index.audit_logs_status_by_timestamp
-  id = "${aws_dynamodb_table.audit_logs.name},StatusByTimestamp"
-}
-
 resource "aws_dynamodb_global_secondary_index" "audit_logs_subject_by_timestamp" {
   index_name = "SubjectByTimestamp"
   table_name = aws_dynamodb_table.audit_logs.name
@@ -271,12 +247,6 @@ resource "aws_dynamodb_global_secondary_index" "audit_logs_subject_by_timestamp"
   projection {
     projection_type = "KEYS_ONLY"
   }
-}
-
-# Should be deleted once this code has been applied to both Staging and Production
-import {
-  to = aws_dynamodb_global_secondary_index.audit_logs_subject_by_timestamp
-  id = "${aws_dynamodb_table.audit_logs.name},SubjectByTimestamp"
 }
 
 resource "aws_dynamodb_table" "api_audit_logs" {
@@ -344,12 +314,6 @@ resource "aws_dynamodb_global_secondary_index" "api_audit_logs_user_by_time" {
   }
 }
 
-# Should be deleted once this code has been applied to both Staging and Production
-import {
-  to = aws_dynamodb_global_secondary_index.api_audit_logs_user_by_time
-  id = "${aws_dynamodb_table.api_audit_logs.name},UserByTime"
-}
-
 resource "aws_dynamodb_global_secondary_index" "api_audit_logs_status_by_timestamp" {
   index_name = "StatusByTimestamp"
   table_name = aws_dynamodb_table.api_audit_logs.name
@@ -371,12 +335,6 @@ resource "aws_dynamodb_global_secondary_index" "api_audit_logs_status_by_timesta
   }
 }
 
-# Should be deleted once this code has been applied to both Staging and Production
-import {
-  to = aws_dynamodb_global_secondary_index.api_audit_logs_status_by_timestamp
-  id = "${aws_dynamodb_table.api_audit_logs.name},StatusByTimestamp"
-}
-
 resource "aws_dynamodb_global_secondary_index" "api_audit_logs_subject_by_timestamp" {
   index_name = "SubjectByTimestamp"
   table_name = aws_dynamodb_table.api_audit_logs.name
@@ -396,12 +354,6 @@ resource "aws_dynamodb_global_secondary_index" "api_audit_logs_subject_by_timest
   projection {
     projection_type = "KEYS_ONLY"
   }
-}
-
-# Should be deleted once this code has been applied to both Staging and Production
-import {
-  to = aws_dynamodb_global_secondary_index.api_audit_logs_subject_by_timestamp
-  id = "${aws_dynamodb_table.api_audit_logs.name},SubjectByTimestamp"
 }
 
 resource "aws_dynamodb_table" "notification" {
