@@ -10,16 +10,6 @@ resource "aws_dynamodb_table" "reliability_queue" {
     type = "S"
   }
 
-  attribute {
-    name = "HasFileKeys"
-    type = "N"
-  }
-
-  attribute {
-    name = "CreatedAt"
-    type = "N"
-  }
-
   ttl {
     enabled        = true
     attribute_name = "TTL"
@@ -74,11 +64,6 @@ resource "aws_dynamodb_table" "vault" {
 
   attribute {
     name = "NAME_OR_CONF"
-    type = "S"
-  }
-
-  attribute {
-    name = "Status#CreatedAt"
     type = "S"
   }
 
@@ -158,21 +143,6 @@ resource "aws_dynamodb_table" "audit_logs" {
 
   attribute {
     name = "Event#SubjectID#TimeStamp"
-    type = "S"
-  }
-
-  attribute {
-    name = "TimeStamp"
-    type = "N"
-  }
-
-  attribute {
-    name = "Status"
-    type = "S"
-  }
-
-  attribute {
-    name = "Subject"
     type = "S"
   }
 
@@ -265,21 +235,6 @@ resource "aws_dynamodb_table" "api_audit_logs" {
 
   attribute {
     name = "Event#SubjectID#TimeStamp"
-    type = "S"
-  }
-
-  attribute {
-    name = "TimeStamp"
-    type = "N"
-  }
-
-  attribute {
-    name = "Status"
-    type = "S"
-  }
-
-  attribute {
-    name = "Subject"
     type = "S"
   }
 
