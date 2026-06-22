@@ -588,15 +588,15 @@ __metadata:
   linkType: hard
 
 "@gcforms/core@npm:^2.2.9":
-  version: 2.2.9
-  resolution: "@gcforms/core@npm:2.2.9"
+  version: 2.2.14
+  resolution: "@gcforms/core@npm:2.2.14"
   dependencies:
     file-type: "npm:^21.0.0"
     recheck: "npm:^4.5.0"
     tsdown: "npm:^0.15.0"
   peerDependencies:
     "@gcforms/types": "*"
-  checksum: 10c0/a15ea3dd32ae46a51207a6c1b8cb63648e066bfee99b0874ebe50bb1ba54a8fec20c48284b00ddd445d19fbc326ead6ca920e7704f43da5805ddf740dd35d6ca
+  checksum: 10c0/ebb4fd0dceaeb8864610c4249d701605c8bdc795aa4a1ebd9a3f6c13894b035172e1f0862806089d1db7b5f1fa4719461fe1ca8ed633b0661bdc0dc3aae8d6c6
   languageName: node
   linkType: hard
 
@@ -613,9 +613,9 @@ __metadata:
   linkType: hard
 
 "@gcforms/types@npm:^1.0.31":
-  version: 1.0.31
-  resolution: "@gcforms/types@npm:1.0.31"
-  checksum: 10c0/2b7eeecbda3bb24dbe2bf96d073f886ab752ed78cd76f5d009101661e74139ffe50cdc88830948e6edbb7feba131a020ba75a9e067058cf1e07302aa5c8a7747
+  version: 1.0.34
+  resolution: "@gcforms/types@npm:1.0.34"
+  checksum: 10c0/f2ce7f61a1f0402b1d8810bbfcecf21d1dfb45058cd12b7e1c0f12371e299d382a81169e9cdbc25c6b7ca1c54aaa975de139259aff32f1b68250674b0e8ca6a8
   languageName: node
   linkType: hard
 
@@ -1024,20 +1024,20 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 25.9.2
-  resolution: "@types/node@npm:25.9.2"
+  version: 26.0.0
+  resolution: "@types/node@npm:26.0.0"
   dependencies:
-    undici-types: "npm:>=7.24.0 <7.24.7"
-  checksum: 10c0/f14c0d56361febb985eccc45cf0834ee6e2f07c4389a636f3e1a55ebde320077a80bface18c9afd3092f5fa295925502c1a9d55f805efa813f634aa9c941cbac
+    undici-types: "npm:~8.3.0"
+  checksum: 10c0/f36e21634fd8e8ded162ca486508bd8bb229d398a8d5541f6d8c1255968d4464e53327a77f403b216ef98e3b6f6956882eef83e4857d4bc2be9569dd55d37aae
   languageName: node
   linkType: hard
 
 "@types/node@npm:^22.19.19":
-  version: 22.19.20
-  resolution: "@types/node@npm:22.19.20"
+  version: 22.20.0
+  resolution: "@types/node@npm:22.20.0"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10c0/933d4466f1a498dd7c8e173af7265a53e9d410cab4a827ccc348414d5065a9a40ba7a7c994a71b3ee651188111db3b43573b830dc30a61a7489f3e6efc537bf7
+  checksum: 10c0/55d78223205bd5f81f043d71b7a5c8d8854b9ef44ef81291680943adb27fa5ba1f092658c87183d5bc8cf6baf6a57b81dad966eb3afa452cc301a615b6d9b20e
   languageName: node
   linkType: hard
 
@@ -2514,17 +2514,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:>=7.24.0 <7.24.7":
-  version: 7.24.6
-  resolution: "undici-types@npm:7.24.6"
-  checksum: 10c0/d9cd8befb643ac904615c280a095ba4240531f6bb4a5e75a22a7483630ca8d3f1016d2ab6ace6ceda1f63b3a2db2fe037fafe121d6917a0187573aa548ff78ca
-  languageName: node
-  linkType: hard
-
 "undici-types@npm:~6.21.0":
   version: 6.21.0
   resolution: "undici-types@npm:6.21.0"
   checksum: 10c0/c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~8.3.0":
+  version: 8.3.0
+  resolution: "undici-types@npm:8.3.0"
+  checksum: 10c0/c8aa7e2fbebfce519654dafadc0ece59be888d2ccaf180fb4495da875e7b536d2456345c384069c7e6f3e9c9ab7435f074957da306f142343eee86ff8048855a
   languageName: node
   linkType: hard
 
