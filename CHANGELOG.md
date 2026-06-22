@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.44.0](https://github.com/cds-snc/forms-terraform/compare/v3.43.13...v3.44.0) (2026-06-18)
+
+
+### Features
+
+* add new StatusCreatedAt_v2 GSI on Vault table ([#1365](https://github.com/cds-snc/forms-terraform/issues/1365)) ([e6599dd](https://github.com/cds-snc/forms-terraform/commit/e6599dd34721eea1181d2d8f1b721168e3abdf9b))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#1368](https://github.com/cds-snc/forms-terraform/issues/1368)) ([55e5869](https://github.com/cds-snc/forms-terraform/commit/55e5869bdb444a0d649ebf8822e67bb4da54331c))
+* disable new StatusCreatedAt_v2 GSI in Production (only) ([#1374](https://github.com/cds-snc/forms-terraform/issues/1374)) ([c1f0fa9](https://github.com/cds-snc/forms-terraform/commit/c1f0fa9357aee7225a9ddc5e87760a4adebeded1))
+* enable Terragrunt cache to save on disk space while running Github workflows ([#1372](https://github.com/cds-snc/forms-terraform/issues/1372)) ([aab689c](https://github.com/cds-snc/forms-terraform/commit/aab689c6b020d26d45741e9ebc57298625444f57))
+* remove temporary Terraform import to handle state drift between Staging and Production ([#1373](https://github.com/cds-snc/forms-terraform/issues/1373)) ([b5ed7e3](https://github.com/cds-snc/forms-terraform/commit/b5ed7e3f56cd2c023a50f56571ee45c24fd6559c))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1371](https://github.com/cds-snc/forms-terraform/issues/1371)) ([fee300b](https://github.com/cds-snc/forms-terraform/commit/fee300beefc255ef66bf7f39ca36a5428e1cc348))
+* upgrade @gcforms/database package to version 1.1.1 ([#1367](https://github.com/cds-snc/forms-terraform/issues/1367)) ([ce92644](https://github.com/cds-snc/forms-terraform/commit/ce92644638d59fddaf974adbc980bd55cf309eca))
+* upgrade Terrraform (1.15.6) ; Terragrunt (1.0.8) ; Hashicorp AWS provider (6.50.0) ([#1370](https://github.com/cds-snc/forms-terraform/issues/1370)) ([aca86d2](https://github.com/cds-snc/forms-terraform/commit/aca86d21b7a6df17408ed18ec69c11ca7dd264f4))
+
 ## [3.43.13](https://github.com/cds-snc/forms-terraform/compare/v3.43.12...v3.43.13) (2026-06-10)
 
 
