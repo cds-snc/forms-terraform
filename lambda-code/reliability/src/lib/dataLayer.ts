@@ -32,7 +32,7 @@ export async function getSubmission(message: Record<string, unknown>) {
       SubmissionID: message.submissionID,
     },
     ProjectExpression:
-      "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt,SecurityAttribute,VersionId,NotifyProcessed,FileKeys",
+      "SubmissionID,FormID,SendReceipt,FormData,FormSubmissionLanguage,CreatedAt,SecurityAttribute,Version,NotifyProcessed,FileKeys",
   };
 
   return await db.send(new GetCommand(DBParams));
@@ -117,7 +117,7 @@ export async function saveToVault(
   language: string,
   createdAt: string,
   securityAttribute: string,
-  versionId: string,
+  version: Number,
   formSubmissionHash: string
 ) {
   const formSubmission = JSON.stringify(formResponse);
@@ -147,7 +147,7 @@ export async function saveToVault(
             FormSubmissionLanguage: language,
             CreatedAt: Number(createdAt),
             SecurityAttribute: securityAttribute,
-            VersionId: versionId,
+            Version: version,
             "Status#CreatedAt": `New#${Number(createdAt)}`,
             ConfirmationCode: confirmationCode,
             Name: name,

@@ -28,7 +28,7 @@ Params:
   responses - form responses: {formID, securityAttribute, questionID: answer}
   securityAttribute - string of security classification
   fileChecksums - map of file content MD5 checksum associated to file identifier (Record<string, string>)
-  versionId - version of the form template being submitted
+  version - version of the form template being submitted
 */
 export const handler: Handler = async (submission: AnyObject) => {
   const submissionId = v4();
@@ -135,8 +135,8 @@ const saveSubmission = async (
     const securityAttribute = String(formData.securityAttribute ?? "Protected A");
     delete formData.securityAttribute;
 
-    const versionId = String(formData.versionId ?? "1");
-    delete formData.versionId;
+    const version = Number(formData.version ?? 1);
+    delete formData.version;
 
     const timeStamp = Date.now();
 
@@ -164,7 +164,7 @@ const saveSubmission = async (
           FormData: alteredFormDataAsString,
           CreatedAt: timeStamp,
           SecurityAttribute: securityAttribute,
-          VersionId: versionId,
+          Version: version,
           FormSubmissionHash: formResponsesAsHash,
           HasFileKeys: fileKeys !== undefined ? 1 : 0,
           ...(fileKeys !== undefined && { FileKeys: JSON.stringify(fileKeys) }),
