@@ -51,6 +51,7 @@ export const handler: Handler = async (submission: AnyObject) => {
 
       const { fileAccessKeys, fileUploadURLs } = await generateFileAccessKeysAndUploadURLs(
         submissionId,
+        submission.formID,
         attachedFileReferences,
         fileChecksums
       );
