@@ -56,7 +56,6 @@ export function findAttachedFileReferencesInSubmissionResponses(
 
 export async function generateFileAccessKeysAndUploadURLs(
   submissionId: string,
-  formId: string,
   fileReferences: FileReference[],
   fileChecksums: Record<string, string>
 ): Promise<{ fileAccessKeys: string[]; fileUploadURLs: Record<string, PresignedPost> }> {
@@ -69,7 +68,7 @@ export async function generateFileAccessKeysAndUploadURLs(
       const fileAccessKey = `${keyStartingPath}/${fileReference.id}/${fileReference.name}`;
       const contentMD5 = fileChecksums?.[fileReference.id];
 
-      const fileUploadURL = await generateSignedUrl(fileAccessKey, contentMD5, formId);
+      const fileUploadURL = await generateSignedUrl(fileAccessKey, contentMD5);
       return { id: fileReference.id, fileAccessKey, fileUploadURL };
     })
   );
@@ -123,9 +122,9 @@ const extractFileInputs = (originalObject: Record<string, unknown>) => {
   return fileInputList;
 };
 
-const generateSignedUrl = async (key: string, contentMD5: string, formId: string) => {
+const generateSignedUrl = async (key: string, contentMD5: string) => {
   if (!contentMD5) {
-    throw new Error(`Content MD5 checksum is required to generate signed URL. formId: ${formId}, key: ${key}`);
+    throw new Error(`Content MD5 checksum is required to generate signed URL. key: ${key}`);
   }
 
   const base64ContentMD5 = Buffer.from(contentMD5, "hex").toString("base64");
