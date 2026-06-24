@@ -19,6 +19,7 @@ export default async (
   language: string,
   createdAt: string,
   securityAttribute: string,
+  version: Number,
   formSubmissionHash: string
 ) => {
   const submissionAttachmentPaths = submissionAttachmentsWithInformation.map(
@@ -43,6 +44,7 @@ export default async (
       language,
       createdAt,
       securityAttribute,
+      version,
       formSubmissionHash
     );
   } catch (error) {
