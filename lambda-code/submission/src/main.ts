@@ -92,8 +92,8 @@ export const handler: Handler = async (submission: AnyObject) => {
         severity: "1", // this will trigger an alert to on-call team
         status: "failed",
         submissionId: submissionId,
+        formId: submission.formID ?? "n/a",
         msg: (error as Error).message,
-        details: JSON.stringify(error),
       })
     );
 
