@@ -124,7 +124,7 @@ const extractFileInputs = (originalObject: Record<string, unknown>) => {
 
 const generateSignedUrl = async (key: string, contentMD5: string) => {
   if (!contentMD5) {
-    throw new Error(`Content MD5 checksum is required to generate signed URL. key: ${key}`);
+    throw new Error(`Content MD5 checksum is required to generate signed URL. $_key: ${key}`);
   }
 
   const base64ContentMD5 = Buffer.from(contentMD5, "hex").toString("base64");
