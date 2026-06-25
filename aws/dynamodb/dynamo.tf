@@ -123,7 +123,7 @@ resource "aws_dynamodb_global_secondary_index" "vault_status_created_at_v2" {
 
   projection {
     projection_type    = "INCLUDE"
-    non_key_attributes = ["CreatedAt", "Name", "VersionId"]
+    non_key_attributes = ["CreatedAt", "Name", "Version"]
   }
 }
 

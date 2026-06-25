@@ -43,7 +43,8 @@ const messageProcessor = async ({
       ? JSON.parse(messageData.Item?.FormData)
       : null;
     const language = messageData.Item?.FormSubmissionLanguage ?? "en";
-    const securityAttribute = messageData.Item?.SecurityAttribute ?? "Protected A";
+    const securityAttribute = String(messageData.Item?.SecurityAttribute ?? "Protected A");
+    const version = Number(messageData.Item?.Version ?? 1);
     const createdAt = messageData.Item?.CreatedAt ?? null;
     const notifyProcessed = messageData.Item?.NotifyProcessed ?? false;
     sendReceipt = messageData.Item?.SendReceipt ?? null;
@@ -143,8 +144,9 @@ const messageProcessor = async ({
         language,
         createdAt,
         securityAttribute,
-        formSubmissionHash,
         notificationId
+        version,
+        formSubmissionHash
       );
       return { status: true, messageId };
     }
