@@ -29,6 +29,7 @@ Params:
   securityAttribute - string of security classification
   fileChecksums - map of file content MD5 checksum associated to file identifier (Record<string, string>)
   version - version of the form template being submitted
+  notificationId - (optional) UUID of a notification that should be sent later in the submission processing pipeline
 */
 export const handler: Handler = async (submission: AnyObject) => {
   const submissionId = v4();
@@ -39,12 +40,12 @@ export const handler: Handler = async (submission: AnyObject) => {
       submissionId
     );
 
+    const notificationId: string | undefined = submission.notificationId;
+
     /**
      * If we found file references in the response we bypass the regular submission flow
      * in order to generate and return upload URLs for the client to send us files attached to the submission.
      */
-    const notificationId: string | undefined = submission.notificationId;
-
     if (attachedFileReferences.length > 0) {
       const fileChecksums = submission.fileChecksums;
 
