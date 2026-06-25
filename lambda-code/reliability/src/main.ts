@@ -144,9 +144,9 @@ const messageProcessor = async ({
         language,
         createdAt,
         securityAttribute,
-        notificationId
         version,
-        formSubmissionHash
+        formSubmissionHash,
+        notificationId
       );
       return { status: true, messageId };
     }

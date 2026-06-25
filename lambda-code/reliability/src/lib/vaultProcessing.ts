@@ -19,9 +19,9 @@ export default async (
   language: string,
   createdAt: string,
   securityAttribute: string,
-  notificationId?: string
   version: Number,
-  formSubmissionHash: string
+  formSubmissionHash: string,
+  notificationId?: string
 ) => {
   const submissionAttachmentPaths = submissionAttachmentsWithInformation.map(
     (item) => item.attachmentPath
