@@ -64,6 +64,15 @@ export default async (
   }
 
   if (notificationId !== undefined) {
+    console.info(
+      JSON.stringify({
+        level: "info",
+        message: "Request 'new responses available' deferred notification to be processed",
+        notificationId,
+        submissionId: submissionID,
+      })
+    );
+
     await notifyFormOwnersThatNewResponsesAreAvailable(notificationId);
   }
 

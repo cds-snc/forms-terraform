@@ -28,6 +28,13 @@ export const handler: Handler = async (event: SQSEvent) => {
 };
 
 async function handleNotification(notificationId: string): Promise<void> {
+  console.info(
+    JSON.stringify({
+      level: "info",
+      message: `Processing notification ${notificationId}`,
+    })
+  );
+
   try {
     const notification = await retrieveNotification(notificationId);
 
