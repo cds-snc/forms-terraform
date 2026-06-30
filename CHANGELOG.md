@@ -1,5 +1,27 @@
 # Changelog
 
+## [3.45.0](https://github.com/cds-snc/forms-terraform/compare/v3.44.0...v3.45.0) (2026-06-29)
+
+
+### Features
+
+* adds version number ([#1358](https://github.com/cds-snc/forms-terraform/issues/1358)) ([36d2831](https://github.com/cds-snc/forms-terraform/commit/36d283150ab62ee4511fa92475936c30a16d63bf))
+
+
+### Bug Fixes
+
+* remove unused attributes from table declarations ([#1379](https://github.com/cds-snc/forms-terraform/issues/1379)) ([b63bb6f](https://github.com/cds-snc/forms-terraform/commit/b63bb6f38777683fd5f44e01b37b4b92fea45adb))
+
+
+### Miscellaneous Chores
+
+* add formId to Md5 checksum error message ([#1381](https://github.com/cds-snc/forms-terraform/issues/1381)) ([7707f9a](https://github.com/cds-snc/forms-terraform/commit/7707f9ab5655cfc9008731037df5f573dc0fa951))
+* delete unnecessary DynamoDB Terraform imports ([#1375](https://github.com/cds-snc/forms-terraform/issues/1375)) ([80bd01d](https://github.com/cds-snc/forms-terraform/commit/80bd01d10c6d4b03d4ea70013c242f4ea669501d))
+* **deps:** update all non-major github action dependencies ([#1377](https://github.com/cds-snc/forms-terraform/issues/1377)) ([efc0af7](https://github.com/cds-snc/forms-terraform/commit/efc0af793fd77b1e40aa928bdd20cae51596b125))
+* **deps:** update all non-major github action dependencies ([#1384](https://github.com/cds-snc/forms-terraform/issues/1384)) ([f432582](https://github.com/cds-snc/forms-terraform/commit/f4325823c174fa8d1c8a8c0bfa47c57c8c92fff6))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1380](https://github.com/cds-snc/forms-terraform/issues/1380)) ([55e095d](https://github.com/cds-snc/forms-terraform/commit/55e095dd81570fb34c9cd7f3d9753a78224639bf))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1386](https://github.com/cds-snc/forms-terraform/issues/1386)) ([b87c622](https://github.com/cds-snc/forms-terraform/commit/b87c6224809a942d4fbd3f002e22cdf55ed8b663))
+
 ## [3.44.0](https://github.com/cds-snc/forms-terraform/compare/v3.43.13...v3.44.0) (2026-06-18)
 
 
