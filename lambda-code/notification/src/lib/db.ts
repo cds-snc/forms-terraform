@@ -26,8 +26,7 @@ export const retrieveNotification = async (
     return {
       id: result.Item.NotificationID,
       emailRecipients: result.Item.Emails,
-      emailSubject: result.Item.Subject,
-      emailBody: result.Item.Body,
+      emailContent: result.Item.Content,
     };
   } catch (error) {
     throw new Error(
