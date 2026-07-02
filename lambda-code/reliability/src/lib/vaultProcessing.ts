@@ -1,6 +1,5 @@
 import { saveToVault, removeSubmission } from "./dataLayer.js";
 import { SubmissionAttachmentInformation } from "./file_checksum.js";
-import {} from "./file_scanning.js";
 import { isFileValid } from "./fileValidation.js";
 import {
   copyFilesFromReliabilityToVaultStorage,
@@ -8,6 +7,7 @@ import {
   getObjectFirst100BytesInReliabilityBucket,
   removeFilesFromReliabilityStorage,
 } from "./s3FileInput.js";
+import { notification } from "@gcforms/connectors";
 import { FormSubmission } from "./types.js";
 
 export default async (
@@ -20,7 +20,8 @@ export default async (
   createdAt: string,
   securityAttribute: string,
   version: Number,
-  formSubmissionHash: string
+  formSubmissionHash: string,
+  notificationId?: string
 ) => {
   const submissionAttachmentPaths = submissionAttachmentsWithInformation.map(
     (item) => item.attachmentPath
@@ -58,7 +59,21 @@ export default async (
         error: (error as Error).message,
       })
     );
+
     throw new Error(`Failed to save submission to Vault.`);
+  }
+
+  if (notificationId !== undefined) {
+    console.info(
+      JSON.stringify({
+        level: "info",
+        message: "Request 'new responses available' deferred notification to be processed",
+        notificationId,
+        submissionId: submissionID,
+      })
+    );
+
+    await notifyFormOwnersThatNewResponsesAreAvailable(notificationId);
   }
 
   try {
@@ -153,5 +168,17 @@ function buildSubmissionAttachmentJsonRecord(
         md5: item.md5,
       };
     })
+  );
+}
+
+async function notifyFormOwnersThatNewResponsesAreAvailable(notificationId: string): Promise<void> {
+  return notification.enqueueDeferred(notificationId).catch((error) =>
+    console.error(
+      JSON.stringify({
+        level: "error",
+        msg: "Failed to enqueue message for deferred email notification",
+        error: (error as Error).message,
+      })
+    )
   );
 }

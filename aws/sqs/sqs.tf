@@ -176,3 +176,18 @@ resource "aws_sqs_queue" "file_upload_deadletter_queue" {
 
   tags = var.core_tags
 }
+
+# Notification queue (no DLQ requirement)
+resource "aws_sqs_queue" "notification_queue" {
+  # checkov:skip=CKV_AWS_27: Encrytion not Required and difficult to support with S3 notification source
+  name = "notification_queue"
+
+  delay_seconds              = 0    # Messages should be processed right away
+  message_retention_seconds  = 1800 # 30 minutes
+  visibility_timeout_seconds = 300  # 5 minutes (Lambda function timeout is 1 minute)
+
+  kms_master_key_id                 = "alias/aws/sqs"
+  kms_data_key_reuse_period_seconds = 300
+
+  tags = var.core_tags
+}

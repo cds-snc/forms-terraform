@@ -50,6 +50,7 @@ const messageProcessor = async ({
     sendReceipt = messageData.Item?.SendReceipt ?? null;
     const formSubmissionHash = messageData.Item?.FormSubmissionHash ?? null;
     const fileKeys = messageData.Item?.FileKeys ? JSON.parse(messageData.Item?.FileKeys) : [];
+    const notificationId: string | undefined = messageData.Item?.NotificationID;
 
     // Check if form data exists or was already processed.
     if (formSubmission === null || notifyProcessed) {
@@ -144,7 +145,8 @@ const messageProcessor = async ({
         createdAt,
         securityAttribute,
         version,
-        formSubmissionHash
+        formSubmissionHash,
+        notificationId
       );
       return { status: true, messageId };
     }
