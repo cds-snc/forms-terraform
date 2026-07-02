@@ -20,6 +20,7 @@ RUN npm install -g yarn
 RUN yarn set version 4.10.3
 
 COPY .yarnrc.yml package.json yarn.lock ./
+COPY src ./src
 
 RUN yarn install --frozen-lockfile
 
