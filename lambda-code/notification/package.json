@@ -1,6 +1,5 @@
 {
-  "name": "notify-slack",
-  "description": "Lambda that notifies Slack and triggers Opsgenie alert",
+  "name": "notification",
   "version": "1.0.0",
   "main": "main.js",
   "type": "module",
@@ -11,14 +10,14 @@
     "test": "vitest --coverage"
   },
   "dependencies": {
-    "@aws-sdk/client-ssm": "^3.1012.0",
-    "axios": "^1.16.1"
+    "@aws-sdk/client-dynamodb": "^3.902.0",
+    "@aws-sdk/lib-dynamodb": "^3.902.0",
+    "@gcforms/connectors": "^3.0.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.155",
-    "@types/node": "^22.19.19",
+    "@types/node": "^22.18.8",
     "@vitest/coverage-v8": "^4.1.8",
-    "aws-sdk-client-mock": "^4.1.0",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3",
     "vitest": "^4.0.0"

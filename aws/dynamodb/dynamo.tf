@@ -310,3 +310,30 @@ resource "aws_dynamodb_global_secondary_index" "api_audit_logs_subject_by_timest
     projection_type = "KEYS_ONLY"
   }
 }
+
+resource "aws_dynamodb_table" "notification" {
+  # checkov:skip=CKV_AWS_28: 'point in time recovery' is set to true for staging and production
+  name                        = "Notification"
+  billing_mode                = "PAY_PER_REQUEST"
+  hash_key                    = "NotificationID"
+  deletion_protection_enabled = var.env != "development"
+
+  attribute {
+    name = "NotificationID"
+    type = "S"
+  }
+
+  ttl {
+    enabled        = true
+    attribute_name = "TTL"
+  }
+
+  server_side_encryption {
+    enabled     = true
+    kms_key_arn = var.kms_key_dynamodb_arn
+  }
+
+  point_in_time_recovery {
+    enabled = var.env != "development"
+  }
+}

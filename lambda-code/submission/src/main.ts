@@ -29,6 +29,7 @@ Params:
   securityAttribute - string of security classification
   fileChecksums - map of file content MD5 checksum associated to file identifier (Record<string, string>)
   version - version of the form template being submitted
+  notificationId - (optional) UUID of a notification that should be sent later in the submission processing pipeline
 */
 export const handler: Handler = async (submission: AnyObject) => {
   const submissionId = v4();
@@ -38,6 +39,8 @@ export const handler: Handler = async (submission: AnyObject) => {
       submission.responses,
       submissionId
     );
+
+    const notificationId: string | undefined = submission.notificationId;
 
     /**
      * If we found file references in the response we bypass the regular submission flow
@@ -57,7 +60,7 @@ export const handler: Handler = async (submission: AnyObject) => {
         fileChecksums
       );
 
-      await saveSubmission(submissionId, submission, fileAccessKeys);
+      await saveSubmission(submissionId, submission, fileAccessKeys, notificationId);
 
       console.log(
         JSON.stringify({
@@ -71,7 +74,7 @@ export const handler: Handler = async (submission: AnyObject) => {
       return { status: true, submissionId, fileURLMap: fileUploadURLs };
     }
 
-    await saveSubmission(submissionId, submission);
+    await saveSubmission(submissionId, submission, undefined, notificationId);
 
     const receiptId = await enqueueReliabilityProcessingRequest(submissionId);
 
@@ -129,7 +132,8 @@ const enqueueReliabilityProcessingRequest = async (submissionId: string): Promis
 const saveSubmission = async (
   submissionId: string,
   formData: AnyObject,
-  fileKeys?: string[]
+  fileKeys?: string[],
+  notificationId?: string
 ): Promise<void> => {
   try {
     const securityAttribute = String(formData.securityAttribute ?? "Protected A");
@@ -168,6 +172,7 @@ const saveSubmission = async (
           FormSubmissionHash: formResponsesAsHash,
           HasFileKeys: fileKeys !== undefined ? 1 : 0,
           ...(fileKeys !== undefined && { FileKeys: JSON.stringify(fileKeys) }),
+          ...(notificationId !== undefined && { NotificationID: notificationId }),
         },
       })
     );
