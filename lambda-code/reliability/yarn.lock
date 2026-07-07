@@ -897,15 +897,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "@types/uuid@npm:11.0.0"
-  dependencies:
-    uuid: "npm:*"
-  checksum: 10c0/6ebf1448d8fdc78d348a8a84389b74083f2f58bed75a5a6cf3be8419d33dcf757735c8b2de746b066ff8ef07f4384d02549774dc84195ffa46b24745471e9d8e
-  languageName: node
-  linkType: hard
-
 "abbrev@npm:^5.0.0":
   version: 5.0.0
   resolution: "abbrev@npm:5.0.0"
@@ -1983,12 +1974,11 @@ __metadata:
     "@types/aws-lambda": "npm:^8.10.155"
     "@types/json2md": "npm:^1.5.4"
     "@types/node": "npm:^22.19.19"
-    "@types/uuid": "npm:^11.0.0"
     json2md: "npm:^2.0.3"
     magic-bytes.js: "npm:^1.12.1"
     tsc-alias: "npm:^1.8.16"
     typescript: "npm:^5.9.3"
-    uuid: "npm:^13.0.0"
+    uuid: "npm:^14.0.1"
   languageName: unknown
   linkType: soft
 
@@ -2342,21 +2332,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:*":
+"uuid@npm:^14.0.1":
   version: 14.0.1
   resolution: "uuid@npm:14.0.1"
   bin:
     uuid: dist-node/bin/uuid
   checksum: 10c0/2d961289097cb68c37d93d1da0b5c3aafc1eb9948a455cca8d0ae53a099b2fe583b8933254a84097f700e6bac2e23033364904df0467c22551d5d9611febcaf6
-  languageName: node
-  linkType: hard
-
-"uuid@npm:^13.0.0":
-  version: 13.0.2
-  resolution: "uuid@npm:13.0.2"
-  bin:
-    uuid: dist-node/bin/uuid
-  checksum: 10c0/32c7ee84fa7c7966cc09b3a1514a752a8e2f609f15c00033fbaedc0255d577d1877b839f11ee537f37e587bbc620bbb98c3b3a1482931b8ed47d79497cd7a7cd
   languageName: node
   linkType: hard
 

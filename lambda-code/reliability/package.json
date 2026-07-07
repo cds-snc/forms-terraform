@@ -20,13 +20,12 @@
     "@gcforms/types": "^1.0.31",
     "json2md": "^2.0.3",
     "magic-bytes.js": "^1.12.1",
-    "uuid": "^13.0.0"
+    "uuid": "^14.0.1"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.155",
     "@types/json2md": "^1.5.4",
     "@types/node": "^22.19.19",
-    "@types/uuid": "^11.0.0",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3"
   },
