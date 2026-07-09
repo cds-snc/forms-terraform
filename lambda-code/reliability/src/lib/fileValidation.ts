@@ -8,13 +8,14 @@ export function isFileValid(
   fileContentFirst100bytes: Uint8Array<ArrayBufferLike>
 ): boolean {
   try {
-    // using slice to remove "." from extension
-    const fileExtension = path.extname(filePath).slice(1);
+    const { name: fileName, ext: fileExtensionDotIncluded } = path.parse(filePath);
 
-    // path.extname returns an empty string is no extension was found
-    if (fileExtension === "") {
-      throw new Error(`File validation could not find any file extension in "${filePath}"`);
+    // Either file name or extension is missing so we flag it as malicious
+    if (fileName === "" || fileExtensionDotIncluded === "") {
+      return false;
     }
+
+    const fileExtension = fileExtensionDotIncluded.slice(1);
 
     // making sure all strings are in lower case before comparing them
     const supportedMimeType = GCFormsFileAttachmentAllowedTypes.find((type) =>
