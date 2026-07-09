@@ -34,26 +34,11 @@ else
     --region ca-central-1 \
     --create-bucket-configuration LocationConstraint=ca-central-1 \
     >/dev/null
+
   # encrypt the bucket
   aws s3api put-bucket-encryption \
     --bucket forms-${AWS_ACCOUNT_ID}-tfstate \
     --server-side-encryption-configuration "{\"Rules\": [{\"ApplyServerSideEncryptionByDefault\":{\"SSEAlgorithm\": \"AES256\"}}]}" \
-    >/dev/null
-fi
-
-if aws dynamodb list-tables | grep -q "tfstate-lock"; then
-  printf "${yellowColor}=> Terraform Lock DynamoDB table exists...${reset}\n"
-else
-  printf "${yellowColor}=> Detected fresh AWS account instance.  Setting up Terraform Lock table...${reset}\n"
-
-  fresh_instance=true
-
-  # create DynamoDB table for Terraform state locking
-  aws dynamodb create-table \
-    --table-name tfstate-lock \
-    --attribute-definitions AttributeName=LockID,AttributeType=S \
-    --key-schema AttributeName=LockID,KeyType=HASH \
-    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
     >/dev/null
 fi
 
