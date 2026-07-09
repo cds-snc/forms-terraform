@@ -1,5 +1,27 @@
 # Changelog
 
+## [3.46.0](https://github.com/cds-snc/forms-terraform/compare/v3.45.0...v3.46.0) (2026-07-09)
+
+
+### Features
+
+* notification v3 ([#1137](https://github.com/cds-snc/forms-terraform/issues/1137)) ([4599a0c](https://github.com/cds-snc/forms-terraform/commit/4599a0c0a7c2c93dde9608b9319c3a3a0f4548d5))
+
+
+### Bug Fixes
+
+* **deps:** update all patch dependencies ([#1382](https://github.com/cds-snc/forms-terraform/issues/1382)) ([8013397](https://github.com/cds-snc/forms-terraform/commit/80133976e372c9108cde2b3efcaff8d51a916a66))
+* improve file validation logic to handle files where either name or extension is missing ([#1392](https://github.com/cds-snc/forms-terraform/issues/1392)) ([d07bc5c](https://github.com/cds-snc/forms-terraform/commit/d07bc5c761b11c555f5a577c1afa7573ad781dd4))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#1385](https://github.com/cds-snc/forms-terraform/issues/1385)) ([19e75a7](https://github.com/cds-snc/forms-terraform/commit/19e75a7553b1fc111beaf1b4bad017d075a1fa0d))
+* **deps:** update all minor dependencies ([#1383](https://github.com/cds-snc/forms-terraform/issues/1383)) ([5b65cee](https://github.com/cds-snc/forms-terraform/commit/5b65ceea0e6be43b99ddfac919df19ac7bd70d20))
+* **deps:** update all non-major github action dependencies ([#1387](https://github.com/cds-snc/forms-terraform/issues/1387)) ([eb2fa24](https://github.com/cds-snc/forms-terraform/commit/eb2fa24b1bba283d3eea70799ac3b2353bd4d784))
+* remove unused environment variable in Notification lambda ([#1390](https://github.com/cds-snc/forms-terraform/issues/1390)) ([807c92c](https://github.com/cds-snc/forms-terraform/commit/807c92c707df80c41f59427f1b8f0e15b10025a8))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1389](https://github.com/cds-snc/forms-terraform/issues/1389)) ([910bfda](https://github.com/cds-snc/forms-terraform/commit/910bfda26f3bc5c8ff3c398a9dc4d970e2301f83))
+
 ## [3.45.0](https://github.com/cds-snc/forms-terraform/compare/v3.44.0...v3.45.0) (2026-06-29)
 
 
