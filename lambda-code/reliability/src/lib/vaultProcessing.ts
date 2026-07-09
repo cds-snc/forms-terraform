@@ -139,7 +139,9 @@ async function verifyAndFlagMaliciousSubmissionAttachments(
               scanStatus: "THREATS_FOUND",
             };
           default: {
-            throw new Error(`Failed to verify submission attachment ${item.attachmentPath}`);
+            throw new Error(
+              `Failed to verify submission attachment ${item.attachmentPath}. Reason: ${(error as Error).message}`
+            );
           }
         }
       }
