@@ -31,6 +31,10 @@ resource "aws_lambda_function" "notification" {
   tracing_config {
     mode = "Active"
   }
+
+  lifecycle {
+    ignore_changes = [image_uri]
+  }
 }
 
 resource "aws_cloudwatch_log_group" "notification" {
