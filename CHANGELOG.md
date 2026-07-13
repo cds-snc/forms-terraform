@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.46.1](https://github.com/cds-snc/forms-terraform/compare/v3.46.0...v3.46.1) (2026-07-13)
+
+
+### Miscellaneous Chores
+
+* add missing lifecycle block about image_uri in Notification lambda configuration ([#1399](https://github.com/cds-snc/forms-terraform/issues/1399)) ([375d4ad](https://github.com/cds-snc/forms-terraform/commit/375d4ad56a65751fda1a7267f2a0875abd28cade))
+* **deps:** update all non-major github action dependencies ([#1395](https://github.com/cds-snc/forms-terraform/issues/1395)) ([45da42f](https://github.com/cds-snc/forms-terraform/commit/45da42f6cb0c254ba1d5f0c8181ce6fda18b4a86))
+* enable Terraform S3 native-state locking ([#1391](https://github.com/cds-snc/forms-terraform/issues/1391)) ([7c19b83](https://github.com/cds-snc/forms-terraform/commit/7c19b8383cd08e25841862c6fde4438da39aa3c3))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1398](https://github.com/cds-snc/forms-terraform/issues/1398)) ([0b2850f](https://github.com/cds-snc/forms-terraform/commit/0b2850febdb4fc330a8af07eb45498d1c36bb676))
+
 ## [3.46.0](https://github.com/cds-snc/forms-terraform/compare/v3.45.0...v3.46.0) (2026-07-09)
 
 
