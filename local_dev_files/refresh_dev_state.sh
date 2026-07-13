@@ -19,8 +19,6 @@ tfswitch 1.15.6
 
 export TG_PROVIDER_CACHE=1
 
-
-
 if aws s3api list-buckets | grep -q "forms-${AWS_ACCOUNT_ID}-tfstate"; then
   printf "${greenColor}=> Terraform State Bucket exists...${reset}\n"
 else  
@@ -29,19 +27,11 @@ else
   exit 0
 fi
 
-if aws dynamodb list-tables | grep -q "tfstate-lock"; then
-  printf "${greenColor}=> Terraform Lock DynamoDB table exists...${reset}\n"
-else
-  printf "${yellowColor}=> Terrafrom Lock tables do not exist.  Broken install need to be fixed manually.${reset}\n"
-  exit 0
-fi
-
 printf "${yellowColor}=> Clearing local files...${reset}\n"
 for dir in $basedir/env/cloud/*/; do
   rm -rf "${dir}.terragrunt-cache"
   rm -f "${dir}.terraform.lock.hcl"
 done
-
 
 if [ -z "$MODULE_NAME" ]; then
   printf "${greenColor}=> Refreshing All Terragrunt Modules${reset}\n"
@@ -69,8 +59,4 @@ else
   exit 0
 fi
 
-# Print out the time it took to initialize the infrastructure
-
-
 printf "${greenColor} State refreshed"
-
