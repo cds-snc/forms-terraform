@@ -65,6 +65,8 @@ const messageProcessor = async ({
           msg: "Submission will not be processed because it could not be found in the database or has already been processed.",
         })
       );
+
+      return { status: true, messageId };
     }
 
     if (formID === null || typeof formID === "undefined") {
