@@ -2,7 +2,7 @@ import { Handler, SQSEvent } from "aws-lambda";
 import sendToNotify from "@lib/notifyProcessing.js";
 import sendToVault from "@lib/vaultProcessing.js";
 import { getTemplateInfo } from "@lib/templates.js";
-import { getSubmission } from "@lib/dataLayer.js";
+import { getSubmission, markSubmissionForDeletionIn30days } from "@lib/dataLayer.js";
 import { getAllSubmissionAttachmentScanStatuses } from "@lib/file_scanning.js";
 import { addAllSubmissionAttachmentsChecksums } from "@lib/file_checksum.js";
 
@@ -65,36 +65,47 @@ const messageProcessor = async ({
           msg: "Submission will not be processed because it could not be found in the database or has already been processed.",
         })
       );
+
+      return { status: true, messageId };
     }
 
     if (formID === null || typeof formID === "undefined") {
-      console.error(
-        JSON.stringify({
-          level: "error",
-          severity: "2",
-          msg: `Can't process submission because of null or undefined formID.`,
-        })
-      );
-      throw new Error(`Required formID parameter is null or undefined.`);
+      throw new Error(`Form identifier is null or undefined.`);
     }
 
     const templateInfo = await getTemplateInfo(formID);
 
-    if (templateInfo !== null && templateInfo.formConfig !== null) {
-      // Add form config back to submission to be processed
-      formSubmission.form = templateInfo.formConfig;
-      // add delivery option to formsubmission
-      formSubmission.deliveryOption = templateInfo.deliveryOption;
-    } else {
-      console.error(
+    if (templateInfo === null) {
+      throw new Error(`Form ${formID} does not exist in the database.`);
+    }
+
+    if (templateInfo.isFormArchived) {
+      let didSucceedMarkingSubmissionAsProcessed = true;
+
+      try {
+        await markSubmissionForDeletionIn30days(submissionID);
+      } catch (error) {
+        didSucceedMarkingSubmissionAsProcessed = false;
+      }
+
+      // Ack and remove message from queue if the form exist but has been archived
+      console.warn(
         JSON.stringify({
-          level: "error",
-          severity: "2",
-          msg: `No associated form template (ID: ${formID}) exist in the database.`,
+          level: "warn",
+          status: "success",
+          submissionId: submissionID,
+          sendReceipt: sendReceipt,
+          msg: `Submission will not be processed because the associated form ${formID} has been archived. Submission ${didSucceedMarkingSubmissionAsProcessed ? "has been" : "failed to be"} marked for deletion in 30 days.`,
         })
       );
-      throw new Error(`No associated form template (ID: ${formID}) exist in the database.`);
+
+      return { status: true, messageId };
     }
+
+    // Add form config back to submission to be processed
+    formSubmission.form = templateInfo.formConfig;
+    // add delivery option to formsubmission
+    formSubmission.deliveryOption = templateInfo.deliveryOption;
 
     const submissionAttachmentsWithScanStatuses = await getAllSubmissionAttachmentScanStatuses(
       fileKeys
@@ -123,7 +134,6 @@ const messageProcessor = async ({
        form - Complete Form Template
        deliveryOption - (optional) Will be present if user wants to receive form responses by email (`{ emailAddress: string; emailSubjectEn?: string; emailSubjectFr?: string }`)
     */
-
     if (formSubmission.deliveryOption) {
       await sendToNotify(
         submissionID,
@@ -133,7 +143,6 @@ const messageProcessor = async ({
         language,
         createdAt
       );
-      return { status: true, messageId };
     } else {
       await sendToVault(
         submissionID,
@@ -148,8 +157,9 @@ const messageProcessor = async ({
         formSubmissionHash,
         notificationId
       );
-      return { status: true, messageId };
     }
+
+    return { status: true, messageId };
   } catch (error) {
     console.warn(
       JSON.stringify({

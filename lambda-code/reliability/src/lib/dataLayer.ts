@@ -90,6 +90,30 @@ export async function notifyProcessed(submissionID: string) {
   }
 }
 
+export async function markSubmissionForDeletionIn30days(submissionId: string) {
+  try {
+    return await db.send(
+      new UpdateCommand({
+        TableName: "ReliabilityQueue",
+        Key: {
+          SubmissionID: submissionId,
+        },
+        UpdateExpression: "SET #ttl = :ttl",
+        ExpressionAttributeNames: {
+          "#ttl": "TTL",
+        },
+        ExpressionAttributeValues: {
+          ":ttl": Math.floor(Date.now() / 1000) + 2592000, // expire after 30 days
+        },
+        ReturnValues: "NONE",
+      })
+    );
+  } catch (error) {
+    console.error(error);
+    throw new Error(`Error updating TTL for submission ${submissionId}`);
+  }
+}
+
 const generateRandomString = (length: number = 5) => {
   const letters = "abcdefghijklmnopqrstuvwxyz";
   const characters = letters + "0123456789";
