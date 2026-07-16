@@ -77,21 +77,32 @@ async function nagOrDelete(
       const templateInfo = await getTemplateInfo(formResponse.formID);
 
       if (templateInfo.isPublished) {
-        if (notificationSettings.shouldSendEmail) {
-          for (const owner of templateInfo.owners) {
-            await notifyFormOwner(formResponse.formID, templateInfo.formName, owner.email);
+        if (templateInfo.isFormArchived === false) {
+          // Only send Nagware emails is form is published and not archived
+          if (notificationSettings.shouldSendEmail) {
+            for (const owner of templateInfo.owners) {
+              await notifyFormOwner(formResponse.formID, templateInfo.formName, owner.email);
+            }
           }
-        }
 
-        logNagwareDetection(
-          {
-            formTimestamp: formResponse.createdAt,
-            formId: formResponse.formID,
-            formName: templateInfo.formName,
-            owners: templateInfo.owners,
-          },
-          notificationSettings.shouldSendSlackNotification
-        );
+          logNagwareDetection(
+            {
+              formTimestamp: formResponse.createdAt,
+              formId: formResponse.formID,
+              formName: templateInfo.formName,
+              owners: templateInfo.owners,
+            },
+            notificationSettings.shouldSendSlackNotification
+          );
+        } else {
+          // If a form is published but also archived we should let the team know about it so that they can act on it (either investigate a possible issue with the app/infra flow or delete orphan submissions)
+          console.warn(
+            JSON.stringify({
+              level: "warn",
+              msg: `Nagware detected submission(s) on a form (${formResponse.formID}) that is published but archived.`,
+            })
+          );
+        }
       } else {
         // Delete form response if form is not published and older than 28 days
         await deleteOldTestResponses(formResponse.formID);
