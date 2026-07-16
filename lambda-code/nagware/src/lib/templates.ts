@@ -8,6 +8,7 @@ export type TemplateInfo = {
     email: string;
   }[];
   isPublished: boolean;
+  isFormArchived: boolean;
 };
 
 export async function getTemplateInfo(formID: string): Promise<TemplateInfo> {
@@ -15,6 +16,7 @@ export async function getTemplateInfo(formID: string): Promise<TemplateInfo> {
     const template = await prisma.template.findUnique({
       where: {
         id: formID,
+        ttl: { not: undefined }, // Because the database package adds a default filter on TTL (if none specified) we want to make sure we can also retrieve archived templates
       },
       select: {
         name: true,
@@ -26,6 +28,7 @@ export async function getTemplateInfo(formID: string): Promise<TemplateInfo> {
             email: true,
           },
         },
+        ttl: true,
       },
     });
 
@@ -38,7 +41,12 @@ export async function getTemplateInfo(formID: string): Promise<TemplateInfo> {
     // Note we use || instead of ?? to allow for empty strings
     const formName = template.name || `${formProperties.titleEn} - ${formProperties.titleFr}`;
 
-    return { formName, owners: template.users, isPublished: template.isPublished };
+    return {
+      formName,
+      owners: template.users,
+      isPublished: template.isPublished,
+      isFormArchived: template.ttl !== null ? true : false,
+    };
   } catch (error) {
     console.error(
       JSON.stringify({
