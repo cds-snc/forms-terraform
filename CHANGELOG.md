@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.47.0](https://github.com/cds-snc/forms-terraform/compare/v3.46.1...v3.47.0) (2026-07-20)
+
+
+### Features
+
+* deploy new Vault index to Production ([#1403](https://github.com/cds-snc/forms-terraform/issues/1403)) ([74e7387](https://github.com/cds-snc/forms-terraform/commit/74e73879ea779e7adf30c6ad90d49d10ccae210d))
+
+
+### Bug Fixes
+
+* handle archived forms in Nagware lambda ([#1402](https://github.com/cds-snc/forms-terraform/issues/1402)) ([f456876](https://github.com/cds-snc/forms-terraform/commit/f4568762b72f0b3d41ee395ad36f32ea0063232e))
+* handle recently deleted form when processing submissions ([#1400](https://github.com/cds-snc/forms-terraform/issues/1400)) ([a7808d6](https://github.com/cds-snc/forms-terraform/commit/a7808d6256dc6c2cb3c21777bf1bd1373cb7116d))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#1396](https://github.com/cds-snc/forms-terraform/issues/1396)) ([17d94bf](https://github.com/cds-snc/forms-terraform/commit/17d94bf907c41e4cb7bcda77365d8efd1afd067d))
+
 ## [3.46.1](https://github.com/cds-snc/forms-terraform/compare/v3.46.0...v3.46.1) (2026-07-13)
 
 
