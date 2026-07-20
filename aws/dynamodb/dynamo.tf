@@ -81,6 +81,7 @@ resource "aws_dynamodb_table" "vault" {
   }
 }
 
+// `StatusCreatedAt` will be deleted once all services have migrated to the new `StatusCreatedAt_v2` index
 resource "aws_dynamodb_global_secondary_index" "vault_status_created_at" {
   index_name = "StatusCreatedAt"
   table_name = aws_dynamodb_table.vault.name
@@ -104,8 +105,6 @@ resource "aws_dynamodb_global_secondary_index" "vault_status_created_at" {
 }
 
 resource "aws_dynamodb_global_secondary_index" "vault_status_created_at_v2" {
-  count = var.env == "production" ? 0 : 1 # disabled in Production as it is used to design and test the new form versioning system
-
   index_name = "StatusCreatedAt_v2"
   table_name = aws_dynamodb_table.vault.name
 
