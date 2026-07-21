@@ -620,7 +620,7 @@ resource "aws_wafv2_regex_pattern_set" "valid_app_uri_paths" {
 
   # Files
   regular_expression {
-    regex_string = "^\\/(?:en|fr)?\\/?(?:(static|_next|img|fonts|favicon\\.ico)(?:\\/[\\w-]+)*)(?:\\/.*)?$"
+    regex_string = "^\\/(?:en|fr)?\\/?(?:(static|_next|img|fonts|favicon\\.ico|service-worker\\.js)(?:\\/[\\w-]+)*)(?:\\/.*)?$"
   }
 
   # This is a temporary rule to allow search engines tools to access ownership verification files
