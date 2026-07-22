@@ -185,35 +185,6 @@ variable "redis_url" {
   type        = string
 }
 
-variable "ecs_iam_forms_secrets_manager_policy_arn" {
-  description = "IAM policy for access to Secrets Manager"
-  type        = string
-}
-
-variable "ecs_iam_forms_kms_policy_arn" {
-  description = "IAM policy for access to KMS"
-  type        = string
-}
-
-variable "ecs_iam_forms_dynamodb_policy_arn" {
-  description = "IAM policy for access to DynamoDB"
-  type        = string
-}
-
-variable "ecs_iam_forms_audit_logs_arn" {
-  description = "IAM Policy for access to Audit Logs"
-}
-
-variable "ecs_iam_forms_sqs_policy_arn" {
-  description = "IAM policy for access to SQS"
-  type        = string
-}
-
-variable "ecs_iam_forms_cognito_policy_arn" {
-  description = "IAM policy for access to Cognito"
-  type        = string
-}
-
 // API end to end test
 
 variable "idp_project_identifier" {
