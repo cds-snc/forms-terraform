@@ -2,8 +2,6 @@
 # Holds the Forms app images used by the Lambda preview service
 #
 resource "aws_ecr_repository" "pr_review_repository" {
-  count = var.env == "staging" ? 1 : 0
-
   name                 = "pr_review"
   image_tag_mutability = "MUTABLE"
 
@@ -13,9 +11,7 @@ resource "aws_ecr_repository" "pr_review_repository" {
 }
 
 resource "aws_ecr_lifecycle_policy" "pr_review_policy" {
-  count = var.env == "staging" ? 1 : 0
-
-  repository = aws_ecr_repository.pr_review_repository[0].name
+  repository = aws_ecr_repository.pr_review_repository.name
   policy = jsonencode({
     rules = [{
       rulePriority = 1
