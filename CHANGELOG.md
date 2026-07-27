@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.47.1](https://github.com/cds-snc/forms-terraform/compare/v3.47.0...v3.47.1) (2026-07-27)
+
+
+### Miscellaneous Chores
+
+* allow retrieval of service-worker.js file in firewall ([#1410](https://github.com/cds-snc/forms-terraform/issues/1410)) ([2e01b22](https://github.com/cds-snc/forms-terraform/commit/2e01b22cf1c5e51186d70a887958d1b36fe67fac))
+* **deps:** lock file maintenance ([#1407](https://github.com/cds-snc/forms-terraform/issues/1407)) ([efbc3cc](https://github.com/cds-snc/forms-terraform/commit/efbc3cc5f291954ed5cba8710702ef8a525fcc17))
+* **deps:** lock file maintenance ([#1415](https://github.com/cds-snc/forms-terraform/issues/1415)) ([03f2ac9](https://github.com/cds-snc/forms-terraform/commit/03f2ac9b0a4742a3d806c819a8695d6d1e8362ea))
+* **deps:** update all non-major github action dependencies ([#1406](https://github.com/cds-snc/forms-terraform/issues/1406)) ([c935d77](https://github.com/cds-snc/forms-terraform/commit/c935d77b5ffb3ccbbf14e5d3597e08a55d70a26b))
+* **deps:** update all non-major github action dependencies ([#1414](https://github.com/cds-snc/forms-terraform/issues/1414)) ([5b5a017](https://github.com/cds-snc/forms-terraform/commit/5b5a017962f4c382111c5c6f43213a1a2d5ce4b3))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1409](https://github.com/cds-snc/forms-terraform/issues/1409)) ([4ca36fd](https://github.com/cds-snc/forms-terraform/commit/4ca36fd36198fc9000601093944ad2de2bdf9dcf))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1416](https://github.com/cds-snc/forms-terraform/issues/1416)) ([23168a1](https://github.com/cds-snc/forms-terraform/commit/23168a1df70b80fbf6922935bf9483ab5f6d7867))
+
 ## [3.47.0](https://github.com/cds-snc/forms-terraform/compare/v3.46.1...v3.47.0) (2026-07-20)
 
 
