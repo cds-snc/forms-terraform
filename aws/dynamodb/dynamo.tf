@@ -81,29 +81,6 @@ resource "aws_dynamodb_table" "vault" {
   }
 }
 
-// `StatusCreatedAt` will be deleted once all services have migrated to the new `StatusCreatedAt_v2` index
-resource "aws_dynamodb_global_secondary_index" "vault_status_created_at" {
-  index_name = "StatusCreatedAt"
-  table_name = aws_dynamodb_table.vault.name
-
-  key_schema {
-    attribute_name = "FormID"
-    attribute_type = "S"
-    key_type       = "HASH"
-  }
-
-  key_schema {
-    attribute_name = "Status#CreatedAt"
-    attribute_type = "S"
-    key_type       = "RANGE"
-  }
-
-  projection {
-    projection_type    = "INCLUDE"
-    non_key_attributes = ["CreatedAt", "Name"]
-  }
-}
-
 resource "aws_dynamodb_global_secondary_index" "vault_status_created_at_v2" {
   index_name = "StatusCreatedAt_v2"
   table_name = aws_dynamodb_table.vault.name
