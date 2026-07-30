@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.47.2](https://github.com/cds-snc/forms-terraform/compare/v3.47.1...v3.47.2) (2026-07-30)
+
+
+### Miscellaneous Chores
+
+* introduce allowlist to counter blocklist ([#1418](https://github.com/cds-snc/forms-terraform/issues/1418)) ([de5aae4](https://github.com/cds-snc/forms-terraform/commit/de5aae405222279e2d3305cfc4a78bd0784215d0))
+
 ## [3.47.1](https://github.com/cds-snc/forms-terraform/compare/v3.47.0...v3.47.1) (2026-07-27)
 
 
