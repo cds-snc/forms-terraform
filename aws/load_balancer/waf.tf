@@ -403,8 +403,21 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     }
 
     statement {
-      ip_set_reference_statement {
-        arn = module.waf_ip_blocklist.ipv4_blocklist_arn
+      and_statement {
+        statement {
+          ip_set_reference_statement {
+            arn = module.waf_ip_blocklist.ipv4_blocklist_arn
+          }
+        }
+        statement {
+          not_statement {
+            statement {
+              ip_set_reference_statement {
+                arn = aws_wafv2_ip_set.ipv4_allowlist.arn
+              }
+            }
+          }
+        }
       }
     }
 
@@ -812,4 +825,17 @@ module "waf_ip_blocklist" {
   waf_block_threshold              = 50
   waf_ip_blocklist_update_schedule = "rate(15 minutes)"
   billing_tag_value                = "forms"
+}
+
+resource "aws_wafv2_ip_set" "ipv4_allowlist" {
+  name               = "ipv4_allowlist_forms_app"
+  scope              = "REGIONAL"
+  ip_address_version = "IPV4"
+  addresses          = []
+
+  lifecycle {
+    ignore_changes = [
+      addresses
+    ]
+  }
 }
