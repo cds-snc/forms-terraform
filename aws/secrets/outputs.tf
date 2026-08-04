@@ -1,11 +1,11 @@
 output "notify_api_key_secret_arn" {
   description = "ARN of notify_api_key secret"
-  value       = aws_secretsmanager_secret_version.notify_api_key.arn
+  value       = aws_secretsmanager_secret.notify_api_key.arn
 }
 
 output "addresscomplete_api_key_secret_arn" {
   description = "ARN of addresscomplete_api_key secret"
-  value       = aws_secretsmanager_secret_version.addresscomplete_api_key.arn
+  value       = aws_secretsmanager_secret.addresscomplete_api_key.arn
 }
 
 output "freshdesk_api_key_secret_arn" {
@@ -35,15 +35,15 @@ output "notify_callback_bearer_token_secret_arn" {
 
 output "zitadel_administration_key_secret_arn" {
   description = "ARN of zitadel_administration_key secret"
-  value       = aws_secretsmanager_secret_version.zitadel_administration_key.arn
+  value       = aws_secretsmanager_secret.zitadel_administration_key.arn
 }
 
 output "zitadel_application_key_secret_arn" {
   description = "ARN of zitadel_application_key secret"
-  value       = aws_secretsmanager_secret_version.zitadel_application_key.arn
+  value       = aws_secretsmanager_secret.zitadel_application_key.arn
 }
 
 output "hcaptcha_site_verify_key_secret_arn" {
   description = "The hCaptcha site verify key secret used for forms"
-  value       = aws_secretsmanager_secret_version.hcaptcha_site_verify_key.arn
+  value       = aws_secretsmanager_secret.hcaptcha_site_verify_key.arn
 }
