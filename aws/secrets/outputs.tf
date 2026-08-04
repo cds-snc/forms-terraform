@@ -3,6 +3,11 @@ output "notify_api_key_secret_arn" {
   value       = aws_secretsmanager_secret_version.notify_api_key.arn
 }
 
+output "addresscomplete_api_key_secret_arn" {
+  description = "ARN of addresscomplete_api_key secret"
+  value       = aws_secretsmanager_secret_version.addresscomplete_api_key.arn
+}
+
 output "freshdesk_api_key_secret_arn" {
   description = "ARN of freshdesk_api_key secret"
   value       = aws_secretsmanager_secret.freshdesk_api_key.arn

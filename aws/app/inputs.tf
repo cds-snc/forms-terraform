@@ -162,6 +162,12 @@ variable "notify_api_key_secret_arn" {
   sensitive   = true
 }
 
+variable "addresscomplete_api_key_secret_arn" {
+  description = "The Canada Post AddressComplete API key secret used by the webapp"
+  type        = string
+  sensitive   = true
+}
+
 variable "freshdesk_api_key_secret_arn" {
   description = "The FreshDesk API key secret used by the ECS task and Lambda"
   type        = string

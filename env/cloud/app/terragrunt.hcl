@@ -117,6 +117,7 @@ dependency "secrets" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
     notify_api_key_secret_arn               = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:notify_api_key"
+    addresscomplete_api_key_secret_arn      = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:addresscomplete_api_key"
     freshdesk_api_key_secret_arn            = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:freshdesk_api_key_secret"
     token_secret_arn                        = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:token_secret"
     recaptcha_secret_arn                    = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:recaptcha_secret"
@@ -197,6 +198,7 @@ inputs = {
   cognito_user_pool_id  = dependency.cognito.outputs.cognito_user_pool_id
 
   recaptcha_secret_arn                    = dependency.secrets.outputs.recaptcha_secret_arn
+  addresscomplete_api_key_secret_arn      = dependency.secrets.outputs.addresscomplete_api_key_secret_arn
   notify_api_key_secret_arn               = dependency.secrets.outputs.notify_api_key_secret_arn
   freshdesk_api_key_secret_arn            = dependency.secrets.outputs.freshdesk_api_key_secret_arn
   notify_callback_bearer_token_secret_arn = dependency.secrets.outputs.notify_callback_bearer_token_secret_arn

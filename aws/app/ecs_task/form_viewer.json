@@ -132,6 +132,10 @@
         "valueFrom": "${notify_api_key}"
       },
       {
+        "name": "ADDRESSCOMPLETE_API_KEY",
+        "valueFrom": "${addresscomplete_api_key}"
+      },
+      {
         "name": "RECAPTCHA_V3_SECRET_KEY",
         "valueFrom": "${recaptcha_secret}"
       },
