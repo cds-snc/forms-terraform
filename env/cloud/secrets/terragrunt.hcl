@@ -21,6 +21,7 @@ locals {
 }
 
 inputs = {
+  # Overwritten in GitHub Actions by TFVARS
   ecs_secret_token             = local.ecs_secret_token
   recaptcha_secret             = local.recaptcha_secret
   notify_callback_bearer_token = local.notify_callback_bearer_token
@@ -30,7 +31,6 @@ inputs = {
   zitadel_administration_key   = local.zitadel_administration_key
   zitadel_application_key      = local.zitadel_application_key
   hcaptcha_site_verify_key     = local.hcaptcha_site_verify_key
-  # Overwritten in GitHub Actions by TFVARS
-  rds_db_password = local.rds_db_password
-  sentry_api_key  = local.sentry_api_key
+  rds_db_password              = local.rds_db_password
+  sentry_api_key               = local.sentry_api_key
 }
