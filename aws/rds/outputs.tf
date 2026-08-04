@@ -7,7 +7,7 @@ data "aws_subnet" "private" {
 
 output "database_connection_url_secret_arn" {
   description = "ARN of the database URL used to connect to Postgres"
-  value       = aws_secretsmanager_secret_version.database_connection_url.arn
+  value       = aws_secretsmanager_secret.database_connection_url.arn
 }
 
 output "rds_cluster_arn" {

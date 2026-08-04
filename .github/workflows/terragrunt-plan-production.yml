@@ -45,6 +45,7 @@ env:
   TF_VAR_hcaptcha_site_key: ${{ vars.PRODUCTION_HCAPTCHA_SITE_KEY }}
   TF_VAR_hcaptcha_site_verify_key: ${{ secrets.PRODUCTION_HCAPTCHA_SITE_VERIFY_KEY }}
   TF_VAR_security_txt_content: ${{ vars.SECURITY_TXT_ALPHA_CANADA_CA }}
+  TF_VAR_addresscomplete_api_key: ${{ secrets.PRODUCTION_ADDRESSCOMPLETE_API_KEY }}
   # IdP
   TF_VAR_idp_database_cluster_admin_username: ${{ secrets.PRODUCTION_IDP_DATABASE_CLUSTER_ADMIN_USERNAME }}
   TF_VAR_idp_database_cluster_admin_password: ${{ secrets.PRODUCTION_IDP_DATABASE_CLUSTER_ADMIN_PASSWORD }}

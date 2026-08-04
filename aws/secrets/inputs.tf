@@ -23,6 +23,12 @@ variable "notify_api_key" {
   sensitive   = true
 }
 
+variable "addresscomplete_api_key" {
+  description = "The Canada Post AddressComplete API key used by the webapp"
+  type        = string
+  sensitive   = true
+}
+
 variable "freshdesk_api_key" {
   description = "The FreshDesk API key used by the ECS task and Lambda"
   type        = string
