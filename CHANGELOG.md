@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.48.0](https://github.com/cds-snc/forms-terraform/compare/v3.47.2...v3.48.0) (2026-08-04)
+
+
+### Features
+
+* AddressComplete Secrets ([#1425](https://github.com/cds-snc/forms-terraform/issues/1425)) ([df95a92](https://github.com/cds-snc/forms-terraform/commit/df95a92eb5ccd1ad469ea30f64dd9f91e5b197a7))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#1422](https://github.com/cds-snc/forms-terraform/issues/1422)) ([13511ae](https://github.com/cds-snc/forms-terraform/commit/13511ae7e96ea2a5d504ed4bb232981b76d7b084))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1424](https://github.com/cds-snc/forms-terraform/issues/1424)) ([77b6187](https://github.com/cds-snc/forms-terraform/commit/77b6187ec8f825454e366d9c2316eb65b29f067b))
+
 ## [3.47.2](https://github.com/cds-snc/forms-terraform/compare/v3.47.1...v3.47.2) (2026-07-30)
 
 
