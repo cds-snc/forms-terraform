@@ -371,9 +371,15 @@ function handleArrayResponse(title: string, response: Response, collector: strin
   collector.push(`**${title}**${String.fromCharCode(13)}—`);
 }
 
+function escapeMarkdownLinks(text: string): string {
+  return text.replace(/\[([^\]]*)\]\(([^)]*)\)/g, "\\[$1\\]($2)");
+}
+
 function handleTextResponse(title: string, response: Response, collector: string[]) {
   if (response !== undefined && response !== null && response !== "") {
-    collector.push(`**${title}**${String.fromCharCode(13)}${response}`);
+    collector.push(
+      `**${title}**${String.fromCharCode(13)}${escapeMarkdownLinks(String(response))}`
+    );
     return;
   }
 
