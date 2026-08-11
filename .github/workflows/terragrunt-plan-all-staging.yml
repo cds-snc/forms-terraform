@@ -43,6 +43,7 @@ env:
   TF_VAR_hcaptcha_site_key: ${{ vars.STAGING_HCAPTCHA_SITE_KEY }}
   TF_VAR_hcaptcha_site_verify_key: ${{ secrets.STAGING_HCAPTCHA_SITE_VERIFY_KEY }}
   TF_VAR_security_txt_content: ${{ vars.SECURITY_TXT_CDSSANDBOX_XYZ }}
+  TF_VAR_addresscomplete_api_key: ${{ secrets.STAGING_ADDRESSCOMPLETE_API_KEY }}
   # IdP
   TF_VAR_idp_database_cluster_admin_username: ${{ secrets.STAGING_IDP_DATABASE_CLUSTER_ADMIN_USERNAME }}
   TF_VAR_idp_database_cluster_admin_password: ${{ secrets.STAGING_IDP_DATABASE_CLUSTER_ADMIN_PASSWORD }}
@@ -63,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       # Setup Terraform, Terragrunt, and Conftest
       - name: Setup terraform tools

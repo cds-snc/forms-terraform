@@ -1,5 +1,54 @@
 # Changelog
 
+## [3.48.1](https://github.com/cds-snc/forms-terraform/compare/v3.48.0...v3.48.1) (2026-08-11)
+
+
+### Bug Fixes
+
+* **deps:** update all patch dependencies ([#1420](https://github.com/cds-snc/forms-terraform/issues/1420)) ([b220dca](https://github.com/cds-snc/forms-terraform/commit/b220dca652e237cef721946366db6621f0fb4990))
+* Escape markdown links in user input ([#1430](https://github.com/cds-snc/forms-terraform/issues/1430)) ([431bbd5](https://github.com/cds-snc/forms-terraform/commit/431bbd51a0dc64ec370c52c0af3d54bdf372e2e1))
+
+
+### Miscellaneous Chores
+
+* delete old StatusCreatedAt Vault index ([#1417](https://github.com/cds-snc/forms-terraform/issues/1417)) ([a7358e4](https://github.com/cds-snc/forms-terraform/commit/a7358e4c6f398e2dcac06afbd73c1d8cbe49180f))
+* **deps:** lock file maintenance ([#1427](https://github.com/cds-snc/forms-terraform/issues/1427)) ([2e8132e](https://github.com/cds-snc/forms-terraform/commit/2e8132e45290958b8ebfa2813aac1750e5c7b267))
+* **deps:** update all non-major github action dependencies ([#1426](https://github.com/cds-snc/forms-terraform/issues/1426)) ([871d52a](https://github.com/cds-snc/forms-terraform/commit/871d52a93f2d907acc8a1cd15f6ec4713a3f252c))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1429](https://github.com/cds-snc/forms-terraform/issues/1429)) ([718c7c3](https://github.com/cds-snc/forms-terraform/commit/718c7c3b10946271d6d614f4423ce15947cb1103))
+
+## [3.48.0](https://github.com/cds-snc/forms-terraform/compare/v3.47.2...v3.48.0) (2026-08-04)
+
+
+### Features
+
+* AddressComplete Secrets ([#1425](https://github.com/cds-snc/forms-terraform/issues/1425)) ([df95a92](https://github.com/cds-snc/forms-terraform/commit/df95a92eb5ccd1ad469ea30f64dd9f91e5b197a7))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#1422](https://github.com/cds-snc/forms-terraform/issues/1422)) ([13511ae](https://github.com/cds-snc/forms-terraform/commit/13511ae7e96ea2a5d504ed4bb232981b76d7b084))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1424](https://github.com/cds-snc/forms-terraform/issues/1424)) ([77b6187](https://github.com/cds-snc/forms-terraform/commit/77b6187ec8f825454e366d9c2316eb65b29f067b))
+
+## [3.47.2](https://github.com/cds-snc/forms-terraform/compare/v3.47.1...v3.47.2) (2026-07-30)
+
+
+### Miscellaneous Chores
+
+* introduce allowlist to counter blocklist ([#1418](https://github.com/cds-snc/forms-terraform/issues/1418)) ([de5aae4](https://github.com/cds-snc/forms-terraform/commit/de5aae405222279e2d3305cfc4a78bd0784215d0))
+
+## [3.47.1](https://github.com/cds-snc/forms-terraform/compare/v3.47.0...v3.47.1) (2026-07-27)
+
+
+### Miscellaneous Chores
+
+* allow retrieval of service-worker.js file in firewall ([#1410](https://github.com/cds-snc/forms-terraform/issues/1410)) ([2e01b22](https://github.com/cds-snc/forms-terraform/commit/2e01b22cf1c5e51186d70a887958d1b36fe67fac))
+* **deps:** lock file maintenance ([#1407](https://github.com/cds-snc/forms-terraform/issues/1407)) ([efbc3cc](https://github.com/cds-snc/forms-terraform/commit/efbc3cc5f291954ed5cba8710702ef8a525fcc17))
+* **deps:** lock file maintenance ([#1415](https://github.com/cds-snc/forms-terraform/issues/1415)) ([03f2ac9](https://github.com/cds-snc/forms-terraform/commit/03f2ac9b0a4742a3d806c819a8695d6d1e8362ea))
+* **deps:** update all non-major github action dependencies ([#1406](https://github.com/cds-snc/forms-terraform/issues/1406)) ([c935d77](https://github.com/cds-snc/forms-terraform/commit/c935d77b5ffb3ccbbf14e5d3597e08a55d70a26b))
+* **deps:** update all non-major github action dependencies ([#1414](https://github.com/cds-snc/forms-terraform/issues/1414)) ([5b5a017](https://github.com/cds-snc/forms-terraform/commit/5b5a017962f4c382111c5c6f43213a1a2d5ce4b3))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1409](https://github.com/cds-snc/forms-terraform/issues/1409)) ([4ca36fd](https://github.com/cds-snc/forms-terraform/commit/4ca36fd36198fc9000601093944ad2de2bdf9dcf))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1416](https://github.com/cds-snc/forms-terraform/issues/1416)) ([23168a1](https://github.com/cds-snc/forms-terraform/commit/23168a1df70b80fbf6922935bf9483ab5f6d7867))
+
 ## [3.47.0](https://github.com/cds-snc/forms-terraform/compare/v3.46.1...v3.47.0) (2026-07-20)
 
 
