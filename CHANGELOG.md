@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.48.1](https://github.com/cds-snc/forms-terraform/compare/v3.48.0...v3.48.1) (2026-08-11)
+
+
+### Bug Fixes
+
+* **deps:** update all patch dependencies ([#1420](https://github.com/cds-snc/forms-terraform/issues/1420)) ([b220dca](https://github.com/cds-snc/forms-terraform/commit/b220dca652e237cef721946366db6621f0fb4990))
+* Escape markdown links in user input ([#1430](https://github.com/cds-snc/forms-terraform/issues/1430)) ([431bbd5](https://github.com/cds-snc/forms-terraform/commit/431bbd51a0dc64ec370c52c0af3d54bdf372e2e1))
+
+
+### Miscellaneous Chores
+
+* delete old StatusCreatedAt Vault index ([#1417](https://github.com/cds-snc/forms-terraform/issues/1417)) ([a7358e4](https://github.com/cds-snc/forms-terraform/commit/a7358e4c6f398e2dcac06afbd73c1d8cbe49180f))
+* **deps:** lock file maintenance ([#1427](https://github.com/cds-snc/forms-terraform/issues/1427)) ([2e8132e](https://github.com/cds-snc/forms-terraform/commit/2e8132e45290958b8ebfa2813aac1750e5c7b267))
+* **deps:** update all non-major github action dependencies ([#1426](https://github.com/cds-snc/forms-terraform/issues/1426)) ([871d52a](https://github.com/cds-snc/forms-terraform/commit/871d52a93f2d907acc8a1cd15f6ec4713a3f252c))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1429](https://github.com/cds-snc/forms-terraform/issues/1429)) ([718c7c3](https://github.com/cds-snc/forms-terraform/commit/718c7c3b10946271d6d614f4423ce15947cb1103))
+
 ## [3.48.0](https://github.com/cds-snc/forms-terraform/compare/v3.47.2...v3.48.0) (2026-08-04)
 
 
