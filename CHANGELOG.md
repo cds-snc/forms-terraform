@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.48.2](https://github.com/cds-snc/forms-terraform/compare/v3.48.1...v3.48.2) (2026-08-11)
+
+
+### Miscellaneous Chores
+
+* rework Slack audit log ([#1431](https://github.com/cds-snc/forms-terraform/issues/1431)) ([9740840](https://github.com/cds-snc/forms-terraform/commit/9740840d4ba5fa9704337ff70079b8e16bc47d1f))
+
 ## [3.48.1](https://github.com/cds-snc/forms-terraform/compare/v3.48.0...v3.48.1) (2026-08-11)
 
 
