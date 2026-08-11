@@ -82,9 +82,7 @@ const notifyOnEvent = async (logEvents: Array<LogEvent>) => {
         level: "warn",
         msg: `User ${logEvent.userId} performed ${logEvent.event} on ${logEvent.subject?.type}${
           logEvent.subject.id ? ` (id: ${logEvent.subject.id})` : ""
-        }.${eventDescription ? `\n\n${eventDescription}.` : ""}${
-          logEvent.clientIp ? `\n\nClient IP: ${logEvent.clientIp}` : ""
-        }`,
+        }.${eventDescription ? `\n\n${eventDescription}.` : ""}`,
       })
     );
   });
