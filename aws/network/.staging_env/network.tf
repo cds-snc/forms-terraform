@@ -2,6 +2,7 @@
 # VPC:
 # Defines the network and subnets for the Forms service
 #
+
 locals {
   subnetCount = 3
 }
@@ -26,6 +27,7 @@ resource "aws_vpc" "forms" {
 # Internet Gateway:
 # Allow VPC resources to communicate with the internet
 #
+
 resource "aws_internet_gateway" "forms" {
   vpc_id = aws_vpc.forms.id
 
@@ -125,6 +127,7 @@ data "aws_subnets" "lambda_endpoint_available" {
 # NAT Gateway
 # Allows private resources to access the internet
 #
+
 resource "aws_nat_gateway" "forms" {
   count = local.subnetCount
 
@@ -179,7 +182,6 @@ resource "aws_route_table_association" "ig" {
   route_table_id = aws_route_table.ig.id
 }
 
-
 #
 # Firewall Routes
 # 
@@ -206,11 +208,9 @@ resource "aws_route_table_association" "firewall" {
   route_table_id = aws_route_table.firewall.id
 }
 
-
 #
 # Public Routes
 #
-
 
 resource "aws_route_table" "forms_public_subnet" {
   count  = local.subnetCount
@@ -240,7 +240,6 @@ resource "aws_route_table_association" "forms" {
 # Private Routes
 #
 
-
 resource "aws_route_table" "forms_private_subnet" {
   count = local.subnetCount
 
@@ -265,7 +264,6 @@ resource "aws_route_table_association" "forms_private_route" {
   subnet_id      = aws_subnet.forms_private.*.id[count.index]
   route_table_id = aws_route_table.forms_private_subnet.*.id[count.index]
 }
-
 
 #
 # Local DNS Namespace

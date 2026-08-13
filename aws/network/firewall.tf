@@ -6,7 +6,6 @@ locals {
 
 resource "aws_networkfirewall_firewall" "forms" {
   #checkov:skip=CKV_AWS_345: AWS Managed Key is enough encryption for this use case
-
   name                   = "GCForms"
   description            = "Firewall limiting outbound traffic.  WAF handles inbound"
   delete_protection      = true
@@ -21,7 +20,6 @@ resource "aws_networkfirewall_firewall" "forms" {
     }
   }
 }
-
 
 resource "aws_networkfirewall_firewall_policy" "forms" {
   #checkov:skip=CKV_AWS_346: AWS Managed Key is enough encryption for this use case
@@ -47,7 +45,6 @@ resource "aws_networkfirewall_firewall_policy" "forms" {
       priority     = 1
       resource_arn = aws_networkfirewall_rule_group.suricata_rules.arn
     }
-
   }
 }
 
@@ -65,9 +62,6 @@ resource "aws_networkfirewall_rule_group" "suricata_rules" {
       rules_string = file("./firewall_rules/suricata.rules")
     }
   }
-
-
-
 }
 
 resource "aws_networkfirewall_logging_configuration" "forms" {
@@ -95,6 +89,7 @@ resource "aws_networkfirewall_logging_configuration" "forms" {
 #
 # Firewall CloudWatch log group
 #
+
 resource "aws_cloudwatch_log_group" "forms_alert" {
   # checkov:skip=CKV_AWS_338: WAF and Firewall logs are only kept for 14 days 
   name              = "Network-Firewall-Alert"
