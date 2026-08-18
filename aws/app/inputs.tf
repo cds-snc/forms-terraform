@@ -174,6 +174,11 @@ variable "freshdesk_api_key_secret_arn" {
   sensitive   = true
 }
 
+variable "public_subnet_ids" {
+  description = "Public subnet IDs for the CodePipeline module"
+  type        = list(string)
+}
+
 variable "private_subnet_ids" {
   description = "Private subnet IDs for the ECS service"
   type        = list(string)

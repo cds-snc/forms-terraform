@@ -59,6 +59,7 @@ dependency "network" {
   mock_outputs = {
     vpc_id                                                 = "vpc-id"
     code_build_security_group_id                           = "sg-cb"
+    public_subnet_ids                                      = ["pub-1", "pub-2"]
     private_subnet_ids                                     = ["prv-1", "prv-2"]
     egress_security_group_id                               = "sg-1234567890"
     ecs_security_group_id                                  = "sg-1234567890"
@@ -178,6 +179,7 @@ inputs = {
   code_build_security_group_id                           = dependency.network.outputs.code_build_security_group_id
   ecs_security_group_id                                  = dependency.network.outputs.ecs_security_group_id
   egress_security_group_id                               = dependency.network.outputs.egress_security_group_id
+  public_subnet_ids                                      = dependency.network.outputs.public_subnet_ids
   private_subnet_ids                                     = dependency.network.outputs.private_subnet_ids
   service_discovery_private_dns_namespace_ecs_local_name = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_name
 

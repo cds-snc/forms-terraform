@@ -6,7 +6,7 @@ module "code_pipeline" {
 
   vpc_id                         = var.vpc_id
   code_build_security_group_id   = var.code_build_security_group_id
-  private_subnet_ids             = var.private_subnet_ids
+  public_subnet_ids              = var.public_subnet_ids
   app_name                       = "gc-forms-api"
   github_repo_name               = "cds-snc/forms-api"
   app_ecr_url                    = var.api_image_ecr_url

@@ -48,6 +48,11 @@ variable "lb_target_group_2_name" {
   type        = string
 }
 
+variable "public_subnet_ids" {
+  description = "Public subnet IDs for the CodePipeline module"
+  type        = list(string)
+}
+
 variable "private_subnet_ids" {
   description = "IDs of the private subnets for the ECS service"
   type        = list(string)

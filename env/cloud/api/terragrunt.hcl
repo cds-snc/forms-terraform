@@ -63,6 +63,7 @@ dependency "network" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
     api_ecs_security_group_id                              = "sg-1234567890"
+    public_subnet_ids                                      = ["pub-1", "pub-2"]
     private_subnet_ids                                     = ["prv-1", "prv-2"]
     service_discovery_private_dns_namespace_ecs_local_id   = ""
     service_discovery_private_dns_namespace_ecs_local_name = "ecs.local"
@@ -146,6 +147,7 @@ inputs = {
   lb_target_group_2_name      = dependency.load_balancer.outputs.lb_api_target_group_2_name
 
   security_group_id_api_ecs                              = dependency.network.outputs.api_ecs_security_group_id
+  public_subnet_ids                                      = dependency.network.outputs.public_subnet_ids
   private_subnet_ids                                     = dependency.network.outputs.private_subnet_ids
   service_discovery_private_dns_namespace_ecs_local_id   = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_id
   service_discovery_private_dns_namespace_ecs_local_name = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_name

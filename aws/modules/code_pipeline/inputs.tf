@@ -8,8 +8,8 @@ variable "account_id" {
   type        = string
 }
 
-variable "private_subnet_ids" {
-  description = "The list of private subnet IDs used by the RDS cluster to"
+variable "public_subnet_ids" {
+  description = "The list of public subnet IDs used by AWS CodeBuild"
   type        = list(string)
 }
 
