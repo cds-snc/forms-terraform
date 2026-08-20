@@ -1,0 +1,14 @@
+packages:
+  - "lambda-code/submission"
+  # - "lambda-code/*"
+
+injectWorkspacePackages: true
+
+blockExoticSubdeps: true
+
+catalog:
+  "@aws-sdk/client-dynamodb": ^3.1113.0
+  "@aws-sdk/client-s3": ^3.1113.0
+  "@aws-sdk/client-sqs": ^3.1113.0
+  "@aws-sdk/lib-dynamodb": ^3.1113.0
+  uuid: ^14.0.2
