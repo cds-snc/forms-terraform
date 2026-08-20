@@ -1,0 +1,17 @@
+packages:
+  - "lambda-code/submission"
+  # - "lambda-code/*"
+
+injectWorkspacePackages: true
+
+blockExoticSubdeps: true
+
+# minimumReleaseAge: 10080 # 7 days
+minimumReleaseAge: 0 # to delete and replace by previous line
+
+catalog:
+  "@aws-sdk/client-dynamodb": ^3.1113.0
+  "@aws-sdk/client-s3": ^3.1113.0
+  "@aws-sdk/client-sqs": ^3.1113.0
+  "@aws-sdk/lib-dynamodb": ^3.1113.0
+  uuid: ^14.0.2

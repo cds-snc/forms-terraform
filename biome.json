@@ -1,0 +1,41 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.9/schema.json",
+  "files": {
+    "includes": [
+      "lambda-code/!",
+      "!!**/build",
+      "!!**/node_modules",
+      "tsconfig.json",
+      "vitest.config.ts",
+      "biome.json",
+      "package.json"
+    ],
+    "ignoreUnknown": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "correctness": {
+        "noNodejsModules": "off",
+        "noUndeclaredDependencies": "off"
+      },
+      "style": {
+        "useNamingConvention": "info"
+      },
+      "suspicious": {
+        "noConsole": "info"
+      }
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space"
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "recommended": true
+    }
+  }
+}
