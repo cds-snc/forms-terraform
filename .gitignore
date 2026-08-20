@@ -36,9 +36,6 @@ override.tf.json
 *tfplan*
 tf.plan
 
-# Ignore vscode settings
-.vscode
-
 # Ignore node modules folders for Lambda functions
 **/node_modules/
 
