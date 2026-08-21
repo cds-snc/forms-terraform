@@ -8,6 +8,7 @@ resource "aws_lambda_function" "cognito_email_sender" {
   package_type  = "Image"
   role          = aws_iam_role.cognito_lambda.arn
   timeout       = 300
+  architectures = ["arm64"]
 
   lifecycle {
     ignore_changes = [image_uri]
@@ -55,6 +56,7 @@ resource "aws_lambda_function" "cognito_pre_sign_up" {
   package_type  = "Image"
   role          = aws_iam_role.cognito_lambda.arn
   timeout       = 300
+  architectures = ["arm64"]
 
   lifecycle {
     ignore_changes = [image_uri]

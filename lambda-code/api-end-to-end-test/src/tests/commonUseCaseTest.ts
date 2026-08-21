@@ -1,6 +1,6 @@
-import { ApiClient } from "@lib/apiClient.js";
-import { SubmissionGenerator } from "@lib/submissionGenerator.js";
-import { generateRandomString, pause } from "@lib/utils.js";
+import { ApiClient } from "../lib/apiClient.ts";
+import { SubmissionGenerator } from "../lib/submissionGenerator.ts";
+import { generateRandomString, pause } from "../lib/utils.ts";
 
 export class CommonUseCaseTest implements ApiTest {
   public name = "CommonUseCaseTest";
