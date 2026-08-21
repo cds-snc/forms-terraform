@@ -5,6 +5,7 @@ resource "aws_lambda_function" "reliability" {
   role          = aws_iam_role.lambda.arn
   timeout       = 300
   memory_size   = 256
+  architectures = ["arm64"]
 
   // Ensure that the Reliability Lambda always has a pool of at least 150 / 1000 execution environments
   reserved_concurrent_executions = 150

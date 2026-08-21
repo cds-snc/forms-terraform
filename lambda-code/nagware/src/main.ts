@@ -1,10 +1,10 @@
 import {
   retrieveNewOrDownloadedFormResponsesOver28DaysOld,
   deleteOldTestResponses,
-} from "@lib/dynamodbDataLayer.js";
-import { getTemplateInfo } from "@lib/templates.js";
-import { notifyFormOwner } from "@lib/emailNotification.js";
-import { setOverdueResponseCache } from "@lib/overdueResponseCache.js";
+} from "./lib/dynamodbDataLayer.ts";
+import { getTemplateInfo } from "./lib/templates.ts";
+import { notifyFormOwner } from "./lib/emailNotification.ts";
+import { setOverdueResponseCache } from "./lib/overdueResponseCache.ts";
 import { Handler } from "aws-lambda";
 
 type NotificationSettings = {

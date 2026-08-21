@@ -5,12 +5,11 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "target": "ESNext",
-    "baseUrl": "./",
-    "paths": {
-      "@lib/*": ["src/lib/*"]
-    },
-    "outDir": "build"
+    "allowJs": true,
+    "rootDir": "src",
+    "outDir": "build",
+    "types": ["node"],
+    "rewriteRelativeImportExtensions": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*"]
 }

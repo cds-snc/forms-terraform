@@ -1,6 +1,6 @@
 import { Handler, SQSEvent } from "aws-lambda";
-import { notifyByEmail } from "@lib/email.js";
-import { retrieveNotification } from "@lib/db.js";
+import { notifyByEmail } from "./lib/email.ts";
+import { retrieveNotification } from "./lib/db.ts";
 
 type OperationResult = { status: "success" } | { status: "failure"; id: string };
 
