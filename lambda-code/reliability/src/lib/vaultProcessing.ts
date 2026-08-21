@@ -1,14 +1,14 @@
-import { saveToVault, removeSubmission } from "./dataLayer.js";
-import { SubmissionAttachmentInformation } from "./file_checksum.js";
-import { isFileValid } from "./fileValidation.js";
+import { saveToVault, removeSubmission } from "./dataLayer.ts";
+import { SubmissionAttachmentInformation } from "./file_checksum.ts";
+import { isFileValid } from "./fileValidation.ts";
 import {
   copyFilesFromReliabilityToVaultStorage,
   FileSizeUnder100BytesException,
   getObjectFirst100BytesInReliabilityBucket,
   removeFilesFromReliabilityStorage,
-} from "./s3FileInput.js";
-import { notification } from "@gcforms/connectors";
-import { FormSubmission } from "./types.js";
+} from "./s3FileInput.ts";
+import { enqueueDeferred } from "@gcforms/connectors";
+import { FormSubmission } from "./types.ts";
 
 export default async (
   submissionID: string,
@@ -174,7 +174,7 @@ function buildSubmissionAttachmentJsonRecord(
 }
 
 async function notifyFormOwnersThatNewResponsesAreAvailable(notificationId: string): Promise<void> {
-  return notification.enqueueDeferred(notificationId).catch((error) =>
+  return enqueueDeferred(notificationId).catch((error) =>
     console.error(
       JSON.stringify({
         level: "error",

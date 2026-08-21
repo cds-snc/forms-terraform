@@ -1,0 +1,32 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.9/schema.json",
+  "files": {
+    "includes": ["lambda-code/!"]
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "all",
+      "correctness": {
+        "noNodejsModules": "off",
+        "noUndeclaredDependencies": "off"
+      },
+      "style": {
+        "useNamingConvention": "info"
+      },
+      "suspicious": {
+        "noConsole": "info"
+      }
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space"
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "recommended": true
+    }
+  }
+}

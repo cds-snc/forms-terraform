@@ -42,21 +42,19 @@ for lambdaFolderPath in $basedir/*/; do
   lambdaName=$(basename $lambdaFolderPath)
 
   if [[ ! " ${lambdasToSkip[@]} " =~ " ${lambdaName} " ]]; then
-    cd $lambdaFolderPath
-
-    printf "${greenColor}=> Building new ${lambdaName} image${reset}\n"
-
     repositoryName=${lambdaName}-lambda
 
-    docker build --platform=linux/amd64 --provenance false -t $repositoryName .
-    printf "${greenColor}=> Tagging and pushing ${lambdaName} image${reset}\n"
+    printf "${greenColor}=> Building new ${lambdaName} image${reset}\n"
+    docker build --platform=linux/arm64 --provenance false --build-arg LAMBDA_NAME=$lambdaName -f Dockerfile.lambda -t $repositoryName .
 
+    printf "${greenColor}=> Tagging and pushing ${lambdaName} image${reset}\n"
     docker tag $repositoryName $ecrRepositoryAddress/$repositoryName
     docker push $ecrRepositoryAddress/$repositoryName
 
+    # Submission lambda is the only one with a starting capital letter
     functionName=$([ "$lambdaName" == "submission" ] && echo "Submission" || echo "$lambdaName")
-    printf "${yellowColor}=> Requesting ${functionName} Lambda function to use new image. It can fail if the Lambda function is not deployed yet.${reset}\n"
 
+    printf "${yellowColor}=> Requesting ${functionName} Lambda function to use new image. It can fail if the Lambda function is not deployed yet.${reset}\n"
     aws lambda update-function-code --function-name $functionName --image-uri $ecrRepositoryAddress/$repositoryName:latest >/dev/null || continue
   else
     printf "${yellowColor}=> Skipping $lambdaName Lambda as the associated resource was not requested.${reset}\n"

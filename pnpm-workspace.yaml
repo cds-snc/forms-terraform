@@ -1,0 +1,27 @@
+packages:
+  - "lambda-code/*"
+
+injectWorkspacePackages: true
+
+blockExoticSubdeps: true
+
+# minimumReleaseAge: 10080 # 7 days
+minimumReleaseAge: 0 # to delete and replace by previous line
+
+catalog:
+  "@biomejs/biome": ^2.5.9
+  "@types/aws-lambda": ^8.10.162
+  "@types/node": ^26.2.0
+  typescript: ^7.0.2
+  vitest: ^4.1.11
+  "@aws-sdk/client-dynamodb": ^3.1113.0
+  "@aws-sdk/client-s3": ^3.1113.0
+  "@aws-sdk/client-sqs": ^3.1113.0
+  "@aws-sdk/lib-dynamodb": ^3.1113.0
+  "@aws-sdk/client-lambda": ^3.1113.0
+  uuid: ^14.0.2
+  "@gcforms/connectors": ^3.0.1
+  "@gcforms/core": ^2.2.26
+  "@gcforms/database": 1.1.10
+  "@gcforms/types": ^1.0.38
+  axios: ^1.19.0
