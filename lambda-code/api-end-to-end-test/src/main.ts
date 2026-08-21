@@ -1,9 +1,9 @@
 import { Handler } from "aws-lambda";
-import { IdpClient } from "@lib/idpClient.js";
-import { ApiClient } from "@lib/apiClient.js";
-import { SubmissionGenerator } from "@lib/submissionGenerator.js";
-import { CommonUseCaseTest } from "@tests/commonUseCaseTest.js";
-import { RateLimiterTest } from "@tests/rateLimiterTest.js";
+import { IdpClient } from "./lib/idpClient.ts";
+import { ApiClient } from "./lib/apiClient.ts";
+import { SubmissionGenerator } from "./lib/submissionGenerator.ts";
+import { CommonUseCaseTest } from "./tests/commonUseCaseTest.ts";
+import { RateLimiterTest } from "./tests/rateLimiterTest.ts";
 
 const IDP_TRUSTED_DOMAIN: string = process.env.IDP_TRUSTED_DOMAIN ?? "";
 const IDP_URL: string = process.env.IDP_URL ?? "";
