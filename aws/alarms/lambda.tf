@@ -9,6 +9,7 @@ resource "aws_lambda_function" "notify_slack" {
   package_type  = "Image"
   role          = aws_iam_role.notify_slack_lambda.arn
   timeout       = 300
+  architectures = ["arm64"]
 
   lifecycle {
     ignore_changes = [image_uri]

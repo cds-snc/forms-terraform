@@ -1,19 +1,19 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { SQSEvent } from "aws-lambda";
-import { Notification } from "../src/lib/types.js";
+import { Notification } from "../src/lib/types.ts";
 
 // These modules need to be mocked before importing
-vi.mock("../src/lib/email.js", () => ({
+vi.mock("../src/lib/email.ts", () => ({
   notifyByEmail: vi.fn(),
 }));
 
-vi.mock("../src/lib/db.js", () => ({
+vi.mock("../src/lib/db.ts", () => ({
   retrieveNotification: vi.fn(),
 }));
 
-import * as main from "../src/main.js";
-import * as db from "../src/lib/db.js";
-import * as email from "../src/lib/email.js";
+import * as main from "../src/main.ts";
+import * as db from "../src/lib/db.ts";
+import * as email from "../src/lib/email.ts";
 
 describe("Notification Lambda Handler SQS batch processing", () => {
   afterEach(() => {
