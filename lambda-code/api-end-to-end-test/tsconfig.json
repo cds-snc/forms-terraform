@@ -1,18 +1,8 @@
 {
+  "extends": "../../tsconfig.lambda.json",
   "compilerOptions": {
-    "strict": true,
-    "esModuleInterop": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "target": "ESNext",
-    "baseUrl": "./",
-    "paths": {
-      "@lib/*": ["src/lib/*"],
-      "@tests/*": ["src/tests/*"]
-    },
-    "outDir": "build",
-    "types": ["node"]
+    "rootDir": "src",
+    "outDir": "build"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*"]
 }
