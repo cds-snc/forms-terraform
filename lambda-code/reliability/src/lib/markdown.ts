@@ -1,6 +1,6 @@
 import json2md from "json2md";
-import { extractFormData } from "./dataLayer.js";
-import { FormSubmission } from "./types.js";
+import { extractFormData } from "./dataLayer.ts";
+import { FormSubmission } from "./types.ts";
 
 export default (
   formSubmission: FormSubmission,
