@@ -51,6 +51,7 @@ for lambdaFolderPath in $basedir/*/; do
     docker tag $repositoryName $ecrRepositoryAddress/$repositoryName
     docker push $ecrRepositoryAddress/$repositoryName
 
+    # Submission lambda is the only one with a starting capital letter
     functionName=$([ "$lambdaName" == "submission" ] && echo "Submission" || echo "$lambdaName")
 
     printf "${yellowColor}=> Requesting ${functionName} Lambda function to use new image. It can fail if the Lambda function is not deployed yet.${reset}\n"

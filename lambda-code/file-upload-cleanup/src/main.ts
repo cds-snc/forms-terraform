@@ -4,7 +4,7 @@ import {
   decideIfUnprocessedSubmissionShouldBeDeleted,
   deleteUnprocessedSubmission,
   ReasonBehindUnprocessedSubmission,
-} from "@lib/datalayer.js";
+} from "./lib/datalayer.ts";
 
 export const handler: Handler = async () => {
   try {

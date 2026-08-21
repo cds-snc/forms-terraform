@@ -1,5 +1,5 @@
 import { EmailContent, GCNotifyConnector } from "@gcforms/connectors";
-import { Notification } from "@lib/types.js";
+import { Notification } from "./types.ts";
 
 const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
   process.env.NOTIFY_API_KEY ?? ""
