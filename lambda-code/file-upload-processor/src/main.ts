@@ -5,7 +5,7 @@ import {
   updateReceiptIdForSubmission,
   retrieveSubmission,
   verifyIfAllFilesExist,
-} from "@lib/utils.js";
+} from "./lib/utils.ts";
 
 export const handler: Handler = async (event: SQSEvent) => {
   try {
