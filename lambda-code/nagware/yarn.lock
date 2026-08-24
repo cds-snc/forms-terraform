@@ -352,15 +352,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gcforms/database@npm:1.1.7":
-  version: 1.1.7
-  resolution: "@gcforms/database@npm:1.1.7"
+"@gcforms/database@npm:1.1.9":
+  version: 1.1.9
+  resolution: "@gcforms/database@npm:1.1.9"
   dependencies:
     "@aws-sdk/client-secrets-manager": "npm:^3.1068.0"
     "@prisma/adapter-pg": "npm:7.8.0"
     "@prisma/client": "npm:7.8.0"
     pg: "npm:8.20.0"
-  checksum: 10c0/2d4987ae4bd531ab008d686297f786afeb9edfb217d725efbd75fe9d7b043757493384b0476bfc2365db1a536ee6b9537197ed7055151f35be46af319988b376
+  checksum: 10c0/5d700225d6e63ddea0283964506c476e58d22d57718d423a71c9762357ea224515ff4a03d4d45462917278d314c87bfcd74bcd7ae8973a976399250ecf2e366b
   languageName: node
   linkType: hard
 
@@ -1200,7 +1200,7 @@ __metadata:
     "@aws-sdk/client-dynamodb": "npm:^3.902.0"
     "@aws-sdk/lib-dynamodb": "npm:^3.902.0"
     "@gcforms/connectors": "npm:^2.2.20"
-    "@gcforms/database": "npm:1.1.7"
+    "@gcforms/database": "npm:1.1.9"
     "@gcforms/types": "npm:^1.0.31"
     "@types/aws-lambda": "npm:^8.10.155"
     "@types/node": "npm:^22.19.19"
@@ -1562,8 +1562,8 @@ __metadata:
   linkType: hard
 
 "tsc-alias@npm:^1.8.16":
-  version: 1.9.1
-  resolution: "tsc-alias@npm:1.9.1"
+  version: 1.9.2
+  resolution: "tsc-alias@npm:1.9.2"
   dependencies:
     chokidar: "npm:^3.5.3"
     commander: "npm:^9.0.0"
@@ -1574,7 +1574,7 @@ __metadata:
     plimit-lit: "npm:^1.2.6"
   bin:
     tsc-alias: dist/bin/index.js
-  checksum: 10c0/b696508a671fdcd3e10fe6d88a64da77397811dbb7fd701623b8def2ae41f0cb7b39607de403873f072088dea8c6c10fc88ea3e65b6bb8a69635c9d61a935f77
+  checksum: 10c0/928acca5ae3a14ff6b54914985df5d4e6c240a771bbd3d68840a3b4c373bbf5dc8c6abd1d5b64f50c51518c4e59cf8dc98f5c3f5ddb3adc0e4b798d4942102f1
   languageName: node
   linkType: hard
 
