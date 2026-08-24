@@ -127,8 +127,3 @@ output "lambda_vault_integrity_log_group_name" {
   description = "Vault integrity Lambda CloudWatch log group name"
   value       = aws_cloudwatch_log_group.vault_integrity.name
 }
-
-output "forms_lambda_client_iam_role_name" {
-  description = "IAM role name for forms client Lambda"
-  value       = try(aws_iam_role.forms_lambda_client[0].name, null)
-}
