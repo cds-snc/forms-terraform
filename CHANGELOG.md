@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.48.3](https://github.com/cds-snc/forms-terraform/compare/v3.48.2...v3.48.3) (2026-08-24)
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#1444](https://github.com/cds-snc/forms-terraform/issues/1444)) ([0522db0](https://github.com/cds-snc/forms-terraform/commit/0522db0afbae676cc001289ed5e8a7d889e3307f))
+* **deps:** update all non-major github action dependencies ([#1436](https://github.com/cds-snc/forms-terraform/issues/1436)) ([32ffb18](https://github.com/cds-snc/forms-terraform/commit/32ffb183242bfe153946796db3ecdaa2bd8d3338))
+* **deps:** update all non-major github action dependencies ([#1443](https://github.com/cds-snc/forms-terraform/issues/1443)) ([fe21d38](https://github.com/cds-snc/forms-terraform/commit/fe21d386de9f4cc4a2854e0ce428dc71ce33cee4))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1438](https://github.com/cds-snc/forms-terraform/issues/1438)) ([d9e398e](https://github.com/cds-snc/forms-terraform/commit/d9e398e7a48be52e469ee94214ca8510eed0eed6))
+* tear down Rainbow deployments ([#1411](https://github.com/cds-snc/forms-terraform/issues/1411)) ([b9a7ba9](https://github.com/cds-snc/forms-terraform/commit/b9a7ba9e1d75594230c697a99208f71e9773620c))
+
 ## [3.48.2](https://github.com/cds-snc/forms-terraform/compare/v3.48.1...v3.48.2) (2026-08-11)
 
 
