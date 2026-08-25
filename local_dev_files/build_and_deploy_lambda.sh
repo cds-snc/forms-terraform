@@ -45,7 +45,7 @@ for lambdaFolderPath in $basedir/*/; do
     repositoryName=${lambdaName}-lambda
 
     printf "${greenColor}=> Building new ${lambdaName} image${reset}\n"
-    docker build --platform=linux/arm64 --provenance false --build-arg LAMBDA_FOLDER_NAME=$lambdaName -f Dockerfile.lambda -t $repositoryName .
+    docker buildx build --platform=linux/arm64 --provenance false --build-arg LAMBDA_FOLDER_NAME=$lambdaName -f Dockerfile.lambda -t $repositoryName .
 
     printf "${greenColor}=> Tagging and pushing ${lambdaName} image${reset}\n"
     docker tag $repositoryName $ecrRepositoryAddress/$repositoryName
