@@ -1,4 +1,4 @@
-name: "Terragrunt apply STAGING"
+name: Terragrunt apply STAGING
 
 on:
   workflow_dispatch:
@@ -133,34 +133,28 @@ jobs:
             idp:
               - 'idp/**'
 
-  build-tag-push-lambda-images:
+  build-tag-push-lambda-docker-images:
     needs: find-lambdas-to-deploy
     if: ${{ needs.find-lambdas-to-deploy.outputs.lambdas != '[]' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     strategy:
       fail-fast: false
       max-parallel: 4 # Limits parallel matrix jobs
       matrix:
         image: ${{ fromJSON(needs.find-lambdas-to-deploy.outputs.lambdas) }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
-      - name: Build Lambda images
-        uses: ./.github/workflows/build-lambda-images
+      - name: Build, Tag and Push Lambda Docker image
+        uses: ./.github/workflows/build-push-lambda-docker-image
         with:
-          lambda-directory: lambda-code/${{ matrix.image }}
-          lambda-name: ${{ matrix.image }}
-
-      - name: Tag and push Lambda images
-        uses: ./.github/workflows/tag-and-push-docker-images
-        with:
+          lambda-folder-name: ${{ matrix.image }}
+          push: true
+          tag: ${{ github.sha }}
           aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
           aws-role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
-          image-name: ${{ matrix.image }}
-          image-tag: ${{ github.sha }}
 
   build-tag-push-idp-image:
     needs: detect-idp-changes
@@ -172,21 +166,34 @@ jobs:
 
       - name: Build IdP image
         working-directory: idp
-        run: |
-          make build
+        run: make build
 
-      - name: Tag and push IdP image
-        uses: ./.github/workflows/tag-and-push-docker-images
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
         with:
-          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
-          aws-role-session-name: TFApply
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
+          role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
-          image-name: idp/zitadel
-          image-tag: ${{ github.sha }}
-          repository-suffix: ""
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
+
+      - name: Tag and push docker images
+        env:
+          IMAGE_NAME: idp/zitadel
+          IMAGE_TAG: ${{ github.sha }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          REPOSITORY_NAME=$IMAGE_NAME
+          docker tag $REPOSITORY_NAME $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_TAG
+          docker tag $REPOSITORY_NAME $ECR_REGISTRY/$REPOSITORY_NAME:latest
+          docker push $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$REPOSITORY_NAME:latest
+        shell: bash
 
   terragrunt-apply-all-modules:
-    needs: [build-tag-push-lambda-images, build-tag-push-idp-image]
+    needs: [build-tag-push-lambda-docker-images, build-tag-push-idp-image]
     if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     steps:
@@ -339,7 +346,7 @@ jobs:
     needs:
       [
         terragrunt-apply-ecr-only,
-        build-tag-push-lambda-images,
+        build-tag-push-lambda-docker-images,
         build-tag-push-idp-image,
         terragrunt-apply-all-modules,
         update-lambda-function-image,
