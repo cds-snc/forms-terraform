@@ -1,4 +1,4 @@
-name: "Terragrunt plan STAGING"
+name: Terragrunt plan STAGING
 
 on:
   pull_request:
@@ -85,28 +85,25 @@ jobs:
         with:
           filters: .github/lambda-filter.yml
 
-  test-lambda-code:
+  run-lambda-unit-tests:
     needs: detect-lambda-changes
     if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        image: ${{ fromJSON(needs.detect-lambda-changes.outputs.lambda-to-rebuild) }}
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
-      - name: Test Lambda code
-        uses: ./.github/workflows/test-lambda-code
-        with:
-          lambda-directory: lambda-code/${{ matrix.image }}
-          lambda-name: ${{ matrix.image }}
+      - uses: pnpm/setup@v2
 
-  build-lambda-images:
+      - name: Run tests
+        run: |
+          filters=$(echo '${{ needs.detect-lambda-changes.outputs.lambda-to-rebuild }}' | jq -r '.[] | "--filter " + .' | paste -sd ' ')
+          pnpm $filters test
+
+  build-lambda-docker-images:
     needs: detect-lambda-changes
     if: needs.detect-lambda-changes.outputs.lambda-to-rebuild != '[]'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     strategy:
       fail-fast: false
       max-parallel: 4 # Limits parallel matrix jobs
@@ -116,11 +113,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
-      - name: Build Lambda images
-        uses: ./.github/workflows/build-lambda-images
+      - name: Build Lambda Docker image
+        uses: ./.github/workflows/build-push-lambda-docker-image
         with:
-          lambda-directory: lambda-code/${{ matrix.image }}
-          lambda-name: ${{ matrix.image }}
+          lambda-folder-name: ${{ matrix.image }}
+          push: false
 
   build-idp-image:
     if: ${{ ! startsWith(github.head_ref , 'release-please--') }}
@@ -131,8 +128,7 @@ jobs:
 
       - name: Build IdP image
         working-directory: idp
-        run: |
-          make build
+        run: make build
 
   terragrunt-plan:
     if: ${{ ! startsWith(github.head_ref , 'release-please--') }}

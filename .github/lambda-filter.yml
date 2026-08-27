@@ -8,8 +8,6 @@ cognito-pre-sign-up:
   - "lambda-code/cognito-pre-sign-up/**"
 form-archiver:
   - "lambda-code/form-archiver/**"
-load-testing:
-  - "lambda-code/load-testing/**"
 nagware:
   - "lambda-code/nagware/**"
 notify-slack:

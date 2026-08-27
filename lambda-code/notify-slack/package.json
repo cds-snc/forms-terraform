@@ -1,27 +1,16 @@
 {
   "name": "notify-slack",
-  "description": "Lambda that notifies Slack and triggers Opsgenie alert",
-  "version": "1.0.0",
-  "main": "main.js",
   "type": "module",
-  "license": "MIT",
   "scripts": {
-    "build": "rm -rf build && tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
-    "build:dev": "tsc --project tsconfig.json --watch",
-    "test": "vitest --coverage"
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "lint": "biome check --error-on-warnings --diagnostic-level=warn ."
   },
   "dependencies": {
-    "@aws-sdk/client-ssm": "^3.1012.0",
-    "axios": "^1.16.1"
+    "@aws-sdk/client-ssm": "^3.1113.0",
+    "axios": "catalog:"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.155",
-    "@types/node": "^22.19.19",
-    "@vitest/coverage-v8": "^4.1.8",
-    "aws-sdk-client-mock": "^4.1.0",
-    "tsc-alias": "^1.8.16",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.0"
-  },
-  "packageManager": "yarn@4.17.0"
+    "aws-sdk-client-mock": "^4.1.0"
+  }
 }
