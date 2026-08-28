@@ -108,6 +108,8 @@ importers:
 
   lambda-code/cognito-pre-sign-up: {}
 
+  lambda-code/common: {}
+
   lambda-code/file-upload-cleanup:
     dependencies:
       '@aws-sdk/client-dynamodb':
@@ -265,6 +267,9 @@ importers:
       '@aws-sdk/s3-presigned-post':
         specifier: ^3.1113.0
         version: 3.1117.0
+      common:
+        specifier: workspace:*
+        version: link:../common
       uuid:
         specifier: ^14.0.2
         version: 14.0.2
