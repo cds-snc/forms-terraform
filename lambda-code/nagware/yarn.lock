@@ -6,8 +6,8 @@ __metadata:
   cacheKey: 10c0
 
 "@aws-sdk/client-dynamodb@npm:^3.1068.0, @aws-sdk/client-dynamodb@npm:^3.902.0":
-  version: 3.1116.0
-  resolution: "@aws-sdk/client-dynamodb@npm:3.1116.0"
+  version: 3.1121.0
+  resolution: "@aws-sdk/client-dynamodb@npm:3.1121.0"
   dependencies:
     "@aws-sdk/core": "npm:^3.977.9"
     "@aws-sdk/credential-provider-node": "npm:^3.972.81"
@@ -19,13 +19,13 @@ __metadata:
     "@smithy/node-http-handler": "npm:^4.11.3"
     "@smithy/types": "npm:^4.17.2"
     tslib: "npm:^2.6.2"
-  checksum: 10c0/ec3db432ae6ff9bb1c310d5c89b473c17fb5eedb2a034508210a6d068865bcf31c4973fc0ea4b7c5d99624d241cd47d9c52eee38414578868d17b2a7a08ed079
+  checksum: 10c0/dae913a162d6047bb4d15a5d558e67bc613098520a02b3d330d8e6374b82704fed685ef91bed26107884b1113d022f9fe1a684c4480160d6d28a362265f5a665
   languageName: node
   linkType: hard
 
 "@aws-sdk/client-secrets-manager@npm:^3.1068.0":
-  version: 3.1116.0
-  resolution: "@aws-sdk/client-secrets-manager@npm:3.1116.0"
+  version: 3.1121.0
+  resolution: "@aws-sdk/client-secrets-manager@npm:3.1121.0"
   dependencies:
     "@aws-sdk/core": "npm:^3.977.9"
     "@aws-sdk/credential-provider-node": "npm:^3.972.81"
@@ -35,13 +35,13 @@ __metadata:
     "@smithy/node-http-handler": "npm:^4.11.3"
     "@smithy/types": "npm:^4.17.2"
     tslib: "npm:^2.6.2"
-  checksum: 10c0/63cef2865017be50cebd0ab89e91bcaf79f1ce2fbc5718ace6c49ff474a8c4752633b07b1d5dcb67d712f2f8d3d8c0e407dfcc7b6f88840026c1d5711145ca57
+  checksum: 10c0/2882a9ffd0378165e1bd59309153ed5791604b6d319a4074c15ac7b67b4555a4b055359db7a39c92f8f8eda14562e5cca5acd64912458a73ee3bfad6fb4f4cb3
   languageName: node
   linkType: hard
 
 "@aws-sdk/client-sqs@npm:^3.1068.0":
-  version: 3.1116.0
-  resolution: "@aws-sdk/client-sqs@npm:3.1116.0"
+  version: 3.1121.0
+  resolution: "@aws-sdk/client-sqs@npm:3.1121.0"
   dependencies:
     "@aws-sdk/core": "npm:^3.977.9"
     "@aws-sdk/credential-provider-node": "npm:^3.972.81"
@@ -52,7 +52,7 @@ __metadata:
     "@smithy/node-http-handler": "npm:^4.11.3"
     "@smithy/types": "npm:^4.17.2"
     tslib: "npm:^2.6.2"
-  checksum: 10c0/fa131893af2d9b839bb16e2ca398c0750f45a6aab11eb65d77a4de81a19d811dae2e7331b497a3577afc6190d32d94faed65b40bc45e8c55158234937a857f43
+  checksum: 10c0/fee6bc10086f1a60a389c8f0c35b243d68b51c03b229b094de37dfcbdee8281d0532b21f8469b4ff0ae28b7ca555e808f234524a696be1e7bc13b31db9bc8b42
   languageName: node
   linkType: hard
 
@@ -219,8 +219,8 @@ __metadata:
   linkType: hard
 
 "@aws-sdk/lib-dynamodb@npm:^3.1068.0, @aws-sdk/lib-dynamodb@npm:^3.902.0":
-  version: 3.1116.0
-  resolution: "@aws-sdk/lib-dynamodb@npm:3.1116.0"
+  version: 3.1121.0
+  resolution: "@aws-sdk/lib-dynamodb@npm:3.1121.0"
   dependencies:
     "@aws-sdk/core": "npm:^3.977.9"
     "@aws-sdk/util-dynamodb": "npm:^3.996.9"
@@ -228,8 +228,8 @@ __metadata:
     "@smithy/types": "npm:^4.17.2"
     tslib: "npm:^2.6.2"
   peerDependencies:
-    "@aws-sdk/client-dynamodb": ^3.1116.0
-  checksum: 10c0/9a588bc8c65a04e3f9ef2cca49b660341524e7f56fdb49b713e9056194b302a421482fc09ef46836dd8781cdd7cbbcfb7ec4847b6518d94a8fd08e8bd3917889
+    "@aws-sdk/client-dynamodb": ^3.1121.0
+  checksum: 10c0/3b37a386cf6671486f1f30f4eefa0273e7528ca11a59c1ff9c9931d6fb81e338f997bdfada8686a0584fbfafa11ad986c50a4837804ae2e1d402703b18196b12
   languageName: node
   linkType: hard
 
@@ -586,11 +586,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 26.2.0
-  resolution: "@types/node@npm:26.2.0"
+  version: 26.4.0
+  resolution: "@types/node@npm:26.4.0"
   dependencies:
     undici-types: "npm:~8.3.0"
-  checksum: 10c0/f8566d88162241eb55a46f7e4ea097188eab0aaafefea7a58e63adab8c4144eb98c08b7911452c846104c339a0f82282f5e1ed4b26b578d60709614fe2843f4d
+  checksum: 10c0/e6fc94ea3b58fb8040b38c465dec1c53c1fd9d2c092c81f699d28799726baf59f12e1600318e79e8e6f985bb919dab6ae820180b942b8e38c51acaad63e8aada
   languageName: node
   linkType: hard
 
@@ -669,14 +669,14 @@ __metadata:
   linkType: hard
 
 "axios@npm:^1.12.2":
-  version: 1.19.0
-  resolution: "axios@npm:1.19.0"
+  version: 1.20.0
+  resolution: "axios@npm:1.20.0"
   dependencies:
     follow-redirects: "npm:^1.16.0"
     form-data: "npm:^4.0.6"
     https-proxy-agent: "npm:^5.0.1"
     proxy-from-env: "npm:^2.1.0"
-  checksum: 10c0/559fe7d51291787def61566a3db78b87510c8faf9c8a8c006d9d8b933808628ff0d8eca7756b40ae25e07da96d946c68c1ffba3da9075ed0b5d3661801d76869
+  checksum: 10c0/976088acf532286356f4c2e65df1ef47ba7da3936d83e928d0d64357bbf5370456abd3eb5826c15df322335fcb1fe200d4a84b4fcf20ffccdd63b40d80fa495c
   languageName: node
   linkType: hard
 
@@ -864,11 +864,11 @@ __metadata:
   linkType: hard
 
 "fastq@npm:^1.6.0":
-  version: 1.20.1
-  resolution: "fastq@npm:1.20.1"
+  version: 1.20.3
+  resolution: "fastq@npm:1.20.3"
   dependencies:
     reusify: "npm:^1.0.4"
-  checksum: 10c0/e5dd725884decb1f11e5c822221d76136f239d0236f176fab80b7b8f9e7619ae57e6b4e5b73defc21e6b9ef99437ee7b545cff8e6c2c337819633712fa9d352e
+  checksum: 10c0/ad055a1b50f7ec9142d2e13699ad6c4d1fa9fea1d947fff89de1b5ea3825223e9a626c359b3a0f21aefbe093cc2a9e92a91e068f982a2b176af16b9ea430ffc5
   languageName: node
   linkType: hard
 
@@ -1211,8 +1211,8 @@ __metadata:
   linkType: soft
 
 "node-gyp@npm:latest":
-  version: 13.0.1
-  resolution: "node-gyp@npm:13.0.1"
+  version: 13.0.2
+  resolution: "node-gyp@npm:13.0.2"
   dependencies:
     env-paths: "npm:^2.2.0"
     exponential-backoff: "npm:^3.1.1"
@@ -1226,7 +1226,7 @@ __metadata:
     which: "npm:^7.0.0"
   bin:
     node-gyp: bin/node-gyp.js
-  checksum: 10c0/424077bc9e9bbe953a8e86db473ba818cbc6a121714008c977fd589e21e5f0c811fbf22faac730dc7182450b5e52df301811d01ae3373898658d999b7710f4e6
+  checksum: 10c0/29d33ccf47ffeeb5e7af925550b416f698a26a72eb10975c7eb5775c1d0cecacd76d164a4aa45503d3ddcece209db65c712be00423c69381a4cd14e2e6540559
   languageName: node
   linkType: hard
 
@@ -1373,9 +1373,9 @@ __metadata:
   linkType: hard
 
 "picomatch@npm:^4.0.4":
-  version: 4.0.5
-  resolution: "picomatch@npm:4.0.5"
-  checksum: 10c0/947bc6b6e1ff1e6c5aaf95b107a0839d12802f4f7b867663f67d47accba939ca1cb582cf99dfc30438efa1c4648ac5990967e783e8929c36b03e8440704ef1bd
+  version: 4.0.7
+  resolution: "picomatch@npm:4.0.7"
+  checksum: 10c0/beb6ae02c43ae44e84883b90830196d9046b1726ead292adcf7f57945e0bb0d992d68563d87e03b484b6f3c9a5c6defda7523477f047d7f0e663f126cc01787f
   languageName: node
   linkType: hard
 

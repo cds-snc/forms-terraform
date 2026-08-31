@@ -19,8 +19,8 @@ __metadata:
   linkType: hard
 
 "@aws-sdk/client-dynamodb@npm:^3.902.0":
-  version: 3.1116.0
-  resolution: "@aws-sdk/client-dynamodb@npm:3.1116.0"
+  version: 3.1121.0
+  resolution: "@aws-sdk/client-dynamodb@npm:3.1121.0"
   dependencies:
     "@aws-sdk/core": "npm:^3.977.9"
     "@aws-sdk/credential-provider-node": "npm:^3.972.81"
@@ -32,13 +32,13 @@ __metadata:
     "@smithy/node-http-handler": "npm:^4.11.3"
     "@smithy/types": "npm:^4.17.2"
     tslib: "npm:^2.6.2"
-  checksum: 10c0/ec3db432ae6ff9bb1c310d5c89b473c17fb5eedb2a034508210a6d068865bcf31c4973fc0ea4b7c5d99624d241cd47d9c52eee38414578868d17b2a7a08ed079
+  checksum: 10c0/dae913a162d6047bb4d15a5d558e67bc613098520a02b3d330d8e6374b82704fed685ef91bed26107884b1113d022f9fe1a684c4480160d6d28a362265f5a665
   languageName: node
   linkType: hard
 
 "@aws-sdk/client-s3@npm:^3.901.0":
-  version: 3.1116.0
-  resolution: "@aws-sdk/client-s3@npm:3.1116.0"
+  version: 3.1121.0
+  resolution: "@aws-sdk/client-s3@npm:3.1121.0"
   dependencies:
     "@aws-sdk/checksums": "npm:^3.1000.29"
     "@aws-sdk/core": "npm:^3.977.9"
@@ -51,7 +51,7 @@ __metadata:
     "@smithy/node-http-handler": "npm:^4.11.3"
     "@smithy/types": "npm:^4.17.2"
     tslib: "npm:^2.6.2"
-  checksum: 10c0/715aee8a37257fee0cfb325030b9d442c3f717b52817f526b02b67acaf09f6d25f61ece11c1e88bbbb7b4e69e0359e0a6bd8258cbf5d103a1576be13f82f0ad1
+  checksum: 10c0/ed715f4e8a25c22da391ed984d489664c3e1e575f35cda0e8c17adacedfd33b6265ec811824dadf28c2f001e55c6847369cbf9774b03dc05175e4e56f5111b45
   languageName: node
   linkType: hard
 
@@ -218,8 +218,8 @@ __metadata:
   linkType: hard
 
 "@aws-sdk/lib-dynamodb@npm:^3.902.0":
-  version: 3.1116.0
-  resolution: "@aws-sdk/lib-dynamodb@npm:3.1116.0"
+  version: 3.1121.0
+  resolution: "@aws-sdk/lib-dynamodb@npm:3.1121.0"
   dependencies:
     "@aws-sdk/core": "npm:^3.977.9"
     "@aws-sdk/util-dynamodb": "npm:^3.996.9"
@@ -227,8 +227,8 @@ __metadata:
     "@smithy/types": "npm:^4.17.2"
     tslib: "npm:^2.6.2"
   peerDependencies:
-    "@aws-sdk/client-dynamodb": ^3.1116.0
-  checksum: 10c0/9a588bc8c65a04e3f9ef2cca49b660341524e7f56fdb49b713e9056194b302a421482fc09ef46836dd8781cdd7cbbcfb7ec4847b6518d94a8fd08e8bd3917889
+    "@aws-sdk/client-dynamodb": ^3.1121.0
+  checksum: 10c0/3b37a386cf6671486f1f30f4eefa0273e7528ca11a59c1ff9c9931d6fb81e338f997bdfada8686a0584fbfafa11ad986c50a4837804ae2e1d402703b18196b12
   languageName: node
   linkType: hard
 
@@ -585,11 +585,11 @@ __metadata:
   linkType: hard
 
 "fastq@npm:^1.6.0":
-  version: 1.20.1
-  resolution: "fastq@npm:1.20.1"
+  version: 1.20.3
+  resolution: "fastq@npm:1.20.3"
   dependencies:
     reusify: "npm:^1.0.4"
-  checksum: 10c0/e5dd725884decb1f11e5c822221d76136f239d0236f176fab80b7b8f9e7619ae57e6b4e5b73defc21e6b9ef99437ee7b545cff8e6c2c337819633712fa9d352e
+  checksum: 10c0/ad055a1b50f7ec9142d2e13699ad6c4d1fa9fea1d947fff89de1b5ea3825223e9a626c359b3a0f21aefbe093cc2a9e92a91e068f982a2b176af16b9ea430ffc5
   languageName: node
   linkType: hard
 
@@ -768,8 +768,8 @@ __metadata:
   linkType: hard
 
 "node-gyp@npm:latest":
-  version: 13.0.1
-  resolution: "node-gyp@npm:13.0.1"
+  version: 13.0.2
+  resolution: "node-gyp@npm:13.0.2"
   dependencies:
     env-paths: "npm:^2.2.0"
     exponential-backoff: "npm:^3.1.1"
@@ -783,7 +783,7 @@ __metadata:
     which: "npm:^7.0.0"
   bin:
     node-gyp: bin/node-gyp.js
-  checksum: 10c0/424077bc9e9bbe953a8e86db473ba818cbc6a121714008c977fd589e21e5f0c811fbf22faac730dc7182450b5e52df301811d01ae3373898658d999b7710f4e6
+  checksum: 10c0/29d33ccf47ffeeb5e7af925550b416f698a26a72eb10975c7eb5775c1d0cecacd76d164a4aa45503d3ddcece209db65c712be00423c69381a4cd14e2e6540559
   languageName: node
   linkType: hard
 
@@ -827,9 +827,9 @@ __metadata:
   linkType: hard
 
 "picomatch@npm:^4.0.4":
-  version: 4.0.5
-  resolution: "picomatch@npm:4.0.5"
-  checksum: 10c0/947bc6b6e1ff1e6c5aaf95b107a0839d12802f4f7b867663f67d47accba939ca1cb582cf99dfc30438efa1c4648ac5990967e783e8929c36b03e8440704ef1bd
+  version: 4.0.7
+  resolution: "picomatch@npm:4.0.7"
+  checksum: 10c0/beb6ae02c43ae44e84883b90830196d9046b1726ead292adcf7f57945e0bb0d992d68563d87e03b484b6f3c9a5c6defda7523477f047d7f0e663f126cc01787f
   languageName: node
   linkType: hard
 
