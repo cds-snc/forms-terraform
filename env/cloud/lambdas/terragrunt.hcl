@@ -19,14 +19,7 @@ dependency "app" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    ecs_iam_role_arn                         = "arn:aws:iam::${local.aws_account_id}:role/form-viewer"
-    ecs_iam_forms_secrets_manager_policy_arn = null
-    ecs_iam_forms_kms_policy_arn             = null
-    ecs_iam_forms_dynamodb_policy_arn        = null
-    ecs_iam_forms_sqs_policy_arn             = null
-    ecs_iam_forms_cognito_policy_arn         = null
-    ecs_iam_forms_audit_logs_policy_arn      = null
-
+    ecs_iam_role_arn = "arn:aws:iam::${local.aws_account_id}:role/form-viewer"
   }
 }
 
@@ -211,13 +204,7 @@ dependency "api" {
 }
 
 inputs = {
-  ecs_iam_role_arn                         = local.env == "development" ? null : dependency.app.outputs.ecs_iam_role_arn
-  ecs_iam_forms_secrets_manager_policy_arn = dependency.app.outputs.ecs_iam_forms_secrets_manager_policy_arn
-  ecs_iam_forms_kms_policy_arn             = dependency.app.outputs.ecs_iam_forms_kms_policy_arn
-  ecs_iam_forms_dynamodb_policy_arn        = dependency.app.outputs.ecs_iam_forms_dynamodb_policy_arn
-  ecs_iam_forms_audit_logs_arn             = dependency.app.outputs.ecs_iam_forms_audit_logs_policy_arn
-  ecs_iam_forms_sqs_policy_arn             = dependency.app.outputs.ecs_iam_forms_sqs_policy_arn
-  ecs_iam_forms_cognito_policy_arn         = dependency.app.outputs.ecs_iam_forms_cognito_policy_arn
+  ecs_iam_role_arn = local.env == "development" ? null : dependency.app.outputs.ecs_iam_role_arn
 
   lambda_security_group_id                               = dependency.network.outputs.lambda_security_group_id
   private_subnet_ids                                     = dependency.network.outputs.private_subnet_ids
