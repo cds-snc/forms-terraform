@@ -7,6 +7,9 @@ settings:
 
 catalogs:
   default:
+    '@aws-lambda-powertools/parser':
+      specifier: ^2.35.0
+      version: 2.35.0
     '@aws-sdk/client-dynamodb':
       specifier: ^3.1113.0
       version: 3.1117.0
@@ -37,6 +40,12 @@ catalogs:
     axios:
       specifier: ^1.19.0
       version: 1.19.0
+    uuid:
+      specifier: ^14.0.2
+      version: 14.0.2
+    zod:
+      specifier: ^4.5.4
+      version: 4.5.4
 
 importers:
 
@@ -107,6 +116,15 @@ importers:
         version: 2.2.21
 
   lambda-code/cognito-pre-sign-up: {}
+
+  lambda-code/common:
+    dependencies:
+      '@aws-lambda-powertools/logger':
+        specifier: ^2.35.0
+        version: 2.35.0
+      purify-ts:
+        specifier: ^2.1.4
+        version: 2.1.4
 
   lambda-code/file-upload-cleanup:
     dependencies:
@@ -250,6 +268,9 @@ importers:
 
   lambda-code/submission:
     dependencies:
+      '@aws-lambda-powertools/parser':
+        specifier: 'catalog:'
+        version: 2.35.0(zod@4.5.4)
       '@aws-sdk/client-dynamodb':
         specifier: 'catalog:'
         version: 3.1117.0
@@ -265,9 +286,18 @@ importers:
       '@aws-sdk/s3-presigned-post':
         specifier: ^3.1113.0
         version: 3.1117.0
+      common:
+        specifier: workspace:*
+        version: link:../common
+      purify-ts:
+        specifier: ^2.1.4
+        version: 2.1.4
       uuid:
-        specifier: ^14.0.2
+        specifier: 'catalog:'
         version: 14.0.2
+      zod:
+        specifier: 'catalog:'
+        version: 4.5.4
 
   lambda-code/vault-integrity: {}
 
@@ -320,6 +350,31 @@ packages:
 
   '@aws-crypto/serialize@5.0.2':
     resolution: {integrity: sha512-TKFABiTVow9VYk0m1nUKQYzj/DYG6x7HquBuva+VByFO5rJDxdsPrHNehTXgcQop3Huz5juP/vwrJK4F9/vMpg==}
+
+  '@aws-lambda-powertools/commons@2.35.0':
+    resolution: {integrity: sha512-DPD5fnl7V1xSPJuKGQ8KETp+nPmcIw8mYWEdNfnuTr/zNDyTkiX2l3QNUPlrtpOPtJ7r+UGSbXCgKPPlXN27Bw==}
+
+  '@aws-lambda-powertools/logger@2.35.0':
+    resolution: {integrity: sha512-ituCLfspm7IYfXH3o2W67anH3YgKh9N3wDqjsyW6RCw0BAv+vgSrIRbGBB+UqiT9DPU8HJTfoSs9JNYijlQS3g==}
+    peerDependencies:
+      '@aws-lambda-powertools/jmespath': 2.35.0
+      '@middy/core': 4.x || 5.x || 6.x || 7.x
+    peerDependenciesMeta:
+      '@aws-lambda-powertools/jmespath':
+        optional: true
+      '@middy/core':
+        optional: true
+
+  '@aws-lambda-powertools/parser@2.35.0':
+    resolution: {integrity: sha512-Je9jCP8vnOfX7K5GBFosrUYvq1t/54MfboacABvnNBI32uN6UUowDStO2r4jIxpNgv86vrO2YrGH4rbP9h5ufw==}
+    peerDependencies:
+      '@middy/core': 4.x || 5.x || 6.x || 7.x
+      zod: 4.x
+    peerDependenciesMeta:
+      '@middy/core':
+        optional: true
+      zod:
+        optional: true
 
   '@aws-sdk/checksums@3.1000.29':
     resolution: {integrity: sha512-Dtu0gr4dnATZAPwEYbpCsG+MpLM7OAliy2gTepEFQwl1vZ6DL3QMH2FveMa3HLvPsOdhJsPRB3KtxVhph9T75A==}
@@ -901,6 +956,9 @@ packages:
 
   '@types/estree@1.0.9':
     resolution: {integrity: sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg==}
+
+  '@types/json-schema@7.0.15':
+    resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
   '@types/json2md@1.5.4':
     resolution: {integrity: sha512-OFTAYD7Nnyu7FZPGnDwYbGOTKqzDfX71uFSgTbGhcr0aHCi17QkSOY3wO5H4yv5h23Ly+7suvf2lzHcdeDIH2Q==}
@@ -1514,6 +1572,9 @@ packages:
     resolution: {integrity: sha512-cJ+oHTW1VAEa8cJslgmUZrc+sjRKgAKl3Zyse6+PV38hZe/V6Z14TbCuXcan9F9ghlz4QrFr2c92TNF82UkYHA==}
     engines: {node: '>=10'}
 
+  purify-ts@2.1.4:
+    resolution: {integrity: sha512-PKSMYPJRoxxHdsI9I2/caXmMDoAFd15lHmOAJsq55cl9o2gHH6NWaPTuwRW6cNkTRhZRkmoTN7U6062mRMcIsA==}
+
   quansync@1.0.0:
     resolution: {integrity: sha512-5xZacEEufv3HSTPQuchrvV6soaiACMFnq1H8wkVioctoH3TRha9Sz66lOxRwPK/qZj7HPiSveih9yAyh98gvqA==}
 
@@ -1824,6 +1885,9 @@ packages:
   yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
 
+  zod@4.5.4:
+    resolution: {integrity: sha512-sC95tT5iHHH9gtpj6A81kh+NEaRAUFN+qlUPDUbRfOMvNf5QCBqsb3WgvnpVtK5Y+4UfA6KqufotuTvMGiTlsA==}
+
 snapshots:
 
   '@aws-crypto/branch-keystore-node@5.0.2':
@@ -1945,6 +2009,22 @@ snapshots:
       bn.js: 5.2.5
       tslib: 2.8.1
       uuid: 11.1.1
+
+  '@aws-lambda-powertools/commons@2.35.0':
+    dependencies:
+      '@aws/lambda-invoke-store': 0.3.0
+
+  '@aws-lambda-powertools/logger@2.35.0':
+    dependencies:
+      '@aws-lambda-powertools/commons': 2.35.0
+      '@aws/lambda-invoke-store': 0.3.0
+
+  '@aws-lambda-powertools/parser@2.35.0(zod@4.5.4)':
+    dependencies:
+      '@aws-lambda-powertools/commons': 2.35.0
+      '@standard-schema/spec': 1.1.0
+    optionalDependencies:
+      zod: 4.5.4
 
   '@aws-sdk/checksums@3.1000.29':
     dependencies:
@@ -2626,6 +2706,8 @@ snapshots:
 
   '@types/estree@1.0.9': {}
 
+  '@types/json-schema@7.0.15': {}
+
   '@types/json2md@1.5.4': {}
 
   '@types/lru-cache@5.1.1': {}
@@ -3136,6 +3218,10 @@ snapshots:
 
   proxy-from-env@2.1.0: {}
 
+  purify-ts@2.1.4:
+    dependencies:
+      '@types/json-schema': 7.0.15
+
   quansync@1.0.0: {}
 
   readable-stream@3.6.2:
@@ -3436,3 +3522,5 @@ snapshots:
   xtend@4.0.2: {}
 
   yallist@4.0.0: {}
+
+  zod@4.5.4: {}

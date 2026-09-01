@@ -1,12 +1,12 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.5.9/schema.json",
   "files": {
-    "includes": ["lambda-code/!"]
+    "includes": ["lambda-code/submission/**", "lambda-code/common/**"]
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "all",
+      "preset": "recommended",
       "correctness": {
         "noNodejsModules": "off",
         "noUndeclaredDependencies": "off"
@@ -21,7 +21,8 @@
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "space"
+    "indentStyle": "space",
+    "lineWidth": 200
   },
   "assist": {
     "enabled": true,

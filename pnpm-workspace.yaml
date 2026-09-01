@@ -6,6 +6,7 @@ injectWorkspacePackages: true
 blockExoticSubdeps: true
 
 catalog:
+  "@aws-lambda-powertools/parser": ^2.35.0
   "@aws-sdk/client-dynamodb": ^3.1113.0
   "@aws-sdk/client-s3": ^3.1113.0
   "@aws-sdk/client-sqs": ^3.1113.0
@@ -17,3 +18,4 @@ catalog:
   "@gcforms/types": ^1.0.38
   axios: ^1.19.0
   uuid: ^14.0.2
+  zod: ^4.5.4

@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.lambda.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "build",
+    "declaration": true
+  },
+  "include": ["src/**/*"]
+}
