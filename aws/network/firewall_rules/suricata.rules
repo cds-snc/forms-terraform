@@ -6,21 +6,31 @@ pass tcp $HOME_NET any -> any any (flow:not_established, to_server; sid:20250102
 
 # Egress Rules
 # Log any outgoing to ensure when we add the FQDN list that we have captured everything
-alert ip $HOME_NET any -> any any (msg:"Internal network calling out"; flow:to_server; sid:202501053;)
+alert ip $HOME_NET any -> any any (msg:"Internal network calling out"; flow:to_server; sid:202501050;)
 
 # Port/protocol enforcement (TLS can only use TCP/443, TLS can't use anything other than TCP/443)
 reject tcp $HOME_NET any -> any 443 (msg:"Egress Port TCP/443 but not TLS"; app-layer-protocol:!tls; flow:to_server; sid:202501030;)
 reject tls $HOME_NET any -> any !443 (msg:"Egress TLS but not port TCP/443"; flow:to_server; sid:202501031;)
 
-# Allow-list of strict FQDNs to silently allow
-# pass tls $HOME_NET any -> any any (tls.sni; content:"github.com"; startswith; nocase; endswith; flow:to_server; sid:202501050;)
-# pass tls $HOME_NET any -> any any (tls.sni; content:"api.hcaptcha.com"; startswith; nocase; endswith; flow:to_server; sid:202501051;)
-# pass tls $HOME_NET any -> any any (tls.sni; content:"auth.cdssandbox.xyz"; startswith; nocase; endswith; flow:to_server; sid:202501079;)
-# pass tls $HOME_NET any -> any any (tls.sni; dotprefix; content:".docker.io"; nocase; endswith; flow:to_server; sid:202501052;)
-# pass tls $HOME_NET any -> any any (tls.sni; dotprefix; content:".notification.canada.ca"; nocase; endswith; flow:to_server; sid:202501078;)
-
 # Allow all outbound requests for testing before implementing string FQDN list
-pass tls $HOME_NET any -> any any (flow:to_server; sid:202500001;)
+# pass tls $HOME_NET any -> any any (flow:to_server; sid:202501051;)
+
+# Allow-list of strict FQDNs to silently allow
+pass tls $HOME_NET any -> any any (tls.sni; dotprefix; content:".forms-staging.cdssandbox.xyz"; endswith; nocase; flow:to_server; sid:202600000;)
+pass tls $HOME_NET any -> any any (tls.sni; content:"auth.cdssandbox.xyz"; startswith; endswith; nocase; flow:to_server; sid:202600001;)
+pass tls $HOME_NET any -> any any (tls.sni; content:"api.notification.canada.ca"; startswith; endswith; nocase; flow:to_server; sid:202600002;)
+pass tls $HOME_NET any -> any any (tls.sni; content:"ws1.postescanada-canadapost.ca"; startswith; endswith; nocase; flow:to_server; sid:202600003;)
+pass tls $HOME_NET any -> any any (tls.sni; content:"registry.yarnpkg.com"; startswith; endswith; nocase; flow:to_server; sid:202600004;)
+pass tls $HOME_NET any -> any any (tls.sni; content:"repo.yarnpkg.com"; startswith; endswith; nocase; flow:to_server; sid:202600005;)
+pass tls $HOME_NET any -> any any (tls.sni; content:"registry.npmjs.org"; startswith; endswith; nocase; flow:to_server; sid:202600006;)
+pass tls $HOME_NET any -> any any (tls.sni; content:"registry-1.docker.io"; startswith; endswith; nocase; flow:to_server; sid:202600007;)
+pass tls $HOME_NET any -> any any (tls.sni; content:"production.cloudfront.docker.com"; startswith; endswith; nocase; flow:to_server; sid:202600008;)
+pass tls $HOME_NET any -> any any (tls.sni; content:"auth.docker.io"; startswith; endswith; nocase; flow:to_server; sid:202600009;)
+pass tls $HOME_NET any -> any any (tls.sni; content:"binaries.prisma.sh"; startswith; endswith; nocase; flow:to_server; sid:202600010;)
+pass tls $HOME_NET any -> any any (tls.sni; content:"api.hcaptcha.com"; startswith; endswith; nocase; flow:to_server; sid:202600011;)
+pass tls $HOME_NET any -> any any (tls.sni; content:"fonts.gstatic.com"; startswith; endswith; nocase; flow:to_server; sid:202600012;)
+pass tls $HOME_NET any -> any any (tls.sni; content:"fonts.googleapis.com"; startswith; endswith; nocase; flow:to_server; sid:202600013;)
+
 
 # Egress Default Block Rules
 reject tls $HOME_NET any -> any any (msg:"Default Egress HTTPS Reject"; ssl_state:client_hello; ja4.hash; content:"_"; flowbits:set,blocked; flow:to_server; sid:999991;)
