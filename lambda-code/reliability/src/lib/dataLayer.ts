@@ -16,8 +16,8 @@ import {
   AddressComponents,
   FileInputResponse,
 } from "@gcforms/types";
-import { FormSubmission } from "./types.js";
-import { getFormattedDateFromObject } from "./utils.js";
+import { FormSubmission } from "./types.ts";
+import { getFormattedDateFromObject } from "./utils.ts";
 
 const db = DynamoDBDocumentClient.from(
   new DynamoDBClient({

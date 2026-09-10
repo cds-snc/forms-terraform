@@ -42,5 +42,4 @@ complete -C /usr/local/bin/terraform terraform\n\
 complete -C /usr/local/bin/terraform terragrunt\n\
 alias tf='terraform'\n\
 alias tg='terragrunt'\n\
-alias ll='la -la' \n\
-alias laws='aws --endpoint-url=http://localstack:4566 --region=ca-central-1'" >> /home/vscode/.zshrc
+alias ll='la -la'" >> /home/vscode/.zshrc

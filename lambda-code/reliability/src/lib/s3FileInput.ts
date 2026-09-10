@@ -6,7 +6,6 @@ import {
   DeleteObjectCommand,
   HeadObjectCommand,
 } from "@aws-sdk/client-s3";
-import { NodeJsClient } from "@smithy/types";
 
 export class FileSizeUnder100BytesException extends Error {
   constructor() {
@@ -18,64 +17,65 @@ export class FileSizeUnder100BytesException extends Error {
 const s3Client = new S3Client({
   region: process.env.REGION ?? "ca-central-1",
   forcePathStyle: true,
-}) as NodeJsClient<S3Client>;
+});
 
 const environment = process.env.ENVIRONMENT;
 const reliabilityBucketName = `forms-${environment}-reliability-file-storage`;
 const vaultBucketName = `forms-${environment}-vault-file-storage`;
 
-async function getObject(bucket: string, key: string) {
-  const getObjectCommand = new GetObjectCommand({
-    Bucket: bucket,
-    Key: key,
-  });
-  const response = await s3Client.send(getObjectCommand);
+async function getObjectAsBase64String(
+  bucket: string,
+  key: string,
+): Promise<string> {
+  try {
+    const response = await s3Client.send(
+      new GetObjectCommand({
+        Bucket: bucket,
+        Key: key,
+      }),
+    );
 
-  return new Promise((resolve, reject) => {
-    try {
-      // Store all of data chunks returned from the response data stream
-      // into an array then use Array#join() to use the returned contents as a String
-      let responseDataChunks: Array<Uint8Array> = [];
-
-      // Attach a 'data' listener to add the chunks of data to our array
-      // Each chunk is a Buffer instance
-      response.Body?.on("data", (chunk: Buffer) => responseDataChunks.push(chunk));
-
-      // Once the stream has no more data, join the chunks into a string and return the string
-      response.Body?.once("end", () => resolve(Buffer.concat(responseDataChunks)));
-    } catch (error) {
-      // Handle the error or throw
-      console.error(
-        JSON.stringify({
-          level: "error",
-          severity: "2",
-          msg: `Failed to retrieve object from S3: ${bucket}/${key}}`,
-          error: (error as Error).message,
-        })
-      );
-
-      // Log full error to console, it will not be sent to Slack
-      console.error(error);
-
-      return reject(error);
+    if (!response.Body) {
+      throw new Error(`S3 object has no body: ${bucket}/${key}`);
     }
-  });
+
+    return response.Body.transformToString("base64");
+  } catch (error) {
+    // Handle the error or throw
+    console.error(
+      JSON.stringify({
+        level: "error",
+        severity: "2",
+        msg: `Failed to retrieve object from S3: ${bucket}/${key}}`,
+        error: (error as Error).message,
+      }),
+    );
+
+    // Log full error to console, it will not be sent to Slack
+    console.error(error);
+
+    throw error;
+  }
 }
 
 export async function retrieveFilesFromReliabilityStorage(filePaths: string[]) {
   try {
-    const files = filePaths.map(async (filePath) => {
-      const result = await getObject(reliabilityBucketName, filePath);
-      return (result as Buffer).toString("base64");
-    });
-    return await Promise.all(files);
+    return Promise.all(
+      filePaths.map(async (filePath) => {
+        return getObjectAsBase64String(reliabilityBucketName, filePath);
+      }),
+    );
   } catch (error) {
     console.error(error);
-    throw new Error(`Failed to retrieve files from reliability storage: ${filePaths.toString()}`);
+    throw new Error(
+      `Failed to retrieve files from reliability storage: ${filePaths.toString()}`,
+    );
   }
 }
 
-export async function copyFilesFromReliabilityToVaultStorage(filePaths: string[]) {
+export async function copyFilesFromReliabilityToVaultStorage(
+  filePaths: string[],
+) {
   try {
     for (const filePath of filePaths) {
       const lastSlashIndex = filePath.lastIndexOf("/");
@@ -87,13 +87,13 @@ export async function copyFilesFromReliabilityToVaultStorage(filePaths: string[]
           Bucket: vaultBucketName,
           CopySource: `${reliabilityBucketName}/${filePathMinusFileName}/${encodeURIComponent(fileName)}`,
           Key: filePath,
-        })
+        }),
       );
     }
   } catch (error) {
     console.error(error);
     throw new Error(
-      `Failed to copy files from reliability storage to vault storage: ${filePaths.toString()}`
+      `Failed to copy files from reliability storage to vault storage: ${filePaths.toString()}`,
     );
   }
 }
@@ -110,7 +110,9 @@ export async function removeFilesFromReliabilityStorage(filePaths: string[]) {
     }
   } catch (error) {
     console.log(error);
-    throw new Error(`Failed to remove files from reliability storage: ${filePaths.toString()}`);
+    throw new Error(
+      `Failed to remove files from reliability storage: ${filePaths.toString()}`,
+    );
   }
 }
 
@@ -120,7 +122,7 @@ export const getFileTags = async (filePath: string) => {
       new GetObjectTaggingCommand({
         Bucket: reliabilityBucketName,
         Key: filePath,
-      })
+      }),
     );
     const tags = response.TagSet;
 
@@ -141,7 +143,7 @@ export const getFileMetaData = async (filePath: string) => {
       new HeadObjectCommand({
         Bucket: reliabilityBucketName,
         Key: filePath,
-      })
+      }),
     )
     .catch((error) => {
       console.error(error);
@@ -158,7 +160,7 @@ export const getFileMetaData = async (filePath: string) => {
 };
 
 export async function getObjectFirst100BytesInReliabilityBucket(
-  objectKey: string
+  objectKey: string,
 ): Promise<Uint8Array<ArrayBufferLike>> {
   try {
     const response = await s3Client.send(
@@ -166,7 +168,7 @@ export async function getObjectFirst100BytesInReliabilityBucket(
         Bucket: reliabilityBucketName,
         Key: objectKey,
         Range: "bytes=0-99",
-      })
+      }),
     );
 
     const bytes = await response.Body?.transformToByteArray();
