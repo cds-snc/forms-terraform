@@ -7,11 +7,15 @@
     "lint": "biome check --error-on-warnings --diagnostic-level=warn ."
   },
   "dependencies": {
+    "@aws-lambda-powertools/parser": "catalog:",
     "@aws-sdk/client-dynamodb": "catalog:",
     "@aws-sdk/client-s3": "catalog:",
     "@aws-sdk/client-sqs": "catalog:",
     "@aws-sdk/lib-dynamodb": "catalog:",
     "@aws-sdk/s3-presigned-post": "^3.1113.0",
-    "uuid": "^14.0.2"
+    "common": "workspace:*",
+    "purify-ts": "^2.1.4",
+    "uuid": "catalog:",
+    "zod": "catalog:"
   }
 }

@@ -1,215 +1,86 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
-import { Handler } from "aws-lambda";
-import { v4 } from "uuid";
-import { createHash } from "crypto";
-import {
-  findAttachedFileReferencesInSubmissionResponses,
-  generateFileAccessKeysAndUploadURLs,
-} from "./lib/fileUpload.ts";
+import type { PresignedPost } from "@aws-sdk/s3-presigned-post";
+import { type ContextualLogger, lambdaWithContextualLogger } from "common";
+import { EitherAsync } from "purify-ts";
+import * as uuid from "uuid";
+import { type Attachment, associateAttachmentWithCorrespondingChecksum, generateAttachmentS3AccessKeys, generateAttachmentUploadUrls, searchForAttachmentsInResponses } from "./lib/attachments.ts";
+import { extractSubmissionPayloadFromLambdaEvent, type SubmissionPayload } from "./lib/payload.ts";
+import { enqueueDelayedSubmissionProcessingRequest } from "./lib/processing.ts";
+import { attachSubmissionProcessingRequestIdToSavedSubmission, saveSubmissionToReliabilityStorage } from "./lib/storage.ts";
 
-type AnyObject = {
-  [key: string]: any;
+type LambdaEvent = Record<string, unknown>;
+
+type LambdaResult = {
+  submissionId: string;
+  fileURLMap?: Record<string, PresignedPost>;
 };
 
-const awsProperties = {
-  region: process.env.REGION ?? "ca-central-1",
-};
+const SUBMISSION_PROCESSING_REQUEST_DELAY_IN_SECONDS = 5; // Helps ensure the file scanning job is processed first
 
-const dynamodb = new DynamoDBClient(awsProperties);
+export const handler = lambdaWithContextualLogger<LambdaEvent, LambdaResult>(({ event, contextualLogger }) => {
+  return EitherAsync
+    .liftEither(extractSubmissionPayloadFromLambdaEvent(event)) // biome-ignore format: To help keep the chain vertically aligned
+    .ifRight(({ formID }) => contextualLogger.addMetadata("formId", formID))
+    .chain((submissionPayload) => EitherAsync.liftEither(searchForAttachmentsInResponses(submissionPayload.responses)).map((detectedAttachments) => ({ submissionPayload, detectedAttachments })))
+    .chain(({ submissionPayload, detectedAttachments }) => {
+      const submissionId = uuid.v4();
 
-const sqs = new SQSClient(awsProperties);
+      contextualLogger.addMetadata("submissionId", submissionId);
 
-/*
-Params:
-  formID - ID of form,
-  language - form submission language "fr" or "en",
-  responses - form responses: {formID, securityAttribute, questionID: answer}
-  securityAttribute - string of security classification
-  fileChecksums - map of file content MD5 checksum associated to file identifier (Record<string, string>)
-  version - version of the form template being submitted
-  notificationId - (optional) UUID of a notification that should be sent later in the submission processing pipeline
-*/
-export const handler: Handler = async (submission: AnyObject) => {
-  const submissionId = v4();
-
-  try {
-    const attachedFileReferences = findAttachedFileReferencesInSubmissionResponses(
-      submission.responses,
-      submissionId
-    );
-
-    const notificationId: string | undefined = submission.notificationId;
-
-    /**
-     * If we found file references in the response we bypass the regular submission flow
-     * in order to generate and return upload URLs for the client to send us files attached to the submission.
-     */
-    if (attachedFileReferences.length > 0) {
-      const fileChecksums = submission.fileChecksums;
-
-      // Validate that we have checksums for all file references
-      if (!fileChecksums || Object.keys(fileChecksums).length === 0) {
-        throw new Error("File references found but no checksums provided");
-      }
-
-      const { fileAccessKeys, fileUploadURLs } = await generateFileAccessKeysAndUploadURLs(
-        submissionId,
-        attachedFileReferences,
-        fileChecksums
-      );
-
-      await saveSubmission(submissionId, submission, fileAccessKeys, notificationId);
-
-      console.log(
-        JSON.stringify({
-          level: "info",
-          status: "success",
-          submissionId: submissionId,
-          details: `Sent back ${fileAccessKeys.length} signed URLs to the client in order to upload files attached to submission ${submissionId}`,
-        })
-      );
-
-      return { status: true, submissionId, fileURLMap: fileUploadURLs };
-    }
-
-    await saveSubmission(submissionId, submission, undefined, notificationId);
-
-    const receiptId = await enqueueReliabilityProcessingRequest(submissionId);
-
-    await updateReceiptIdForSubmission(submissionId, receiptId);
-
-    console.log(
-      JSON.stringify({
+      return detectedAttachments.length > 0
+        ? handleSubmissionWithAttachments(submissionId, submissionPayload, detectedAttachments, contextualLogger)
+        : handleSubmissionWithoutAttachments(submissionId, submissionPayload, contextualLogger);
+    })
+    .ifRight(() =>
+      contextualLogger.log({
         level: "info",
-        status: "success",
-        sqsMessage: receiptId,
-        submissionId: submissionId,
-      })
-    );
-
-    return { status: true, submissionId };
-  } catch (error) {
-    console.error(
-      JSON.stringify({
+        message: "Submission processed successfully",
+      }),
+    )
+    .ifLeft((error) =>
+      contextualLogger.log({
         level: "error",
-        severity: "1", // this will trigger an alert to on-call team
-        status: "failed",
-        submissionId: submissionId,
-        formId: submission.formID ?? "n/a",
-        msg: (error as Error).message,
-      })
+        message: "Submission processing failed",
+        error: error as Error,
+        severityLevel: "1",
+      }),
     );
+});
 
-    return { status: false };
+function handleSubmissionWithoutAttachments(submissionId: string, submissionPayload: SubmissionPayload, contextualLogger: ContextualLogger): EitherAsync<Error, LambdaResult> {
+  return saveSubmissionToReliabilityStorage(submissionId, submissionPayload)
+    .chain(() =>
+      enqueueDelayedSubmissionProcessingRequest(submissionId, SUBMISSION_PROCESSING_REQUEST_DELAY_IN_SECONDS).map(({ submissionProcessingRequestId }) => ({
+        submissionId,
+        submissionProcessingRequestId,
+      })),
+    )
+    .ifRight(({ submissionProcessingRequestId }) => contextualLogger.addMetadata("submissionProcessingRequestId", submissionProcessingRequestId))
+    .chain(({ submissionId, submissionProcessingRequestId }) =>
+      attachSubmissionProcessingRequestIdToSavedSubmission(submissionId, submissionProcessingRequestId).map(() => ({
+        submissionId,
+      })),
+    )
+    .map(({ submissionId }) => ({ submissionId }) satisfies LambdaResult);
+}
+
+function handleSubmissionWithAttachments(submissionId: string, submissionPayload: SubmissionPayload, attachments: Attachment[], contextualLogger: ContextualLogger): EitherAsync<Error, LambdaResult> {
+  contextualLogger.log({ level: "info", message: `Attachment(s) detected:\n${attachments.map((a) => `- ID: ${a.id} / size = ${a.size} bytes`).join("\n")}` });
+
+  if (submissionPayload.fileChecksums === undefined) {
+    // TODO: make sure this throw is propagated in the EitherAsync chain
+    throw new Error("Attachments have been detected in the responses but no content MD5 checksums were provided");
   }
-};
 
-const enqueueReliabilityProcessingRequest = async (submissionId: string): Promise<string> => {
-  try {
-    const sendMessageCommandOutput = await sqs.send(
-      new SendMessageCommand({
-        MessageBody: JSON.stringify({
-          submissionID: submissionId,
-        }),
-        // Helps ensure the file scanning job is processed first
-        DelaySeconds: 5,
-        QueueUrl: process.env.SQS_URL,
-      })
-    );
-
-    if (!sendMessageCommandOutput.MessageId) {
-      throw new Error("Received null SQS message identifier");
-    }
-
-    return sendMessageCommandOutput.MessageId;
-  } catch (error) {
-    throw new Error("Could not enqueue reliability processing request. " + JSON.stringify(error));
-  }
-};
-
-const saveSubmission = async (
-  submissionId: string,
-  formData: AnyObject,
-  fileKeys?: string[],
-  notificationId?: string
-): Promise<void> => {
-  try {
-    const securityAttribute = String(formData.securityAttribute ?? "Protected A");
-    delete formData.securityAttribute;
-
-    const version = Number(formData.version ?? 1);
-    delete formData.version;
-
-    const timeStamp = Date.now();
-
-    const alteredFormDataAsString = JSON.stringify(formData);
-
-    const formResponsesAsString = JSON.stringify(formData.responses);
-
-    const formResponsesAsHash = createHash("md5").update(formResponsesAsString).digest("hex"); // We use MD5 here because it is faster to generate and it will only be used as a checksum.
-
-    console.log(
-      JSON.stringify({
-        level: "info",
-        msg: `MD5 hash ${formResponsesAsHash} was calculated for submission ${submissionId} (formId: ${formData.formID}).`,
-      })
-    );
-
-    await dynamodb.send(
-      new PutCommand({
-        TableName: "ReliabilityQueue",
-        Item: {
-          SubmissionID: submissionId,
-          FormID: formData.formID,
-          SendReceipt: "unknown",
-          FormSubmissionLanguage: formData.language,
-          FormData: alteredFormDataAsString,
-          CreatedAt: timeStamp,
-          SecurityAttribute: securityAttribute,
-          Version: version,
-          FormSubmissionHash: formResponsesAsHash,
-          HasFileKeys: fileKeys !== undefined ? 1 : 0,
-          ...(fileKeys !== undefined && { FileKeys: JSON.stringify(fileKeys) }),
-          ...(notificationId !== undefined && { NotificationID: notificationId }),
-        },
-      })
-    );
-  } catch (error) {
-    throw new Error(
-      `Could not save submission to Reliability Temporary Storage. Reason: ${
-        (error as Error).message
-      }`
-    );
-  }
-};
-
-const updateReceiptIdForSubmission = async (
-  submissionId: string,
-  receiptId: string
-): Promise<void> => {
-  try {
-    await dynamodb.send(
-      new UpdateCommand({
-        TableName: "ReliabilityQueue",
-        Key: {
-          SubmissionID: submissionId,
-        },
-        UpdateExpression: "SET SendReceipt = :receiptId",
-        ExpressionAttributeValues: {
-          ":receiptId": receiptId,
-        },
-      })
-    );
-  } catch (error) {
-    console.warn(
-      JSON.stringify({
-        level: "warn",
-        submissionId: submissionId,
-        msg: `Could not update submission in reliability queue table with receipt identifier`,
-        error: (error as Error).message,
-      })
-    );
-  }
-};
+  return EitherAsync
+    .liftEither(associateAttachmentWithCorrespondingChecksum(attachments, submissionPayload.fileChecksums)) // biome-ignore format: To help keep the chain vertically aligned
+    .chain((attachmentWithChecksums) => EitherAsync.liftEither(generateAttachmentS3AccessKeys(submissionId, attachmentWithChecksums)))
+    .chain((attachmentS3AccessKeys) => generateAttachmentUploadUrls(attachmentS3AccessKeys))
+    .chain((attachmentS3UploadUrls) =>
+      saveSubmissionToReliabilityStorage(
+        submissionId,
+        submissionPayload,
+        attachmentS3UploadUrls.map((a) => a.s3AccessKey),
+      ).map(() => ({ attachmentS3UploadUrls })),
+    )
+    .map(({ attachmentS3UploadUrls }) => ({ submissionId, fileURLMap: Object.fromEntries(attachmentS3UploadUrls.map((v) => [v.id, v.s3UploadUrl])) }) satisfies LambdaResult);
+}
