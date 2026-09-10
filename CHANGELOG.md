@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.48.4](https://github.com/cds-snc/forms-terraform/compare/v3.48.3...v3.48.4) (2026-09-10)
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#1453](https://github.com/cds-snc/forms-terraform/issues/1453)) ([e798403](https://github.com/cds-snc/forms-terraform/commit/e7984034e9e81cefd8cc8ff178ba673446f5ecf9))
+* **deps:** lock file maintenance ([#1458](https://github.com/cds-snc/forms-terraform/issues/1458)) ([d4a95c6](https://github.com/cds-snc/forms-terraform/commit/d4a95c6ae516022f719639d1e79a6e08b902cde7))
+* **deps:** update all non-major github action dependencies ([#1452](https://github.com/cds-snc/forms-terraform/issues/1452)) ([d369821](https://github.com/cds-snc/forms-terraform/commit/d369821719cf6340cf8bcce6f7be70c458ae6fbd))
+* **deps:** update all non-major github action dependencies ([#1457](https://github.com/cds-snc/forms-terraform/issues/1457)) ([8921176](https://github.com/cds-snc/forms-terraform/commit/892117658f08b4d6edfed4d3786029abc382ae34))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1445](https://github.com/cds-snc/forms-terraform/issues/1445)) ([ac6b3c9](https://github.com/cds-snc/forms-terraform/commit/ac6b3c98ab33e59c72aea3aa04fc209251beacef))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1454](https://github.com/cds-snc/forms-terraform/issues/1454)) ([de91843](https://github.com/cds-snc/forms-terraform/commit/de91843bb3ac2ef487916d23fb8cad507cbf64c7))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1459](https://github.com/cds-snc/forms-terraform/issues/1459)) ([74661a0](https://github.com/cds-snc/forms-terraform/commit/74661a0a9e13143250c446ca0624c5da9ff3dbf2))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1460](https://github.com/cds-snc/forms-terraform/issues/1460)) ([016ab29](https://github.com/cds-snc/forms-terraform/commit/016ab29a3ce4d8aa1c317e22ffd1fae7552edbc6))
+
 ## [3.48.3](https://github.com/cds-snc/forms-terraform/compare/v3.48.2...v3.48.3) (2026-08-24)
 
 
