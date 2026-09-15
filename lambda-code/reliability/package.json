@@ -12,7 +12,7 @@
     "@aws-sdk/client-sqs": "catalog:",
     "@aws-sdk/lib-dynamodb": "catalog:",
     "@aws-sdk/client-lambda": "catalog:",
-    "uuid": "^14.0.2",
+    "uuid": "catalog:",
     "json2md": "^2.0.3",
     "magic-bytes.js": "^1.13.1",
     "@gcforms/connectors": "catalog:",
