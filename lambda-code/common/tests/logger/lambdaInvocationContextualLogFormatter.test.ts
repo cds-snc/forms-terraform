@@ -1,6 +1,6 @@
 import type { UnformattedAttributes } from "@aws-lambda-powertools/logger/types";
 import { describe, expect, it } from "vitest";
-import { ContextualLogFormatter } from "../../src/logger/contextualLogFormatter.ts";
+import { LambdaInvocationContextualLogFormatter } from "../../src/logger/lambdaInvocationContextualLogFormatter.ts";
 
 const timestamp = new Date("2026-09-14T15:00:00.000Z");
 
@@ -26,7 +26,7 @@ const defaultAttributes = {
 
 describe("ContextualLogFormatter", () => {
   it("formats the basic log attributes", () => {
-    const formatter = new ContextualLogFormatter();
+    const formatter = new LambdaInvocationContextualLogFormatter();
 
     const result = formatter.formatAttributes(defaultAttributes, {});
 
@@ -37,20 +37,16 @@ describe("ContextualLogFormatter", () => {
       context: {
         gcForms: {},
         aws: {
-          correlationIds: {
-            awsRequestId: "awsRequestId",
-            xRayTraceId: "xRayTraceId",
-          },
-          lambdaFunction: {
-            coldStart: true,
-          },
+          awsRequestId: "awsRequestId",
+          xRayTraceId: "xRayTraceId",
+          lambdaColdStart: true,
         },
       },
     });
   });
 
   it("puts additional attributes into the GC Forms context", () => {
-    const formatter = new ContextualLogFormatter();
+    const formatter = new LambdaInvocationContextualLogFormatter();
 
     const result = formatter.formatAttributes(defaultAttributes, {
       first: "first",
@@ -70,7 +66,7 @@ describe("ContextualLogFormatter", () => {
   });
 
   it("includes the error and severity level attributes when provided", () => {
-    const formatter = new ContextualLogFormatter();
+    const formatter = new LambdaInvocationContextualLogFormatter();
 
     const result = formatter.formatAttributes(defaultAttributes, {
       error: new Error("main error", { cause: new Error("sub error") }),

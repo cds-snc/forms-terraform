@@ -1,36 +1,18 @@
 import type { Context } from "aws-lambda";
 import { Left, Right } from "purify-ts";
 import { EitherAsync } from "purify-ts/EitherAsync";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { lambdaWithContextualLogger } from "../src/lambdaWithContextualLogger.ts";
-
-const contextualLoggerMock = vi.hoisted(() => ({
-  addContext: vi.fn(),
-  addMetadata: vi.fn(),
-  log: vi.fn(),
-}));
-
-vi.mock("../src/logger/contextualLogger.ts", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@aws-lambda-powertools/logger")>();
-
-  class MockContextualLogger {
-    addContext = contextualLoggerMock.addContext;
-    addMetadata = contextualLoggerMock.addMetadata;
-    log = contextualLoggerMock.log;
-  }
-
-  return {
-    ...actual,
-    DefaultContextualLogger: MockContextualLogger,
-  };
-});
+import { DefaultLambdaInvocationContextualLogger } from "../src/logger/lambdaInvocationContextualLogger.ts";
 
 describe("lambdaWithContextualLogger", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it("adds the Lambda context to the contextual logger", async () => {
+    const startInvocationContextSpy = vi.spyOn(DefaultLambdaInvocationContextualLogger.prototype, "startInvocationContext");
+
     const context = {
       awsRequestId: "awsRequestId",
     } as Context;
@@ -39,7 +21,7 @@ describe("lambdaWithContextualLogger", () => {
 
     await wrappedHandler({ input: "data" }, context);
 
-    expect(contextualLoggerMock.addContext).toHaveBeenCalledExactlyOnceWith(context);
+    expect(startInvocationContextSpy).toHaveBeenCalledExactlyOnceWith(context);
   });
 
   it("passes the event, context, and contextual logger to the handler", async () => {
@@ -54,11 +36,10 @@ describe("lambdaWithContextualLogger", () => {
 
     await wrappedHandler(event, context);
 
-    expect(handler).toHaveBeenCalledOnce();
-    expect(handler).toHaveBeenCalledWith({
+    expect(handler).toHaveBeenCalledExactlyOnceWith({
       event,
       context,
-      contextualLogger: contextualLoggerMock,
+      contextualLogger: expect.any(DefaultLambdaInvocationContextualLogger),
     });
   });
 
@@ -76,5 +57,27 @@ describe("lambdaWithContextualLogger", () => {
     const wrappedHandler = lambdaWithContextualLogger(() => EitherAsync.liftEither(Left(error)));
 
     await expect(wrappedHandler({ input: "data" }, {} as Context)).rejects.toEqual(error);
+  });
+
+  it("ends the Lambda invocation context when the handler resolves to Right", async () => {
+    const endInvocationContextSpy = vi.spyOn(DefaultLambdaInvocationContextualLogger.prototype, "endInvocationContext");
+
+    const wrappedHandler = lambdaWithContextualLogger(() => EitherAsync.liftEither(Right("success")));
+
+    await wrappedHandler({ input: "data" }, {} as Context);
+
+    expect(endInvocationContextSpy).toHaveBeenCalledOnce();
+  });
+
+  it("ends the Lambda invocation context when the handler resolves to Left", async () => {
+    const endInvocationContextSpy = vi.spyOn(DefaultLambdaInvocationContextualLogger.prototype, "endInvocationContext");
+
+    const error = new Error("error");
+
+    const wrappedHandler = lambdaWithContextualLogger(() => EitherAsync.liftEither(Left(error)));
+
+    await expect(wrappedHandler({ input: "data" }, {} as Context)).rejects.toEqual(error);
+
+    expect(endInvocationContextSpy).toHaveBeenCalledOnce();
   });
 });

@@ -1,7 +1,7 @@
 import { LogFormatter, LogItem } from "@aws-lambda-powertools/logger";
 import type { LogAttributes, UnformattedAttributes } from "@aws-lambda-powertools/logger/types";
 
-export class ContextualLogFormatter extends LogFormatter {
+export class LambdaInvocationContextualLogFormatter extends LogFormatter {
   formatAttributes(attributes: UnformattedAttributes, additionalLogAttributes: LogAttributes): LogItem {
     const { error, severityLevel, ...gcFormsContext } = additionalLogAttributes;
 
@@ -19,13 +19,9 @@ export class ContextualLogFormatter extends LogFormatter {
         context: {
           gcForms: gcFormsContext,
           aws: {
-            correlationIds: {
-              awsRequestId: attributes.lambdaContext?.awsRequestId,
-              xRayTraceId: attributes.xRayTraceId,
-            },
-            lambdaFunction: {
-              coldStart: attributes.lambdaContext?.coldStart,
-            },
+            awsRequestId: attributes.lambdaContext?.awsRequestId,
+            xRayTraceId: attributes.xRayTraceId,
+            lambdaColdStart: attributes.lambdaContext?.coldStart,
           },
         },
       },

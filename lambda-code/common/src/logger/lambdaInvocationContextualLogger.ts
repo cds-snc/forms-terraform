@@ -1,8 +1,8 @@
 import { Logger } from "@aws-lambda-powertools/logger";
 import type { Context } from "aws-lambda";
-import { ContextualLogFormatter } from "./contextualLogFormatter.ts";
+import { LambdaInvocationContextualLogFormatter } from "./lambdaInvocationContextualLogFormatter.ts";
 
-export interface ContextualLogger {
+export interface LambdaInvocationContextualLogger {
   addMetadata(key: string, value: string): void;
   log(log: Log): void;
 }
@@ -17,24 +17,34 @@ type Log =
       severityLevel?: "1" | "2";
     };
 
-export class DefaultContextualLogger implements ContextualLogger {
+export class DefaultLambdaInvocationContextualLogger implements LambdaInvocationContextualLogger {
   private readonly logger: Logger;
 
-  constructor() {
-    this.logger = new Logger({
-      logFormatter: new ContextualLogFormatter(),
-    });
+  public static createWithDefaultLogFormatter(): DefaultLambdaInvocationContextualLogger {
+    return new DefaultLambdaInvocationContextualLogger(
+      new Logger({
+        logFormatter: new LambdaInvocationContextualLogFormatter(),
+      }),
+    );
   }
 
-  addContext(context: Context): void {
+  protected constructor(logger: Logger) {
+    this.logger = logger;
+  }
+
+  public startInvocationContext(context: Context): void {
     this.logger.addContext(context);
   }
 
-  addMetadata(key: string, value: string): void {
+  public endInvocationContext(): void {
+    this.logger.resetKeys();
+  }
+
+  public addMetadata(key: string, value: string): void {
     this.logger.appendKeys({ [key]: value });
   }
 
-  log(log: Log): void {
+  public log(log: Log): void {
     switch (log.level) {
       case "info":
         this.logger.info(log.message);
