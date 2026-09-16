@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.48.5](https://github.com/cds-snc/forms-terraform/compare/v3.48.4...v3.48.5) (2026-09-16)
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#1464](https://github.com/cds-snc/forms-terraform/issues/1464)) ([5be0cf5](https://github.com/cds-snc/forms-terraform/commit/5be0cf545e7b85f6fc7adedae4efa072370fdd7f))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1467](https://github.com/cds-snc/forms-terraform/issues/1467)) ([7ede259](https://github.com/cds-snc/forms-terraform/commit/7ede2593f712fedfc5dbc611fc9ae5854f43e001))
+
 ## [3.48.4](https://github.com/cds-snc/forms-terraform/compare/v3.48.3...v3.48.4) (2026-09-15)
 
 
