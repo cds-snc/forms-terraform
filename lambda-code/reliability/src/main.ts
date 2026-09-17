@@ -1,10 +1,10 @@
 import { Handler, SQSEvent } from "aws-lambda";
-import sendToNotify from "@lib/notifyProcessing.js";
-import sendToVault from "@lib/vaultProcessing.js";
-import { getTemplateInfo } from "@lib/templates.js";
-import { getSubmission, markSubmissionForDeletionIn30days } from "@lib/dataLayer.js";
-import { getAllSubmissionAttachmentScanStatuses } from "@lib/file_scanning.js";
-import { addAllSubmissionAttachmentsChecksums } from "@lib/file_checksum.js";
+import sendToNotify from "./lib/notifyProcessing.ts";
+import sendToVault from "./lib/vaultProcessing.ts";
+import { getTemplateInfo } from "./lib/templates.ts";
+import { getSubmission, markSubmissionForDeletionIn30days } from "./lib/dataLayer.ts";
+import { getAllSubmissionAttachmentScanStatuses } from "./lib/file_scanning.ts";
+import { addAllSubmissionAttachmentsChecksums } from "./lib/file_checksum.ts";
 
 export const handler: Handler = async (event: SQSEvent) => {
   const batch = event.Records.map((message) => {

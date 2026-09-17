@@ -10,6 +10,7 @@ resource "aws_lambda_function" "reliability_dlq_consumer" {
   role          = aws_iam_role.lambda.arn
   timeout       = 300
   memory_size   = 256
+  architectures = ["arm64"]
 
   lifecycle {
     ignore_changes = [image_uri]
