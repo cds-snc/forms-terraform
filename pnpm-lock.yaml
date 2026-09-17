@@ -236,12 +236,18 @@ importers:
       '@gcforms/types':
         specifier: 'catalog:'
         version: 1.0.38
+      common:
+        specifier: workspace:*
+        version: link:../common
       json2md:
         specifier: ^2.0.3
         version: 2.0.3
       magic-bytes.js:
         specifier: ^1.13.1
         version: 1.13.1
+      purify-ts:
+        specifier: 'catalog:'
+        version: 2.1.4
       uuid:
         specifier: 'catalog:'
         version: 14.0.2
