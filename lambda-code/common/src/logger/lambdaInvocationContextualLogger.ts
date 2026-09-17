@@ -20,6 +20,12 @@ type Log =
 export class DefaultLambdaInvocationContextualLogger implements LambdaInvocationContextualLogger {
   private readonly logger: Logger;
 
+  /**
+   * Tracks the first invocation so child loggers retain the correct invocation context,
+   * including cold-start metadata, due to how @aws-lambda-powertools/logger handles child loggers.
+   */
+  private isFirstInvocation: boolean;
+
   public static createWithDefaultLogFormatter(): DefaultLambdaInvocationContextualLogger {
     return new DefaultLambdaInvocationContextualLogger(
       new Logger({
@@ -28,16 +34,23 @@ export class DefaultLambdaInvocationContextualLogger implements LambdaInvocation
     );
   }
 
-  protected constructor(logger: Logger) {
+  protected constructor(logger: Logger, isFirstInvocation: boolean = true) {
     this.logger = logger;
+    this.isFirstInvocation = isFirstInvocation;
   }
 
   public startInvocationContext(context: Context): void {
     this.logger.addContext(context);
+    this.logger.appendPersistentKeys({ isFirstInvocation: this.isFirstInvocation });
   }
 
   public endInvocationContext(): void {
     this.logger.resetKeys();
+    this.isFirstInvocation = false;
+  }
+
+  public createChildLogger(): DefaultLambdaInvocationContextualLogger {
+    return new DefaultLambdaInvocationContextualLogger(this.logger.createChild(), this.isFirstInvocation);
   }
 
   public addMetadata(key: string, value: string): void {
