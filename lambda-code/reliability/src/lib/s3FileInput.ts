@@ -1,189 +1,189 @@
-import {
-  S3Client,
-  GetObjectCommand,
-  GetObjectTaggingCommand,
-  CopyObjectCommand,
-  DeleteObjectCommand,
-  HeadObjectCommand,
-} from "@aws-sdk/client-s3";
+// import {
+//   S3Client,
+//   GetObjectCommand,
+//   GetObjectTaggingCommand,
+//   CopyObjectCommand,
+//   DeleteObjectCommand,
+//   HeadObjectCommand,
+// } from "@aws-sdk/client-s3";
 
-export class FileSizeUnder100BytesException extends Error {
-  constructor() {
-    super("FileSizeUnder100BytesException");
-    Object.setPrototypeOf(this, FileSizeUnder100BytesException.prototype);
-  }
-}
+// export class FileSizeUnder100BytesException extends Error {
+//   constructor() {
+//     super("FileSizeUnder100BytesException");
+//     Object.setPrototypeOf(this, FileSizeUnder100BytesException.prototype);
+//   }
+// }
 
-const s3Client = new S3Client({
-  region: process.env.REGION ?? "ca-central-1",
-  forcePathStyle: true,
-});
+// const s3Client = new S3Client({
+//   region: process.env.REGION ?? "ca-central-1",
+//   forcePathStyle: true,
+// });
 
-const environment = process.env.ENVIRONMENT;
-const reliabilityBucketName = `forms-${environment}-reliability-file-storage`;
-const vaultBucketName = `forms-${environment}-vault-file-storage`;
+// const environment = process.env.ENVIRONMENT;
+// const reliabilityBucketName = `forms-${environment}-reliability-file-storage`;
+// const vaultBucketName = `forms-${environment}-vault-file-storage`;
 
-async function getObjectAsBase64String(
-  bucket: string,
-  key: string,
-): Promise<string> {
-  try {
-    const response = await s3Client.send(
-      new GetObjectCommand({
-        Bucket: bucket,
-        Key: key,
-      }),
-    );
+// async function getObjectAsBase64String(
+//   bucket: string,
+//   key: string,
+// ): Promise<string> {
+//   try {
+//     const response = await s3Client.send(
+//       new GetObjectCommand({
+//         Bucket: bucket,
+//         Key: key,
+//       }),
+//     );
 
-    if (!response.Body) {
-      throw new Error(`S3 object has no body: ${bucket}/${key}`);
-    }
+//     if (!response.Body) {
+//       throw new Error(`S3 object has no body: ${bucket}/${key}`);
+//     }
 
-    return response.Body.transformToString("base64");
-  } catch (error) {
-    // Handle the error or throw
-    console.error(
-      JSON.stringify({
-        level: "error",
-        severity: "2",
-        msg: `Failed to retrieve object from S3: ${bucket}/${key}}`,
-        error: (error as Error).message,
-      }),
-    );
+//     return response.Body.transformToString("base64");
+//   } catch (error) {
+//     // Handle the error or throw
+//     console.error(
+//       JSON.stringify({
+//         level: "error",
+//         severity: "2",
+//         msg: `Failed to retrieve object from S3: ${bucket}/${key}}`,
+//         error: (error as Error).message,
+//       }),
+//     );
 
-    // Log full error to console, it will not be sent to Slack
-    console.error(error);
+//     // Log full error to console, it will not be sent to Slack
+//     console.error(error);
 
-    throw error;
-  }
-}
+//     throw error;
+//   }
+// }
 
-export async function retrieveFilesFromReliabilityStorage(filePaths: string[]) {
-  try {
-    return Promise.all(
-      filePaths.map(async (filePath) => {
-        return getObjectAsBase64String(reliabilityBucketName, filePath);
-      }),
-    );
-  } catch (error) {
-    console.error(error);
-    throw new Error(
-      `Failed to retrieve files from reliability storage: ${filePaths.toString()}`,
-    );
-  }
-}
+// export async function retrieveFilesFromReliabilityStorage(filePaths: string[]) {
+//   try {
+//     return Promise.all(
+//       filePaths.map(async (filePath) => {
+//         return getObjectAsBase64String(reliabilityBucketName, filePath);
+//       }),
+//     );
+//   } catch (error) {
+//     console.error(error);
+//     throw new Error(
+//       `Failed to retrieve files from reliability storage: ${filePaths.toString()}`,
+//     );
+//   }
+// }
 
-export async function copyFilesFromReliabilityToVaultStorage(
-  filePaths: string[],
-) {
-  try {
-    for (const filePath of filePaths) {
-      const lastSlashIndex = filePath.lastIndexOf("/");
-      const filePathMinusFileName = filePath.slice(0, lastSlashIndex);
-      const fileName = filePath.slice(lastSlashIndex + 1);
+// export async function copyFilesFromReliabilityToVaultStorage(
+//   filePaths: string[],
+// ) {
+//   try {
+//     for (const filePath of filePaths) {
+//       const lastSlashIndex = filePath.lastIndexOf("/");
+//       const filePathMinusFileName = filePath.slice(0, lastSlashIndex);
+//       const fileName = filePath.slice(lastSlashIndex + 1);
 
-      await s3Client.send(
-        new CopyObjectCommand({
-          Bucket: vaultBucketName,
-          CopySource: `${reliabilityBucketName}/${filePathMinusFileName}/${encodeURIComponent(fileName)}`,
-          Key: filePath,
-        }),
-      );
-    }
-  } catch (error) {
-    console.error(error);
-    throw new Error(
-      `Failed to copy files from reliability storage to vault storage: ${filePaths.toString()}`,
-    );
-  }
-}
+//       await s3Client.send(
+//         new CopyObjectCommand({
+//           Bucket: vaultBucketName,
+//           CopySource: `${reliabilityBucketName}/${filePathMinusFileName}/${encodeURIComponent(fileName)}`,
+//           Key: filePath,
+//         }),
+//       );
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     throw new Error(
+//       `Failed to copy files from reliability storage to vault storage: ${filePaths.toString()}`,
+//     );
+//   }
+// }
 
-export async function removeFilesFromReliabilityStorage(filePaths: string[]) {
-  try {
-    for (const filePath of filePaths) {
-      const commandInput = {
-        Bucket: reliabilityBucketName,
-        Key: filePath,
-      };
+// export async function removeFilesFromReliabilityStorage(filePaths: string[]) {
+//   try {
+//     for (const filePath of filePaths) {
+//       const commandInput = {
+//         Bucket: reliabilityBucketName,
+//         Key: filePath,
+//       };
 
-      await s3Client.send(new DeleteObjectCommand(commandInput));
-    }
-  } catch (error) {
-    console.log(error);
-    throw new Error(
-      `Failed to remove files from reliability storage: ${filePaths.toString()}`,
-    );
-  }
-}
+//       await s3Client.send(new DeleteObjectCommand(commandInput));
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     throw new Error(
+//       `Failed to remove files from reliability storage: ${filePaths.toString()}`,
+//     );
+//   }
+// }
 
-export const getFileTags = async (filePath: string) => {
-  try {
-    const response = await s3Client.send(
-      new GetObjectTaggingCommand({
-        Bucket: reliabilityBucketName,
-        Key: filePath,
-      }),
-    );
-    const tags = response.TagSet;
+// export const getFileTags = async (filePath: string) => {
+//   try {
+//     const response = await s3Client.send(
+//       new GetObjectTaggingCommand({
+//         Bucket: reliabilityBucketName,
+//         Key: filePath,
+//       }),
+//     );
+//     const tags = response.TagSet;
 
-    if (!tags) {
-      throw new Error(`No tags found for file: ${filePath}`);
-    }
+//     if (!tags) {
+//       throw new Error(`No tags found for file: ${filePath}`);
+//     }
 
-    return tags;
-  } catch (error) {
-    console.error(error);
-    throw new Error(`Failed to retrieve tags for file: ${filePath}`);
-  }
-};
+//     return tags;
+//   } catch (error) {
+//     console.error(error);
+//     throw new Error(`Failed to retrieve tags for file: ${filePath}`);
+//   }
+// };
 
-export const getFileMetaData = async (filePath: string) => {
-  const response = await s3Client
-    .send(
-      new HeadObjectCommand({
-        Bucket: reliabilityBucketName,
-        Key: filePath,
-      }),
-    )
-    .catch((error) => {
-      console.error(error);
-      throw new Error(`Failed to retrieve metadata for file: ${filePath}`);
-    });
+// export const getFileMetaData = async (filePath: string) => {
+//   const response = await s3Client
+//     .send(
+//       new HeadObjectCommand({
+//         Bucket: reliabilityBucketName,
+//         Key: filePath,
+//       }),
+//     )
+//     .catch((error) => {
+//       console.error(error);
+//       throw new Error(`Failed to retrieve metadata for file: ${filePath}`);
+//     });
 
-  const metadata = response.Metadata;
+//   const metadata = response.Metadata;
 
-  if (!metadata) {
-    throw new Error(`No metadata found for file: ${filePath}`);
-  }
+//   if (!metadata) {
+//     throw new Error(`No metadata found for file: ${filePath}`);
+//   }
 
-  return metadata;
-};
+//   return metadata;
+// };
 
-export async function getObjectFirst100BytesInReliabilityBucket(
-  objectKey: string,
-): Promise<Uint8Array<ArrayBufferLike>> {
-  try {
-    const response = await s3Client.send(
-      new GetObjectCommand({
-        Bucket: reliabilityBucketName,
-        Key: objectKey,
-        Range: "bytes=0-99",
-      }),
-    );
+// export async function getObjectFirst100BytesInReliabilityBucket(
+//   objectKey: string,
+// ): Promise<Uint8Array<ArrayBufferLike>> {
+//   try {
+//     const response = await s3Client.send(
+//       new GetObjectCommand({
+//         Bucket: reliabilityBucketName,
+//         Key: objectKey,
+//         Range: "bytes=0-99",
+//       }),
+//     );
 
-    const bytes = await response.Body?.transformToByteArray();
+//     const bytes = await response.Body?.transformToByteArray();
 
-    if (bytes === undefined || bytes.length < 100) {
-      throw new FileSizeUnder100BytesException();
-    }
+//     if (bytes === undefined || bytes.length < 100) {
+//       throw new FileSizeUnder100BytesException();
+//     }
 
-    return bytes;
-  } catch (error) {
-    // AWS S3 will throw the exception only if the file size is 0 bytes.
-    if ((error as Error).name === "InvalidRange") {
-      throw new FileSizeUnder100BytesException();
-    }
+//     return bytes;
+//   } catch (error) {
+//     // AWS S3 will throw the exception only if the file size is 0 bytes.
+//     if ((error as Error).name === "InvalidRange") {
+//       throw new FileSizeUnder100BytesException();
+//     }
 
-    throw error;
-  }
-}
+//     throw error;
+//   }
+// }

@@ -1,7 +1,17 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.5.9/schema.json",
   "files": {
-    "includes": ["lambda-code/submission/**/*", "lambda-code/common/**/*", "!!**/build", "!!**/node_modules", "tsconfig.json", "vitest.config.ts", "biome.json", "package.json"],
+    "includes": [
+      "lambda-code/common/**/*",
+      "lambda-code/submission/**/*",
+      "lambda-code/reliability/**/*",
+      "!!**/build",
+      "!!**/node_modules",
+      "tsconfig.json",
+      "vitest.config.ts",
+      "biome.json",
+      "package.json"
+    ],
     "ignoreUnknown": true
   },
   "linter": {
