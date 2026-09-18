@@ -1,5 +1,5 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post";
-import { type ContextualLogger, lambdaWithContextualLogger } from "common";
+import { type LambdaInvocationContextualLogger, lambdaWithContextualLogger } from "common";
 import { EitherAsync } from "purify-ts";
 import * as uuid from "uuid";
 import { type Attachment, associateAttachmentWithCorrespondingChecksum, generateAttachmentS3AccessKeys, generateAttachmentUploadUrls, searchForAttachmentsInResponses } from "./lib/attachments.ts";
@@ -46,7 +46,7 @@ export const handler = lambdaWithContextualLogger<LambdaEvent, LambdaResult>(({ 
     );
 });
 
-function handleSubmissionWithoutAttachments(submissionId: string, submissionPayload: SubmissionPayload, contextualLogger: ContextualLogger): EitherAsync<Error, LambdaResult> {
+function handleSubmissionWithoutAttachments(submissionId: string, submissionPayload: SubmissionPayload, contextualLogger: LambdaInvocationContextualLogger): EitherAsync<Error, LambdaResult> {
   return saveSubmissionToReliabilityStorage(submissionId, submissionPayload)
     .chain(() =>
       enqueueDelayedSubmissionProcessingRequest(submissionId, SUBMISSION_PROCESSING_REQUEST_DELAY_IN_SECONDS).map(({ submissionProcessingRequestId }) => ({
@@ -63,7 +63,12 @@ function handleSubmissionWithoutAttachments(submissionId: string, submissionPayl
     .map(({ submissionId }) => ({ submissionId }) satisfies LambdaResult);
 }
 
-function handleSubmissionWithAttachments(submissionId: string, submissionPayload: SubmissionPayload, attachments: Attachment[], contextualLogger: ContextualLogger): EitherAsync<Error, LambdaResult> {
+function handleSubmissionWithAttachments(
+  submissionId: string,
+  submissionPayload: SubmissionPayload,
+  attachments: Attachment[],
+  contextualLogger: LambdaInvocationContextualLogger,
+): EitherAsync<Error, LambdaResult> {
   contextualLogger.log({ level: "info", message: `Attachment(s) detected:\n${attachments.map((a) => `- ID: ${a.id} / size = ${a.size} bytes`).join("\n")}` });
 
   if (submissionPayload.fileChecksums === undefined) {

@@ -5,23 +5,26 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { lambdaWithContextualLogger } from "../src/lambdaWithContextualLogger.ts";
 
 const contextualLoggerMock = vi.hoisted(() => ({
-  addContext: vi.fn(),
+  startInvocationContext: vi.fn(),
+  endInvocationContext: vi.fn(),
   addMetadata: vi.fn(),
   log: vi.fn(),
 }));
 
-vi.mock("../src/logger/contextualLogger.ts", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@aws-lambda-powertools/logger")>();
-
+vi.mock("../src/logger/lambdaInvocationContextualLogger.ts", async () => {
   class MockContextualLogger {
-    addContext = contextualLoggerMock.addContext;
+    static createWithDefaultLogFormatter() {
+      return contextualLoggerMock;
+    }
+
+    startInvocationContext = contextualLoggerMock.startInvocationContext;
+    endInvocationContext = contextualLoggerMock.endInvocationContext;
     addMetadata = contextualLoggerMock.addMetadata;
     log = contextualLoggerMock.log;
   }
 
   return {
-    ...actual,
-    DefaultContextualLogger: MockContextualLogger,
+    DefaultLambdaInvocationContextualLogger: MockContextualLogger,
   };
 });
 
@@ -37,9 +40,9 @@ describe("lambdaWithContextualLogger", () => {
 
     const wrappedHandler = lambdaWithContextualLogger(() => EitherAsync.liftEither(Right("success")));
 
-    await wrappedHandler({ input: "data" }, context);
+    await wrappedHandler({ input: "data" }, context, () => {});
 
-    expect(contextualLoggerMock.addContext).toHaveBeenCalledExactlyOnceWith(context);
+    expect(contextualLoggerMock.startInvocationContext).toHaveBeenCalledExactlyOnceWith(context);
   });
 
   it("passes the event, context, and contextual logger to the handler", async () => {
@@ -52,7 +55,7 @@ describe("lambdaWithContextualLogger", () => {
 
     const wrappedHandler = lambdaWithContextualLogger(handler);
 
-    await wrappedHandler(event, context);
+    await wrappedHandler(event, context, () => {});
 
     expect(handler).toHaveBeenCalledOnce();
     expect(handler).toHaveBeenCalledWith({
@@ -65,7 +68,7 @@ describe("lambdaWithContextualLogger", () => {
   it("returns the output when the handler resolves to Right", async () => {
     const wrappedHandler = lambdaWithContextualLogger(() => EitherAsync.liftEither(Right("success")));
 
-    const result = await wrappedHandler({ input: "data" }, {} as Context);
+    const result = await wrappedHandler({ input: "data" }, {} as Context, () => {});
 
     expect(result).toEqual("success");
   });
@@ -75,6 +78,6 @@ describe("lambdaWithContextualLogger", () => {
 
     const wrappedHandler = lambdaWithContextualLogger(() => EitherAsync.liftEither(Left(error)));
 
-    await expect(wrappedHandler({ input: "data" }, {} as Context)).rejects.toEqual(error);
+    await expect(wrappedHandler({ input: "data" }, {} as Context, () => {})).rejects.toEqual(error);
   });
 });

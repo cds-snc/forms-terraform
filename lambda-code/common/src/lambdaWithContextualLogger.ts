@@ -1,20 +1,24 @@
-import type { Context } from "aws-lambda";
+import type { Context, Handler } from "aws-lambda";
 import type { EitherAsync } from "purify-ts/EitherAsync";
-import { type ContextualLogger, DefaultContextualLogger } from "./logger/contextualLogger.ts";
+import { DefaultLambdaInvocationContextualLogger, type LambdaInvocationContextualLogger } from "./logger/lambdaInvocationContextualLogger.ts";
 
-const contextualLogger = new DefaultContextualLogger();
+const contextualLogger = DefaultLambdaInvocationContextualLogger.createWithDefaultLogFormatter();
 
-export function lambdaWithContextualLogger<Input, Output>(handler: (params: { event: Input; context: Context; contextualLogger: ContextualLogger }) => EitherAsync<Error, Output>) {
+export function lambdaWithContextualLogger<Input, Output>(
+  handler: (params: { event: Input; context: Context; contextualLogger: LambdaInvocationContextualLogger }) => EitherAsync<Error, Output>,
+): Handler {
   return async (event: Input, context: Context): Promise<Output> => {
-    contextualLogger.addContext(context);
+    contextualLogger.startInvocationContext(context);
 
-    const handlerResult = await handler({ event, context, contextualLogger });
-
-    return handlerResult.caseOf({
-      Left: (error) => {
-        throw error;
-      },
-      Right: (output) => output,
-    });
+    return handler({ event, context, contextualLogger })
+      .caseOf({
+        Left: (error) => {
+          throw error;
+        },
+        Right: (output) => output,
+      })
+      .finally(() => {
+        contextualLogger.endInvocationContext();
+      });
   };
 }

@@ -1,37 +1,37 @@
-import { getFileTags } from "./s3FileInput.ts";
+// import { getFileTags } from "./s3FileInput.ts";
 
-export type SubmissionAttachmentWithScanStatus = {
-  attachmentPath: string;
-  scanStatus: string;
-};
+// export type SubmissionAttachmentWithScanStatus = {
+//   attachmentPath: string;
+//   scanStatus: string;
+// };
 
-export async function getAllSubmissionAttachmentScanStatuses(
-  attachmentPaths: string[]
-): Promise<SubmissionAttachmentWithScanStatus[]> {
-  return Promise.all(
-    attachmentPaths.map(async (path) => {
-      return getSubmissionAttachmentScanStatus(path).then((status) => {
-        console.info(`File ${path} / Scan status: ${JSON.stringify(status)}`);
-        return { attachmentPath: path, scanStatus: status };
-      });
-    })
-  );
-}
+// export async function getAllSubmissionAttachmentScanStatuses(
+//   attachmentPaths: string[]
+// ): Promise<SubmissionAttachmentWithScanStatus[]> {
+//   return Promise.all(
+//     attachmentPaths.map(async (path) => {
+//       return getSubmissionAttachmentScanStatus(path).then((status) => {
+//         console.info(`File ${path} / Scan status: ${JSON.stringify(status)}`);
+//         return { attachmentPath: path, scanStatus: status };
+//       });
+//     })
+//   );
+// }
 
-async function getSubmissionAttachmentScanStatus(attachmentPath: string): Promise<string> {
-  return getFileTags(attachmentPath)
-    .then((tags) => {
-      const guardDutyScanStatus = tags.find(
-        (tag) => tag.Key === "GuardDutyMalwareScanStatus"
-      )?.Value;
+// async function getSubmissionAttachmentScanStatus(attachmentPath: string): Promise<string> {
+//   return getFileTags(attachmentPath)
+//     .then((tags) => {
+//       const guardDutyScanStatus = tags.find(
+//         (tag) => tag.Key === "GuardDutyMalwareScanStatus"
+//       )?.Value;
 
-      if (guardDutyScanStatus === undefined) {
-        throw new Error(`Detected undefined scan status for file path ${attachmentPath}`);
-      }
+//       if (guardDutyScanStatus === undefined) {
+//         throw new Error(`Detected undefined scan status for file path ${attachmentPath}`);
+//       }
 
-      return guardDutyScanStatus;
-    })
-    .catch((error) => {
-      throw new Error(`Error retrieving scan status for file: ${(error as Error).message}`);
-    });
-}
+//       return guardDutyScanStatus;
+//     })
+//     .catch((error) => {
+//       throw new Error(`Error retrieving scan status for file: ${(error as Error).message}`);
+//     });
+// }

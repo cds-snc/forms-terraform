@@ -1,12 +1,23 @@
-import { lambdaWithContextualLogger } from "common";
-import { EitherAsync, Right } from "purify-ts";
+import { lambdaWithSqsBatchProcessingAndContextualLogger } from "common";
+import { EitherAsync, Left, Right } from "purify-ts";
 
-type LambdaEvent = Record<string, unknown>;
+// type LambdaEvent = Record<string, unknown>;
 
-type LambdaResult = {};
+const sleep = (ms: number): Promise<void> => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
 
-export const handler = lambdaWithContextualLogger<LambdaEvent, LambdaResult>(({ event, contextualLogger }) => {
-  return EitherAsync.liftEither(Right({}));
+export const handler = lambdaWithSqsBatchProcessingAndContextualLogger(({ event, contextualLogger }) => {
+  contextualLogger.addMetadata("messageId", event.messageId);
+  return EitherAsync.fromPromise<Error, void>(async () => {
+    try {
+      await sleep(Math.floor(Math.random() * 20000) + 1);
+      contextualLogger.log({ level: "info", message: `messageId = ${event.messageId}` });
+      return Right(undefined);
+    } catch (err) {
+      return Left(err as Error);
+    }
+  });
 });
 // import { Handler, SQSEvent } from "aws-lambda";
 // import sendToNotify from "./lib/notifyProcessing.ts";

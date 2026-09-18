@@ -1,10 +1,11 @@
 import type { Context } from "aws-lambda";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { DefaultContextualLogger } from "../../src/logger/contextualLogger.ts";
+import { DefaultLambdaInvocationContextualLogger } from "../../src/logger/lambdaInvocationContextualLogger.ts";
 
 const loggerMock = vi.hoisted(() => ({
   addContext: vi.fn(),
   appendKeys: vi.fn(),
+  appendPersistentKeys: vi.fn(),
   info: vi.fn(),
   warn: vi.fn(),
   error: vi.fn(),
@@ -16,6 +17,7 @@ vi.mock("@aws-lambda-powertools/logger", async (importOriginal) => {
   class MockLogger {
     addContext = loggerMock.addContext;
     appendKeys = loggerMock.appendKeys;
+    appendPersistentKeys = loggerMock.appendPersistentKeys;
     info = loggerMock.info;
     warn = loggerMock.warn;
     error = loggerMock.error;
@@ -33,18 +35,18 @@ describe("DefaultContextualLogger", () => {
   });
 
   it("adds Lambda context to the logger", () => {
-    const logger = new DefaultContextualLogger();
+    const logger = DefaultLambdaInvocationContextualLogger.createWithDefaultLogFormatter();
     const context = {
       awsRequestId: "awsRequestId",
     } as Context;
 
-    logger.addContext(context);
+    logger.startInvocationContext(context);
 
     expect(loggerMock.addContext).toHaveBeenCalledExactlyOnceWith(context);
   });
 
   it("adds metadata to the logger", () => {
-    const logger = new DefaultContextualLogger();
+    const logger = DefaultLambdaInvocationContextualLogger.createWithDefaultLogFormatter();
 
     logger.addMetadata("first", "first");
 
@@ -54,7 +56,7 @@ describe("DefaultContextualLogger", () => {
   });
 
   it("logs an info message", () => {
-    const logger = new DefaultContextualLogger();
+    const logger = DefaultLambdaInvocationContextualLogger.createWithDefaultLogFormatter();
 
     logger.log({
       level: "info",
@@ -67,7 +69,7 @@ describe("DefaultContextualLogger", () => {
   });
 
   it("logs a warning message", () => {
-    const logger = new DefaultContextualLogger();
+    const logger = DefaultLambdaInvocationContextualLogger.createWithDefaultLogFormatter();
 
     logger.log({
       level: "warn",
@@ -80,7 +82,7 @@ describe("DefaultContextualLogger", () => {
   });
 
   it("logs an error with the error and severity level", () => {
-    const logger = new DefaultContextualLogger();
+    const logger = DefaultLambdaInvocationContextualLogger.createWithDefaultLogFormatter();
     const error = new Error("error");
 
     logger.log({
@@ -97,7 +99,7 @@ describe("DefaultContextualLogger", () => {
   });
 
   it("logs an error without a severity level", () => {
-    const logger = new DefaultContextualLogger();
+    const logger = DefaultLambdaInvocationContextualLogger.createWithDefaultLogFormatter();
     const error = new Error("error");
 
     logger.log({
