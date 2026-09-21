@@ -304,7 +304,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     priority = 6
 
     override_action {
-      none {}
+      count {}
     }
 
     statement {
