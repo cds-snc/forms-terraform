@@ -1,3 +1,7 @@
+resource "aws_shield_subscription" "forms" {
+  auto_renew = "ENABLED"
+}
+
 resource "aws_shield_protection" "alb" {
   name         = "LoadBalancer"
   resource_arn = aws_lb.form_viewer.arn
