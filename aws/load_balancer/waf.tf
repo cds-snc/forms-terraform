@@ -5,8 +5,7 @@
 
 locals {
   # AWSManagedRulesCommonRuleSet to exclude.
-  excluded_rules_common                  = ["GenericRFI_QUERYARGUMENTS", "GenericRFI_BODY", "SizeRestrictions_BODY"]
-  cognito_login_outside_canada_rule_name = "AWSCognitoLoginOutsideCanada"
+  excluded_rules_common = ["GenericRFI_QUERYARGUMENTS", "GenericRFI_BODY", "SizeRestrictions_BODY"]
 }
 
 resource "aws_wafv2_rule_group" "rate_limiters_group" {
@@ -79,23 +78,35 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   }
 
   rule {
-    name     = "AWSManagedRulesAmazonIpReputationList"
+    name     = "BlockedIPv4"
     priority = 1
 
-    override_action {
-      none {}
+    action {
+      block {}
     }
 
     statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesAmazonIpReputationList"
-        vendor_name = "AWS"
+      and_statement {
+        statement {
+          ip_set_reference_statement {
+            arn = module.waf_ip_blocklist.ipv4_blocklist_arn
+          }
+        }
+        statement {
+          not_statement {
+            statement {
+              ip_set_reference_statement {
+                arn = aws_wafv2_ip_set.ipv4_allowlist.arn
+              }
+            }
+          }
+        }
       }
     }
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesAmazonIpReputationList"
+      metric_name                = "BlockedIPv4"
       sampled_requests_enabled   = true
     }
   }
@@ -209,29 +220,8 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   }
 
   rule {
-    name     = "RateLimitersRuleGroup"
-    priority = 3
-
-    override_action {
-      none {}
-    }
-
-    statement {
-      rule_group_reference_statement {
-        arn = aws_wafv2_rule_group.rate_limiters_group.arn
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "rate_limiters_rule_group"
-      sampled_requests_enabled   = false
-    }
-  }
-
-  rule {
     name     = "PreventHostInjections"
-    priority = 4
+    priority = 3
 
     statement {
       not_statement {
@@ -267,7 +257,29 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   }
 
   rule {
-    name     = "AWSManagedRulesCommonRuleSet"
+    name     = "AWSManagedRulesAmazonIpReputationList"
+    priority = 4
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesAmazonIpReputationList"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesAmazonIpReputationList"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "RateLimitersRuleGroup"
     priority = 5
 
     override_action {
@@ -275,53 +287,21 @@ resource "aws_wafv2_web_acl" "forms_acl" {
     }
 
     statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesCommonRuleSet"
-        vendor_name = "AWS"
-
-        dynamic "rule_action_override" {
-          for_each = local.excluded_rules_common
-          content {
-            name = rule_action_override.value
-            action_to_use {
-              count {}
-            }
-          }
-        }
+      rule_group_reference_statement {
+        arn = aws_wafv2_rule_group.rate_limiters_group.arn
       }
     }
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesCommonRuleSet"
-      sampled_requests_enabled   = true
+      metric_name                = "rate_limiters_rule_group"
+      sampled_requests_enabled   = false
     }
   }
 
   rule {
-    name     = "AWSManagedRulesKnownBadInputsRuleSet"
+    name     = "AWSManagedRulesAntiDDoSRuleSet"
     priority = 6
-    override_action {
-      none {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesKnownBadInputsRuleSet"
-        vendor_name = "AWS"
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesKnownBadInputsRuleSet"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "AWSManagedRulesLinuxRuleSet"
-    priority = 7
 
     override_action {
       none {}
@@ -329,91 +309,16 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
     statement {
       managed_rule_group_statement {
-        name        = "AWSManagedRulesLinuxRuleSet"
+        name        = "AWSManagedRulesAntiDDoSRuleSet"
         vendor_name = "AWS"
-      }
-    }
 
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesLinuxRuleSet"
-      sampled_requests_enabled   = true
-    }
-  }
+        managed_rule_group_configs {
+          aws_managed_rules_anti_ddos_rule_set {
+            sensitivity_to_block = "LOW"
 
-  rule {
-    name     = local.cognito_login_outside_canada_rule_name
-    priority = 8
-
-    action {
-      count {
-        custom_request_handling {
-          insert_header {
-            name  = "cognito-login-outside-of-canada"
-            value = "detected"
-          }
-        }
-      }
-    }
-
-    statement {
-      and_statement {
-        statement {
-          not_statement {
-            statement {
-              geo_match_statement {
-                country_codes = ["CA"]
-              }
-            }
-          }
-        }
-
-        statement {
-          regex_pattern_set_reference_statement {
-            arn = aws_wafv2_regex_pattern_set.cognito_login_paths.arn
-            field_to_match {
-              uri_path {}
-            }
-            text_transformation {
-              priority = 1
-              type     = "COMPRESS_WHITE_SPACE"
-            }
-            text_transformation {
-              priority = 2
-              type     = "LOWERCASE"
-            }
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      metric_name                = local.cognito_login_outside_canada_rule_name
-      cloudwatch_metrics_enabled = true
-      sampled_requests_enabled   = true
-    }
-  }
-
-  rule {
-    name     = "BlockedIPv4"
-    priority = 9
-
-    action {
-      block {}
-    }
-
-    statement {
-      and_statement {
-        statement {
-          ip_set_reference_statement {
-            arn = module.waf_ip_blocklist.ipv4_blocklist_arn
-          }
-        }
-        statement {
-          not_statement {
-            statement {
-              ip_set_reference_statement {
-                arn = aws_wafv2_ip_set.ipv4_allowlist.arn
+            client_side_action_config {
+              challenge {
+                usage_of_action = "DISABLED"
               }
             }
           }
@@ -423,14 +328,14 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "BlockedIPv4"
+      metric_name                = "AWSManagedRulesAntiDDoSRuleSet"
       sampled_requests_enabled   = true
     }
   }
 
   rule {
     name     = "AllowOnlyAppUrls"
-    priority = 10
+    priority = 7
 
     action {
       allow {}
@@ -499,7 +404,7 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
   rule {
     name     = "AllowOnlyApiUrls"
-    priority = 11
+    priority = 8
 
     action {
       allow {}
@@ -560,7 +465,6 @@ resource "aws_wafv2_web_acl" "forms_acl" {
       }
     }
 
-
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "AllowOnlyApiUrls"
@@ -569,8 +473,8 @@ resource "aws_wafv2_web_acl" "forms_acl" {
   }
 
   rule {
-    name     = "AWSManagedRulesAntiDDoSRuleSet"
-    priority = 12
+    name     = "AWSManagedRulesKnownBadInputsRuleSet"
+    priority = 9
 
     override_action {
       none {}
@@ -578,19 +482,59 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
     statement {
       managed_rule_group_statement {
-        name        = "AWSManagedRulesAntiDDoSRuleSet"
+        name        = "AWSManagedRulesKnownBadInputsRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesKnownBadInputsRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWSManagedRulesLinuxRuleSet"
+    priority = 10
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesLinuxRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AWSManagedRulesLinuxRuleSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "AWSManagedRulesCommonRuleSet"
+    priority = 11
+
+    override_action {
+      none {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesCommonRuleSet"
         vendor_name = "AWS"
 
-        managed_rule_group_configs {
-          aws_managed_rules_anti_ddos_rule_set {
-            client_side_action_config {
-              challenge {
-                sensitivity     = "HIGH"
-                usage_of_action = "ENABLED"
-                exempt_uri_regular_expression {
-                  regex_string = "/api/|.(acc|avi|css|gif|jpe?g|js|pdf|png|tiff?|ttf|webm|webp|woff2?)$"
-                }
-              }
+        dynamic "rule_action_override" {
+          for_each = local.excluded_rules_common
+          content {
+            name = rule_action_override.value
+            action_to_use {
+              count {}
             }
           }
         }
@@ -599,12 +543,11 @@ resource "aws_wafv2_web_acl" "forms_acl" {
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesAntiDDoSRuleSet"
+      metric_name                = "AWSManagedRulesCommonRuleSet"
       sampled_requests_enabled   = true
     }
   }
 
-  // ACL visibility Metric
   visibility_config {
     cloudwatch_metrics_enabled = true
     metric_name                = "forms_global_rule"
