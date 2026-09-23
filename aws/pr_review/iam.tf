@@ -47,6 +47,11 @@ resource "aws_iam_role_policy_attachment" "cognito_forms_lambda_client" {
   policy_arn = var.ecs_iam_forms_cognito_policy_arn
 }
 
+resource "aws_iam_role_policy_attachment" "s3_forms_lambda_client" {
+  role       = aws_iam_role.forms_lambda_client.name
+  policy_arn = var.ecs_iam_forms_s3_policy_arn
+}
+
 resource "aws_iam_role_policy_attachment" "forms_lambda_client_vpc_access" {
   role       = aws_iam_role.forms_lambda_client.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
