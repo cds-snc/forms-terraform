@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.48.5](https://github.com/cds-snc/forms-terraform/compare/v3.48.4...v3.48.5) (2026-09-23)
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#1464](https://github.com/cds-snc/forms-terraform/issues/1464)) ([5be0cf5](https://github.com/cds-snc/forms-terraform/commit/5be0cf545e7b85f6fc7adedae4efa072370fdd7f))
+* **deps:** update all non-major github action dependencies ([#1469](https://github.com/cds-snc/forms-terraform/issues/1469)) ([8ff1283](https://github.com/cds-snc/forms-terraform/commit/8ff1283f7638384681edd308e830b74f6d00b4c8))
+* enable AWS Shield DDoS protection on the GC Forms load balancer ([#1471](https://github.com/cds-snc/forms-terraform/issues/1471)) ([87775df](https://github.com/cds-snc/forms-terraform/commit/87775dfb9a1204be4dd061f08dda35f4160e2c38))
+* grant s3 access to forms ecs task ([#1474](https://github.com/cds-snc/forms-terraform/issues/1474)) ([2a84deb](https://github.com/cds-snc/forms-terraform/commit/2a84debb6dd45ce54946efdc53d7c0ed3c8477a8))
+* remove AWS Shield subscription (because it was manually enabled) ([#1472](https://github.com/cds-snc/forms-terraform/issues/1472)) ([58fcf42](https://github.com/cds-snc/forms-terraform/commit/58fcf42db621d22fee4eb82571e0696178cafb6d))
+* solve race condition around ECS task definition when deploying app and infra at the same time ([#1475](https://github.com/cds-snc/forms-terraform/issues/1475)) ([288979b](https://github.com/cds-snc/forms-terraform/commit/288979b2d1ddb1480b71edec963f16bda3901434))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1467](https://github.com/cds-snc/forms-terraform/issues/1467)) ([7ede259](https://github.com/cds-snc/forms-terraform/commit/7ede2593f712fedfc5dbc611fc9ae5854f43e001))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1473](https://github.com/cds-snc/forms-terraform/issues/1473)) ([f0f1365](https://github.com/cds-snc/forms-terraform/commit/f0f136505ec661cc8f407d89e87483203e848aab))
+
 ## [3.48.4](https://github.com/cds-snc/forms-terraform/compare/v3.48.3...v3.48.4) (2026-09-15)
 
 
