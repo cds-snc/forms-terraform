@@ -39,12 +39,13 @@ dependency "app" {
   mock_outputs_merge_with_state           = true
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    ecs_iam_forms_secrets_manager_policy_arn = null
-    ecs_iam_forms_kms_policy_arn             = null
-    ecs_iam_forms_dynamodb_policy_arn        = null
-    ecs_iam_forms_sqs_policy_arn             = null
-    ecs_iam_forms_cognito_policy_arn         = null
-    ecs_iam_forms_audit_logs_policy_arn      = null
+    ecs_iam_forms_secrets_manager_policy_arn = "arn:aws:iam::000000000000:policy/ecs_iam_forms_secrets_manager_policy_arn"
+    ecs_iam_forms_kms_policy_arn             = "arn:aws:iam::000000000000:policy/ecs_iam_forms_kms_policy_arn"
+    ecs_iam_forms_dynamodb_policy_arn        = "arn:aws:iam::000000000000:policy/ecs_iam_forms_dynamodb_policy_arn"
+    ecs_iam_forms_sqs_policy_arn             = "arn:aws:iam::000000000000:policy/ecs_iam_forms_sqs_policy_arn"
+    ecs_iam_forms_cognito_policy_arn         = "arn:aws:iam::000000000000:policy/ecs_iam_forms_cognito_policy_arn"
+    ecs_iam_forms_audit_logs_policy_arn      = "arn:aws:iam::000000000000:policy/ecs_iam_forms_audit_logs_policy_arn"
+    ecs_iam_forms_s3_policy_arn              = "arn:aws:iam::000000000000:policy/ecs_iam_forms_s3_policy_arn"
   }
 }
 
@@ -63,6 +64,7 @@ inputs = {
   ecs_iam_forms_audit_logs_arn             = dependency.app.outputs.ecs_iam_forms_audit_logs_policy_arn
   ecs_iam_forms_sqs_policy_arn             = dependency.app.outputs.ecs_iam_forms_sqs_policy_arn
   ecs_iam_forms_cognito_policy_arn         = dependency.app.outputs.ecs_iam_forms_cognito_policy_arn
+  ecs_iam_forms_s3_policy_arn              = dependency.app.outputs.ecs_iam_forms_s3_policy_arn
 }
 
 include "root" {

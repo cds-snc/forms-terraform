@@ -126,6 +126,11 @@ resource "aws_iam_role_policy_attachment" "ecs_xray" {
   policy_arn = aws_iam_policy.ecs_xray.arn
 }
 
+resource "aws_iam_role_policy_attachment" "ecs_s3" {
+  role       = aws_iam_role.forms.name
+  policy_arn = aws_iam_policy.s3.arn
+}
+
 #
 # IAM - SQS
 #
@@ -275,6 +280,32 @@ data "aws_iam_policy_document" "assume_role_policy_cognito" {
 
     resources = [
       var.cognito_user_pool_arn
+    ]
+  }
+}
+
+#
+# S3
+#
+
+resource "aws_iam_policy" "s3" {
+  name        = "s3"
+  path        = "/"
+  description = "IAM policy for allowing ECS access to S3"
+  policy      = data.aws_iam_policy_document.s3.json
+
+  tags = var.core_tags
+}
+
+data "aws_iam_policy_document" "s3" {
+  statement {
+    sid     = "S3Vault"
+    effect  = "Allow"
+    actions = ["s3:GetObject"]
+
+    resources = [
+      var.s3_vault_file_storage_arn,
+      "${var.s3_vault_file_storage_arn}/*"
     ]
   }
 }

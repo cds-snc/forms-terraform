@@ -316,3 +316,13 @@ variable "code_build_security_group_id" {
   description = "Code Build security group"
   type        = string
 }
+
+variable "s3_vault_file_storage_id" {
+  description = "Identifier of the Vault file storage bucket"
+  type        = string
+}
+
+variable "s3_vault_file_storage_arn" {
+  description = "ARN of the S3 bucket used for the Vault's file storage"
+  type        = string
+}

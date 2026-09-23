@@ -52,6 +52,11 @@ variable "ecs_iam_forms_cognito_policy_arn" {
   type        = string
 }
 
+variable "ecs_iam_forms_s3_policy_arn" {
+  description = "IAM policy for access to S3"
+  type        = string
+}
+
 variable "forms_submission_lambda_name" {
   description = "Name of the Forms Submission Lambda function"
   type        = string
