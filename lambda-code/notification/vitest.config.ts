@@ -1,19 +1,23 @@
-import { defineConfig } from 'vitest/config';
-import { resolve } from 'path';
+import { defineConfig, mergeConfig } from "vitest/config";
+import baseConfig from "../../vitest.config.ts";
+import { resolve } from "path";
 
 // Needed to map the "@lib" alias used in the source code
-export default defineConfig({
-  test: {
-    globals: true,
-    environment: 'node',
-    coverage: {
-      reporter: ['text', 'json', 'html'],
-      exclude: ['build/**', 'tests/**', '**/*.test.ts'],
+export default mergeConfig(
+  baseConfig,
+  defineConfig({
+    test: {
+      globals: true,
+      environment: "node",
+      coverage: {
+        reporter: ["text", "json", "html"],
+        exclude: ["build/**", "tests/**", "**/*.test.ts"],
+      },
     },
-  },
-  resolve: {
-    alias: {
-      '@lib': resolve(__dirname, './src/lib'),
+    resolve: {
+      alias: {
+        "@lib": resolve(__dirname, "./src/lib"),
+      },
     },
-  },
-});
+  }),
+);

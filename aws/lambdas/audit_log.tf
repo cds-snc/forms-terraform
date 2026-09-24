@@ -10,6 +10,7 @@ resource "aws_lambda_function" "audit_logs" {
   role          = aws_iam_role.lambda.arn
   timeout       = 60
   memory_size   = 256
+  architectures = ["arm64"]
 
   # Limit number of concurrent instances running at a time to fight against DynamoDB's API rate limiting when there is a spike in numbers of audit logs to process
   reserved_concurrent_executions = 5

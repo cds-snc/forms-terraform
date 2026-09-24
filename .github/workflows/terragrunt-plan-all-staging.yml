@@ -222,10 +222,10 @@ jobs:
           comment: "false"
           terragrunt: "true"
 
-      - name: Terragrunt plan load_testing
+      - name: Terragrunt plan glue
         uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
-          directory: "env/cloud/load_testing"
+          directory: "env/cloud/glue"
           comment: "false"
           terragrunt: "true"
 
@@ -236,9 +236,9 @@ jobs:
           comment: "false"
           terragrunt: "true"
 
-      - name: Terragrunt plan glue
+      - name: Terragrunt plan load_testing
         uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
-          directory: "env/cloud/glue"
+          directory: "env/cloud/load_testing"
           comment: "false"
           terragrunt: "true"

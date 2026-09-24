@@ -1,22 +1,12 @@
 {
   "name": "cognito-email-sender",
-  "version": "1.0.0",
-  "main": "main.js",
   "type": "module",
-  "license": "MIT",
   "scripts": {
-    "build": "rm -rf build && tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
-    "build:dev": "tsc --project tsconfig.json --watch"
+    "build": "tsc -p tsconfig.json",
+    "lint": "biome check --error-on-warnings --diagnostic-level=warn ."
   },
   "dependencies": {
-    "@aws-crypto/client-node": "^4.2.1",
-    "@gcforms/connectors": "^2.2.20"
-  },
-  "devDependencies": {
-    "@types/aws-lambda": "^8.10.155",
-    "@types/node": "^22.19.19",
-    "tsc-alias": "^1.8.16",
-    "typescript": "^5.9.3"
-  },
-  "packageManager": "yarn@4.17.0"
+    "@aws-crypto/client-node": "^5.0.2",
+    "@gcforms/connectors": "2.2.21"
+  }
 }
