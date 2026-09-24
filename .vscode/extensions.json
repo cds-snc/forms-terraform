@@ -1,7 +1,7 @@
 {
-    "recommendations": [
-        "biomejs.biome",
-        "vitest.explorer",
-        "ms-python.black-formatter"
-    ]
+  "recommendations": [
+    "biomejs.biome",
+    "vitest.explorer",
+    "ms-python.black-formatter"
+  ]
 }
