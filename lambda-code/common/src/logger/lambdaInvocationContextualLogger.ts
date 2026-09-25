@@ -9,7 +9,7 @@ export interface LambdaInvocationContextualLogger {
 
 type Log =
   | { level: "info"; message: string }
-  | { level: "warn"; message: string }
+  | { level: "warn"; message: string; error?: Error }
   | {
       level: "error";
       message: string;
@@ -63,7 +63,7 @@ export class DefaultLambdaInvocationContextualLogger implements LambdaInvocation
         this.logger.info(log.message);
         break;
       case "warn":
-        this.logger.warn(log.message);
+        this.logger.warn(log.message, { error: log.error });
         break;
       case "error":
         this.logger.error(log.message, {

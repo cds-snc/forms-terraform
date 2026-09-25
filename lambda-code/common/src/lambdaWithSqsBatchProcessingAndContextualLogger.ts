@@ -6,14 +6,14 @@ import { DefaultLambdaInvocationContextualLogger, type LambdaInvocationContextua
 const sqsBatchProcessor = new BatchProcessor(EventType.SQS);
 const contextualLogger = DefaultLambdaInvocationContextualLogger.createWithDefaultLogFormatter();
 
-export function lambdaWithSqsBatchProcessingAndContextualLogger(
-  handler: (params: { event: SQSRecord; context: Context; contextualLogger: LambdaInvocationContextualLogger }) => EitherAsync<Error, void>,
+export function lambdaWithSqsBatchProcessingAndContextualLogger<SqsRecordBodyType extends Record<string, unknown>>(
+  handler: (params: { event: SqsRecordBodyType; context: Context; contextualLogger: LambdaInvocationContextualLogger }) => EitherAsync<Error, void>,
 ) {
   return async (event: SQSEvent, context: Context): Promise<SQSBatchResponse> => {
     contextualLogger.startInvocationContext(context);
 
-    async function recordHandler(sqsRecord: SQSRecord) {
-      return handler({ event: sqsRecord, context, contextualLogger: contextualLogger.createChildLogger() }).caseOf({
+    async function recordHandler(sqsRecord: SQSRecord): Promise<void> {
+      return handler({ event: JSON.parse(sqsRecord.body), context, contextualLogger: contextualLogger.createChildLogger() }).caseOf({
         Left: (error) => {
           throw error;
         },

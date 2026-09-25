@@ -12,7 +12,7 @@ import {
 } from "../src/lib/attachments.ts";
 import { extractSubmissionPayloadFromLambdaEvent } from "../src/lib/payload.ts";
 import { enqueueDelayedSubmissionProcessingRequest } from "../src/lib/processing.ts";
-import { attachSubmissionProcessingRequestIdToSavedSubmission, saveSubmissionToReliabilityStorage } from "../src/lib/storage.ts";
+import { attachSubmissionProcessingRequestIdToProcessableSubmission, saveProcessableSubmissionToReliabilityStorage } from "../src/lib/storage.ts";
 import { handler } from "../src/main.ts";
 
 vi.mock("uuid");
@@ -28,8 +28,8 @@ const associateAttachmentWithCorrespondingChecksumMock = vi.mocked(associateAtta
 const generateAttachmentS3AccessKeysMock = vi.mocked(generateAttachmentS3AccessKeys);
 const generateAttachmentUploadUrlsMock = vi.mocked(generateAttachmentUploadUrls);
 const enqueueDelayedSubmissionProcessingRequestMock = vi.mocked(enqueueDelayedSubmissionProcessingRequest);
-const saveSubmissionToReliabilityStorageMock = vi.mocked(saveSubmissionToReliabilityStorage);
-const attachSubmissionProcessingRequestIdToSavedSubmissionMock = vi.mocked(attachSubmissionProcessingRequestIdToSavedSubmission);
+const saveProcessableSubmissionToReliabilityStorageMock = vi.mocked(saveProcessableSubmissionToReliabilityStorage);
+const attachSubmissionProcessingRequestIdToProcessableSubmissionMock = vi.mocked(attachSubmissionProcessingRequestIdToProcessableSubmission);
 
 const submissionId = "submission-123";
 
@@ -103,32 +103,32 @@ describe("handler", () => {
     uuidV4Mock.mockReturnValue(submissionId);
     extractSubmissionPayloadFromLambdaEventMock.mockReturnValue(Right(submissionPayload));
     searchForAttachmentsInResponsesMock.mockReturnValue(Right([]));
-    saveSubmissionToReliabilityStorageMock.mockReturnValue(eitherAsyncRight(undefined));
+    saveProcessableSubmissionToReliabilityStorageMock.mockReturnValue(eitherAsyncRight(undefined));
     enqueueDelayedSubmissionProcessingRequestMock.mockReturnValue(
       eitherAsyncRight({
         submissionProcessingRequestId: "processing-123",
       }),
     );
-    attachSubmissionProcessingRequestIdToSavedSubmissionMock.mockReturnValue(eitherAsyncRight(undefined));
+    attachSubmissionProcessingRequestIdToProcessableSubmissionMock.mockReturnValue(eitherAsyncRight(undefined));
   });
 
   describe("submissions without attachments", () => {
     it("processes the submission successfully", async () => {
       await expect(invokeLambdaHandler()).resolves.toEqual({ submissionId });
 
-      expect(saveSubmissionToReliabilityStorageMock).toHaveBeenCalledWith(submissionId, submissionPayload);
+      expect(saveProcessableSubmissionToReliabilityStorageMock).toHaveBeenCalledWith(submissionId, submissionPayload);
       expect(enqueueDelayedSubmissionProcessingRequestMock).toHaveBeenCalledWith(submissionId, 5);
-      expect(attachSubmissionProcessingRequestIdToSavedSubmissionMock).toHaveBeenCalledWith(submissionId, "processing-123");
+      expect(attachSubmissionProcessingRequestIdToProcessableSubmissionMock).toHaveBeenCalledWith(submissionId, "processing-123");
     });
 
     it("does not enqueue processing when saving the submission fails", async () => {
       const error = new Error("Failed to save submission");
-      saveSubmissionToReliabilityStorageMock.mockReturnValue(eitherAsyncLeft(error));
+      saveProcessableSubmissionToReliabilityStorageMock.mockReturnValue(eitherAsyncLeft(error));
 
       await expect(invokeLambdaHandler()).rejects.toEqual(error);
 
       expect(enqueueDelayedSubmissionProcessingRequestMock).not.toHaveBeenCalled();
-      expect(attachSubmissionProcessingRequestIdToSavedSubmissionMock).not.toHaveBeenCalled();
+      expect(attachSubmissionProcessingRequestIdToProcessableSubmissionMock).not.toHaveBeenCalled();
     });
 
     it("does not attach the processing request ID when enqueueing fails", async () => {
@@ -137,13 +137,13 @@ describe("handler", () => {
 
       await expect(invokeLambdaHandler()).rejects.toEqual(error);
 
-      expect(attachSubmissionProcessingRequestIdToSavedSubmissionMock).not.toHaveBeenCalled();
+      expect(attachSubmissionProcessingRequestIdToProcessableSubmissionMock).not.toHaveBeenCalled();
     });
 
     it("returns an error when attaching the processing request ID fails", async () => {
       const error = new Error("Failed to attach processing request ID");
 
-      attachSubmissionProcessingRequestIdToSavedSubmissionMock.mockReturnValue(eitherAsyncLeft(error));
+      attachSubmissionProcessingRequestIdToProcessableSubmissionMock.mockReturnValue(eitherAsyncLeft(error));
 
       await expect(invokeLambdaHandler()).rejects.toEqual(error);
     });
@@ -169,9 +169,9 @@ describe("handler", () => {
       expect(associateAttachmentWithCorrespondingChecksumMock).toHaveBeenCalledWith([attachment], submissionPayloadWithAttachments.fileChecksums);
       expect(generateAttachmentS3AccessKeysMock).toHaveBeenCalledWith(submissionId, [attachmentWithChecksum]);
       expect(generateAttachmentUploadUrlsMock).toHaveBeenCalledWith([attachmentWithS3AccessKey]);
-      expect(saveSubmissionToReliabilityStorageMock).toHaveBeenCalledWith(submissionId, submissionPayloadWithAttachments, [attachmentWithS3AccessKey.s3AccessKey]);
+      expect(saveProcessableSubmissionToReliabilityStorageMock).toHaveBeenCalledWith(submissionId, submissionPayloadWithAttachments, [attachmentWithS3AccessKey.s3AccessKey]);
       expect(enqueueDelayedSubmissionProcessingRequestMock).not.toHaveBeenCalled();
-      expect(attachSubmissionProcessingRequestIdToSavedSubmissionMock).not.toHaveBeenCalled();
+      expect(attachSubmissionProcessingRequestIdToProcessableSubmissionMock).not.toHaveBeenCalled();
     });
 
     it("returns an error when checksums are missing", async () => {
@@ -193,7 +193,7 @@ describe("handler", () => {
       expect(associateAttachmentWithCorrespondingChecksumMock).not.toHaveBeenCalled();
       expect(generateAttachmentS3AccessKeysMock).not.toHaveBeenCalled();
       expect(generateAttachmentUploadUrlsMock).not.toHaveBeenCalled();
-      expect(saveSubmissionToReliabilityStorageMock).not.toHaveBeenCalled();
+      expect(saveProcessableSubmissionToReliabilityStorageMock).not.toHaveBeenCalled();
     });
 
     it("returns an error when checksum association fails", async () => {
@@ -204,7 +204,7 @@ describe("handler", () => {
 
       expect(generateAttachmentS3AccessKeysMock).not.toHaveBeenCalled();
       expect(generateAttachmentUploadUrlsMock).not.toHaveBeenCalled();
-      expect(saveSubmissionToReliabilityStorageMock).not.toHaveBeenCalled();
+      expect(saveProcessableSubmissionToReliabilityStorageMock).not.toHaveBeenCalled();
     });
 
     it("returns an error when generating S3 access keys fails", async () => {
@@ -216,7 +216,7 @@ describe("handler", () => {
       await expect(invokeLambdaHandler()).rejects.toEqual(error);
 
       expect(generateAttachmentUploadUrlsMock).not.toHaveBeenCalled();
-      expect(saveSubmissionToReliabilityStorageMock).not.toHaveBeenCalled();
+      expect(saveProcessableSubmissionToReliabilityStorageMock).not.toHaveBeenCalled();
     });
 
     it("returns an error when generating upload URLs fails", async () => {
@@ -225,12 +225,12 @@ describe("handler", () => {
 
       await expect(invokeLambdaHandler()).rejects.toEqual(error);
 
-      expect(saveSubmissionToReliabilityStorageMock).not.toHaveBeenCalled();
+      expect(saveProcessableSubmissionToReliabilityStorageMock).not.toHaveBeenCalled();
     });
 
     it("returns an error when saving the submission fails", async () => {
       const error = new Error("Failed to save submission");
-      saveSubmissionToReliabilityStorageMock.mockReturnValue(eitherAsyncLeft(error));
+      saveProcessableSubmissionToReliabilityStorageMock.mockReturnValue(eitherAsyncLeft(error));
 
       await expect(invokeLambdaHandler()).rejects.toEqual(error);
     });
@@ -267,7 +267,7 @@ describe("handler", () => {
 
       await invokeLambdaHandler();
 
-      expect(saveSubmissionToReliabilityStorageMock).toHaveBeenCalledWith(submissionId, submissionPayloadWithAttachments, [
+      expect(saveProcessableSubmissionToReliabilityStorageMock).toHaveBeenCalledWith(submissionId, submissionPayloadWithAttachments, [
         attachmentWithS3AccessKey.s3AccessKey,
         secondAttachmentWithS3AccessKey.s3AccessKey,
       ]);
@@ -282,7 +282,7 @@ describe("handler", () => {
       await expect(invokeLambdaHandler()).rejects.toEqual(error);
 
       expect(searchForAttachmentsInResponsesMock).not.toHaveBeenCalled();
-      expect(saveSubmissionToReliabilityStorageMock).not.toHaveBeenCalled();
+      expect(saveProcessableSubmissionToReliabilityStorageMock).not.toHaveBeenCalled();
       expect(enqueueDelayedSubmissionProcessingRequestMock).not.toHaveBeenCalled();
     });
   });
@@ -293,9 +293,9 @@ describe("handler", () => {
 
       await invokeLambdaHandler();
 
-      expect(saveSubmissionToReliabilityStorageMock).toHaveBeenCalledWith("generated-submission-id", submissionPayload);
+      expect(saveProcessableSubmissionToReliabilityStorageMock).toHaveBeenCalledWith("generated-submission-id", submissionPayload);
       expect(enqueueDelayedSubmissionProcessingRequestMock).toHaveBeenCalledWith("generated-submission-id", 5);
-      expect(attachSubmissionProcessingRequestIdToSavedSubmissionMock).toHaveBeenCalledWith("generated-submission-id", "processing-123");
+      expect(attachSubmissionProcessingRequestIdToProcessableSubmissionMock).toHaveBeenCalledWith("generated-submission-id", "processing-123");
     });
   });
 });
