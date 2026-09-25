@@ -1,6 +1,6 @@
-import { S3Client } from "@aws-sdk/client-s3";
 import { createPresignedPost, type PresignedPost } from "@aws-sdk/s3-presigned-post";
 import { Either, EitherAsync } from "purify-ts";
+import { s3Client } from "./awsServicesConnector.ts";
 
 export type Attachment = {
   id: string;
@@ -22,10 +22,6 @@ type AttachmentWithS3UploadUrl = AttachmentWithS3AccessKey & {
 
 const S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES = 10485760; // S3 signed URL allows users to upload file up to 10 MB
 const S3_SIGNED_URL_LIFETIME_IN_SECONDS = 600; // S3 signed URL gives users 10 minutes to begin uploading a file
-
-const s3Client = new S3Client({
-  region: process.env.REGION ?? "ca-central-1",
-});
 
 export function searchForAttachmentsInResponses(responses: Record<string, unknown>): Either<never, Attachment[]> {
   function isAttachment(value: unknown): value is Attachment {
@@ -80,8 +76,8 @@ export function generateAttachmentUploadUrls(attachmentWithS3AccessKeys: Attachm
   function generateS3UploadUrl(key: string, contentMd5Checksum: string): EitherAsync<Error, PresignedPost> {
     const base64ContentMd5 = Buffer.from(contentMd5Checksum, "hex").toString("base64");
 
-    return EitherAsync(() => {
-      return createPresignedPost(s3Client, {
+    return EitherAsync<Error, PresignedPost>(() =>
+      createPresignedPost(s3Client, {
         Bucket: process.env.S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME ?? "missing_bucket_name",
         Key: key,
         Fields: {
@@ -91,12 +87,13 @@ export function generateAttachmentUploadUrls(attachmentWithS3AccessKeys: Attachm
         },
         Conditions: [["content-length-range", 0, S3_MAX_FILE_SIZE_ALLOWED_IN_BYTES], { "Content-MD5": base64ContentMd5 }],
         Expires: S3_SIGNED_URL_LIFETIME_IN_SECONDS,
-      }).catch((error: unknown) => {
-        throw new Error(`Failed to generate S3 upload URL for ${key}`, {
+      }),
+    ).mapLeft(
+      (error) =>
+        new Error(`Failed to generate S3 upload URL for ${key}`, {
           cause: error,
-        });
-      });
-    });
+        }),
+    );
   }
 
   return EitherAsync.all(
@@ -105,9 +102,10 @@ export function generateAttachmentUploadUrls(attachmentWithS3AccessKeys: Attachm
         return { ...attachment, s3UploadUrl };
       }),
     ),
-  ).mapLeft((error) => {
-    throw new Error("Failed to generate attachment upload URLs", {
-      cause: error,
-    });
-  });
+  ).mapLeft(
+    (error) =>
+      new Error("Failed to generate attachment upload URLs", {
+        cause: error,
+      }),
+  );
 }
