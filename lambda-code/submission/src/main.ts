@@ -5,7 +5,7 @@ import * as uuid from "uuid";
 import { type Attachment, associateAttachmentWithCorrespondingChecksum, generateAttachmentS3AccessKeys, generateAttachmentUploadUrls, searchForAttachmentsInResponses } from "./lib/attachments.ts";
 import { extractSubmissionPayloadFromLambdaEvent, type SubmissionPayload } from "./lib/payload.ts";
 import { enqueueDelayedSubmissionProcessingRequest } from "./lib/processing.ts";
-import { attachSubmissionProcessingRequestIdToSavedSubmission, saveSubmissionToReliabilityStorage } from "./lib/storage.ts";
+import { attachSubmissionProcessingRequestIdToProcessableSubmission, saveProcessableSubmissionToReliabilityStorage } from "./lib/storage.ts";
 
 type LambdaEvent = Record<string, unknown>;
 
@@ -47,7 +47,7 @@ export const handler = lambdaWithContextualLogger<LambdaEvent, LambdaResult>(({ 
 });
 
 function handleSubmissionWithoutAttachments(submissionId: string, submissionPayload: SubmissionPayload, contextualLogger: LambdaInvocationContextualLogger): EitherAsync<Error, LambdaResult> {
-  return saveSubmissionToReliabilityStorage(submissionId, submissionPayload)
+  return saveProcessableSubmissionToReliabilityStorage(submissionId, submissionPayload)
     .chain(() =>
       enqueueDelayedSubmissionProcessingRequest(submissionId, SUBMISSION_PROCESSING_REQUEST_DELAY_IN_SECONDS).map(({ submissionProcessingRequestId }) => ({
         submissionId,
@@ -56,7 +56,7 @@ function handleSubmissionWithoutAttachments(submissionId: string, submissionPayl
     )
     .ifRight(({ submissionProcessingRequestId }) => contextualLogger.addMetadata("submissionProcessingRequestId", submissionProcessingRequestId))
     .chain(({ submissionId, submissionProcessingRequestId }) =>
-      attachSubmissionProcessingRequestIdToSavedSubmission(submissionId, submissionProcessingRequestId).map(() => ({
+      attachSubmissionProcessingRequestIdToProcessableSubmission(submissionId, submissionProcessingRequestId).map(() => ({
         submissionId,
       })),
     )
@@ -80,7 +80,7 @@ function handleSubmissionWithAttachments(
     .chain((attachmentWithChecksums) => EitherAsync.liftEither(generateAttachmentS3AccessKeys(submissionId, attachmentWithChecksums)))
     .chain((attachmentS3AccessKeys) => generateAttachmentUploadUrls(attachmentS3AccessKeys))
     .chain((attachmentS3UploadUrls) =>
-      saveSubmissionToReliabilityStorage(
+      saveProcessableSubmissionToReliabilityStorage(
         submissionId,
         submissionPayload,
         attachmentS3UploadUrls.map((a) => a.s3AccessKey),
