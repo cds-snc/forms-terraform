@@ -48,3 +48,8 @@ output "ecs_iam_forms_cognito_policy_arn" {
   description = "IAM policy for access to Cognito"
   value       = aws_iam_policy.cognito.arn
 }
+
+output "ecs_iam_forms_s3_policy_arn" {
+  description = "IAM policy for access to S3"
+  value       = aws_iam_policy.s3.arn
+}

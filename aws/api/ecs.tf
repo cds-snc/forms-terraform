@@ -137,15 +137,10 @@ data "aws_iam_policy_document" "api_ecs_kms_vault" {
 
 data "aws_iam_policy_document" "api_ecs_s3_vault" {
   statement {
-    sid    = "S3Vault"
-    effect = "Allow"
-    actions = [
-      "s3:ListBucket",
-      "s3:GetObject",
-      "s3:GetObjectTagging",
-      "s3:GetObjectVersion",
-      "s3:GetObjectVersionTagging"
-    ]
+    sid     = "S3Vault"
+    effect  = "Allow"
+    actions = ["s3:GetObject"]
+
     resources = [
       var.s3_vault_file_storage_arn,
       "${var.s3_vault_file_storage_arn}/*"

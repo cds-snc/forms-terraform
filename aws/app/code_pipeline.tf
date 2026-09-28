@@ -13,6 +13,7 @@ module "gc_forms_code_pipeline" {
   ecs_cluster_name               = aws_ecs_cluster.forms.name
   ecs_service_name               = aws_ecs_service.form_viewer.name
   app_container_name             = jsondecode(aws_ecs_task_definition.form_viewer.container_definitions)[1].name
+  task_definition_arn            = aws_ecs_task_definition.form_viewer.arn
   task_definition_family         = aws_ecs_task_definition.form_viewer.family
   load_balancer_listener_arns    = [var.lb_https_listener_arn]
   loadblancer_target_group_names = [var.lb_target_group_1_name, var.lb_target_group_2_name]

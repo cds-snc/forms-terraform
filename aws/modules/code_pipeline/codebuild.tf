@@ -64,7 +64,7 @@ locals {
 
   base_post_build_commands = [
     "printf \"$APPSPEC\" > appspec.yaml",
-    "aws ecs describe-task-definition --task-definition ${var.task_definition_family} --query taskDefinition | jq --arg releaseIdentifier \"$RELEASE_IDENTIFIER\" '.taskDefinitionArn |= \"${data.aws_ecs_task_definition.this.arn_without_revision}\" | .containerDefinitions |= map(select(.name == \"${var.app_container_name}\").image |= \"${var.app_ecr_url}:\" + $releaseIdentifier)' > task_definition.json"
+    "aws ecs describe-task-definition --task-definition ${var.task_definition_arn} --query taskDefinition | jq --arg releaseIdentifier \"$RELEASE_IDENTIFIER\" '.taskDefinitionArn |= \"${data.aws_ecs_task_definition.this.arn_without_revision}\" | .containerDefinitions |= map(select(.name == \"${var.app_container_name}\").image |= \"${var.app_ecr_url}:\" + $releaseIdentifier)' > task_definition.json"
   ]
 
   post_build_commands = concat(local.base_post_build_commands, var.custom_post_build_commands)

@@ -124,6 +124,10 @@
       {
         "name": "ZITADEL_TRUSTED_DOMAIN",
         "value": "${zitadel_trusted_domain}"
+      },
+      {
+        "name": "VAULT_FILE_STORAGE_BUCKET_NAME",
+        "value": "${vault_file_storage_bucket_name}"
       }
     ],
     "secrets": [

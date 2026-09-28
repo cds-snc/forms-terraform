@@ -3,7 +3,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../cognito", "../secrets", "../idp"]
+  paths = ["../kms", "../network", "../dynamodb", "../rds", "../redis", "../sqs", "../load_balancer", "../ecr", "../cognito", "../secrets", "../idp", "../s3"]
 }
 
 dependency "dynamodb" {
@@ -139,6 +139,18 @@ dependency "idp" {
   }
 }
 
+dependency "s3" {
+  config_path = "../s3"
+
+  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
+  mock_outputs_merge_strategy_with_state  = "shallow"
+
+  mock_outputs = {
+    vault_file_storage_id  = "forms-environment-vault-file-storage"
+    vault_file_storage_arn = "arn:aws:s3:::forms-mock-vault-file-storage"
+  }
+}
+
 locals {
   aws_account_id = get_env("AWS_ACCOUNT_ID", "000000000000")
 }
@@ -209,6 +221,9 @@ inputs = {
 
   ecs_idp_service_name = dependency.idp.outputs.ecs_idp_service_name
   ecs_idp_service_port = dependency.idp.outputs.ecs_idp_service_port
+
+  s3_vault_file_storage_id  = dependency.s3.outputs.vault_file_storage_id
+  s3_vault_file_storage_arn = dependency.s3.outputs.vault_file_storage_arn
 
   # Overwritten by GitHub TFVARS
   zitadel_client_id  = "123456789"

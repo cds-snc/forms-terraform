@@ -38,6 +38,11 @@ variable "app_ecr_url" {
   type        = string
 }
 
+variable "task_definition_arn" {
+  description = "Task definition of the ECS service"
+  type        = string
+}
+
 variable "task_definition_family" {
   description = "Task Definiton family of the ECS service"
   type        = string

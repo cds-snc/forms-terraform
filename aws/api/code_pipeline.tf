@@ -13,6 +13,7 @@ module "code_pipeline" {
   ecs_cluster_name               = var.ecs_cluster_name
   ecs_service_name               = var.ecs_service_name
   app_container_name             = var.ecs_service_name
+  task_definition_arn            = module.api_ecs.task_definition_arn
   task_definition_family         = module.api_ecs.task_definition_family
   load_balancer_listener_arns    = [var.lb_https_listener_arn]
   loadblancer_target_group_names = [var.lb_target_group_1_name, var.lb_target_group_2_name]
