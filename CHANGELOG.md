@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.48.6](https://github.com/cds-snc/forms-terraform/compare/v3.48.5...v3.48.6) (2026-09-29)
+
+
+### Miscellaneous Chores
+
+* add new set of Suricata rules to start restricting traffic egressing from our VPC ([#1433](https://github.com/cds-snc/forms-terraform/issues/1433)) ([4222f25](https://github.com/cds-snc/forms-terraform/commit/4222f253803a9988127f2c191f66c275c5b65701))
+
 ## [3.48.5](https://github.com/cds-snc/forms-terraform/compare/v3.48.4...v3.48.5) (2026-09-28)
 
 
