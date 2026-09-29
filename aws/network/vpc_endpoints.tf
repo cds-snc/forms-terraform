@@ -198,6 +198,19 @@ resource "aws_vpc_endpoint" "ecs" {
   tags = var.core_tags
 }
 
+resource "aws_vpc_endpoint" "cognito" {
+  vpc_id              = aws_vpc.forms.id
+  vpc_endpoint_type   = "Interface"
+  service_name        = "com.amazonaws.${var.region}.cognito-idp"
+  private_dns_enabled = true
+  security_group_ids = [
+    aws_security_group.privatelink.id,
+  ]
+  subnet_ids = aws_subnet.forms_private.*.id
+
+  tags = var.core_tags
+}
+
 resource "aws_vpc_endpoint" "dynamodb" {
   vpc_id            = aws_vpc.forms.id
   vpc_endpoint_type = "Gateway"
