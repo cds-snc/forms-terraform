@@ -1,4 +1,4 @@
-import { RedisConnector } from "./redisConnector.js";
+import { RedisConnector } from "./redisConnector.ts";
 
 /**
  * Handles caching of overdue form responses.  The cache expiry should be at least

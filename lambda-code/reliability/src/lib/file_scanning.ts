@@ -1,4 +1,4 @@
-import { getFileTags } from "./s3FileInput.js";
+import { getFileTags } from "./s3FileInput.ts";
 
 export type SubmissionAttachmentWithScanStatus = {
   attachmentPath: string;
