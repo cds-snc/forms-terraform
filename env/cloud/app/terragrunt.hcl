@@ -123,7 +123,6 @@ dependency "secrets" {
     recaptcha_secret_arn                    = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:recaptcha_secret"
     notify_callback_bearer_token_secret_arn = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:notify_callback_bearer_token_secret"
     zitadel_administration_key_secret_arn   = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:zitadel_administration_key"
-    sentry_api_key_secret_arn               = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:sentry_api_key"
     hcaptcha_site_verify_key_secret_arn     = "arn:aws:secretsmanager:ca-central-1:${local.aws_account_id}:secret:hcaptcha_site_verify_key"
   }
 }
@@ -216,7 +215,6 @@ inputs = {
   notify_callback_bearer_token_secret_arn = dependency.secrets.outputs.notify_callback_bearer_token_secret_arn
   token_secret_arn                        = dependency.secrets.outputs.token_secret_arn
   zitadel_administration_key_secret_arn   = dependency.secrets.outputs.zitadel_administration_key_secret_arn
-  sentry_api_key_secret_arn               = dependency.secrets.outputs.sentry_api_key_secret_arn
   hcaptcha_site_verify_key_secret_arn     = dependency.secrets.outputs.hcaptcha_site_verify_key_secret_arn
 
   ecs_idp_service_name = dependency.idp.outputs.ecs_idp_service_name

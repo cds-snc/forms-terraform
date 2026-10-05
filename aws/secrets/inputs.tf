@@ -35,12 +35,6 @@ variable "freshdesk_api_key" {
   sensitive   = true
 }
 
-variable "sentry_api_key" {
-  description = "The Sentry API key used by the ECS task and Lambda"
-  type        = string
-  sensitive   = true
-}
-
 variable "zitadel_administration_key" {
   description = "The Zitadel administration key used by the ECS task and Lambda"
   type        = string

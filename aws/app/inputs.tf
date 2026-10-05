@@ -275,12 +275,6 @@ variable "email_address_support" {
   type        = string
 }
 
-variable "sentry_api_key_secret_arn" {
-  description = "The Sentry API key secret used by the ECS task"
-  type        = string
-  sensitive   = true
-}
-
 variable "hcaptcha_site_key" {
   description = "The hCaptcha site key used for forms"
   type        = string

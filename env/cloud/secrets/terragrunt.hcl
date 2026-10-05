@@ -13,7 +13,6 @@ locals {
   notify_api_key               = get_env("NOTIFY_API_KEY", "I_am_not_a_secret_token")
   addresscomplete_api_key      = get_env("ADDRESSCOMPLETE_API_KEY", "I_am_not_a_secret_token")
   freshdesk_api_key            = get_env("FRESHDESK_API_KEY", "I_am_not_a_secret_token")
-  sentry_api_key               = get_env("SENTRY_API_KEY", "I_am_not_a_secret_token")
   zitadel_administration_key   = get_env("ZITADEL_ADMINISTRATION_KEY", "I_am_not_a_secret_token")
   zitadel_application_key      = get_env("ZITADEL_APPLICATION_KEY", "I_am_not_a_secret_token")
   rds_db_password              = "chummy"
@@ -32,5 +31,4 @@ inputs = {
   zitadel_application_key      = local.zitadel_application_key
   hcaptcha_site_verify_key     = local.hcaptcha_site_verify_key
   rds_db_password              = local.rds_db_password
-  sentry_api_key               = local.sentry_api_key
 }
