@@ -45,7 +45,6 @@ locals {
     zitadel_trusted_domain          = "auth.${var.domains[0]}"
     zitadel_administration_key      = var.zitadel_administration_key_secret_arn
     zitadel_client_id               = var.zitadel_client_id
-    sentry_api_key                  = var.sentry_api_key_secret_arn
     hcaptcha_site_verify_key        = var.hcaptcha_site_verify_key_secret_arn
     vault_file_storage_bucket_name  = var.s3_vault_file_storage_id
   })
