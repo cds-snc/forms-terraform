@@ -33,11 +33,11 @@ reject tcp $HOME_NET any -> $EXTERNAL_NET 443 (app-layer-protocol:!tls; flow:to_
 # ------------------------------------------------------------
 
 # Internal services
-pass tls $HOME_NET any -> $EXTERNAL_NET 443 (ssl_state:client_hello; flow:to_server; tls.sni; content:"auth.cdssandbox.xyz"; startswith; endswith; nocase; msg:"Egress: reaching out to auth.cdssandbox.xyz"; alert; sid:30;)
+pass tls $HOME_NET any -> $EXTERNAL_NET 443 (ssl_state:client_hello; flow:to_server; tls.sni; content:"${sso_domain}"; startswith; endswith; nocase; msg:"Egress: reaching out to ${sso_domain}"; alert; sid:30;)
 pass tls $HOME_NET any -> $EXTERNAL_NET 443 (ssl_state:client_hello; flow:to_server; tls.sni; content:"api.notification.canada.ca"; startswith; endswith; nocase; msg:"Egress: reaching out to api.notification.canada.ca"; alert; sid:31;)
 # Next two pass statements can be removed once the migration to the new SSO solution is complete and Cognito is removed
 pass tls $HOME_NET any -> $EXTERNAL_NET 443 (ssl_state:client_hello; flow:to_server; tls.sni; content:"cognito-idp.ca-central-1.amazonaws.com"; startswith; endswith; nocase; msg:"Egress: reaching out to cognito-idp.ca-central-1.amazonaws.com"; alert; sid:32;)
-pass tls $HOME_NET any -> $EXTERNAL_NET 443 (ssl_state:client_hello; flow:to_server; tls.sni; content:"auth.forms-staging.cdssandbox.xyz"; startswith; endswith; nocase; msg:"Egress: reaching out to auth.forms-staging.cdssandbox.xyz"; alert; sid:33;)
+pass tls $HOME_NET any -> $EXTERNAL_NET 443 (ssl_state:client_hello; flow:to_server; tls.sni; content:"auth.${gc_forms_domain}"; startswith; endswith; nocase; msg:"Egress: reaching out to auth.${gc_forms_domain}"; alert; sid:33;)
 
 # External services
 pass tls $HOME_NET any -> $EXTERNAL_NET 443 (ssl_state:client_hello; flow:to_server; tls.sni; content:"api.hcaptcha.com"; startswith; endswith; nocase; msg:"Egress: reaching out to api.hcaptcha.com"; alert; sid:50;)
