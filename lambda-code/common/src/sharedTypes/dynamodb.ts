@@ -9,6 +9,7 @@ export type DynamoDbProcessableSubmission = {
   SecurityAttribute: string;
   Version: number;
   HasFileKeys: number;
+  NotifyProcessed?: boolean;
   FileKeys?: string;
   NotificationID?: string;
 };

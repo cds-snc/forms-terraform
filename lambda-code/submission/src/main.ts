@@ -7,16 +7,16 @@ import { extractSubmissionPayloadFromLambdaEvent, type SubmissionPayload } from 
 import { enqueueDelayedSubmissionProcessingRequest } from "./lib/processing.ts";
 import { attachSubmissionProcessingRequestIdToProcessableSubmission, saveProcessableSubmissionToReliabilityStorage } from "./lib/storage.ts";
 
-type LambdaEvent = Record<string, unknown>;
+type LambdaInput = Record<string, unknown>;
 
-type LambdaResult = {
+type LambdaOutput = {
   submissionId: string;
   fileURLMap?: Record<string, PresignedPost>;
 };
 
 const SUBMISSION_PROCESSING_REQUEST_DELAY_IN_SECONDS = 5;
 
-export const handler = lambdaWithContextualLogger<LambdaEvent, LambdaResult>(({ event, contextualLogger }) => {
+export const handler = lambdaWithContextualLogger<LambdaInput, LambdaOutput>(({ event, contextualLogger }) => {
   return EitherAsync
     .liftEither(extractSubmissionPayloadFromLambdaEvent(event)) // biome-ignore format: To help keep the chain vertically aligned
     .ifRight(({ formID }) => contextualLogger.addMetadata("formId", formID))
@@ -46,7 +46,7 @@ export const handler = lambdaWithContextualLogger<LambdaEvent, LambdaResult>(({ 
     );
 });
 
-function handleSubmissionWithoutAttachments(submissionId: string, submissionPayload: SubmissionPayload, contextualLogger: LambdaInvocationContextualLogger): EitherAsync<Error, LambdaResult> {
+function handleSubmissionWithoutAttachments(submissionId: string, submissionPayload: SubmissionPayload, contextualLogger: LambdaInvocationContextualLogger): EitherAsync<Error, LambdaOutput> {
   return saveProcessableSubmissionToReliabilityStorage(submissionId, submissionPayload)
     .chain(() =>
       enqueueDelayedSubmissionProcessingRequest(submissionId, SUBMISSION_PROCESSING_REQUEST_DELAY_IN_SECONDS).map(({ submissionProcessingRequestId }) => ({
@@ -60,7 +60,7 @@ function handleSubmissionWithoutAttachments(submissionId: string, submissionPayl
         submissionId,
       })),
     )
-    .map(({ submissionId }) => ({ submissionId }) satisfies LambdaResult);
+    .map(({ submissionId }) => ({ submissionId }) satisfies LambdaOutput);
 }
 
 function handleSubmissionWithAttachments(
@@ -68,7 +68,7 @@ function handleSubmissionWithAttachments(
   submissionPayload: SubmissionPayload,
   attachments: Attachment[],
   contextualLogger: LambdaInvocationContextualLogger,
-): EitherAsync<Error, LambdaResult> {
+): EitherAsync<Error, LambdaOutput> {
   contextualLogger.log({ level: "info", message: `Attachment(s) detected:\n${attachments.map((a) => `- ID: ${a.id} / size = ${a.size} bytes`).join("\n")}` });
 
   if (submissionPayload.fileChecksums === undefined) {
@@ -86,5 +86,5 @@ function handleSubmissionWithAttachments(
         attachmentS3UploadUrls.map((a) => a.s3AccessKey),
       ).map(() => ({ attachmentS3UploadUrls })),
     )
-    .map(({ attachmentS3UploadUrls }) => ({ submissionId, fileURLMap: Object.fromEntries(attachmentS3UploadUrls.map((v) => [v.id, v.s3UploadUrl])) }) satisfies LambdaResult);
+    .map(({ attachmentS3UploadUrls }) => ({ submissionId, fileURLMap: Object.fromEntries(attachmentS3UploadUrls.map((v) => [v.id, v.s3UploadUrl])) }) satisfies LambdaOutput);
 }
