@@ -144,4 +144,55 @@ describe("DefaultContextualLogger", () => {
       severityLevel: undefined,
     });
   });
+
+  it("sets isFirstInvocation metadata to true only for the first invocation", () => {
+    const appendPersistentKeysSpy = vi.spyOn(Logger.prototype, "appendPersistentKeys");
+
+    const context = {
+      awsRequestId: "awsRequestId",
+    } as Context;
+
+    const logger = DefaultLambdaInvocationContextualLogger.createWithDefaultLogFormatter();
+
+    logger.startInvocationContext(context);
+
+    expect(appendPersistentKeysSpy).toHaveBeenNthCalledWith(1, { isFirstInvocation: true });
+
+    logger.endInvocationContext();
+
+    logger.startInvocationContext(context);
+
+    expect(appendPersistentKeysSpy).toHaveBeenNthCalledWith(2, { isFirstInvocation: false });
+  });
+
+  it("passes the current isFirstInvocation metadata value to child loggers", () => {
+    const appendPersistentKeysSpy = vi.spyOn(Logger.prototype, "appendPersistentKeys");
+
+    const context = {
+      awsRequestId: "awsRequestId",
+    } as Context;
+
+    const logger1 = DefaultLambdaInvocationContextualLogger.createWithDefaultLogFormatter();
+    const childLogger1 = logger1.createChildLogger();
+
+    logger1.startInvocationContext(context);
+    childLogger1.startInvocationContext(context);
+
+    logger1.log({ level: "info", message: "first" });
+    childLogger1.log({ level: "info", message: "first child" });
+
+    // Will ignore call 1 and 4 because the Logger class uses `appendPersistentKeys` when initializing itself as part of the child creation process
+    expect(appendPersistentKeysSpy).toHaveBeenNthCalledWith(2, { isFirstInvocation: true });
+    expect(appendPersistentKeysSpy).toHaveBeenNthCalledWith(3, { isFirstInvocation: true });
+
+    logger1.endInvocationContext();
+
+    const childLogger2 = logger1.createChildLogger();
+
+    logger1.startInvocationContext(context);
+    childLogger2.startInvocationContext(context);
+
+    expect(appendPersistentKeysSpy).toHaveBeenNthCalledWith(5, { isFirstInvocation: false });
+    expect(appendPersistentKeysSpy).toHaveBeenNthCalledWith(6, { isFirstInvocation: false });
+  });
 });

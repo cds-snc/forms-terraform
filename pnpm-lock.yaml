@@ -125,6 +125,9 @@ importers:
 
   lambda-code/common:
     dependencies:
+      '@aws-lambda-powertools/batch':
+        specifier: ^2.35.0
+        version: 2.35.0
       '@aws-lambda-powertools/logger':
         specifier: ^2.35.0
         version: 2.35.0
@@ -236,12 +239,18 @@ importers:
       '@gcforms/types':
         specifier: 'catalog:'
         version: 1.0.38
+      common:
+        specifier: workspace:*
+        version: link:../common
       json2md:
         specifier: ^2.0.3
         version: 2.0.3
       magic-bytes.js:
         specifier: ^1.13.1
         version: 1.13.1
+      purify-ts:
+        specifier: 'catalog:'
+        version: 2.1.4
       uuid:
         specifier: 'catalog:'
         version: 14.0.2
@@ -352,6 +361,9 @@ packages:
 
   '@aws-crypto/serialize@5.0.2':
     resolution: {integrity: sha512-TKFABiTVow9VYk0m1nUKQYzj/DYG6x7HquBuva+VByFO5rJDxdsPrHNehTXgcQop3Huz5juP/vwrJK4F9/vMpg==}
+
+  '@aws-lambda-powertools/batch@2.35.0':
+    resolution: {integrity: sha512-RdM7gs6YmblfK/llGBt1/u32XgQjGMa1sr9zlhULRzMdumAnmnPGYOqXqEGTu4gjfZAnMdYldNntYVSGkGQ8rQ==}
 
   '@aws-lambda-powertools/commons@2.35.0':
     resolution: {integrity: sha512-DPD5fnl7V1xSPJuKGQ8KETp+nPmcIw8mYWEdNfnuTr/zNDyTkiX2l3QNUPlrtpOPtJ7r+UGSbXCgKPPlXN27Bw==}
@@ -2011,6 +2023,12 @@ snapshots:
       bn.js: 5.2.5
       tslib: 2.8.1
       uuid: 11.1.1
+
+  '@aws-lambda-powertools/batch@2.35.0':
+    dependencies:
+      '@aws-lambda-powertools/commons': 2.35.0
+      '@aws/lambda-invoke-store': 0.3.0
+      '@standard-schema/spec': 1.1.0
 
   '@aws-lambda-powertools/commons@2.35.0':
     dependencies:
