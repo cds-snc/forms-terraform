@@ -1,0 +1,56 @@
+name: Build Lambda Docker image
+description: Shared composite action to build a Lambda Docker image
+
+inputs:
+  lambda-folder-name:
+    required: true
+  push:
+    required: false
+    default: false
+  tag:
+    description: Required if 'push' set to true
+    required: false
+    default: local
+  aws-role-to-assume:
+    description: Required if 'push' set to true
+    required: false
+  aws-role-session-name:
+    description: Required if 'push' set to true
+    required: false
+  aws-region:
+    description: Required if 'push' set to true
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+
+    - name: Configure AWS credentials
+      if: ${{ inputs.push == 'true' }}
+      uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
+      with:
+        role-to-assume: ${{ inputs.aws-role-to-assume }}
+        role-session-name: ${{ inputs.aws-role-session-name }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Login to Amazon ECR
+      if: ${{ inputs.push == 'true' }}
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
+
+    - name: Build (and Push if requested) Docker image
+      uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+      env:
+        IMAGE_NAME: ${{ steps.login-ecr.outputs.registry || 'local' }}/${{ inputs.lambda-folder-name }}-lambda
+      with:
+        platforms: linux/arm64
+        provenance: false
+        file: Dockerfile.lambda
+        build-args: |
+          LAMBDA_FOLDER_NAME=${{ inputs.lambda-folder-name }}
+        tags: |
+          ${{ env.IMAGE_NAME }}:${{ inputs.tag }}
+          ${{ env.IMAGE_NAME }}:latest
+        push: ${{ inputs.push }}

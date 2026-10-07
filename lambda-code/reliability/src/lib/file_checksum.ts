@@ -1,5 +1,5 @@
-import type { SubmissionAttachmentWithScanStatus } from "./file_scanning.js";
-import { getFileMetaData } from "./s3FileInput.js";
+import type { SubmissionAttachmentWithScanStatus } from "./file_scanning.ts";
+import { getFileMetaData } from "./s3FileInput.ts";
 
 export interface SubmissionAttachmentInformation extends SubmissionAttachmentWithScanStatus {
   md5?: string;

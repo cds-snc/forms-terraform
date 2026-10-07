@@ -1,8 +1,3 @@
-variable "ecr_repository_url_load_testing_lambda" {
-  description = "URL of the Load Testing Lambda ECR"
-  type        = string
-}
-
 variable "lambda_submission_function_name" {
   description = "Name of the Submission Lambda function."
   type        = string
