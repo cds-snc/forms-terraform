@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.48.6](https://github.com/cds-snc/forms-terraform/compare/v3.48.5...v3.48.6) (2026-10-06)
+
+
+### Miscellaneous Chores
+
+* add new set of Suricata rules to start restricting traffic egressing from our VPC ([#1433](https://github.com/cds-snc/forms-terraform/issues/1433)) ([4222f25](https://github.com/cds-snc/forms-terraform/commit/4222f253803a9988127f2c191f66c275c5b65701))
+* **deps:** update all non-major github action dependencies ([#1482](https://github.com/cds-snc/forms-terraform/issues/1482)) ([19a8856](https://github.com/cds-snc/forms-terraform/commit/19a885631f05774e604e9e26b817263a18696e66))
+* remove cognito VPC endpoint ([#1486](https://github.com/cds-snc/forms-terraform/issues/1486)) ([fe31f05](https://github.com/cds-snc/forms-terraform/commit/fe31f05e994b765d95d5e27f2e0859d7feb8aa22))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1488](https://github.com/cds-snc/forms-terraform/issues/1488)) ([10526f7](https://github.com/cds-snc/forms-terraform/commit/10526f7a14462aacd6f067c665da761c87a68532))
+
 ## [3.48.5](https://github.com/cds-snc/forms-terraform/compare/v3.48.4...v3.48.5) (2026-09-28)
 
 
