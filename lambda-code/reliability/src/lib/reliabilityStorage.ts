@@ -3,18 +3,18 @@ import { type DynamoDbProcessableSubmission, DynamoDbProcessableSubmissionProjec
 import { type Either, EitherAsync, Left, Right } from "purify-ts";
 import { dynamodbClient } from "./awsServicesConnector.ts";
 
-type ProcessableSubmission = {
+export type ProcessableSubmission = {
   id: string;
   associatedFormId: string;
   responses: Record<string, unknown>;
   language: string;
-  securityAttribute: string;
-  version: number;
-  createdAt: number;
+  // securityAttribute: string;
+  // version: number;
+  // createdAt: number;
   notifyProcessed: boolean;
-  responsesHash: string;
-  fileKeys: string[];
-  notificationId?: string;
+  // responsesHash: string;
+  // fileKeys: string[];
+  // notificationId?: string;
 };
 
 // SubmissionID: string;
@@ -73,7 +73,8 @@ export function retrieveProcessableSubmissionFromReliabilityStorage(submissionId
         associatedFormId: retrievedSubmission.FormID,
         responses: JSON.parse(retrievedSubmission.FormData),
         language: retrievedSubmission.FormSubmissionLanguage,
-      });
+        notifyProcessed: retrievedSubmission.NotifyProcessed ?? false,
+      } satisfies ProcessableSubmission);
     })
     .mapLeft(
       (error) =>
