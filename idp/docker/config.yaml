@@ -65,3 +65,6 @@ Notifications:
   MaxAttempts: 3
   # Automatically cancel the notification if it cannot be handled within a specific time
   MaxTtl: 5m
+
+ServicePing:
+  Enabled: false # https://zitadel.com/docs/self-hosting/manage/service_ping
