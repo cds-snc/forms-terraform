@@ -43,6 +43,10 @@ DefaultInstance:
     IdTokenLifetime: "0.5h"
     RefreshTokenIdleExpiration: "720h"
     RefreshTokenExpiration: "2160h"
+  Restrictions:
+    # DisallowPublicOrgRegistration defines if ZITADEL should expose the endpoint /ui/login/register/org
+    # If it is true, the endpoint returns the HTTP status 404 on GET requests, and 409 on POST requests.
+    DisallowPublicOrgRegistration: true
 
 OIDC:
   DefaultAccessTokenLifetime: "0.5h"
