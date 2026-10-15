@@ -197,8 +197,22 @@ resource "aws_wafv2_web_acl" "idp" {
     }
 
     statement {
-      ip_set_reference_statement {
-        arn = var.waf_ipv4_blocklist_arn
+      and_statement {
+        statement {
+          ip_set_reference_statement {
+            arn = var.waf_ipv4_blocklist_arn
+          }
+        }
+
+        statement {
+          not_statement {
+            statement {
+              ip_set_reference_statement {
+                arn = var.waf_ipv4_allowlist_arn
+              }
+            }
+          }
+        }
       }
     }
 

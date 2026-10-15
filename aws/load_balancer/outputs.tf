@@ -73,6 +73,11 @@ output "waf_ipv4_blocklist_arn" {
   value       = module.waf_ip_blocklist.ipv4_blocklist_arn
 }
 
+output "waf_ipv4_allowlist_arn" {
+  description = "WAF ACL IPv4 allowlist"
+  value       = aws_wafv2_ip_set.ipv4_allowlist.arn
+}
+
 output "waf_ipv4_new_blocked_ip_metric_filter_name" {
   description = "WAF ACL IP blocklist CloudWatch Metric Filter name"
   value       = module.waf_ip_blocklist.ipv4_new_blocked_ip_metric_filter_name

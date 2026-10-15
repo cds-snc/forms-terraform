@@ -60,6 +60,11 @@ variable "waf_ipv4_blocklist_arn" {
   type        = string
 }
 
+variable "waf_ipv4_allowlist_arn" {
+  description = "The WAF ACL IPv4 allowlist ARN."
+  type        = string
+}
+
 variable "zitadel_admin_password" {
   description = "Zitadel administrator password."
   type        = string
