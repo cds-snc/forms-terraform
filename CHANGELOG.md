@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.48.7](https://github.com/cds-snc/forms-terraform/compare/v3.48.6...v3.48.7) (2026-10-15)
+
+
+### Miscellaneous Chores
+
+* add WAF restriction to only give access to the token generation endpoint on the IDP ([#1494](https://github.com/cds-snc/forms-terraform/issues/1494)) ([551d7f5](https://github.com/cds-snc/forms-terraform/commit/551d7f58106bcd89d84f04b4d298b1b19bf23362))
+* **deps:** update all non-major github action dependencies ([#1489](https://github.com/cds-snc/forms-terraform/issues/1489)) ([6e6aef7](https://github.com/cds-snc/forms-terraform/commit/6e6aef73bf379a61d243e025fac0be19b65e4a4c))
+* disable public org registration in Zitadel ([#1492](https://github.com/cds-snc/forms-terraform/issues/1492)) ([aa4cd04](https://github.com/cds-snc/forms-terraform/commit/aa4cd04f673938600b7c251e36e2fac64d8eadb2))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1495](https://github.com/cds-snc/forms-terraform/issues/1495)) ([6174f4e](https://github.com/cds-snc/forms-terraform/commit/6174f4eddaf65f0037a5cc19cbdb09019c951e71))
+* update idp waf allowed uri paths ([#1496](https://github.com/cds-snc/forms-terraform/issues/1496)) ([f42289e](https://github.com/cds-snc/forms-terraform/commit/f42289ea3013fd18e2f21cc40cd57a49e76f27d2))
+
 ## [3.48.6](https://github.com/cds-snc/forms-terraform/compare/v3.48.5...v3.48.6) (2026-10-06)
 
 
