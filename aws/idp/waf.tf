@@ -210,37 +210,57 @@ resource "aws_wafv2_web_acl" "idp" {
   }
 
   rule {
-    name     = "ValidHost"
+    name     = "ValidHostAndIdpUriPaths"
     priority = 8
 
     action {
       allow {}
     }
 
-    // statement {
-    // The OR statement is commented out until we have more then one domain to check against
-    // or_statement {
-    dynamic "statement" {
-      for_each = local.idp_domains
-      content {
-        byte_match_statement {
-          positional_constraint = "EXACTLY"
-          field_to_match {
-            single_header {
-              name = "host"
+    statement {
+      // The OR statement is commented out until we have more then one domain to check against
+      // or_statement {
+      and_statement {
+        dynamic "statement" {
+          for_each = local.idp_domains
+          content {
+            byte_match_statement {
+              positional_constraint = "EXACTLY"
+              field_to_match {
+                single_header {
+                  name = "host"
+                }
+              }
+              search_string = statement.value
+              text_transformation {
+                priority = 1
+                type     = "COMPRESS_WHITE_SPACE"
+              }
+              text_transformation {
+                priority = 2
+                type     = "LOWERCASE"
+              }
             }
           }
-          search_string = statement.value
-          text_transformation {
-            priority = 1
-            type     = "COMPRESS_WHITE_SPACE"
+        }
+
+        statement {
+          regex_pattern_set_reference_statement {
+            arn = aws_wafv2_regex_pattern_set.valid_idp_uri_paths.arn
+            field_to_match {
+              uri_path {}
+            }
+
+            text_transformation {
+              priority = 1
+              type     = "COMPRESS_WHITE_SPACE"
+            }
+
+            text_transformation {
+              priority = 2
+              type     = "LOWERCASE"
+            }
           }
-          text_transformation {
-            priority = 2
-            type     = "LOWERCASE"
-          }
-          //        }
-          //        }
         }
       }
     }
@@ -343,5 +363,15 @@ resource "aws_wafv2_web_acl_logging_configuration" "idp" {
     single_header {
       name = "authorization"
     }
+  }
+}
+
+resource "aws_wafv2_regex_pattern_set" "valid_idp_uri_paths" {
+  name        = "valid_idp_uri_paths"
+  scope       = "REGIONAL"
+  description = "Regex to match the IDP valid urls"
+
+  regular_expression {
+    regex_string = "^\\/oauth\\/v2\\/token$"
   }
 }
