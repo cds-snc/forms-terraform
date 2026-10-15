@@ -197,8 +197,22 @@ resource "aws_wafv2_web_acl" "idp" {
     }
 
     statement {
-      ip_set_reference_statement {
-        arn = var.waf_ipv4_blocklist_arn
+      and_statement {
+        statement {
+          ip_set_reference_statement {
+            arn = var.waf_ipv4_blocklist_arn
+          }
+        }
+
+        statement {
+          not_statement {
+            statement {
+              ip_set_reference_statement {
+                arn = var.waf_ipv4_allowlist_arn
+              }
+            }
+          }
+        }
       }
     }
 
@@ -372,6 +386,6 @@ resource "aws_wafv2_regex_pattern_set" "valid_idp_uri_paths" {
   description = "Regex to match the IDP valid urls"
 
   regular_expression {
-    regex_string = "^\\/oauth\\/v2\\/token$"
+    regex_string = "^\\/(oauth\\/v2\\/token|debug\\/healthz|\\.well-known\\/openid-configuration)$"
   }
 }
