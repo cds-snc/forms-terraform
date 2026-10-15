@@ -372,6 +372,6 @@ resource "aws_wafv2_regex_pattern_set" "valid_idp_uri_paths" {
   description = "Regex to match the IDP valid urls"
 
   regular_expression {
-    regex_string = "^\\/oauth\\/v2\\/token$"
+    regex_string = "^\\/(oauth\\/v2\\/token|debug\\/healthz|\\.well-known\\/openid-configuration)$"
   }
 }
