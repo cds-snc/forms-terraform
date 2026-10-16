@@ -12,13 +12,15 @@
     "@aws-sdk/client-sqs": "catalog:",
     "@aws-sdk/lib-dynamodb": "catalog:",
     "@aws-sdk/client-lambda": "catalog:",
-    "uuid": "catalog:",
-    "json2md": "^2.0.3",
-    "magic-bytes.js": "^1.13.1",
     "@gcforms/connectors": "catalog:",
     "@gcforms/core": "catalog:",
     "@gcforms/database": "catalog:",
-    "@gcforms/types": "catalog:"
+    "@gcforms/types": "catalog:",
+    "common": "workspace:*",
+    "json2md": "^2.0.3",
+    "magic-bytes.js": "^1.13.1",
+    "purify-ts": "catalog:",
+    "uuid": "catalog:"
   },
   "devDependencies": {
     "@types/json2md": "^1.5.4"

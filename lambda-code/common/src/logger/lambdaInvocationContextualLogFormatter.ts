@@ -3,7 +3,7 @@ import type { LogAttributes, UnformattedAttributes } from "@aws-lambda-powertool
 
 export class LambdaInvocationContextualLogFormatter extends LogFormatter {
   formatAttributes(attributes: UnformattedAttributes, additionalLogAttributes: LogAttributes): LogItem {
-    const { error, severityLevel, ...gcFormsContext } = additionalLogAttributes;
+    const { isFirstInvocation, error, severityLevel, ...gcFormsContext } = additionalLogAttributes;
 
     return new LogItem({
       attributes: {
@@ -21,7 +21,9 @@ export class LambdaInvocationContextualLogFormatter extends LogFormatter {
           aws: {
             awsRequestId: attributes.lambdaContext?.awsRequestId,
             xRayTraceId: attributes.xRayTraceId,
-            lambdaColdStart: attributes.lambdaContext?.coldStart,
+            ...(isFirstInvocation !== undefined && {
+              lambdaColdStart: isFirstInvocation as boolean,
+            }),
           },
         },
       },

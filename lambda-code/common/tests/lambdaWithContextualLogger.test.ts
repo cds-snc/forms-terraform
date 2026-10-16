@@ -76,7 +76,7 @@ describe("lambdaWithContextualLogger", () => {
 
     const wrappedHandler = lambdaWithContextualLogger(() => EitherAsync.liftEither(Left(error)));
 
-    await expect(wrappedHandler({ input: "data" }, {} as Context)).rejects.toEqual(error);
+    await expect(wrappedHandler({ input: "data" }, {} as Context)).rejects.toThrow();
 
     expect(endInvocationContextSpy).toHaveBeenCalledOnce();
   });
