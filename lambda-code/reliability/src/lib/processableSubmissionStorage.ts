@@ -1,6 +1,6 @@
 import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import { type DynamoDbProcessableSubmission, DynamoDbProcessableSubmissionProjectionExpression } from "common";
-import { type Either, EitherAsync, Left, Right } from "purify-ts";
+import { EitherAsync, Just, type Maybe, Nothing } from "purify-ts";
 import { dynamodbClient } from "./awsServicesConnector.ts";
 
 export type ProcessableSubmission = {
@@ -49,13 +49,13 @@ export type ProcessableSubmission = {
 //     const fileKeys = messageData.Item?.FileKeys ? JSON.parse(messageData.Item?.FileKeys) : [];
 //     const notificationId: string | undefined = messageData.Item?.NotificationID;
 
-export function retrieveProcessableSubmissionFromReliabilityStorage(submissionId: string): EitherAsync<Error, Either<null, ProcessableSubmission>> {
+export function retrieveProcessableSubmission(id: string): EitherAsync<Error, Maybe<ProcessableSubmission>> {
   return EitherAsync(() =>
     dynamodbClient.send(
       new GetCommand({
         TableName: process.env.DYNAMODB_RELIABILITY_QUEUE_TABLE_NAME,
         Key: {
-          SubmissionID: submissionId,
+          SubmissionID: id,
         },
         ProjectionExpression: DynamoDbProcessableSubmissionProjectionExpression,
       }),
@@ -63,23 +63,18 @@ export function retrieveProcessableSubmissionFromReliabilityStorage(submissionId
   )
     .map(({ Item }) => {
       if (Item === undefined) {
-        return Left(null);
+        return Nothing;
       }
 
       const retrievedSubmission = Item as DynamoDbProcessableSubmission;
 
-      return Right({
-        id: submissionId,
+      return Just({
+        id,
         associatedFormId: retrievedSubmission.FormID,
         responses: JSON.parse(retrievedSubmission.FormData),
         language: retrievedSubmission.FormSubmissionLanguage,
         notifyProcessed: retrievedSubmission.NotifyProcessed ?? false,
       } satisfies ProcessableSubmission);
     })
-    .mapLeft(
-      (error) =>
-        new Error("Failed to retrieve processable submission from reliability storage", {
-          cause: error,
-        }),
-    );
+    .mapLeft((error) => new Error("Failed to retrieve processable submission from reliability storage", { cause: error }));
 }

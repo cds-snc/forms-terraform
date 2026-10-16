@@ -1,6 +1,7 @@
-import { lambdaWithSqsBatchProcessingAndContextualLogger } from "common";
+import { type LambdaInvocationContextualLogger, lambdaWithSqsBatchProcessingAndContextualLogger } from "common";
 import { EitherAsync, Right } from "purify-ts";
-import { type ProcessableSubmission, retrieveProcessableSubmissionFromReliabilityStorage } from "./lib/reliabilityStorage.ts";
+import { retrieveFormTemplate } from "./lib/formTemplateStorage.ts";
+import { type ProcessableSubmission, retrieveProcessableSubmission } from "./lib/processableSubmissionStorage.ts";
 
 type LambdaSqsRecordBody = {
   submissionID: string;
@@ -14,23 +15,19 @@ export const EitherAsyncUtils = {
 export const handler = lambdaWithSqsBatchProcessingAndContextualLogger<LambdaSqsRecordBody>(({ event, contextualLogger }) => {
   contextualLogger.addMetadata("submissionId", event.submissionID);
 
-  return retrieveProcessableSubmissionFromReliabilityStorage(event.submissionID)
-    .chain((processableSubmissionOrNull) => {
-      const result = processableSubmissionOrNull.extract();
+  return retrieveProcessableSubmission(event.submissionID)
+    .chain((processableSubmission) => {
+      return processableSubmission.caseOf({
+        Just: (value) => handleProcessableSubmission(value, contextualLogger),
+        Nothing: () => {
+          contextualLogger.log({
+            level: "warn",
+            message: "Skipping regular processing as submission could not be found in the database",
+          });
 
-      // Check if form data exists or was already processed.
-      if (result === null || result.notifyProcessed === true) {
-        // Ack and remove message from queue if it doesn't exist in the DB
-        // Do not throw an error so it does not retry again
-        contextualLogger.log({
-          level: "warn",
-          message: `Submission will not be processed because ${result === null ? "it could not be found in the database" : "it has already been processed by the email delivery flow"}`,
-        });
-
-        return EitherAsyncUtils.done();
-      }
-
-      return handleProcessableSubmission(result);
+          return EitherAsyncUtils.done();
+        },
+      });
     })
     .ifRight(() =>
       contextualLogger.log({
@@ -49,6 +46,53 @@ export const handler = lambdaWithSqsBatchProcessingAndContextualLogger<LambdaSqs
     );
 });
 
-function handleProcessableSubmission(processableSubmission: ProcessableSubmission): EitherAsync<Error, void> {
-  return EitherAsync.fromPromise(() => Promise.resolve(Right(undefined)));
+function handleProcessableSubmission(processableSubmission: ProcessableSubmission, contextualLogger: LambdaInvocationContextualLogger): EitherAsync<Error, void> {
+  if (processableSubmission.notifyProcessed) {
+    contextualLogger.log({
+      level: "warn",
+      message: "Skipping regular processing as submission has already been sent via GC Notify (email delivery pipeline)",
+    });
+
+    return EitherAsyncUtils.done();
+  }
+
+  return retrieveFormTemplate(processableSubmission.id)
+    .chain((formTemplate) => {
+      return formTemplate.caseOf({
+        Just: (value) => {
+          if (value.isFormArchived) {
+            return markSubmissionForDeletionIn30Days();
+          }
+
+          return getAllSubmissionAttachmentScanStatuses();
+        },
+        Nothing: () => {
+          throw new Error("Form template could not be found in the database");
+        },
+      });
+    })
+    .chain(addAllSubmissionAttachmentsChecksums)
+    .chain(() => {
+      return sendToNotify();
+    });
+}
+
+function markSubmissionForDeletionIn30Days(): EitherAsync<Error, void> {
+  return EitherAsyncUtils.done();
+}
+
+function getAllSubmissionAttachmentScanStatuses(): EitherAsync<Error, void> {
+  return EitherAsyncUtils.done();
+}
+
+function addAllSubmissionAttachmentsChecksums(): EitherAsync<Error, void> {
+  return EitherAsyncUtils.done();
+}
+
+function sendToNotify(): EitherAsync<Error, void> {
+  return EitherAsyncUtils.done();
+}
+
+function sendToVault(): EitherAsync<Error, void> {
+  return EitherAsyncUtils.done();
 }
