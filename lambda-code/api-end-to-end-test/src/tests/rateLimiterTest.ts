@@ -1,5 +1,5 @@
-import { ApiClient } from "@lib/apiClient.js";
-import { pause } from "@lib/utils.js";
+import { ApiClient } from "../lib/apiClient.ts";
+import { pause } from "../lib/utils.ts";
 
 const DEFAULT_API_RATE_LIMIT_TOKEN_BUCKET_CAPACITY = 500;
 const DEFAULT_API_RATE_LIMIT_TOKEN_BUCKET_REFILL_DURATION_IN_SECONDS = 60;
