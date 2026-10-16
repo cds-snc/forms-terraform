@@ -7,7 +7,8 @@
     "target": "ESNext",
     "allowJs": true,
     "types": ["node"],
-    "rewriteRelativeImportExtensions": true
+    "rewriteRelativeImportExtensions": true,
+    "customConditions": ["development"]
   },
   "exclude": ["**/build", "**/dist"]
 }
