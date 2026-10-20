@@ -1,181 +1,84 @@
-import { Handler, SQSEvent } from "aws-lambda";
-import sendToNotify from "./lib/notifyProcessing.ts";
-import sendToVault from "./lib/vaultProcessing.ts";
-import { getTemplateInfo } from "./lib/templates.ts";
-import { getSubmission, markSubmissionForDeletionIn30days } from "./lib/dataLayer.ts";
-import { getAllSubmissionAttachmentScanStatuses } from "./lib/file_scanning.ts";
-import { addAllSubmissionAttachmentsChecksums } from "./lib/file_checksum.ts";
+import { type LambdaInvocationContextualLogger, lambdaWithSqsBatchProcessingAndContextualLogger } from "common";
+import { EitherAsync, Left, Right } from "purify-ts";
+import { type FormTemplate, retrieveFormTemplate } from "./lib/formTemplateStorage.ts";
+import { markProcessableSubmissionForDeletionIn30days, type ProcessableSubmission, retrieveProcessableSubmission } from "./lib/processableSubmissionStorage.ts";
+import { retrieveSubmissionAttachmentScanStatus } from "./lib/submissionAttachmentsStorage.ts";
 
-export const handler: Handler = async (event: SQSEvent) => {
-  const batch = event.Records.map((message) => {
-    const { messageId, body } = message;
-    return { messageId, message: JSON.parse(body) };
+type LambdaSqsRecordBody = {
+  submissionID: string;
+};
+
+// What we want to do here? Export to common package? Not use at all?
+export const EitherAsyncUtils = {
+  done: (): EitherAsync<Error, void> => EitherAsync.liftEither(Right(undefined)),
+  error: (message: string): EitherAsync<Error, void> => EitherAsync.liftEither(Left(new Error(message))),
+};
+
+export const handler = lambdaWithSqsBatchProcessingAndContextualLogger<LambdaSqsRecordBody>(({ event, contextualLogger }) => {
+  contextualLogger.addMetadata("submissionId", event.submissionID);
+
+  return retrieveProcessableSubmission(event.submissionID)
+    .chain((processableSubmission) => {
+      return processableSubmission.caseOf({
+        Just: (pSubmission) => {
+          if (pSubmission.notifyProcessed) {
+            return skipProcessing("Skipping regular processing as submission has already been sent via GC Notify (email delivery pipeline)", contextualLogger);
+          }
+
+          return retrieveFormTemplate(pSubmission.associatedFormId).chain((formTemplate) => {
+            return formTemplate.caseOf({
+              Just: (fTemplate) => {
+                if (fTemplate.isFormArchived) {
+                  return markProcessableSubmissionForDeletionIn30days(pSubmission.id).chain(() =>
+                    skipProcessing(
+                      "Skipping regular processing because the form associated with this submission has been archived. Submission has been marked for deletion (in 30 days).",
+                      contextualLogger,
+                    ),
+                  );
+                }
+
+                return handleSubmission(pSubmission, fTemplate, contextualLogger);
+              },
+              Nothing: () => EitherAsyncUtils.error("Form template could not be found in the database"),
+            });
+          });
+        },
+        Nothing: () => skipProcessing("Skipping regular processing as submission could not be found in the database", contextualLogger),
+      });
+    })
+    .ifRight(() =>
+      contextualLogger.log({
+        level: "info",
+        message: "Submission processing completed",
+      }),
+    )
+    .ifLeft((error) =>
+      contextualLogger.log({
+        level: "error",
+        message: "Submission processing failed",
+        error: error as Error,
+        severityLevel: "2",
+        // sendReceipt: sendReceipt ?? "n/a",
+      }),
+    );
+});
+
+function skipProcessing(reason: string, contextualLogger: LambdaInvocationContextualLogger): EitherAsync<Error, void> {
+  contextualLogger.log({
+    level: "warn",
+    message: reason,
   });
 
-  // We can use Promise.all because messageProcessor will never throw and always return a value
-  const results = await Promise.all(batch.map((item) => messageProcessor(item)));
+  return EitherAsyncUtils.done();
+}
 
-  const batchItemFailures = results
-    .filter((result) => !result.status)
-    .map((result) => ({ itemIdentifier: result.messageId }));
+function handleSubmission(processableSubmission: ProcessableSubmission, formTemplate: FormTemplate, contextualLogger: LambdaInvocationContextualLogger): EitherAsync<Error, void> {
+  return EitherAsyncUtils.done();
+}
 
-  return { batchItemFailures };
-};
-
-const messageProcessor = async ({
-  messageId,
-  message,
-}: {
-  messageId: string;
-  message: { submissionID: string };
-}) => {
-  let sendReceipt = null;
-
-  try {
-    const messageData = await getSubmission(message);
-    const submissionID = messageData.Item?.SubmissionID ?? message.submissionID;
-    const formID =
-      // dynamodb client could possibly return as a number due to early form identifiers being numeric
-      typeof messageData.Item?.FormID === "string"
-        ? messageData.Item?.FormID
-        : (messageData.Item?.FormID.toString() ?? null);
-    const formSubmission = messageData.Item?.FormData
-      ? JSON.parse(messageData.Item?.FormData)
-      : null;
-    const language = messageData.Item?.FormSubmissionLanguage ?? "en";
-    const securityAttribute = String(messageData.Item?.SecurityAttribute ?? "Protected A");
-    const version = Number(messageData.Item?.Version ?? 1);
-    const createdAt = messageData.Item?.CreatedAt ?? null;
-    const notifyProcessed = messageData.Item?.NotifyProcessed ?? false;
-    sendReceipt = messageData.Item?.SendReceipt ?? null;
-    const formSubmissionHash = messageData.Item?.FormSubmissionHash ?? null;
-    const fileKeys = messageData.Item?.FileKeys ? JSON.parse(messageData.Item?.FileKeys) : [];
-    const notificationId: string | undefined = messageData.Item?.NotificationID;
-
-    // Check if form data exists or was already processed.
-    if (formSubmission === null || notifyProcessed) {
-      // Ack and remove message from queue if it doesn't exist in the DB
-      // Do not throw an error so it does not retry again
-      console.warn(
-        JSON.stringify({
-          level: "warn",
-          status: "success",
-          submissionId: submissionID,
-          sendReceipt: sendReceipt,
-          msg: "Submission will not be processed because it could not be found in the database or has already been processed.",
-        })
-      );
-
-      return { status: true, messageId };
-    }
-
-    if (formID === null || typeof formID === "undefined") {
-      throw new Error(`Form identifier is null or undefined.`);
-    }
-
-    const templateInfo = await getTemplateInfo(formID);
-
-    if (templateInfo === null) {
-      throw new Error(`Form ${formID} does not exist in the database.`);
-    }
-
-    if (templateInfo.isFormArchived) {
-      let didSucceedMarkingSubmissionAsProcessed = true;
-
-      try {
-        await markSubmissionForDeletionIn30days(submissionID);
-      } catch (error) {
-        didSucceedMarkingSubmissionAsProcessed = false;
-      }
-
-      // Ack and remove message from queue if the form exist but has been archived
-      console.warn(
-        JSON.stringify({
-          level: "warn",
-          status: "success",
-          submissionId: submissionID,
-          sendReceipt: sendReceipt,
-          msg: `Submission will not be processed because the associated form ${formID} has been archived. Submission ${didSucceedMarkingSubmissionAsProcessed ? "has been" : "failed to be"} marked for deletion in 30 days.`,
-        })
-      );
-
-      return { status: true, messageId };
-    }
-
-    // Add form config back to submission to be processed
-    formSubmission.form = templateInfo.formConfig;
-    // add delivery option to formsubmission
-    formSubmission.deliveryOption = templateInfo.deliveryOption;
-
-    const submissionAttachmentsWithScanStatuses = await getAllSubmissionAttachmentScanStatuses(
-      fileKeys
-    ).catch((error) => {
-      // Not creating a message to slack and only writing to console.  The next error thrown in the chain will cause a Slack message.
-      console.warn(error.message);
-      throw new Error(
-        `File scanning for submission ID ${submissionID} is not completed or we failed to retrieve the scan status`
-      );
-    });
-
-    const submissionAttachmentsWithInformation = await addAllSubmissionAttachmentsChecksums(
-      submissionAttachmentsWithScanStatuses
-    ).catch((error) => {
-      // Not creating a message to slack and only writing to console.  The next error thrown in the chain will cause a Slack message.
-      console.warn(error.message);
-      throw new Error(`Failed to retrieve checksum information for submission ID ${submissionID}`);
-    });
-
-    /*
-     Process submission to vault or Notify
-     Form submission object contains:
-       formID - ID of form,
-       language - form submission language "fr" or "en",
-       responses - form responses: {formID, securityAttribute, questionID: answer}
-       form - Complete Form Template
-       deliveryOption - (optional) Will be present if user wants to receive form responses by email (`{ emailAddress: string; emailSubjectEn?: string; emailSubjectFr?: string }`)
-    */
-    if (formSubmission.deliveryOption) {
-      await sendToNotify(
-        submissionID,
-        sendReceipt,
-        formSubmission,
-        submissionAttachmentsWithInformation,
-        language,
-        createdAt
-      );
-    } else {
-      await sendToVault(
-        submissionID,
-        sendReceipt,
-        formSubmission,
-        submissionAttachmentsWithInformation,
-        formID,
-        language,
-        createdAt,
-        securityAttribute,
-        version,
-        formSubmissionHash,
-        notificationId
-      );
-    }
-
-    return { status: true, messageId };
-  } catch (error) {
-    console.warn(
-      JSON.stringify({
-        level: "warn",
-        severity: "2",
-        status: "failed",
-        submissionId: message.submissionID ?? "n/a",
-        sendReceipt: sendReceipt ?? "n/a",
-        msg: `Failed to process submission ID ${message.submissionID ?? "n/a"}`,
-        error: (error as Error).message,
-      })
-    );
-
-    // Log full error to console, it will not be sent to Slack
-    console.warn(error);
-
-    return { status: false, messageId };
-  }
-};
+/**
+ *
+ * should look like this in Vault
+ *
+ * [{"id":"d2d131bc-17bf-4e05-9296-234f140fd417","name":"Screenshot 2026-09-28 at 11.09.16 AM.png","path":"form_attachments/2026-10-05/5c59f2e3-5e72-4793-af62-cb59304331a3/d2d131bc-17bf-4e05-9296-234f140fd417/Screenshot 2026-09-28 at 11.09.16 AM.png","scanStatus":"NO_THREATS_FOUND","md5":"f52d6dc56c21e2bad35dc7d8c7342cb6"}]
+ */

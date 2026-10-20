@@ -39,6 +39,21 @@ describe("ContextualLogFormatter", () => {
         aws: {
           awsRequestId: "awsRequestId",
           xRayTraceId: "xRayTraceId",
+        },
+      },
+    });
+  });
+
+  it("includes lambdaColdStart in the AWS context based on isFirstInvocation", () => {
+    const formatter = new LambdaInvocationContextualLogFormatter();
+
+    const result = formatter.formatAttributes(defaultAttributes, {
+      isFirstInvocation: true,
+    });
+
+    expect(result.getAttributes()).toMatchObject({
+      context: {
+        aws: {
           lambdaColdStart: true,
         },
       },

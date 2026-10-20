@@ -12,6 +12,7 @@
     "lint": "biome check --error-on-warnings --diagnostic-level=warn ."
   },
   "dependencies": {
+    "@aws-lambda-powertools/batch": "^2.35.0",
     "@aws-lambda-powertools/logger": "^2.35.0",
     "purify-ts": "catalog:"
   }
