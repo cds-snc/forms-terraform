@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "scripts": {
     "build": "pnpm --recursive exec tsc -p tsconfig.json",
     "test": "pnpm --recursive exec vitest run",
@@ -8,6 +9,7 @@
     "@biomejs/biome": "^2.5.9",
     "@types/aws-lambda": "^8.10.162",
     "@types/node": "^26.2.0",
+    "aws-sdk-client-mock": "^4.1.0",
     "typescript": "^7.0.2",
     "vitest": "^4.1.11"
   },

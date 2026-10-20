@@ -9,8 +9,5 @@
   "dependencies": {
     "@aws-sdk/client-ssm": "^3.1113.0",
     "axios": "catalog:"
-  },
-  "devDependencies": {
-    "aws-sdk-client-mock": "^4.1.0"
   }
 }
