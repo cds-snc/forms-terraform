@@ -6,6 +6,7 @@ resource "aws_lambda_function" "notification" {
   role          = aws_iam_role.lambda.arn
   timeout       = 60
   memory_size   = 256
+  architectures = ["arm64"]
 
   dynamic "vpc_config" {
     for_each = local.vpc_config

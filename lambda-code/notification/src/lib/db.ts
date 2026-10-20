@@ -1,6 +1,6 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { GetCommand } from "@aws-sdk/lib-dynamodb";
-import { Notification } from "@lib/types.js";
+import { Notification } from "./types.ts";
 
 const dynamodbClient = new DynamoDBClient({
   region: process.env.REGION ?? "ca-central-1",
