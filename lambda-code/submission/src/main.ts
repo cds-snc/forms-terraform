@@ -72,7 +72,7 @@ function handleSubmissionWithAttachments(
   contextualLogger.log({ level: "info", message: `Attachment(s) detected:\n${attachments.map((a) => `- ID: ${a.id} / size = ${a.size} bytes`).join("\n")}` });
 
   if (submissionPayload.fileChecksums === undefined) {
-    throw new Error("Attachments have been detected in the responses but no content MD5 checksums were provided");
+    throw new Error("Attachments have been detected in the responses but no content MD5 checksums were provided"); // to change to use EitherAsyncUtils.error
   }
 
   return EitherAsync

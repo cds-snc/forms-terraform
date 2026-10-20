@@ -1,4 +1,4 @@
-import { GetCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, UpdateCommand, type UpdateCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { type DynamoDbProcessableSubmission, DynamoDbProcessableSubmissionProjectionExpression } from "common";
 import { EitherAsync, Just, type Maybe, Nothing } from "purify-ts";
 import { dynamodbClient } from "./awsServicesConnector.ts";
@@ -76,5 +76,22 @@ export function retrieveProcessableSubmission(id: string): EitherAsync<Error, Ma
         notifyProcessed: retrievedSubmission.NotifyProcessed ?? false,
       } satisfies ProcessableSubmission);
     })
-    .mapLeft((error) => new Error("Failed to retrieve processable submission from reliability storage", { cause: error }));
+    .mapLeft((error) => new Error("Failed to retrieve processable submission", { cause: error }));
+}
+
+export function markProcessableSubmissionForDeletionIn30days(id: string): EitherAsync<Error, void> {
+  return EitherAsync<Error, UpdateCommandOutput>(() =>
+    dynamodbClient.send(
+      new UpdateCommand({
+        TableName: process.env.DYNAMODB_RELIABILITY_QUEUE_TABLE_NAME,
+        Key: { SubmissionID: id },
+        UpdateExpression: "SET #ttl = :ttl",
+        ExpressionAttributeNames: { "#ttl": "TTL" },
+        ExpressionAttributeValues: { ":ttl": Math.floor(Date.now() / 1000) + 2592000 },
+        ReturnValues: "NONE",
+      }),
+    ),
+  )
+    .void()
+    .mapLeft((error) => new Error("Failed to mark processable submission for deletion", { cause: error }));
 }
