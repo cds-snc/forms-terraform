@@ -36,7 +36,7 @@ export async function getTemplateInfo(formID: string): Promise<TemplateInfo | nu
     }
 
     return {
-      formConfig: template.jsonConfig as FormProperties,
+      formConfig: template.jsonConfig as unknown as FormProperties,
       ...(template.deliveryOption && { deliveryOption: template.deliveryOption }),
       isFormArchived: template.ttl !== null ? true : false,
     };

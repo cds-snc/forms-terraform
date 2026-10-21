@@ -36,7 +36,7 @@ export async function getTemplateInfo(formID: string): Promise<TemplateInfo> {
       throw new Error(`Could not find any template with form identifier: ${formID}.`);
     }
 
-    const formProperties = template.jsonConfig as FormProperties;
+    const formProperties = template.jsonConfig as unknown as FormProperties;
 
     // Note we use || instead of ?? to allow for empty strings
     const formName = template.name || `${formProperties.titleEn} - ${formProperties.titleFr}`;
