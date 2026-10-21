@@ -61,7 +61,17 @@ template_to_user_df = glueContext.create_dynamic_frame.from_options(
         "dbtable": "TemplateUserView",
         "useConnectionProperties": "true",
     },
-    transformation_ctx="api_service_account_df"
+    transformation_ctx="template_user_view_df"
+).toDF()
+
+template_versions_df = glueContext.create_dynamic_frame.from_options(
+    connection_type="postgresql",
+    connection_options={
+        "connectionName": args['rds_connection_name'],
+        "dbtable": "TemplateVersion",
+        "useConnectionProperties": "true",
+    },
+    transformation_ctx="template_versions_df"
 ).toDF()
 
 # - Done the User table load...
@@ -290,6 +300,7 @@ user_df = user_df.join(publish_priv_users, user_df.id == publish_priv_users.user
 # ------- Step 5 -------
 # drop the jsonConfig and parsed_json columns
 redacted_df = redacted_df.drop("jsonConfig", "parsed_json")
+template_versions_df = template_versions_df.drop("jsonConfig")
 
 logger.info("Produced Redacted Data Frame")
 
@@ -330,6 +341,14 @@ templateToUserDataSink = glueContext.write_dynamic_frame.from_options(
     connection_options = {"path": f"s3://{args['rds_bucket']}/platform/gc-forms/processed-data/templateToUser"},
     format = "parquet",
     transformation_ctx = "templateToUserDataSink"
+)
+
+templateVersionsDataSink = glueContext.write_dynamic_frame.from_options(
+    frame = DynamicFrame.fromDF(template_versions_df, glueContext, "template_versions_df"),
+    connection_type = "s3",
+    connection_options = {"path": f"s3://{args['rds_bucket']}/platform/gc-forms/processed-data/templateVersions"},
+    format = "parquet",
+    transformation_ctx = "templateVersionsDataSink"
 )
 
 logger.info("Data written to S3")
