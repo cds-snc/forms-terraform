@@ -157,6 +157,8 @@ redacted_df = redacted_df.withColumn("closingDate", date_format(from_unixtime(co
 
 # Add a timestamp column for Athena to use as a partition.
 redacted_df = redacted_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
+template_versions_df = template_versions_df.withColumn("timestamp", date_format(from_unixtime(current_stamp.cast("bigint")), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS"))
+
 
 # ------- Step 4 -------
 # Parse the jsonConfig column to extract the values
