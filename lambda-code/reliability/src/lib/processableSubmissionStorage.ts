@@ -1,4 +1,4 @@
-import { GetCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, UpdateCommand, type UpdateCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { type DynamoDbProcessableSubmission, DynamoDbProcessableSubmissionProjectionExpression } from "common";
 import { EitherAsync, Just, type Maybe, Nothing } from "purify-ts";
 import { dynamodbClient } from "./awsServicesConnector.ts";
@@ -6,48 +6,16 @@ import { dynamodbClient } from "./awsServicesConnector.ts";
 export type ProcessableSubmission = {
   id: string;
   associatedFormId: string;
-  responses: Record<string, unknown>;
+  createdAt: number;
   language: string;
-  // securityAttribute: string;
-  // version: number;
-  // createdAt: number;
-  notifyProcessed: boolean;
-  // responsesHash: string;
-  // fileKeys: string[];
-  // notificationId?: string;
+  securityAttribute: string;
+  version: number;
+  responsesAsJson: string;
+  responsesHash: string;
+  attachmentPathsAsJson?: string;
+  notificationId?: string;
+  hasBeenSuccessfullyProcessedByEmailPipeline: boolean;
 };
-
-// SubmissionID: string;
-//   FormID: string;
-//   SendReceipt: string;
-//   CreatedAt: number;
-//   FormSubmissionLanguage: string;
-//   FormData: string;
-//   FormSubmissionHash: string;
-//   SecurityAttribute: string;
-//   Version: number;
-//   HasFileKeys: number;
-//   FileKeys?: string;
-//   NotificationID?: string;
-
-// const submissionID = messageData.Item?.SubmissionID ?? message.submissionID;
-//     const formID =
-//       // dynamodb client could possibly return as a number due to early form identifiers being numeric
-//       typeof messageData.Item?.FormID === "string"
-//         ? messageData.Item?.FormID
-//         : (messageData.Item?.FormID.toString() ?? null);
-//     const formSubmission = messageData.Item?.FormData
-//       ? JSON.parse(messageData.Item?.FormData)
-//       : null;
-//     const language = messageData.Item?.FormSubmissionLanguage ?? "en";
-//     const securityAttribute = String(messageData.Item?.SecurityAttribute ?? "Protected A");
-//     const version = Number(messageData.Item?.Version ?? 1);
-//     const createdAt = messageData.Item?.CreatedAt ?? null;
-//     const notifyProcessed = messageData.Item?.NotifyProcessed ?? false;
-//     sendReceipt = messageData.Item?.SendReceipt ?? null;
-//     const formSubmissionHash = messageData.Item?.FormSubmissionHash ?? null;
-//     const fileKeys = messageData.Item?.FileKeys ? JSON.parse(messageData.Item?.FileKeys) : [];
-//     const notificationId: string | undefined = messageData.Item?.NotificationID;
 
 export function retrieveProcessableSubmission(id: string): EitherAsync<Error, Maybe<ProcessableSubmission>> {
   return EitherAsync(() =>
@@ -71,10 +39,33 @@ export function retrieveProcessableSubmission(id: string): EitherAsync<Error, Ma
       return Just({
         id,
         associatedFormId: retrievedSubmission.FormID,
-        responses: JSON.parse(retrievedSubmission.FormData),
+        createdAt: retrievedSubmission.CreatedAt,
         language: retrievedSubmission.FormSubmissionLanguage,
-        notifyProcessed: retrievedSubmission.NotifyProcessed ?? false,
+        securityAttribute: retrievedSubmission.SecurityAttribute,
+        version: retrievedSubmission.Version,
+        responsesAsJson: retrievedSubmission.FormData,
+        responsesHash: retrievedSubmission.FormSubmissionHash,
+        attachmentPathsAsJson: retrievedSubmission.FileKeys,
+        notificationId: retrievedSubmission.NotificationID,
+        hasBeenSuccessfullyProcessedByEmailPipeline: retrievedSubmission.NotifyProcessed ?? false,
       } satisfies ProcessableSubmission);
     })
-    .mapLeft((error) => new Error("Failed to retrieve processable submission from reliability storage", { cause: error }));
+    .mapLeft((error) => new Error("Failed to retrieve processable submission", { cause: error }));
+}
+
+export function markProcessableSubmissionForDeletionIn30days(id: string): EitherAsync<Error, void> {
+  return EitherAsync<Error, UpdateCommandOutput>(() =>
+    dynamodbClient.send(
+      new UpdateCommand({
+        TableName: process.env.DYNAMODB_RELIABILITY_QUEUE_TABLE_NAME,
+        Key: { SubmissionID: id },
+        UpdateExpression: "SET #ttl = :ttl",
+        ExpressionAttributeNames: { "#ttl": "TTL" },
+        ExpressionAttributeValues: { ":ttl": Math.floor(Date.now() / 1000) + 2592000 },
+        ReturnValues: "NONE",
+      }),
+    ),
+  )
+    .void()
+    .mapLeft((error) => new Error("Failed to mark processable submission for deletion", { cause: error }));
 }
