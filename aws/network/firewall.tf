@@ -50,16 +50,21 @@ resource "aws_networkfirewall_firewall_policy" "forms" {
 
 resource "aws_networkfirewall_rule_group" "suricata_rules" {
   #checkov:skip=CKV_AWS_345: AWS Managed Key is enough encryption for this use case
-  capacity    = 500
   name        = "GCForms"
-  description = "Only allow web traffic and deny everything else"
-  type        = "STATEFUL"
+  description = "Stateful Suricata rules controlling inbound and outbound network traffic based on allowed domains, protocols, and traffic types."
+
+  type     = "STATEFUL"
+  capacity = 500
   rule_group {
     stateful_rule_options {
       rule_order = "STRICT_ORDER"
     }
+
     rules_source {
-      rules_string = file("./firewall_rules/suricata.rules")
+      rules_string = templatefile("./firewall_rules/suricata.rules", {
+        sso_domain      = var.env == "production" ? "session.canada.ca" : "auth.cdssandbox.xyz"
+        gc_forms_domain = var.domains[0]
+      })
     }
   }
 }
