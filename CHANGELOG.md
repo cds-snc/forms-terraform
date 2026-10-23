@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.48.9](https://github.com/cds-snc/forms-terraform/compare/v3.48.8...v3.48.9) (2026-10-22)
+
+
+### Miscellaneous Chores
+
+* make ReleasePlease include commit "add template versions to superset etl" ([#1503](https://github.com/cds-snc/forms-terraform/issues/1503)) ([fb7c994](https://github.com/cds-snc/forms-terraform/commit/fb7c994c09e6e98e72850f27d3559484064b9fa0))
+
 ## [3.48.8](https://github.com/cds-snc/forms-terraform/compare/v3.48.7...v3.48.8) (2026-10-21)
 
 
