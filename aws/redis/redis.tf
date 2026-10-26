@@ -9,7 +9,7 @@ resource "aws_elasticache_replication_group" "redis" {
   automatic_failover_enabled = var.env != "development"
   replication_group_id       = "gcforms-redis-rep-group"
   description                = "Redis cluster for GCForms"
-  node_type                  = "cache.t2.micro"
+  node_type                  = "cache.t3.micro"
   num_cache_clusters         = var.env == "development" ? 1 : 2
   engine_version             = "7.1"
   parameter_group_name       = "default.redis7"
