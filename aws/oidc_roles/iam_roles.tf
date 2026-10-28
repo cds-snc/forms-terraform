@@ -1,6 +1,6 @@
 locals {
-  forms_api_release                   = "forms-api-release"
-  platform_forms_client_pr_review_env = "platform-forms-client-pr-review-env"
+  platform_forms_client_post_merge_actions = "platform-forms-client-post-merge-actions"
+  platform_forms_client_pr_review_env      = "platform-forms-client-pr-review-env"
 }
 
 # 
@@ -23,9 +23,9 @@ module "github_workflow_roles" {
 
   roles = [
     {
-      name      = local.forms_api_release
-      repo_name = "forms-api"
-      claim     = "ref:refs/tags/v*"
+      name      = local.platform_forms_client_post_merge_actions
+      repo_name = "platform-forms-client"
+      claim     = "ref:refs/heads/main"
     },
     {
       name      = local.platform_forms_client_pr_review_env
@@ -42,10 +42,10 @@ module "github_workflow_roles" {
 # attachments are scoped to only the environments that require the role.
 #
 
-resource "aws_iam_role_policy_attachment" "forms_api_release" {
-  count      = var.env == "production" ? 1 : 0
-  role       = local.forms_api_release
-  policy_arn = aws_iam_policy.forms_api_release[0].arn
+resource "aws_iam_role_policy_attachment" "platform_forms_client_post_merge_actions" {
+  count      = var.env == "staging" ? 1 : 0
+  role       = local.platform_forms_client_post_merge_actions
+  policy_arn = aws_iam_policy.platform_forms_client_post_merge_actions[0].arn
 
   depends_on = [module.github_workflow_roles]
 }

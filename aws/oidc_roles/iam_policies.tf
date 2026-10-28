@@ -116,46 +116,32 @@ data "aws_iam_policy_document" "platform_forms_client_pr_review_env" {
 #
 # Push and manage ECR images
 #
-resource "aws_iam_policy" "forms_api_release" {
-  count  = var.env == "production" ? 1 : 0
-  name   = local.forms_api_release
+resource "aws_iam_policy" "platform_forms_client_post_merge_actions" {
+  count = var.env == "staging" ? 1 : 0
+
+  name   = local.platform_forms_client_post_merge_actions
   path   = "/"
-  policy = data.aws_iam_policy_document.ecr_push_image[0].json
+  policy = data.aws_iam_policy_document.platform_forms_client_post_merge_actions[0].json
 
   tags = var.core_tags
 }
 
-data "aws_iam_policy_document" "ecr_push_image" {
-  count = var.env == "production" ? 1 : 0
+data "aws_iam_policy_document" "platform_forms_client_post_merge_actions" {
+  count = var.env == "staging" ? 1 : 0
 
   statement {
+    sid    = "PullImagesFromECRPullThroughCache"
     effect = "Allow"
+
     actions = [
+      "ecr:GetAuthorizationToken",
       "ecr:BatchCheckLayerAvailability",
-      "ecr:BatchDeleteImage",
       "ecr:BatchGetImage",
-      "ecr:CompleteLayerUpload",
-      "ecr:DescribeImages",
-      "ecr:DescribeRepositories",
       "ecr:GetDownloadUrlForLayer",
-      "ecr:GetRepositoryPolicy",
-      "ecr:InitiateLayerUpload",
-      "ecr:ListImages",
-      "ecr:PutImage",
-      "ecr:SetRepositoryPolicy",
-      "ecr:UploadLayerPart"
+      "ecr:BatchImportUpstreamImage",
+      "ecr:CreateRepository"
     ]
-    resources = [
-      "arn:aws:ecr:${var.region}:${var.account_id}:repository/form_viewer_production",
-      "arn:aws:ecr:${var.region}:${var.account_id}:repository/forms/api"
-    ]
-  }
 
-  statement {
-    effect = "Allow"
-    actions = [
-      "ecr:GetAuthorizationToken"
-    ]
     resources = ["*"]
   }
 }
