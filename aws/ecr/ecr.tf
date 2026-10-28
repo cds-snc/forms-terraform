@@ -164,3 +164,9 @@ data "aws_iam_policy_document" "ecr_cross_account_read" {
     }
   }
 }
+
+
+resource "aws_ecr_pull_through_cache_rule" "cache" {
+  ecr_repository_prefix = "ecr-public"
+  upstream_registry_url = "public.ecr.aws"
+}
