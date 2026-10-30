@@ -386,6 +386,7 @@ resource "aws_wafv2_regex_pattern_set" "valid_idp_uri_paths" {
   description = "Regex to match the IDP valid urls"
 
   regular_expression {
-    regex_string = "^\\/(oauth\\/v2\\/token|debug\\/healthz|\\.well-known\\/openid-configuration)$"
+    // Only apply restrict access in Production to avoid blocking local app development that requires access to more IDP API endpoints
+    regex_string = var.env == "production" ? "^\\/(oauth\\/v2\\/token|debug\\/healthz|\\.well-known\\/openid-configuration)$" : "^\\/.*$"
   }
 }
