@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.48.10](https://github.com/cds-snc/forms-terraform/compare/v3.48.9...v3.48.10) (2026-10-30)
+
+
+### Miscellaneous Chores
+
+* add a pull through cache to private ecr ([#1512](https://github.com/cds-snc/forms-terraform/issues/1512)) ([36ea36f](https://github.com/cds-snc/forms-terraform/commit/36ea36f17985f736e488a032d312c81fdf00e343))
+* add new OIDC role for post commit github actions in forms repo ([#1513](https://github.com/cds-snc/forms-terraform/issues/1513)) ([3b80d44](https://github.com/cds-snc/forms-terraform/commit/3b80d44df69ccaa4d56fbae1ada8be0a0d29c197))
+* change ElastiCache instance from T2 with T3 ([#1510](https://github.com/cds-snc/forms-terraform/issues/1510)) ([c6a5440](https://github.com/cds-snc/forms-terraform/commit/c6a54406e88b7bd547189c8affc8eb5b9e74b175))
+* **deps:** lock file maintenance ([#1508](https://github.com/cds-snc/forms-terraform/issues/1508)) ([b8bd378](https://github.com/cds-snc/forms-terraform/commit/b8bd378f0b0b321e13574842a758518b350b0153))
+* **deps:** update all non-major github action dependencies ([#1505](https://github.com/cds-snc/forms-terraform/issues/1505)) ([ee006cc](https://github.com/cds-snc/forms-terraform/commit/ee006cc5daae5347ee610c10ce5acb6d48588ce9))
+* only restrict IDP API access in Production ([#1514](https://github.com/cds-snc/forms-terraform/issues/1514)) ([7c2938e](https://github.com/cds-snc/forms-terraform/commit/7c2938e55532a0d2f3154b4fd275ad9979db6062))
+* refine VPC firewall Suricata rules ([#1487](https://github.com/cds-snc/forms-terraform/issues/1487)) ([77a62a7](https://github.com/cds-snc/forms-terraform/commit/77a62a7ebff5e628f9fd1e34e7d7804074e33846))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1511](https://github.com/cds-snc/forms-terraform/issues/1511)) ([69882b6](https://github.com/cds-snc/forms-terraform/commit/69882b6bcdb894e61b660b42a21b027984587834))
+
 ## [3.48.9](https://github.com/cds-snc/forms-terraform/compare/v3.48.8...v3.48.9) (2026-10-22)
 
 
