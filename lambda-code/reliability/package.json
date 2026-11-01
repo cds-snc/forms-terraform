@@ -16,7 +16,7 @@
     "@aws-sdk/lib-dynamodb": "^3.902.0",
     "@gcforms/connectors": "^2.2.20",
     "@gcforms/core": "^2.2.9",
-    "@gcforms/database": "1.1.7",
+    "@gcforms/database": "1.2.0",
     "@gcforms/types": "^1.0.31",
     "json2md": "^2.0.3",
     "magic-bytes.js": "^1.12.1",
@@ -29,5 +29,5 @@
     "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3"
   },
-  "packageManager": "yarn@4.17.0"
+  "packageManager": "yarn@4.18.1"
 }
