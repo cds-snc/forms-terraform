@@ -2,7 +2,8 @@
 # Create and Manage PR review environment resources
 #
 resource "aws_iam_policy" "platform_forms_client_pr_review_env" {
-  count  = var.env == "staging" ? 1 : 0
+  count = var.env == "staging" ? 1 : 0
+
   name   = local.platform_forms_client_pr_review_env
   path   = "/"
   policy = data.aws_iam_policy_document.platform_forms_client_pr_review_env[0].json
