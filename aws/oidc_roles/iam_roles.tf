@@ -19,6 +19,8 @@ data "aws_iam_policy" "admin" {
 # 
 
 module "github_workflow_roles" {
+  count = var.env == "staging" ? 1 : 0
+
   source = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=94729229cfcb754146c82a566227e55df6612228" # v11.3.5
 
   roles = [
@@ -43,7 +45,8 @@ module "github_workflow_roles" {
 #
 
 resource "aws_iam_role_policy_attachment" "platform_forms_client_post_merge_actions" {
-  count      = var.env == "staging" ? 1 : 0
+  count = var.env == "staging" ? 1 : 0
+
   role       = local.platform_forms_client_post_merge_actions
   policy_arn = aws_iam_policy.platform_forms_client_post_merge_actions[0].arn
 
@@ -51,7 +54,8 @@ resource "aws_iam_role_policy_attachment" "platform_forms_client_post_merge_acti
 }
 
 resource "aws_iam_role_policy_attachment" "platform_forms_client_pr_review_env" {
-  count      = var.env == "staging" ? 1 : 0
+  count = var.env == "staging" ? 1 : 0
+
   role       = local.platform_forms_client_pr_review_env
   policy_arn = aws_iam_policy.platform_forms_client_pr_review_env[0].arn
 
