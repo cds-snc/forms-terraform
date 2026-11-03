@@ -1,6 +1,6 @@
 locals {
   rds_engine         = "aurora-postgresql"
-  rds_engine_version = "17.7"
+  rds_engine_version = "17.9"
 }
 
 resource "random_string" "random" {
