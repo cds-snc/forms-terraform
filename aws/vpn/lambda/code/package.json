@@ -8,7 +8,7 @@
     "prebuild": "rm -rf dist",
     "build": "tsc --project tsconfig.json",
     "build:dev": "tsc --project tsconfig.json --watch",
-    "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cd ./dist && yarn install --production",
+    "postbuild": "cp package.json dist/package.json && cp yarn.lock dist/yarn.lock && cd ./dist && yarn workspaces focus --all --production",
     "start": "node dist/main.js"
   },
   "devDependencies": {
@@ -19,5 +19,5 @@
   "dependencies": {
     "@aws-sdk/client-ec2": "^3.750.0"
   },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  "packageManager": "yarn@4.18.1"
 }
