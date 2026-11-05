@@ -30,7 +30,8 @@
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "space"
+    "indentStyle": "space",
+    "lineWidth": 200
   },
   "assist": {
     "enabled": true,

@@ -6,7 +6,7 @@
     "lint": "biome check --error-on-warnings --diagnostic-level=warn ."
   },
   "dependencies": {
-    "@aws-crypto/client-node": "^5.0.2",
+    "@aws-crypto/client-node": "catalog:",
     "@gcforms/connectors": "2.2.21"
   }
 }

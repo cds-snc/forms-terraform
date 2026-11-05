@@ -7,6 +7,9 @@ settings:
 
 catalogs:
   default:
+    '@aws-crypto/client-node':
+      specifier: ^5.0.2
+      version: 5.0.2
     '@aws-sdk/client-dynamodb':
       specifier: ^3.1113.0
       version: 3.1117.0
@@ -19,9 +22,15 @@ catalogs:
     '@aws-sdk/client-sqs':
       specifier: ^3.1113.0
       version: 3.1117.0
+    '@aws-sdk/client-ssm':
+      specifier: ^3.1113.0
+      version: 3.1117.0
     '@aws-sdk/lib-dynamodb':
       specifier: ^3.1113.0
       version: 3.1117.0
+    '@biomejs/biome':
+      specifier: ^2.5.9
+      version: 2.5.10
     '@gcforms/connectors':
       specifier: ^3.0.1
       version: 3.0.1
@@ -34,28 +43,52 @@ catalogs:
     '@gcforms/types':
       specifier: ^1.0.38
       version: 1.0.38
+    '@types/aws-lambda':
+      specifier: ^8.10.162
+      version: 8.10.162
+    '@types/node':
+      specifier: ^26.2.0
+      version: 26.3.0
+    aws-sdk-client-mock:
+      specifier: ^4.1.0
+      version: 4.1.0
     axios:
       specifier: ^1.19.0
       version: 1.19.0
+    jose:
+      specifier: ^6.2.9
+      version: 6.2.10
+    redis:
+      specifier: ^6.2.1
+      version: 6.2.1
+    typescript:
+      specifier: ^7.0.2
+      version: 7.0.2
+    vitest:
+      specifier: ^4.1.11
+      version: 4.1.11
 
 importers:
 
   .:
     devDependencies:
       '@biomejs/biome':
-        specifier: ^2.5.9
+        specifier: 'catalog:'
         version: 2.5.10
       '@types/aws-lambda':
-        specifier: ^8.10.162
+        specifier: 'catalog:'
         version: 8.10.162
       '@types/node':
-        specifier: ^26.2.0
+        specifier: 'catalog:'
         version: 26.3.0
+      aws-sdk-client-mock:
+        specifier: 'catalog:'
+        version: 4.1.0
       typescript:
-        specifier: ^7.0.2
+        specifier: 'catalog:'
         version: 7.0.2
       vitest:
-        specifier: ^4.1.11
+        specifier: 'catalog:'
         version: 4.1.11(@types/node@26.3.0)(vite@8.2.2(@types/node@26.3.0)(jiti@2.7.0))
 
   lambda-code/api-end-to-end-test:
@@ -73,7 +106,7 @@ importers:
         specifier: 'catalog:'
         version: 1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       jose:
-        specifier: ^6.2.9
+        specifier: 'catalog:'
         version: 6.2.10
 
   lambda-code/audit-logs:
@@ -100,7 +133,7 @@ importers:
   lambda-code/cognito-email-sender:
     dependencies:
       '@aws-crypto/client-node':
-        specifier: ^5.0.2
+        specifier: 'catalog:'
         version: 5.0.2
       '@gcforms/connectors':
         specifier: 2.2.21
@@ -159,7 +192,7 @@ importers:
         specifier: 'catalog:'
         version: 1.0.38
       redis:
-        specifier: ^6.2.1
+        specifier: 'catalog:'
         version: 6.2.1
 
   lambda-code/notification:
@@ -177,15 +210,11 @@ importers:
   lambda-code/notify-slack:
     dependencies:
       '@aws-sdk/client-ssm':
-        specifier: ^3.1113.0
+        specifier: 'catalog:'
         version: 3.1117.0
       axios:
         specifier: 'catalog:'
         version: 1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
-    devDependencies:
-      aws-sdk-client-mock:
-        specifier: ^4.1.0
-        version: 4.1.0
 
   lambda-code/reliability:
     dependencies:

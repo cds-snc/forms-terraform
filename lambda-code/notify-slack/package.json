@@ -7,10 +7,7 @@
     "lint": "biome check --error-on-warnings --diagnostic-level=warn ."
   },
   "dependencies": {
-    "@aws-sdk/client-ssm": "^3.1113.0",
+    "@aws-sdk/client-ssm": "catalog:",
     "axios": "catalog:"
-  },
-  "devDependencies": {
-    "aws-sdk-client-mock": "^4.1.0"
   }
 }
