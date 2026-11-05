@@ -12,6 +12,6 @@
     "@gcforms/connectors": "catalog:",
     "@gcforms/database": "catalog:",
     "@gcforms/types": "catalog:",
-    "redis": "^6.2.1"
+    "redis": "catalog:"
   }
 }
