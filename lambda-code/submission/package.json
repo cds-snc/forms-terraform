@@ -11,7 +11,10 @@
     "@aws-sdk/client-s3": "catalog:",
     "@aws-sdk/client-sqs": "catalog:",
     "@aws-sdk/lib-dynamodb": "catalog:",
-    "@aws-sdk/s3-presigned-post": "^3.1113.0",
-    "uuid": "^14.0.2"
+    "@aws-sdk/s3-presigned-post": "catalog:",
+    "common": "workspace:*",
+    "purify-ts": "catalog:",
+    "uuid": "catalog:",
+    "zod": "catalog:"
   }
 }
