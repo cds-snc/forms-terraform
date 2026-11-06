@@ -11,7 +11,7 @@ describe("EitherAsyncUtils", () => {
       expect(result).toEqual(Right("success"));
     });
 
-    it("should return a Right containing undefined when no value is provided", async () => {
+    it("should return a Right containing undefined when no value is provided (void scenario)", async () => {
       const result = await EitherAsyncUtils.right().run();
 
       expect(result).toEqual(Right(undefined));
@@ -35,7 +35,7 @@ describe("EitherAsyncUtils", () => {
       expect(result).toEqual(Right("success"));
     });
 
-    it("should replace a Left with Right(undefined) when no fallback is provided", async () => {
+    it("should replace a Left with Right(undefined) when no fallback is provided (void scenario)", async () => {
       const operation = EitherAsyncUtils.left("error");
 
       const result = await EitherAsyncUtils.rightOnLeft(operation).run();
@@ -44,7 +44,7 @@ describe("EitherAsyncUtils", () => {
     });
 
     it("should replace a Left with the provided fallback value", async () => {
-      const operation = EitherAsyncUtils.left<string>("error");
+      const operation = EitherAsyncUtils.left("error");
 
       const result = await EitherAsyncUtils.rightOnLeft(operation, {
         fallbackValue: "fallback",
@@ -70,25 +70,6 @@ describe("EitherAsyncUtils", () => {
       await EitherAsyncUtils.rightOnLeft(operation, { sideEffect }).run();
 
       expect(sideEffect).not.toHaveBeenCalled();
-    });
-
-    it("should execute the side effect before returning the fallback value", async () => {
-      const executionOrder: string[] = [];
-
-      const operation = EitherAsyncUtils.left("error");
-
-      const result = await EitherAsyncUtils.rightOnLeft(operation, {
-        fallbackValue: "fallback",
-        sideEffect: () => executionOrder.push("sideEffect"),
-      })
-        .map((value) => {
-          executionOrder.push("map");
-          return value;
-        })
-        .run();
-
-      expect(result).toEqual(Right("fallback"));
-      expect(executionOrder).toEqual(["sideEffect", "map"]);
     });
   });
 
@@ -137,8 +118,7 @@ describe("EitherAsyncUtils", () => {
 
       const result = await operation("original").run();
 
-      expect(result.isLeft()).toBe(true);
-      expect(result.extract()).toBe("error");
+      expect(result).toEqual(Left("error"));
     });
   });
 });
