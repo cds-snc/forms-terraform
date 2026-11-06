@@ -58,6 +58,9 @@ catalogs:
     '@types/aws-lambda':
       specifier: ^8.10.162
       version: 8.10.162
+    '@types/json2md':
+      specifier: ^1.5.4
+      version: 1.5.4
     '@types/node':
       specifier: ^26.2.0
       version: 26.3.0
@@ -70,6 +73,12 @@ catalogs:
     jose:
       specifier: ^6.2.9
       version: 6.2.10
+    json2md:
+      specifier: ^2.0.3
+      version: 2.0.3
+    magic-bytes.js:
+      specifier: ^1.13.1
+      version: 1.13.1
     purify-ts:
       specifier: ^2.1.4
       version: 2.1.4
@@ -260,13 +269,7 @@ importers:
       '@aws-sdk/client-dynamodb':
         specifier: 'catalog:'
         version: 3.1117.0
-      '@aws-sdk/client-lambda':
-        specifier: 'catalog:'
-        version: 3.1117.0
       '@aws-sdk/client-s3':
-        specifier: 'catalog:'
-        version: 3.1117.0
-      '@aws-sdk/client-sqs':
         specifier: 'catalog:'
         version: 3.1117.0
       '@aws-sdk/lib-dynamodb':
@@ -284,18 +287,24 @@ importers:
       '@gcforms/types':
         specifier: 'catalog:'
         version: 1.0.38
+      common:
+        specifier: workspace:*
+        version: link:../common
       json2md:
-        specifier: ^2.0.3
+        specifier: 'catalog:'
         version: 2.0.3
       magic-bytes.js:
-        specifier: ^1.13.1
+        specifier: 'catalog:'
         version: 1.13.1
+      purify-ts:
+        specifier: 'catalog:'
+        version: 2.1.4
       uuid:
-        specifier: ^14.0.2
+        specifier: 'catalog:'
         version: 14.0.2
     devDependencies:
       '@types/json2md':
-        specifier: ^1.5.4
+        specifier: 'catalog:'
         version: 1.5.4
 
   lambda-code/reliability-dlq-consumer:

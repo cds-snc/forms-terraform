@@ -4,6 +4,7 @@
     "includes": [
       "lambda-code/common/**/*",
       "lambda-code/submission/**/*",
+      "lambda-code/reliability/**/*",
       "!!**/build",
       "!!**/node_modules",
       "tsconfig.json",
