@@ -5,6 +5,7 @@
       "lambda-code/common/**/*",
       "lambda-code/overdue-responses-confirmator/**/*",
       "lambda-code/submission/**/*",
+      "lambda-code/reliability/**/*",
       "!!**/build",
       "!!**/node_modules",
       "tsconfig.json",
