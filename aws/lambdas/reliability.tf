@@ -4,7 +4,7 @@ resource "aws_lambda_function" "reliability" {
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
   timeout       = 300
-  memory_size   = 256
+  memory_size   = 512
   architectures = ["arm64"]
 
   // Ensure that the Reliability Lambda always has a pool of at least 150 / 1000 execution environments
@@ -23,12 +23,16 @@ resource "aws_lambda_function" "reliability" {
 
   environment {
     variables = {
-      ENVIRONMENT            = local.env
-      REGION                 = var.region
-      NOTIFY_API_KEY         = var.notify_api_key_secret_arn
-      TEMPLATE_ID            = var.gc_template_id
-      DATABASE_URL           = var.database_connection_url_secret_arn
-      NOTIFICATION_QUEUE_URL = var.sqs_notification_queue_url
+      ENVIRONMENT                             = local.env
+      REGION                                  = var.region
+      NOTIFY_API_KEY                          = var.notify_api_key_secret_arn
+      TEMPLATE_ID                             = var.gc_template_id
+      DATABASE_URL                            = var.database_connection_url_secret_arn
+      NOTIFICATION_QUEUE_URL                  = var.sqs_notification_queue_url
+      DYNAMODB_RELIABILITY_QUEUE_TABLE_NAME   = var.dynamodb_reliability_queue_name
+      DYNAMODB_VAULT_TABLE_NAME               = var.dynamodb_vault_table_name
+      S3_RELIABILITY_FILE_STORAGE_BUCKET_NAME = var.reliability_file_storage_id
+      S3_VAULT_FILE_STORAGE_BUCKET_NAME       = var.vault_file_storage_id
     }
   }
 
