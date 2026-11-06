@@ -69,7 +69,11 @@ describe("lambdaWithValidatedEventAndContextualLogger", () => {
     await wrappedHandler(validEvent, context);
 
     expect(handler).toHaveBeenCalledOnce();
-    expect(handler.mock.calls[0][0].event).toEqual(validEvent);
+    expect(handler).toHaveBeenCalledExactlyOnceWith({
+      event: validEvent,
+      context,
+      contextualLogger: expect.any(DefaultLambdaInvocationContextualLogger),
+    });
   });
 
   it("throws an error when event validation fails", async () => {

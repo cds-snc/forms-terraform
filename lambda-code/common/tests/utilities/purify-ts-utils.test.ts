@@ -44,7 +44,7 @@ describe("EitherAsyncUtils", () => {
     });
 
     it("should replace a Left with the provided fallback value", async () => {
-      const operation = EitherAsyncUtils.left<string, never>("error");
+      const operation = EitherAsyncUtils.left<string>("error");
 
       const result = await EitherAsyncUtils.rightOnLeft(operation, {
         fallbackValue: "fallback",
