@@ -2,7 +2,7 @@
   "$schema": "https://biomejs.dev/schemas/2.5.9/schema.json",
   "files": {
     "includes": [
-      "lambda-code/!",
+      "lambda-code/common/**/*",
       "!!**/build",
       "!!**/node_modules",
       "tsconfig.json",
