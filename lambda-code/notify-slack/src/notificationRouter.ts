@@ -1,5 +1,5 @@
-import { Priority, sendToOpsGenie } from "./opsgenie.js";
-import { sendToSlack } from "./slack.js";
+import { Priority, sendToOpsGenie } from "./opsgenie.ts";
+import { sendToSlack } from "./slack.ts";
 import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 
 export type LogEvent = {

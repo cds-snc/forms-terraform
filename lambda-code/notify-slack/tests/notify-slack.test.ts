@@ -1,10 +1,10 @@
-import * as notify_slack from "../src/main.js";
+import * as notify_slack from "../src/main.ts";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import * as zlib from "zlib";
 import { mockClient } from "aws-sdk-client-mock";
 import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
-import { sendToSlack } from "../src/slack.js";
-import { sendToOpsGenie } from "../src/opsgenie.js";
+import { sendToSlack } from "../src/slack.ts";
+import { sendToOpsGenie } from "../src/opsgenie.ts";
 
 vi.mock("../src/slack");
 const sendToSlackMock = vi.mocked(sendToSlack);
