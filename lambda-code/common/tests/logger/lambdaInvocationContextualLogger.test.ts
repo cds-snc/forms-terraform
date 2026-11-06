@@ -101,12 +101,32 @@ describe("DefaultContextualLogger", () => {
       message: "message",
     });
 
-    expect(warnLogSpy).toHaveBeenCalledExactlyOnceWith("message");
+    expect(warnLogSpy).toHaveBeenCalledExactlyOnceWith("message", { error: undefined });
     expect(infoLogSpy).not.toHaveBeenCalled();
     expect(errorLogSpy).not.toHaveBeenCalled();
   });
 
-  it("logs an error with the error and severity level", () => {
+  it("logs a warning message with an error", () => {
+    const infoLogSpy = vi.spyOn(Logger.prototype, "info");
+    const warnLogSpy = vi.spyOn(Logger.prototype, "warn");
+    const errorLogSpy = vi.spyOn(Logger.prototype, "error");
+
+    const error = new Error("error");
+
+    const logger = DefaultLambdaInvocationContextualLogger.createWithDefaultLogFormatter();
+
+    logger.log({
+      level: "warn",
+      message: "message",
+      error,
+    });
+
+    expect(warnLogSpy).toHaveBeenCalledExactlyOnceWith("message", { error });
+    expect(infoLogSpy).not.toHaveBeenCalled();
+    expect(errorLogSpy).not.toHaveBeenCalled();
+  });
+
+  it("logs an error with an error and a severity level", () => {
     const errorLogSpy = vi.spyOn(Logger.prototype, "error");
 
     const error = new Error("error");

@@ -32,7 +32,8 @@ describe("lambdaWithSqsBatchProcessingAndContextualLogger", () => {
 
   it("passes the SQS record, context, and contextual logger to the handler", async () => {
     const record = {
-      messageId: "messageId",
+      messageId: "messageId1",
+      body: '{"value": 1}',
     } as SQSRecord;
 
     const context = {
@@ -51,7 +52,7 @@ describe("lambdaWithSqsBatchProcessingAndContextualLogger", () => {
     );
 
     expect(handler).toHaveBeenCalledExactlyOnceWith({
-      event: record,
+      event: { value: 1 },
       context,
       contextualLogger: expect.any(DefaultLambdaInvocationContextualLogger),
     });
@@ -60,10 +61,12 @@ describe("lambdaWithSqsBatchProcessingAndContextualLogger", () => {
   it("passes each SQS record to the handler", async () => {
     const record1 = {
       messageId: "messageId1",
+      body: '{"value": 1}',
     } as SQSRecord;
 
     const record2 = {
       messageId: "messageId2",
+      body: '{"value": 2}',
     } as SQSRecord;
 
     const context = {
@@ -83,14 +86,14 @@ describe("lambdaWithSqsBatchProcessingAndContextualLogger", () => {
 
     expect(handler).toHaveBeenCalledTimes(2);
 
-    expect(handler).toHaveBeenCalledWith({
-      event: record1,
+    expect(handler).toHaveBeenNthCalledWith(1, {
+      event: { value: 1 },
       context,
       contextualLogger: expect.any(DefaultLambdaInvocationContextualLogger),
     });
 
-    expect(handler).toHaveBeenCalledWith({
-      event: record2,
+    expect(handler).toHaveBeenNthCalledWith(2, {
+      event: { value: 2 },
       context,
       contextualLogger: expect.any(DefaultLambdaInvocationContextualLogger),
     });
@@ -103,9 +106,11 @@ describe("lambdaWithSqsBatchProcessingAndContextualLogger", () => {
       Records: [
         {
           messageId: "messageId1",
+          body: '{"value": 1}',
         },
         {
           messageId: "messageId2",
+          body: '{"value": 2}',
         },
       ],
     } as SQSEvent;
@@ -125,7 +130,8 @@ describe("lambdaWithSqsBatchProcessingAndContextualLogger", () => {
         {
           Records: [
             {
-              messageId: "messageId",
+              messageId: "messageId1",
+              body: '{"value": 1}',
             },
           ],
         } as SQSEvent,
@@ -136,7 +142,7 @@ describe("lambdaWithSqsBatchProcessingAndContextualLogger", () => {
 
   it("returns a partial batch failure when one record fails to be handled", async () => {
     const wrappedHandler = lambdaWithSqsBatchProcessingAndContextualLogger(({ event }) =>
-      event.messageId === "messageId1" ? EitherAsync.liftEither(Right(undefined)) : EitherAsync.liftEither(Left(new Error("error"))),
+      event.value === 1 ? EitherAsync.liftEither(Right(undefined)) : EitherAsync.liftEither(Left(new Error("error"))),
     );
 
     await expect(
@@ -145,9 +151,11 @@ describe("lambdaWithSqsBatchProcessingAndContextualLogger", () => {
           Records: [
             {
               messageId: "messageId1",
+              body: '{"value": 1}',
             },
             {
               messageId: "messageId2",
+              body: '{"value": 2}',
             },
           ],
         } as SQSEvent,
@@ -171,9 +179,11 @@ describe("lambdaWithSqsBatchProcessingAndContextualLogger", () => {
           Records: [
             {
               messageId: "messageId1",
+              body: '{"value": 1}',
             },
             {
               messageId: "messageId2",
+              body: '{"value": 2}',
             },
           ],
         } as SQSEvent,
@@ -192,6 +202,7 @@ describe("lambdaWithSqsBatchProcessingAndContextualLogger", () => {
         Records: [
           {
             messageId: "messageId",
+            body: '{"value": 1}',
           },
         ],
       } as SQSEvent,
@@ -212,6 +223,7 @@ describe("lambdaWithSqsBatchProcessingAndContextualLogger", () => {
           Records: [
             {
               messageId: "messageId",
+              body: '{"value": 1}',
             },
           ],
         } as SQSEvent,
