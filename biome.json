@@ -3,6 +3,7 @@
   "files": {
     "includes": [
       "lambda-code/common/**/*",
+      "lambda-code/submission/**/*",
       "!!**/build",
       "!!**/node_modules",
       "tsconfig.json",
