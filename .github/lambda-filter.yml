@@ -1,3 +1,5 @@
+api-end-to-end-test:
+  - "lambda-code/api-end-to-end-test/**"
 audit-logs:
   - "lambda-code/audit-logs/**"
 audit-logs-archiver:
@@ -6,12 +8,20 @@ cognito-email-sender:
   - "lambda-code/cognito-email-sender/**"
 cognito-pre-sign-up:
   - "lambda-code/cognito-pre-sign-up/**"
+file-upload-cleanup:
+  - "lambda-code/file-upload-cleanup/**"
+file-upload-processor:
+  - "lambda-code/file-upload-processor/**"
 form-archiver:
   - "lambda-code/form-archiver/**"
 nagware:
   - "lambda-code/nagware/**"
+notification:
+  - "lambda-code/notification/**"
 notify-slack:
   - "lambda-code/notify-slack/**"
+overdue-responses-janitor:
+  - "lambda-code/overdue-responses-janitor/**"
 reliability:
   - "lambda-code/reliability/**"
 reliability-dlq-consumer:
@@ -22,11 +32,3 @@ submission:
   - "lambda-code/submission/**"
 vault-integrity:
   - "lambda-code/vault-integrity/**"
-api-end-to-end-test:
-  - "lambda-code/api-end-to-end-test/**"
-file-upload-processor:
-  - "lambda-code/file-upload-processor/**"
-file-upload-cleanup:
-  - "lambda-code/file-upload-cleanup/**"
-notification:
-  - "lambda-code/notification/**"
