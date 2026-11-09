@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.48.11](https://github.com/cds-snc/forms-terraform/compare/v3.48.10...v3.48.11) (2026-11-09)
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#1524](https://github.com/cds-snc/forms-terraform/issues/1524)) ([43b66d2](https://github.com/cds-snc/forms-terraform/commit/43b66d204f91febfc8b5a879f5042795da6ba7bc))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1529](https://github.com/cds-snc/forms-terraform/issues/1529)) ([8f4e147](https://github.com/cds-snc/forms-terraform/commit/8f4e147dac0e05d68e1eea2e8d22061dde5ec06e))
+
 ## [3.48.10](https://github.com/cds-snc/forms-terraform/compare/v3.48.9...v3.48.10) (2026-11-03)
 
 
