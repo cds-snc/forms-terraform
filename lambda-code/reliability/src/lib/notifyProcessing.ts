@@ -1,13 +1,14 @@
-import { GCNotifyConnector } from "@gcforms/connectors";
-import convertMessage from "./markdown.js";
-import { notifyProcessed } from "./dataLayer.js";
-import { retrieveFilesFromReliabilityStorage } from "./s3FileInput.js";
-import { FormSubmission } from "./types.js";
-import { SubmissionAttachmentInformation } from "./file_checksum.js";
+import { EmailAttachment, GCNotifyConnector } from "@gcforms/connectors";
+import convertMessage from "./markdown.ts";
+import { notifyProcessed } from "./dataLayer.ts";
+import { retrieveFilesFromReliabilityStorage } from "./s3FileInput.ts";
+import { FormSubmission } from "./types.ts";
+import { SubmissionAttachmentInformation } from "./file_checksum.ts";
 
-const gcNotifyConnector = await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
-  process.env.NOTIFY_API_KEY ?? ""
-);
+const gcNotifyConnector =
+  await GCNotifyConnector.defaultUsingApiKeyFromAwsSecret(
+    process.env.NOTIFY_API_KEY ?? "",
+  );
 
 export default async (
   submissionID: string,
@@ -15,7 +16,7 @@ export default async (
   formSubmission: FormSubmission,
   submissionAttachmentsWithInformation: SubmissionAttachmentInformation[],
   language: string,
-  createdAt: string
+  createdAt: string,
 ) => {
   try {
     // Making sure currently processed submission email address is defined
@@ -27,42 +28,50 @@ export default async (
     }
 
     const submissionAttachmentPaths = submissionAttachmentsWithInformation.map(
-      (item) => item.attachmentPath
+      (item) => item.attachmentPath,
     );
 
-    const submissionAttachments = submissionAttachmentsWithInformation.map((item) => {
-      const attachmentName = item.attachmentPath.split("/").pop();
+    const submissionAttachments = submissionAttachmentsWithInformation.map(
+      (item) => {
+        const attachmentName = item.attachmentPath.split("/").pop();
 
-      if (attachmentName === undefined) {
-        throw new Error(`Attachment name is undefined. File path: ${item.attachmentPath}.`);
-      }
+        if (attachmentName === undefined) {
+          throw new Error(
+            `Attachment name is undefined. File path: ${item.attachmentPath}.`,
+          );
+        }
 
-      return {
-        name: attachmentName,
-        path: item.attachmentPath,
-      };
-    });
+        return {
+          name: attachmentName,
+          path: item.attachmentPath,
+        };
+      },
+    );
 
-    const files = await retrieveFilesFromReliabilityStorage(submissionAttachmentPaths);
+    const files = await retrieveFilesFromReliabilityStorage(
+      submissionAttachmentPaths,
+    );
 
-    const attachFileParameters = submissionAttachments.reduce((acc, current, index) => {
-      return {
-        [`file${index}`]: {
-          file: files[index],
-          filename: current.name,
-          sending_method: "attach",
-        },
-        ...acc,
-      };
-    }, {});
+    const emailAttachments: EmailAttachment[] = submissionAttachments.map(
+      (attachment, index) => {
+        return { fileName: attachment.name, base64EncodedFile: files[index] };
+      },
+    );
 
     const templateId = process.env.TEMPLATE_ID;
 
     if (templateId === undefined) {
-      throw new Error(`Missing Environment Variables: ${templateId ? "" : "Template ID"}`);
+      throw new Error(
+        `Missing Environment Variables: ${templateId ? "" : "Template ID"}`,
+      );
     }
 
-    const emailBody = convertMessage(formSubmission, submissionID, language, createdAt);
+    const emailBody = convertMessage(
+      formSubmission,
+      submissionID,
+      language,
+      createdAt,
+    );
     const messageSubject =
       language === "fr"
         ? formSubmission.deliveryOption.emailSubjectFr
@@ -74,13 +83,15 @@ export default async (
 
     await gcNotifyConnector.sendEmail(
       formSubmission.deliveryOption.emailAddress,
-      templateId,
       {
-        subject: messageSubject,
-        formResponse: emailBody,
-        ...attachFileParameters,
+        templateId,
+        placeholders: {
+          subject: messageSubject,
+          formResponse: emailBody,
+        },
+        attachments: emailAttachments,
       },
-      submissionID
+      submissionID,
     );
 
     await notifyProcessed(submissionID);
@@ -92,7 +103,7 @@ export default async (
         submissionId: submissionID,
         sendReceipt: sendReceipt,
         msg: "Successfully sent submission through GC Notify.",
-      })
+      }),
     );
   } catch (error) {
     console.error(
@@ -103,7 +114,7 @@ export default async (
         sendReceipt: sendReceipt ?? "n/a",
         msg: "Failed to send submission through GC Notify",
         error: (error as Error).message,
-      })
+      }),
     );
 
     throw new Error(`Failed to send submission through GC Notify.`);
