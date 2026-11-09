@@ -37,22 +37,23 @@ resource "aws_ecr_lifecycle_policy" "form_viewer_policy" {
 
 locals {
   ecr_names = toset(compact([
+    "api-end-to-end-test-lambda",
     "audit-logs-lambda",
     "audit-logs-archiver-lambda",
     "cognito-email-sender-lambda",
     "cognito-pre-sign-up-lambda",
+    "file-upload-cleanup-lambda",
+    "file-upload-processor-lambda",
     "form-archiver-lambda",
     "nagware-lambda",
+    "notification-lambda",
     "notify-slack-lambda",
+    "overdue-responses-confirmator-lambda",
     "reliability-lambda",
     "reliability-dlq-consumer-lambda",
     "response-archiver-lambda",
     "submission-lambda",
-    "vault-integrity-lambda",
-    "api-end-to-end-test-lambda",
-    "file-upload-processor-lambda",
-    "file-upload-cleanup-lambda",
-    "notification-lambda"
+    "vault-integrity-lambda"
   ]))
 }
 

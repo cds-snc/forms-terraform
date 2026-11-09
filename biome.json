@@ -1,15 +1,7 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.5.9/schema.json",
   "files": {
-    "includes": [
-      "lambda-code/common/**/*",
-      "!!**/build",
-      "!!**/node_modules",
-      "tsconfig.json",
-      "vitest.config.ts",
-      "biome.json",
-      "package.json"
-    ],
+    "includes": ["lambda-code/common/**/*", "lambda-code/overdue-responses-confirmator/**/*", "!!**/build", "!!**/node_modules", "tsconfig.json", "vitest.config.ts", "biome.json", "package.json"],
     "ignoreUnknown": true
   },
   "linter": {

@@ -137,7 +137,8 @@ data "aws_iam_policy_document" "lambda_dynamodb" {
       "dynamodb:DescribeStream",
       "dynamodb:GetRecords",
       "dynamodb:GetShardIterator",
-      "dynamodb:ListStreams"
+      "dynamodb:ListStreams",
+      "dynamodb:PartiQLUpdate"
     ]
 
     resources = [

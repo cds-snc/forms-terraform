@@ -83,6 +83,16 @@ variable "lambda_notification_log_group_name" {
   type        = string
 }
 
+variable "lambda_overdue_responses_confirmator_function_name" {
+  description = "Overdue responses confirmator Lambda function name"
+  type        = string
+}
+
+variable "lambda_overdue_responses_confirmator_log_group_name" {
+  description = "Overdue responses confirmator Lambda CloudWatch log group name"
+  type        = string
+}
+
 variable "lambda_reliability_function_name" {
   description = "Reliability Lambda function name"
   type        = string
