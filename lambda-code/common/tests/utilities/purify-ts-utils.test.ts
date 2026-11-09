@@ -10,9 +10,11 @@ describe("EitherAsyncUtils", () => {
 
       expect(result).toEqual(Right("success"));
     });
+  });
 
-    it("should return a Right containing undefined when no value is provided (void scenario)", async () => {
-      const result = await EitherAsyncUtils.right().run();
+  describe("rightVoid", () => {
+    it("should return a Right containing undefined", async () => {
+      const result = await EitherAsyncUtils.rightVoid().run();
 
       expect(result).toEqual(Right(undefined));
     });
@@ -30,25 +32,15 @@ describe("EitherAsyncUtils", () => {
     it("should preserve the Right value when the operation succeeds", async () => {
       const operation = EitherAsyncUtils.right("success");
 
-      const result = await EitherAsyncUtils.rightOnLeft(operation).run();
+      const result = await EitherAsyncUtils.rightOnLeft(operation, "fallback").run();
 
       expect(result).toEqual(Right("success"));
     });
 
-    it("should replace a Left with Right(undefined) when no fallback is provided (void scenario)", async () => {
+    it("should return the fallback value when the operation returns a Left", async () => {
       const operation = EitherAsyncUtils.left("error");
 
-      const result = await EitherAsyncUtils.rightOnLeft(operation).run();
-
-      expect(result).toEqual(Right(undefined));
-    });
-
-    it("should replace a Left with the provided fallback value", async () => {
-      const operation = EitherAsyncUtils.left("error");
-
-      const result = await EitherAsyncUtils.rightOnLeft(operation, {
-        fallbackValue: "fallback",
-      }).run();
+      const result = await EitherAsyncUtils.rightOnLeft(operation, "fallback").run();
 
       expect(result).toEqual(Right("fallback"));
     });
@@ -57,17 +49,57 @@ describe("EitherAsyncUtils", () => {
       const sideEffect = vi.fn();
       const operation = EitherAsyncUtils.left("error");
 
-      await EitherAsyncUtils.rightOnLeft(operation, { sideEffect }).run();
+      const result = await EitherAsyncUtils.rightOnLeft(operation, "fallback", sideEffect).run();
 
       expect(sideEffect).toHaveBeenCalledOnce();
       expect(sideEffect).toHaveBeenCalledWith("error");
+      expect(result).toEqual(Right("fallback"));
     });
 
     it("should not execute the side effect when the operation returns a Right", async () => {
       const sideEffect = vi.fn();
       const operation = EitherAsyncUtils.right("success");
 
-      await EitherAsyncUtils.rightOnLeft(operation, { sideEffect }).run();
+      const result = await EitherAsyncUtils.rightOnLeft(operation, "fallback", sideEffect).run();
+
+      expect(sideEffect).not.toHaveBeenCalled();
+      expect(result).toEqual(Right("success"));
+    });
+  });
+
+  describe("rightVoidOnLeft", () => {
+    it("should preserve the Right value when the operation succeeds", async () => {
+      const operation = EitherAsyncUtils.right("success");
+
+      const result = await EitherAsyncUtils.rightVoidOnLeft(operation).run();
+
+      expect(result).toEqual(Right("success"));
+    });
+
+    it("should replace a Left with Right(undefined)", async () => {
+      const operation = EitherAsyncUtils.left("error");
+
+      const result = await EitherAsyncUtils.rightVoidOnLeft(operation).run();
+
+      expect(result).toEqual(Right(undefined));
+    });
+
+    it("should execute the side effect when the operation returns a Left", async () => {
+      const sideEffect = vi.fn();
+      const operation = EitherAsyncUtils.left("error");
+
+      const result = await EitherAsyncUtils.rightVoidOnLeft(operation, sideEffect).run();
+
+      expect(sideEffect).toHaveBeenCalledOnce();
+      expect(sideEffect).toHaveBeenCalledWith("error");
+      expect(result).toEqual(Right(undefined));
+    });
+
+    it("should not execute the side effect when the operation returns a Right", async () => {
+      const sideEffect = vi.fn();
+      const operation = EitherAsyncUtils.right("success");
+
+      await EitherAsyncUtils.rightVoidOnLeft(operation, sideEffect).run();
 
       expect(sideEffect).not.toHaveBeenCalled();
     });
