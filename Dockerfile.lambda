@@ -27,13 +27,15 @@ COPY package.json \
      pnpm-workspace.yaml \
      ./
 
-COPY --parents ./lambda-code/$LAMBDA_FOLDER_NAME/package.json \
-               ./lambda-code/$LAMBDA_FOLDER_NAME/tsconfig.json \
-               ./lambda-code/$LAMBDA_FOLDER_NAME/src \
-               ./
+COPY --parents ./lambda-code/common/package.json ./lambda-code/common/tsconfig.json ./
+COPY --parents ./lambda-code/$LAMBDA_FOLDER_NAME/package.json ./lambda-code/$LAMBDA_FOLDER_NAME/tsconfig.json ./
 
-RUN corepack enable pnpm && pnpm install --frozen-lockfile && pnpm build
+RUN corepack enable pnpm && pnpm install --frozen-lockfile
 
+COPY --parents ./lambda-code/common/src ./
+COPY --parents ./lambda-code/$LAMBDA_FOLDER_NAME/src ./
+
+RUN pnpm --filter $LAMBDA_FOLDER_NAME... build
 RUN pnpm --filter $LAMBDA_FOLDER_NAME deploy --prod ./standalone-build
 
 FROM public.ecr.aws/lambda/nodejs:$NODE_VERSION
