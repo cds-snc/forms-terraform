@@ -155,23 +155,24 @@ dependency "ecr" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
     ecr_repository_lambda_urls = {
-      type                            = "map",
-      audit-logs-lambda               = "test_url",
-      audit-logs-archiver-lambda      = "test_url",
-      cognito-email-sender-lambda     = "test_url",
-      cognito-pre-sign-up-lambda      = "test_url",
-      form-archiver-lambda            = "test_url",
-      nagware-lambda                  = "test_url",
-      notify-slack-lambda             = "test_url",
-      reliability-lambda              = "test_url",
-      reliability-dlq-consumer-lambda = "test_url",
-      response-archiver-lambda        = "test_url",
-      submission-lambda               = "test_url",
-      vault-integrity-lambda          = "test_url",
-      api-end-to-end-test-lambda      = "test_url",
-      file-upload-processor-lambda    = "test_url",
-      file-upload-cleanup-lambda      = "test_url",
-      notification-lambda             = "test_url"
+      type                                 = "map",
+      api-end-to-end-test-lambda           = "test_url",
+      audit-logs-lambda                    = "test_url",
+      audit-logs-archiver-lambda           = "test_url",
+      cognito-email-sender-lambda          = "test_url",
+      cognito-pre-sign-up-lambda           = "test_url",
+      file-upload-cleanup-lambda           = "test_url",
+      file-upload-processor-lambda         = "test_url",
+      form-archiver-lambda                 = "test_url",
+      nagware-lambda                       = "test_url",
+      notification-lambda                  = "test_url",
+      notify-slack-lambda                  = "test_url",
+      overdue-responses-confirmator-lambda = "test_url",
+      reliability-lambda                   = "test_url",
+      reliability-dlq-consumer-lambda      = "test_url",
+      response-archiver-lambda             = "test_url",
+      submission-lambda                    = "test_url",
+      vault-integrity-lambda               = "test_url"
     }
   }
 }

@@ -1,0 +1,16 @@
+{
+  "name": "overdue-responses-confirmator",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "lint": "biome check --error-on-warnings --diagnostic-level=warn ."
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "catalog:",
+    "@aws-sdk/lib-dynamodb": "catalog:",
+    "common": "workspace:*",
+    "purify-ts": "catalog:",
+    "zod": "catalog:"
+  }
+}
