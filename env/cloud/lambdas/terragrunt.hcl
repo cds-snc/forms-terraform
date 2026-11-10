@@ -104,16 +104,17 @@ dependency "dynamodb" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs = {
-    dynamodb_reliability_queue_arn     = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ReliabilityQueue"
-    dynamodb_vault_arn                 = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault"
-    dynamodb_vault_table_name          = "Vault"
-    dynamodb_vault_stream_arn          = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault/stream/2023-03-14T15:54:31.086"
-    dynamodb_app_audit_logs_table_name = "AuditLogs"
-    dynamodb_app_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/AuditLogs"
-    dynamodb_api_audit_logs_table_name = "ApiAuditLogs"
-    dynamodb_api_audit_logs_arn        = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ApiAuditLogs"
-    dynamodb_notification_table_name   = "Notification"
-    dynamodb_notification_table_arn    = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Notification"
+    dynamodb_reliability_queue_arn                 = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ReliabilityQueue"
+    dynamodb_vault_arn                             = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault"
+    dynamodb_vault_table_name                      = "Vault"
+    dynamodb_vault_stream_arn                      = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Vault/stream/2023-03-14T15:54:31.086"
+    dynamodb_vault_status_created_at_v2_index_name = "StatusCreatedAt_v2"
+    dynamodb_app_audit_logs_table_name             = "AuditLogs"
+    dynamodb_app_audit_logs_arn                    = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/AuditLogs"
+    dynamodb_api_audit_logs_table_name             = "ApiAuditLogs"
+    dynamodb_api_audit_logs_arn                    = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/ApiAuditLogs"
+    dynamodb_notification_table_name               = "Notification"
+    dynamodb_notification_table_arn                = "arn:aws:dynamodb:ca-central-1:${local.aws_account_id}:table/Notification"
   }
 }
 
@@ -211,16 +212,17 @@ inputs = {
   service_discovery_private_dns_namespace_ecs_local_name = dependency.network.outputs.service_discovery_private_dns_namespace_ecs_local_name
   api_end_to_end_test_lambda_security_group_id           = dependency.network.outputs.api_end_to_end_test_lambda_security_group_id
 
-  dynamodb_reliability_queue_arn     = dependency.dynamodb.outputs.dynamodb_reliability_queue_arn
-  dynamodb_vault_arn                 = dependency.dynamodb.outputs.dynamodb_vault_arn
-  dynamodb_vault_table_name          = dependency.dynamodb.outputs.dynamodb_vault_table_name
-  dynamodb_vault_stream_arn          = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
-  dynamodb_app_audit_logs_table_name = dependency.dynamodb.outputs.dynamodb_app_audit_logs_table_name
-  dynamodb_app_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_app_audit_logs_arn
-  dynamodb_api_audit_logs_table_name = dependency.dynamodb.outputs.dynamodb_api_audit_logs_table_name
-  dynamodb_api_audit_logs_arn        = dependency.dynamodb.outputs.dynamodb_api_audit_logs_arn
-  dynamodb_notification_table_name   = dependency.dynamodb.outputs.dynamodb_notification_table_name
-  dynamodb_notification_table_arn    = dependency.dynamodb.outputs.dynamodb_notification_table_arn
+  dynamodb_reliability_queue_arn                 = dependency.dynamodb.outputs.dynamodb_reliability_queue_arn
+  dynamodb_vault_arn                             = dependency.dynamodb.outputs.dynamodb_vault_arn
+  dynamodb_vault_table_name                      = dependency.dynamodb.outputs.dynamodb_vault_table_name
+  dynamodb_vault_stream_arn                      = dependency.dynamodb.outputs.dynamodb_vault_stream_arn
+  dynamodb_vault_status_created_at_v2_index_name = dependency.dynamodb.outputs.dynamodb_vault_status_created_at_v2_index_name
+  dynamodb_app_audit_logs_table_name             = dependency.dynamodb.outputs.dynamodb_app_audit_logs_table_name
+  dynamodb_app_audit_logs_arn                    = dependency.dynamodb.outputs.dynamodb_app_audit_logs_arn
+  dynamodb_api_audit_logs_table_name             = dependency.dynamodb.outputs.dynamodb_api_audit_logs_table_name
+  dynamodb_api_audit_logs_arn                    = dependency.dynamodb.outputs.dynamodb_api_audit_logs_arn
+  dynamodb_notification_table_name               = dependency.dynamodb.outputs.dynamodb_notification_table_name
+  dynamodb_notification_table_arn                = dependency.dynamodb.outputs.dynamodb_notification_table_arn
 
   kms_key_cloudwatch_arn = dependency.kms.outputs.kms_key_cloudwatch_arn
   kms_key_dynamodb_arn   = dependency.kms.outputs.kms_key_dynamodb_arn

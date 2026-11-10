@@ -21,8 +21,9 @@ resource "aws_lambda_function" "overdue_responses_confirmator" {
 
   environment {
     variables = {
-      REGION                    = var.region
-      DYNAMODB_VAULT_TABLE_NAME = var.dynamodb_vault_table_name
+      REGION                                         = var.region
+      DYNAMODB_VAULT_TABLE_NAME                      = var.dynamodb_vault_table_name
+      DYNAMODB_VAULT_STATUS_CREATED_AT_V2_INDEX_NAME = var.dynamodb_vault_status_created_at_v2_index_name
     }
   }
 
