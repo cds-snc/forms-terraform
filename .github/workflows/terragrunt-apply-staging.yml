@@ -67,27 +67,6 @@ env:
   TF_VAR_api_end_to_end_test_form_api_private_key: ${{ secrets.STAGING_API_END_TO_END_TEST_FORM_API_PRIVATE_KEY }}
 
 jobs:
-  # We deploy ECR first to make sure it is available for the 'build-tag-push-lambda-images' job which will be run in parallel with `terragrunt-apply-all-modules`
-  terragrunt-apply-ecr-only:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-
-      - name: Setup terraform tools
-        uses: cds-snc/terraform-tools-setup@36df0d7572a15921998170395475093c183d720a # v1.3.0
-
-      - name: Configure AWS credentials using OIDC
-        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
-        with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
-          role-session-name: TFApply
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Terragrunt apply ecr
-        working-directory: env/cloud/ecr
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
   find-lambdas-to-deploy:
     runs-on: ubuntu-latest
     outputs:
@@ -96,41 +75,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
-      - name: Find modified Lambdas
-        if: github.event_name != 'workflow_dispatch'
-        id: filtered-lambdas
-        uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad # v3.0.4
-        with:
-          filters: .github/lambda-filter.yml
-
       - name: Find all Lambdas
-        if: github.event_name == 'workflow_dispatch'
+
         id: all-lambdas
         run: echo "changes=$(yq 'keys | .[]' .github/lambda-filter.yml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
       - name: Set job output
         id: set-job-output
         env:
-          FILTERED_LAMBDAS: ${{ steps.filtered-lambdas.outputs.changes }}
           ALL_LAMBDAS: ${{ steps.all-lambdas.outputs.changes }}
-        run: echo "lambdas=${FILTERED_LAMBDAS:-$ALL_LAMBDAS}" >> $GITHUB_OUTPUT
-
-  detect-idp-changes:
-    needs: terragrunt-apply-ecr-only
-    runs-on: ubuntu-latest
-    outputs:
-      changes: ${{ steps.filter.outputs.changes }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-
-      - name: Filter
-        id: filter
-        uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad # v3.0.4
-        with:
-          filters: |
-            idp:
-              - 'idp/**'
+        run: echo "lambdas=$ALL_LAMBDAS" >> $GITHUB_OUTPUT
 
   build-tag-push-lambda-docker-images:
     needs: find-lambdas-to-deploy
@@ -155,44 +109,8 @@ jobs:
           aws-role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
 
-  build-tag-push-idp-image:
-    needs: detect-idp-changes
-    if: ${{ needs.detect-idp-changes.outputs.changes != '[]' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-
-      - name: Build IdP image
-        working-directory: idp
-        run: make build
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
-        with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
-          role-session-name: TFApply
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
-
-      - name: Tag and push docker images
-        env:
-          IMAGE_NAME: idp/zitadel
-          IMAGE_TAG: ${{ github.sha }}
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: |
-          REPOSITORY_NAME=$IMAGE_NAME
-          docker tag $REPOSITORY_NAME $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_TAG
-          docker tag $REPOSITORY_NAME $ECR_REGISTRY/$REPOSITORY_NAME:latest
-          docker push $ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$REPOSITORY_NAME:latest
-        shell: bash
-
   terragrunt-apply-all-modules:
-    needs: [build-tag-push-lambda-docker-images, build-tag-push-idp-image]
+    needs: [build-tag-push-lambda-docker-images]
     if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     steps:
@@ -208,97 +126,8 @@ jobs:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
           role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
-
-      - name: Terragrunt apply hosted_zone
-        working-directory: env/cloud/hosted_zone
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply kms
-        working-directory: env/cloud/kms
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply oidc_roles
-        working-directory: env/cloud/oidc_roles
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply sqs
-        working-directory: env/cloud/sqs
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply secrets
-        working-directory: env/cloud/secrets
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply s3
-        working-directory: env/cloud/s3
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      # Depends on S3
-      - name: Terragrunt apply guard_duty
-        working-directory: env/cloud/guard_duty
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      # Depends on kms
-      - name: Terragrunt apply sns
-        working-directory: env/cloud/sns
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply cognito
-        working-directory: env/cloud/cognito
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply network
-        working-directory: env/cloud/network
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply dynamodb
-        working-directory: env/cloud/dynamodb
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      # Depends on network
-      - name: Terragrunt apply load_balancer
-        working-directory: env/cloud/load_balancer
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply redis
-        working-directory: env/cloud/redis
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply rds
-        working-directory: env/cloud/rds
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply idp
-        working-directory: env/cloud/idp
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      # Depends on everything
-      - name: Terragrunt apply app
-        working-directory: env/cloud/app
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply api
-        working-directory: env/cloud/api
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
       - name: Terragrunt apply lambdas
         working-directory: env/cloud/lambdas
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply alarms
-        working-directory: env/cloud/alarms
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply glue
-        working-directory: env/cloud/glue
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply pr_review
-        working-directory: env/cloud/pr_review
-        run: terragrunt run --non-interactive -- apply -auto-approve
-
-      - name: Terragrunt apply load_testing
-        working-directory: env/cloud/load_testing
         run: terragrunt run --non-interactive -- apply -auto-approve
 
   update-lambda-function-image:
@@ -322,34 +151,12 @@ jobs:
           lambda-name: ${{ matrix.image }}
           image-tag: ${{ github.sha }}
 
-  update-idp-ecs-service-image:
-    needs: [detect-idp-changes, terragrunt-apply-all-modules]
-    if: ${{ needs.detect-idp-changes.outputs.changes != '[]' && !failure() && !cancelled() }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-
-      - name: Update IdP ESC service to use new image
-        uses: ./.github/workflows/request-ecs-service-to-use-new-image
-        with:
-          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
-          aws-role-session-name: TFApply
-          aws-region: ${{ env.AWS_REGION }}
-          ecs-cluster-name: auth
-          ecs-service-name: zitadel
-          ecs-task-def-name: zitadel
-          image-tag: "idp/zitadel:${{ github.sha }}"
-
   notify-on-error:
     needs:
       [
-        terragrunt-apply-ecr-only,
         build-tag-push-lambda-docker-images,
-        build-tag-push-idp-image,
         terragrunt-apply-all-modules,
         update-lambda-function-image,
-        update-idp-ecs-service-image,
       ]
     if: ${{ failure() && !cancelled() }}
     runs-on: ubuntu-latest
