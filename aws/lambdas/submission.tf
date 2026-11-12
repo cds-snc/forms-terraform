@@ -15,6 +15,7 @@ resource "aws_lambda_function" "submission" {
   role          = aws_iam_role.lambda.arn
   timeout       = 60
   memory_size   = 256
+  architectures = ["arm64"]
 
   // Ensure that the Submisison Lambda always has a pool of at least 150 / 1000 execution environments
   reserved_concurrent_executions = 150

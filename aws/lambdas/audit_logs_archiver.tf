@@ -5,6 +5,7 @@ resource "aws_lambda_function" "audit_logs_archiver" {
   role          = aws_iam_role.lambda.arn
   timeout       = 900
   memory_size   = 512
+  architectures = ["arm64"]
 
   lifecycle {
     ignore_changes = [image_uri]

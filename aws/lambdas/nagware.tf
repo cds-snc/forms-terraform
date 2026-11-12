@@ -9,6 +9,7 @@ resource "aws_lambda_function" "nagware" {
   role          = aws_iam_role.lambda.arn
   timeout       = 900
   memory_size   = 512
+  architectures = ["arm64"]
 
   // Even in development mode this lambda should be attached to the VPC in order to connecto the DB
   vpc_config {

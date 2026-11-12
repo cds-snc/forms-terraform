@@ -7,7 +7,7 @@ import { createHash } from "crypto";
 import {
   findAttachedFileReferencesInSubmissionResponses,
   generateFileAccessKeysAndUploadURLs,
-} from "./lib/fileUpload.js";
+} from "./lib/fileUpload.ts";
 
 type AnyObject = {
   [key: string]: any;
