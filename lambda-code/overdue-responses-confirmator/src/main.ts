@@ -1,5 +1,5 @@
-import { type NativeAttributeValue, QueryCommand, type QueryCommandOutput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { lambdaWithValidatedEventAndContextualLogger } from "common";
+import { BatchExecuteStatementCommand, type NativeAttributeValue, QueryCommand, type QueryCommandOutput } from "@aws-sdk/lib-dynamodb";
+import { EitherAsyncUtils, lambdaWithValidatedEventAndContextualLogger } from "common";
 import { EitherAsync } from "purify-ts";
 import z from "zod";
 import { dynamodbClient } from "./lib/awsServicesConnector.ts";
@@ -10,63 +10,49 @@ const lambdaEventSchema = z.object({
 
 type OverdueResponsesConfirmatorPayload = z.infer<typeof lambdaEventSchema>;
 
-type LambdaOutput = {
-  numberOfOverdueResponsesConfirmed: number;
-};
-
-type FormOverdueResponsesResult =
-  | { didRetrieveAllResponses: true; responseNames: string[] }
-  | { didRetrieveAllResponses: false; responseNames: string[]; lastEvaluatedKey: Record<string, NativeAttributeValue> };
-
 const AGE_AFTER_RESPONSE_CONSIDERED_OVERDUE = 45;
 
-export const handler = lambdaWithValidatedEventAndContextualLogger<OverdueResponsesConfirmatorPayload, LambdaOutput>(lambdaEventSchema, ({ event, contextualLogger }) => {
+export const handler = lambdaWithValidatedEventAndContextualLogger<OverdueResponsesConfirmatorPayload, void>(lambdaEventSchema, ({ event, contextualLogger }) => {
   return retrieveAndConfirmAllOverdueResponses(event.formId)
-    .map(() => ({ numberOfOverdueResponsesConfirmed: 0 }) satisfies LambdaOutput)
     .ifRight(({ numberOfOverdueResponsesConfirmed }) =>
       contextualLogger.log({ level: "info", message: `${numberOfOverdueResponsesConfirmed} overdue responses have been confirmed.\n\nHasta la vista!` }),
     )
+    .void()
     .ifLeft((error) => contextualLogger.log({ level: "error", message: "Something went wrong.\n\nI'll be back!", error }));
 });
 
-function retrieveAndConfirmAllOverdueResponses(formId: string): EitherAsync<Error, void> {
-  return EitherAsync(async () => {
+function retrieveAndConfirmAllOverdueResponses(formId: string): EitherAsync<Error, { numberOfOverdueResponsesConfirmed: number }> {
+  return EitherAsync(async ({ throwE }) => {
+    let numberOfOverdueResponsesConfirmed = 0;
     let lastEvaluatedKey: Record<string, NativeAttributeValue> | undefined | null = null;
 
     while (lastEvaluatedKey !== undefined) {
-      const test = await retrieveFormOverdueResponses({
-        formId,
-        minimumAgeToBeConsideredAsOverdue: AGE_AFTER_RESPONSE_CONSIDERED_OVERDUE,
-        maximumNumberOfResponsesToBeRetrieved: 50,
-        lastEvaluatedKey: lastEvaluatedKey ?? undefined,
-      })
-        .chain((result) => confirmFormOverdueResponses({ formId: "" }))
-        .run();
-      // .caseOf({
-      //   Left: (error) => {
-      //     throw error;
-      //   },
-      //   Right: (output) => output,
-      // });
-
-      lastEvaluatedKey = undefined;
+      await retrieveFormOverdueResponses(formId, lastEvaluatedKey ?? undefined)
+        .chain(EitherAsyncUtils.ifRightAsync(({ responseNames }) => (responseNames.length > 0 ? confirmFormOverdueResponses(formId, responseNames) : EitherAsyncUtils.rightVoid())))
+        .caseOf({
+          Right: ({ responseNames, lastEvaluatedKey: nextLastEvaluatedKey }) => {
+            numberOfOverdueResponsesConfirmed += responseNames.length;
+            lastEvaluatedKey = nextLastEvaluatedKey;
+          },
+          Left: (error) => throwE(error),
+        });
     }
+
+    return { numberOfOverdueResponsesConfirmed };
   });
 }
 
-function retrieveFormOverdueResponses(input: {
-  formId: string;
-  minimumAgeToBeConsideredAsOverdue: number;
-  maximumNumberOfResponsesToBeRetrieved: number;
-  lastEvaluatedKey?: Record<string, NativeAttributeValue>;
-}): EitherAsync<Error, FormOverdueResponsesResult> {
+function retrieveFormOverdueResponses(
+  formId: string,
+  lastEvaluatedKey?: Record<string, NativeAttributeValue>,
+): EitherAsync<Error, { responseNames: string[]; lastEvaluatedKey?: Record<string, NativeAttributeValue> }> {
   return EitherAsync<Error, QueryCommandOutput>(() =>
     dynamodbClient.send(
       new QueryCommand({
         TableName: process.env.DYNAMODB_VAULT_TABLE_NAME,
         IndexName: process.env.DYNAMODB_VAULT_STATUS_CREATED_AT_V2_INDEX_NAME,
-        ExclusiveStartKey: input.lastEvaluatedKey,
-        Limit: input.maximumNumberOfResponsesToBeRetrieved,
+        ExclusiveStartKey: lastEvaluatedKey,
+        Limit: 25, // Set to 25 because the confirmation code is limited to 25 updates at a time
         KeyConditionExpression: "FormID = :formId AND #statusCreatedAtKey BETWEEN :lowerBound AND :upperBound",
         ProjectionExpression: "#name,CreatedAt",
         ExpressionAttributeNames: {
@@ -74,7 +60,7 @@ function retrieveFormOverdueResponses(input: {
           "#name": "Name",
         },
         ExpressionAttributeValues: {
-          ":formId": input.formId,
+          ":formId": formId,
           /**
            * Timestamps must be zero-padded to 13 digits (Unix milliseconds) to ensure
            * lexicographical string ordering matches chronological ordering in DynamoDB.
@@ -88,38 +74,35 @@ function retrieveFormOverdueResponses(input: {
            * all existing and newly created sort keys to preserve chronological ordering.
            */
           ":lowerBound": "Downloaded#0000000000000",
-          // ":upperBound": `Downloaded#${Date.now() - input.minimumAgeToBeConsideredAsOverdue * 24 * 60 * 60 * 1000}`,
+          // ":upperBound": `Downloaded#${Date.now() - AGE_AFTER_RESPONSE_CONSIDERED_OVERDUE * 24 * 60 * 60 * 1000}`,
           ":upperBound": `Downloaded#${Date.now()}`,
         },
       }),
     ),
   )
-    .map(({ Items, LastEvaluatedKey }) => {
-      console.log(Items);
-      if (LastEvaluatedKey === undefined) {
-        return { didRetrieveAllResponses: true, responseNames: [] } satisfies FormOverdueResponsesResult;
-      } else {
-        return { didRetrieveAllResponses: false, responseNames: [], lastEvaluatedKey: LastEvaluatedKey } satisfies FormOverdueResponsesResult;
-      }
-    })
+    .map(({ Items, LastEvaluatedKey }) => ({ responseNames: Items?.map((item) => item.Name as string) ?? [], lastEvaluatedKey: LastEvaluatedKey }))
     .mapLeft((error) => new Error("Failed to retrieve overdue responses", { cause: error }));
 }
 
-function confirmFormOverdueResponses(input: { formId: string }): EitherAsync<Error, void> {
+function confirmFormOverdueResponses(formId: string, responseNames: string[]): EitherAsync<Error, void> {
+  if (responseNames.length > 25) {
+    return EitherAsyncUtils.left(new Error("This version of the code cannot confirm more than 25 overdue responses at a time (BatchExecuteStatementCommand)"));
+  }
+
   return EitherAsync(() =>
     dynamodbClient.send(
-      new UpdateCommand({
-        TableName: process.env.DYNAMODB_VAULT_TABLE_NAME,
-        Key: {
-          // SubmissionID: submissionId,
-        },
-        UpdateExpression: "SET SendReceipt = :receiptId",
-        ExpressionAttributeValues: {
-          // ":receiptId": receiptId,
-        },
+      new BatchExecuteStatementCommand({
+        Statements: responseNames.map((responseName) => ({
+          Statement: `UPDATE "${process.env.DYNAMODB_VAULT_TABLE_NAME}" SET WillConfirm = 'confirmed' WHERE "FormID" = '${formId}' AND "NAME_OR_CONF" = 'NAME#${responseName}'`,
+        })),
       }),
     ),
   )
-    .void()
+    .chain(({ $metadata: { httpStatusCode }, Responses }) => {
+      const errors = Responses?.filter((response) => response.Error !== undefined) ?? [];
+      return httpStatusCode === 200 && errors.length === 0
+        ? EitherAsyncUtils.rightVoid()
+        : EitherAsyncUtils.left(new Error("At least one update statement in the batch did not succeed", { cause: JSON.stringify(errors) }));
+    })
     .mapLeft((error) => new Error("Failed to confirm overdue responses", { cause: error }));
 }
