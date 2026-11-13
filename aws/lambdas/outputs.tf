@@ -78,6 +78,16 @@ output "lambda_notification_log_group_name" {
   value       = aws_cloudwatch_log_group.notification.name
 }
 
+output "lambda_overdue_responses_confirmator_function_name" {
+  description = "Overdue responses confirmator Lambda function name"
+  value       = aws_lambda_function.notification.function_name
+}
+
+output "lambda_overdue_responses_confirmator_log_group_name" {
+  description = "Overdue responses confirmator Lambda CloudWatch log group name"
+  value       = aws_cloudwatch_log_group.notification.name
+}
+
 output "lambda_reliability_function_name" {
   description = "Reliability Lambda function name"
   value       = aws_lambda_function.reliability.function_name

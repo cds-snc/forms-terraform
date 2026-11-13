@@ -249,6 +249,24 @@ importers:
         specifier: 'catalog:'
         version: 1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
 
+  lambda-code/overdue-responses-confirmator:
+    dependencies:
+      '@aws-sdk/client-dynamodb':
+        specifier: 'catalog:'
+        version: 3.1117.0
+      '@aws-sdk/lib-dynamodb':
+        specifier: 'catalog:'
+        version: 3.1117.0(@aws-sdk/client-dynamodb@3.1117.0)
+      common:
+        specifier: workspace:*
+        version: link:../common
+      purify-ts:
+        specifier: 'catalog:'
+        version: 2.1.4
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
+
   lambda-code/reliability:
     dependencies:
       '@aws-sdk/client-dynamodb':
