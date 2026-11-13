@@ -4,48 +4,85 @@ import { EitherAsync } from "purify-ts";
 import z from "zod";
 import { dynamodbClient } from "./lib/awsServicesConnector.ts";
 
+const AGE_IN_DAYS_AFTER_RESPONSE_CONSIDERED_OVERDUE = 45;
+
 const lambdaEventSchema = z.object({
   formId: z.cuid2(),
 });
 
 type OverdueResponsesConfirmatorPayload = z.infer<typeof lambdaEventSchema>;
 
-const AGE_AFTER_RESPONSE_CONSIDERED_OVERDUE = 45;
+type OverdueResponse = {
+  name: string;
+  createdAt: number;
+};
 
 export const handler = lambdaWithValidatedEventAndContextualLogger<OverdueResponsesConfirmatorPayload, void>(lambdaEventSchema, ({ event, contextualLogger }) => {
   return retrieveAndConfirmAllOverdueResponses(event.formId)
-    .ifRight(({ numberOfOverdueResponsesConfirmed }) =>
-      contextualLogger.log({ level: "info", message: `${numberOfOverdueResponsesConfirmed} overdue responses have been confirmed.\n\nHasta la vista!` }),
+    .ifRight(({ numberOfConfirmedOverdueResponses, oldestOverdueResponseDate, newestOverdueResponseDate }) =>
+      contextualLogger.log({
+        level: "info",
+        message: `
+The Confirmator has confirmed ${numberOfConfirmedOverdueResponses} overdue responses.
+        
+Target acquisition - Oldest / Newest overdue response:
+${oldestOverdueResponseDate?.toISOString() ?? "n/a"} / ${newestOverdueResponseDate?.toISOString() ?? "n/a"}
+        
+Hasta la vista, overdue responses!
+`,
+      }),
     )
     .void()
-    .ifLeft((error) => contextualLogger.log({ level: "error", message: "Something went wrong.\n\nI'll be back!", error }));
+    .ifLeft((error) => contextualLogger.log({ level: "error", message: "No problemo... just a minor system malfunction.\n\nI'll be back!", error }));
 });
 
-function retrieveAndConfirmAllOverdueResponses(formId: string): EitherAsync<Error, { numberOfOverdueResponsesConfirmed: number }> {
+function retrieveAndConfirmAllOverdueResponses(formId: string): EitherAsync<Error, { numberOfConfirmedOverdueResponses: number; oldestOverdueResponseDate?: Date; newestOverdueResponseDate?: Date }> {
   return EitherAsync(async ({ throwE }) => {
-    let numberOfOverdueResponsesConfirmed = 0;
     let lastEvaluatedKey: Record<string, NativeAttributeValue> | undefined | null = null;
 
+    let numberOfConfirmedOverdueResponses = 0;
+    let oldestOverdueResponseDate: Date | undefined;
+    let newestOverdueResponseDate: Date | undefined;
+
     while (lastEvaluatedKey !== undefined) {
-      await retrieveFormOverdueResponses(formId, lastEvaluatedKey ?? undefined)
-        .chain(EitherAsyncUtils.ifRightAsync(({ responseNames }) => (responseNames.length > 0 ? confirmFormOverdueResponses(formId, responseNames) : EitherAsyncUtils.rightVoid())))
+      await retrieveOverdueResponses(formId, AGE_IN_DAYS_AFTER_RESPONSE_CONSIDERED_OVERDUE, lastEvaluatedKey ?? undefined)
+        .chain(
+          EitherAsyncUtils.ifRightAsync(({ overdueResponses }) =>
+            overdueResponses.length > 0
+              ? confirmOverdueResponses(
+                  formId,
+                  overdueResponses.map((r) => r.name),
+                )
+              : EitherAsyncUtils.rightVoid(),
+          ),
+        )
         .caseOf({
-          Right: ({ responseNames, lastEvaluatedKey: nextLastEvaluatedKey }) => {
-            numberOfOverdueResponsesConfirmed += responseNames.length;
+          Right: ({ overdueResponses, lastEvaluatedKey: nextLastEvaluatedKey }) => {
             lastEvaluatedKey = nextLastEvaluatedKey;
+            numberOfConfirmedOverdueResponses += overdueResponses.length;
+
+            if (oldestOverdueResponseDate === undefined) {
+              const firstOverdueResponseCreatedAt = overdueResponses.at(0)?.createdAt;
+              oldestOverdueResponseDate = firstOverdueResponseCreatedAt ? new Date(firstOverdueResponseCreatedAt) : undefined;
+              newestOverdueResponseDate = firstOverdueResponseCreatedAt ? new Date(firstOverdueResponseCreatedAt) : undefined;
+            }
+
+            const lastOverdueResponseCreatedAt = overdueResponses.at(-1)?.createdAt;
+            newestOverdueResponseDate = lastOverdueResponseCreatedAt ? new Date(lastOverdueResponseCreatedAt) : undefined;
           },
           Left: (error) => throwE(error),
         });
     }
 
-    return { numberOfOverdueResponsesConfirmed };
+    return { numberOfConfirmedOverdueResponses, oldestOverdueResponseDate, newestOverdueResponseDate };
   });
 }
 
-function retrieveFormOverdueResponses(
+function retrieveOverdueResponses(
   formId: string,
+  ageInDaysAfterResponseConsideredOverdue: number,
   lastEvaluatedKey?: Record<string, NativeAttributeValue>,
-): EitherAsync<Error, { responseNames: string[]; lastEvaluatedKey?: Record<string, NativeAttributeValue> }> {
+): EitherAsync<Error, { overdueResponses: OverdueResponse[]; lastEvaluatedKey?: Record<string, NativeAttributeValue> }> {
   return EitherAsync<Error, QueryCommandOutput>(() =>
     dynamodbClient.send(
       new QueryCommand({
@@ -74,17 +111,16 @@ function retrieveFormOverdueResponses(
            * all existing and newly created sort keys to preserve chronological ordering.
            */
           ":lowerBound": "Downloaded#0000000000000",
-          // ":upperBound": `Downloaded#${Date.now() - AGE_AFTER_RESPONSE_CONSIDERED_OVERDUE * 24 * 60 * 60 * 1000}`,
-          ":upperBound": `Downloaded#${Date.now()}`,
+          ":upperBound": `Downloaded#${Date.now() - ageInDaysAfterResponseConsideredOverdue * 24 * 60 * 60 * 1000}`,
         },
       }),
     ),
   )
-    .map(({ Items, LastEvaluatedKey }) => ({ responseNames: Items?.map((item) => item.Name as string) ?? [], lastEvaluatedKey: LastEvaluatedKey }))
+    .map(({ Items, LastEvaluatedKey }) => ({ overdueResponses: Items?.map((item) => ({ name: item.Name as string, createdAt: item.CreatedAt as number })) ?? [], lastEvaluatedKey: LastEvaluatedKey }))
     .mapLeft((error) => new Error("Failed to retrieve overdue responses", { cause: error }));
 }
 
-function confirmFormOverdueResponses(formId: string, responseNames: string[]): EitherAsync<Error, void> {
+function confirmOverdueResponses(formId: string, responseNames: string[]): EitherAsync<Error, void> {
   if (responseNames.length > 25) {
     return EitherAsyncUtils.left(new Error("This version of the code cannot confirm more than 25 overdue responses at a time (BatchExecuteStatementCommand)"));
   }
