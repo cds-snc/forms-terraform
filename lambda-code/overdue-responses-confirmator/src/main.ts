@@ -128,9 +128,15 @@ function confirmOverdueResponses(formId: string, responseNames: string[]): Eithe
   return EitherAsync(() =>
     dynamodbClient.send(
       new BatchExecuteStatementCommand({
-        Statements: responseNames.map((responseName) => ({
-          Statement: `UPDATE "${process.env.DYNAMODB_VAULT_TABLE_NAME}" SET WillConfirm = 'confirmed' WHERE "FormID" = '${formId}' AND "NAME_OR_CONF" = 'NAME#${responseName}'`,
-        })),
+        Statements: responseNames.map((responseName) => {
+          const confirmTimestamp = Date.now();
+          const removalDate = confirmTimestamp + 2592000000; // 2592000000 milliseconds = 30 days
+
+          return {
+            Statement: `UPDATE "${process.env.DYNAMODB_VAULT_TABLE_NAME}" SET "ConfirmTimestamp" = ?, "RemovalDate" = ? WHERE "FormID" = ? AND "NAME_OR_CONF" = ?`,
+            Parameters: [confirmTimestamp, removalDate, formId, `NAME#${responseName}`],
+          };
+        }),
       }),
     ),
   )
