@@ -46,16 +46,7 @@ function retrieveAndConfirmAllOverdueResponses(formId: string): EitherAsync<Erro
 
     while (lastEvaluatedKey !== undefined) {
       await retrieveOverdueResponses(formId, AGE_IN_DAYS_AFTER_RESPONSE_CONSIDERED_OVERDUE, lastEvaluatedKey ?? undefined)
-        .chain(
-          EitherAsyncUtils.ifRightAsync(({ overdueResponses }) =>
-            overdueResponses.length > 0
-              ? confirmOverdueResponses(
-                  formId,
-                  overdueResponses.map((r) => r.name),
-                )
-              : EitherAsyncUtils.rightVoid(),
-          ),
-        )
+        .chain(EitherAsyncUtils.ifRightAsync(({ overdueResponses }) => (overdueResponses.length > 0 ? confirmOverdueResponses(formId, overdueResponses) : EitherAsyncUtils.rightVoid())))
         .caseOf({
           Right: ({ overdueResponses, lastEvaluatedKey: nextLastEvaluatedKey }) => {
             lastEvaluatedKey = nextLastEvaluatedKey;
@@ -120,21 +111,21 @@ function retrieveOverdueResponses(
     .mapLeft((error) => new Error("Failed to retrieve overdue responses", { cause: error }));
 }
 
-function confirmOverdueResponses(formId: string, responseNames: string[]): EitherAsync<Error, void> {
-  if (responseNames.length > 25) {
+function confirmOverdueResponses(formId: string, overdueResponses: OverdueResponse[]): EitherAsync<Error, void> {
+  if (overdueResponses.length > 25) {
     return EitherAsyncUtils.left(new Error("This version of the code cannot confirm more than 25 overdue responses at a time (BatchExecuteStatementCommand)"));
   }
 
   return EitherAsync(() =>
     dynamodbClient.send(
       new BatchExecuteStatementCommand({
-        Statements: responseNames.map((responseName) => {
+        Statements: overdueResponses.map((overdueResponse) => {
           const confirmTimestamp = Date.now();
           const removalDate = confirmTimestamp + 2592000000; // 2592000000 milliseconds = 30 days
 
           return {
-            Statement: `UPDATE "${process.env.DYNAMODB_VAULT_TABLE_NAME}" SET "ConfirmTimestamp" = ?, "RemovalDate" = ? WHERE "FormID" = ? AND "NAME_OR_CONF" = ?`,
-            Parameters: [confirmTimestamp, removalDate, formId, `NAME#${responseName}`],
+            Statement: `UPDATE "${process.env.DYNAMODB_VAULT_TABLE_NAME}" SET "Status#CreatedAt" = ?, "ConfirmTimestamp" = ?, "RemovalDate" = ? WHERE "FormID" = ? AND "NAME_OR_CONF" = ?`,
+            Parameters: [`Confirmed#${overdueResponse.createdAt}`, confirmTimestamp, removalDate, formId, `NAME#${overdueResponse.name}`],
           };
         }),
       }),
