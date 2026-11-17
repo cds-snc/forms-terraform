@@ -54,7 +54,7 @@ catalogs:
       version: 4.1.0
     axios:
       specifier: ^1.19.0
-      version: 1.19.0
+      version: 1.21.1
     jose:
       specifier: ^6.2.9
       version: 6.2.10
@@ -104,7 +104,7 @@ importers:
         version: 3.1117.0(@aws-sdk/client-dynamodb@3.1117.0)
       axios:
         specifier: 'catalog:'
-        version: 1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+        version: 1.21.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       jose:
         specifier: 'catalog:'
         version: 6.2.10
@@ -137,7 +137,7 @@ importers:
         version: 5.0.2
       '@gcforms/connectors':
         specifier: 2.2.21
-        version: 2.2.21
+        version: 2.2.21(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
 
   lambda-code/cognito-pre-sign-up: {}
 
@@ -184,7 +184,7 @@ importers:
         version: 3.1117.0(@aws-sdk/client-dynamodb@3.1117.0)
       '@gcforms/connectors':
         specifier: 'catalog:'
-        version: 3.0.1
+        version: 3.0.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       '@gcforms/database':
         specifier: 'catalog:'
         version: 1.1.10(typescript@7.0.2)
@@ -205,7 +205,7 @@ importers:
         version: 3.1117.0(@aws-sdk/client-dynamodb@3.1117.0)
       '@gcforms/connectors':
         specifier: 'catalog:'
-        version: 3.0.1
+        version: 3.0.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
 
   lambda-code/notify-slack:
     dependencies:
@@ -214,7 +214,7 @@ importers:
         version: 3.1117.0
       axios:
         specifier: 'catalog:'
-        version: 1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+        version: 1.21.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
 
   lambda-code/reliability:
     dependencies:
@@ -235,7 +235,7 @@ importers:
         version: 3.1117.0(@aws-sdk/client-dynamodb@3.1117.0)
       '@gcforms/connectors':
         specifier: 'catalog:'
-        version: 3.0.1(supports-color@7.2.0)
+        version: 3.0.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       '@gcforms/core':
         specifier: 'catalog:'
         version: 2.2.26(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@gcforms/types@1.0.38)(supports-color@7.2.0)(typescript@7.0.2)
@@ -882,6 +882,9 @@ packages:
   '@smithy/core@3.33.3':
     resolution: {integrity: sha512-CsOeKq/9kA3y6VJHt+/+VTCtBaxJ4OTFpgrjIUhPpDIKxBci1k2bJaQASF2h/ELWrulGp+t97DZ0mevfAD8idg==}
     engines: {node: '>=18.0.0'}
+    deprecated: |-
+      Deprecated due to a bug in custom logger data redaction. Upgrade to the latest version. If you used a custom logger with this
+        version, review your logs and rotate any credentials or other secrets. See https://github.com/aws/aws-sdk-js-v3/issues/8393.
 
   '@smithy/credential-provider-imds@4.5.2':
     resolution: {integrity: sha512-A9uSdn72ozbRUSit0eib0TW7nXuNPlaeM0zcGkJ+nE6tFcSDbnmtwoxbTCFBukVQcszDAyvsd7+rTduPTXpygg==}
@@ -1126,6 +1129,9 @@ packages:
   axios@1.19.0:
     resolution: {integrity: sha512-ht/iuYZXEjFxLH/Hkezgd7m6JKlHHXEUSneaDz8uZe1Gj5QZtCnpyDsckvAiEnT89OEbCLmnte4R4sn7P0EKFw==}
 
+  axios@1.21.1:
+    resolution: {integrity: sha512-6eI5Q/Y4u/Um9dDlsRoq5pY2rxnUTv+L4PpLitnbk/i4jb3MxLZ5CsN5Ih3IysbeRYK4pR+P7qfMsOQl9fwwFQ==}
+
   birpc@2.9.0:
     resolution: {integrity: sha512-KrayHS5pBi69Xi9JmvoqrIgYGDkD6mcSe/i6YKi3w5kekCLzrX4+nawcXqrj2tIp50Kw/mT/s3p+GVK0A0sKxw==}
 
@@ -1257,6 +1263,15 @@ packages:
 
   follow-redirects@1.16.0:
     resolution: {integrity: sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+
+  follow-redirects@1.16.3:
+    resolution: {integrity: sha512-toOSoqN6d51Wjf1aOFJYcoVv1aND9rj/CwjLU0Vz40oDuSpWDayCeKe4JpL5NL0WdFvoOOCI3BRo69HahjbR1A==}
     engines: {node: '>=4.0'}
     peerDependencies:
       debug: '*'
@@ -2334,31 +2349,19 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  '@gcforms/connectors@2.2.21':
+  '@gcforms/connectors@2.2.21(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
       '@aws-sdk/client-dynamodb': 3.1117.0
       '@aws-sdk/client-secrets-manager': 3.1117.0
       '@aws-sdk/client-sqs': 3.1117.0
       '@aws-sdk/lib-dynamodb': 3.1117.0(@aws-sdk/client-dynamodb@3.1117.0)
-      axios: 1.19.0
+      axios: 1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       postgres: 3.4.9
     transitivePeerDependencies:
       - debug
       - supports-color
 
-  '@gcforms/connectors@3.0.1':
-    dependencies:
-      '@aws-sdk/client-dynamodb': 3.1117.0
-      '@aws-sdk/client-secrets-manager': 3.1117.0
-      '@aws-sdk/client-sqs': 3.1117.0
-      '@aws-sdk/lib-dynamodb': 3.1117.0(@aws-sdk/client-dynamodb@3.1117.0)
-      axios: 1.19.0
-      postgres: 3.4.9
-    transitivePeerDependencies:
-      - debug
-      - supports-color
-
-  '@gcforms/connectors@3.0.1(supports-color@7.2.0)':
+  '@gcforms/connectors@3.0.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
       '@aws-sdk/client-dynamodb': 3.1117.0
       '@aws-sdk/client-secrets-manager': 3.1117.0
@@ -2806,7 +2809,7 @@ snapshots:
       sinon: 18.0.1
       tslib: 2.8.1
 
-  axios@1.19.0:
+  axios@1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
     dependencies:
       follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
       form-data: 4.0.6
@@ -2816,9 +2819,9 @@ snapshots:
       - debug
       - supports-color
 
-  axios@1.19.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
+  axios@1.21.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0):
     dependencies:
-      follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
+      follow-redirects: 1.16.3(debug@4.4.3(supports-color@7.2.0))
       form-data: 4.0.6
       https-proxy-agent: 5.0.1(supports-color@7.2.0)
       proxy-from-env: 2.1.0
@@ -2929,6 +2932,10 @@ snapshots:
       - supports-color
 
   follow-redirects@1.16.0(debug@4.4.3(supports-color@7.2.0)):
+    optionalDependencies:
+      debug: 4.4.3(supports-color@7.2.0)
+
+  follow-redirects@1.16.3(debug@4.4.3(supports-color@7.2.0)):
     optionalDependencies:
       debug: 4.4.3(supports-color@7.2.0)
 
