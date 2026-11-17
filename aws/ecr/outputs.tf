@@ -13,12 +13,6 @@ output "ecr_repository_url_cognito_pre_sign_up_lambda" {
   value       = aws_ecr_repository.lambda["cognito-pre-sign-up-lambda"].repository_url
 }
 
-output "ecr_repository_url_load_testing_lambda" {
-  description = "URL of the Load Testing Lambda ECR"
-  value       = try(aws_ecr_repository.lambda["load-testing-lambda"].repository_url, null)
-}
-
-
 output "ecr_repository_url_notify_slack_lambda" {
   description = "URL of the Notify Slack Lambda ECR"
   value       = aws_ecr_repository.lambda["notify-slack-lambda"].repository_url

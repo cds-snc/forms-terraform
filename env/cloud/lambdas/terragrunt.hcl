@@ -171,7 +171,6 @@ dependency "ecr" {
       api-end-to-end-test-lambda      = "test_url",
       file-upload-processor-lambda    = "test_url",
       file-upload-cleanup-lambda      = "test_url",
-      load-testing-lambda             = "test_url",
       notification-lambda             = "test_url"
     }
   }

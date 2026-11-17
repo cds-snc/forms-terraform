@@ -1,6 +1,6 @@
 import { Handler } from "aws-lambda";
 import { gunzip } from "zlib";
-import { notifyGcFormsTeam } from "./notificationRouter.js";
+import { notifyGcFormsTeam } from "./notificationRouter.ts";
 
 export const handler: Handler = async (event: any) => {
   try {
