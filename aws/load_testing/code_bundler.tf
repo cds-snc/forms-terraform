@@ -1,5 +1,6 @@
 resource "terraform_data" "load_testing_lambda_package_dependencies" {
   triggers_replace = [
+    timestamp(),
     filesha256("${path.module}/lambda-code/requirements.txt")
   ]
 
@@ -29,6 +30,7 @@ data "archive_file" "load_testing_lambda_package_dependencies" {
 
 resource "terraform_data" "load_testing_lambda_package" {
   triggers_replace = [
+    timestamp(),
     sha256(join("", [
       for file in sort(fileset("${path.module}/lambda-code/tests", "**")) :
       filesha256("${path.module}/lambda-code/tests/${file}")
