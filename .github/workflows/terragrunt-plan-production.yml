@@ -255,15 +255,6 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Terragrunt plan cognito
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/cognito"
-          comment-delete: "true"
-          comment-title: "Production: cognito"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
       - name: Terragrunt plan network
         uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
@@ -335,24 +326,6 @@ jobs:
           directory: "env/cloud/api"
           comment-delete: "true"
           comment-title: "Production: api"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      - name: Terragrunt plan lambdas
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/lambdas"
-          comment-delete: "true"
-          comment-title: "Production: lambdas"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      - name: Terragrunt plan alarms
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/alarms"
-          comment-delete: "true"
-          comment-title: "Production: alarms"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
