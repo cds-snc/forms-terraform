@@ -72,6 +72,24 @@ jobs:
         with:
           is-tagged: "true"
 
+  generate-lambda-functions-matrix:
+    needs: get-version
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ env.VERSION }}
+      - name: Generate matrix
+        id: generate-matrix
+        run: |
+          LAMBDA_ARRAY=$(echo $(cat ./.github/production-lambda-functions.conf) | sed 's/ //g' )
+          echo "matrix=$LAMBDA_ARRAY" >> $GITHUB_OUTPUT
+    outputs:
+      lambda-functions-matrix: ${{ steps.generate-matrix.outputs.matrix }}
+
   # We deploy ECR first to make sure it is available for the 'build-tag-push-lambda-images' job which will be run in parallel with `terragrunt-apply-all-modules`
   terragrunt-apply-ecr-only:
     needs: get-version
@@ -98,6 +116,33 @@ jobs:
       - name: Terragrunt apply ecr
         working-directory: env/cloud/ecr
         run: terragrunt run --non-interactive -- apply -auto-approve
+
+  build-tag-push-lambda-docker-images:
+    needs:
+      [get-version, generate-lambda-functions-matrix, terragrunt-apply-ecr-only]
+    runs-on: ubuntu-24.04-arm
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4 # Limits parallel matrix jobs
+      matrix:
+        image: ${{ fromJSON(needs.generate-lambda-functions-matrix.outputs.lambda-functions-matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ env.VERSION }}
+
+      - name: Build, Tag and Push Lambda Docker image
+        uses: ./.github/workflows/build-push-lambda-docker-image
+        with:
+          lambda-folder-name: ${{ matrix.image }}
+          push: true
+          tag: ${{ github.sha }}
+          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
+          aws-role-session-name: TFApply
+          aws-region: ${{ env.AWS_REGION }}
 
   build-tag-push-idp-image:
     needs: [get-version, terragrunt-apply-ecr-only]
@@ -139,7 +184,12 @@ jobs:
         shell: bash
 
   terragrunt-apply-all-modules:
-    needs: [get-version, build-tag-push-idp-image]
+    needs:
+      [
+        get-version,
+        build-tag-push-lambda-docker-images,
+        build-tag-push-idp-image,
+      ]
     if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     env:
@@ -196,6 +246,10 @@ jobs:
         working-directory: env/cloud/sns
         run: terragrunt run --non-interactive -- apply -auto-approve
 
+      - name: Terragrunt apply cognito
+        working-directory: env/cloud/cognito
+        run: terragrunt run --non-interactive -- apply -auto-approve
+
       - name: Terragrunt apply network
         working-directory: env/cloud/network
         run: terragrunt run --non-interactive -- apply -auto-approve
@@ -230,9 +284,47 @@ jobs:
         working-directory: env/cloud/api
         run: terragrunt run --non-interactive -- apply -auto-approve
 
+      - name: Terragrunt apply lambdas
+        working-directory: env/cloud/lambdas
+        run: terragrunt run --non-interactive -- apply -auto-approve
+
+      - name: Terragrunt apply alarms
+        working-directory: env/cloud/alarms
+        run: terragrunt run --non-interactive -- apply -auto-approve
+
       - name: Terragrunt apply glue
         working-directory: env/cloud/glue
         run: terragrunt run --non-interactive -- apply -auto-approve
+
+  update-lambda-function-image:
+    needs:
+      [
+        get-version,
+        generate-lambda-functions-matrix,
+        terragrunt-apply-all-modules,
+      ]
+    if: ${{ !failure() && !cancelled() }}
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJSON(needs.generate-lambda-functions-matrix.outputs.lambda-functions-matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ env.VERSION }}
+
+      - name: Request Lambda functions to use new image
+        uses: ./.github/workflows/request-lambda-functions-to-use-new-image
+        with:
+          aws-role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/forms-terraform-apply
+          aws-role-session-name: TFApply
+          aws-region: ${{ env.AWS_REGION }}
+          lambda-name: ${{ matrix.image }}
+          image-tag: ${{ env.VERSION }}
 
   update-idp-ecs-service-image:
     needs: [get-version, terragrunt-apply-all-modules]
@@ -262,8 +354,10 @@ jobs:
       [
         get-version,
         terragrunt-apply-ecr-only,
+        build-tag-push-lambda-docker-images,
         build-tag-push-idp-image,
         terragrunt-apply-all-modules,
+        update-lambda-function-image,
         update-idp-ecs-service-image,
       ]
     if: ${{ failure() && !cancelled() }}
