@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.48.11](https://github.com/cds-snc/forms-terraform/compare/v3.48.10...v3.48.11) (2026-11-19)
+
+
+### Miscellaneous Chores
+
+* Add sso client id to prod env ([#1538](https://github.com/cds-snc/forms-terraform/issues/1538)) ([61baef6](https://github.com/cds-snc/forms-terraform/commit/61baef65f80d63f8958b13e0fd91783aa18abfa0))
+* **deps:** update all non-major github action dependencies ([#1524](https://github.com/cds-snc/forms-terraform/issues/1524)) ([43b66d2](https://github.com/cds-snc/forms-terraform/commit/43b66d204f91febfc8b5a879f5042795da6ba7bc))
+* **deps:** update dependency axios to v1.20.0 [security] ([#1539](https://github.com/cds-snc/forms-terraform/issues/1539)) ([b970b90](https://github.com/cds-snc/forms-terraform/commit/b970b9074fed4765e0e8da66bfbe43cc1a4460e1))
+* force lambda functions to be built and deployed when shared configuration files are modified ([#1542](https://github.com/cds-snc/forms-terraform/issues/1542)) ([27cc936](https://github.com/cds-snc/forms-terraform/commit/27cc936a6eba9e32869f75e2312bb04ca369ce41))
+* force Terraform plan/apply workflows to run when a shared Lambda configuration file changes ([#1549](https://github.com/cds-snc/forms-terraform/issues/1549)) ([d70cab0](https://github.com/cds-snc/forms-terraform/commit/d70cab059041e14a171d522dabd17e61712c64a7))
+* lambdas architecture revamp ([#1447](https://github.com/cds-snc/forms-terraform/issues/1447)) ([6e1aba7](https://github.com/cds-snc/forms-terraform/commit/6e1aba70e9bacac8bdf4ad46b53a0fd05e8657b9))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1529](https://github.com/cds-snc/forms-terraform/issues/1529)) ([8f4e147](https://github.com/cds-snc/forms-terraform/commit/8f4e147dac0e05d68e1eea2e8d22061dde5ec06e))
+* temporary solution to force rebuild load testing lambda on every apply ([#1541](https://github.com/cds-snc/forms-terraform/issues/1541)) ([3c49c58](https://github.com/cds-snc/forms-terraform/commit/3c49c58a001eabb0bb026442e6fdf065545b2b67))
+* update Production deployment script to avoid deploying Cognito, Alarms and Lambdas Terraform modules ([#1544](https://github.com/cds-snc/forms-terraform/issues/1544)) ([1bdb1d9](https://github.com/cds-snc/forms-terraform/commit/1bdb1d94b630e671481a9e7309eb2bf3730eed31))
+* update Staging infra deployment script to only deploy lambda r… ([#1532](https://github.com/cds-snc/forms-terraform/issues/1532)) ([572ad62](https://github.com/cds-snc/forms-terraform/commit/572ad62cd80ba0beb51c29699998ed75cf4e122b))
+* upgrade IDP RDS engine version from 16.11 to 16.13 ([#1540](https://github.com/cds-snc/forms-terraform/issues/1540)) ([1f0e4fc](https://github.com/cds-snc/forms-terraform/commit/1f0e4fc328d56bd4bafa5ec042cf6418d14c004e))
+
 ## [3.48.10](https://github.com/cds-snc/forms-terraform/compare/v3.48.9...v3.48.10) (2026-11-03)
 
 
