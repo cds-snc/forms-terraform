@@ -1,32 +1,53 @@
+common: &common
+  - "pnpm-workspace.yaml"
+  - "pnpm-lock.yaml"
+  - "tsconfig.json"
+  - "Dockerfile.lambda"
 audit-logs:
+  - *common
   - "lambda-code/audit-logs/**"
 audit-logs-archiver:
+  - *common
   - "lambda-code/audit-logs-archiver/**"
 cognito-email-sender:
+  - *common
   - "lambda-code/cognito-email-sender/**"
 cognito-pre-sign-up:
+  - *common
   - "lambda-code/cognito-pre-sign-up/**"
 form-archiver:
+  - *common
   - "lambda-code/form-archiver/**"
 nagware:
+  - *common
   - "lambda-code/nagware/**"
 notify-slack:
+  - *common
   - "lambda-code/notify-slack/**"
 reliability:
+  - *common
   - "lambda-code/reliability/**"
 reliability-dlq-consumer:
+  - *common
   - "lambda-code/reliability-dlq-consumer/**"
 response-archiver:
+  - *common
   - "lambda-code/response-archiver/**"
 submission:
+  - *common
   - "lambda-code/submission/**"
 vault-integrity:
+  - *common
   - "lambda-code/vault-integrity/**"
 api-end-to-end-test:
+  - *common
   - "lambda-code/api-end-to-end-test/**"
 file-upload-processor:
+  - *common
   - "lambda-code/file-upload-processor/**"
 file-upload-cleanup:
+  - *common
   - "lambda-code/file-upload-cleanup/**"
 notification:
+  - *common
   - "lambda-code/notification/**"
