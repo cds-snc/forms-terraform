@@ -171,169 +171,29 @@ jobs:
           role-session-name: TFPlan
           aws-region: ${{ env.AWS_REGION }}
 
-      # No dependencies
-      - name: Terragrunt plan ecr
+      - name: Terragrunt plan alarms
         uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
-          directory: "env/cloud/ecr"
+          directory: "env/cloud/alarms"
           comment-delete: "true"
-          comment-title: "Production: ecr"
+          comment-title: "Production: alarms"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Terragrunt plan hosted_zone
+      - name: Terragrunt plan cognito
         uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
-          directory: "env/cloud/hosted_zone"
+          directory: "env/cloud/cognito"
           comment-delete: "true"
-          comment-title: "Production: hosted_zone"
+          comment-title: "Production: cognito"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
-      - name: Terragrunt plan kms
+      - name: Terragrunt plan lambdas
         uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
         with:
-          directory: "env/cloud/kms"
+          directory: "env/cloud/lambdas"
           comment-delete: "true"
-          comment-title: "Production: kms"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      - name: Terragrunt plan oidc_roles
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/oidc_roles"
-          comment-delete: "true"
-          comment-title: "Production: oidc_roles"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      - name: Terragrunt plan sqs
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/sqs"
-          comment-delete: "true"
-          comment-title: "Production: sqs"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      - name: Terragrunt plan secrets
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/secrets"
-          comment-delete: "true"
-          comment-title: "Production: secrets"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      - name: Terragrunt plan s3
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/s3"
-          comment-delete: "true"
-          comment-title: "Production: s3"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      # Depends on S3
-      - name: Terragrunt plan guard_duty
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/guard_duty"
-          comment-delete: "true"
-          comment-title: "Production: guard_duty"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      # Depends on kms
-      - name: Terragrunt plan sns
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/sns"
-          comment-delete: "true"
-          comment-title: "Production: sns"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      - name: Terragrunt plan network
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/network"
-          comment-delete: "true"
-          comment-title: "Production: network"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      - name: Terragrunt plan dynamodb
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/dynamodb"
-          comment-delete: "true"
-          comment-title: "Production: dynamodb"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      # Depends on network
-      - name: Terragrunt plan load_balancer
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/load_balancer"
-          comment-delete: "true"
-          comment-title: "Production: load_balancer"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      - name: Terragrunt plan redis
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/redis"
-          comment-delete: "true"
-          comment-title: "Production: redis"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      - name: Terragrunt plan rds
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/rds"
-          comment-delete: "true"
-          comment-title: "Production: rds"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      - name: Terragrunt plan idp
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/idp"
-          comment-delete: "true"
-          comment-title: "Production: idp"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      # Depends on everything
-      - name: Terragrunt plan app
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/app"
-          comment-delete: "true"
-          comment-title: "Production: app"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      - name: Terragrunt plan api
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/api"
-          comment-delete: "true"
-          comment-title: "Production: api"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
-      - name: Terragrunt plan glue
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 #5.0.3
-        with:
-          directory: "env/cloud/glue"
-          comment-delete: "true"
-          comment-title: "Production: glue"
+          comment-title: "Production: lambdas"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
