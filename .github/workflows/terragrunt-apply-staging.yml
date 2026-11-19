@@ -11,6 +11,10 @@ on:
       - "idp/**"
       - "lambda-code/**"
       - ".github/workflows/terragrunt-apply-staging.yml"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "tsconfig.json"
+      - "Dockerfile.lambda"
 
 permissions:
   id-token: write
