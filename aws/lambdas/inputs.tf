@@ -69,6 +69,16 @@ variable "kms_key_dynamodb_arn" {
   type        = string
 }
 
+variable "dynamodb_reliability_queue_arn" {
+  description = "Reliability queue DynamodDB table ARN"
+  type        = string
+}
+
+variable "dynamodb_reliability_queue_name" {
+  description = "Reliability queue DynamodDB table name"
+  type        = string
+}
+
 variable "dynamodb_vault_arn" {
   description = "Vault DynamodDB table ARN"
   type        = string
@@ -86,11 +96,6 @@ variable "dynamodb_vault_stream_arn" {
 
 variable "dynamodb_vault_status_created_at_v2_index_name" {
   description = "DynamoDB StatusCreatedAt_v2 index name from Vault table"
-  type        = string
-}
-
-variable "dynamodb_reliability_queue_arn" {
-  description = "Reliability queue DynamodDB table ARN"
   type        = string
 }
 
