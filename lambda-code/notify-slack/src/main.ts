@@ -119,8 +119,8 @@ const handleCloudWatchLogEvent = async (logData: string) => {
     // If logMessage is false, then the message is not JSON
     if (logMessage) {
       const message = `
-              ${logMessage.msg}
-              ${logMessage.error ? "\n".concat(logMessage.error) : ""}
+              ${logMessage.msg || logMessage.message}
+              ${logMessage.error && typeof logMessage.error === "string" ? "\n".concat(logMessage.error) : ""}
               ${logMessage.severity ? "\n\nSeverity level: ".concat(logMessage.severity) : ""}
               `;
 
