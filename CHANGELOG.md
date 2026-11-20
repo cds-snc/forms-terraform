@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.48.12](https://github.com/cds-snc/forms-terraform/compare/v3.48.11...v3.48.12) (2026-11-20)
+
+
+### Miscellaneous Chores
+
+* update Production deployment script to only deploy Cognito, Alarms and Lambdas Terraform modules ([#1545](https://github.com/cds-snc/forms-terraform/issues/1545)) ([cda930f](https://github.com/cds-snc/forms-terraform/commit/cda930fd5c8e414128e33caabf226ef62af2e75c))
+* upgrade waf_ip_blocklist module to latest version 14.0.1 ([#1551](https://github.com/cds-snc/forms-terraform/issues/1551)) ([3a5d2e4](https://github.com/cds-snc/forms-terraform/commit/3a5d2e407684a530d4c357ab6bca5f13a039ebb1))
+
 ## [3.48.11](https://github.com/cds-snc/forms-terraform/compare/v3.48.10...v3.48.11) (2026-11-19)
 
 
