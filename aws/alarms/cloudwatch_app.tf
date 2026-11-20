@@ -470,7 +470,7 @@ resource "aws_cloudwatch_log_subscription_filter" "forms_unhandled_error_steam" 
 resource "aws_cloudwatch_log_subscription_filter" "forms_app_log_stream" {
   name            = "forms_app_log_stream"
   log_group_name  = var.ecs_cloudwatch_log_group_name
-  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
+  filter_pattern  = "{($.level = \"warn\") || ($.level = \"WARN\") || ($.level = \"error\") || ($.level = \"ERROR\")}"
   destination_arn = aws_lambda_function.notify_slack.arn
 }
 
@@ -478,7 +478,7 @@ resource "aws_cloudwatch_log_subscription_filter" "lambda_error_detection" {
   for_each        = local.map_of_forms_app_lambda
   name            = "error_detection_in_${each.key}_lambda_logs"
   log_group_name  = each.value.log_group_name
-  filter_pattern  = "{($.level = \"warn\") || ($.level = \"error\")}"
+  filter_pattern  = "{($.level = \"warn\") || ($.level = \"WARN\") || ($.level = \"error\") || ($.level = \"ERROR\")}"
   destination_arn = aws_lambda_function.notify_slack.arn
 }
 

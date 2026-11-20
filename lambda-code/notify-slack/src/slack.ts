@@ -42,11 +42,11 @@ export async function sendToSlack(group: string, message: string, level: string)
 }
 
 function logLevelAsEmojiAndColor(emojiLevel: string): { emoji: string; color: string } {
-  switch (emojiLevel) {
+  switch (emojiLevel.toLowerCase()) {
     case "danger":
     case "error":
-    case "SEV1":
-    case "SEV2":
+    case "sev1":
+    case "sev2":
       return { emoji: ":rotating_light:", color: "#eb1607" };
     case "warning":
     case "warn":
