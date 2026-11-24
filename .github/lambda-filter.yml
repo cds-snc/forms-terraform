@@ -3,6 +3,9 @@ common: &common
   - "pnpm-lock.yaml"
   - "tsconfig.json"
   - "Dockerfile.lambda"
+api-end-to-end-test:
+  - *common
+  - "lambda-code/api-end-to-end-test/**"
 audit-logs:
   - *common
   - "lambda-code/audit-logs/**"
@@ -15,15 +18,27 @@ cognito-email-sender:
 cognito-pre-sign-up:
   - *common
   - "lambda-code/cognito-pre-sign-up/**"
+file-upload-cleanup:
+  - *common
+  - "lambda-code/file-upload-cleanup/**"
+file-upload-processor:
+  - *common
+  - "lambda-code/file-upload-processor/**"
 form-archiver:
   - *common
   - "lambda-code/form-archiver/**"
 nagware:
   - *common
   - "lambda-code/nagware/**"
+notification:
+  - *common
+  - "lambda-code/notification/**"
 notify-slack:
   - *common
   - "lambda-code/notify-slack/**"
+overdue-responses-confirmator:
+  - *common
+  - "lambda-code/overdue-responses-confirmator/**"
 reliability:
   - *common
   - "lambda-code/reliability/**"
@@ -39,15 +54,3 @@ submission:
 vault-integrity:
   - *common
   - "lambda-code/vault-integrity/**"
-api-end-to-end-test:
-  - *common
-  - "lambda-code/api-end-to-end-test/**"
-file-upload-processor:
-  - *common
-  - "lambda-code/file-upload-processor/**"
-file-upload-cleanup:
-  - *common
-  - "lambda-code/file-upload-cleanup/**"
-notification:
-  - *common
-  - "lambda-code/notification/**"

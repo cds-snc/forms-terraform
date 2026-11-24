@@ -430,6 +430,10 @@ locals {
       function_name  = var.lambda_notification_function_name
       log_group_name = var.lambda_notification_log_group_name
     }
+    overdue_responses_confirmator = {
+      function_name  = var.lambda_overdue_responses_confirmator_function_name
+      log_group_name = var.lambda_overdue_responses_confirmator_log_group_name
+    }
     reliability = {
       function_name  = var.lambda_reliability_function_name
       log_group_name = var.lambda_reliability_log_group_name

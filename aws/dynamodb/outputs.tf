@@ -17,6 +17,10 @@ output "dynamodb_vault_stream_arn" {
   description = "Vault DynamoDB stream ARN"
   value       = aws_dynamodb_table.vault.stream_arn
 }
+output "dynamodb_vault_status_created_at_v2_index_name" {
+  description = "DynamoDB StatusCreatedAt_v2 index name from Vault table"
+  value       = aws_dynamodb_global_secondary_index.vault_status_created_at_v2.index_name
+}
 
 output "dynamodb_app_audit_logs_arn" {
   description = "App Audit Logs table ARN"
