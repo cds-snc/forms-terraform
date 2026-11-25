@@ -23,7 +23,7 @@ catalog:
   "@biomejs/biome": ^2.5.9
   "@gcforms/connectors": ^3.0.1
   "@gcforms/core": ^2.2.26
-  "@gcforms/database": 1.1.10
+  "@gcforms/database": 1.2.3
   "@gcforms/types": ^1.0.38
   "@types/aws-lambda": ^8.10.162
   "@types/json2md": ^1.5.4
