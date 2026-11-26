@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.48.12](https://github.com/cds-snc/forms-terraform/compare/v3.48.11...v3.48.12) (2026-11-26)
+
+
+### Bug Fixes
+
+* remove submission instead of marking it for deletion after 30 days when the associated form is archived (reliability lambda) ([#1557](https://github.com/cds-snc/forms-terraform/issues/1557)) ([53ed3e0](https://github.com/cds-snc/forms-terraform/commit/53ed3e072641b18564b74d71b69093f87de8b943))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#1552](https://github.com/cds-snc/forms-terraform/issues/1552)) ([46435c5](https://github.com/cds-snc/forms-terraform/commit/46435c51dd8666f22d82a379eca7cd6fcfc3d28e))
+* synced file(s) with cds-snc/site-reliability-engineering ([#1556](https://github.com/cds-snc/forms-terraform/issues/1556)) ([8de911c](https://github.com/cds-snc/forms-terraform/commit/8de911cbeb7e782b5621156219c72f4e2fc40f99))
+* update Production deployment script to only deploy Cognito, Alarms and Lambdas Terraform modules ([#1545](https://github.com/cds-snc/forms-terraform/issues/1545)) ([cda930f](https://github.com/cds-snc/forms-terraform/commit/cda930fd5c8e414128e33caabf226ef62af2e75c))
+* upgrade waf_ip_blocklist module to latest version 14.0.1 ([#1551](https://github.com/cds-snc/forms-terraform/issues/1551)) ([3a5d2e4](https://github.com/cds-snc/forms-terraform/commit/3a5d2e407684a530d4c357ab6bca5f13a039ebb1))
+
 ## [3.48.11](https://github.com/cds-snc/forms-terraform/compare/v3.48.10...v3.48.11) (2026-11-19)
 
 
