@@ -2,7 +2,7 @@ import { Handler, SQSEvent } from "aws-lambda";
 import sendToNotify from "./lib/notifyProcessing.ts";
 import sendToVault from "./lib/vaultProcessing.ts";
 import { getTemplateInfo } from "./lib/templates.ts";
-import { getSubmission, markSubmissionForDeletionIn30days } from "./lib/dataLayer.ts";
+import { getSubmission, removeSubmission } from "./lib/dataLayer.ts";
 import { getAllSubmissionAttachmentScanStatuses } from "./lib/file_scanning.ts";
 import { addAllSubmissionAttachmentsChecksums } from "./lib/file_checksum.ts";
 
@@ -83,7 +83,7 @@ const messageProcessor = async ({
       let didSucceedMarkingSubmissionAsProcessed = true;
 
       try {
-        await markSubmissionForDeletionIn30days(submissionID);
+        await removeSubmission(submissionID);
       } catch (error) {
         didSucceedMarkingSubmissionAsProcessed = false;
       }
@@ -95,7 +95,7 @@ const messageProcessor = async ({
           status: "success",
           submissionId: submissionID,
           sendReceipt: sendReceipt,
-          msg: `Submission will not be processed because the associated form ${formID} has been archived. Submission ${didSucceedMarkingSubmissionAsProcessed ? "has been" : "failed to be"} marked for deletion in 30 days.`,
+          msg: `Submission will not be processed because the associated form ${formID} has been archived. Submission ${didSucceedMarkingSubmissionAsProcessed ? "has been" : "failed to be"} removed.`,
         })
       );
 
