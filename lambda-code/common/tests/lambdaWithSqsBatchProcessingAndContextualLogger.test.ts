@@ -6,6 +6,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { lambdaWithSqsBatchProcessingAndContextualLogger } from "../src/lambdaWithSqsBatchProcessingAndContextualLogger.ts";
 import { DefaultLambdaInvocationContextualLogger } from "../src/logger/lambdaInvocationContextualLogger.ts";
 
+// This module needs to use the real contextual logger instead of the global Vitest mock.
+vi.unmock("../src/logger/lambdaInvocationContextualLogger.ts");
+
 describe("lambdaWithSqsBatchProcessingAndContextualLogger", () => {
   afterEach(() => {
     vi.restoreAllMocks();

@@ -6,6 +6,9 @@ import { z } from "zod";
 import { lambdaWithValidatedEventAndContextualLogger } from "../src/lambdaWithValidatedEventAndContextualLogger.ts";
 import { DefaultLambdaInvocationContextualLogger } from "../src/logger/lambdaInvocationContextualLogger.ts";
 
+// This module needs to use the real contextual logger instead of the global Vitest mock.
+vi.unmock("../src/logger/lambdaInvocationContextualLogger.ts");
+
 describe("lambdaWithValidatedEventAndContextualLogger", () => {
   const eventSchema = z.object({
     input: z.string(),
